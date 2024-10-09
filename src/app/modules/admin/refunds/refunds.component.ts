@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'app-refunds',
     templateUrl: './refunds.component.html',
-    styleUrls: ['./refunds.component.scss']
+    standalone: true,
+    encapsulation: ViewEncapsulation.None,
 })
 export class RefundsComponent { }

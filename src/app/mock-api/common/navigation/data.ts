@@ -7,7 +7,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     title: 'Inicio',
     type: 'basic',
     icon: 'heroicons_outline:home',
-    link: '/home',
+    link: '/example',
   },
   {
     id: 'documents',
@@ -28,7 +28,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
     title: 'Rembolsos',
     type: 'basic',
     icon: 'heroicons_outline:cash',
-    link: '/reimbursements', // Nueva ruta para Rembolsos
+    link: '/refunds', // Nueva ruta para Rembolsos
   },
   {
     id: 'example',
@@ -44,7 +44,7 @@ export const compactNavigation: FuseNavigationItem[] = [
     title: 'Inicio',
     type: 'basic',
     icon: 'heroicons_outline:home',
-    link: '/home',
+    link: '/example',
   },
   {
     id: 'documents',
@@ -65,6 +65,6 @@ export const compactNavigation: FuseNavigationItem[] = [
     title: 'Rembolsos',
     type: 'basic',
     icon: 'heroicons_outline:banknotes',
-    link: '/reimbursements', // Nueva ruta para Rembolsos
+    link: '/refunds', // Nueva ruta para Rembolsos
   }
 ];

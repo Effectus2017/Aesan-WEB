@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
     selector: 'app-budget',
     templateUrl: './budget.component.html',
-    styleUrls: ['./budget.component.scss']
+    standalone: true,
+    encapsulation: ViewEncapsulation.None,
 })
 export class BudgetComponent { }

@@ -1,6 +1,9 @@
-import { Route } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 import { BudgetComponent } from './budget.component';
 
-export const budgetRoutes: Route[] = [
-  { path: '', component: BudgetComponent }
-];
+export default [
+    {
+        path     : '',
+        component: BudgetComponent,
+    },
+] as Routes;

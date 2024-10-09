@@ -3,9 +3,6 @@ import { initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { DocumentsComponent } from './modules/admin/documents/documents.component'; // Actualizada la ruta
-import { BudgetComponent } from './modules/admin/budget/budget.component'; // Actualizada la ruta
-import { RefundsComponent } from './modules/admin/refunds/refunds.component'; // Actualizada la ruta
 
 // @formatter:off
 /* eslint-disable max-len */
