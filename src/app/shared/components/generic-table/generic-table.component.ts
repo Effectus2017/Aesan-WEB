@@ -5,7 +5,7 @@ import { CommonModule, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { GenericTableHandler } from './generic-table.interface';
+import { OnGenericTableHandler } from './generic-table.interface';
 
 @Component({
   selector: 'app-generic-table',
@@ -18,7 +18,7 @@ export class GenericTableComponent {
   @Input() columnsSchema: any[];
   @Input() displayedColumns: string[];
   @ViewChild(MatSort) sort: MatSort;
-  @Input() handler: GenericTableHandler;
+  @Input() handler: OnGenericTableHandler;
 
   // Functions
   trackByFn(index: number, item: any): any {

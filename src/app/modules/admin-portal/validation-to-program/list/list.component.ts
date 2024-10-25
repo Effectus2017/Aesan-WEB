@@ -18,12 +18,11 @@ import { MatInputModule } from '@angular/material/input';
 import { NgFor, NgIf } from '@angular/common';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { SelectionModel } from '@angular/cdk/collections';
 // Importa el esquema de columnas
 import { COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { GenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface'
+import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface'
 // Datos Dummy
 import { columnsData } from './columns-data'; // Importar el nuevo archivo
 
@@ -49,7 +48,7 @@ import { columnsData } from './columns-data'; // Importar el nuevo archivo
     GenericHeaderComponent
 ],
 })
-export class ValidationToProgramListComponent implements OnInit, OnDestroy, GenericTableHandler {
+export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   // Inyeccion de servicios
   private _formBuilder = inject(UntypedFormBuilder);
   private _customRouterService = inject(CustomRouterService);
@@ -58,13 +57,17 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, Gene
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _fuseAlertService = inject(FuseAlertService);
 
+  // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Variables
   title?: string = 'Validación de Aplicación al Programa';
 
+  // Lista de datos
   list: MatTableDataSource<any> = new MatTableDataSource();
-  columnsSchema: any = COLUMNS_SCHEMA; // Usa el esquema importado
+  // Esquema de columnas
+  columnsSchema: any = COLUMNS_SCHEMA;
+  // Columnas a mostrar
   displayedColumns: string[] = COLUMNS_SCHEMA.map((col) => col.key);
 
   pageSizeOptions = [5, 10, 15, 25];
@@ -72,16 +75,16 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, Gene
   length = 0;
   pageEvent: PageEvent;
 
+  // Formulario
   formRoot: UntypedFormGroup;
   clearVisible: boolean = false;
 
+  // Datos Dummy
   data = columnsData; // Asignar los datos desde el nuevo archivo
 
   // Constructor
   constructor() {}
-    onCheckChange(event: Event, element: any): void {
-        throw new Error('Method not implemented.');
-    }
+
 
   // Lifecycle hooks
   ngOnInit() {
@@ -107,11 +110,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, Gene
     this._unsubscribeAll.complete();
   }
 
-  // Funciones
-
-  trackByFn(index: number, item: any): any {
-    return item.id || index;
-  }
 
   onSubmit() {
     if (this.formRoot.valid) {
@@ -143,7 +141,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, Gene
     //this._customersService.getAllCustomersFromDB(requestParameters).subscribe();
   }
 
-  onClear(event: Event) {
+  onClean(event: Event) {
     event.stopPropagation();
     event.preventDefault();
     this.clearVisible = false;
@@ -201,6 +199,11 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, Gene
         // });
       }
     });
+  }
+
+  // Cambiar estado
+  onCheckChange(event: Event, element: any): void {
+    throw new Error('Method not implemented.');
   }
 
 }
