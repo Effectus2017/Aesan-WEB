@@ -1,0 +1,52 @@
+import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
+import { AuthService } from 'app/core/auth/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class CustomRouterService {
+  constructor(
+    private _router: Router,
+    private _authService: AuthService
+  ) {}
+
+  navigate(commands: any[], extras?: any): Promise<boolean> {
+    const userRole = this._authService.getUserRole();
+    const userAgency = this._authService.getUserAgency();
+
+    let prefix = '/admin-portal/';
+
+    switch (userAgency) {
+      case 'PDAM':
+        prefix = '/pdam-portal/';
+        break;
+      case 'PSAV':
+        prefix = '/psav-portal/';
+        break;
+      case 'PACNA':
+        prefix = '/pacna-portal/';
+        break;
+      case 'PFHF':
+        prefix = '/pfhf-portal/';
+        break;
+      case 'PAF':
+        prefix = '/paf-portal/';
+        break;
+      case 'PDFE':
+        prefix = '/pdf-portal/';
+        break;
+      default:
+        prefix = '/admin-portal/';
+        break;
+    }
+
+    // Añadir el prefijo solo si el primer segmento no es 'sign-in' o 'sign-up'
+    if (typeof commands[0] === 'string' && !commands[0].startsWith('/sign-in') && !commands[0].startsWith('/sign-up')) {
+      commands[0] = `${prefix}${commands[0]}`;
+    }
+
+    return this._router.navigate(commands, extras);
+
+  }
+}

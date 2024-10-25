@@ -4,19 +4,17 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
-// @formatter:off
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 export const appRoutes: Route[] = [
-  // Redirect empty path to '/example'
-  { path: '', pathMatch: 'full', redirectTo: 'example' },
+  { path: '', pathMatch: 'full', redirectTo: 'admin-portal' },
+  // Redirigir después del inicio de sesión
+  { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'auth-redirect' },
 
-  // Redirect signed-in user to the '/example'
-  //
-  // After the user signs in, the sign-in page will redirect the user to the 'signed-in-redirect'
-  // path. Below is another redirection for that path to redirect the user to the desired
-  // location. This is a small convenience to keep all main routes together here on this file.
-  { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'example' },
+    // Ruta de redirección basada en el rol
+  {
+    path: 'auth-redirect',
+    canActivate: [AuthGuard],
+    loadChildren: () => import('app/modules/auth/auth-redirect/auth-redirect.routes'),
+  },
 
   // Auth routes for guests
   {
@@ -63,7 +61,7 @@ export const appRoutes: Route[] = [
 
   // Admin routes
   {
-    path: '',
+    path: 'admin-portal',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
@@ -71,10 +69,91 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin/example/example.routes') },
-      { path: 'documents', loadChildren: () => import('app/modules/admin/documents/documents.routes') }, // Actualizada la ruta
-      { path: 'budget', loadChildren: () => import('app/modules/admin/budget/budget.routes') }, // Actualizada la ruta
-      { path: 'refunds', loadChildren: () => import('app/modules/admin/refunds/refunds.routes') }, // Actualizada la ruta
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+      { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'pacna-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'psav-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'pdam-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'pfhf-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'paf-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
+    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
+    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
     ],
   },
 ];

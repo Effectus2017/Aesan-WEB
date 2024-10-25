@@ -3,7 +3,7 @@
 
 <!-- Navigation -->
 <fuse-vertical-navigation
-    class="bg-blue-300 dark print:hidden"
+    [class]="backgroundClass + ' dark print:hidden'"
     [appearance]="'compact'"
     [mode]="isScreenSmall ? 'over' : 'side'"
     [name]="'mainNavigation'"
@@ -14,8 +14,8 @@
         <!-- Logo -->
         <div class="flex items-center justify-center h-20 mt-3 mb-4">
             <img
-                class=""
-                src="assets/images/logo/logo.png"
+                class="w-20"
+                [src]="logoPath"
                 alt="Logo image">
         </div>
     </ng-container>
@@ -47,7 +47,7 @@
                 <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
             </button>
             -->
-
+            <theme-toggle></theme-toggle>
             <user></user>
         </div>
     </div>
@@ -60,8 +60,20 @@
     </div>
 
     <!-- Footer -->
-    <div class="relative flex items-center justify-start w-full px-4 border-t flex-0 h-14 md:px-6 z-49 bg-card dark:bg-transparent print:hidden">
-        <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
+    <div class="relative flex items-center justify-start w-full px-4 border-t flex-0 h-18 md:px-6 z-49 bg-[#003C49] dark:bg-transparent print:hidden">
+        <div class="flex items-center">
+            <img src="assets/images/logo/aesan-logo-1x.png" alt="Logo" class="mr-2 h-14">
+        </div>
+        <div class="flex flex-row ml-auto text-right text-white gap-9">
+            <div class="flex items-center gap-3">
+                <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:map-pin"></mat-icon>
+                <p class="ml-2 text-sm">P.O. Box 190759 San Juan, PR 00919-0759</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:phone"></mat-icon>
+                <p class="ml-2 text-sm">(787) 759-2000 / Exts. 4055, 6292</p>
+            </div>
+        </div>
     </div>
 
 </div>

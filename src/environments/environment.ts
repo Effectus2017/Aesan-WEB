@@ -1,4 +1,8 @@
+import data from './urls.json'; // Es diferente en la version 13
+
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api' // Ajusta esto a la URL de tu API
+  baseHttpUrl: data.devUrl,
+  v100: 1.0,
+  loginEnable: false,
 };

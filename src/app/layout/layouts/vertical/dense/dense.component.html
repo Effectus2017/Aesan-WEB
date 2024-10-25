@@ -3,7 +3,7 @@
 
 <!-- Navigation -->
 <fuse-vertical-navigation
-    class="dark bg-gray-900 print:hidden"
+    class="bg-gray-900 dark print:hidden"
     [appearance]="navigationAppearance"
     [mode]="isScreenSmall ? 'over' : 'side'"
     [name]="'mainNavigation'"
@@ -15,7 +15,7 @@
         <div class="flex items-center justify-center h-20">
             <img
                 class="w-8"
-                src="assets/images/logo/logo.svg"
+                src="assets/images/logo/aesan.png"
                 alt="Logo image">
         </div>
     </ng-container>
@@ -25,7 +25,7 @@
 <div class="flex flex-col flex-auto w-full min-w-0">
 
     <!-- Header -->
-    <div class="relative flex flex-0 items-center w-full h-16 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
+    <div class="relative flex items-center w-full h-16 px-4 shadow flex-0 md:px-6 z-49 dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
         <div class="flex items-center pr-2 space-x-2">
             <!-- Navigation toggle button -->
             <button
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="relative flex flex-0 items-center justify-start w-full h-14 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
+    <div class="relative flex items-center justify-start w-full px-4 border-t flex-0 h-14 md:px-6 z-49 bg-card dark:bg-transparent print:hidden">
         <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
     </div>
 

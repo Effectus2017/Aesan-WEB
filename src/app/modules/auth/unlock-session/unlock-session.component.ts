@@ -10,129 +10,121 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/core/user/user.service';
+import { UserService } from 'app/shared/services/user.service';
 
 @Component({
-    selector     : 'auth-unlock-session',
-    templateUrl  : './unlock-session.component.html',
-    encapsulation: ViewEncapsulation.None,
-    animations   : fuseAnimations,
-    standalone   : true,
-    imports      : [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
+  selector: 'auth-unlock-session',
+  templateUrl: './unlock-session.component.html',
+  encapsulation: ViewEncapsulation.None,
+  animations: fuseAnimations,
+  standalone: true,
+  imports: [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
 })
-export class AuthUnlockSessionComponent implements OnInit
-{
-    @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;
+export class AuthUnlockSessionComponent implements OnInit {
+  @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;
 
-    alert: { type: FuseAlertType; message: string } = {
-        type   : 'success',
-        message: '',
-    };
-    name: string;
-    showAlert: boolean = false;
-    unlockSessionForm: UntypedFormGroup;
-    private _email: string;
+  alert: { type: FuseAlertType; message: string } = {
+    type: 'success',
+    message: '',
+  };
+  name: string;
+  showAlert: boolean = false;
+  unlockSessionForm: UntypedFormGroup;
+  private _email: string;
 
-    /**
-     * Constructor
-     */
-    constructor(
-        private _activatedRoute: ActivatedRoute,
-        private _authService: AuthService,
-        private _formBuilder: UntypedFormBuilder,
-        private _router: Router,
-        private _userService: UserService,
-    )
-    {
+  /**
+   * Constructor
+   */
+  constructor(
+    private _activatedRoute: ActivatedRoute,
+    private _authService: AuthService,
+    private _formBuilder: UntypedFormBuilder,
+    private _router: Router,
+    private _userService: UserService
+  ) {}
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Lifecycle hooks
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * On init
+   */
+  ngOnInit(): void {
+    // Get the user's name
+    this._userService.user$.subscribe((user) => {
+      this.name = user.name;
+      this._email = user.email;
+    });
+
+    // Create the form
+    this.unlockSessionForm = this._formBuilder.group({
+      name: [
+        {
+          value: this.name,
+          disabled: true,
+        },
+      ],
+      password: ['', Validators.required],
+    });
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Unlock
+   */
+  unlock(): void {
+    // Return if the form is invalid
+    if (this.unlockSessionForm.invalid) {
+      return;
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
+    // Disable the form
+    this.unlockSessionForm.disable();
 
-    /**
-     * On init
-     */
-    ngOnInit(): void
-    {
-        // Get the user's name
-        this._userService.user$.subscribe((user) =>
-        {
-            this.name = user.name;
-            this._email = user.email;
-        });
+    // Hide the alert
+    this.showAlert = false;
 
-        // Create the form
-        this.unlockSessionForm = this._formBuilder.group({
-            name    : [
-                {
-                    value   : this.name,
-                    disabled: true,
-                },
-            ],
-            password: ['', Validators.required],
-        });
-    }
+    this._authService
+      .unlockSession({
+        email: this._email ?? '',
+        password: this.unlockSessionForm.get('password').value,
+      })
+      .subscribe(
+        () => {
+          // Set the redirect url.
+          // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
+          // to the correct page after a successful sign in. This way, that url can be set via
+          // routing file and we don't have to touch here.
+          const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
+          // Navigate to the redirect url
+          this._router.navigateByUrl(redirectURL);
+        },
+        (response) => {
+          // Re-enable the form
+          this.unlockSessionForm.enable();
 
-    /**
-     * Unlock
-     */
-    unlock(): void
-    {
-        // Return if the form is invalid
-        if ( this.unlockSessionForm.invalid )
-        {
-            return;
+          // Reset the form
+          this.unlockSessionNgForm.resetForm({
+            name: {
+              value: this.name,
+              disabled: true,
+            },
+          });
+
+          // Set the alert
+          this.alert = {
+            type: 'error',
+            message: 'Invalid password',
+          };
+
+          // Show the alert
+          this.showAlert = true;
         }
-
-        // Disable the form
-        this.unlockSessionForm.disable();
-
-        // Hide the alert
-        this.showAlert = false;
-
-        this._authService.unlockSession({
-            email   : this._email ?? '',
-            password: this.unlockSessionForm.get('password').value,
-        }).subscribe(
-            () =>
-            {
-                // Set the redirect url.
-                // The '/signed-in-redirect' is a dummy url to catch the request and redirect the user
-                // to the correct page after a successful sign in. This way, that url can be set via
-                // routing file and we don't have to touch here.
-                const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
-
-                // Navigate to the redirect url
-                this._router.navigateByUrl(redirectURL);
-
-            },
-            (response) =>
-            {
-                // Re-enable the form
-                this.unlockSessionForm.enable();
-
-                // Reset the form
-                this.unlockSessionNgForm.resetForm({
-                    name: {
-                        value   : this.name,
-                        disabled: true,
-                    },
-                });
-
-                // Set the alert
-                this.alert = {
-                    type   : 'error',
-                    message: 'Invalid password',
-                };
-
-                // Show the alert
-                this.showAlert = true;
-            },
-        );
-    }
+      );
+  }
 }
