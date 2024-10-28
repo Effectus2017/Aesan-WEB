@@ -1,21 +1,25 @@
-import { PageEvent } from "@angular/material/paginator";
-import { MatTableDataSource } from "@angular/material/table";
+import { PageEvent } from '@angular/material/paginator';
+
+export interface GenericTableConfig<T = any> {
+  dataSource: T[];
+  columnsSchema: any[];
+  displayedColumns: string[];
+  handler?: any;
+  showPaginator?: boolean;
+  pageSize?: number;
+  pageSizeOptions?: number[];
+  length?: number;
+}
 
 export interface OnGenericTableHandler {
   // Lista de datos
-  list: MatTableDataSource<any>;
-  // Esquema de columnas
-  columnsSchema: any;
-  // Columnas a mostrar
-  displayedColumns: string[];
-  // Opciones de paginación
-  pageSizeOptions: number[];
-  pageSize: number;
-  length: number;
-  pageEvent: PageEvent;
+  tableConfig: GenericTableConfig;
   // Funciones
-  onEdit(event: Event, id: number): void;
-  onDelete(event: Event, id: number): void;
-  onCheckChange(event: Event, element: any): void;
-  getPaginator(event?: PageEvent): void;
+  onEdit?: (event: Event, id: number) => void;
+  onDelete?: (event: Event, id: number) => void;
+  onCheckChange?: (event: Event, element: any) => void;
+  getPaginator?: (event?: PageEvent) => void;
+  // Métodos para obtener datos
+  getById?: (id: number) => void;
+  getAll?: (index: number, form: any) => void;
 }

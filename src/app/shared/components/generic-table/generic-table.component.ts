@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { CommonModule, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { OnGenericTableHandler } from './generic-table.interface';
+import { GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 
 @Component({
   selector: 'app-generic-table',
@@ -13,12 +13,26 @@ import { OnGenericTableHandler } from './generic-table.interface';
   standalone: true,
   imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule],
 })
-export class GenericTableComponent {
+export class GenericTableComponent implements OnInit {
+  @Input() config: GenericTableConfig;
   @Input() dataSource: MatTableDataSource<any>;
   @Input() columnsSchema: any[];
   @Input() displayedColumns: string[];
   @ViewChild(MatSort) sort: MatSort;
   @Input() handler: OnGenericTableHandler;
+
+  ngOnInit(): void {
+    // Valores por defecto
+    this.config = {
+      ...{
+        showPaginator: true,
+        pageSize: 10,
+        pageSizeOptions: [5, 10, 25, 100],
+        length: 0
+      },
+      ...this.config
+    };
+  }
 
   // Functions
   trackByFn(index: number, item: any): any {
@@ -33,8 +47,8 @@ export class GenericTableComponent {
     this.handler.onDelete(event, id);
   }
 
-  onCheckChange(event: Event, element: any): void {
-    this.handler.onCheckChange(event, element);
-  }
+//   onCheckChange(event: Event, element: any): void {
+//     this.handler.onCheckChange(event, element);
+//   }
 
 }

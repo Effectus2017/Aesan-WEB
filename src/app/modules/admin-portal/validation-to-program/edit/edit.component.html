@@ -1,230 +1,102 @@
 <div class="absolute inset-0 flex flex-col min-w-0">
-  <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
-    <div class="flex-1 min-w-0">
-      <div class="mt-2">
-        <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">
-          {{ title }}
-        </h2>
-      </div>
-    </div>
+  <!-- Header con título y botones -->
 
-    <!-- Agregar un boton para ir al carrito -->
-    <button mat-raised-button (click)="onCart()" class="bg-[#F1A621] text-white">
-      <mat-icon [svgIcon]="'heroicons_solid:shopping-cart'" class="text-white"></mat-icon>
-      <span class="ml-2">Carrito</span>
-    </button>
-
-    <!-- Actions -->
-    <!-- <button mat-button (click)="onBack()">Cancel</button> -->
-
-    <button mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="onSubmit()">
-      <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
-      {{ isLoading ? "Actualizando..." : "Actualizar" }}
-    </button>
-  </div>
+  <app-generic-header [config]="headerConfig"></app-generic-header>
 
   <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
-    <form [formGroup]="formRoot">
+    <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 pb-8 pl-8 pr-8">
-        <!-- Empresa -->
-        <div class="col-span-10 overflow-hidden">
-          <div class="prose-sm prose">
-            <h2 class="my-4">Empresa:</h2>
-          </div>
+        <!-- Información del Programa -->
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Programa al que desea participar:</mat-label>
+            <input matInput formControlName="programName" value="PDAM" readonly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Estatus:</mat-label>
+            <input matInput formControlName="status" readonly />
+          </mat-form-field>
         </div>
 
-        <div class="col-span-10 overflow-hidden">
-          <!-- Company Profile -->
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <mat-form-field class="w-full">
-              <mat-label>Nombre de la empresa:</mat-label>
-              <input matInput formControlName="companyName" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:building-office'"></mat-icon>
-            </mat-form-field>
+        <!-- Información de la Agencia -->
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Nombre de la Agencia Auspiciadora:</mat-label>
+            <input matInput formControlName="agencyName" value="FONDITA DE JUAN" readonly />
+          </mat-form-field>
 
-            <mat-form-field class="w-full">
-              <mat-label>Dominio:</mat-label>
-              <input matInput formControlName="domain" placeholder="Dominio" />
-              <span matSuffix>.onmicrosoft.com</span>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:globe-americas'"></mat-icon>
-              <mat-hint *ngIf="domainControl.value && domainControl.value.length < 5"> El dominio debe tener al menos 5 caracteres </mat-hint>
-              <mat-hint *ngIf="isValidatingDomain"> Validando dominio... </mat-hint>
-              <mat-hint *ngIf="!isValidatingDomain && isDomainAvailable !== null && domainControl.value.length >= 5">
-                {{ isDomainAvailable ? "Dominio disponible" : "Dominio no disponible (ya está en uso)" }}
-              </mat-hint>
-              <mat-error *ngIf="domainControl.hasError('required')">El dominio es requerido</mat-error>
-              <mat-error *ngIf="domainControl.hasError('pattern')">El dominio solo puede contener letras, números y guiones</mat-error>
-              <mat-error *ngIf="domainControl.hasError('minlength')">El dominio debe tener al menos 5 caracteres</mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-1">
-            <mat-form-field>
-              <mat-label>Número de registro de la organización:</mat-label>
-              <input matInput formControlName="organizationRegistrationNumber" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:identification'"></mat-icon>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <mat-form-field>
-              <mat-label>Dirección línea 1:</mat-label>
-              <input matInput formControlName="addressLine1" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:home'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Dirección línea 2:</mat-label>
-              <input matInput formControlName="addressLine2" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:home'"></mat-icon>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-12 gap-4">
-            <mat-form-field class="col-span-3">
-              <mat-label>País:</mat-label>
-              <input matInput formControlName="country" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:globe-alt'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field class="col-span-3">
-              <mat-label>Ciudad:</mat-label>
-              <input matInput formControlName="city" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field class="col-span-3">
-              <mat-label>Estado:</mat-label>
-              <input matInput formControlName="state" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field class="col-span-3">
-              <mat-label>Código Postal:</mat-label>
-              <input matInput formControlName="postalCode" maxlength="5" #postalCode />
-              <mat-hint align="end">{{ postalCode.value.length }} / 5</mat-hint>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:inbox'"></mat-icon>
-            </mat-form-field>
-          </div>
+          <mat-form-field>
+            <mat-label>UIE #:</mat-label>
+            <input matInput formControlName="uieNumber" value="7454839948" readonly />
+          </mat-form-field>
         </div>
 
-        <!-- Información de facturación -->
-        <div class="col-span-10 overflow-hidden">
-          <div class="prose-sm prose">
-            <h2 class="my-4">Información de facturación:</h2>
-          </div>
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label># Registro de Corporación:</mat-label>
+            <input matInput formControlName="corporationNumber" value="789013" readonly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>#S.S Patronal:</mat-label>
+            <input matInput formControlName="ssPatronal" value="66-145674" readonly />
+          </mat-form-field>
         </div>
 
-        <div class="col-span-10 overflow-hidden">
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <mat-form-field>
-              <mat-label>Nombre:</mat-label>
-              <input matInput formControlName="firstName" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user'"></mat-icon>
-            </mat-form-field>
+        <!-- Dirección y Contacto -->
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Dirección:</mat-label>
+            <input matInput formControlName="address" value="calle Esperanza Urb. Corazón" readonly />
+          </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Segundo nombre:</mat-label>
-              <input matInput formControlName="middleName" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Apellido:</mat-label>
-              <input matInput formControlName="lastName" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user'"></mat-icon>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <mat-form-field>
-              <mat-label>Correo electrónico:</mat-label>
-              <input matInput formControlName="email" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Teléfono:</mat-label>
-              <input matInput formControlName="phoneNumber" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:phone'"></mat-icon>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <mat-form-field>
-              <mat-label>Cultura:</mat-label>
-              <input matInput formControlName="culture" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:globe-alt'"></mat-icon>
-            </mat-form-field>
-
-            <mat-form-field>
-              <mat-label>Idioma:</mat-label>
-              <input matInput formControlName="language" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:language'"></mat-icon>
-            </mat-form-field>
-          </div>
+          <mat-form-field>
+            <mat-label>Teléfono:</mat-label>
+            <input matInput formControlName="phone" value="(xxx) xxx-xxxxx" readonly />
+          </mat-form-field>
         </div>
 
-        <div class="col-span-10 overflow-hidden">
-          <mat-checkbox formControlName="enableGDAPByDefault"> Habilitar GDAP por defecto </mat-checkbox>
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Pueblo:</mat-label>
+            <input matInput formControlName="city" value="Caguas" readonly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Región:</mat-label>
+            <input matInput formControlName="region" value="Arecibo" readonly />
+          </mat-form-field>
         </div>
 
-        <!-- Suscripciones -->
-        <div class="col-span-10 overflow-hidden">
-          <div class="flex items-center justify-between">
-            <div class="prose-sm prose">
-              <h2 id="suscripciones" class="my-4">Suscripciones:</h2>
-            </div>
+        <!-- Información Personal -->
+        <div class="grid grid-cols-3 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Nombre:</mat-label>
+            <input matInput formControlName="firstName" value="JUAN" readonly />
+          </mat-form-field>
 
-            <button mat-stroked-button color="primary" (click)="updateFromMPC()">
-              <mat-icon [svgIcon]="'heroicons_outline:arrow-path'"></mat-icon>
-              <span class="ml-2">Obtener</span>
-            </button>
-          </div>
+          <mat-form-field>
+            <mat-label>Apellido Paterno:</mat-label>
+            <input matInput formControlName="paternalLastName" value="DEL PUEBLO" readonly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>Apellido Materno:</mat-label>
+            <input matInput formControlName="maternalLastName" value="DÍAZ" readonly />
+          </mat-form-field>
         </div>
 
-        <div class="col-span-10 p-4 overflow-hidden shadow bg-card rounded-2xl">
-          <table mat-table [dataSource]="subscriptionsDataSource" class="w-full">
-            <ng-container *ngFor="let col of columnsSchema" [matColumnDef]="col.key">
-              <th mat-header-cell *matHeaderCellDef>{{ col.label }}</th>
-              <td mat-cell *matCellDef="let element">
-                <ng-container [ngSwitch]="col.type">
-                  <mat-checkbox
-                    *ngSwitchCase="'check'"
-                    (click)="$event.stopPropagation()"
-                    (change)="$event ? selectHandler(element) : null"
-                    [checked]="selection.isSelected(element)"
-                  >
-                  </mat-checkbox>
-                  <span *ngSwitchCase="'date'">
-                    {{ element[col.key] | date : "yyyy-MM-dd" }}
-                  </span>
-                  <span *ngSwitchCase="'text'">{{ element[col.key] }}</span>
-                  <span *ngSwitchCase="'number'">{{ element[col.key] }}</span>
-                  <span *ngSwitchCase="'boolean'">{{ element[col.key] ? "Sí" : "No" }}</span>
-                  <span *ngIf="col.type === 'button'" class="flex flex-row justify-center gap-2">
-                    <div *ngFor="let button of col?.buttons">
-                      <button title="edit" *ngIf="button.key === 'edit'" type="button" mat-icon-button color="warm" (click)="onEdit($event, element.id)">
-                        <mat-icon [svgIcon]="'mat_solid:launch'"></mat-icon>
-                      </button>
-                      <button title="delete" *ngIf="button.key === 'delete'" type="button" mat-icon-button color="warm" (click)="onDelete($event, element.id)">
-                        <mat-icon [svgIcon]="'mat_solid:delete'"></mat-icon>
-                      </button>
-                    </div>
-                  </span>
-                </ng-container>
-              </td>
-            </ng-container>
+        <div class="grid grid-cols-2 col-span-10 gap-4">
+          <mat-form-field>
+            <mat-label>Código Postal:</mat-label>
+            <input matInput formControlName="postalCode" value="00123" readonly />
+          </mat-form-field>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-          </table>
-
-          <mat-paginator [pageSizeOptions]="pageSizeOptions" [pageSize]="pageSize" [length]="length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
-        </div>
-
-        <div *ngIf="errorMessage" class="col-span-10 mt-4 text-red-500">
-          {{ errorMessage }}
+          <mat-form-field>
+            <mat-label>Correo Electrónico:</mat-label>
+            <input matInput formControlName="email" value="juandelpueblo@fonditajuan.com" readonly />
+          </mat-form-field>
         </div>
       </div>
     </form>

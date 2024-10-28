@@ -1,5 +1,5 @@
-<table class="w-full" mat-table [dataSource]="dataSource" [trackBy]="trackByFn">
-  <ng-container [matColumnDef]="col.key" *ngFor="let col of columnsSchema">
+<table class="w-full" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
+  <ng-container [matColumnDef]="col.key" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>
       {{ col.label }}
     </th>
@@ -35,6 +35,6 @@
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr class="h-16 order-row" mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  <tr mat-header-row *matHeaderRowDef="config.displayedColumns"></tr>
+  <tr class="h-16 order-row" mat-row *matRowDef="let row; columns: config.displayedColumns"></tr>
 </table>

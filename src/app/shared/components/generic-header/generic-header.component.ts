@@ -6,18 +6,44 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { NgIf } from '@angular/common';
+import { fuseAnimations } from '@fuse/animations';
+import { RouterLink, RouterModule } from '@angular/router';
+import { GenericHeaderConfig } from './generic-header.interface';
 
 @Component({
   selector: 'app-generic-header',
   templateUrl: './generic-header.component.html',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf],
+  animations: fuseAnimations,
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink],
 })
 export class GenericHeaderComponent {
-  @Input() title: string;
-  @Input() formGroup: FormGroup;
+  @Input() config: GenericHeaderConfig;
+
+  // Search Field config
+  @Input() searchFieldShow: boolean = false;
+  @Input() searchInputPlaceholder: string = 'Buscar';
+
+  // Go to Add Button config
+  @Input() goToAddButtonShow: boolean = false;
+
+  // Cancel Button config
+  @Input() cancelButtonShow: boolean = false;
+  @Input() cancelButtonText: string = 'Cancelar';
+
+  // Submit Button config
+  @Input() submitButtonShow: boolean = false;
+  @Input() submitButtonText: string = 'Crear';
+  @Input() submitLoadingText: string = 'Creando...';
+
+  // Clear Button config
   @Input() clearVisible: boolean = false;
 
-  @Output() clear = new EventEmitter<Event>();
+  // Loading config
+  @Input() isLoading: boolean = false;
+
+  // Outputs
+  @Output() clean = new EventEmitter<Event>();
   @Output() submit = new EventEmitter<void>();
+  @Output() cancel = new EventEmitter<void>();
 }
