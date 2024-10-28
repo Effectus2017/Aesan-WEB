@@ -1,17 +1,12 @@
 <div class="flex flex-col items-center flex-auto min-w-0 sm:justify-center">
-  <!-- Main -->
   <div class="flex-auto w-full max-w-5xl p-6 sm:p-10">
-    <!-- CONTENT GOES HERE -->
     <div class="w-full px-4 py-8 sm:w-auto sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
-      <!-- Title -->
-      <div class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-center">Application to the Program</div>
+      <div class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-center">{{ 'auth.sign-up.title' | transloco }}</div>
       <form class="mt-10" [formGroup]="signUpForm" #signUpNgForm="ngForm">
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <!-- Left column -->
           <div>
-            <!-- Program you wish to participate in -->
             <mat-form-field class="w-full">
-              <mat-label>Program you wish to participate in</mat-label>
+              <mat-label>{{ 'auth.sign-up.program.label' | transloco }}</mat-label>
               <mat-select [formControlName]="'program'">
                 <mat-option value="PDAM">PDAM</mat-option>
                 <mat-option value="PSAV">PSAV</mat-option>
@@ -19,145 +14,109 @@
               </mat-select>
             </mat-form-field>
 
-            <!-- Name of the Sponsoring Agency -->
             <mat-form-field class="w-full">
-              <mat-label>Name of the Sponsoring Agency</mat-label>
-              <input matInput [formControlName]="'agencyName'" placeholder="Enter the name of the sponsoring agency" />
+              <mat-label>{{ 'auth.sign-up.agency.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'agencyName'" placeholder="{{ 'auth.sign-up.agency.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- State Department Registration Number -->
             <mat-form-field class="w-full">
-              <mat-label>State Department Registration Number</mat-label>
-              <input matInput [formControlName]="'stateDepartmentRegistration'" placeholder="Enter the state department registration number" />
+              <mat-label>{{ 'auth.sign-up.state-department-registration.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'stateDepartmentRegistration'" placeholder="{{ 'auth.sign-up.state-department-registration.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Address -->
             <mat-form-field class="w-full">
-              <mat-label>Address</mat-label>
-              <input matInput [formControlName]="'address'" placeholder="Enter the address" />
+              <mat-label>{{ 'auth.sign-up.address.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'address'" placeholder="{{ 'auth.sign-up.address.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- City -->
             <mat-form-field class="w-full">
-              <mat-label>City</mat-label>
+              <mat-label>{{ 'auth.sign-up.city.label' | transloco }}</mat-label>
               <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event)">
                 <mat-option *ngFor="let city of listCities" [value]="city.id">{{ city.name }}</mat-option>
               </mat-select>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:globe-americas'"></mat-icon>
             </mat-form-field>
 
-            <!-- Region -->
             <mat-form-field class="w-full">
-              <mat-label>Region</mat-label>
+              <mat-label>{{ 'auth.sign-up.region.label' | transloco }}</mat-label>
               <mat-select [formControlName]="'region'">
                 <mat-option *ngFor="let region of listRegions" [value]="region">{{ region.name }}</mat-option>
               </mat-select>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:globe-americas'"></mat-icon>
             </mat-form-field>
 
-            <!-- Postal Code -->
             <mat-form-field class="w-full">
-              <mat-label>Postal Code</mat-label>
-              <input matInput [formControlName]="'postalCode'" placeholder="Enter the postal code" />
+              <mat-label>{{ 'auth.sign-up.postal-code.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'postalCode'" placeholder="{{ 'auth.sign-up.postal-code.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- First Name -->
             <mat-form-field class="w-full">
-              <mat-label>First Name</mat-label>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-              <input matInput [formControlName]="'firstName'" placeholder="Enter the first name" />
+              <mat-label>{{ 'auth.sign-up.first-name.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'firstName'" placeholder="{{ 'auth.sign-up.first-name.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Father's Last Name -->
             <mat-form-field class="w-full">
-              <mat-label>Father's Last Name</mat-label>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-              <input matInput [formControlName]="'fatherLastName'" placeholder="Enter the father's last name" />
+              <mat-label>{{ 'auth.sign-up.father-last-name.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'fatherLastName'" placeholder="{{ 'auth.sign-up.father-last-name.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Administrator Title -->
             <mat-form-field class="w-full">
-              <mat-label>Administrator Title</mat-label>
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:identification'"></mat-icon>
-              <input matInput [formControlName]="'adminTitle'" placeholder="Enter the administrator title" />
+              <mat-label>{{ 'auth.sign-up.admin-title.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'adminTitle'" placeholder="{{ 'auth.sign-up.admin-title.placeholder' | transloco }}" />
             </mat-form-field>
           </div>
 
-          <!-- Right column -->
           <div>
-            <!-- Is it a non-profit organization? -->
             <mat-form-field class="w-full">
-              <mat-label>Is it a non-profit organization?</mat-label>
+              <mat-label>{{ 'auth.sign-up.non-profit.label' | transloco }}</mat-label>
               <mat-select [formControlName]="'nonProfit'">
-                <mat-option value="Yes">Yes</mat-option>
-                <mat-option value="No">No</mat-option>
+                <mat-option value="Yes">{{ 'auth.sign-up.non-profit.yes' | transloco }}</mat-option>
+                <mat-option value="No">{{ 'auth.sign-up.non-profit.no' | transloco }}</mat-option>
               </mat-select>
             </mat-form-field>
 
-            <!-- # UIE -->
             <mat-form-field class="w-full">
-              <mat-label># UIE</mat-label>
-              <input matInput [formControlName]="'uieNumber'" placeholder="Enter the UIE number" />
+              <mat-label>{{ 'auth.sign-up.uie.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'uieNumber'" placeholder="{{ 'auth.sign-up.uie.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Employer Identification Number (EIN) -->
             <mat-form-field class="w-full">
-              <mat-label>Employer Identification Number (EIN)</mat-label>
-              <input matInput [formControlName]="'einNumber'" placeholder="Enter the Employer Identification Number (EIN)" />
+              <mat-label>{{ 'auth.sign-up.ein.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'einNumber'" placeholder="{{ 'auth.sign-up.ein.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Latitude -->
             <mat-form-field class="w-full">
-              <mat-label>Latitude</mat-label>
-              <input matInput [formControlName]="'latitude'" placeholder="Enter the latitude" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-              <mat-error *ngIf="signUpForm.get('latitude').hasError('required')">Value required</mat-error>
+              <mat-label>{{ 'auth.sign-up.latitude.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'latitude'" placeholder="{{ 'auth.sign-up.latitude.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Longitude -->
             <mat-form-field class="w-full">
-              <mat-label>Longitude</mat-label>
-              <input matInput [formControlName]="'longitude'" placeholder="Enter the longitude" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-              <mat-error *ngIf="signUpForm.get('longitude').hasError('required')">Value required</mat-error>
+              <mat-label>{{ 'auth.sign-up.longitude.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'longitude'" placeholder="{{ 'auth.sign-up.longitude.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Phone -->
             <mat-form-field class="w-full">
-              <mat-label>Phone</mat-label>
-              <input matInput [formControlName]="'phone'" placeholder="(xxx) xxx-xxxx" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+              <mat-label>{{ 'auth.sign-up.phone.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'phone'" placeholder="{{ 'auth.sign-up.phone.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Email -->
             <mat-form-field class="w-full">
-              <mat-label>Email</mat-label>
-              <input matInput [formControlName]="'email'" placeholder="Enter the email" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:envelope'"></mat-icon>
-              <mat-error *ngIf="signUpForm.get('email').hasError('email')">Please enter a valid email</mat-error>
+              <mat-label>{{ 'auth.sign-up.email.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'email'" placeholder="{{ 'auth.sign-up.email.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Middle Name -->
             <mat-form-field class="w-full">
-              <mat-label>Middle Name</mat-label>
-              <input matInput [formControlName]="'middleName'" placeholder="Enter the middle name" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-              <mat-error *ngIf="signUpForm.get('middleName').hasError('required')">Value required</mat-error>
+              <mat-label>{{ 'auth.sign-up.middle-name.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'middleName'" placeholder="{{ 'auth.sign-up.middle-name.placeholder' | transloco }}" />
             </mat-form-field>
 
-            <!-- Mother's Last Name -->
             <mat-form-field class="w-full">
-              <mat-label>Mother's Last Name</mat-label>
-              <input matInput [formControlName]="'motherLastName'" placeholder="Enter the mother's last name" />
-              <mat-icon class="icon-size-5" matSuffix [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-              <mat-error *ngIf="signUpForm.get('motherLastName').hasError('required')">Value required</mat-error>
+              <mat-label>{{ 'auth.sign-up.mother-last-name.label' | transloco }}</mat-label>
+              <input matInput [formControlName]="'motherLastName'" placeholder="{{ 'auth.sign-up.mother-last-name.placeholder' | transloco }}" />
             </mat-form-field>
           </div>
         </div>
-        <!-- Submit button -->
         <div class="flex justify-end mt-8">
           <button class="w-full sm:w-auto fuse-mat-button-large" mat-flat-button [color]="'primary'" [disabled]="signUpForm.disabled" (click)="signUp()">
-            <span *ngIf="!signUpForm.disabled">Submit Registration</span>
+            <span *ngIf="!signUpForm.disabled">{{ 'auth.sign-up.submit' | transloco }}</span>
             <mat-progress-spinner *ngIf="signUpForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
           </button>
         </div>

@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -10,6 +10,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { FuseNavigationService } from '@fuse/components/navigation';
+import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
@@ -30,9 +32,17 @@ import { AuthService } from 'app/core/auth/auth.service';
     MatIconModule,
     MatCheckboxModule,
     MatProgressSpinnerModule,
+    TranslocoModule,
   ],
 })
 export class AuthSignInComponent implements OnInit {
+
+  private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private _authService: AuthService = inject(AuthService);
+  private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
+  private _fuseNavigationService: FuseNavigationService = inject(FuseNavigationService);
+  private _router: Router = inject(Router);
+
   @ViewChild('signInNgForm') signInNgForm: NgForm;
 
   alert: { type: FuseAlertType; message: string } = {
@@ -42,7 +52,7 @@ export class AuthSignInComponent implements OnInit {
   signInForm: UntypedFormGroup;
   showAlert: boolean = false;
 
-  constructor(private _activatedRoute: ActivatedRoute, private _authService: AuthService, private _formBuilder: UntypedFormBuilder, private _router: Router) {}
+  constructor() {}
 
   ngOnInit(): void {
     // Create the form
@@ -51,6 +61,9 @@ export class AuthSignInComponent implements OnInit {
       password: ['@dmin5812931!', Validators.required],
       rememberMe: [''],
     });
+
+    // Register the navigation component
+    this._fuseNavigationService.registerComponent('authSignIn', this);
   }
 
   signIn(): void {
@@ -95,5 +108,7 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = true;
       }
     });
+
+
   }
 }

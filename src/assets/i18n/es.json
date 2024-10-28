@@ -1,0 +1,107 @@
+{
+    "common": {
+        "welcome-back": "Bienvenido",
+        "Project": "Proyecto",
+        "Analytics": "Analítica"
+    },
+    "auth": {
+        "sign-in": {
+            "title": "Iniciar Sesión",
+            "no-account": "¿No tienes una cuenta?",
+            "sign-up": "Registrarse",
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingresa tu correo electrónico",
+                "required": "El correo electrónico es requerido",
+                "invalid": "Por favor ingresa un correo electrónico válido"
+            },
+            "password": {
+                "label": "Contraseña",
+                "placeholder": "Ingresa tu contraseña",
+                "required": "La contraseña es requerida"
+            },
+            "remember-me": "Recordarme",
+            "forgot-password": "¿Olvidaste tu contraseña?",
+            "submit": "Iniciar Sesión"
+        },
+        "sign-up": {
+            "title": "Solicitud al Programa",
+            "program": {
+                "label": "Programa en el que deseas participar"
+            },
+            "agency": {
+                "label": "Nombre de la Agencia Patrocinadora",
+                "placeholder": "Ingresa el nombre de la agencia patrocinadora"
+            },
+            "state-department-registration": {
+                "label": "Número de Registro del Departamento de Estado",
+                "placeholder": "Ingresa el número de registro del departamento de estado"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Ingresa la dirección"
+            },
+            "city": {
+                "label": "Ciudad",
+                "placeholder": "Selecciona tu ciudad"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Selecciona tu región"
+            },
+            "postal-code": {
+                "label": "Código Postal",
+                "placeholder": "Ingresa el código postal"
+            },
+            "first-name": {
+                "label": "Nombre",
+                "placeholder": "Ingresa el nombre"
+            },
+            "father-last-name": {
+                "label": "Apellido del Padre",
+                "placeholder": "Ingresa el apellido del padre"
+            },
+            "admin-title": {
+                "label": "Título del Administrador",
+                "placeholder": "Ingresa el título del administrador"
+            },
+            "non-profit": {
+                "label": "¿Es una organización sin fines de lucro?",
+                "yes": "Sí",
+                "no": "No"
+            },
+            "uie": {
+                "label": "# UIE",
+                "placeholder": "Ingresa el número de UIE"
+            },
+            "ein": {
+                "label": "Número de Identificación del Empleador (EIN)",
+                "placeholder": "Ingresa el número de identificación del empleador (EIN)"
+            },
+            "latitude": {
+                "label": "Latitud",
+                "placeholder": "Ingresa la latitud"
+            },
+            "longitude": {
+                "label": "Longitud",
+                "placeholder": "Ingresa la longitud"
+            },
+            "phone": {
+                "label": "Teléfono",
+                "placeholder": "(xxx) xxx-xxxx"
+            },
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingresa el correo electrónico"
+            },
+            "middle-name": {
+                "label": "Segundo Nombre",
+                "placeholder": "Ingresa el segundo nombre"
+            },
+            "mother-last-name": {
+                "label": "Apellido de la Madre",
+                "placeholder": "Ingresa el apellido de la madre"
+            }
+        }
+    }
+}

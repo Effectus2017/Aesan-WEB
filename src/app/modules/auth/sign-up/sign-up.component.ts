@@ -11,6 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
@@ -35,6 +36,7 @@ import { UserService } from 'app/shared/services/user.service';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatIconModule,
+    TranslocoModule,
   ],
 })
 export class AuthSignUpComponent implements OnInit {

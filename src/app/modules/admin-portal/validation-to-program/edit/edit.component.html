@@ -7,7 +7,7 @@
     <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 pb-8 pl-8 pr-8">
         <!-- Información del Programa -->
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Programa al que desea participar:</mat-label>
             <input matInput formControlName="programName" value="PDAM" readonly />
@@ -15,12 +15,14 @@
 
           <mat-form-field>
             <mat-label>Estatus:</mat-label>
-            <input matInput formControlName="status" readonly />
+            <mat-select formControlName="status">
+              <mat-option *ngFor="let status of list" [value]="status">{{ status }}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
         <!-- Información de la Agencia -->
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Nombre de la Agencia Auspiciadora:</mat-label>
             <input matInput formControlName="agencyName" value="FONDITA DE JUAN" readonly />
@@ -32,7 +34,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label># Registro de Corporación:</mat-label>
             <input matInput formControlName="corporationNumber" value="789013" readonly />
@@ -45,7 +47,7 @@
         </div>
 
         <!-- Dirección y Contacto -->
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Dirección:</mat-label>
             <input matInput formControlName="address" value="calle Esperanza Urb. Corazón" readonly />
@@ -57,7 +59,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Pueblo:</mat-label>
             <input matInput formControlName="city" value="Caguas" readonly />
@@ -70,7 +72,7 @@
         </div>
 
         <!-- Información Personal -->
-        <div class="grid grid-cols-3 col-span-10 gap-4">
+        <div class="grid grid-cols-3 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Nombre:</mat-label>
             <input matInput formControlName="firstName" value="JUAN" readonly />
@@ -87,7 +89,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-2 col-span-10 gap-4">
+        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>Código Postal:</mat-label>
             <input matInput formControlName="postalCode" value="00123" readonly />

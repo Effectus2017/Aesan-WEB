@@ -61,26 +61,29 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   private _route = inject(ActivatedRoute);
   private _customRouterService = inject(CustomRouterService);
 
+  list = ['Programar Visita', 'Orientación', 'Cumple con los requisitos', 'No cumple con los requisitos'];
+
   headerConfig: GenericHeaderConfig = {
     title: 'Validación de Aplicación al Programa',
     formGroup: this._formBuilder.group({
-      programName: [''],
-      status: [''],
-      agencyName: [''],
-      uieNumber: [''],
-      corporationNumber: [''],
-      ssPatronal: [''],
-      address: [''],
-      phone: [''],
-      city: [''],
-      region: [''],
-      firstName: [''],
-      paternalLastName: [''],
-      maternalLastName: [''],
-      postalCode: [''],
-      email: [''],
+      programName: ['PDAM'],
+      status: [''], // Este campo parece estar vacío en la imagen
+      agencyName: ['FONDITA DE JUAN'],
+      uieNumber: ['7454839948'],
+      corporationNumber: ['789013'],
+      ssPatronal: ['66-145674'],
+      address: ['calle Esperanza Urb. Corazón'],
+      phone: ['(xxx) xxx-xxxxx'],
+      city: ['Caguas'],
+      region: ['Arecibo'],
+      firstName: ['JUAN'],
+      paternalLastName: ['DEL PUEBLO'],
+      maternalLastName: ['DÍAZ'],
+      postalCode: ['00123'],
+      email: ['juandelpueblo@fonditajuan.com'],
     }),
-    submitButtonText: 'Aprobar Aplicación',
+    submitButtonText: 'Aprobar',
+    submitButtonShow: true,
     cancelButtonText: 'Rechazar',
     cancelButtonShow: true,
   };

@@ -34,7 +34,7 @@
 
     <!-- Botón Cancelar -->
     <button *ngIf="config.cancelButtonShow" type="button" title="Cancelar" (click)="cancel.emit($event)" mat-button>
-      Cancel
+      {{ config.cancelButtonText }}
     </button>
 
     <!-- Botón Submit -->

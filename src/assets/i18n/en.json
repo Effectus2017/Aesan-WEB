@@ -1,5 +1,107 @@
 {
-    "welcome-back": "Welcome back",
-    "Project": "Project",
-    "Analytics": "Analytics"
+    "side-menu": {
+        "welcome-back": "Welcome back",
+        "Project": "Project",
+        "Analytics": "Analytics"
+    },
+    "auth": {
+        "sign-in": {
+            "title": "Sign In",
+            "no-account": "Don't have an account?",
+            "sign-up": "Sign Up",
+            "email": {
+                "label": "Email Address",
+                "placeholder": "Enter your email",
+                "required": "Email address is required",
+                "invalid": "Please enter a valid email address"
+            },
+            "password": {
+                "label": "Password",
+                "placeholder": "Enter your password",
+                "required": "Password is required"
+            },
+            "remember-me": "Remember Me",
+            "forgot-password": "Forgot Your Password?",
+            "submit": "Sign In"
+        },
+        "sign-up": {
+            "title": "Application to the Program",
+            "program": {
+                "label": "Program you wish to participate in"
+            },
+            "agency": {
+                "label": "Name of the Sponsoring Agency",
+                "placeholder": "Enter the name of the sponsoring agency"
+            },
+            "state-department-registration": {
+                "label": "State Department Registration Number",
+                "placeholder": "Enter the state department registration number"
+            },
+            "address": {
+                "label": "Address",
+                "placeholder": "Enter the address"
+            },
+            "city": {
+                "label": "City",
+                "placeholder": "Select your city"
+            },
+            "region": {
+                "label": "Region",
+                "placeholder": "Select your region"
+            },
+            "postal-code": {
+                "label": "Zip Code",
+                "placeholder": "Enter the zip code"
+            },
+            "first-name": {
+                "label": "First Name",
+                "placeholder": "Enter the first name"
+            },
+            "father-last-name": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter the father's last name"
+            },
+            "admin-title": {
+                "label": "Administrator Title",
+                "placeholder": "Enter the administrator title"
+            },
+            "non-profit": {
+                "label": "Is it a non-profit organization?",
+                "yes": "Yes",
+                "no": "No"
+            },
+            "uie": {
+                "label": "# UIE",
+                "placeholder": "Enter the UIE number"
+            },
+            "ein": {
+                "label": "Employer Identification Number (EIN)",
+                "placeholder": "Enter the Employer Identification Number (EIN)"
+            },
+            "latitude": {
+                "label": "Latitude",
+                "placeholder": "Enter the latitude"
+            },
+            "longitude": {
+                "label": "Longitude",
+                "placeholder": "Enter the longitude"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "(xxx) xxx-xxxx"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter the email"
+            },
+            "middle-name": {
+                "label": "Middle Name",
+                "placeholder": "Enter the middle name"
+            },
+            "mother-last-name": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter the mother's last name"
+            }
+        }
+    }
 }

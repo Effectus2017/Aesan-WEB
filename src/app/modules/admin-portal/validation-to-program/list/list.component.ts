@@ -27,6 +27,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { columnsData } from './columns-data'; // Importar el nuevo archivo
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { FuseNavigationService } from '@fuse/components/navigation';
 
 @Component({
   selector: 'app-admin-validation-to-program-list',
@@ -58,7 +59,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   private _changeDetectorRef = inject(ChangeDetectorRef);
   //   private _fuseConfirmationService = inject(FuseConfirmationService);
   //   private _fuseAlertService = inject(FuseAlertService);
-
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -72,9 +72,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     }),
     searchFieldShow: true,
     searchInputPlaceholder: 'Buscar usuario',
-
-
-
     submitButtonText: 'Guardar',
   };
 

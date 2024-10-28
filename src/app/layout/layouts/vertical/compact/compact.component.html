@@ -28,6 +28,7 @@
     <div class="relative flex items-center w-full h-16 px-4 shadow flex-0 md:px-6 z-49 dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
         <!-- Navigation toggle button -->
         <button
+            title="Toggle Navigation"
             mat-icon-button
             (click)="toggleNavigation('mainNavigation')">
             <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
@@ -47,6 +48,7 @@
                 <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
             </button>
             -->
+            <languages></languages>
             <theme-toggle></theme-toggle>
             <user></user>
         </div>
