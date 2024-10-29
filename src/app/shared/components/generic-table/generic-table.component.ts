@@ -6,12 +6,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-generic-table',
   templateUrl: './generic-table.component.html',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule],
+  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, TranslocoModule],
 })
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;

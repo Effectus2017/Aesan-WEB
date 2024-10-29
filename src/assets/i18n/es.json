@@ -103,5 +103,68 @@
                 "placeholder": "Ingresa el apellido de la madre"
             }
         }
+    },
+    "validation-to-program": {
+        "list": {
+            "title": "Validación de Aplicación al Programa",
+            "search": {
+                "placeholder": "Buscar usuario",
+                "button": "Buscar"
+            },
+            "table": {
+                "columns": {
+                    "program": "Programa",
+                    "agencyName": "Nombre de Agencia",
+                    "stateDepartmentRegistration": "Registro Depto. Estado",
+                    "address": "Dirección",
+                    "city": "Ciudad",
+                    "region": "Región",
+                    "zipCpde": "Código Postal",
+                    "firstName": "Nombre",
+                    "fatherLastName": "Apellido Paterno",
+                    "adminTitle": "Título Admin.",
+                    "nonProfit": "Sin Fines de Lucro",
+                    "uieNumber": "# UIE",
+                    "einNumber": "# EIN",
+                    "ssPatronal": "SS Employer",
+                    "latitude": "Latitud",
+                    "longitude": "Longitud",
+                    "phone": "Teléfono",
+                    "email": "Correo",
+                    "middleName": "Segundo Nombre",
+                    "motherLastName": "Apellido Materno",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "delete": "Eliminar"
+                }
+            },
+            "buttons": {
+                "add": "Agregar",
+                "clear": "Limpiar",
+                "save": "Guardar"
+            }
+        },
+        "edit": {
+            "title": "Editar Validación de Aplicación al Programa",
+            "programName": "Programa al que desea participar:",
+            "status": "Estatus:",
+            "agencyName": "Nombre de la Agencia Auspiciadora:",
+            "uieNumber": "UIE #:",
+            "corporationNumber": "# Registro de Corporación:",
+            "ssPatronal": "# S.S Patronal:",
+            "address": "Dirección:",
+            "phone": "Teléfono:",
+            "city": "Pueblo:",
+            "region": "Región:",
+            "firstName": "Nombre:",
+            "paternalLastName": "Apellido Paterno:",
+            "maternalLastName": "Apellido Materno:",
+            "postalCode": "Código Postal:",
+            "email": "Correo Electrónico:",
+            "submit": "Aprobar",
+            "cancel": "Rechazar"
+        }
     }
 }

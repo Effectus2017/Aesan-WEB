@@ -9,32 +9,33 @@ import { NgIf } from '@angular/common';
 import { fuseAnimations } from '@fuse/animations';
 import { RouterLink, RouterModule } from '@angular/router';
 import { GenericHeaderConfig } from './generic-header.interface';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-generic-header',
   templateUrl: './generic-header.component.html',
   standalone: true,
   animations: fuseAnimations,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink, TranslocoModule],
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;
 
   // Search Field config
   @Input() searchFieldShow: boolean = false;
-  @Input() searchInputPlaceholder: string = 'Buscar';
+  @Input() searchInputPlaceholder: string = 'Search';
 
   // Go to Add Button config
   @Input() goToAddButtonShow: boolean = false;
 
   // Cancel Button config
   @Input() cancelButtonShow: boolean = false;
-  @Input() cancelButtonText: string = 'Cancelar';
+  @Input() cancelButtonText: string = 'Cancel';
 
   // Submit Button config
   @Input() submitButtonShow: boolean = false;
-  @Input() submitButtonText: string = 'Crear';
-  @Input() submitLoadingText: string = 'Creando...';
+  @Input() submitButtonText: string = 'Create';
+  @Input() submitLoadingText: string = 'Creating...';
 
   // Clear Button config
   @Input() clearVisible: boolean = false;

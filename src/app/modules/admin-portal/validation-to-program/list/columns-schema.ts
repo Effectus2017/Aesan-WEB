@@ -1,48 +1,52 @@
 export const COLUMNS_SCHEMA = [
-
   {
     key: 'nombre',
     type: 'text',
-    label: 'Nombre de la Agencia Auspiciadora',
+    label: 'validation-to-program.list.table.columns.agencyName'
   },
   {
     key: 'uie',
     type: 'text',
-    label: 'UIE#',
+    label: 'validation-to-program.list.table.columns.uieNumber'
   },
   {
     key: 'registroCorp',
     type: 'text',
-    label: '#Registro Corp.',
+    label: 'validation-to-program.list.table.columns.einNumber'
   },
   {
     key: 'ssPatronal',
     type: 'text',
-    label: '#S.S Patronal',
+    label: 'validation-to-program.list.table.columns.ssPatronal'
   },
   {
     key: 'creadoPor',
     type: 'text',
-    label: 'Creado por',
+    label: 'validation-to-program.list.table.columns.firstName'
   },
   {
     key: 'estatus',
     type: 'text',
-    label: 'Estatus',
+    label: 'validation-to-program.list.table.columns.adminTitle'
   },
   {
     key: 'fechaCreacion',
     type: 'text',
-    label: 'Fecha de creación',
+    label: 'validation-to-program.list.table.columns.fatherLastName'
   },
   {
-    key: 'button',
+    key: 'actions',
     type: 'button',
-    label: '',
+    label: 'validation-to-program.list.table.columns.actions',
     buttons: [
       {
         key: 'edit',
+        label: 'validation-to-program.list.table.buttons.edit'
       },
-    ],
-  },
+      {
+        key: 'delete',
+        label: 'validation-to-program.list.table.buttons.delete'
+      }
+    ]
+  }
 ];

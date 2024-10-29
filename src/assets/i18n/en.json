@@ -103,5 +103,68 @@
                 "placeholder": "Enter the mother's last name"
             }
         }
+    },
+    "validation-to-program": {
+        "list": {
+            "title": "Program Application Validation",
+            "search": {
+                "placeholder": "Search user",
+                "button": "Search"
+            },
+            "table": {
+                "columns": {
+                    "program": "Program",
+                    "agencyName": "Agency Name",
+                    "stateDepartmentRegistration": "State Dept. Registration",
+                    "address": "Address",
+                    "city": "City",
+                    "region": "Region",
+                    "zipCode": "Postal Code",
+                    "firstName": "First Name",
+                    "fatherLastName": "Father's Last Name",
+                    "adminTitle": "Admin Title",
+                    "nonProfit": "Non Profit",
+                    "uieNumber": "UIE #",
+                    "einNumber": "EIN #",
+                    "ssPatronal": "SS Patronal",
+                    "latitude": "Latitude",
+                    "longitude": "Longitude",
+                    "phone": "Phone",
+                    "email": "Email",
+                    "middleName": "Middle Name",
+                    "motherLastName": "Mother's Last Name",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "edit": "Edit",
+                    "delete": "Delete"
+                }
+            },
+            "buttons": {
+                "add": "Add",
+                "clear": "Clear",
+                "save": "Save"
+            }
+        },
+        "edit": {
+            "title": "Edit Program Application Validation",
+            "programName": "Program you wish to participate in:",
+            "status": "Status:",
+            "agencyName": "Name of the Sponsoring Agency:",
+            "uieNumber": "UIE #:",
+            "corporationNumber": "Corporation Registration #:",
+            "ssPatronal": "SS Employer #:",
+            "address": "Address:",
+            "phone": "Phone:",
+            "city": "City:",
+            "region": "Region:",
+            "firstName": "First Name:",
+            "paternalLastName": "Father's Last Name:",
+            "maternalLastName": "Mother's Last Name:",
+            "postalCode": "Postal Code:",
+            "email": "Email:",
+            "submit": "Approve",
+            "cancel": "Reject"
+        }
     }
 }

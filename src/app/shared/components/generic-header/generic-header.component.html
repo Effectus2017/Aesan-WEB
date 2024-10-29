@@ -1,7 +1,9 @@
 <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-8 sm:px-10 bg-card dark:bg-transparent">
   <div class="flex-1 min-w-0">
     <div class="mt-2">
-      <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">{{ config.title }}</h2>
+      <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">
+        {{ config.title | transloco }}
+      </h2>
     </div>
   </div>
 
@@ -17,7 +19,7 @@
     <ng-container *ngIf="config.searchFieldShow">
       <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
         <mat-icon class="icon-size-5" matPrefix svgIcon="mat_solid:search"></mat-icon>
-        <input label="Buscar" matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder" formControlName="name" />
+        <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" />
       </mat-form-field>
 
       <button title="Buscar" mat-flat-button color="primary" type="button" (click)="submit.emit()">
@@ -34,13 +36,13 @@
 
     <!-- Botón Cancelar -->
     <button *ngIf="config.cancelButtonShow" type="button" title="Cancelar" (click)="cancel.emit($event)" mat-button>
-      {{ config.cancelButtonText }}
+      {{ config.cancelButtonText | transloco }}
     </button>
 
     <!-- Botón Submit -->
     <button *ngIf="config.submitButtonShow" type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="submit.emit()">
       <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
-      {{ isLoading ? config.submitLoadingText : config.submitButtonText }}
+      <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
     </button>
   </form>
 </div>

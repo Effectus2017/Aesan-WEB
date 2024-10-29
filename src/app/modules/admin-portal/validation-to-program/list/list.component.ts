@@ -28,6 +28,7 @@ import { columnsData } from './columns-data'; // Importar el nuevo archivo
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { FuseNavigationService } from '@fuse/components/navigation';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-admin-validation-to-program-list',
@@ -49,6 +50,7 @@ import { FuseNavigationService } from '@fuse/components/navigation';
     NgIf,
     GenericTableComponent,
     GenericHeaderComponent,
+    TranslocoModule,
   ],
 })
 export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
@@ -66,13 +68,13 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
-    title: 'Validación de Aplicación al Programa',
+    title: 'validation-to-program.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'Buscar usuario',
-    submitButtonText: 'Guardar',
+    searchInputPlaceholder: 'validation-to-program.list.search.placeholder',
+    submitButtonText: 'validation-to-program.list.buttons.save',
   };
 
   // Configuración de la tabla

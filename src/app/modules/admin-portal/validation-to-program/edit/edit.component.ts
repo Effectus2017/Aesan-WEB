@@ -1,7 +1,7 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
@@ -13,13 +13,13 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { Subject } from 'rxjs';
-import { Program } from 'app/shared/models/Program';
 import { ActivatedRoute } from '@angular/router';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatTableModule } from '@angular/material/table';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -47,6 +47,7 @@ import { OnGenericEditComponentHandler } from 'app/shared/components/generic-int
     NgSwitch,
     NgSwitchCase,
     GenericHeaderComponent,
+    TranslocoModule,
   ],
 })
 export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -64,10 +65,10 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   list = ['Programar Visita', 'Orientación', 'Cumple con los requisitos', 'No cumple con los requisitos'];
 
   headerConfig: GenericHeaderConfig = {
-    title: 'Validación de Aplicación al Programa',
+    title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({
       programName: ['PDAM'],
-      status: [''], // Este campo parece estar vacío en la imagen
+      status: [''],
       agencyName: ['FONDITA DE JUAN'],
       uieNumber: ['7454839948'],
       corporationNumber: ['789013'],
@@ -82,9 +83,9 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       postalCode: ['00123'],
       email: ['juandelpueblo@fonditajuan.com'],
     }),
-    submitButtonText: 'Aprobar',
+    submitButtonText: 'validation-to-program.edit.submit',
     submitButtonShow: true,
-    cancelButtonText: 'Rechazar',
+    cancelButtonText: 'validation-to-program.edit.cancel',
     cancelButtonShow: true,
   };
 
