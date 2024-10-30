@@ -33,13 +33,6 @@ export class ThemeToggleComponent implements OnInit {
    * On init
    */
   ngOnInit(): void {
-    // Obtener el tema guardado del localStorage
-    // const savedTheme = localStorage.getItem('theme');
-    // if (savedTheme) {
-    //   this.isDarkMode = savedTheme === 'dark';
-    //   this._fuseConfigService.config = { scheme: savedTheme };
-    // }
-
     // Suscribirse a los cambios de configuración
     this._fuseConfigService.config$.pipe(takeUntil(this._unsubscribeAll)).subscribe((config) => {
       this.isDarkMode = config.scheme === 'dark';

@@ -101,7 +101,8 @@
             "mother-last-name": {
                 "label": "Mother's Last Name",
                 "placeholder": "Enter the mother's last name"
-            }
+            },
+            "submit": "Submit"
         }
     },
     "validation-to-program": {

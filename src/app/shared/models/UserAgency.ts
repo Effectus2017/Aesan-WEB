@@ -2,17 +2,20 @@
 export interface AgencyRequest {
     name?: string;
     statusId?: number;
-    stateDepartmentRegistration?: string;
-    uieNumber?: number;
-    einNumber?: number;
-    address?: string;
     cityId?: number;
     regionId?: number;
+    programId?: number;
+
+
+    sdrNumber?: string;
+    uieNumber?: number;
+    einNumber?: number;
+
+    address?: string;
     postalCode?: string;
     latitude?: number;
     longitude?: number;
     phone?: string;
-    programs?: number[];
 }
 
 export interface UserRequest {

@@ -101,7 +101,8 @@
             "mother-last-name": {
                 "label": "Apellido de la Madre",
                 "placeholder": "Ingresa el apellido de la madre"
-            }
+            },
+            "submit": "Enviar"
         }
     },
     "validation-to-program": {

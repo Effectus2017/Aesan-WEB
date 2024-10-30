@@ -1,15 +1,21 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
 
+/**
+ * Servicio para la navegación personalizada
+ * Segun el rol y la agencia del usuario, se redirige a la ruta correspondiente
+ */
+
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomRouterService {
-  constructor(
-    private _router: Router,
-    private _authService: AuthService
-  ) {}
+  private _router: Router = inject(Router);
+  private _authService: AuthService = inject(AuthService);
+
+  constructor() {}
 
   navigate(commands: any[], extras?: any): Promise<boolean> {
     const userRole = this._authService.getUserRole();
@@ -47,6 +53,5 @@ export class CustomRouterService {
     }
 
     return this._router.navigate(commands, extras);
-
   }
 }

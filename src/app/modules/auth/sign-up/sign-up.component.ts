@@ -1,4 +1,5 @@
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import { Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,6 +38,7 @@ import { UserService } from 'app/shared/services/user.service';
     MatSelectModule,
     MatIconModule,
     TranslocoModule,
+    NgFor
   ],
 })
 export class AuthSignUpComponent implements OnInit {
@@ -61,30 +63,34 @@ export class AuthSignUpComponent implements OnInit {
 
   constructor() {}
 
-
   ngOnInit(): void {
     // Create the form
     this.signUpForm = this._formBuilder.group({
-      program: ['', Validators.required],
-      agencyName: ['', Validators.required],
-      stateDepartmentRegistration: ['', Validators.required],
-      uieNumber: ['', Validators.required],
-      einNumber: ['', Validators.required],
-      //
-      address: ['', Validators.required],
+
+      name: ['', Validators.required],
       city: ['', Validators.required],
       region: ['', Validators.required],
-      postalCode: ['', Validators.required],
+      program: ['', Validators.required],
+
+
+      sdrNumber: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      uieNumber: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      einNumber: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      nonProfit: ['', Validators.required],
+      //
+      address: ['', Validators.required],
+
+      postalCode: ['', [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
       latitude: ['', Validators.required],
       longitude: ['', Validators.required],
       //
       firstName: ['', Validators.required],
-      middleName: ['', Validators.required],
+      middleName: [''],
       fatherLastName: ['', Validators.required],
-      motherLastName: ['', Validators.required],
+      motherLastName: [''],
       //
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', Validators.required],
+      phone: ['', [Validators.required, Validators.pattern(/^(1-)?(?!.*000)([0-9]{3}-[0-9]{4}|[0-9]{7})$/)]],
       //
       adminTitle: ['', Validators.required],
     });
@@ -106,8 +112,14 @@ export class AuthSignUpComponent implements OnInit {
 
     this._userService.getAllProgramsFromDb(queryParams).subscribe({
       next: (response) => {
-        this.listPrograms = response;
+        this.listPrograms = response.body.data;
       },
+      error: (error) => {
+        console.error('Error al cargar los programas', error);
+      },
+      complete: () => {
+        console.log('Programas cargados con éxito');
+      }
     });
   }
 
@@ -122,7 +134,7 @@ export class AuthSignUpComponent implements OnInit {
 
     this._geoService.getCities(queryParams).subscribe({
       next: (response) => {
-        this.listCities = response;
+        this.listCities = response.body.data;
       },
       error: (error) => {
         console.error('Error al cargar las ciudades', error);
@@ -136,13 +148,13 @@ export class AuthSignUpComponent implements OnInit {
   // Método para obtener todas las regiones según el ID de la ciudad
   getRegionsByCityId(cityId: number): void {
     const queryParams: QueryParameters = {
-      regionId: cityId,
+      cityId: cityId,
       alls: true,
     };
 
     this._geoService.getRegionsByCityId(queryParams).subscribe({
-      next: (response) => {
-        this.listRegions = response;
+      next: (response: HttpResponse<any>) => {
+        this.listRegions = response.body.data;
       },
       error: (error) => {
         console.error('Error al cargar las regiones', error);
@@ -172,17 +184,21 @@ export class AuthSignUpComponent implements OnInit {
     const userAgencyRequest: UserAgencyRequest = {
       agency: {
         name: this.signUpForm.value.agencyName ? this.signUpForm.value.agencyName : '',
-        stateDepartmentRegistration: this.signUpForm.value.stateDepartmentRegistration ? this.signUpForm.value.stateDepartmentRegistration : '',
-        uieNumber: this.signUpForm.value.uieNumber ? this.signUpForm.value.uieNumber : 0,
-        einNumber: this.signUpForm.value.einNumber ? this.signUpForm.value.einNumber : 0,
-        address: this.signUpForm.value.address ? this.signUpForm.value.address : '',
         cityId: this.signUpForm.value.city.id ? this.signUpForm.value.city.id : 0,
         regionId: this.signUpForm.value.region.id ? this.signUpForm.value.region.id : 0,
+        programId: this.signUpForm.value.program ? this.signUpForm.value.program : 0,
+
+        //
+        sdrNumber: this.signUpForm.value.sdrNumber ? this.signUpForm.value.sdrNumber : 0,
+        uieNumber: this.signUpForm.value.uieNumber ? this.signUpForm.value.uieNumber : 0,
+        einNumber: this.signUpForm.value.einNumber ? this.signUpForm.value.einNumber : 0,
+
+        //
+        address: this.signUpForm.value.address ? this.signUpForm.value.address : '',
         postalCode: this.signUpForm.value.postalCode ? this.signUpForm.value.postalCode : '',
         latitude: this.signUpForm.value.latitude ? this.signUpForm.value.latitude : 0,
         longitude: this.signUpForm.value.longitude ? this.signUpForm.value.longitude : 0,
-        phone: this.signUpForm.value.phone ? this.signUpForm.value.phone : '',
-        programs: this.signUpForm.value.program ? [this.signUpForm.value.program] : [],
+        phone: this.signUpForm.value.phone ? this.signUpForm.value.phone : ''
       },
       user: {
         firstName: this.signUpForm.value.firstName,

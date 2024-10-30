@@ -1,12 +1,13 @@
 import { HttpParams } from '@angular/common/http';
 import { Constants } from './const';
+import { QueryParameters } from './models/QueryParameters';
 
 // Obtiene las opciones de la petición HTTP
-export function getHttpOptions(model: any = null) {
-  if (isNullOrUndefined(model)) {
+export function getHttpOptions(model: QueryParameters) {
+  if (isNullOrUndefinedEmptyStringNullArray(model)) {
     return Object.assign({}, Constants.httpOptions);
   }
-  return this.queryParameters(model);
+  return queryParameters(model);
 }
 
 // Verifica si el valor es null o undefined
@@ -30,7 +31,7 @@ export function isNullOrUndefinedEmptyStringNullArray<T>(obj: T | null | undefin
 }
 
 // Obtiene los parámetros de la petición HTTP
-export function queryParameters(model: any) {
+export function queryParameters(model: QueryParameters) {
   const options = Object.assign({}, Constants.httpOptions);
   let _p = new HttpParams();
   for (const key in model) {

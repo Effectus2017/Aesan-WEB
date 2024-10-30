@@ -5,6 +5,7 @@ export interface QueryParameters {
   name?: string;
   alls?: boolean;
   userId?: string;
+  cityId?: number;
   regionId?: number;
 }
 

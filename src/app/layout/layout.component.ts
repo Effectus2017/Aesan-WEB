@@ -1,5 +1,5 @@
 import { DOCUMENT, NgIf } from '@angular/common';
-import { Component, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
+import { Component, inject, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { FuseConfig, FuseConfigService } from '@fuse/services/config';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
@@ -18,6 +18,8 @@ import { CompactLayoutComponent } from './layouts/vertical/compact/compact.compo
 import { DenseLayoutComponent } from './layouts/vertical/dense/dense.component';
 import { FuturisticLayoutComponent } from './layouts/vertical/futuristic/futuristic.component';
 import { ThinLayoutComponent } from './layouts/vertical/thin/thin.component';
+import { NavigationService } from 'app/core/navigation/navigation.service';
+import { Navigation } from 'app/core/navigation/navigation.types';
 
 @Component({
   selector: 'layout',
@@ -48,6 +50,9 @@ export class LayoutComponent implements OnInit, OnDestroy {
   theme: string;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  private _navigationService: NavigationService = inject(NavigationService);
+  navigation: Navigation;
+
   /**
    * Constructor
    */
@@ -69,6 +74,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      this._fuseConfigService.config = { scheme: savedTheme };
+    }
+
+    // Suscribirse a los cambios de navegación
+    this._navigationService.navigation$.pipe(takeUntil(this._unsubscribeAll)).subscribe((navigation: Navigation) => {
+      // Actualizar la navegación en el componente
+      // (asumiendo que tienes una propiedad para almacenar la navegación)
+      this.navigation = navigation;
+    });
+
+    // Obtener la navegación inicial
+    this._navigationService.get();
+
     // Set the theme and scheme based on the configuration
     combineLatest([this._fuseConfigService.config$, this._fuseMediaWatcherService.onMediaQueryChange$(['(prefers-color-scheme: dark)', '(prefers-color-scheme: light)'])])
       .pipe(

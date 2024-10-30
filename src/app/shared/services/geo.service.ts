@@ -60,7 +60,7 @@ export class GeoService {
    * @returns Un observable que emite todas las ciudades.
    */
   getCities(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-cities`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response.data)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-cities-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response.data)));
   }
 
   /**
@@ -78,7 +78,7 @@ export class GeoService {
    * @returns Un observable que emite todas las regiones.
    */
   getRegions(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-regions`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._regions.next(response.data)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-regions-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._regions.next(response.data)));
   }
 
   /**
