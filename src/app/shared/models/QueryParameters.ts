@@ -7,5 +7,8 @@ export interface QueryParameters {
   userId?: string;
   cityId?: number;
   regionId?: number;
+  programId?: number;
+  statusId?: number;
+  agencyId?: number;
 }
 

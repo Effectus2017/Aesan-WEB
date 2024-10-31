@@ -1,6 +1,7 @@
-import { AgencyRequest, UserRequest } from "../UserAgency";
+import { UserRequest } from "./UserRequest";
+import { AgencyRequest } from "./AgencyRequest";
 
 export interface UserAgencyRequest {
-    agency: AgencyRequest;
-    user: UserRequest;
+    Agency: AgencyRequest;
+    User: UserRequest;
 }

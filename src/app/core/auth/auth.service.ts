@@ -4,7 +4,7 @@ import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'environments/environment';
 import { Observable, of, switchMap, throwError } from 'rxjs';
-import { Token, TokenUser } from '../../shared/models/user.types';
+import { Token, TokenResponse } from '../../shared/models/user.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -49,7 +49,7 @@ export class AuthService {
     return this._httpClient.post(`${this.apiUrl}/login`, credentials).pipe(
       switchMap((response: any) => {
         const token: Token = response as Token;
-        var user = JSON.parse(window.atob(token.access_token.split('.')[1])) as TokenUser;
+        var user = JSON.parse(window.atob(token.access_token.split('.')[1])) as TokenResponse;
         // Store the access token in the local storage
         this.accessToken = token.access_token;
 
@@ -118,16 +118,16 @@ export class AuthService {
   }
 
   getUserRole(): string {
-    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenUser;
+    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
     return user.role;
   }
 
   getUserAgency(): string {
-    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenUser;
+    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
     return user.agency;
   }
 
-  getUserDataFromToken(): TokenUser | null {
+  getUserDataFromToken(): TokenResponse | null {
     const token = this.accessToken;
     if (!token) {
       return null;

@@ -25,9 +25,19 @@
             "submit": "Iniciar Sesión"
         },
         "sign-up": {
-            "title": "Solicitud al Programa",
+            "title": "Aplicación al Programa",
             "program": {
                 "label": "Programa en el que deseas participar"
+            },
+            "state-funds-denied": {
+                "label": "¿Has sido denegado o descalificado de fondos estatales en los últimos siete años?",
+                "yes": "Sí",
+                "no": "No"
+            },
+            "federal-funds-denied": {
+                "label": "¿Has sido denegado o descalificado de fondos federales en los últimos siete años?",
+                "yes": "Sí",
+                "no": "No"
             },
             "agency": {
                 "label": "Nombre de la Agencia Patrocinadora",
@@ -49,9 +59,13 @@
                 "label": "Región",
                 "placeholder": "Selecciona tu región"
             },
-            "postal-code": {
+            "zip-code": {
                 "label": "Código Postal",
                 "placeholder": "Ingresa el código postal"
+            },
+            "postal-address": {
+                "label": "Dirección Postal",
+                "placeholder": "Ingresa la dirección postal"
             },
             "first-name": {
                 "label": "Nombre",
@@ -102,7 +116,7 @@
                 "label": "Apellido de la Madre",
                 "placeholder": "Ingresa el apellido de la madre"
             },
-            "submit": "Enviar"
+            "submit": "Aplicar al Programa"
         }
     },
     "validation-to-program": {
@@ -134,6 +148,7 @@
                     "email": "Correo",
                     "middleName": "Segundo Nombre",
                     "motherLastName": "Apellido Materno",
+                    "createdAt": "Fecha de Creación",
                     "actions": "Acciones"
                 },
                 "buttons": {

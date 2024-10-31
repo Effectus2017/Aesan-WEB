@@ -9,17 +9,19 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
-import { Subject } from 'rxjs';
-import { ActivatedRoute } from '@angular/router';
-import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { Subject, takeUntil } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { Agency } from 'app/shared/models/Agency';
+import { GeoService } from 'app/shared/services/geo.service';
+import { UserService } from 'app/shared/services/user.service';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -53,35 +55,47 @@ import { TranslocoModule } from '@ngneat/transloco';
 export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  //   ValidationToProgramId: string;
-  //   ValidationToProgram: Program;
-  //   errorMessage: string = '';
-
   private _formBuilder = inject(UntypedFormBuilder);
+  private _agencyService = inject(AgencyService);
+  private _geoService = inject(GeoService);
+  private _userService = inject(UserService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _route = inject(ActivatedRoute);
-  private _customRouterService = inject(CustomRouterService);
 
-  list = ['Programar Visita', 'Orientación', 'Cumple con los requisitos', 'No cumple con los requisitos'];
+  listAgencyStatus = [];
+  listPrograms = [];
+  listCities = [];
+  listRegions = [];
 
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({
-      programName: ['PDAM'],
+      name: [{ value: null }],
+      city: [],
+      region: [],
+      program: [{ value: null }],
       status: [''],
-      agencyName: ['FONDITA DE JUAN'],
-      uieNumber: ['7454839948'],
-      corporationNumber: ['789013'],
-      ssPatronal: ['66-145674'],
-      address: ['calle Esperanza Urb. Corazón'],
-      phone: ['(xxx) xxx-xxxxx'],
-      city: ['Caguas'],
-      region: ['Arecibo'],
-      firstName: ['JUAN'],
-      paternalLastName: ['DEL PUEBLO'],
-      maternalLastName: ['DÍAZ'],
-      postalCode: ['00123'],
-      email: ['juandelpueblo@fonditajuan.com'],
+
+      // Datos de la Agencia
+      sdrNumber: [{ value: null }],
+      uieNumber: [{ value: null }],
+      einNumber: [{ value: null }],
+
+      // Dirección y Coordenadas
+      address: [{ value: null }],
+      postalCode: [{ value: null }],
+      latitude: [{ value: null }],
+      longitude: [{ value: null }],
+
+      // Datos del Contacto
+      firstName: [{ value: null }],
+      middleName: [{ value: null }],
+      fatherLastName: [{ value: null }],
+      motherLastName: [{ value: null }],
+      email: [{ value: null }],
+      phone: [{ value: null }],
+
+      // Datos del Administrador
+      adminTitle: [{ value: null }],
     }),
     submitButtonText: 'validation-to-program.edit.submit',
     submitButtonShow: true,
@@ -91,14 +105,41 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
 
   constructor() {}
 
-  //   get domainControl() {
-  //     return this.formRoot.get('domain');
-  //   }
-
   ngOnInit() {
-    // Inicializar el formulario
-    // this.formRoot = this._formBuilder.group({
-    // });
+    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (result.body.data) {
+        this.listCities = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (result.body.data) {
+        this.listRegions = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    this._userService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (result.body.data) {
+        this.listPrograms = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    this._agencyService.agencyStatus$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (result.body.data) {
+        this.listAgencyStatus = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (result.body) {
+        this.onSetForm(result.body);
+        this._changeDetectorRef.detectChanges();
+      }
+    });
   }
 
   ngOnDestroy(): void {
@@ -107,11 +148,48 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
     this._unsubscribeAll.complete();
   }
 
-  onSetForm(param: any) {
+  onSetForm(param: Agency) {
     console.log(param);
+    this.headerConfig.formGroup.patchValue({
+      name: param.name,
+      city: param.city,
+      region: param.region,
+      program: param.program,
+      status: param.status,
+      sdrNumber: param.sdrNumber,
+      uieNumber: param.uieNumber,
+      einNumber: param.einNumber,
+      address: param.address,
+      postalCode: param.postalCode,
+      latitude: param.latitude,
+      longitude: param.longitude,
+      firstName: param.user.firstName,
+      middleName: param.user.middleName,
+      fatherLastName: param.user.fatherLastName,
+      motherLastName: param.user.motherLastName,
+      email: param.email,
+      phone: param.phone,
+      adminTitle: param.user.administrationTitle,
+    });
   }
 
   onUpdate(param: any) {
     console.log(param);
+  }
+
+  compareCity(city1: any, city2: any): boolean {
+    return city1 && city2 ? city1.id === city2.id : city1 === city2;
+  }
+
+  compareRegion(region1: any, region2: any): boolean {
+    return region1 && region2 ? region1.id === region2.id : region1 === region2;
+  }
+
+  compareProgram(program1: any, program2: any): boolean {
+    return program1 && program2 ? program1.id === program2.id : program1 === program2;
+  }
+
+  compareStatus(status1: any, status2: any): boolean {
+    return status1 && status2 ? status1.id === status2.id : status1 === status2;
   }
 }

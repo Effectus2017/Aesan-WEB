@@ -9,7 +9,7 @@ import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/co
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
-import { TokenUser } from 'app/shared/models/user.types';
+import { TokenResponse } from 'app/shared/models/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
@@ -45,7 +45,7 @@ import { UserService } from 'app/shared/services/user.service';
 export class FuturisticLayoutComponent implements OnInit, OnDestroy {
   isScreenSmall: boolean;
   navigation: Navigation;
-  user: TokenUser;
+  user: TokenResponse;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   /**
@@ -85,7 +85,7 @@ export class FuturisticLayoutComponent implements OnInit, OnDestroy {
     });
 
     // Subscribe to the user service
-    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenUser) => {
+    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenResponse) => {
       this.user = user;
     });
 

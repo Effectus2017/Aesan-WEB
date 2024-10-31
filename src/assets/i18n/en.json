@@ -1,7 +1,7 @@
 {
     "side-menu": {
         "welcome-back": "Welcome back",
-        "Project": "Project",
+        "Project": "Program Application",
         "Analytics": "Analytics"
     },
     "auth": {
@@ -25,9 +25,19 @@
             "submit": "Sign In"
         },
         "sign-up": {
-            "title": "Application to the Program",
+            "title": "Program Application",
             "program": {
                 "label": "Program you wish to participate in"
+            },
+            "state-funds-denied": {
+                "label": "Have you been denied or disqualified from state funds in the last seven years?",
+                "yes": "Yes",
+                "no": "No"
+            },
+            "federal-funds-denied": {
+                "label": "Have you been denied or disqualified from federal funds in the last seven years?",
+                "yes": "Yes",
+                "no": "No"
             },
             "agency": {
                 "label": "Name of the Sponsoring Agency",
@@ -49,9 +59,13 @@
                 "label": "Region",
                 "placeholder": "Select your region"
             },
-            "postal-code": {
+            "zip-code": {
                 "label": "Zip Code",
                 "placeholder": "Enter the zip code"
+            },
+            "postal-address": {
+                "label": "Postal Address",
+                "placeholder": "Enter the postal address"
             },
             "first-name": {
                 "label": "First Name",
@@ -102,7 +116,7 @@
                 "label": "Mother's Last Name",
                 "placeholder": "Enter the mother's last name"
             },
-            "submit": "Submit"
+            "submit": "Submit Aplication"
         }
     },
     "validation-to-program": {
@@ -134,6 +148,7 @@
                     "email": "Email",
                     "middleName": "Middle Name",
                     "motherLastName": "Mother's Last Name",
+                    "createdAt": "Creation Date",
                     "actions": "Actions"
                 },
                 "buttons": {
@@ -149,21 +164,51 @@
         },
         "edit": {
             "title": "Edit Program Application Validation",
-            "programName": "Program you wish to participate in:",
-            "status": "Status:",
-            "agencyName": "Name of the Sponsoring Agency:",
-            "uieNumber": "UIE #:",
-            "corporationNumber": "Corporation Registration #:",
-            "ssPatronal": "SS Employer #:",
-            "address": "Address:",
-            "phone": "Phone:",
-            "city": "City:",
-            "region": "Region:",
-            "firstName": "First Name:",
-            "paternalLastName": "Father's Last Name:",
-            "maternalLastName": "Mother's Last Name:",
-            "postalCode": "Postal Code:",
-            "email": "Email:",
+            "program": {
+                "label": "Program you wish to participate in:"
+            },
+            "status": {
+                "label": "Status:"
+            },
+            "agency": {
+                "label": "Name of the Sponsoring Agency:"
+            },
+            "state-department-registration": {
+                "label": "State Department Registration Number:"
+            },
+            "uieNumber": {
+                "label": "UIE #:"
+            },
+            "einNumber": {
+                "label": "EIN #:"
+            },
+            "phone": {
+                "label": "Phone:"
+            },
+            "email": {
+                "label": "Email:"
+            },
+            "postal-code": {
+                "label": "Postal Code:"
+            },
+            "city": {
+                "label": "City:"
+            },
+            "region": {
+                "label": "Region:"
+            },
+            "first-name": {
+                "label": "First Name:"
+            },
+            "middle-name": {
+                "label": "Middle Name:"
+            },
+            "father-last-name": {
+                "label": "Father's Last Name:"
+            },
+            "mother-last-name": {
+                "label": "Mother's Last Name:"
+            },
             "submit": "Approve",
             "cancel": "Reject"
         }

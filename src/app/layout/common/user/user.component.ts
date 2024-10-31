@@ -6,7 +6,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { TokenUser } from 'app/shared/models/user.types';
+import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -25,7 +25,7 @@ export class UserComponent implements OnInit, OnDestroy {
   /* eslint-enable @typescript-eslint/naming-convention */
 
   @Input() showAvatar: boolean = true;
-  user: TokenUser;
+  user: TokenResponse;
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -43,7 +43,7 @@ export class UserComponent implements OnInit, OnDestroy {
    */
   ngOnInit(): void {
     // Subscribe to user changes
-    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenUser) => {
+    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenResponse) => {
       this.user = user;
 
       // Mark for check

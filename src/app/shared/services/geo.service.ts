@@ -34,7 +34,7 @@ export class GeoService {
    * Obtiene todas las regiones.
    * @returns Un observable que emite todas las regiones.
    */
-  get regions$(): Observable<any[]> {
+  get regions$(): Observable<Region[]> {
     return this._regions.asObservable();
   }
 
@@ -59,8 +59,8 @@ export class GeoService {
    * @param queryParameters Los parámetros de consulta para filtrar las ciudades.
    * @returns Un observable que emite todas las ciudades.
    */
-  getCities(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-cities-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response.data)));
+  getCitiesFromDb(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-cities-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response)));
   }
 
   /**
@@ -69,7 +69,7 @@ export class GeoService {
    * @returns Un observable que emite la ciudad obtenida.
    */
   getCityById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-city-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._city.next(response.data)));
+    return this._httpClient.get(`${this.apiUrl}/get-city-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._city.next(response)));
   }
 
   /**
@@ -77,8 +77,8 @@ export class GeoService {
    * @param queryParameters Los parámetros de consulta para filtrar las regiones.
    * @returns Un observable que emite todas las regiones.
    */
-  getRegions(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-regions-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._regions.next(response.data)));
+  getRegionsFromDb(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-regions-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._regions.next(response)));
   }
 
   /**
@@ -87,7 +87,7 @@ export class GeoService {
    * @returns Un observable que emite las regiones obtenidas.
    */
   getRegionsByCityId(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-regions-by-city-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._region.next(response.data)));
+    return this._httpClient.get(`${this.apiUrl}/get-regions-by-city-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._region.next(response)));
   }
 
   /**
@@ -96,6 +96,6 @@ export class GeoService {
    * @returns Un observable que emite la región obtenida.
    */
   getRegionById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-region-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._region.next(response.data)));
+    return this._httpClient.get(`${this.apiUrl}/get-region-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._region.next(response)));
   }
 }

@@ -10,7 +10,7 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { UserService } from 'app/shared/services/user.service';
-import { TokenUser } from 'app/shared/models/user.types';
+import { TokenResponse } from 'app/shared/models/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
@@ -31,7 +31,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
 {
     isScreenSmall: boolean;
     navigation: Navigation;
-    user: TokenUser;
+    user: TokenResponse;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -80,7 +80,7 @@ export class ClassyLayoutComponent implements OnInit, OnDestroy
         // Subscribe to the user service
         this._userService.user$
             .pipe((takeUntil(this._unsubscribeAll)))
-            .subscribe((user: TokenUser) =>
+            .subscribe((user: TokenResponse) =>
             {
                 this.user = user;
             });

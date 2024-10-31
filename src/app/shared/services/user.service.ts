@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
-import { TokenUser } from '../models/user.types';
+import { TokenResponse } from '../models/user.types';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
+import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
+import { Program } from '../models/Program';
 
 /**
  * Servicio para interactuar con los usuarios y sus datos.
@@ -14,7 +16,8 @@ import { QueryParameters } from '../models/QueryParameters';
   providedIn: 'root',
 })
 export class UserService {
-  private _user: ReplaySubject<TokenUser> = new ReplaySubject<TokenUser>(1);
+  private _user: ReplaySubject<TokenResponse> = new ReplaySubject<TokenResponse>(1);
+  private _programs: BehaviorSubject<Program[] | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
 
@@ -25,7 +28,7 @@ export class UserService {
    * Establece el usuario actual.
    * @param value El usuario a establecer.
    */
-  set user(value: TokenUser)
+  set user(value: TokenResponse)
   {
       this._user.next(value);
   }
@@ -34,9 +37,17 @@ export class UserService {
    * Obtiene un observable que emite el usuario actual.
    * @returns Un observable que emite el usuario actual.
    */
-  get user$(): Observable<TokenUser>
+  get user$(): Observable<TokenResponse>
   {
       return this._user.asObservable();
+  }
+
+  /**
+   * Obtiene un observable que emite los programas.
+   * @returns Un observable que emite los programas.
+   */
+  get programs$(): Observable<Program[] | null> {
+    return this._programs.asObservable();
   }
 
   /**
@@ -71,7 +82,7 @@ export class UserService {
    * @returns Un observable que emite todos los programas obtenidos.
    */
   getAllProgramsFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-programs-from-db`, getHttpOptions(queryParameters));
+    return this._httpClient.get(`${this.apiUrl}/get-all-programs-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._programs.next(response)));
   }
 
   /**
@@ -79,8 +90,12 @@ export class UserService {
    * @param model El modelo que contiene los datos del usuario y la agencia.
    * @returns Un observable que emite el resultado de la operación.
    */
-  registerUserAgency(model: any): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/register-user-agency`, model);
+  registerUserAgency(model: UserAgencyRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/register-user-agency`, model, getHttpOptions(queryParameters)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
   }
 }
 

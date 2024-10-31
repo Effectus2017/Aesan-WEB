@@ -4,7 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { CommonModule, NgIf } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 
@@ -48,8 +48,15 @@ export class GenericTableComponent implements OnInit {
     this.handler.onDelete(event, id);
   }
 
-//   onCheckChange(event: Event, element: any): void {
-//     this.handler.onCheckChange(event, element);
-//   }
+  onCheckboxChange(event: MatCheckboxChange, element: any, key: string): void {
+    // Actualiza el valor usando el mismo método que usas para establecer valores anidados
+    //this.getNestedValue(element, key, event.checked);
+    //this.handler.onCheckboxChange(event, element, key);
+  }
+
+  getNestedValue(element: any, path: string): any {
+    return path.split('.').reduce((obj, key) =>
+      (obj && obj[key] !== undefined) ? obj[key] : undefined, element);
+  }
 
 }

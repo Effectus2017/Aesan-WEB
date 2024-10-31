@@ -1,37 +1,53 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { ProgramsService } from 'app/shared/services/program.service';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { GeoService } from 'app/shared/services/geo.service';
+import { UserService } from 'app/shared/services/user.service';
 import { forkJoin, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ValidationToProgramResolver implements Resolve<any> {
-  /**
-   * Constructor
-   */
-  constructor(private _programsService: ProgramsService) {}
+export class ValidationToProgramListResolver implements Resolve<any> {
+  private _agencyService: AgencyService = inject(AgencyService);
+  private _geoService: GeoService = inject(GeoService);
+  private _userService: UserService = inject(UserService);
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Public methods
-  // -----------------------------------------------------------------------------------------------------
-
-  /**
-   * Resolver
-   *
-   * @param route
-   * @param state
-   */
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
     const requestParameters: QueryParameters = {
       take: 15,
       skip: 0,
-      alls: true
+      alls: true,
     };
 
-    return forkJoin([this._programsService.getPrograms()]);
+    return forkJoin([
+      this._agencyService.getAllAgenciesFromDb(requestParameters),
+      this._geoService.getCitiesFromDb(requestParameters),
+      this._userService.getAllProgramsFromDb(requestParameters),
+    ]);
   }
 }
 
-
+@Injectable({
+  providedIn: 'root',
+})
+export class ValidationToProgramEditResolver implements Resolve<any> {
+  private _agencyService: AgencyService = inject(AgencyService);
+  private _geoService: GeoService = inject(GeoService);
+  private _userService: UserService = inject(UserService);
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
+    const id = route.params['id'];
+    const requestParameters: QueryParameters = {
+      agencyId: Number(id),
+    };
+    return forkJoin([
+      this._agencyService.getAgencyById(requestParameters),
+      this._agencyService.getAllAgenciesFromDb({ take: 15, skip: 0, alls: true }),
+      this._agencyService.getAllAgencyStatusFromDb({ take: 15, skip: 0, alls: true }),
+      this._geoService.getCitiesFromDb({ take: 15, skip: 0, alls: true }),
+      this._geoService.getRegionsFromDb({ take: 15, skip: 0, alls: true }),
+      this._userService.getAllProgramsFromDb({ take: 15, skip: 0, alls: true }),
+    ]);
+  }
+}

@@ -4,7 +4,7 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertService } from '@fuse/components/alert';
@@ -29,6 +29,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
+import { AgencyService } from 'app/shared/services/agency.service';
 
 @Component({
   selector: 'app-admin-validation-to-program-list',
@@ -56,6 +57,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   // Inyeccion de servicios
   private _formBuilder = inject(UntypedFormBuilder);
+  private _agencyService = inject(AgencyService);
   private _customRouterService = inject(CustomRouterService);
   //   //private _customersService = inject(CustomersService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -84,24 +86,24 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     displayedColumns: COLUMNS_SCHEMA.map((col) => col.key),
     handler: this,
     showPaginator: true,
-    pageSize: 10,
-    pageSizeOptions: [5, 10, 25, 100],
+    pageSize: 15,
+    pageSizeOptions: [15, 50, 100],
     length: 0
   };
 
   // Constructor
   constructor() {}
 
-  //   // Lifecycle hooks
+  // Lifecycle hooks
   ngOnInit() {
 
-    //     // Get the accountings
-    //     // this._customersService.customers$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //     //   this.list.data = result.body.data;
-    //     //   // Mark for check
-    //     //   this._changeDetectorRef.markForCheck();
-    //     // });
-    this.tableConfig.dataSource = columnsData; // Asignar datos a la tabla
+    // Get the agencies
+    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      this.tableConfig.dataSource = result.body.data;
+      this.tableConfig.length = result.body.count;
+          // Mark for check
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -136,8 +138,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   onEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    console.log('onEdit', event, id);
-    //this._customRouterService.navigate([`customers/edit/${id}`]);
+    this._customRouterService.navigate([`validation-to-program/edit/${id}`]);
   }
 
   // Métodos para obtener datos
@@ -147,8 +148,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       skip: index,
     };
 
-    //this._customersService.getAllCustomersFromDB(requestParameters).subscribe();
+    this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();
   }
-
 
 }

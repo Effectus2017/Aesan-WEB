@@ -1,38 +1,38 @@
 export const COLUMNS_SCHEMA = [
   {
-    key: 'nombre',
+    key: 'name',
     type: 'text',
     label: 'validation-to-program.list.table.columns.agencyName'
   },
   {
-    key: 'uie',
+    key: 'uieNumber',
     type: 'text',
     label: 'validation-to-program.list.table.columns.uieNumber'
   },
   {
-    key: 'registroCorp',
+    key: 'einNumber',
     type: 'text',
     label: 'validation-to-program.list.table.columns.einNumber'
   },
   {
-    key: 'ssPatronal',
+    key: 'sdrNumber',
     type: 'text',
     label: 'validation-to-program.list.table.columns.ssPatronal'
   },
   {
-    key: 'creadoPor',
+    key: 'user.firstName',
     type: 'text',
     label: 'validation-to-program.list.table.columns.firstName'
   },
   {
-    key: 'estatus',
+    key: 'user.administrationTitle',
     type: 'text',
     label: 'validation-to-program.list.table.columns.adminTitle'
   },
   {
-    key: 'fechaCreacion',
-    type: 'text',
-    label: 'validation-to-program.list.table.columns.fatherLastName'
+    key: 'createdAt',
+    type: 'date-time',
+    label: 'validation-to-program.list.table.columns.createdAt'
   },
   {
     key: 'actions',
