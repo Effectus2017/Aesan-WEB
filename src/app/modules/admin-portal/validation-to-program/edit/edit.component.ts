@@ -70,31 +70,34 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
     title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({
       name: [{ value: null }],
-      city: [],
-      region: [],
       program: [{ value: null }],
       status: [''],
 
       // Datos de la Agencia
-      sdrNumber: [{ value: null }],
       uieNumber: [{ value: null }],
+      sdrNumber: [{ value: null }],
       einNumber: [{ value: null }],
+
+      // Datos de la Ciudad y Región
+      city: [],
+      region: [],
+      latitude: [{ value: null }],
+      longitude: [{ value: null }],
 
       // Dirección y Coordenadas
       address: [{ value: null }],
-      postalCode: [{ value: null }],
-      latitude: [{ value: null }],
-      longitude: [{ value: null }],
+      phone: [{ value: null }],
+      zipCode: [{ value: null }],
+      postalAddress: [{ value: null }],
 
       // Datos del Contacto
       firstName: [{ value: null }],
       middleName: [{ value: null }],
       fatherLastName: [{ value: null }],
       motherLastName: [{ value: null }],
-      email: [{ value: null }],
-      phone: [{ value: null }],
 
       // Datos del Administrador
+      email: [{ value: null }],
       adminTitle: [{ value: null }],
     }),
     submitButtonText: 'validation-to-program.edit.submit',

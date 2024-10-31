@@ -30,12 +30,12 @@
                 "label": "Program you wish to participate in"
             },
             "state-funds-denied": {
-                "label": "Have you been denied or disqualified from state funds in the last seven years?",
+                "label": "Have you been denied or disqualified from state funds in the last 7 years?",
                 "yes": "Yes",
                 "no": "No"
             },
             "federal-funds-denied": {
-                "label": "Have you been denied or disqualified from federal funds in the last seven years?",
+                "label": "Have you been denied or disqualified from federal funds in the last 7 years?",
                 "yes": "Yes",
                 "no": "No"
             },

@@ -4,6 +4,7 @@ import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fr
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -43,6 +44,7 @@ import { Subject, takeUntil } from 'rxjs';
     MatIconModule,
     TranslocoModule,
     NgFor,
+    MatDividerModule,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -73,28 +75,38 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Create the form
     this.signUpForm = this._formBuilder.group({
       name: [null, Validators.required],
-      city: [null, Validators.required],
-      region: [null, Validators.required],
       program: [null, Validators.required],
 
+      // Datos de la Agencia
       sdrNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
       uieNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
       einNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+
+      // Datos de la Agencia
       nonProfit: [null, Validators.required],
-      //
-      address: [null, Validators.required],
-      postalCode: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      federalFundsDenied: [null, Validators.required],
+      stateFundsDenied: [null, Validators.required],
+
+      // Datos de la Ciudad y Región
+      city: [null, Validators.required],
+      region: [null, Validators.required],
       latitude: [null, Validators.required],
       longitude: [null, Validators.required],
-      //
+
+      // Dirección y Teléfono
+      address: [null, Validators.required],
+      phone: [null, [Validators.required]],
+      zipCode: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      postalAddress: [null, Validators.required],
+
+      // Datos del Contacto
       firstName: [null, Validators.required],
       middleName: [null],
       fatherLastName: [null, Validators.required],
       motherLastName: [null],
-      //
+
+      // Datos del Correo Electrónico y Cargo
       email: [null, [Validators.required, Validators.email]],
-      phone: [null, [Validators.required]],
-      //
       adminTitle: [null, Validators.required],
     });
 
@@ -199,25 +211,29 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const userAgencyRequest: UserAgencyRequest = {
       Agency: {
         Name: this.signUpForm.value.name ? this.signUpForm.value.name : '',
-        CityId: this.signUpForm.value.city ? this.signUpForm.value.city.id : 0,
-        RegionId: this.signUpForm.value.region ? this.signUpForm.value.region.id : 0,
         ProgramId: this.signUpForm.value.program ? this.signUpForm.value.program.id : 0,
-        //
+        // Datos de la Agencia
         SdrNumber: this.signUpForm.value.sdrNumber ? this.signUpForm.value.sdrNumber : 0,
         UieNumber: this.signUpForm.value.uieNumber ? this.signUpForm.value.uieNumber : 0,
         EinNumber: this.signUpForm.value.einNumber ? this.signUpForm.value.einNumber : 0,
-        //
-        Address: this.signUpForm.value.address ? this.signUpForm.value.address : '',
-        PostalCode: this.signUpForm.value.postalCode ? this.signUpForm.value.postalCode : 0,
+        // Datos de la Ciudad y Región
+        CityId: this.signUpForm.value.city ? this.signUpForm.value.city.id : 0,
+        RegionId: this.signUpForm.value.region ? this.signUpForm.value.region.id : 0,
         Latitude: this.signUpForm.value.latitude ? this.signUpForm.value.latitude : 0,
         Longitude: this.signUpForm.value.longitude ? this.signUpForm.value.longitude : 0,
+        // Dirección y Teléfono
+        Address: this.signUpForm.value.address ? this.signUpForm.value.address : '',
+        ZipCode: this.signUpForm.value.zipCode ? this.signUpForm.value.zipCode : 0,
+        PostalAddress: this.signUpForm.value.postalAddress ? this.signUpForm.value.postalAddress : '',
         Phone: this.signUpForm.value.phone ? this.signUpForm.value.phone : '',
       },
       User: {
+        // Datos del Contacto
         FirstName: this.signUpForm.value.firstName,
         MiddleName: this.signUpForm.value.middleName,
         FatherLastName: this.signUpForm.value.fatherLastName,
         MotherLastName: this.signUpForm.value.motherLastName,
+        // Datos del Correo Electrónico y Cargo
         AdministrationTitle: this.signUpForm.value.adminTitle,
         Email: this.signUpForm.value.email,
       },
