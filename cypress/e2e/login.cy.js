@@ -3,7 +3,6 @@ describe('Pruebas de inicio de sesión', () => {
     // Interceptar las solicitudes
     beforeEach(() => {
         cy.intercept('POST', 'https://localhost:5000/auth/login').as('login'); // Interceptar la solicitud de inicio de sesión
-
     });
 
     it('Debería permitir iniciar sesión con credenciales válidas', () => {
@@ -26,7 +25,7 @@ describe('Pruebas de inicio de sesión', () => {
         //     cy.url().should('include', '/auth-redirect');
         // });
 
-        cy.visit('http://localhost:4200/admin-portal/validation-to-program');
+        cy.visit('http://localhost:4200/auth-redirect');
 
     });
 

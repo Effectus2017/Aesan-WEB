@@ -98,6 +98,15 @@ export class AgencyService {
   }
 
   /**
+   * Actualiza el estado de una agencia
+   * @param queryParameters Los parámetros de consulta
+   * @returns True si se actualizó correctamente
+   */
+  updateAgencyStatus(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-agency-status`, queryParameters, getHttpOptions(queryParameters));
+  }
+
+  /**
    * Elimina una agencia
    * @param queryParameters Los parámetros de consulta
    * @returns La agencia eliminada

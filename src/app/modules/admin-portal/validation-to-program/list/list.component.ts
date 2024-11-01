@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
 import { Subject, takeUntil } from 'rxjs';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseAlertService } from '@fuse/components/alert';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -24,12 +22,13 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 // Datos Dummy
-import { columnsData } from './columns-data'; // Importar el nuevo archivo
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
-import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
+
+// DESCRICION DEL COMPONENTE
+// Este componente se encarga de mostrar la lista de validaciones de aplicación a programas.
 
 @Component({
   selector: 'app-admin-validation-to-program-list',
@@ -59,14 +58,9 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
   private _customRouterService = inject(CustomRouterService);
-  //   //private _customersService = inject(CustomersService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  //   private _fuseConfirmationService = inject(FuseConfirmationService);
-  //   private _fuseAlertService = inject(FuseAlertService);
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-
-  //   clearVisible: boolean = false;
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -83,7 +77,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   tableConfig: GenericTableConfig = {
     dataSource: [],
     columnsSchema: COLUMNS_SCHEMA,
-    displayedColumns: COLUMNS_SCHEMA.map((col) => col.key),
+    displayedColumns: COLUMNS_SCHEMA.map((col) => Array.isArray(col.key) ? col.key[0] : col.key),
     handler: this,
     showPaginator: true,
     pageSize: 15,

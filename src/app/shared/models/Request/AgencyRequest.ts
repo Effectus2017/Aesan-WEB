@@ -1,4 +1,5 @@
 export interface AgencyRequest {
+    Id?: number;
     Name?: string;
     StatusId?: number;
     ProgramId?: number;
@@ -19,9 +20,16 @@ export interface AgencyRequest {
     Phone?: string;
     ZipCode?: number;
     PostalAddress?: string;
+    Email?: string;
 
     // Nuevos campos de elegibilidad
     NonProfit?: boolean;
     FederalFundsDenied?: boolean;
     StateFundsDenied?: boolean;
+    // Datos del usuario
+    FirstName?: string;
+    MiddleName?: string;
+    FatherLastName?: string;
+    MotherLastName?: string;
+    AdministrationTitle?: string;
 }

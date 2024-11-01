@@ -20,14 +20,15 @@ export const COLUMNS_SCHEMA = [
     label: 'validation-to-program.list.table.columns.ssPatronal'
   },
   {
-    key: 'user.firstName',
-    type: 'text',
-    label: 'validation-to-program.list.table.columns.firstName'
+    key: ['user.firstName', 'user.fatherLastName'],
+    type: 'combined-text',
+    keys: ['user.firstName', 'user.fatherLastName'], //
+    label: 'validation-to-program.list.table.columns.createdBy'
   },
   {
-    key: 'user.administrationTitle',
+    key: 'status.name',
     type: 'text',
-    label: 'validation-to-program.list.table.columns.adminTitle'
+    label: 'validation-to-program.list.table.columns.status'
   },
   {
     key: 'createdAt',
@@ -43,10 +44,6 @@ export const COLUMNS_SCHEMA = [
         key: 'edit',
         label: 'validation-to-program.list.table.buttons.edit'
       },
-      {
-        key: 'delete',
-        label: 'validation-to-program.list.table.buttons.delete'
-      }
     ]
   }
 ];

@@ -12,6 +12,7 @@ export interface TokenResponse {
   exp?: number;
   iat?: number;
   agency?: string;
+  program?: string;
 }
 
 export interface Token {

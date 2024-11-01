@@ -22,7 +22,7 @@
         <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" />
       </mat-form-field>
 
-      <button title="Buscar" mat-flat-button color="primary" type="button" (click)="submit.emit()">
+      <button title="Buscar" mat-flat-button color="primary" type="button" (click)="onSearch()">
         <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
       </button>
     </ng-container>
@@ -34,13 +34,28 @@
       </button>
     </a>
 
+    <!-- Botón Guardar -->
+    <button class="bg-[#F39B1A]" *ngIf="config.saveButtonShow"
+            type="button"
+            title="Guardar"
+            mat-flat-button
+            color="primary"
+            (click)="onSave()">
+      {{ config.saveButtonText | transloco }}
+    </button>
+
     <!-- Botón Cancelar -->
-    <button *ngIf="config.cancelButtonShow" type="button" title="Cancelar" (click)="cancel.emit($event)" mat-button>
+    <button *ngIf="config.cancelButtonShow" type="button" title="Cancelar" (click)="onCancel($event)" mat-button>
       {{ config.cancelButtonText | transloco }}
     </button>
 
+    <!-- Botón Rechazar -->
+    <button *ngIf="config.rejectButtonShow" type="button" title="Rechazar" (click)="onReject()" mat-button>
+      {{ config.rejectButtonText | transloco }}
+    </button>
+
     <!-- Botón Submit -->
-    <button *ngIf="config.submitButtonShow" type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="submit.emit()">
+    <button *ngIf="config.submitButtonShow" type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="onSubmit()">
       <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
       <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
     </button>

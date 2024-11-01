@@ -4,27 +4,34 @@ import { Program } from "./Program";
 import { Region } from "./Region";
 
 export interface Agency {
+    id?: number;
     name?: string;
     statusId?: number;
-
+    // Identification
     sdrNumber?: number;
     uieNumber?: number;
     einNumber?: number;
-
+    // Address
     address?: string;
-    postalCode?: number;
+    phone?: string;
+    zipCode?: number;
+    postalAddress?: string;
+    // Location
+    city?: City;
+    region?: Region;
     latitude?: number;
     longitude?: number;
-    phone?: string;
+    // Contact
     email?: string;
-
+    // Dates
     createdAt?: Date;
     updatedAt?: Date;
 
-    city?: City;
-    region?: Region;
+    // Status
     status?: AgencyStatus;
+    // Program
     program?: Program;
+    // User
     user?: User;
 }
 

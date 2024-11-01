@@ -1,7 +1,7 @@
 <div class="absolute inset-0 flex flex-col min-w-0">
   <!-- Header con título y botones -->
 
-  <app-generic-header [config]="headerConfig"></app-generic-header>
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
   <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
@@ -50,7 +50,7 @@
         </div>
 
         <!-- Dirección y Contacto -->
-        <div class="grid grid-cols-2 col-span-8 gap-4">
+        <div class="grid grid-cols-4 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>{{ 'validation-to-program.edit.address.label' | transloco }}</mat-label>
             <input matInput formControlName="address" readonly />
@@ -60,6 +60,17 @@
             <mat-label>{{ 'validation-to-program.edit.phone.label' | transloco }}</mat-label>
             <input matInput formControlName="phone" readonly />
           </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'validation-to-program.edit.zip-code.label' | transloco }}</mat-label>
+            <input matInput formControlName="zipCode" readonly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'validation-to-program.edit.postal-address.label' | transloco }}</mat-label>
+            <input matInput formControlName="postalAddress" readonly />
+          </mat-form-field>
+
         </div>
 
         <div class="grid grid-cols-2 col-span-8 gap-4">
@@ -105,10 +116,7 @@
         </div>
 
         <div class="grid grid-cols-2 col-span-8 gap-4">
-          <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.postal-code.label' | transloco }}</mat-label>
-            <input matInput formControlName="postalCode" readonly />
-          </mat-form-field>
+
 
           <mat-form-field>
             <mat-label>{{ 'validation-to-program.edit.email.label' | transloco }}</mat-label>

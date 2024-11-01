@@ -127,6 +127,11 @@ export class AuthService {
     return user.agency;
   }
 
+  getUserProgram(): string {
+    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
+    return user.program;
+  }
+
   getUserDataFromToken(): TokenResponse | null {
     const token = this.accessToken;
     if (!token) {

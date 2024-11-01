@@ -22,6 +22,8 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -66,6 +68,8 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   listCities = [];
   listRegions = [];
 
+  param: Agency;
+
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({
@@ -102,8 +106,10 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
     }),
     submitButtonText: 'validation-to-program.edit.submit',
     submitButtonShow: true,
-    cancelButtonText: 'validation-to-program.edit.cancel',
-    cancelButtonShow: true,
+    saveButtonText: 'validation-to-program.edit.save',
+    saveButtonShow: true,
+    rejectButtonText: 'validation-to-program.edit.reject',
+    rejectButtonShow: true,
   };
 
   constructor() {}
@@ -153,6 +159,7 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
 
   onSetForm(param: Agency) {
     console.log(param);
+    this.param = param;
     this.headerConfig.formGroup.patchValue({
       name: param.name,
       city: param.city,
@@ -163,7 +170,8 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       uieNumber: param.uieNumber,
       einNumber: param.einNumber,
       address: param.address,
-      postalCode: param.postalCode,
+      zipCode: param.zipCode,
+      postalAddress: param.postalAddress,
       latitude: param.latitude,
       longitude: param.longitude,
       firstName: param.user.firstName,
@@ -178,6 +186,81 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
 
   onUpdate(param: any) {
     console.log(param);
+  }
+
+  onUpdateStatus(param: any) {
+    console.log(param);
+  }
+
+  onSave() {
+    // Obtener los valores del formulario
+    const formValues = this.headerConfig.formGroup.value;
+
+    // Construir el objeto de actualización
+    const agencyRequest: AgencyRequest = {
+      Id: this.param.id,
+      Name: formValues.name,
+      CityId: formValues.city?.id,
+      RegionId: formValues.region?.id,
+      ProgramId: formValues.program?.id,
+      StatusId: formValues.status?.id,
+      SdrNumber: formValues.sdrNumber,
+      UieNumber: formValues.uieNumber,
+      EinNumber: formValues.einNumber,
+      Address: formValues.address,
+      ZipCode: formValues.zipCode,
+      PostalAddress: formValues.postalAddress,
+      Latitude: formValues.latitude,
+      Longitude: formValues.longitude,
+      Email: formValues.email,
+      Phone: formValues.phone,
+      FirstName: formValues.firstName,
+      MiddleName: formValues.middleName,
+      FatherLastName: formValues.fatherLastName,
+      MotherLastName: formValues.motherLastName,
+      AdministrationTitle: formValues.adminTitle,
+    };
+
+    // Parámetros de consulta
+    const queryParams: QueryParameters = {
+      agencyId: this.param.id,
+    };
+
+    // Llamar al servicio para actualizar
+    this._agencyService.updateAgency(agencyRequest, queryParams).subscribe({
+      next: (response) => {
+        console.log('Agencia actualizada:', response);
+      },
+      error: (error) => {
+        console.error('Error al actualizar la agencia:', error);
+      },
+      complete: () => {
+        console.log('Actualización completada');
+      },
+    });
+  }
+
+  onSubmit() {
+    console.log(this.headerConfig.formGroup.value);
+  }
+
+  onReject() {
+    const queryParams: QueryParameters = {
+      agencyId: this.param.id,
+      statusId: 6,
+    };
+
+    this._agencyService.updateAgencyStatus(queryParams).subscribe({
+      next: (response) => {
+        console.log(response);
+      },
+      error: (error) => {
+        console.error(error);
+      },
+      complete: () => {
+        console.log('Agencia actualizada con éxito');
+      },
+    });
   }
 
   compareCity(city1: any, city2: any): boolean {

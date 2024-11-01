@@ -41,10 +41,11 @@ export class NavigationService {
   private adjustNavigationLinks(navigation: Navigation): Navigation {
     const userRole = this._authService.getUserRole();
     const userAgency = this._authService.getUserAgency();
+    const userProgram = this._authService.getUserProgram();
 
     let prefix = '/admin-portal/';
 
-    switch (userAgency) {
+    switch (userProgram) {
       case 'PDAM':
         prefix = '/pdam-portal/';
         break;

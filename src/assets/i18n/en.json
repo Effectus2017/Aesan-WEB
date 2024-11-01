@@ -27,7 +27,12 @@
         "sign-up": {
             "title": "Program Application",
             "program": {
-                "label": "Program you wish to participate in"
+                "label": "Which program do you want to participate in?"
+            },
+            "non-profit": {
+                "label": "Is it a non-profit organization?",
+                "yes": "Yes",
+                "no": "No"
             },
             "state-funds-denied": {
                 "label": "Have you been denied or disqualified from state funds in the last 7 years?",
@@ -43,9 +48,17 @@
                 "label": "Name of the Sponsoring Agency",
                 "placeholder": "Enter the name of the sponsoring agency"
             },
+            "uie": {
+                "label": "# UIE",
+                "placeholder": "Enter the UIE number"
+            },
             "state-department-registration": {
                 "label": "State Department Registration Number",
                 "placeholder": "Enter the state department registration number"
+            },
+            "ein": {
+                "label": "Employer Identification Number (EIN)",
+                "placeholder": "Enter the Employer Identification Number (EIN)"
             },
             "address": {
                 "label": "Address",
@@ -71,26 +84,21 @@
                 "label": "First Name",
                 "placeholder": "Enter the first name"
             },
+            "middle-name": {
+                "label": "Middle Name",
+                "placeholder": "Enter the middle name"
+            },
             "father-last-name": {
                 "label": "Father's Last Name",
                 "placeholder": "Enter the father's last name"
             },
+            "mother-last-name": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter the mother's last name"
+            },
             "admin-title": {
                 "label": "Administrator Title",
                 "placeholder": "Enter the administrator title"
-            },
-            "non-profit": {
-                "label": "Is it a non-profit organization?",
-                "yes": "Yes",
-                "no": "No"
-            },
-            "uie": {
-                "label": "# UIE",
-                "placeholder": "Enter the UIE number"
-            },
-            "ein": {
-                "label": "Employer Identification Number (EIN)",
-                "placeholder": "Enter the Employer Identification Number (EIN)"
             },
             "latitude": {
                 "label": "Latitude",
@@ -108,14 +116,6 @@
                 "label": "Email",
                 "placeholder": "Enter the email"
             },
-            "middle-name": {
-                "label": "Middle Name",
-                "placeholder": "Enter the middle name"
-            },
-            "mother-last-name": {
-                "label": "Mother's Last Name",
-                "placeholder": "Enter the mother's last name"
-            },
             "submit": "Submit Aplication"
         }
     },
@@ -129,7 +129,7 @@
             "table": {
                 "columns": {
                     "program": "Program",
-                    "agencyName": "Agency Name",
+                    "agencyName": "Name of the Sponsoring Agency",
                     "stateDepartmentRegistration": "State Dept. Registration",
                     "address": "Address",
                     "city": "City",
@@ -139,16 +139,18 @@
                     "fatherLastName": "Father's Last Name",
                     "adminTitle": "Admin Title",
                     "nonProfit": "Non Profit",
-                    "uieNumber": "UIE #",
-                    "einNumber": "EIN #",
-                    "ssPatronal": "SS Patronal",
+                    "uieNumber": "# UIE",
+                    "einNumber": "Employer Identification Number (EIN)",
+                    "ssPatronal": "State Department Registration Number",
                     "latitude": "Latitude",
                     "longitude": "Longitude",
                     "phone": "Phone",
                     "email": "Email",
                     "middleName": "Middle Name",
                     "motherLastName": "Mother's Last Name",
+                    "createdBy": "Created By",
                     "createdAt": "Creation Date",
+                    "status": "Status",
                     "actions": "Actions"
                 },
                 "buttons": {
@@ -182,14 +184,20 @@
             "einNumber": {
                 "label": "EIN #:"
             },
+            "address": {
+                "label": "Address:"
+            },
             "phone": {
                 "label": "Phone:"
             },
+            "zip-code": {
+                "label": "Zip Code:"
+            },
+            "postal-address": {
+                "label": "Postal Address:"
+            },
             "email": {
                 "label": "Email:"
-            },
-            "postal-code": {
-                "label": "Postal Code:"
             },
             "city": {
                 "label": "City:"
@@ -209,8 +217,9 @@
             "mother-last-name": {
                 "label": "Mother's Last Name:"
             },
-            "submit": "Approve",
-            "cancel": "Reject"
+            "save": "Save",
+            "submit": "Approve Application",
+            "reject": "Reject"
         }
     }
 }

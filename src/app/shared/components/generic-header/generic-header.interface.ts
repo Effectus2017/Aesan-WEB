@@ -21,6 +21,14 @@ export interface GenericHeaderConfig {
   submitButtonText?: string;
   submitLoadingText?: string;
 
+  // Save Button config
+  saveButtonShow?: boolean;
+  saveButtonText?: string;
+
+  // Reject Button config
+  rejectButtonShow?: boolean;
+  rejectButtonText?: string;
+
   // Clear Button config
   clearVisible?: boolean;
 
@@ -58,4 +66,14 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de navegación al agregar
    */
   onAdd?: () => void;
+
+  /**
+   * Manejador para el evento de guardar
+   */
+  onSave?: () => void;
+
+  /**
+   * Manejador para el evento de rechazar
+   */
+  onReject?: () => void;
 }

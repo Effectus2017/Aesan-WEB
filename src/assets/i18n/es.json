@@ -27,7 +27,12 @@
         "sign-up": {
             "title": "Aplicación al Programa",
             "program": {
-                "label": "Programa en el que deseas participar"
+                "label": "¿A qué programa desea participar?"
+            },
+            "non-profit": {
+                "label": "¿Es una organización sin fines de lucro?",
+                "yes": "Sí",
+                "no": "No"
             },
             "state-funds-denied": {
                 "label": "¿Has sido denegado o descalificado de fondos estatales en los últimos siete años?",
@@ -79,11 +84,6 @@
                 "label": "Título del Administrador",
                 "placeholder": "Ingresa el título del administrador"
             },
-            "non-profit": {
-                "label": "¿Es una organización sin fines de lucro?",
-                "yes": "Sí",
-                "no": "No"
-            },
             "uie": {
                 "label": "# UIE",
                 "placeholder": "Ingresa el número de UIE"
@@ -129,26 +129,28 @@
             "table": {
                 "columns": {
                     "program": "Programa",
-                    "agencyName": "Nombre de Agencia",
-                    "stateDepartmentRegistration": "Registro Depto. Estado",
-                    "address": "Dirección",
-                    "city": "Ciudad",
-                    "region": "Región",
-                    "zipCpde": "Código Postal",
-                    "firstName": "Nombre",
+                    "agencyName": "Nombre de la Agencia Auspiciadora:",
+                    "stateDepartmentRegistration": "Registro Depto. Estado:",
+                    "address": "Dirección:",
+                    "city": "Ciudad:",
+                    "region": "Región:",
+                    "zipCpde": "Código Postal:",
+                    "firstName": "Nombre:",
                     "fatherLastName": "Apellido Paterno",
                     "adminTitle": "Título Admin.",
                     "nonProfit": "Sin Fines de Lucro",
                     "uieNumber": "# UIE",
-                    "einNumber": "# EIN",
-                    "ssPatronal": "SS Employer",
+                    "einNumber": "Número de Identificación del Empleador (EIN)",
+                    "ssPatronal": "Número de Registro del Departamento de Estado",
                     "latitude": "Latitud",
                     "longitude": "Longitud",
                     "phone": "Teléfono",
                     "email": "Correo",
                     "middleName": "Segundo Nombre",
                     "motherLastName": "Apellido Materno",
+                    "createdBy": "Creado por",
                     "createdAt": "Fecha de Creación",
+                    "status": "Estatus",
                     "actions": "Acciones"
                 },
                 "buttons": {
@@ -164,23 +166,60 @@
         },
         "edit": {
             "title": "Editar Validación de Aplicación al Programa",
-            "programName": "Programa al que desea participar:",
-            "status": "Estatus:",
-            "agencyName": "Nombre de la Agencia Auspiciadora:",
-            "uieNumber": "UIE #:",
-            "corporationNumber": "# Registro de Corporación:",
-            "ssPatronal": "# S.S Patronal:",
-            "address": "Dirección:",
-            "phone": "Teléfono:",
-            "city": "Pueblo:",
-            "region": "Región:",
-            "firstName": "Nombre:",
-            "paternalLastName": "Apellido Paterno:",
-            "maternalLastName": "Apellido Materno:",
-            "postalCode": "Código Postal:",
-            "email": "Correo Electrónico:",
-            "submit": "Aprobar",
-            "cancel": "Rechazar"
+            "program": {
+                "label": "Programa al que desea participar:"
+            },
+            "status": {
+                "label": "Estatus:"
+            },
+            "agency": {
+                "label": "Nombre de la Agencia Auspiciadora:"
+            },
+            "state-department-registration": {
+                "label": "Registro Depto. Estado:"
+            },
+            "uieNumber": {
+                "label": "UIE #:"
+            },
+            "einNumber": {
+                "label": "EIN #:"
+            },
+            "address": {
+                "label": "Dirección:"
+            },
+            "phone": {
+                "label": "Teléfono:"
+            },
+            "email": {
+                "label": "Correo:"
+            },
+            "zip-code": {
+                "label": "Código Postal:"
+            },
+            "postal-address": {
+                "label": "Dirección Postal:"
+            },
+            "city": {
+                "label": "Ciudad:"
+            },
+            "region": {
+                "label": "Región:"
+            },
+            "first-name": {
+                "label": "Nombre:"
+            },
+            "middle-name": {
+                "label": "Segundo Nombre:"
+            },
+            "father-last-name": {
+                "label": "Apellido Paterno:"
+            },
+            "mother-last-name": {
+                "label": "Apellido Materno:"
+            },
+            "save": "Guardar",
+            "submit": "Aprobar Aplicación",
+            "reject": "Rechazar"
         }
     }
 }
