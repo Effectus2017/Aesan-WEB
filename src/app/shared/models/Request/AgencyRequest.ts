@@ -20,4 +20,8 @@ export interface AgencyRequest {
     ZipCode?: number;
     PostalAddress?: string;
 
+    // Nuevos campos de elegibilidad
+    NonProfit?: boolean;
+    FederalFundsDenied?: boolean;
+    StateFundsDenied?: boolean;
 }

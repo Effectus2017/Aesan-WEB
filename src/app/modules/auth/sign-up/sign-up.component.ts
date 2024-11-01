@@ -69,6 +69,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   listCities = [];
   listRegions = [];
 
+  // Añadir nueva propiedad para controlar el estado del botón
+  isEligible: boolean = true;
+
   constructor() {}
 
   ngOnInit(): void {
@@ -226,6 +229,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         ZipCode: this.signUpForm.value.zipCode ? this.signUpForm.value.zipCode : 0,
         PostalAddress: this.signUpForm.value.postalAddress ? this.signUpForm.value.postalAddress : '',
         Phone: this.signUpForm.value.phone ? this.signUpForm.value.phone : '',
+        NonProfit: this.signUpForm.value.nonProfit === 'Yes' ? true : false,
+        FederalFundsDenied: this.signUpForm.value.federalFundsDenied === 'Yes' ? true : false,
+        StateFundsDenied: this.signUpForm.value.stateFundsDenied === 'Yes' ? true : false,
       },
       User: {
         // Datos del Contacto
@@ -272,9 +278,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   nonProfitChange(event: any): void {
-    if (this.signUpForm.value.nonProfit === 'No' && ['PDAM', 'PSAV'].includes(this.signUpForm.value.program.name)) {
-      // Open the confirmation dialog
-      const confirmation = this._fuseConfirmationService.open({
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const isNotNonProfit = this.signUpForm.value.nonProfit === 'No';
+
+    // Verificar elegibilidad para PDAM y PSAV
+    if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+      this.isEligible = false;
+      this._fuseConfirmationService.open({
         title: 'Notificación',
         message: 'Usted no es elegible para participar de los programas de AESAN',
         actions: {
@@ -286,20 +296,33 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           },
         },
       });
-
-      confirmation.afterClosed().subscribe((result) => {
-        // If the confirm button pressed...
-        if (result === 'confirmed') {
-        }
-      });
+    } else {
+      this.isEligible = true;
     }
   }
 
-  stateFundsDeniedChange(event: any): void {
-    console.log(event);
-  }
+  checkFundsEligibility(): void {
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
+    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
 
-  federalFundsDeniedChange(event: any): void {
-    console.log(event);
+    // Verificar elegibilidad para PACNA
+    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
+      this.isEligible = false;
+      this._fuseConfirmationService.open({
+        title: 'Notificación',
+        message: 'You are not eligible to participate in PACNA program',
+        actions: {
+          confirm: {
+            label: 'Aceptar',
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
+    } else {
+      this.isEligible = true;
+    }
   }
 }
