@@ -8,17 +8,16 @@
       <div class="grid grid-cols-12 gap-2 pb-8 pl-8 pr-8">
         <!-- Información del Programa -->
         <div class="grid grid-cols-2 col-span-8 gap-4">
-
           <mat-form-field data-cy="program-field">
-            <mat-label>{{ 'validation-to-program.edit.program.label' | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareProgram" data-cy="program-select">
+            <mat-label>{{ "validation-to-program.edit.program.label" | transloco }}</mat-label>
+            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select">
               <mat-option *ngFor="let program of listPrograms" [value]="program">{{ program.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field data-cy="status-field">
-            <mat-label>{{ 'validation-to-program.edit.status.label' | transloco }}</mat-label>
-            <mat-select formControlName="status" [compareWith]="compareStatus" data-cy="status-select">
+            <mat-label>{{ "validation-to-program.edit.status.label" | transloco }}</mat-label>
+            <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select" [placeholder]="'validation-to-program.edit.status.placeholder' | transloco">
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -27,100 +26,104 @@
         <!-- Información de la Agencia -->
         <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.agency.label' | transloco }}</mat-label>
-            <input matInput formControlName="name" readonly />
+            <mat-label>{{ "validation-to-program.edit.agency.label" | transloco }}</mat-label>
+            <input matInput formControlName="name" [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.uieNumber.label' | transloco }}</mat-label>
-            <input matInput formControlName="uieNumber" readonly />
+            <mat-label>{{ "validation-to-program.edit.uieNumber.label" | transloco }}</mat-label>
+            <input matInput formControlName="uieNumber" [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
         <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.einNumber.label' | transloco }}</mat-label>
-            <input matInput formControlName="einNumber" readonly />
+            <mat-label>{{ "validation-to-program.edit.einNumber.label" | transloco }}</mat-label>
+            <input matInput formControlName="einNumber" [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.state-department-registration.label' | transloco }}</mat-label>
-            <input matInput formControlName="sdrNumber" readonly />
+            <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
+            <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
         <!-- Dirección y Contacto -->
         <div class="grid grid-cols-4 col-span-8 gap-4">
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.address.label' | transloco }}</mat-label>
-            <input matInput formControlName="address" readonly />
+            <mat-label>{{ "validation-to-program.edit.address.label" | transloco }}</mat-label>
+            <input matInput formControlName="address" [placeholder]="'validation-to-program.edit.address.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.phone.label' | transloco }}</mat-label>
-            <input matInput formControlName="phone" readonly />
+            <mat-label>{{ "validation-to-program.edit.phone.label" | transloco }}</mat-label>
+            <input matInput formControlName="phone" [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.zip-code.label' | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" readonly />
+            <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
+            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.postal-address.label' | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" readonly />
+            <mat-label>{{ "validation-to-program.edit.postal-address.label" | transloco }}</mat-label>
+            <input matInput formControlName="postalAddress" [placeholder]="'validation-to-program.edit.postal-address.placeholder' | transloco" />
+            <!-- <mat-error *ngIf="this.headerConfig.formGroup.get('postalAddress').hasError('required')" data-cy="postal-address-required-error">
+              {{ "validation-to-program.edit.postal-address.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="this.headerConfig.formGroup.get('postalAddress').hasError('minlength')" data-cy="postal-address-minlength-error">
+              {{ "validation-to-program.edit.postal-address.minlength" | transloco }}
+            </mat-error> -->
           </mat-form-field>
-
         </div>
 
         <div class="grid grid-cols-2 col-span-8 gap-4">
-
           <mat-form-field data-cy="city-field">
-            <mat-label>{{ 'validation-to-program.edit.city.label' | transloco }}</mat-label>
-            <mat-select [formControlName]="'city'" [compareWith]="compareCity" data-cy="city-select">
+            <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'city'" [compareWith]="compareItems" data-cy="city-select">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field data-cy="region-field">
-            <mat-label>{{ 'validation-to-program.edit.region.label' | transloco }}</mat-label>
-            <mat-select [formControlName]="'region'" [compareWith]="compareRegion" data-cy="region-select">
+            <mat-label>{{ "validation-to-program.edit.region.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'region'" [compareWith]="compareItems" data-cy="region-select">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-
         </div>
 
         <!-- Información Personal -->
         <div class="grid grid-cols-4 col-span-8 gap-4">
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.first-name.label' | transloco }}</mat-label>
-            <input matInput formControlName="firstName" readonly />
+            <mat-label>{{ "validation-to-program.edit.first-name.label" | transloco }}</mat-label>
+            <input matInput formControlName="firstName" [placeholder]="'validation-to-program.edit.first-name.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.middle-name.label' | transloco }}</mat-label>
-            <input matInput formControlName="middleName" readonly />
+            <mat-label>{{ "validation-to-program.edit.middle-name.label" | transloco }}</mat-label>
+            <input matInput formControlName="middleName" [placeholder]="'validation-to-program.edit.middle-name.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.father-last-name.label' | transloco }}</mat-label>
-            <input matInput formControlName="fatherLastName" readonly />
+            <mat-label>{{ "validation-to-program.edit.father-last-name.label" | transloco }}</mat-label>
+            <input matInput formControlName="fatherLastName" [placeholder]="'validation-to-program.edit.father-last-name.placeholder' | transloco" />
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.mother-last-name.label' | transloco }}</mat-label>
-            <input matInput formControlName="motherLastName" readonly />
+            <mat-label>{{ "validation-to-program.edit.mother-last-name.label" | transloco }}</mat-label>
+            <input matInput formControlName="motherLastName" [placeholder]="'validation-to-program.edit.mother-last-name.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
         <div class="grid grid-cols-2 col-span-8 gap-4">
-
-
           <mat-form-field>
-            <mat-label>{{ 'validation-to-program.edit.email.label' | transloco }}</mat-label>
-            <input matInput formControlName="email"  readonly />
+            <mat-label>{{ "validation-to-program.edit.email.label" | transloco }}</mat-label>
+            <input matInput formControlName="email" [placeholder]="'validation-to-program.edit.email.placeholder' | transloco" />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ "validation-to-program.edit.administration-title.label" | transloco }}</mat-label>
+            <input matInput formControlName="administrationTitle" [placeholder]="'validation-to-program.edit.administration-title.placeholder' | transloco" />
           </mat-form-field>
         </div>
       </div>

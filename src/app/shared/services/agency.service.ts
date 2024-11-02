@@ -98,6 +98,16 @@ export class AgencyService {
   }
 
   /**
+   * Actualiza el logo de una agencia
+   * @param model El modelo con la nueva URL de la imagen
+   * @param queryParameters Los parámetros de consulta
+   * @returns True si se actualizó correctamente
+   */
+  updateAgencyLogo(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-agency-logo`, null, getHttpOptions(queryParameters));
+  }
+
+  /**
    * Actualiza el estado de una agencia
    * @param queryParameters Los parámetros de consulta
    * @returns True si se actualizó correctamente

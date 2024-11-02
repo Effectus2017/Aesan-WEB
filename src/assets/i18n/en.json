@@ -167,59 +167,97 @@
         "edit": {
             "title": "Edit Program Application Validation",
             "program": {
-                "label": "Program you wish to participate in:"
+                "label": "Program you wish to participate in:",
+                "placeholder": "Select a program"
             },
             "status": {
-                "label": "Status:"
+                "label": "Status:",
+                "placeholder": "Select a status"
             },
             "agency": {
-                "label": "Name of the Sponsoring Agency:"
+                "label": "Name of the Sponsoring Agency:",
+                "placeholder": "Enter the agency name"
             },
             "state-department-registration": {
-                "label": "State Department Registration Number:"
+                "label": "State Department Registration Number:",
+                "placeholder": "Enter the registration number"
             },
             "uieNumber": {
-                "label": "UIE #:"
+                "label": "UIE #:",
+                "placeholder": "Enter the UIE number"
             },
             "einNumber": {
-                "label": "EIN #:"
+                "label": "EIN #:",
+                "placeholder": "Enter the EIN number"
             },
             "address": {
-                "label": "Address:"
+                "label": "Address:",
+                "placeholder": "Enter the address"
             },
             "phone": {
-                "label": "Phone:"
+                "label": "Phone:",
+                "placeholder": "(xxx) xxx-xxxx"
             },
             "zip-code": {
-                "label": "Zip Code:"
+                "label": "Zip Code:",
+                "placeholder": "Enter the zip code"
             },
             "postal-address": {
-                "label": "Postal Address:"
-            },
-            "email": {
-                "label": "Email:"
+                "label": "Postal Address:",
+                "placeholder": "Enter the postal address"
             },
             "city": {
-                "label": "City:"
+                "label": "City:",
+                "placeholder": "Select a city"
             },
             "region": {
-                "label": "Region:"
+                "label": "Region:",
+                "placeholder": "Select a region"
             },
             "first-name": {
-                "label": "First Name:"
+                "label": "First Name:",
+                "placeholder": "Enter the first name"
             },
             "middle-name": {
-                "label": "Middle Name:"
+                "label": "Middle Name:",
+                "placeholder": "Enter the middle name"
             },
             "father-last-name": {
-                "label": "Father's Last Name:"
+                "label": "Father's Last Name:",
+                "placeholder": "Enter the father's last name"
             },
             "mother-last-name": {
-                "label": "Mother's Last Name:"
+                "label": "Mother's Last Name:",
+                "placeholder": "Enter the mother's last name"
+            },
+            "email": {
+                "label": "Email:",
+                "placeholder": "Enter the email address"
+            },
+            "administration-title": {
+                "label": "Administration Title:",
+                "placeholder": "Enter the administration title"
             },
             "save": "Save",
             "submit": "Approve Application",
             "reject": "Reject"
+        }
+    },
+    "dialog": {
+        "success": {
+            "title": "Success",
+            "message": "The agency has been successfully approved.",
+            "confirm": "Accept"
+        },
+        "error": {
+            "title": "Error",
+            "message": "An error occurred while updating the agency. Please try again later.",
+            "confirm": "Accept"
+        },
+        "reject": {
+            "title": "Confirmation",
+            "message": "The agency has been successfully rejected.",
+            "confirm": "Accept"
         }
     }
 }

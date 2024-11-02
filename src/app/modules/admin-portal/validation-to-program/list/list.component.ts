@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 
 import { Subject, takeUntil } from 'rxjs';
@@ -26,6 +26,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { Agency } from 'app/shared/models/Agency';
 
 // DESCRICION DEL COMPONENTE
 // Este componente se encarga de mostrar la lista de validaciones de aplicación a programas.
@@ -75,14 +76,14 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
-    dataSource: [],
+    dataSource: new MatTableDataSource<Agency>(),
     columnsSchema: COLUMNS_SCHEMA,
-    displayedColumns: COLUMNS_SCHEMA.map((col) => Array.isArray(col.key) ? col.key[0] : col.key),
+    displayedColumns: COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
-    length: 0
+    length: 0,
   };
 
   // Constructor
@@ -90,12 +91,11 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   // Lifecycle hooks
   ngOnInit() {
-
     // Get the agencies
     this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSource = result.body.data;
+      this.tableConfig.dataSource.data = result.body.data;
       this.tableConfig.length = result.body.count;
-          // Mark for check
+      // Mark for check
       this._changeDetectorRef.markForCheck();
     });
   }
@@ -106,43 +106,48 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     this._unsubscribeAll.complete();
   }
 
-  onSubmit() {
+  onSearch() {
     if (this.headerConfig.formGroup.valid) {
-      console.log('onSubmit', this.headerConfig.formGroup.value);
-      //this.getAll(0, this.headerConfig.formGroup.value);
+      console.log('onSearch');
+      this.getAll(0, this.headerConfig.formGroup.value);
       this.headerConfig.clearVisible = true;
     }
   }
 
-  getPaginator(form: any, event?: PageEvent) {
-    // Paginado de tabla
-    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
-    this.tableConfig.pageSize = event.pageSize;
-    //this.getAll(index * this.pageSize, form);
-  }
-
-  onClean(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-    //     this.clearVisible = false;
-    //     this.formRoot.reset();
-    //     this.get(this.formRoot.value);
-  }
-
-  onEdit(event: Event, id: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouterService.navigate([`validation-to-program/edit/${id}`]);
-  }
-
   // Métodos para obtener datos
   getAll(index: number, form: any) {
+
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
+      name: form.name || null,
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();
   }
 
+  getPaginator(event?: PageEvent) {
+    // Paginado de tabla
+    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event.pageSize;
+    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+  }
+
+  onClean(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    // quita el botón de limpiar
+    this.headerConfig.clearVisible = false;
+    // resetea el formulario
+    this.headerConfig.formGroup.reset();
+    // obtiene todos los datos
+    this.getAll(0, this.headerConfig.formGroup.value);
+  }
+
+  onEdit(event: Event, id: number) {
+    event.stopPropagation();
+    event.preventDefault();
+    // navega a la página de edición
+    this._customRouterService.navigate([`validation-to-program/edit/${id}`]);
+  }
 }

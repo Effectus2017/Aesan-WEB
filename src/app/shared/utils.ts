@@ -2,6 +2,12 @@ import { HttpParams } from '@angular/common/http';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 
+
+// Función genérica para comparar elementos por una propiedad específica
+export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
+  return item1[property] === item2[property];
+}
+
 // Obtiene las opciones de la petición HTTP
 export function getHttpOptions(model: QueryParameters) {
   if (isNullOrUndefinedEmptyStringNullArray(model)) {

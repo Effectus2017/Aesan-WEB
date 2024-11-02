@@ -10,7 +10,7 @@
   <form [formGroup]="config.formGroup" class="flex items-center gap-3 mt-6 shrink-0 sm:mt-0">
     <!-- Botón Clear -->
     <div class="animated-box" *ngIf="config.clearVisible" [@fadeInRight]="config.clearVisible" [@fadeOutRight]="config.clearVisible">
-      <button title="Limpiar" type="button" mat-flat-button color="primary" (click)="clear.emit($event)">
+      <button title="Limpiar" type="button" mat-flat-button color="primary" (click)="onClean($event)">
         <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
       </button>
     </div>

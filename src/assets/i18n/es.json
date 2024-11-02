@@ -167,59 +167,97 @@
         "edit": {
             "title": "Editar Validación de Aplicación al Programa",
             "program": {
-                "label": "Programa al que desea participar:"
+                "label": "Programa al que desea participar:",
+                "placeholder": "Seleccione un programa"
             },
             "status": {
-                "label": "Estatus:"
+                "label": "Estado:",
+                "placeholder": "Seleccione un estado"
             },
             "agency": {
-                "label": "Nombre de la Agencia Auspiciadora:"
+                "label": "Nombre de la Agencia Auspiciadora:",
+                "placeholder": "Ingrese el nombre de la agencia"
             },
             "state-department-registration": {
-                "label": "Registro Depto. Estado:"
+                "label": "Registro Depto. Estado:",
+                "placeholder": "Ingrese el número de registro"
             },
             "uieNumber": {
-                "label": "UIE #:"
+                "label": "UIE #:",
+                "placeholder": "Ingrese el número UIE"
             },
             "einNumber": {
-                "label": "EIN #:"
+                "label": "EIN #:",
+                "placeholder": "Ingrese el número EIN"
             },
             "address": {
-                "label": "Dirección:"
+                "label": "Dirección:",
+                "placeholder": "Ingrese la dirección"
             },
             "phone": {
-                "label": "Teléfono:"
-            },
-            "email": {
-                "label": "Correo:"
+                "label": "Teléfono:",
+                "placeholder": "(xxx) xxx-xxxx"
             },
             "zip-code": {
-                "label": "Código Postal:"
+                "label": "Código Postal:",
+                "placeholder": "Ingrese el código postal"
             },
             "postal-address": {
-                "label": "Dirección Postal:"
+                "label": "Dirección Postal:",
+                "placeholder": "Ingrese la dirección postal"
             },
             "city": {
-                "label": "Ciudad:"
+                "label": "Ciudad:",
+                "placeholder": "Seleccione una ciudad"
             },
             "region": {
-                "label": "Región:"
+                "label": "Región:",
+                "placeholder": "Seleccione una región"
             },
             "first-name": {
-                "label": "Nombre:"
+                "label": "Nombre:",
+                "placeholder": "Ingrese el nombre"
             },
             "middle-name": {
-                "label": "Segundo Nombre:"
+                "label": "Segundo Nombre:",
+                "placeholder": "Ingrese el segundo nombre"
             },
             "father-last-name": {
-                "label": "Apellido Paterno:"
+                "label": "Apellido Paterno:",
+                "placeholder": "Ingrese el apellido paterno"
             },
             "mother-last-name": {
-                "label": "Apellido Materno:"
+                "label": "Apellido Materno:",
+                "placeholder": "Ingrese el apellido materno"
+            },
+            "email": {
+                "label": "Correo:",
+                "placeholder": "Ingrese el correo electrónico"
+            },
+            "administration-title": {
+                "label": "Título Administrador:",
+                "placeholder": "Ingrese el título del administrador"
             },
             "save": "Guardar",
             "submit": "Aprobar Aplicación",
             "reject": "Rechazar"
+        }
+    },
+    "dialog": {
+        "success": {
+            "title": "Éxito",
+            "message": "La agencia ha sido aprobada con éxito.",
+            "confirm": "Aceptar"
+        },
+        "error": {
+            "title": "Error",
+            "message": "Ocurrió un error al actualizar la agencia. Por favor, inténtelo de nuevo más tarde.",
+            "confirm": "Aceptar"
+        },
+        "reject": {
+            "title": "Confirmación",
+            "message": "La agencia ha sido rechazada con éxito.",
+            "confirm": "Aceptar"
         }
     }
 }

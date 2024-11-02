@@ -1,7 +1,8 @@
 import { PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 
 export interface GenericTableConfig<T = any> {
-  dataSource: T[];
+  dataSource: MatTableDataSource<T>;
   columnsSchema: any[];
   displayedColumns: string[];
   handler?: any;

@@ -1,7 +1,7 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
@@ -17,13 +17,16 @@ import { MatTableModule } from '@angular/material/table';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
+import { compareByProperty } from 'app/shared/utils';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -52,6 +55,7 @@ import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
     NgSwitchCase,
     GenericHeaderComponent,
     TranslocoModule,
+    MatSnackBarModule,
   ],
 })
 export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -62,6 +66,9 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _translocoService = inject(TranslocoService);
+  private _snackBar = inject(MatSnackBar);
 
   listAgencyStatus = [];
   listPrograms = [];
@@ -73,36 +80,34 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({
-      name: [{ value: null }],
-      program: [{ value: null }],
-      status: [''],
+      name: [null, Validators.required],
+      program: [null, Validators.required],
+      status: [null, Validators.required],
 
       // Datos de la Agencia
-      uieNumber: [{ value: null }],
-      sdrNumber: [{ value: null }],
-      einNumber: [{ value: null }],
+      uieNumber: [null, Validators.required],
+      sdrNumber: [null, Validators.required],
+      einNumber: [null, Validators.required],
 
       // Datos de la Ciudad y Región
-      city: [],
-      region: [],
-      latitude: [{ value: null }],
-      longitude: [{ value: null }],
+      city: [null, Validators.required],
+      region: [null, Validators.required],
 
       // Dirección y Coordenadas
-      address: [{ value: null }],
-      phone: [{ value: null }],
-      zipCode: [{ value: null }],
-      postalAddress: [{ value: null }],
+      address: [null, Validators.required],
+      phone: [null, Validators.required],
+      zipCode: [null, Validators.required],
+      postalAddress: [null, Validators.required],
 
       // Datos del Contacto
-      firstName: [{ value: null }],
-      middleName: [{ value: null }],
-      fatherLastName: [{ value: null }],
-      motherLastName: [{ value: null }],
+      firstName: [null, Validators.required],
+      middleName: [null],
+      fatherLastName: [null, Validators.required],
+      motherLastName: [null],
 
       // Datos del Administrador
-      email: [{ value: null }],
-      adminTitle: [{ value: null }],
+      email: [null, Validators.email],
+      administrationTitle: [null],
     }),
     submitButtonText: 'validation-to-program.edit.submit',
     submitButtonShow: true,
@@ -161,44 +166,48 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
     console.log(param);
     this.param = param;
     this.headerConfig.formGroup.patchValue({
-      name: param.name,
-      city: param.city,
-      region: param.region,
-      program: param.program,
-      status: param.status,
-      sdrNumber: param.sdrNumber,
-      uieNumber: param.uieNumber,
-      einNumber: param.einNumber,
-      address: param.address,
-      zipCode: param.zipCode,
-      postalAddress: param.postalAddress,
-      latitude: param.latitude,
-      longitude: param.longitude,
-      firstName: param.user.firstName,
-      middleName: param.user.middleName,
-      fatherLastName: param.user.fatherLastName,
-      motherLastName: param.user.motherLastName,
-      email: param.email,
-      phone: param.phone,
-      adminTitle: param.user.administrationTitle,
+      name: param.name || null,
+      city: param.city || null,
+      region: param.region || null,
+      program: param.program || null,
+      status: param.status || null,
+      sdrNumber: param.sdrNumber || null,
+      uieNumber: param.uieNumber || null,
+      einNumber: param.einNumber || null,
+      address: param.address || null,
+      zipCode: param.zipCode || null,
+      postalAddress: param.postalAddress || null,
+      firstName: param.user.firstName || null,
+      middleName: param.user.middleName || null,
+      fatherLastName: param.user.fatherLastName || null,
+      motherLastName: param.user.motherLastName || null,
+      email: param.email || null,
+      phone: param.phone || null,
+      administrationTitle: param.user.administrationTitle || null,
     });
   }
 
-  onUpdate(param: any) {
-    console.log(param);
-  }
-
-  onUpdateStatus(param: any) {
-    console.log(param);
-  }
-
+  /**
+   * Guarda los cambios en la agencia
+   */
   onSave() {
+    if (this.headerConfig.formGroup.invalid) {
+      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', {
+        duration: 5000,
+      });
+
+      this.headerConfig.formGroup.markAllAsTouched();
+      return;
+    }
+
+    // Disable the form
+    this.headerConfig.formGroup.disable();
+
     // Obtener los valores del formulario
     const formValues = this.headerConfig.formGroup.value;
 
     // Construir el objeto de actualización
     const agencyRequest: AgencyRequest = {
-      Id: this.param.id,
       Name: formValues.name,
       CityId: formValues.city?.id,
       RegionId: formValues.region?.id,
@@ -210,15 +219,13 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       Address: formValues.address,
       ZipCode: formValues.zipCode,
       PostalAddress: formValues.postalAddress,
-      Latitude: formValues.latitude,
-      Longitude: formValues.longitude,
       Email: formValues.email,
       Phone: formValues.phone,
       FirstName: formValues.firstName,
       MiddleName: formValues.middleName,
       FatherLastName: formValues.fatherLastName,
       MotherLastName: formValues.motherLastName,
-      AdministrationTitle: formValues.adminTitle,
+      AdministrationTitle: formValues.administrationTitle,
     };
 
     // Parámetros de consulta
@@ -229,53 +236,185 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
     // Llamar al servicio para actualizar
     this._agencyService.updateAgency(agencyRequest, queryParams).subscribe({
       next: (response) => {
-        console.log('Agencia actualizada:', response);
+        if (response.body) {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('dialog.success.title'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success',
+            },
+            message: this._translocoService.translate('dialog.success.message'),
+            actions: {
+              confirm: {
+                label: this._translocoService.translate('dialog.success.confirm'),
+              },
+              cancel: {
+                show: false,
+              },
+            },
+          });
+        } else {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('dialog.error.title'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:x-circle',
+              color: 'error',
+            },
+            message: this._translocoService.translate('dialog.error.message'),
+            actions: {
+              confirm: {
+                label: this._translocoService.translate('dialog.error.confirm'),
+              },
+              cancel: {
+                show: false,
+              },
+            },
+          });
+        }
       },
       error: (error) => {
         console.error('Error al actualizar la agencia:', error);
+        this.headerConfig.formGroup.enable();
       },
       complete: () => {
         console.log('Actualización completada');
+        this.headerConfig.formGroup.enable();
+
+        const queryParams: QueryParameters = {
+          agencyId: this.param.id,
+        };
+
+        this._agencyService.getAgencyById(queryParams).subscribe();
       },
     });
   }
 
+  /**
+   * Guarda los cambios en la agencia
+   */
   onSubmit() {
-    console.log(this.headerConfig.formGroup.value);
-  }
-
-  onReject() {
     const queryParams: QueryParameters = {
       agencyId: this.param.id,
-      statusId: 6,
+      statusId: 7, // Suponiendo que 7 es el ID para aprobar la agencia
     };
 
     this._agencyService.updateAgencyStatus(queryParams).subscribe({
       next: (response) => {
-        console.log(response);
+        if (response.body) {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('dialog.success.title'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success',
+            },
+            message: this._translocoService.translate('dialog.success.message'),
+            actions: {
+              confirm: {
+                label: this._translocoService.translate('dialog.success.confirm'),
+              },
+              cancel: {
+                show: false,
+              },
+            },
+          });
+        }
       },
       error: (error) => {
-        console.error(error);
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('dialog.error.title'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error',
+          },
+          message: this._translocoService.translate('dialog.error.message'),
+          actions: {
+            confirm: {
+              label: this._translocoService.translate('dialog.error.confirm'),
+            },
+            cancel: {
+              show: false,
+            },
+          },
+        });
       },
       complete: () => {
-        console.log('Agencia actualizada con éxito');
+        const queryParams: QueryParameters = {
+          agencyId: this.param.id,
+        };
+
+        this._agencyService.getAgencyById(queryParams).subscribe();
       },
     });
   }
 
-  compareCity(city1: any, city2: any): boolean {
-    return city1 && city2 ? city1.id === city2.id : city1 === city2;
+  /**
+   * Rechaza la agencia
+   */
+  onReject() {
+    const queryParams: QueryParameters = {
+      agencyId: this.param.id,
+      statusId: 6, // Suponiendo que 6 es el ID para rechazar la agencia
+      rejectionJustification: 'La solicitud ha sido rechazada debido a la falta de documentación necesaria.',
+    };
+
+    this._agencyService.updateAgencyStatus(queryParams).subscribe({
+      next: (response) => {
+        if (response.body) {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('dialog.reject.title'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success',
+            },
+            message: this._translocoService.translate('dialog.reject.message'),
+            actions: {
+              confirm: {
+                label: this._translocoService.translate('dialog.reject.confirm'),
+              },
+              cancel: {
+                show: false,
+              },
+            },
+          });
+        }
+      },
+      error: (error) => {
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('dialog.error.title'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'warn',
+          },
+          message: 'Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde.',
+          actions: {
+            confirm: {
+              label: 'Aceptar',
+            },
+            cancel: {
+              show: false,
+            },
+          },
+        });
+        console.error(error);
+      },
+      complete: () => {
+        const queryParams: QueryParameters = {
+          agencyId: this.param.id,
+        };
+
+        this._agencyService.getAgencyById(queryParams).subscribe();
+      },
+    });
   }
 
-  compareRegion(region1: any, region2: any): boolean {
-    return region1 && region2 ? region1.id === region2.id : region1 === region2;
-  }
-
-  compareProgram(program1: any, program2: any): boolean {
-    return program1 && program2 ? program1.id === program2.id : program1 === program2;
-  }
-
-  compareStatus(status1: any, status2: any): boolean {
-    return status1 && status2 ? status1.id === status2.id : status1 === status2;
+  // Función única para comparar diferentes tipos de elementos
+  compareItems<T>(item1: T, item2: T): boolean {
+    return compareByProperty(item1, item2, 'id' as keyof T);
   }
 }

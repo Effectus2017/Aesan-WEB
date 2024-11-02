@@ -10,5 +10,7 @@ export interface QueryParameters {
   programId?: number;
   statusId?: number;
   agencyId?: number;
+  imageUrl?: string;
+  rejectionJustification?: string;
 }
 

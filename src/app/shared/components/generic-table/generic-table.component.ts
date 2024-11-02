@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { CommonModule, NgIf } from '@angular/common';
@@ -12,27 +12,15 @@ import { TranslocoModule } from '@ngneat/transloco';
   selector: 'app-generic-table',
   templateUrl: './generic-table.component.html',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, TranslocoModule],
 })
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;
-  @Input() dataSource: MatTableDataSource<any>;
-  @Input() columnsSchema: any[];
-  @Input() displayedColumns: string[];
-  @ViewChild(MatSort) sort: MatSort;
   @Input() handler: OnGenericTableHandler;
 
   ngOnInit(): void {
-    // Valores por defecto
-    this.config = {
-      ...{
-        showPaginator: true,
-        pageSize: 10,
-        pageSizeOptions: [5, 10, 25, 100],
-        length: 0
-      },
-      ...this.config
-    };
+
   }
 
   // Functions

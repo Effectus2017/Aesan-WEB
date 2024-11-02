@@ -48,12 +48,6 @@ export class GenericHeaderComponent {
   // Loading config
   @Input() isLoading: boolean = false;
 
-  // Outputs
-//   @Output() clean = new EventEmitter<Event>();
-//   @Output() submit = new EventEmitter<void>();
-//   @Output() cancel = new EventEmitter<void>();
-//   @Output() save = new EventEmitter<void>();
-
   onSubmit() {
     this.handler.onSubmit();
   }
@@ -68,5 +62,13 @@ export class GenericHeaderComponent {
 
   onReject() {
     this.handler.onReject();
+  }
+
+  onSearch() {
+    this.handler.onSearch();
+  }
+
+  onClean(event: Event) {
+    this.handler.onClean(event);
   }
 }

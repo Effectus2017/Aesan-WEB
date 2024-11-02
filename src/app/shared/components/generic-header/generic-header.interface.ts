@@ -60,7 +60,7 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de búsqueda
    * @param searchTerm Término de búsqueda actual
    */
-  onSearch?: (searchTerm: string) => void;
+  onSearch?: () => void;
 
   /**
    * Manejador para el evento de navegación al agregar
@@ -76,4 +76,9 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de rechazar
    */
   onReject?: () => void;
+
+  /**
+   * Manejador para el evento de limpiar
+   */
+  onClean?: (event: Event) => void;
 }

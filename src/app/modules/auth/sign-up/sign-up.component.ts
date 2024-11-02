@@ -10,7 +10,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -22,7 +21,8 @@ import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'auth-sign-up',
@@ -45,6 +45,7 @@ import { Subject, takeUntil } from 'rxjs';
     TranslocoModule,
     NgFor,
     MatDividerModule,
+    MatSnackBarModule,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -64,7 +65,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
-
+  private _snackBar = inject(MatSnackBar);
   listPrograms = [];
   listCities = [];
   listRegions = [];
@@ -81,9 +82,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       program: [null, Validators.required],
 
       // Datos de la Agencia
-      sdrNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
-      uieNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
-      einNumber: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      sdrNumber: [null, [Validators.required]],
+      uieNumber: [null, [Validators.required]],
+      einNumber: [null, [Validators.required]],
 
       // Datos de la Agencia
       nonProfit: [null, Validators.required],
@@ -99,7 +100,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Dirección y Teléfono
       address: [null, Validators.required],
       phone: [null, [Validators.required]],
-      zipCode: [null, [Validators.required, Validators.pattern(/^\d{1,10}$/)]],
+      zipCode: [null, [Validators.required]],
       postalAddress: [null, Validators.required],
 
       // Datos del Contacto
@@ -110,16 +111,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos del Correo Electrónico y Cargo
       email: [null, [Validators.required, Validators.email]],
-      adminTitle: [null, Validators.required],
+      administrationTitle: [null, Validators.required],
     });
-
-    // this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //     this.listCities = result.body.data;
-    //   });
-
-    // this._userService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //   this.listPrograms = result.body.data;
-    // });
 
     // Cargar ciudades
     this.loadCities();
@@ -202,6 +195,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   signUp(): void {
     // Return if the form is invalid
     if (this.signUpForm.invalid) {
+      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', {
+        duration: 5000,
+      });
+
+      this.signUpForm.markAllAsTouched();
       return;
     }
 
@@ -211,37 +209,40 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Hide the alert
     this.showAlert = false;
 
+    // Obtener los valores del formulario
+    const formValues = this.signUpForm.value;
+
     const userAgencyRequest: UserAgencyRequest = {
       Agency: {
-        Name: this.signUpForm.value.name ? this.signUpForm.value.name : '',
-        ProgramId: this.signUpForm.value.program ? this.signUpForm.value.program.id : 0,
+        Name: formValues.name ? formValues.name : '',
+        ProgramId: formValues.program ? formValues.program.id : 0,
         // Datos de la Agencia
-        SdrNumber: this.signUpForm.value.sdrNumber ? this.signUpForm.value.sdrNumber : 0,
-        UieNumber: this.signUpForm.value.uieNumber ? this.signUpForm.value.uieNumber : 0,
-        EinNumber: this.signUpForm.value.einNumber ? this.signUpForm.value.einNumber : 0,
+        SdrNumber: formValues.sdrNumber ? formValues.sdrNumber : 0,
+        UieNumber: formValues.uieNumber ? formValues.uieNumber : 0,
+        EinNumber: formValues.einNumber ? formValues.einNumber : 0,
         // Datos de la Ciudad y Región
-        CityId: this.signUpForm.value.city ? this.signUpForm.value.city.id : 0,
-        RegionId: this.signUpForm.value.region ? this.signUpForm.value.region.id : 0,
-        Latitude: this.signUpForm.value.latitude ? this.signUpForm.value.latitude : 0,
-        Longitude: this.signUpForm.value.longitude ? this.signUpForm.value.longitude : 0,
+        CityId: formValues.city ? formValues.city.id : 0,
+        RegionId: formValues.region ? formValues.region.id : 0,
+        Latitude: formValues.latitude ? formValues.latitude : 0,
+        Longitude: formValues.longitude ? formValues.longitude : 0,
         // Dirección y Teléfono
-        Address: this.signUpForm.value.address ? this.signUpForm.value.address : '',
-        ZipCode: this.signUpForm.value.zipCode ? this.signUpForm.value.zipCode : 0,
-        PostalAddress: this.signUpForm.value.postalAddress ? this.signUpForm.value.postalAddress : '',
-        Phone: this.signUpForm.value.phone ? this.signUpForm.value.phone : '',
-        NonProfit: this.signUpForm.value.nonProfit === 'Yes' ? true : false,
-        FederalFundsDenied: this.signUpForm.value.federalFundsDenied === 'Yes' ? true : false,
-        StateFundsDenied: this.signUpForm.value.stateFundsDenied === 'Yes' ? true : false,
+        Address: formValues.address ? formValues.address : '',
+        ZipCode: formValues.zipCode ? formValues.zipCode : 0,
+        PostalAddress: formValues.postalAddress ? formValues.postalAddress : '',
+        Phone: formValues.phone ? formValues.phone : '',
+        NonProfit: formValues.nonProfit === 'Yes' ? true : false,
+        FederalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
+        StateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
       },
       User: {
         // Datos del Contacto
-        FirstName: this.signUpForm.value.firstName,
-        MiddleName: this.signUpForm.value.middleName,
-        FatherLastName: this.signUpForm.value.fatherLastName,
-        MotherLastName: this.signUpForm.value.motherLastName,
+        FirstName: formValues.firstName,
+        MiddleName: formValues.middleName,
+        FatherLastName: formValues.fatherLastName,
+        MotherLastName: formValues.motherLastName,
         // Datos del Correo Electrónico y Cargo
-        AdministrationTitle: this.signUpForm.value.adminTitle,
-        Email: this.signUpForm.value.email,
+        AdministrationTitle: formValues.administrationTitle,
+        Email: formValues.email,
       },
     };
 
