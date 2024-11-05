@@ -3,12 +3,18 @@
     <div class="w-full px-4 py-8 sm:w-auto sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
       <div class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-center">{{ "auth.sign-up.title" | transloco }}</div>
       <form class="mt-10" [formGroup]="signUpForm" #signUpNgForm="ngForm" data-cy="sign-up-form">
+        <!-- Sponsor Information -->
         <div class="grid grid-cols-12 gap-2 pb-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4">
+            <p class="text-lg font-medium">{{ 'auth.sign-up.sponsor-information' | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ 'auth.sign-up.sponsor-information-description' | transloco }}</p>
+          </div>
+
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "auth.sign-up.program.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'program'" data-cy="program-select">
+              <mat-select [formControlName]="'program'" data-cy="program-select" multiple>
                 <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ program.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -67,34 +73,17 @@
               <input matInput [formControlName]="'einNumber'" placeholder="{{ 'auth.sign-up.ein.placeholder' | transloco }}" type="number" data-cy="ein-input" />
             </mat-form-field>
           </div>
-          <!-- <div class="grid grid-cols-1 col-span-12 gap-4">
-            <p class="text-lg font-medium">Profile</p>
-            <p class="mb-6 text-secondary">People here will get to know you with this information</p>
-          </div> -->
+          <div class="grid grid-cols-1 col-span-12 gap-4">
+            <p class="text-lg font-medium">{{ 'auth.sign-up.address.label' | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ 'auth.sign-up.address.description' | transloco }}</p>
+          </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Address *  -->
             <mat-form-field data-cy="address-field">
               <mat-label>{{ "auth.sign-up.address.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'address'" placeholder="{{ 'auth.sign-up.address.placeholder' | transloco }}" data-cy="address-input" />
             </mat-form-field>
-            <!-- Phone *  -->
-            <mat-form-field data-cy="phone-field">
-              <mat-label>{{ "auth.sign-up.phone.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'phone'" placeholder="{{ 'auth.sign-up.phone.placeholder' | transloco }}" type="tel" data-cy="phone-input" />
-            </mat-form-field>
-            <!-- Zip Code *  -->
-            <mat-form-field data-cy="zip-code-field">
-              <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="zip-code-input" />
-            </mat-form-field>
-            <!-- Postal Address *  -->
-            <mat-form-field data-cy="postal-address-field">
-              <mat-label>{{ "auth.sign-up.postal-address.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'auth.sign-up.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
-            </mat-form-field>
-          </div>
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
             <!-- City *  -->
             <mat-form-field data-cy="city-field">
               <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
@@ -109,6 +98,14 @@
                 <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
               </mat-select>
             </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
+            <!-- Zip Code *  -->
+            <mat-form-field data-cy="zip-code-field">
+              <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="zip-code-input" />
+            </mat-form-field>
             <!-- Latitude *  -->
             <mat-form-field data-cy="latitude-field">
               <mat-label>{{ "auth.sign-up.latitude.label" | transloco }}</mat-label>
@@ -121,10 +118,47 @@
             </mat-form-field>
           </div>
 
-          <!-- <div class="grid grid-cols-1 col-span-12 gap-4">
-            <p class="text-lg font-medium">Profile</p>
-            <p class="mb-6 text-secondary">People here will get to know you with this information</p>
-          </div> -->
+          <div class="grid grid-cols-1 col-span-12 gap-4">
+            <p class="text-lg font-medium">{{ 'auth.sign-up.postal-address.label' | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ 'auth.sign-up.postal-address.description' | transloco }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4">
+            <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{ 'auth.sign-up.same-as-physical-address.label' | transloco }}</mat-checkbox>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
+            <!-- Postal Address *  -->
+            <!-- cambiar texto a address unicamente -->
+            <mat-form-field data-cy="postal-address-field">
+              <mat-label>{{ "auth.sign-up.postal-address.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'auth.sign-up.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
+            </mat-form-field>
+            <!-- City *  -->
+            <mat-form-field data-cy="postal-city-field">
+              <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'postalCity'" (valueChange)="getRegionsByCityId($event)" data-cy="postal-city-select">
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- Region *  -->
+            <mat-form-field data-cy="postal-region-field">
+              <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select">
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- Zip Code *  -->
+            <mat-form-field data-cy="postal-zip-code-field">
+              <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="postal-zip-code-input" />
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4">
+            <p class="text-lg font-medium">{{ 'auth.sign-up.user-information' | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ 'auth.sign-up.user-information-description' | transloco }}</p>
+          </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
             <!-- First Name *  -->
@@ -149,12 +183,16 @@
             </mat-form-field>
           </div>
 
-
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Email *  -->
             <mat-form-field data-cy="email-field">
               <mat-label>{{ "auth.sign-up.email.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'email'" placeholder="{{ 'auth.sign-up.email.placeholder' | transloco }}" type="email" data-cy="email-input" />
+            </mat-form-field>
+            <!-- Phone *  -->
+            <mat-form-field data-cy="phone-field">
+              <mat-label>{{ "auth.sign-up.phone.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'phone'" placeholder="{{ 'auth.sign-up.phone.placeholder' | transloco }}" type="tel" data-cy="phone-input" />
             </mat-form-field>
             <!-- Admin Title *  -->
             <mat-form-field data-cy="admin-title-field">
@@ -170,7 +208,8 @@
             [color]="'primary'"
             (click)="signUp()"
             [disabled]="!isEligible || signUpForm.disabled"
-            data-cy="submit-button">
+            data-cy="submit-button"
+          >
             <span *ngIf="!signUpForm.disabled">{{ "auth.sign-up.submit" | transloco }}</span>
             <mat-progress-spinner *ngIf="signUpForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
           </button>

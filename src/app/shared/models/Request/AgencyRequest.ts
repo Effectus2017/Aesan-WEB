@@ -2,26 +2,25 @@ export interface AgencyRequest {
     Id?: number;
     Name?: string;
     StatusId?: number;
-    ProgramId?: number;
-
     // Datos de la Agencia
     SdrNumber?: number;
     UieNumber?: number;
     EinNumber?: number;
-
-    // Datos de la Ciudad y Región
+    // Dirección
+    Address?: string;
+    ZipCode?: number;
     CityId?: number;
     RegionId?: number;
     Latitude?: number;
     Longitude?: number;
-
-    // Dirección y Teléfono
-    Address?: string;
-    Phone?: string;
-    ZipCode?: number;
+    // Dirección Postal
     PostalAddress?: string;
+    PostalZipCode?: number;
+    PostalCityId?: number;
+    PostalRegionId?: number;
+    // Datos del usuario
     Email?: string;
-
+    Phone?: string;
     // Nuevos campos de elegibilidad
     NonProfit?: boolean;
     FederalFundsDenied?: boolean;
@@ -32,4 +31,6 @@ export interface AgencyRequest {
     FatherLastName?: string;
     MotherLastName?: string;
     AdministrationTitle?: string;
+    // Programas
+    Programs?: number[];
 }

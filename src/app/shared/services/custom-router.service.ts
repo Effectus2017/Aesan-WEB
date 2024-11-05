@@ -20,11 +20,11 @@ export class CustomRouterService {
   navigate(commands: any[], extras?: any): Promise<boolean> {
     const userRole = this._authService.getUserRole();
     const userAgency = this._authService.getUserAgency();
-    const userProgram = this._authService.getUserProgram();
+    const userPrograms = this._authService.getUserPrograms();
 
     let prefix = '/admin-portal/';
 
-    switch (userProgram) {
+    switch (userPrograms[0]) {
       case 'PDAM':
         prefix = '/pdam-portal/';
         break;

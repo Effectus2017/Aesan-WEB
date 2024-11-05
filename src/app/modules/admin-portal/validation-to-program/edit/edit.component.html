@@ -5,12 +5,19 @@
 
   <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
+
+
+
       <div class="grid grid-cols-12 gap-2 pb-8 pl-8 pr-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4">
+            <p class="text-lg font-medium">Sponsor Information</p>
+            <p class="mb-6 text-secondary">Here you can add your sponsor information</p>
+          </div>
         <!-- Información del Programa -->
         <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field data-cy="program-field">
             <mat-label>{{ "validation-to-program.edit.program.label" | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select">
+            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select" multiple="">
               <mat-option *ngFor="let program of listPrograms" [value]="program">{{ program.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -22,6 +29,8 @@
             </mat-select>
           </mat-form-field>
         </div>
+
+
 
         <!-- Información de la Agencia -->
         <div class="grid grid-cols-2 col-span-8 gap-4">
@@ -45,6 +54,24 @@
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
             <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" />
+          </mat-form-field>
+        </div>
+
+        <!-- Ciudad y Región  -->
+
+        <div class="grid grid-cols-2 col-span-8 gap-4">
+          <mat-form-field data-cy="city-field">
+            <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'city'" [compareWith]="compareItems" data-cy="city-select">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field data-cy="region-field">
+            <mat-label>{{ "validation-to-program.edit.region.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'region'" [compareWith]="compareItems" data-cy="region-select">
+              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
@@ -74,22 +101,6 @@
             <mat-error *ngIf="this.headerConfig.formGroup.get('postalAddress').hasError('minlength')" data-cy="postal-address-minlength-error">
               {{ "validation-to-program.edit.postal-address.minlength" | transloco }}
             </mat-error> -->
-          </mat-form-field>
-        </div>
-
-        <div class="grid grid-cols-2 col-span-8 gap-4">
-          <mat-form-field data-cy="city-field">
-            <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'city'" [compareWith]="compareItems" data-cy="city-select">
-              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field data-cy="region-field">
-            <mat-label>{{ "validation-to-program.edit.region.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'region'" [compareWith]="compareItems" data-cy="region-select">
-              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
-            </mat-select>
           </mat-form-field>
         </div>
 

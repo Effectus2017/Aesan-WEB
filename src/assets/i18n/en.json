@@ -25,6 +25,10 @@
             "submit": "Sign In"
         },
         "sign-up": {
+            "sponsor-information": "Sponsor Information",
+            "sponsor-information-description": "Here you can add your sponsor information",
+            "user-information": "User Information",
+            "user-information-description": "Here you can add your user information",
             "title": "Program Application",
             "program": {
                 "label": "Which program do you want to participate in?"
@@ -62,7 +66,8 @@
             },
             "address": {
                 "label": "Address",
-                "placeholder": "Enter the address"
+                "placeholder": "Enter the address",
+                "description": "Physical address of the organization or agency"
             },
             "city": {
                 "label": "City",
@@ -78,7 +83,11 @@
             },
             "postal-address": {
                 "label": "Postal Address",
-                "placeholder": "Enter the postal address"
+                "placeholder": "Enter the postal address",
+                "description": "Postal address of the organization or agency"
+            },
+            "same-as-physical-address": {
+                "label": "Same as physical address"
             },
             "first-name": {
                 "label": "First Name",
@@ -89,11 +98,11 @@
                 "placeholder": "Enter the middle name"
             },
             "father-last-name": {
-                "label": "Father's Last Name",
+                "label": "Last Name",
                 "placeholder": "Enter the father's last name"
             },
             "mother-last-name": {
-                "label": "Mother's Last Name",
+                "label": "Second Last Name",
                 "placeholder": "Enter the mother's last name"
             },
             "admin-title": {
@@ -116,7 +125,25 @@
                 "label": "Email",
                 "placeholder": "Enter the email"
             },
-            "submit": "Submit Aplication"
+            "submit": "Submit Aplication",
+            "pacna-not-eligible": {
+                "message": "You are not eligible to participate in the PACNA program.",
+                "close": "Close"
+            },
+            "pdam-psav-not-eligible": {
+                "message": "You are not eligible to participate in the PDAM or PSAV programs."
+            },
+            "processing-request": {
+                "message": "An error occurred while processing your request. Please try again later."
+            },
+            "form-invalid": {
+                "message": "Please fill in all required fields.",
+                "close": "Close"
+            },
+            "notification": {
+                "title": "Notification",
+                "confirm": "Accept"
+            }
         }
     },
     "validation-to-program": {

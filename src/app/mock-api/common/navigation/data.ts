@@ -41,10 +41,11 @@ export const defaultNavigation: FuseNavigationItem[] = [
 export const compactNavigation: FuseNavigationItem[] = [
   {
     id: 'home',
-    title: 'Inicio',
+    title: 'Dashboard',
     type: 'basic',
-    icon: 'heroicons_solid:home',
+    icon: 'heroicons_solid:chart-bar',
     link: '/example',
+    roles: ['Administrator'],
   },
   {
     id: 'programs',
@@ -52,6 +53,15 @@ export const compactNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:home',
     link: '/validation-to-program',
+    roles: ['Administrator'],
+  },
+  {
+    id: 'pre-operational',
+    title: 'Pre-Operacional',
+    type: 'basic',
+    icon: 'heroicons_solid:check-badge',
+    link: '/pre-operational',
+    roles: ['Monitor'],
   },
   {
     id: 'documents',
@@ -59,6 +69,7 @@ export const compactNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document',
     link: '/documents', // Nueva ruta para Documentos
+    roles: ['Administrator'],
   },
   {
     id: 'budget',
@@ -66,6 +77,7 @@ export const compactNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:banknotes',
     link: '/budget', // Nueva ruta para Presupuesto
+    roles: ['Administrator'],
   },
   {
     id: 'reimbursements',
@@ -73,5 +85,6 @@ export const compactNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:banknotes',
     link: '/refunds', // Nueva ruta para Rembolsos
+    roles: ['Administrator'],
   }
 ];

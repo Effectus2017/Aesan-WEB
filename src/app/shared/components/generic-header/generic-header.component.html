@@ -9,55 +9,61 @@
 
   <form [formGroup]="config.formGroup" class="flex items-center gap-3 mt-6 shrink-0 sm:mt-0">
     <!-- Botón Clear -->
-    <div class="animated-box" *ngIf="config.clearVisible" [@fadeInRight]="config.clearVisible" [@fadeOutRight]="config.clearVisible">
+    @if (config.clearVisible) {
+    <div class="animated-box" [@fadeInRight]="config.clearVisible" [@fadeOutRight]="config.clearVisible">
       <button title="Limpiar" type="button" mat-flat-button color="primary" (click)="onClean($event)">
         <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
       </button>
     </div>
+    }
 
     <!-- Campo de búsqueda -->
-    <ng-container *ngIf="config.searchFieldShow">
-      <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
-        <mat-icon class="icon-size-5" matPrefix svgIcon="mat_solid:search"></mat-icon>
-        <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" />
-      </mat-form-field>
+    @if (config.searchFieldShow) {
+    <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
+      <mat-icon class="icon-size-5" matPrefix svgIcon="mat_solid:search"></mat-icon>
+      <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" />
+    </mat-form-field>
 
-      <button title="Buscar" mat-flat-button color="primary" type="button" (click)="onSearch()">
-        <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
-      </button>
-    </ng-container>
-
+    <button title="Buscar" mat-flat-button color="primary" type="button" (click)="onSearch()">
+      <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
+    </button>
+    }
     <!-- Botón Agregar -->
-    <a [routerLink]="'add'" *ngIf="config.goToAddButtonShow">
+    @if (config.goToAddButtonShow) {
+    <a [routerLink]="'add'">
       <button type="button" title="Agregar" class="text-white bg-[#F1A621]" mat-flat-button [color]="'primary'">
         <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
       </button>
     </a>
+    }
 
     <!-- Botón Guardar -->
-    <button class="bg-[#F39B1A]" *ngIf="config.saveButtonShow"
-            type="button"
-            title="Guardar"
-            mat-flat-button
-            color="primary"
-            (click)="onSave()">
+    @if (config.saveButtonShow) {
+    <button class="bg-[#F39B1A]" type="button" title="Guardar" mat-flat-button color="primary" (click)="onSave()">
       {{ config.saveButtonText | transloco }}
     </button>
+    }
 
     <!-- Botón Cancelar -->
-    <button *ngIf="config.cancelButtonShow" type="button" title="Cancelar" (click)="onCancel($event)" mat-button>
+    @if (config.cancelButtonShow) {
+    <button type="button" title="Cancelar" (click)="onCancel($event)" mat-button>
       {{ config.cancelButtonText | transloco }}
     </button>
+    }
 
     <!-- Botón Rechazar -->
-    <button *ngIf="config.rejectButtonShow" type="button" title="Rechazar" (click)="onReject()" mat-button>
+    @if (config.rejectButtonShow) {
+    <button type="button" title="Rechazar" (click)="onReject()" mat-button>
       {{ config.rejectButtonText | transloco }}
     </button>
+    }
 
     <!-- Botón Submit -->
-    <button *ngIf="config.submitButtonShow" type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="onSubmit()">
+    @if (config.submitButtonShow) {
+    <button type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="onSubmit()">
       <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
       <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
     </button>
+    }
   </form>
 </div>

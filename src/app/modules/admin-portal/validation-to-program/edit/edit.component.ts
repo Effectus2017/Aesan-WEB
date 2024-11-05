@@ -211,7 +211,7 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       Name: formValues.name,
       CityId: formValues.city?.id,
       RegionId: formValues.region?.id,
-      ProgramId: formValues.program?.id,
+      //ProgramId: formValues.program?.id,
       StatusId: formValues.status?.id,
       SdrNumber: formValues.sdrNumber,
       UieNumber: formValues.uieNumber,

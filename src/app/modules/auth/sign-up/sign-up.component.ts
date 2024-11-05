@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -66,6 +66,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _userService = inject(UserService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _snackBar = inject(MatSnackBar);
+
+  private _translocoService = inject(TranslocoService);
+
   listPrograms = [];
   listCities = [];
   listRegions = [];
@@ -91,17 +94,22 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
 
-      // Datos de la Ciudad y Región
+      // Dirección
+      address: [null, Validators.required],
+      zipCode: [null, [Validators.required]],
       city: [null, Validators.required],
       region: [null, Validators.required],
       latitude: [null, Validators.required],
       longitude: [null, Validators.required],
 
-      // Dirección y Teléfono
-      address: [null, Validators.required],
-      phone: [null, [Validators.required]],
-      zipCode: [null, [Validators.required]],
+      // Copiar Dirección Física
+      sameAsPhysicalAddress: [false],
+
+      // Dirección Postal
       postalAddress: [null, Validators.required],
+      postalZipCode: [null, Validators.required],
+      postalCity: [null, Validators.required],
+      postalRegion: [null, Validators.required],
 
       // Datos del Contacto
       firstName: [null, Validators.required],
@@ -111,6 +119,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos del Correo Electrónico y Cargo
       email: [null, [Validators.required, Validators.email]],
+      phone: [null, [Validators.required]],
       administrationTitle: [null, Validators.required],
     });
 
@@ -195,11 +204,25 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   signUp(): void {
     // Return if the form is invalid
     if (this.signUpForm.invalid) {
-      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', {
+      this._snackBar.open(this._translocoService.translate('auth.sign-up.form-invalid.message'), this._translocoService.translate('auth.sign-up.form-invalid.close'), {
         duration: 5000,
       });
 
       this.signUpForm.markAllAsTouched();
+      return;
+    }
+
+    // Verificar elegibilidad para PACNA
+
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
+    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
+
+    // Verificar elegibilidad para PACNA
+    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
+      this._snackBar.open(this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'), this._translocoService.translate('auth.sign-up.pacna-not-eligible.close'), {
+        duration: 5000,
+      });
       return;
     }
 
@@ -215,24 +238,29 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const userAgencyRequest: UserAgencyRequest = {
       Agency: {
         Name: formValues.name ? formValues.name : '',
-        ProgramId: formValues.program ? formValues.program.id : 0,
         // Datos de la Agencia
         SdrNumber: formValues.sdrNumber ? formValues.sdrNumber : 0,
         UieNumber: formValues.uieNumber ? formValues.uieNumber : 0,
         EinNumber: formValues.einNumber ? formValues.einNumber : 0,
-        // Datos de la Ciudad y Región
+        // Dirección Física
+        Address: formValues.address ? formValues.address : '',
+        ZipCode: formValues.zipCode ? formValues.zipCode : 0,
         CityId: formValues.city ? formValues.city.id : 0,
         RegionId: formValues.region ? formValues.region.id : 0,
         Latitude: formValues.latitude ? formValues.latitude : 0,
         Longitude: formValues.longitude ? formValues.longitude : 0,
-        // Dirección y Teléfono
-        Address: formValues.address ? formValues.address : '',
-        ZipCode: formValues.zipCode ? formValues.zipCode : 0,
+        // Dirección Postal
         PostalAddress: formValues.postalAddress ? formValues.postalAddress : '',
+        PostalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
+        PostalCityId: formValues.postalCity ? formValues.postalCity.id : 0,
+        PostalRegionId: formValues.postalRegion ? formValues.postalRegion.id : 0,
+        // Datos del usuario
         Phone: formValues.phone ? formValues.phone : '',
         NonProfit: formValues.nonProfit === 'Yes' ? true : false,
         FederalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         StateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
+        //
+        Programs: formValues.programs ? formValues.programs : [],
       },
       User: {
         // Datos del Contacto
@@ -260,21 +288,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         console.log('Proceso de creación de usuario completado');
-         // Re-enable the form
-         this.signUpForm.enable();
+        // Re-enable the form
+        this.signUpForm.enable();
 
-         // Reset the form
-         this.signUpNgForm.resetForm();
+        // Reset the form
+        this.signUpNgForm.resetForm();
 
-         // Set the alert
-         this.alert = {
-           type: 'error',
-           message: 'Ocurrió un error al procesar su solicitud. Por favor, inténtelo de nuevo.',
-         };
+        // Set the alert
+        this.alert = {
+          type: 'error',
+          message: this._translocoService.translate('auth.sign-up.error.processing-request'),
+        };
 
-         // Show the alert
-         this.showAlert = true;
-      }
+        // Show the alert
+        this.showAlert = true;
+      },
     });
   }
 
@@ -286,11 +314,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
       this.isEligible = false;
       this._fuseConfirmationService.open({
-        title: 'Notificación',
-        message: 'Usted no es elegible para participar de los programas de AESAN',
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
         actions: {
           confirm: {
-            label: 'Aceptar',
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -311,11 +339,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
       this.isEligible = false;
       this._fuseConfirmationService.open({
-        title: 'Notificación',
-        message: 'You are not eligible to participate in PACNA program',
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
         actions: {
           confirm: {
-            label: 'Aceptar',
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -324,6 +352,26 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       });
     } else {
       this.isEligible = true;
+    }
+  }
+
+  // Copiar Dirección Física
+  onCheckboxChange(event: any): void {
+    if (event.checked) {
+      this.signUpForm.patchValue({
+        postalAddress: this.signUpForm.value.address,
+        postalCity: this.signUpForm.value.city,
+        postalRegion: this.signUpForm.value.region,
+        postalZipCode: this.signUpForm.value.zipCode,
+      });
+      this.signUpForm.updateValueAndValidity();
+    } else {
+      this.signUpForm.patchValue({
+        postalAddress: '',
+        postalCity: '',
+        postalRegion: '',
+        postalZipCode: '',
+      });
     }
   }
 }

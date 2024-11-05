@@ -15,6 +15,7 @@ describe('Pruebas de registro de auspiciador', () => {
         // Seleccionar programa PDAM
         cy.get('[data-cy=program-select]').click();
         cy.get('[data-cy=program-option]').contains('PDAM').click();
+        cy.get('[data-cy=program-option]').contains('PACNA').click(); // Seleccionar PACNA también
 
         // Seleccionar "No" para sin fines de lucro
         cy.get('[data-cy=non-profit-select]').click();
@@ -46,7 +47,7 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=state-funds-denied-yes]').click();
 
         // Verificar notificación
-        cy.contains('You are not eligible to participate in PACNA program').should('be.visible');
+        cy.contains('Usted no es elegible para participar en el programa PACNA').should('be.visible');
         cy.get('[data-cy=submit-button]').should('be.disabled');
 
         // Restablecer fondos estatales
@@ -58,7 +59,7 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=federal-funds-denied-yes]').click();
 
         // Verificar notificación
-        cy.contains('You are not eligible to participate in PACNA program').should('be.visible');
+        cy.contains('Usted no es elegible para participar en el programa PACNA').should('be.visible');
         cy.get('[data-cy=submit-button]').should('be.disabled');
     });
 
@@ -67,6 +68,7 @@ describe('Pruebas de registro de auspiciador', () => {
         // Seleccionar programa PACNA (permite organizaciones con fines de lucro)
         cy.get('[data-cy=program-select]').click();
         cy.get('[data-cy=program-option]').contains('PACNA').click();
+        cy.get('[data-cy=program-option]').contains('PDAM').click(); // Seleccionar PDAM también
 
         // Completar campos de elegibilidad
         cy.get('[data-cy=non-profit-select]').click();
@@ -107,9 +109,15 @@ describe('Pruebas de registro de auspiciador', () => {
             `1-787-${faker.string.numeric(3)}-${faker.string.numeric(4)}`
         );
         cy.get('[data-cy=zip-code-input]').type(faker.string.numeric(5));
-        cy.get('[data-cy=postal-address-input]').type(
-            'PO Box ' + faker.string.numeric(5)
-        );
+
+        // Seleccionar el checkbox "Same as Physical Address"
+        cy.get('[data-cy=same-as-physical-address-checkbox]').check();
+
+        // Verificar que los campos de dirección postal se llenan automáticamente
+        cy.get('[data-cy=postal-address-input]').should('have.value', faker.location.streetAddress());
+        cy.get('[data-cy=postal-city-select]').should('have.value', 'Arecibo');
+        cy.get('[data-cy=postal-region-select]').should('have.value', 'Aguada');
+        cy.get('[data-cy=postal-zip-code-input]').should('have.value', faker.string.numeric(5));
 
         // Información del administrador
         cy.get('[data-cy=first-name-input]').type(faker.person.firstName());
