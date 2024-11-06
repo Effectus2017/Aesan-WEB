@@ -77,6 +77,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<Agency>(),
+    dataSourceList: [],
     columnsSchema: COLUMNS_SCHEMA,
     displayedColumns: COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -95,6 +96,9 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       this.tableConfig.dataSource.data = result.body.data;
       this.tableConfig.length = result.body.count;
+      // Lista de datos
+      this.tableConfig.dataSourceList = result.body.data;
+
       // Mark for check
       this._changeDetectorRef.markForCheck();
     });
@@ -108,7 +112,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   onSearch() {
     if (this.headerConfig.formGroup.valid) {
-      console.log('onSearch');
       this.getAll(0, this.headerConfig.formGroup.value);
       this.headerConfig.clearVisible = true;
     }

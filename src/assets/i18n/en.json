@@ -31,7 +31,9 @@
             "user-information-description": "Here you can add your user information",
             "title": "Program Application",
             "program": {
-                "label": "Which program do you want to participate in?"
+                "label": "Which program do you want to participate in?",
+                "required": "Please select at least one program",
+                "required-close": "Close"
             },
             "non-profit": {
                 "label": "Is it a non-profit organization?",

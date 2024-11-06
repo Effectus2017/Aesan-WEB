@@ -212,6 +212,28 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Verificar que se haya seleccionado al menos un programa
+    if (this.signUpForm.value.program?.length === 0) {
+      this._snackBar.open(this._translocoService.translate('auth.sign-up.program.required'), this._translocoService.translate('auth.sign-up.program.required-close'), {
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Obtener los IDs de los programas seleccionados
+    const programs = this.signUpForm.value.program ? this.signUpForm.value.program.map((program: any) => program.id) : [];
+
+    // Validar que la lista de programas no esté vacía y que sean todos numéricos
+    if (programs.length === 0 || !programs.every(id => typeof id === 'number')) {
+      this.alert = {
+        type: 'error',
+        message: this._translocoService.translate('auth.sign-up.program.required'),
+      };
+      this.showAlert = true;
+      this.signUpForm.enable(); // Rehabilitar el formulario
+      return; // Salir de la función si la validación falla
+    }
+
     // Verificar elegibilidad para PACNA
 
     const selectedProgram = this.signUpForm.value.program?.name;
@@ -260,7 +282,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         FederalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         StateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         //
-        Programs: formValues.programs ? formValues.programs : [],
+        Programs: formValues.program ? formValues.program.map((program: any) => program.id) : [],
+        //
+        Email: formValues.email ? formValues.email : '',
       },
       User: {
         // Datos del Contacto
@@ -274,7 +298,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       },
     };
 
-    console.log(userAgencyRequest);
+
+
     const requestParameters: QueryParameters = {};
     //Registrar el usuario
     this._userService.registerUserAgency(userAgencyRequest, requestParameters).subscribe({
@@ -307,11 +332,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   nonProfitChange(event: any): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+
+
+    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
     const isNotNonProfit = this.signUpForm.value.nonProfit === 'No';
 
     // Verificar elegibilidad para PDAM y PSAV
-    if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+    if (isNotNonProfit && selectedPrograms.some(program => ['PDAM', 'PSAV'].includes(program))) {
       this.isEligible = false;
       this._fuseConfirmationService.open({
         title: this._translocoService.translate('auth.sign-up.notification.title'),
@@ -331,12 +358,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   checkFundsEligibility(): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
     const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
     const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
 
     // Verificar elegibilidad para PACNA
-    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
+    if ((stateFundsDenied || federalFundsDenied) && selectedPrograms.some(program => program === 'PACNA')) {
       this.isEligible = false;
       this._fuseConfirmationService.open({
         title: this._translocoService.translate('auth.sign-up.notification.title'),

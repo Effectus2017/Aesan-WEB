@@ -1,39 +1,54 @@
 <div class="absolute inset-0 flex flex-col min-w-0">
   <!-- Header con título y botones -->
-
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-  <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
+  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
+      <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <!-- Sponsor Information Section -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "auth.sign-up.sponsor-information" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "auth.sign-up.sponsor-information-description" | transloco }}</p>
+        </div>
 
-
-
-      <div class="grid grid-cols-12 gap-2 pb-8 pl-8 pr-8">
-        <div class="grid grid-cols-1 col-span-12 gap-4">
-            <p class="text-lg font-medium">Sponsor Information</p>
-            <p class="mb-6 text-secondary">Here you can add your sponsor information</p>
-          </div>
-        <!-- Información del Programa -->
-        <div class="grid grid-cols-2 col-span-8 gap-4">
+        <!-- Program and Status Selection -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field data-cy="program-field">
             <mat-label>{{ "validation-to-program.edit.program.label" | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select" multiple="">
+            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select" multiple>
               <mat-option *ngFor="let program of listPrograms" [value]="program">{{ program.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field data-cy="status-field">
             <mat-label>{{ "validation-to-program.edit.status.label" | transloco }}</mat-label>
-            <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select" [placeholder]="'validation-to-program.edit.status.placeholder' | transloco">
+            <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select">
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
 
+        <!-- Non-Profit and Funds Denied Questions -->
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field data-cy="non-profit-field">
+            <mat-label>{{ "auth.sign-up.non-profit.label" | transloco }}</mat-label>
+            <mat-select formControlName="nonProfit" data-cy="non-profit-select">
+              <mat-option value="Yes">{{ "auth.sign-up.non-profit.yes" | transloco }}</mat-option>
+              <mat-option value="No">{{ "auth.sign-up.non-profit.no" | transloco }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
+          <mat-form-field data-cy="state-funds-denied-field">
+            <mat-label>{{ "auth.sign-up.state-funds-denied.label" | transloco }}</mat-label>
+            <mat-select formControlName="stateFundsDenied" data-cy="state-funds-denied-select">
+              <mat-option value="Yes">{{ "auth.sign-up.state-funds-denied.yes" | transloco }}</mat-option>
+              <mat-option value="No">{{ "auth.sign-up.state-funds-denied.no" | transloco }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div> -->
 
-        <!-- Información de la Agencia -->
-        <div class="grid grid-cols-2 col-span-8 gap-4">
+        <!-- Agency Information -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.agency.label" | transloco }}</mat-label>
             <input matInput formControlName="name" [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco" />
@@ -41,98 +56,143 @@
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.uieNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="uieNumber" [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco" />
+            <input matInput formControlName="uieNumber" [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco" type="number" />
           </mat-form-field>
-        </div>
 
-        <div class="grid grid-cols-2 col-span-8 gap-4">
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.einNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="einNumber" [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco" />
+            <input matInput formControlName="einNumber" [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco" type="number" />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
-            <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" />
+            <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" type="number" />
           </mat-form-field>
         </div>
 
-        <!-- Ciudad y Región  -->
-
-        <div class="grid grid-cols-2 col-span-8 gap-4">
-          <mat-form-field data-cy="city-field">
-            <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'city'" [compareWith]="compareItems" data-cy="city-select">
-              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field data-cy="region-field">
-            <mat-label>{{ "validation-to-program.edit.region.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'region'" [compareWith]="compareItems" data-cy="region-select">
-              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "auth.sign-up.address.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "auth.sign-up.address.description" | transloco }}</p>
         </div>
 
-        <!-- Dirección y Contacto -->
-        <div class="grid grid-cols-4 col-span-8 gap-4">
-          <mat-form-field>
+        <!-- Address -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Address *  -->
+          <mat-form-field data-cy="address-field">
             <mat-label>{{ "validation-to-program.edit.address.label" | transloco }}</mat-label>
             <input matInput formControlName="address" [placeholder]="'validation-to-program.edit.address.placeholder' | transloco" />
           </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>{{ "validation-to-program.edit.phone.label" | transloco }}</mat-label>
-            <input matInput formControlName="phone" [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco" />
+          <!-- City *  -->
+          <mat-form-field data-cy="city-field">
+            <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
+            <mat-select formControlName="city" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event)" data-cy="city-select">
+              <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" />
-          </mat-form-field>
-
-          <mat-form-field>
-            <mat-label>{{ "validation-to-program.edit.postal-address.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" [placeholder]="'validation-to-program.edit.postal-address.placeholder' | transloco" />
-            <!-- <mat-error *ngIf="this.headerConfig.formGroup.get('postalAddress').hasError('required')" data-cy="postal-address-required-error">
-              {{ "validation-to-program.edit.postal-address.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="this.headerConfig.formGroup.get('postalAddress').hasError('minlength')" data-cy="postal-address-minlength-error">
-              {{ "validation-to-program.edit.postal-address.minlength" | transloco }}
-            </mat-error> -->
+          <!-- Region *  -->
+          <mat-form-field data-cy="region-field">
+            <mat-label>{{ "validation-to-program.edit.region.label" | transloco }}</mat-label>
+            <mat-select formControlName="region" [compareWith]="compareItems" data-cy="region-select">
+              <mat-option *ngFor="let region of listRegions" [value]="region">{{ region.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Información Personal -->
-        <div class="grid grid-cols-4 col-span-8 gap-4">
+        <!-- Additional Location Details -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Zip Code *  -->
           <mat-form-field>
+            <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
+            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" type="number" />
+          </mat-form-field>
+          <!-- Latitude *  -->
+          <mat-form-field>
+            <mat-label>{{ "auth.sign-up.latitude.label" | transloco }}</mat-label>
+            <input matInput formControlName="latitude" [placeholder]="'auth.sign-up.latitude.placeholder' | transloco" />
+          </mat-form-field>
+          <!-- Longitude *  -->
+          <mat-form-field>
+            <mat-label>{{ "auth.sign-up.longitude.label" | transloco }}</mat-label>
+            <input matInput formControlName="longitude" [placeholder]="'auth.sign-up.longitude.placeholder' | transloco" />
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "auth.sign-up.postal-address.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "auth.sign-up.postal-address.description" | transloco }}</p>
+        </div>
+
+        <!-- Postal Address *  -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <!-- Postal Address *  -->
+          <mat-form-field data-cy="postal-address-field">
+            <mat-label>{{ "auth.sign-up.postal-address.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'auth.sign-up.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
+          </mat-form-field>
+          <!-- Postal City *  -->
+          <mat-form-field data-cy="postal-city-field">
+            <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'postalCity'" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event)" data-cy="postal-city-select">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- Postal Region *  -->
+          <mat-form-field data-cy="postal-region-field">
+            <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'postalRegion'" [compareWith]="compareItems" data-cy="postal-region-select">
+              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- Postal Zip Code *  -->
+          <mat-form-field data-cy="postal-zip-code-field">
+            <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="postal-zip-code-input" />
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "auth.sign-up.user-information" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "auth.sign-up.user-information-description" | transloco }}</p>
+        </div>
+
+        <!-- Personal Information -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+          <!-- First Name *  -->
+          <mat-form-field data-cy="first-name-field">
             <mat-label>{{ "validation-to-program.edit.first-name.label" | transloco }}</mat-label>
             <input matInput formControlName="firstName" [placeholder]="'validation-to-program.edit.first-name.placeholder' | transloco" />
           </mat-form-field>
-
-          <mat-form-field>
+          <!-- Middle Name *  -->
+          <mat-form-field data-cy="middle-name-field">
             <mat-label>{{ "validation-to-program.edit.middle-name.label" | transloco }}</mat-label>
             <input matInput formControlName="middleName" [placeholder]="'validation-to-program.edit.middle-name.placeholder' | transloco" />
           </mat-form-field>
-
-          <mat-form-field>
+          <!-- Father Last Name *  -->
+          <mat-form-field data-cy="father-last-name-field">
             <mat-label>{{ "validation-to-program.edit.father-last-name.label" | transloco }}</mat-label>
             <input matInput formControlName="fatherLastName" [placeholder]="'validation-to-program.edit.father-last-name.placeholder' | transloco" />
           </mat-form-field>
-
-          <mat-form-field>
+          <!-- Mother Last Name *  -->
+          <mat-form-field data-cy="mother-last-name-field">
             <mat-label>{{ "validation-to-program.edit.mother-last-name.label" | transloco }}</mat-label>
             <input matInput formControlName="motherLastName" [placeholder]="'validation-to-program.edit.mother-last-name.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-2 col-span-8 gap-4">
-          <mat-form-field>
+        <!-- Contact Information -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Email *  -->
+          <mat-form-field data-cy="email-field">
             <mat-label>{{ "validation-to-program.edit.email.label" | transloco }}</mat-label>
-            <input matInput formControlName="email" [placeholder]="'validation-to-program.edit.email.placeholder' | transloco" />
+            <input matInput formControlName="email" [placeholder]="'validation-to-program.edit.email.placeholder' | transloco" type="email" />
           </mat-form-field>
-          <mat-form-field>
+          <!-- Phone *  -->
+          <mat-form-field data-cy="phone-field">
+            <mat-label>{{ "validation-to-program.edit.phone.label" | transloco }}</mat-label>
+            <input matInput formControlName="phone" [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco" type="tel" />
+          </mat-form-field>
+          <!-- Administration Title *  -->
+          <mat-form-field data-cy="administration-title-field">
             <mat-label>{{ "validation-to-program.edit.administration-title.label" | transloco }}</mat-label>
             <input matInput formControlName="administrationTitle" [placeholder]="'validation-to-program.edit.administration-title.placeholder' | transloco" />
           </mat-form-field>

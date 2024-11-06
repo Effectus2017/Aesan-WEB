@@ -15,12 +15,19 @@ export interface Agency {
     address?: string;
     phone?: string;
     zipCode?: number;
-    postalAddress?: string;
+
     // Location
     city?: City;
     region?: Region;
     latitude?: number;
     longitude?: number;
+
+    // Postal Address
+    postalAddress?: string;
+    postalZipCode?: number;
+    postalCity?: City;
+    postalRegion?: Region;
+
     // Contact
     email?: string;
     // Dates
@@ -28,9 +35,13 @@ export interface Agency {
     updatedAt?: Date;
 
     // Status
+    isActive?: boolean;
+    isListable?: boolean;
+
+    // Status
     status?: AgencyStatus;
     // Program
-    program?: Program;
+    programs?: Program[];
     // User
     user?: User;
 }

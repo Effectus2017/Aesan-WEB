@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 
 export interface GenericTableConfig<T = any> {
   dataSource: MatTableDataSource<T>;
+  dataSourceList: T[];
   columnsSchema: any[];
   displayedColumns: string[];
   handler?: any;

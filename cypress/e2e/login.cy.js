@@ -16,16 +16,19 @@ describe('Pruebas de inicio de sesión', () => {
         // Hacer clic en el botón de inicio de sesión
         cy.get('[data-cy=submit-button]').click();
 
-        // Espera a que se complete la solicitud de inicio de sesión
-        // cy.wait('@login', { timeout: 5000 }).then((interception) => {
-        //     cy.log('login', interception); // Verifica la información de la interceptación
-        //     expect(interception.response.statusCode).to.eq(200); // Verifica el código de estado
-        //     expect(interception.response.body).to.have.property('access_token'); // Verifica que la respuesta contenga un token
-        //     // Verifica que la redirección sea correcta
-        //     cy.url().should('include', '/auth-redirect');
-        // });
+        //cy.visit('http://localhost:4200/auth-redirect');
 
-        cy.visit('http://localhost:4200/auth-redirect');
+        // cy.wait(1000);
+
+        // // Verificar que se redirige a la página principal
+        // cy.visit('http://localhost:4200/admin-portal/validation-to-program');
+
+        // // Buscar la agencia recién creada
+        // cy.get('[data-cy=generic-header-search-input]').type('Waters'); // Asumiendo que el nombre de la agencia es el que se generó
+        // cy.get('[data-cy=generic-header-search-button]').click(); // Hacer clic en el botón de búsqueda
+
+        // // Verificar que la agencia aparece en la lista
+        // cy.get('[data-cy=generic-table-cells]').should('contain', 'Waters');
 
     });
 

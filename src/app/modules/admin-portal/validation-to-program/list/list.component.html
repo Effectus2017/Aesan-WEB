@@ -6,5 +6,5 @@
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
   <!-- Paginador -->
-  <mat-paginator [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
+  <mat-paginator class="hidden sm:block" [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
 </div>

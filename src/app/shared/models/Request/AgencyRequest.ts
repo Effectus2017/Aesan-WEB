@@ -25,6 +25,9 @@ export interface AgencyRequest {
     NonProfit?: boolean;
     FederalFundsDenied?: boolean;
     StateFundsDenied?: boolean;
+    // Status
+    IsActive?: boolean;
+    IsListable?: boolean;
     // Datos del usuario
     FirstName?: string;
     MiddleName?: string;

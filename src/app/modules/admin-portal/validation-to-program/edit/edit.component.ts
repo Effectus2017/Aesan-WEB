@@ -27,6 +27,8 @@ import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
 import { compareByProperty } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { City } from 'app/shared/models/City';
+import { HttpResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -92,12 +94,19 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       // Datos de la Ciudad y Región
       city: [null, Validators.required],
       region: [null, Validators.required],
+      latitude: [null, Validators.required],
+      longitude: [null, Validators.required],
 
       // Dirección y Coordenadas
       address: [null, Validators.required],
       phone: [null, Validators.required],
       zipCode: [null, Validators.required],
+
+      // Dirección Postal
       postalAddress: [null, Validators.required],
+      postalZipCode: [null, Validators.required],
+      postalCity: [null, Validators.required],
+      postalRegion: [null, Validators.required],
 
       // Datos del Contacto
       firstName: [null, Validators.required],
@@ -169,14 +178,22 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       name: param.name || null,
       city: param.city || null,
       region: param.region || null,
-      program: param.program || null,
+      program: param.programs || null,
       status: param.status || null,
       sdrNumber: param.sdrNumber || null,
       uieNumber: param.uieNumber || null,
       einNumber: param.einNumber || null,
+      // Dirección
       address: param.address || null,
       zipCode: param.zipCode || null,
+      latitude: param.latitude || null,
+      longitude: param.longitude || null,
+      // Dirección Postal
       postalAddress: param.postalAddress || null,
+      postalZipCode: param.postalZipCode || null,
+      postalCity: param.postalCity || null,
+      postalRegion: param.postalRegion || null,
+      // Datos del Contacto
       firstName: param.user.firstName || null,
       middleName: param.user.middleName || null,
       fatherLastName: param.user.fatherLastName || null,
@@ -211,7 +228,6 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       Name: formValues.name,
       CityId: formValues.city?.id,
       RegionId: formValues.region?.id,
-      //ProgramId: formValues.program?.id,
       StatusId: formValues.status?.id,
       SdrNumber: formValues.sdrNumber,
       UieNumber: formValues.uieNumber,
@@ -226,6 +242,8 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
       FatherLastName: formValues.fatherLastName,
       MotherLastName: formValues.motherLastName,
       AdministrationTitle: formValues.administrationTitle,
+      //
+      Programs: formValues.program ? formValues.program.map((program: any) => program.id) : [],
     };
 
     // Parámetros de consulta
@@ -409,6 +427,26 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
         };
 
         this._agencyService.getAgencyById(queryParams).subscribe();
+      },
+    });
+  }
+
+  // Método para obtener todas las regiones según el ID de la ciudad
+  getRegionsByCityId(city: City): void {
+    const queryParams: QueryParameters = {
+      cityId: city.id,
+      alls: true,
+    };
+
+    this._geoService.getRegionsByCityId(queryParams).subscribe({
+      next: (response: HttpResponse<any>) => {
+        this.listRegions = response.body.data;
+      },
+      error: (error) => {
+        console.error('Error al cargar las regiones', error);
+      },
+      complete: () => {
+        console.log('Regiones cargadas con éxito');
       },
     });
   }
