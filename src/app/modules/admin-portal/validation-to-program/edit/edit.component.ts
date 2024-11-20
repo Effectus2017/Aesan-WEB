@@ -29,6 +29,8 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
 import { HttpResponse } from '@angular/common/http';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -52,12 +54,13 @@ import { HttpResponse } from '@angular/common/http';
     MatTableModule,
     MatPaginatorModule,
     NgFor,
-    NgIf,
-    NgSwitch,
-    NgSwitchCase,
+    // NgIf,
+    // NgSwitch,
+    // NgSwitchCase,
     GenericHeaderComponent,
     TranslocoModule,
     MatSnackBarModule,
+    MatDialogModule,
   ],
 })
 export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -78,6 +81,8 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   listRegions = [];
 
   param: Agency;
+
+  private _dialog = inject(MatDialog);
 
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
@@ -373,61 +378,131 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
    * Rechaza la agencia
    */
   onReject() {
-    const queryParams: QueryParameters = {
-      agencyId: this.param.id,
-      statusId: 6, // Suponiendo que 6 es el ID para rechazar la agencia
-      rejectionJustification: 'La solicitud ha sido rechazada debido a la falta de documentación necesaria.',
-    };
+    this.showRejectDialog();
+    // const queryParams: QueryParameters = {
+    //   agencyId: this.param.id,
+    //   statusId: 6, // Suponiendo que 6 es el ID para rechazar la agencia
+    //   rejectionJustification: 'La solicitud ha sido rechazada debido a la falta de documentación necesaria.',
+    // };
 
-    this._agencyService.updateAgencyStatus(queryParams).subscribe({
-      next: (response) => {
-        if (response.body) {
-          this._fuseConfirmationService.open({
-            title: this._translocoService.translate('dialog.reject.title'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:check-circle',
-              color: 'success',
-            },
-            message: this._translocoService.translate('dialog.reject.message'),
-            actions: {
-              confirm: {
-                label: this._translocoService.translate('dialog.reject.confirm'),
-              },
-              cancel: {
-                show: false,
-              },
-            },
-          });
-        }
-      },
-      error: (error) => {
-        this._fuseConfirmationService.open({
-          title: this._translocoService.translate('dialog.error.title'),
-          icon: {
-            show: true,
-            name: 'heroicons_outline:exclamation-circle',
-            color: 'warn',
-          },
-          message: 'Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde.',
-          actions: {
-            confirm: {
-              label: 'Aceptar',
-            },
-            cancel: {
-              show: false,
-            },
-          },
-        });
-        console.error(error);
-      },
-      complete: () => {
+    // this._agencyService.updateAgencyStatus(queryParams).subscribe({
+    //   next: (response) => {
+    //     if (response.body) {
+    //       this._fuseConfirmationService.open({
+    //         title: this._translocoService.translate('dialog.reject.title'),
+    //         icon: {
+    //           show: true,
+    //           name: 'heroicons_outline:check-circle',
+    //           color: 'success',
+    //         },
+    //         message: this._translocoService.translate('dialog.reject.message'),
+    //         actions: {
+    //           confirm: {
+    //             label: this._translocoService.translate('dialog.reject.confirm'),
+    //           },
+    //           cancel: {
+    //             show: false,
+    //           },
+    //         },
+    //       });
+    //     }
+    //   },
+    //   error: (error) => {
+    //     this._fuseConfirmationService.open({
+    //       title: this._translocoService.translate('dialog.error.title'),
+    //       icon: {
+    //         show: true,
+    //         name: 'heroicons_outline:exclamation-circle',
+    //         color: 'warn',
+    //       },
+    //       message: 'Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde.',
+    //       actions: {
+    //         confirm: {
+    //           label: 'Aceptar',
+    //         },
+    //         cancel: {
+    //           show: false,
+    //         },
+    //       },
+    //     });
+    //     console.error(error);
+    //   },
+    //   complete: () => {
+    //     const queryParams: QueryParameters = {
+    //       agencyId: this.param.id,
+    //     };
+
+    //     this._agencyService.getAgencyById(queryParams).subscribe();
+    //   },
+    // });
+  }
+
+  /**
+   * Muestra el diálogo para ingresar la justificación del rechazo
+   */
+  private showRejectDialog(): void {
+    const dialogRef = this._dialog.open(RejectDialogComponent, {
+      data: { reason: '' },
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: string | undefined) => {
+      if (result) {
         const queryParams: QueryParameters = {
           agencyId: this.param.id,
+          statusId: 6,
+          rejectionJustification: result.trim(),
         };
 
-        this._agencyService.getAgencyById(queryParams).subscribe();
-      },
+        this._agencyService.updateAgencyStatus(queryParams).subscribe({
+          next: (response) => {
+            if (response.body) {
+              this._fuseConfirmationService.open({
+                title: this._translocoService.translate('dialog.reject.title'),
+                icon: {
+                  show: true,
+                  name: 'heroicons_outline:check-circle',
+                  color: 'success',
+                },
+                message: this._translocoService.translate('dialog.reject.message'),
+                actions: {
+                  confirm: {
+                    label: this._translocoService.translate('dialog.reject.ok'),
+                    color: 'primary',
+                  },
+                  cancel: {
+                    show: false,
+                  },
+                },
+              });
+            }
+          },
+          error: (error) => {
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('dialog.error.title'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-circle',
+                color: 'warn',
+              },
+              message: this._translocoService.translate('dialog.reject.errorMessage'),
+              actions: {
+                confirm: {
+                  label: this._translocoService.translate('dialog.error.ok'),
+                  color: 'primary',
+                },
+                cancel: {
+                  show: false,
+                },
+              },
+            });
+            console.error(error);
+          },
+          complete: () => {
+            this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+          },
+        });
+      }
     });
   }
 

@@ -1,0 +1,31 @@
+<div class="min-w-[400px]">
+  <h2 mat-dialog-title class="text-xl font-semibold">{{ 'dialog.reject.title' | transloco }}</h2>
+  
+  <mat-dialog-content class="p-4">
+    <p class="mb-4">{{ 'dialog.reject.enterReason' | transloco }}</p>
+    <mat-form-field class="w-full mt-4">
+      <textarea
+        matInput
+        class="resize-none"
+        [(ngModel)]="data.reason"
+        placeholder="{{ 'dialog.reject.reasonPlaceholder' | transloco }}"
+        rows="4"
+        required
+      ></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end" class="p-4">
+    <button mat-button [mat-dialog-close]="undefined" class="mr-2">
+      {{ 'dialog.reject.cancel' | transloco }}
+    </button>
+    <button
+      mat-flat-button
+      color="warn"
+      [disabled]="!data.reason?.trim()"
+      [mat-dialog-close]="data.reason"
+    >
+      {{ 'dialog.reject.confirm' | transloco }}
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -275,18 +275,29 @@
     "dialog": {
         "success": {
             "title": "Success",
-            "message": "The agency has been successfully approved.",
+            "message": "The agency has been approved successfully.",
             "confirm": "Accept"
         },
         "error": {
             "title": "Error",
-            "message": "An error occurred while updating the agency. Please try again later.",
-            "confirm": "Accept"
+            "message": "An error has occurred. Please try again.",
+            "confirm": "Accept",
+            "ok": "Aceptar"
         },
         "reject": {
-            "title": "Confirmation",
-            "message": "The agency has been successfully rejected.",
-            "confirm": "Accept"
-        }
+            "title": "Rejection Justification",
+            "enterReason": "Please enter the reason for rejection:",
+            "reasonLabel": "Rejection reason",
+            "reasonPlaceholder": "Enter the reason for rejection here...",
+            "confirm": "Reject",
+            "cancel": "Cancel",
+            "ok": "OK",
+            "success": "The agency has been rejected successfully",
+            "error": "Error rejecting the agency",
+            "errorNoReason": "You must enter a reason for rejection",
+            "message": "The agency has been rejected successfully.",
+            "errorMessage": "An error occurred while rejecting the agency. Please try again later."
+        },
+        "close": "Close"
     }
 }

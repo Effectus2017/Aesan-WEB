@@ -44,9 +44,12 @@
                 "yes": "Sí",
                 "no": "No"
             },
+            "sponsor-information": "Información del Patrocinador",
+            "sponsor-information-description": "Aquí puede agregar la información del patrocinador",
             "agency": {
                 "label": "Nombre de la Agencia Patrocinadora",
-                "placeholder": "Ingresa el nombre de la agencia patrocinadora"
+                "placeholder": "Ingresa el nombre de la agencia patrocinadora",
+                "description": "Información del patrocinador"
             },
             "state-department-registration": {
                 "label": "Número de Registro del Departamento de Estado",
@@ -54,7 +57,8 @@
             },
             "address": {
                 "label": "Dirección",
-                "placeholder": "Ingresa la dirección"
+                "placeholder": "Ingresa la dirección",
+                "description": "Información de la dirección"
             },
             "city": {
                 "label": "Ciudad",
@@ -70,8 +74,11 @@
             },
             "postal-address": {
                 "label": "Dirección Postal",
-                "placeholder": "Ingresa la dirección postal"
+                "placeholder": "Ingresa la dirección postal",
+                "description": "Información de la dirección postal"
             },
+            "user-information": "Información del Usuario",
+            "user-information-description": "Aquí puede agregar la información del usuario",
             "first-name": {
                 "label": "Nombre",
                 "placeholder": "Ingresa el nombre"
@@ -251,13 +258,24 @@
         },
         "error": {
             "title": "Error",
-            "message": "Ocurrió un error al actualizar la agencia. Por favor, inténtelo de nuevo más tarde.",
-            "confirm": "Aceptar"
+            "message": "Ha ocurrido un error. Por favor, inténtelo de nuevo.",
+            "confirm": "Aceptar",
+            "ok": "Aceptar"
         },
         "reject": {
-            "title": "Confirmación",
-            "message": "La agencia ha sido rechazada con éxito.",
-            "confirm": "Aceptar"
-        }
+            "title": "Justificación de Rechazo",
+            "enterReason": "Por favor, ingrese el motivo del rechazo:",
+            "reasonLabel": "Motivo del rechazo",
+            "reasonPlaceholder": "Ingrese aquí el motivo del rechazo...",
+            "confirm": "Rechazar",
+            "cancel": "Cancelar",
+            "ok": "Aceptar",
+            "success": "La agencia ha sido rechazada exitosamente",
+            "error": "Error al rechazar la agencia",
+            "errorNoReason": "Debe ingresar un motivo para el rechazo",
+            "message": "La agencia ha sido rechazada exitosamente.",
+            "errorMessage": "Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde."
+        },
+        "close": "Cerrar"
     }
 }
