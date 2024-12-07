@@ -31,42 +31,51 @@ export class NavigationService {
    */
   get(): Observable<Navigation> {
     return this._httpClient.get<Navigation>('api/common/navigation').pipe(
-      map((navigation) => this.adjustNavigationLinks(navigation)),
+      map((navigation) => this.adjustNavigationByUserRole(navigation)),
       tap((navigation) => {
         this._navigation.next(navigation);
       })
     );
   }
 
-  private adjustNavigationLinks(navigation: Navigation): Navigation {
+  private adjustNavigationByUserRole(navigation: Navigation): Navigation {
     const userRole = this._authService.getUserRole();
     const userAgency = this._authService.getUserAgency();
     const userPrograms = this._authService.getUserPrograms();
 
+    // Determinar el prefijo de la ruta basado en el rol y programa
     let prefix = '/admin-portal/';
 
-    switch (userPrograms[0]) {
-      case 'PDAM':
-        prefix = '/pdam-portal/';
-        break;
-      case 'PSAV':
-        prefix = '/psav-portal/';
-        break;
-      case 'PACNA':
-        prefix = '/pacna-portal/';
-        break;
-      case 'PFHF':
-        prefix = '/pfhf-portal/';
-        break;
-      case 'PAF':
-        prefix = '/paf-portal/';
-        break;
-      case 'PDFE':
-        prefix = '/pdf-portal/';
-        break;
-      default:
-        prefix = '/admin-portal/';
-        break;
+    if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+      prefix = '/agency-portal/';
+      // Si es una agencia, usar la navegación específica de agencia
+      navigation.default = this.getAgencyNavigation();
+      navigation.compact = this.getAgencyNavigation();
+    } else {
+      // Ajustar el prefijo según el programa para otros roles
+      switch (userPrograms) {
+        case 'PDAM':
+          prefix = '/pdam-portal/';
+          break;
+        case 'PSAV':
+          prefix = '/psav-portal/';
+          break;
+        case 'PACNA':
+          prefix = '/pacna-portal/';
+          break;
+        case 'PFHF':
+          prefix = '/pfhf-portal/';
+          break;
+        case 'PAF':
+          prefix = '/paf-portal/';
+          break;
+        case 'PDFE':
+          prefix = '/pdf-portal/';
+          break;
+        default:
+          prefix = '/admin-portal/';
+          break;
+      }
     }
 
     const adjustLinks = (items: FuseNavigationItem[]): FuseNavigationItem[] => {
@@ -91,23 +100,53 @@ export class NavigationService {
       navigation.compact = adjustLinks(navigation.compact);
     }
 
-    if (navigation.futuristic) {
-      navigation.futuristic = adjustLinks(navigation.futuristic);
-    }
-
-    if (navigation.horizontal) {
-      navigation.horizontal = adjustLinks(navigation.horizontal);
-    }
-
     return navigation;
   }
 
+  private getAgencyNavigation(): FuseNavigationItem[] {
+    return [
+      {
+        id: 'agency-home',
+        title: 'Inicio',
+        type: 'basic',
+        icon: 'heroicons_outline:home',
+        link: 'home'
+      },
+      {
+        id: 'program-requests',
+        title: 'Solicitudes al Programa',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: 'program-requests'
+      },
+      {
+        id: 'documents',
+        title: 'Documentos',
+        type: 'basic',
+        icon: 'heroicons_outline:document',
+        link: 'documents'
+      },
+      {
+        id: 'budget',
+        title: 'Presupuesto',
+        type: 'basic',
+        icon: 'heroicons_outline:currency-dollar',
+        link: 'budget'
+      },
+      {
+        id: 'reimbursements',
+        title: 'Reembolsos',
+        type: 'basic',
+        icon: 'heroicons_outline:receipt-refund',
+        link: 'reimbursements'
+      }
+    ];
+  }
+
   private isItemAllowed(item: FuseNavigationItem, userRole: string): boolean {
-    // Si no hay roles especificados, se permite para todos
     if (!item.roles || item.roles.length === 0) {
       return true;
     }
-    // Verificar si el rol del usuario está en la lista de roles permitidos
     return item.roles.includes(userRole);
   }
 }

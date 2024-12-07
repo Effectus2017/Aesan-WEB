@@ -1,7 +1,7 @@
 import { HttpParams } from '@angular/common/http';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
-
+import { throwError } from 'rxjs';
 
 // Función genérica para comparar elementos por una propiedad específica
 export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
@@ -78,4 +78,19 @@ export function queryParameters(model: QueryParameters) {
   options.params = _p;
 
   return options;
+}
+
+export function handleError(error: any) {
+  let errorMessage = '';
+  if (error.error instanceof ErrorEvent) {
+    // Get client-side error
+    errorMessage = error.error.message;
+  } else {
+    // Get server-side error
+    errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+  }
+  //window.alert(errorMessage);
+  return throwError(() => {
+    return errorMessage;
+  });
 }

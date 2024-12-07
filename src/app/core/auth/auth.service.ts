@@ -37,8 +37,8 @@ export class AuthService {
     return this._httpClient.post('api/auth/forgot-password', email);
   }
 
-  resetPassword(password: string): Observable<any> {
-    return this._httpClient.post('api/auth/reset-password', password);
+  resetPassword(resetModel: { email: string; temporaryPassword: string; newPassword: string }): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/reset-password`, resetModel);
   }
 
   signIn(credentials: { userName: string; password: string }): Observable<any> {
@@ -117,39 +117,75 @@ export class AuthService {
     return of(false);
   }
 
-  getUserRole(): string {
-    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
+  getUserRole(): string | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
     return user.role;
   }
 
-  getUserAgency(): string {
-    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
+  getUserAgency(): string | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
     return user.agency;
   }
 
-  getUserPrograms(): string[] {
-    var user = JSON.parse(window.atob(this.accessToken.split('.')[1])) as TokenResponse;
+  getUserPrograms(): string | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
     return user.programs;
+  }
+
+  getUserId(): string | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
+    return user.userId;
   }
 
   getUserDataFromToken(): TokenResponse | null {
     const token = this.accessToken;
     if (!token) {
-      return null;
+        return null;
     }
     try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      return {
-        id: payload.sub,
-        name: payload.name,
-        lastName: payload.lastName,
-        email: payload.email,
-        avatar: payload.avatar,
-        status: 'online'
-      };
+        const payloadPart = token.split('.')[1];
+        const decodedPayload = atob(payloadPart);
+        const payload = JSON.parse(decodedPayload);
+        return {
+            nameid: payload.nameid,
+            unique_name: payload.unique_name,
+            role: payload.role,
+            userId: payload.userId,
+            name: payload.name,
+            lastName: payload.lastName,
+            email: payload.email,
+            avatar: payload.avatar,
+            status: payload.status,
+            agency: payload.agency,
+            programs: payload.programs,
+            programIds: payload.programIds,
+            nbf: payload.nbf,
+            exp: payload.exp,
+            iat: payload.iat
+        };
     } catch (error) {
-      console.error('Error al decodificar el token:', error);
-      return null;
+        console.error('Error al decodificar el token:', error);
+        return null;
     }
   }
 }

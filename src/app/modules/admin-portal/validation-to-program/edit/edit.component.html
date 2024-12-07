@@ -30,30 +30,11 @@
           </mat-form-field>
         </div>
 
-        <!-- Non-Profit and Funds Denied Questions -->
-        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <mat-form-field data-cy="non-profit-field">
-            <mat-label>{{ "auth.sign-up.non-profit.label" | transloco }}</mat-label>
-            <mat-select formControlName="nonProfit" data-cy="non-profit-select">
-              <mat-option value="Yes">{{ "auth.sign-up.non-profit.yes" | transloco }}</mat-option>
-              <mat-option value="No">{{ "auth.sign-up.non-profit.no" | transloco }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field data-cy="state-funds-denied-field">
-            <mat-label>{{ "auth.sign-up.state-funds-denied.label" | transloco }}</mat-label>
-            <mat-select formControlName="stateFundsDenied" data-cy="state-funds-denied-select">
-              <mat-option value="Yes">{{ "auth.sign-up.state-funds-denied.yes" | transloco }}</mat-option>
-              <mat-option value="No">{{ "auth.sign-up.state-funds-denied.no" | transloco }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div> -->
-
         <!-- Agency Information -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.agency.label" | transloco }}</mat-label>
-            <input matInput formControlName="name" [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco" />
+            <input matInput formControlName="name" [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco"/>
           </mat-form-field>
 
           <mat-form-field>

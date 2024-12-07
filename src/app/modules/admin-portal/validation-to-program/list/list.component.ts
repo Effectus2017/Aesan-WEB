@@ -47,8 +47,6 @@ import { Agency } from 'app/shared/models/Agency';
     MatTableModule,
     MatInputModule,
     RouterModule,
-    NgFor,
-    NgIf,
     GenericTableComponent,
     GenericHeaderComponent,
     TranslocoModule,

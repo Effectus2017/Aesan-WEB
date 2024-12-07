@@ -124,6 +124,26 @@
                 "placeholder": "Ingresa el apellido de la madre"
             },
             "submit": "Aplicar al Programa"
+        },
+        "reset-password": {
+            "title": "Restablecer Contraseña",
+            "temp-password": {
+                "label": "Contraseña Temporal",
+                "placeholder": "Ingresa tu contraseña temporal",
+                "required": "La contraseña temporal es requerida"
+            },
+            "new-password": {
+                "label": "Nueva Contraseña",
+                "placeholder": "Ingresa tu nueva contraseña",
+                "required": "La nueva contraseña es requerida"
+            },
+            "confirm-password": {
+                "label": "Confirmar Contraseña",
+                "placeholder": "Confirma tu nueva contraseña",
+                "required": "La confirmación de contraseña es requerida"
+            },
+            "passwords-must-match": "Las contraseñas deben coincidir",
+            "submit": "Cambiar Contraseña"
         }
     },
     "validation-to-program": {
@@ -277,5 +297,136 @@
             "errorMessage": "Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde."
         },
         "close": "Cerrar"
+    },
+    "program-requests": {
+        "list": {
+            "title": "Solicitudes al Programa",
+            "search": {
+                "placeholder": "Buscar solicitud..."
+            },
+            "buttons": {
+                "save": "Guardar",
+                "add": "Añadir Solicitud"
+            },
+            "columns": {
+                "title": "Solicitud al Programa",
+                "createdBy": "Creado por",
+                "createdAt": "Fecha y hora de creación",
+                "status": "Estado",
+                "actions": "Acciones"
+            },
+            "status": {
+                "pending": "Pendiente",
+                "approved": "Aprobado",
+                "rejected": "Rechazado"
+            },
+            "actions": {
+                "edit": "Editar solicitud",
+                "delete": "Eliminar solicitud"
+            },
+            "messages": {
+                "deleteConfirmation": "¿Está seguro que desea eliminar esta solicitud?",
+                "deleteSuccess": "Solicitud eliminada correctamente",
+                "deleteError": "Error al eliminar la solicitud",
+                "editSuccess": "Solicitud actualizada correctamente",
+                "editError": "Error al actualizar la solicitud",
+                "addSuccess": "Solicitud creada correctamente",
+                "addError": "Error al crear la solicitud"
+            }
+        }
+    },
+    "preoperational-visit": {
+        "list": {
+            "title": "Visita Pre-Operacional",
+            "search": {
+                "placeholder": "Buscar"
+            },
+            "buttons": {
+                "save": "Guardar",
+                "add": "Agregar"
+            },
+            "columns": {
+                "agency": "Agencia",
+                "uie": "# UIE",
+                "status": "Estado",
+                "comments": "Comentarios",
+                "actions": "Acciones"
+            }
+        }
+    },
+    "monitor-preoperational-visit": {
+        "title": "Visita Preoperacional",
+        "edit": {
+            "program": {
+                "label": "Programa",
+                "placeholder": "Seleccione un programa"
+            },
+            "status": {
+                "label": "Estado",
+                "placeholder": "Seleccione un estado"
+            },
+            "agency": {
+                "label": "Nombre de la Agencia",
+                "placeholder": "Ingrese el nombre de la agencia"
+            },
+            "uieNumber": {
+                "label": "Número UIE",
+                "placeholder": "Ingrese el número UIE"
+            },
+            "city": {
+                "label": "Ciudad",
+                "placeholder": "Seleccione una ciudad"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Seleccione una región"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Ingrese la dirección"
+            },
+            "zip-code": {
+                "label": "Código Postal",
+                "placeholder": "Ingrese el código postal"
+            },
+            "first-name": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre"
+            },
+            "middle-name": {
+                "label": "Segundo Nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "father-last-name": {
+                "label": "Apellido Paterno",
+                "placeholder": "Ingrese el apellido paterno"
+            },
+            "mother-last-name": {
+                "label": "Apellido Materno",
+                "placeholder": "Ingrese el apellido materno"
+            },
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingrese el correo electrónico"
+            },
+            "phone": {
+                "label": "Teléfono",
+                "placeholder": "(xxx) xxx-xxxx"
+            },
+            "appointment-coordinated": {
+                "label": "Cita Coordinada",
+                "placeholder": "Seleccione si la cita está coordinada"
+            },
+            "appointment-date": {
+                "label": "Fecha de Cita",
+                "placeholder": "Seleccione la fecha de la cita"
+            },
+            "comments": {
+                "label": "Comentarios",
+                "placeholder": "Ingrese sus comentarios"
+            },
+            "submit": "Enviar",
+            "save": "Guardar"
+        }
     }
 }

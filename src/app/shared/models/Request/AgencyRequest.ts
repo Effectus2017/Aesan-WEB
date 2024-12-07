@@ -37,3 +37,13 @@ export interface AgencyRequest {
     // Programas
     Programs?: number[];
 }
+
+export interface UpdateAgencyProgramRequest {
+    AgencyId?: number;
+    StatusId?: number;
+    ProgramId?: number;
+    UserId?: string;
+    RejectionJustification?: string;
+    AppointmentCoordinated?: boolean;
+    AppointmentDate?: string;
+}

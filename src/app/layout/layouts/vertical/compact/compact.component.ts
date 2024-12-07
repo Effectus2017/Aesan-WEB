@@ -1,22 +1,18 @@
 import { NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
-import { FuseFullscreenComponent } from '@fuse/components/fullscreen';
 import { FuseLoadingBarComponent } from '@fuse/components/loading-bar';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { AuthService } from 'app/core/auth/auth.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { MessagesComponent } from 'app/layout/common/messages/messages.component';
-import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
-import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
-import { SearchComponent } from 'app/layout/common/search/search.component';
-import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
-import { ThemeToggleComponent } from 'app/layout/common/theme-toggle/theme-toggle.component';
+
 import { UserComponent } from 'app/layout/common/user/user.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -29,18 +25,12 @@ import { filter, Subject, takeUntil } from 'rxjs';
     MatButtonModule,
     MatIconModule,
     LanguagesComponent,
-    FuseFullscreenComponent,
-    SearchComponent,
-    ShortcutsComponent,
-    MessagesComponent,
-    NotificationsComponent,
     UserComponent,
     NgIf,
     RouterOutlet,
-    QuickChatComponent,
     FuseVerticalNavigationComponent,
     ThemeToggleComponent
-  ],
+],
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {
   isScreenSmall: boolean;
@@ -49,6 +39,8 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   currentRoute: string;
   backgroundClass: string;
   logoPath: string;
+
+  private _authService = inject(AuthService);
 
   /**
    * Constructor
@@ -135,34 +127,68 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     const rootRoute = this._activatedRoute.snapshot.root;
     const childRoutes = rootRoute.children;
 
-    if (childRoutes.length > 0) {
+    const userPrograms = this._authService.getUserPrograms();
+
+    if (childRoutes.length > 0 && userPrograms) {
       this.currentRoute = childRoutes[0].routeConfig.path;
 
-      switch (this.currentRoute) {
-        case 'pacna-portal':
-          this.backgroundClass = 'bg-[#F8B100]';
-          this.logoPath = 'assets/images/logo/pacna-150x150.png';
-          break;
-        case 'psav-portal':
-          this.backgroundClass = 'bg-[#F26B1E]';
-          this.logoPath = 'assets/images/logo/psav-150x150.png';
-          break;
-        case 'pdam-portal':
+      // Ajustar el prefijo según el programa para otros roles
+      switch (userPrograms) {
+        case 'PDAM':
           this.backgroundClass = 'bg-[#4C3152]';
           this.logoPath = 'assets/images/logo/pdam-150x150.png';
           break;
-        case 'pfhf-portal':
+        case 'PSAV':
+          this.backgroundClass = 'bg-[#F26B1E]';
+          this.logoPath = 'assets/images/logo/psav-150x150.png';
+          break;
+        case 'PACNA':
+          this.backgroundClass = 'bg-[#F8B100]';
+          this.logoPath = 'assets/images/logo/pacna-150x150.png';
+          break;
+        case 'PFHF':
           this.backgroundClass = 'bg-[#28AF66]';
           this.logoPath = 'assets/images/logo/pfhf-150x150.png';
           break;
-        case 'finca-portal':
+        case 'PAF':
+          this.backgroundClass = 'bg-[#4C3152]';
+          this.logoPath = 'assets/images/logo/pdam-150x150.png';
+          break;
+        case 'PDFE':
           this.backgroundClass = 'bg-[#2A788A]';
-          this.logoPath = 'assets/images/logo/finca-150x150.png';
+          this.logoPath = 'assets/images/logo/pdfe-150x150.png';
           break;
         default:
           this.backgroundClass = 'bg-[#003C49]';
           this.logoPath = 'assets/images/logo/aesan.png';
+          break;
       }
+
+    //   switch (this.currentRoute) {
+    //     case 'pacna-portal':
+    //       this.backgroundClass = 'bg-[#F8B100]';
+    //       this.logoPath = 'assets/images/logo/pacna-150x150.png';
+    //       break;
+    //     case 'psav-portal':
+    //       this.backgroundClass = 'bg-[#F26B1E]';
+    //       this.logoPath = 'assets/images/logo/psav-150x150.png';
+    //       break;
+    //     case 'pdam-portal':
+    //       this.backgroundClass = 'bg-[#4C3152]';
+    //       this.logoPath = 'assets/images/logo/pdam-150x150.png';
+    //       break;
+    //     case 'pfhf-portal':
+    //       this.backgroundClass = 'bg-[#28AF66]';
+    //       this.logoPath = 'assets/images/logo/pfhf-150x150.png';
+    //       break;
+    //     case 'finca-portal':
+    //       this.backgroundClass = 'bg-[#2A788A]';
+    //       this.logoPath = 'assets/images/logo/finca-150x150.png';
+    //       break;
+    //     default:
+    //       this.backgroundClass = 'bg-[#003C49]';
+    //       this.logoPath = 'assets/images/logo/aesan.png';
+    //   }
     }
   }
 }

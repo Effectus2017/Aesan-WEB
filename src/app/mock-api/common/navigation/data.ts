@@ -1,6 +1,46 @@
 /* eslint-disable */
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
+// Navegación para el portal de agencias
+export const agencyNavigation: FuseNavigationItem[] = [
+    {
+        id: 'agency-home',
+        title: 'Inicio',
+        type: 'basic',
+        icon: 'heroicons_outline:home',
+        link: '/agency-portal/home'
+    },
+    {
+        id: 'program-requests',
+        title: 'Solicitudes al Programa',
+        type: 'basic',
+        icon: 'heroicons_outline:document-text',
+        link: '/agency-portal/program-requests'
+    },
+    {
+        id: 'documents',
+        title: 'Documentos',
+        type: 'basic',
+        icon: 'heroicons_outline:document',
+        link: '/agency-portal/documents'
+    },
+    {
+        id: 'budget',
+        title: 'Presupuesto',
+        type: 'basic',
+        icon: 'heroicons_outline:currency-dollar',
+        link: '/agency-portal/budget'
+    },
+    {
+        id: 'reimbursements',
+        title: 'Reembolsos',
+        type: 'basic',
+        icon: 'heroicons_outline:receipt-refund',
+        link: '/agency-portal/reimbursements'
+    }
+];
+
+// Mantener las navegaciones existentes...
 export const defaultNavigation: FuseNavigationItem[] = [
   {
     id: 'home',
@@ -37,6 +77,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_solid:chart-pie',
     link: '/example',
   },
+  {
+    id: 'program-requests',
+    title: 'Solicitudes al Programa',
+    type: 'basic',
+    icon: 'heroicons_outline:document-text',
+    link: '/agency-portal/program-requests',
+    roles: ['Agency']
+  }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
   {

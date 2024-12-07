@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 
@@ -8,15 +8,25 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
   standalone: true,
 })
 export class AuthRedirectComponent implements OnInit {
-  constructor(private _authService: AuthService, private _customRouter: CustomRouterService) {}
+  private _authService = inject(AuthService);
+  private _customRouter = inject(CustomRouterService);
 
   ngOnInit(): void {
     const userRole = this._authService.getUserRole();
 
-    if (userRole === 'Administrator') {
-      this._customRouter.navigate(['example']);
-    } else {
-      this._customRouter.navigate(['example']);
+    switch (userRole) {
+      case 'Administrator':
+        this._customRouter.navigate(['example']);
+        break;
+      case 'Agency-Administrator':
+        this._customRouter.navigate(['program-requests']);
+        break;
+      case 'Agency-User':
+        this._customRouter.navigate(['example']);
+        break;
+      default:
+        this._customRouter.navigate(['pre-operational']);
+        break;
     }
   }
 }

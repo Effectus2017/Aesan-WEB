@@ -192,3 +192,29 @@ Estos cambios buscan optimizar la experiencia del usuario y mejorar la funcional
   - Campos requeridos
   - Formato de datos
   - Estados de botones
+
+## [2024-11-19]
+
+## Cambios Realizados
+
+### Edición, Rechazo y Aprobación
+- Se implementó la funcionalidad para rechazar agencias mediante un diálogo de justificación.
+- Se agregó el componente `RejectDialogComponent` para capturar la razón del rechazo.
+- Se mejoró la lógica en el método `onReject()` para mostrar el diálogo y manejar la justificación ingresada.
+
+### Actualizaciones en el Componente de Edición
+- Se importó `MatDialog` y `MatDialogModule` para el manejo de diálogos.
+- Se eliminó el código comentado relacionado con la lógica de rechazo anterior.
+- Se implementó la lógica para actualizar el estado de la agencia tras la justificación del rechazo.
+
+### Internacionalización
+- Se actualizaron los archivos de traducción (`en.json` y `es.json`) para incluir nuevos textos relacionados con el rechazo:
+  - Títulos y mensajes para el diálogo de rechazo.
+  - Mensajes de error y confirmación para el proceso de rechazo.
+
+### Mejoras en la Interfaz de Usuario
+- Se mejoró el diseño del diálogo de rechazo para una mejor experiencia de usuario.
+- Se añadieron placeholders y descripciones en los campos del diálogo para guiar al usuario.
+
+### Cambios en Pruebas
+- Se realizaron ajustes en las pruebas para reflejar la nueva lógica de rechazo y la interacción con el diálogo.

@@ -4,8 +4,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
 import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
-import { ValidationToProgramListComponent } from 'app/modules/admin-portal/validation-to-program/list/list.component';
-import { AuthSignInComponent } from 'app/modules/auth/sign-in/sign-in.component';
 import { take } from 'rxjs';
 
 @Component({

@@ -146,6 +146,26 @@
                 "title": "Notification",
                 "confirm": "Accept"
             }
+        },
+        "reset-password": {
+            "title": "Reset Password",
+            "temp-password": {
+                "label": "Temporary Password",
+                "placeholder": "Enter your temporary password",
+                "required": "Temporary password is required"
+            },
+            "new-password": {
+                "label": "New Password",
+                "placeholder": "Enter your new password",
+                "required": "New password is required"
+            },
+            "confirm-password": {
+                "label": "Confirm Password",
+                "placeholder": "Confirm your new password",
+                "required": "Password confirmation is required"
+            },
+            "passwords-must-match": "Passwords must match",
+            "submit": "Change Password"
         }
     },
     "validation-to-program": {
@@ -299,5 +319,136 @@
             "errorMessage": "An error occurred while rejecting the agency. Please try again later."
         },
         "close": "Close"
+    },
+    "program-requests": {
+        "list": {
+            "title": "Program Requests",
+            "search": {
+                "placeholder": "Search request..."
+            },
+            "buttons": {
+                "save": "Save",
+                "add": "Add Request"
+            },
+            "columns": {
+                "title": "Program Request",
+                "createdBy": "Created by",
+                "createdAt": "Creation date and time",
+                "status": "Status",
+                "actions": "Actions"
+            },
+            "status": {
+                "pending": "Pending",
+                "approved": "Approved",
+                "rejected": "Rejected"
+            },
+            "actions": {
+                "edit": "Edit request",
+                "delete": "Delete request"
+            },
+            "messages": {
+                "deleteConfirmation": "Are you sure you want to delete this request?",
+                "deleteSuccess": "Request successfully deleted",
+                "deleteError": "Error deleting request",
+                "editSuccess": "Request successfully updated",
+                "editError": "Error updating request",
+                "addSuccess": "Request successfully created",
+                "addError": "Error creating request"
+            }
+        }
+    },
+    "preoperational-visit": {
+        "list": {
+            "title": "Pre-Operational Visit",
+            "search": {
+                "placeholder": "Search"
+            },
+            "buttons": {
+                "save": "Save",
+                "add": "Add"
+            },
+            "columns": {
+                "agency": "Agency",
+                "uie": "# UIE",
+                "status": "Status",
+                "comments": "Comments",
+                "actions": "Actions"
+            }
+        }
+    },
+    "monitor-preoperational-visit": {
+        "title": "Preoperational Visit",
+        "edit": {
+            "program": {
+                "label": "Program",
+                "placeholder": "Select a program"
+            },
+            "status": {
+                "label": "Status",
+                "placeholder": "Select a status"
+            },
+            "agency": {
+                "label": "Agency Name",
+                "placeholder": "Enter agency name"
+            },
+            "uieNumber": {
+                "label": "UIE Number",
+                "placeholder": "Enter UIE number"
+            },
+            "city": {
+                "label": "City",
+                "placeholder": "Select a city"
+            },
+            "region": {
+                "label": "Region",
+                "placeholder": "Select a region"
+            },
+            "address": {
+                "label": "Address",
+                "placeholder": "Enter address"
+            },
+            "zip-code": {
+                "label": "Zip Code",
+                "placeholder": "Enter zip code"
+            },
+            "first-name": {
+                "label": "First Name",
+                "placeholder": "Enter first name"
+            },
+            "middle-name": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "father-last-name": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter father's last name"
+            },
+            "mother-last-name": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter mother's last name"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "(xxx) xxx-xxxx"
+            },
+            "appointment-coordinated": {
+                "label": "Appointment Coordinated",
+                "placeholder": "Select if appointment is coordinated"
+            },
+            "appointment-date": {
+                "label": "Appointment Date",
+                "placeholder": "Select appointment date"
+            },
+            "comments": {
+                "label": "Comments",
+                "placeholder": "Enter your comments"
+            },
+            "submit": "Submit",
+            "save": "Save"
+        }
     }
 }

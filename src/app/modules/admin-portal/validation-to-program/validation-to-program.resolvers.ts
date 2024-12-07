@@ -43,11 +43,11 @@ export class ValidationToProgramEditResolver implements Resolve<any> {
     };
     return forkJoin([
       this._agencyService.getAgencyById(requestParameters),
-      this._agencyService.getAllAgenciesFromDb({ take: 15, skip: 0, alls: true }),
-      this._agencyService.getAllAgencyStatusFromDb({ take: 15, skip: 0, alls: true }),
-      this._geoService.getCitiesFromDb({ take: 15, skip: 0, alls: true }),
-      this._geoService.getRegionsFromDb({ take: 15, skip: 0, alls: true }),
-      this._userService.getAllProgramsFromDb({ take: 15, skip: 0, alls: true }),
+      this._agencyService.getAllAgenciesFromDb({ take: 25, skip: 0, alls: true }),
+      this._agencyService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true }),
+      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
+      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),
+      this._userService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true }),
     ]);
   }
 }

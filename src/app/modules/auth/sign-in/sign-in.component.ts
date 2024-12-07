@@ -36,7 +36,6 @@ import { AuthService } from 'app/core/auth/auth.service';
   ],
 })
 export class AuthSignInComponent implements OnInit {
-
   private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
   private _authService: AuthService = inject(AuthService);
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
@@ -64,6 +63,15 @@ export class AuthSignInComponent implements OnInit {
 
     // Register the navigation component
     this._fuseNavigationService.registerComponent('authSignIn', this);
+
+    // Obtener el email de los query params
+    this._activatedRoute.queryParams.subscribe(params => {
+      if (!params['email']) {
+        return;
+      }
+
+      this.signInForm.get('email').setValue(params['email']);
+    });
   }
 
   signIn(): void {
@@ -81,7 +89,7 @@ export class AuthSignInComponent implements OnInit {
     // Crear el modelo según el formulario
     const signInModel = {
       userName: this.signInForm.value.email,
-      password: this.signInForm.value.password
+      password: this.signInForm.value.password,
     };
 
     // Sign in
@@ -95,20 +103,28 @@ export class AuthSignInComponent implements OnInit {
         // Re-enable the form
         this.signInForm.enable();
 
-        // Reset the form
-        this.signInNgForm.resetForm();
+        if (response.status === 409) {
+          // Redirigir al componente de reset password con el email como parámetro
+          this._router.navigate(['/reset-password'], {
+            queryParams: { email: this.signInForm.get('email').value },
+          });
+          return;
+        }
 
-        // Set the alert
-        this.alert = {
-          type: 'error',
-          message: 'Wrong email or password',
-        };
+        if (response.status === 401) {
+          // Reset the form
+          this.signInNgForm.resetForm();
 
-        // Show the alert
-        this.showAlert = true;
-      }
+          // Set the alert
+          this.alert = {
+            type: 'error',
+            message: response.error.message,
+          };
+
+          // Show the alert
+          this.showAlert = true;
+        }
+      },
     });
-
-
   }
 }

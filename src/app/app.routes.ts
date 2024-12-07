@@ -1,11 +1,11 @@
 import { Route } from '@angular/router';
-import { initialDataResolver } from 'app/app.resolvers';
+import { initialDataAgencyPortalResolver, initialDataResolver } from 'app/app.resolvers';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
 export const appRoutes: Route[] = [
-  { path: '', pathMatch: 'full', redirectTo: 'admin-portal' },
+  { path: '', pathMatch: 'full', redirectTo: 'auth-redirect' },
   // Redirigir después del inicio de sesión
   { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'auth-redirect' },
 
@@ -71,9 +71,6 @@ export const appRoutes: Route[] = [
     children: [
       { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
       { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
     ],
   },
 
@@ -87,9 +84,6 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
     ],
   },
 
@@ -103,9 +97,6 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
     ],
   },
 
@@ -118,10 +109,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+      { path: 'pre-operational', loadChildren: () => import('app/modules/pdam/preoperational-visit/preoperational-visit.routes') },
     ],
   },
 
@@ -135,9 +123,6 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
     ],
   },
 
@@ -151,9 +136,32 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    //   { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') }, // Actualizada la ruta
-    //   { path: 'budget', loadChildren: () => import('app/modules/admin-portal/budget/budget.routes') }, // Actualizada la ruta
-    //   { path: 'refunds', loadChildren: () => import('app/modules/admin-portal/refunds/refunds.routes') }, // Actualizada la ruta
+    ],
+  },
+
+  {
+    path: 'monitor-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataResolver,
+    },
+    children: [
+      { path: 'pre-operational', loadChildren: () => import('app/modules/monitor-portal/preoperational-visit/preoperational-visit.routes') },
+    ],
+  },
+
+  {
+    path: 'agency-portal',
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
+    component: LayoutComponent,
+    resolve: {
+      initialData: initialDataAgencyPortalResolver,
+    },
+    children: [
+      { path: 'program-requests', loadChildren: () => import('app/modules/agency-portal/program-requests/program-requests.routes') },
     ],
   },
 ];

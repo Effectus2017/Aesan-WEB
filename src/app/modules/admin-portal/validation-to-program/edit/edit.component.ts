@@ -42,7 +42,6 @@ import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component'
     ReactiveFormsModule,
     FormsModule,
     MatFormFieldModule,
-    NgClass,
     MatInputModule,
     TextFieldModule,
     MatDividerModule,
@@ -54,16 +53,13 @@ import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component'
     MatTableModule,
     MatPaginatorModule,
     NgFor,
-    // NgIf,
-    // NgSwitch,
-    // NgSwitchCase,
     GenericHeaderComponent,
     TranslocoModule,
     MatSnackBarModule,
     MatDialogModule,
   ],
 })
-export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
+export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
@@ -74,6 +70,7 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
   private _snackBar = inject(MatSnackBar);
+  private _dialog = inject(MatDialog);
 
   listAgencyStatus = [];
   listPrograms = [];
@@ -82,8 +79,7 @@ export class ValidationToProgramEditComponent implements OnInit, OnDestroy, OnGe
 
   param: Agency;
 
-  private _dialog = inject(MatDialog);
-
+  // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
     formGroup: this._formBuilder.group({

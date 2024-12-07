@@ -7,7 +7,6 @@ import { AuthService } from 'app/core/auth/auth.service';
  * Segun el rol y la agencia del usuario, se redirige a la ruta correspondiente
  */
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -24,28 +23,34 @@ export class CustomRouterService {
 
     let prefix = '/admin-portal/';
 
-    switch (userPrograms[0]) {
-      case 'PDAM':
-        prefix = '/pdam-portal/';
-        break;
-      case 'PSAV':
-        prefix = '/psav-portal/';
-        break;
-      case 'PACNA':
-        prefix = '/pacna-portal/';
-        break;
-      case 'PFHF':
-        prefix = '/pfhf-portal/';
-        break;
-      case 'PAF':
-        prefix = '/paf-portal/';
-        break;
-      case 'PDFE':
-        prefix = '/pdf-portal/';
-        break;
-      default:
-        prefix = '/admin-portal/';
-        break;
+    if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+      prefix = '/agency-portal/';
+    } else if (userRole === 'Monitor') {
+      prefix = '/monitor-portal/';
+    } else {
+      switch (userPrograms) {
+        case 'PDAM':
+          prefix = '/pdam-portal/';
+          break;
+        case 'PSAV':
+          prefix = '/psav-portal/';
+          break;
+        case 'PACNA':
+          prefix = '/pacna-portal/';
+          break;
+        case 'PFHF':
+          prefix = '/pfhf-portal/';
+          break;
+        case 'PAF':
+          prefix = '/paf-portal/';
+          break;
+        case 'PDFE':
+          prefix = '/pdf-portal/';
+          break;
+        default:
+          prefix = '/admin-portal/';
+          break;
+      }
     }
 
     // Añadir el prefijo solo si el primer segmento no es 'sign-in' o 'sign-up'

@@ -1,9 +1,9 @@
 {
-    "name": "fuse-angular",
+    "name": "aesan-angular",
     "version": "19.1.0",
-    "description": "Fuse - Angular Admin Template and Starter Project",
-    "author": "https://themeforest.net/user/srcn",
-    "license": "https://themeforest.net/licenses/standard",
+    "description": "AESAN - Frontend",
+    "author": "AESAN",
+    "license": "AESAN",
     "private": true,
     "scripts": {
         "ng": "ng",

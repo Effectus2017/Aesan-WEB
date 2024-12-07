@@ -1,18 +1,36 @@
+// export interface TokenResponse {
+//   id: string;
+//   name: string;
+//   lastName: string;
+//   avatar?: string;
+//   status?: string;
+//   unique_name?: string;
+//   email?: string;
+//   role?: string;
+//   nameid?: string;
+//   nbf?: number;
+//   exp?: number;
+//   iat?: number;
+//   agency?: string;
+//   programs?: string;
+// }
+
 export interface TokenResponse {
-  id: string;
+  nameid: string;
+  unique_name: string;
+  role: string;
+  userId: string;
   name: string;
-  lastName: string;
   avatar?: string;
   status?: string;
-  unique_name?: string;
-  email?: string;
-  role?: string;
-  nameid?: string;
-  nbf?: number;
-  exp?: number;
-  iat?: number;
+  lastName: string;
+  email: string;
   agency?: string;
-  programs?: string[];
+  programs?: string;
+  programIds?: string;
+  nbf: number;
+  exp: number;
+  iat: number;
 }
 
 export interface Token {
