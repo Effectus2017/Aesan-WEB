@@ -6,16 +6,22 @@
         <!-- Sponsor Information -->
         <div class="grid grid-cols-12 gap-2 pb-2">
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <p class="text-lg font-medium">{{ 'auth.sign-up.sponsor-information' | transloco }}</p>
-            <p class="mb-6 text-secondary">{{ 'auth.sign-up.sponsor-information-description' | transloco }}</p>
+            <p class="text-lg font-medium">{{ "auth.sign-up.sponsor-information" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "auth.sign-up.sponsor-information-description" | transloco }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1" *ngIf="!signUpForm.get('program')?.value">
+            <p class="font-bold text-red-500">{{ "auth.sign-up.select-program-first" | transloco }}</p>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "auth.sign-up.program.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'program'" data-cy="program-select" multiple>
-                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ program.name }}</mat-option>
+              <mat-select [formControlName]="'program'" data-cy="program-select">
+                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">
+                  {{ program.name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
             <!-- Non Profit *  -->
@@ -27,6 +33,8 @@
               </mat-select>
             </mat-form-field>
           </div>
+
+
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- nuevo campo Have you been denied or disqualified from state funds in the last seven years? *  -->
@@ -43,6 +51,17 @@
               <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="federal-funds-denied-select">
                 <mat-option value="Yes" data-cy="federal-funds-denied-yes">{{ "auth.sign-up.federal-funds-denied.yes" | transloco }}</mat-option>
                 <mat-option value="No" data-cy="federal-funds-denied-no">{{ "auth.sign-up.federal-funds-denied.no" | transloco }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
+            <mat-form-field data-cy="organized-athletic-programs-field">
+              <mat-label>{{ "auth.sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
+                <mat-option value="Yes" data-cy="organized-athletic-programs-yes">{{ "auth.sign-up.organized-athletic-programs.yes" | transloco }}</mat-option>
+                <mat-option value="No" data-cy="organized-athletic-programs-no">{{ "auth.sign-up.organized-athletic-programs.no" | transloco }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -77,8 +96,8 @@
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <p class="text-lg font-medium">{{ 'auth.sign-up.address.label' | transloco }}</p>
-            <p class="mb-6 text-secondary">{{ 'auth.sign-up.address.description' | transloco }}</p>
+            <p class="text-lg font-medium">{{ "auth.sign-up.address.label" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "auth.sign-up.address.description" | transloco }}</p>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
@@ -122,12 +141,14 @@
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <p class="text-lg font-medium">{{ 'auth.sign-up.postal-address.label' | transloco }}</p>
-            <p class="mb-6 text-secondary">{{ 'auth.sign-up.postal-address.description' | transloco }}</p>
+            <p class="text-lg font-medium">{{ "auth.sign-up.postal-address.label" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "auth.sign-up.postal-address.description" | transloco }}</p>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4">
-            <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{ 'auth.sign-up.same-as-physical-address.label' | transloco }}</mat-checkbox>
+            <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{
+              "auth.sign-up.same-as-physical-address.label" | transloco
+            }}</mat-checkbox>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
@@ -154,13 +175,19 @@
             <!-- Zip Code *  -->
             <mat-form-field data-cy="postal-zip-code-field">
               <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="postal-zip-code-input" />
+              <input
+                matInput
+                [formControlName]="'postalZipCode'"
+                placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}"
+                type="number"
+                data-cy="postal-zip-code-input"
+              />
             </mat-form-field>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <p class="text-lg font-medium">{{ 'auth.sign-up.user-information' | transloco }}</p>
-            <p class="mb-6 text-secondary">{{ 'auth.sign-up.user-information-description' | transloco }}</p>
+            <p class="text-lg font-medium">{{ "auth.sign-up.user-information" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "auth.sign-up.user-information-description" | transloco }}</p>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
@@ -210,7 +237,7 @@
             mat-flat-button
             [color]="'primary'"
             (click)="signUp()"
-            [disabled]="!isEligible || signUpForm.disabled"
+            [disabled]="!isEligible || signUpForm.invalid"
             data-cy="submit-button"
           >
             <span *ngIf="!signUpForm.disabled">{{ "auth.sign-up.submit" | transloco }}</span>

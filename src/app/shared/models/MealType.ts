@@ -1,7 +1,5 @@
 
-export interface City {
+export interface MealType {
     id: number;
     name: string;
 }
-
-

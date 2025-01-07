@@ -25,6 +25,7 @@ export interface AgencyRequest {
     NonProfit?: boolean;
     FederalFundsDenied?: boolean;
     StateFundsDenied?: boolean;
+    OrganizedAthleticPrograms?: boolean;
     // Status
     IsActive?: boolean;
     IsListable?: boolean;

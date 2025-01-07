@@ -79,7 +79,7 @@
         </div>
 
         <!-- Entity and Schools -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <!-- Entity * -->
           <mat-form-field data-cy="entity-field">
             <mat-label>¿La entidad es pública o privada?</mat-label>
@@ -91,12 +91,12 @@
           <!-- Numeros de escuelas * -->
           <mat-form-field data-cy="schools-field">
             <mat-label>Número de escuelas</mat-label>
-            <input matInput type="number" formControlName="schools" [placeholder]="'Número de escuelas'" />
+            <input matInput type="number" formControlName="schools" min="1" max="100" [placeholder]="'Número de escuelas'" />
           </mat-form-field>
         </div>
 
         <!-- Tax Exemption Type and Status -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <!-- Tax Exemption Type * -->
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="tax-exemption-type-field">
@@ -119,7 +119,7 @@
         </div>
 
         <!-- Basic Education Certification and AEA Designed Menu -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <div class="flex items-center">
               <mat-form-field data-cy="basic-education-certification-field" class="flex-grow">
@@ -171,7 +171,7 @@
           <p class="mb-6 text-secondary">Material Informativo Sobre la Ley de Derechos Civiles y Programa</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="civil-rights-survey-field">
               <mat-label>¿Certifica que he completado el Cuestionario de Derechos Civiles Pre-Awards en sus instituciones?</mat-label>
@@ -182,7 +182,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-field">
               <mat-label>¿Necesita material informativo en otros idiomas además de español e inglés?</mat-label>
@@ -205,7 +205,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-field">
               <mat-label>¿Necesita intérpreta para diferentes idiomas?</mat-label>
@@ -222,7 +222,7 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <!-- Medio Alternativo -->
             <mat-form-field data-cy="alternative-communication-media-field">
@@ -242,7 +242,9 @@
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="alternative-communication-media-type-field">
               <mat-label>Tipo de Medio Alternativo</mat-label>
-              <input matInput type="text" formControlName="alternativeCommunicationMediaType" [placeholder]="'Tipo de Medio Alternativo'" />
+              <mat-select multiple formControlName="alternativeCommunicationMediaType" [disabled]="!headerConfig.formGroup.get('alternativeCommunicationMedia').value">
+                <mat-option *ngFor="let type of listOfAlternativeCommunicationMediaTypes" [value]="type">{{ type.name }}</mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
         </div>
@@ -251,6 +253,11 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
           <p class="text-lg font-medium">Orgnaización de Sitios</p>
           <p class="mb-6 text-secondary">Descripción de la seccion</p>
+        </div>
+
+        <!-- Tqbla con lsita de escuelas -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-10">
+          <app-generic-table [config]="tableConfig" [handler]="this" #schoolsTable></app-generic-table>
         </div>
       </div>
     </form>

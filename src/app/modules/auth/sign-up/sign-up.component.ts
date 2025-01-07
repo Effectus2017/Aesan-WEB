@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
-import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
+import { FuseAlertType } from '@fuse/components/alert';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -23,6 +23,8 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Region } from 'app/shared/models/Region';
+import { Program } from 'app/shared/models/Program';
 
 @Component({
   selector: 'auth-sign-up',
@@ -31,7 +33,6 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
   animations: fuseAnimations,
   standalone: true,
   imports: [
-    FuseAlertComponent,
     NgIf,
     FormsModule,
     ReactiveFormsModule,
@@ -69,9 +70,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   private _translocoService = inject(TranslocoService);
 
-  listPrograms = [];
-  listCities = [];
-  listRegions = [];
+  listPrograms: Program[] = [];
+  listCities: City[] = [];
+  listRegions: Region[] = [];
 
   // Añadir nueva propiedad para controlar el estado del botón
   isEligible: boolean = true;
@@ -93,6 +94,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       nonProfit: [null, Validators.required],
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
+      organizedAthleticPrograms: [null, Validators.required],
 
       // Dirección
       address: [null, Validators.required],
@@ -123,10 +125,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       administrationTitle: [null, Validators.required],
     });
 
-    // Cargar ciudades
-    this.loadCities();
+    // Deshabilitar inicialmente todos los controles excepto program
+    this.disableAllControlsExceptProgram();
 
-    // Cargar programas
+    // Suscribirse a cambios en el control program
+    this.signUpForm.get('program').valueChanges
+      .subscribe(value => {
+        if (value) {
+          this.enableAllControls();
+        } else {
+          this.disableAllControlsExceptProgram();
+        }
+      });
+
+    // Cargar ciudades y programas
+    this.loadCities();
     this.loadPrograms();
   }
 
@@ -204,47 +217,37 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   signUp(): void {
     // Return if the form is invalid
     if (this.signUpForm.invalid) {
-      this._snackBar.open(this._translocoService.translate('auth.sign-up.form-invalid.message'), this._translocoService.translate('auth.sign-up.form-invalid.close'), {
-        duration: 5000,
-      });
+      this._snackBar.open(
+        this._translocoService.translate('auth.sign-up.form-invalid.message'),
+        this._translocoService.translate('auth.sign-up.form-invalid.close'),
+        { duration: 5000 }
+      );
 
       this.signUpForm.markAllAsTouched();
       return;
     }
 
-    // Verificar que se haya seleccionado al menos un programa
-    if (this.signUpForm.value.program?.length === 0) {
-      this._snackBar.open(this._translocoService.translate('auth.sign-up.program.required'), this._translocoService.translate('auth.sign-up.program.required-close'), {
-        duration: 5000,
-      });
+    // Verificar que se haya seleccionado un programa
+    if (!this.signUpForm.value.program) {
+      this._snackBar.open(
+        this._translocoService.translate('auth.sign-up.program.required'),
+        this._translocoService.translate('auth.sign-up.program.required-close'),
+        { duration: 5000 }
+      );
       return;
     }
 
-    // Obtener los IDs de los programas seleccionados
-    const programs = this.signUpForm.value.program ? this.signUpForm.value.program.map((program: any) => program.id) : [];
+    // Obtener el ID del programa seleccionado
+    const programId = this.signUpForm.value.program?.id;
 
-    // Validar que la lista de programas no esté vacía y que sean todos numéricos
-    if (programs.length === 0 || !programs.every(id => typeof id === 'number')) {
+    // Validar que el programa sea válido
+    if (!programId || typeof programId !== 'number') {
       this.alert = {
         type: 'error',
         message: this._translocoService.translate('auth.sign-up.program.required'),
       };
       this.showAlert = true;
-      this.signUpForm.enable(); // Rehabilitar el formulario
-      return; // Salir de la función si la validación falla
-    }
-
-    // Verificar elegibilidad para PACNA
-
-    const selectedProgram = this.signUpForm.value.program?.name;
-    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
-    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
-
-    // Verificar elegibilidad para PACNA
-    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
-      this._snackBar.open(this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'), this._translocoService.translate('auth.sign-up.pacna-not-eligible.close'), {
-        duration: 5000,
-      });
+      this.signUpForm.enable();
       return;
     }
 
@@ -281,8 +284,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         NonProfit: formValues.nonProfit === 'Yes' ? true : false,
         FederalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         StateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
+        OrganizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
         //
-        Programs: formValues.program ? formValues.program.map((program: any) => program.id) : [],
+        Programs: [programId],
         //
         Email: formValues.email ? formValues.email : '',
       },
@@ -297,8 +301,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         Email: formValues.email,
       },
     };
-
-
 
     const requestParameters: QueryParameters = {};
     //Registrar el usuario
@@ -332,13 +334,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   nonProfitChange(event: any): void {
-
-
-    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
+    const selectedProgram = this.signUpForm.value.program?.name;
     const isNotNonProfit = this.signUpForm.value.nonProfit === 'No';
 
     // Verificar elegibilidad para PDAM y PSAV
-    if (isNotNonProfit && selectedPrograms.some(program => ['PDAM', 'PSAV'].includes(program))) {
+    if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
       this.isEligible = false;
       this._fuseConfirmationService.open({
         title: this._translocoService.translate('auth.sign-up.notification.title'),
@@ -358,12 +358,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   checkFundsEligibility(): void {
-    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
+    const selectedProgram = this.signUpForm.value.program?.name;
     const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
     const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
 
     // Verificar elegibilidad para PACNA
-    if ((stateFundsDenied || federalFundsDenied) && selectedPrograms.some(program => program === 'PACNA')) {
+    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
       this.isEligible = false;
       this._fuseConfirmationService.open({
         title: this._translocoService.translate('auth.sign-up.notification.title'),
@@ -379,6 +379,28 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       });
     } else {
       this.isEligible = true;
+    }
+  }
+
+  checkOrganizedAthleticPrograms(): void {
+    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
+    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === 'Yes';
+
+    // Verificar elegibilidad para PACNA
+    if (organizedAthleticPrograms && selectedPrograms.some(program => program === 'PACNA')) {
+      this.isEligible = false;
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
     }
   }
 
@@ -400,5 +422,26 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         postalZipCode: '',
       });
     }
+  }
+
+  // Añadir estos nuevos métodos
+  private disableAllControlsExceptProgram(): void {
+    Object.keys(this.signUpForm.controls).forEach(controlName => {
+      if (controlName !== 'program') {
+        const control = this.signUpForm.get(controlName);
+        if (control) {
+          control.disable({ emitEvent: false });
+        }
+      }
+    });
+  }
+
+  private enableAllControls(): void {
+    Object.keys(this.signUpForm.controls).forEach(controlName => {
+      const control = this.signUpForm.get(controlName);
+      if (control) {
+        control.enable({ emitEvent: false });
+      }
+    });
   }
 }

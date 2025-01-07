@@ -50,6 +50,11 @@
                 "yes": "Yes",
                 "no": "No"
             },
+            "organized-athletic-programs": {
+                "label": "Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?",
+                "yes": "Yes",
+                "no": "No"
+            },
             "agency": {
                 "label": "Name of the Sponsoring Agency",
                 "placeholder": "Enter the name of the sponsoring agency"
@@ -145,7 +150,8 @@
             "notification": {
                 "title": "Notification",
                 "confirm": "Accept"
-            }
+            },
+            "select-program-first": "Please select at least one program to continue with registration"
         },
         "reset-password": {
             "title": "Reset Password",
@@ -449,6 +455,71 @@
             },
             "submit": "Submit",
             "save": "Save"
+        }
+    },
+    "global": {
+        "dialogs": {
+            "schools": {
+                "add": {
+                    "title": "Add School",
+                    "names": {
+                        "label": "School Name",
+                        "placeholder": "Enter school name",
+                        "required": "School name is required",
+                        "maxLength": "Name cannot exceed 50 characters"
+                    },
+                    "level": {
+                        "label": "Level",
+                        "placeholder": "Select level",
+                        "required": "Level is required"
+                    },
+                    "operatingPeriod": {
+                        "label": "Operating Period",
+                        "placeholder": "Select operating period",
+                        "required": "Operating period is required"
+                    },
+                    "address": {
+                        "label": "Address",
+                        "placeholder": "Enter address",
+                        "required": "Address is required"
+                    },
+                    "city": {
+                        "label": "City",
+                        "placeholder": "Select city",
+                        "required": "City is required"
+                    },
+                    "region": {
+                        "label": "Region",
+                        "placeholder": "Select region",
+                        "required": "Region is required"
+                    },
+                    "zipCode": {
+                        "label": "Zip Code",
+                        "placeholder": "Enter zip code",
+                        "required": "Zip code is required"
+                    },
+                    "organizationType": {
+                        "label": "Organization Type",
+                        "placeholder": "Select organization type",
+                        "required": "Organization type is required"
+                    },
+                    "facilities": {
+                        "label": "Facilities",
+                        "placeholder": "Select facilities",
+                        "required": "At least one facility must be selected"
+                    },
+                    "mealTypes": {
+                        "label": "Meal Types",
+                        "placeholder": "Select meal types",
+                        "required": "At least one meal type must be selected"
+                    }
+                }
+            }
+        },
+        "buttons": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "close": "Close"
         }
     }
 }

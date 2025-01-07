@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { MonitorPreoperationalVisitComponent } from './preoperational-visit.component';
-import { MonitorPreoperationalVisitListComponent } from './list/list.component';
+import { PdamPreoperationalVisitListComponent } from './list/list.component';
 import { initialMonitorPreoperationalVisitResolver, editMonitorPreoperationalVisitResolver } from './preoperational-visit.resolvers';
 import { EditMonitorPreoperationalVisitComponent } from './edit/edit.component';
 
@@ -12,7 +12,7 @@ export default [
         children: [
             {
                 path: '',
-                component: MonitorPreoperationalVisitListComponent,
+                component: PdamPreoperationalVisitListComponent,
                 resolve: {
                     data: initialMonitorPreoperationalVisitResolver
                 }

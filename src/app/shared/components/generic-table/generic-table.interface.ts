@@ -11,15 +11,21 @@ export interface GenericTableConfig<T = any> {
   pageSize?: number;
   pageSizeOptions?: number[];
   length?: number;
+  addButtonShow?: boolean;
+  addButtonIcon?: string;
+  addButtonLabel?: string;
+  addButtonTooltip?: string;
+  addButtonTooltipPosition?: 'above' | 'below' | 'left'  | 'right';
 }
 
 export interface OnGenericTableHandler {
   // Lista de datos
   tableConfig: GenericTableConfig;
   // Funciones
-  onEdit?: (event: Event, id: number) => void;
-  onDelete?: (event: Event, id: number) => void;
-  onCheckChange?: (event: Event, element: any) => void;
+  onTableAdd?: () => void;
+  onTableEdit?: (event: Event, id: number) => void;
+  onTableDelete?: (event: Event, id: number) => void;
+  onTableCheckChange?: (event: Event, element: any) => void;
   getPaginator?: (event?: PageEvent) => void;
   // Métodos para obtener datos
   getById?: (id: number) => void;

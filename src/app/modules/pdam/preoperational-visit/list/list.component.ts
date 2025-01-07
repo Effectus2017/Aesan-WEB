@@ -16,19 +16,18 @@ import { FormControl, UntypedFormBuilder } from '@angular/forms';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { PREOPERATIONAL_VISIT_COLUMNS_SCHEMA } from './columns-schema';
-import { preoperationalVisitColumnsData } from './columns-data';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 
 @Component({
-  selector: 'monitor-preoperational-visit-list',
+  selector: 'pdam-preoperational-visit-list',
   templateUrl: './list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
   standalone: true,
   imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent],
 })
-export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class PdamPreoperationalVisitListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatTable) table: MatTable<ProgramRequest>;

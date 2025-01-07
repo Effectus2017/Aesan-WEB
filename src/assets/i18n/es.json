@@ -44,6 +44,11 @@
                 "yes": "Sí",
                 "no": "No"
             },
+            "organized-athletic-programs": {
+                "label": "¿El Patrocinador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                "yes": "Sí",
+                "no": "No"
+            },
             "sponsor-information": "Información del Patrocinador",
             "sponsor-information-description": "Aquí puede agregar la información del patrocinador",
             "agency": {
@@ -123,7 +128,29 @@
                 "label": "Apellido de la Madre",
                 "placeholder": "Ingresa el apellido de la madre"
             },
-            "submit": "Aplicar al Programa"
+            "submit": "Aplicar al Programa",
+            "select-program-first": "Por favor, seleccione al menos un programa para continuar con el registro",
+            "form-invalid": {
+                "message": "Por favor, complete todos los campos requeridos",
+                "close": "Cerrar"
+            },
+            "notification": {
+                "title": "Notificación",
+                "confirm": "Aceptar"
+            },
+            "same-as-physical-address": {
+                "label": "Igual que la dirección física"
+            },
+            "pdam-psav-not-eligible": {
+                "message": "No es elegible para participar en los programas PDAM o PSAV"
+            },
+            "error": {
+                "processing-request": "Ha ocurrido un error al procesar su solicitud. Por favor, intente nuevamente"
+            },
+            "pacna-not-eligible": {
+                "message": "No es elegible para participar en el programa PACNA",
+                "close": "Cerrar"
+            }
         },
         "reset-password": {
             "title": "Restablecer Contraseña",
@@ -427,6 +454,71 @@
             },
             "submit": "Enviar",
             "save": "Guardar"
+        }
+    },
+    "global": {
+        "dialogs": {
+            "schools": {
+                "add": {
+                    "title": "Agregar Escuela",
+                    "names": {
+                        "label": "Nombre de Escuela",
+                        "placeholder": "Ingrese el nombre de la escuela",
+                        "required": "El nombre de la escuela es requerido",
+                        "maxLength": "El nombre no puede exceder los 50 caracteres"
+                    },
+                    "level": {
+                        "label": "Nivel",
+                        "placeholder": "Seleccione el nivel",
+                        "required": "El nivel es requerido"
+                    },
+                    "operatingPeriod": {
+                        "label": "Período de Operación",
+                        "placeholder": "Seleccione el período de operación",
+                        "required": "El período de operación es requerido"
+                    },
+                    "address": {
+                        "label": "Dirección",
+                        "placeholder": "Ingrese la dirección",
+                        "required": "La dirección es requerida"
+                    },
+                    "city": {
+                        "label": "Ciudad",
+                        "placeholder": "Seleccione la ciudad",
+                        "required": "La ciudad es requerida"
+                    },
+                    "region": {
+                        "label": "Región",
+                        "placeholder": "Seleccione la región",
+                        "required": "La región es requerida"
+                    },
+                    "zipCode": {
+                        "label": "Código Postal",
+                        "placeholder": "Ingrese el código postal",
+                        "required": "El código postal es requerido"
+                    },
+                    "organizationType": {
+                        "label": "Tipo de Organización",
+                        "placeholder": "Seleccione el tipo de organización",
+                        "required": "El tipo de organización es requerido"
+                    },
+                    "facilities": {
+                        "label": "Facilidades",
+                        "placeholder": "Seleccione las facilidades",
+                        "required": "Debe seleccionar al menos una facilidad"
+                    },
+                    "mealTypes": {
+                        "label": "Tipos de Comida",
+                        "placeholder": "Seleccione los tipos de comida",
+                        "required": "Debe seleccionar al menos un tipo de comida"
+                    }
+                }
+            }
+        },
+        "buttons": {
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "close": "Cerrar"
         }
     }
 }

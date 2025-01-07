@@ -17,8 +17,10 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field data-cy="program-field">
             <mat-label>{{ "validation-to-program.edit.program.label" | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select" multiple>
-              <mat-option *ngFor="let program of listPrograms" [value]="program">{{ program.name }}</mat-option>
+            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select">
+              <mat-option *ngFor="let program of listPrograms" [value]="program">
+                {{ program.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
 

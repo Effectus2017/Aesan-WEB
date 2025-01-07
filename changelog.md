@@ -218,3 +218,79 @@ Estos cambios buscan optimizar la experiencia del usuario y mejorar la funcional
 
 ### Cambios en Pruebas
 - Se realizaron ajustes en las pruebas para reflejar la nueva lógica de rechazo y la interacción con el diálogo.
+
+## [2024-11-19] a [2024-12-07]
+
+## Cambios Realizados
+
+### Nuevos Componentes
+
+- Componente para usaurios Monitores (Portal de Monitores segun el programa)
+  - Ahora los usuarios Monitores pueden registrar visitas preoperacionales (en desarrollo)
+  - Segun el tipo de Rol monitor va a portal correspondiente segun el programa que tenga asignado
+- Componente para usaurios de Agencias (Portal de Agencias)
+  - Ahora las agencias pueden registrar solicitudes de programas (en desarrollo)
+  - Ahora las agencias pueden ver la lista de solicitudes de programas (en desarrollo)
+
+- Cuando un usaurio sponsor se loguea, ssi aun tiene password temporal, se le pedira que cambie su password
+
+### Mejoras en Componentes de Edición
+- Se unificó la lógica de guardado en los componentes:
+  - `EditValidationToProgramComponent`
+  - `EditMonitorPreoperationalVisitComponent`
+  - `EditProgramRequestComponent`
+- Se implementó manejo consistente de formularios y validaciones
+- Se agregó deshabilitación del formulario durante el guardado
+- Se mejoró el manejo de errores y mensajes de confirmación
+- Se implementó validación de campos requeridos antes del guardado
+- Se agregó soporte para múltiples programas en el formulario
+
+### Actualizaciones en Servicios
+- Se actualizó `AgencyService` para manejar:
+  - Actualización de estado de agencia
+  - Actualización de programas
+  - Obtención de datos de agencia
+- Se implementó manejo de parámetros de consulta consistente
+- Se mejoró el manejo de respuestas del servidor
+- Se agregó actualización automática de datos después del guardado
+
+### Mejoras en la Interfaz de Usuario
+- Se agregaron diálogos de confirmación para:
+  - Éxito en guardado
+  - Errores en operaciones
+  - Rechazo de agencias
+- Se implementaron mensajes traducidos para todos los diálogos
+- Se mejoró la experiencia de usuario durante operaciones asíncronas
+- Se agregaron indicadores visuales durante el guardado
+- Se implementó diseño responsive para todos los componentes
+- Se mejoró la presentación de datos en vista móvil
+
+### Optimizaciones de Código
+- Se eliminó código comentado obsoleto
+- Se mejoró el manejo de tipos en las interfaces
+- Se implementó manejo consistente de suscripciones
+- Se agregaron comentarios descriptivos en métodos clave
+- Se optimizó la estructura de los componentes
+- Se mejoró el manejo de estados del formulario
+
+### Internacionalización
+- Se actualizaron las traducciones para:
+  - Mensajes de error
+  - Diálogos de confirmación
+  - Etiquetas de formularios
+  - Mensajes de validación
+- Se implementó soporte multiidioma para nuevos componentes
+
+### Testing
+- Se actualizaron las pruebas de Cypress para:
+  - Validación de formularios
+  - Flujos de guardado
+  - Manejo de errores
+  - Interacciones de usuario
+- Se optimizaron los tiempos de espera en las pruebas
+- Se agregaron nuevos casos de prueba para validaciones
+
+### Documentación
+- Se actualizaron los comentarios en el código para mejor claridad
+- Se documentaron los nuevos métodos y componentes
+- Se agregaron ejemplos de uso en los comentarios

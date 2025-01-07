@@ -1,7 +1,5 @@
 
-export interface City {
+export interface Facility {
     id: number;
     name: string;
 }
-
-

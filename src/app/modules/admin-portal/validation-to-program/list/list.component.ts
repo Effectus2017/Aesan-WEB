@@ -122,6 +122,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       take: this.tableConfig.pageSize,
       skip: index,
       name: form.name || null,
+      userId: null,
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();

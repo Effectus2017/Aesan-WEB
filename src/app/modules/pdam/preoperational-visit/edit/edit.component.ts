@@ -37,7 +37,7 @@ import { NgClass } from '@angular/common';
 import { FuseConfigService } from '@fuse/services/config';
 
 @Component({
-  selector: 'app-monitor-preoperational-visit-edit',
+  selector: 'app-monitor-preoperational-visit-pdam-edit',
   standalone: true,
   templateUrl: './edit.component.html',
   encapsulation: ViewEncapsulation.None,

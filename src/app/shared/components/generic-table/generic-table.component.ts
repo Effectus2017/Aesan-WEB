@@ -1,7 +1,6 @@
-import { Component, Input, Output, EventEmitter, ViewChild, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatSort } from '@angular/material/sort';
-import { CommonModule, NgIf } from '@angular/common';
+import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { MatTableModule } from '@angular/material/table';
+import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
@@ -28,18 +27,43 @@ export class GenericTableComponent implements OnInit {
     return item.id || index;
   }
 
+  /**
+   * Método para manejar la adición de un elemento a la tabla.
+   * Llama a la función onTableAdd del handler proporcionado.
+   */
+  onAdd(): void {
+    this.handler.onTableAdd();
+  }
+
+  /**
+   * Método para manejar la edición de un elemento de la tabla.
+   * Llama a la función onTableEdit del handler proporcionado.
+   * @param event El evento de edición.
+   * @param id El ID del elemento a editar.
+   */
   onEdit(event: Event, id: number): void {
-    this.handler.onEdit(event, id);
+    this.handler.onTableEdit(event, id);
   }
 
+  /**
+   * Método para manejar la eliminación de un elemento de la tabla.
+   * Llama a la función onTableDelete del handler proporcionado.
+   * @param event El evento de eliminación.
+   * @param id El ID del elemento a eliminar.
+   */
   onDelete(event: Event, id: number): void {
-    this.handler.onDelete(event, id);
+    this.handler.onTableDelete(event, id);
   }
 
+
+  /**
+   * Método para manejar el cambio de estado de un checkbox en la tabla.
+   * Llama a la función onTableCheckChange del handler proporcionado.
+   * @param event El evento de cambio del checkbox.
+   * @param element El elemento de la fila que contiene el checkbox.
+   */
   onCheckboxChange(event: MatCheckboxChange, element: any, key: string): void {
-    // Actualiza el valor usando el mismo método que usas para establecer valores anidados
-    //this.getNestedValue(element, key, event.checked);
-    //this.handler.onCheckboxChange(event, element, key);
+    //this.handler.onTableCheckChange(event, element);
   }
 
   /**

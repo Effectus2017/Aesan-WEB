@@ -1,0 +1,155 @@
+<div class="flex flex-col max-h-screen -m-6 min-w-160">
+  <!-- Header -->
+  <div class="flex items-center justify-between h-16 pl-6 pr-3 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ "global.dialogs.schools.add.title" | transloco }}</div>
+    <button mat-icon-button (click)="discard()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto p-6 overflow-y-auto" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <!-- Nombre de la escuela -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.names.label" | transloco }}</mat-label>
+          <input matInput darkModeText formControlName="Name" [placeholder]="'global.dialogs.schools.add.names.placeholder' | transloco" />
+          <mat-error *ngIf="form.get('Name').hasError('required')">
+            {{ "global.dialogs.schools.add.names.required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="form.get('Name').hasError('maxlength')">
+            {{ "global.dialogs.schools.add.names.maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Nivel Educativo -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.level.label" | transloco }}</mat-label>
+          <mat-select formControlName="EducationLevelId">
+            <mat-option *ngFor="let level of educationLevels" [value]="level.id">
+              {{ level.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('EducationLevelId').hasError('required')">
+            {{ "global.dialogs.schools.add.level.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <!-- Período de Operación -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.operatingPeriod.label" | transloco }}</mat-label>
+          <mat-select formControlName="OperatingPeriodId">
+            <mat-option *ngFor="let period of operatingPeriods" [value]="period.id">
+              {{ period.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('OperatingPeriodId').hasError('required')">
+            {{ "global.dialogs.schools.add.operatingPeriod.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Dirección -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.address.label" | transloco }}</mat-label>
+          <input matInput darkModeText formControlName="Address" [placeholder]="'global.dialogs.schools.add.address.placeholder' | transloco" />
+          <mat-error *ngIf="form.get('Address').hasError('required')">
+            {{ "global.dialogs.schools.add.address.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <!-- Ciudad -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.city.label" | transloco }}</mat-label>
+          <mat-select formControlName="CityId">
+            <mat-option *ngFor="let city of cities" [value]="city.id">
+              {{ city.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('CityId').hasError('required')">
+            {{ "global.dialogs.schools.add.city.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Región -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.region.label" | transloco }}</mat-label>
+          <mat-select formControlName="RegionId">
+            <mat-option *ngFor="let region of regions" [value]="region.id">
+              {{ region.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('RegionId').hasError('required')">
+            {{ "global.dialogs.schools.add.region.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <!-- Código Postal -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.zipCode.label" | transloco }}</mat-label>
+          <input matInput darkModeText formControlName="ZipCode" type="number" [placeholder]="'global.dialogs.schools.add.zipCode.placeholder' | transloco" />
+          <mat-error *ngIf="form.get('ZipCode').hasError('required')">
+            {{ "global.dialogs.schools.add.zipCode.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Tipo de Organización -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.organizationType.label" | transloco }}</mat-label>
+          <mat-select formControlName="OrganizationTypeId">
+            <mat-option *ngFor="let type of organizationTypes" [value]="type.id">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('OrganizationTypeId').hasError('required')">
+            {{ "global.dialogs.schools.add.organizationType.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+        <!-- Facilidades -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.facilities.label" | transloco }}</mat-label>
+          <mat-select formControlName="FacilityIds" multiple>
+            <mat-option *ngFor="let facility of facilities" [value]="facility.id">
+              {{ facility.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('FacilityIds').hasError('required')">
+            {{ "global.dialogs.schools.add.facilities.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Tipos de Comida -->
+        <mat-form-field>
+          <mat-label>{{ "global.dialogs.schools.add.mealTypes.label" | transloco }}</mat-label>
+          <mat-select formControlName="MealTypeIds" multiple>
+            <mat-option *ngFor="let mealType of mealTypes" [value]="mealType.id">
+              {{ mealType.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('MealTypeIds').hasError('required')">
+            {{ "global.dialogs.schools.add.mealTypes.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="discard()">
+          {{ "global.buttons.cancel" | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid">
+          {{ "global.buttons.save" | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

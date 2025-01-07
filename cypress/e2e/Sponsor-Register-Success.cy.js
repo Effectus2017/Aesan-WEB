@@ -30,6 +30,9 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=federal-funds-denied-select]').click();
         cy.get('[data-cy=federal-funds-denied-no]').contains('No').click();
 
+        cy.get('[data-cy=organized-athletic-programs-select]').click();
+        cy.get('[data-cy=organized-athletic-programs-no]').contains('No').click();
+
         // Datos de la agencia
         const agencyName = faker.company.name();
         cy.get('[data-cy=agency-input]').type(agencyName);

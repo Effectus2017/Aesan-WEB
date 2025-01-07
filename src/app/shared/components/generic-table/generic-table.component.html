@@ -1,46 +1,51 @@
 <!-- Start of Selection -->
-<table class="hidden w-full sm:table " mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
+<div class="flex flex-row justify-end mb-2">
+  <button
+    class="dark:bg-amber-600 dark:hover:bg-amber-600"
+    mat-mini-fab
+    color="primary"
+    (click)="onAdd()"
+    [matTooltip]="config.addButtonTooltip | transloco"
+    [matTooltipPosition]="config.addButtonTooltipPosition | transloco"
+    [title]="config.addButtonLabel | transloco"
+    *ngIf="config.addButtonShow"
+  >
+    <mat-icon>{{ config.addButtonIcon }}</mat-icon>
+  </button>
+</div>
+
+<table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>
       {{ col.label | transloco }}
     </th>
     <td mat-cell *matCellDef="let element" data-cy="generic-table-cells">
-      @switch (col.type) {
-        @case ('check') {
-            <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)"> </mat-checkbox>
+      @switch (col.type) { @case ('check') {
+      <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)"> </mat-checkbox>
+      } @case ('date') {
+      {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
+      } @case ('date-time') {
+      {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
+      } @case ('text') {
+      {{ getNestedValue(element, col.key) }}
+      } @case ('combined-text') {
+      {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
+      } @case ('boolean') {
+      {{ getNestedValue(element, col.key) ? "Si" : "No" }}
+      } @case ('button') {
+      <div class="flex flex-row justify-center gap-2">
+        @for (button of col?.buttons; track button) {
+        <button [title]="button.label | transloco" *ngIf="button.key === 'edit'" type="button" mat-icon-button color="warm" (click)="onEdit($event, element.id)">
+          <mat-icon [svgIcon]="'mat_solid:launch'"></mat-icon>
+        </button>
+        <button [title]="button.label | transloco" *ngIf="button.key === 'delete'" type="button" mat-icon-button color="warm" (click)="onDelete($event, element.id)">
+          <mat-icon [svgIcon]="'mat_solid:delete'"></mat-icon>
+        </button>
         }
-        @case ('date')
-        {
-            {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
-        }
-        @case ('date-time') {
-            {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
-        }
-        @case ('text') {
-            {{ getNestedValue(element, col.key) }}
-        }
-        @case ('combined-text') {
-            {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
-        }
-        @case ('boolean') {
-            {{ getNestedValue(element, col.key) ? "Si" : "No" }}
-        }
-        @case ('button') {
-            <div class="flex flex-row justify-center gap-2">
-            @for (button of col?.buttons; track button) {
-                <button [title]="button.label | transloco" *ngIf="button.key === 'edit'" type="button" mat-icon-button color="warm" (click)="onEdit($event, element.id)">
-                    <mat-icon [svgIcon]="'mat_solid:launch'"></mat-icon>
-                </button>
-                <button [title]="button.label | transloco" *ngIf="button.key === 'delete'" type="button" mat-icon-button color="warm" (click)="onDelete($event, element.id)">
-                    <mat-icon [svgIcon]="'mat_solid:delete'"></mat-icon>
-                </button>
-            }
-            </div>
-        }
-        @default {
-            {{ getNestedValue(element, col.key) }}
-        }
-      }
+      </div>
+      } @default {
+      {{ getNestedValue(element, col.key) }}
+      } }
     </td>
   </ng-container>
 
@@ -51,55 +56,39 @@
 <!-- Lista para móviles -->
 <div class="w-full sm:hidden">
   @for (element of config.dataSource.connect() | async; track element) {
-    <div class="p-2 m-2 border rounded-lg bg-card">
-      @for (col of config.columnsSchema; track col) {
-        <div class="flex w-full py-2" [class.justify-between]="col.key !== 'actions'" [class.justify-center]="col.key === 'actions'">
-          @if (col.key !== 'actions') {
-            <span class="font-medium">{{ col.label | transloco }}:</span>
-          }
-          <span>
-            @switch (col.type) {
-              @case ('check') {
-                <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)"></mat-checkbox>
-              }
-              @case ('date') {
-                {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
-              }
-              @case ('date-time') {
-                {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
-              }
-              @case ('text') {
-                {{ getNestedValue(element, col.key) }}
-              }
-              @case ('combined-text') {
-                {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
-              }
-              @case ('boolean') {
-                {{ getNestedValue(element, col.key) ? "Si" : "No" }}
-              }
-              @case ('button') {
-                <div class="gap-2">
-                  @for (button of col?.buttons; track button) {
-                    @if (button.key === 'edit') {
-                      <button [title]="button.label | transloco" type="button" mat-flat-button color="primary" (click)="onEdit($event, element.id)">
-                        Editar
-                      </button>
-                    }
-                    @if (button.key === 'delete') {
-                      <button [title]="button.label | transloco" type="button" mat-flat-button color="warm" (click)="onDelete($event, element.id)">
-                        Eliminar
-                      </button>
-                    }
-                  }
-                </div>
-              }
-              @default {
-                {{ getNestedValue(element, col.key) }}
-              }
-            }
-          </span>
-        </div>
+  <div class="p-2 m-2 border rounded-lg bg-card">
+    @for (col of config.columnsSchema; track col) {
+    <div class="flex w-full py-2" [class.justify-between]="col.key !== 'actions'" [class.justify-center]="col.key === 'actions'">
+      @if (col.key !== 'actions') {
+      <span class="font-medium">{{ col.label | transloco }}:</span>
       }
+      <span>
+        @switch (col.type) { @case ('check') {
+        <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)"></mat-checkbox>
+        } @case ('date') {
+        {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
+        } @case ('date-time') {
+        {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
+        } @case ('text') {
+        {{ getNestedValue(element, col.key) }}
+        } @case ('combined-text') {
+        {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
+        } @case ('boolean') {
+        {{ getNestedValue(element, col.key) ? "Si" : "No" }}
+        } @case ('button') {
+        <div class="gap-2">
+          @for (button of col?.buttons; track button) { @if (button.key === 'edit') {
+          <button [title]="button.label | transloco" type="button" mat-flat-button color="primary" (click)="onEdit($event, element.id)">Editar</button>
+          } @if (button.key === 'delete') {
+          <button [title]="button.label | transloco" type="button" mat-flat-button color="warm" (click)="onDelete($event, element.id)">Eliminar</button>
+          } }
+        </div>
+        } @default {
+        {{ getNestedValue(element, col.key) }}
+        } }
+      </span>
     </div>
+    }
+  </div>
   }
 </div>

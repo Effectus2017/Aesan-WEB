@@ -179,7 +179,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       name: param.name || null,
       city: param.city || null,
       region: param.region || null,
-      program: param.programs || null,
+      program: param.programs?.[0] || null,
       status: param.status || null,
       sdrNumber: param.sdrNumber || null,
       uieNumber: param.uieNumber || null,
@@ -244,7 +244,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       MotherLastName: formValues.motherLastName,
       AdministrationTitle: formValues.administrationTitle,
       //
-      Programs: formValues.program ? formValues.program.map((program: any) => program.id) : [],
+      Programs: formValues.program ? [formValues.program.id] : [],
     };
 
     // Parámetros de consulta

@@ -13,10 +13,10 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
 import { Subject, takeUntil } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
-import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
+import { OnGenericAddComponentHandler, OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
@@ -31,6 +31,11 @@ import { City } from 'app/shared/models/City';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
+import { schoolsColumnsData } from './columns-data';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { AddSchoolDialogComponent } from '../add-school-dialog/add-school-dialog.component';
 
 @Component({
   selector: 'app-agency-program-requests-add',
@@ -59,9 +64,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDialogModule,
     MatTooltipModule,
     NgIf,
+    GenericTableComponent,
   ],
 })
-export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
+export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericAddComponentHandler, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
@@ -239,6 +245,8 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
 
   param: Agency;
 
+  temporarySchools: any[] = [];
+
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'Solicitud al Programa',
@@ -266,15 +274,38 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
       // Intérpreta
       interpretersNeeded: [null],
       interpretersLanguage: [null],
+      // Medios alternativos para la comunicación
+      alternativeCommunicationMedia: [null],
+      alternativeCommunicationMediaType: [null],
     }),
     submitButtonShow: false,
     saveButtonShow: false,
     rejectButtonShow: false,
   };
 
+  tableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    dataSourceList: [],
+    columnsSchema: SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
+    length: 0,
+    addButtonShow: true,
+    addButtonIcon: 'add',
+    addButtonLabel: 'global.buttons.addSchool',
+    addButtonTooltip: 'global.tooltips.addSchool',
+    addButtonTooltipPosition: 'above',
+  };
+
   constructor() {}
 
   ngOnInit() {
+    this.tableConfig.dataSource.data = schoolsColumnsData;
+
+
     // this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
     //   if (result.body) {
     //     this.onSetForm(result.body);
@@ -517,5 +548,71 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
   // Función única para comparar diferentes tipos de elementos
   compareItems<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);
+  }
+
+  onAdd() {
+    console.log('onAdd');
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // Métodos para manejar la tabla
+  // -----------------------------------------------------------------------------------------------------
+
+  onTableAdd() {
+    const dialogRef = this._dialog.open(AddSchoolDialogComponent, {
+      data: {
+        schoolId: 0, // ID temporal
+        isTemporary: true, // Indicar que es temporal
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        // Agregar el hijo a la lista temporal
+        this.temporarySchools.push(result);
+        // Actualizar la tabla
+        this.tableConfig.dataSource.data = this.temporarySchools;
+        this._changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
+  onTableEdit(event: Event, id: number) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // const schoolToEdit = this.temporarySchools.find((school) => school.id === id);
+    // if (!schoolToEdit) return;
+
+    // const dialogRef = this._dialog.open(EditSchoolDialogComponent, {
+    //   data: {
+    //     schoolId: id,
+    //     employeeId: 0,
+    //     lastNames: this.headerConfig.formGroup.get('lastnames').value,
+    //     school: schoolToEdit,
+    //   },
+    // });
+
+    // dialogRef.afterClosed().subscribe((result: any) => {
+    //   if (result) {
+    //     // Actualizar el hijo en la lista temporal
+    //     const index = this.temporarySchools.findIndex((school) => school.id === id);
+    //     if (index !== -1) {
+    //       this.temporarySchools[index] = result;
+    //       this.tableConfig.dataSource.data = [...this.temporarySchools];
+    //       this._changeDetectorRef.markForCheck();
+    //     }
+    //   }
+    // });
+  }
+
+  onTableDelete(event: Event, id: number) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Eliminar el hijo de la lista temporal
+    this.temporarySchools = this.temporarySchools.filter((school) => school.id !== id);
+    this.tableConfig.dataSource.data = this.temporarySchools;
+    this._changeDetectorRef.markForCheck();
   }
 }
