@@ -1,14 +1,13 @@
-
 export interface SchoolRequest {
-    Id: number;
-    Name: string;
-    EducationLevelId: number;
-    OperatingPeriodId: number;
-    Address: string;
-    CityId: number;
-    RegionId: number;
-    ZipCode: number;
-    OrganizationTypeId: number;
-    FacilityIds: number[];
-    MealTypeIds: number[];
+    id?: number;
+    name: string;
+    educationLevelId: number;
+    operatingPeriodId: number;
+    address: string;
+    cityId: number;
+    regionId: number;
+    zipCode: number;
+    organizationTypeId: number;
+    facilityIds?: number[];
+    mealTypeIds?: number[];
 }

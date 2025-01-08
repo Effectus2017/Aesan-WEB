@@ -261,44 +261,44 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const formValues = this.signUpForm.value;
 
     const userAgencyRequest: UserAgencyRequest = {
-      Agency: {
-        Name: formValues.name ? formValues.name : '',
+      agency: {
+        name: formValues.name ? formValues.name : '',
         // Datos de la Agencia
-        SdrNumber: formValues.sdrNumber ? formValues.sdrNumber : 0,
-        UieNumber: formValues.uieNumber ? formValues.uieNumber : 0,
-        EinNumber: formValues.einNumber ? formValues.einNumber : 0,
+        sdrNumber: formValues.sdrNumber ? formValues.sdrNumber : 0,
+        uieNumber: formValues.uieNumber ? formValues.uieNumber : 0,
+        einNumber: formValues.einNumber ? formValues.einNumber : 0,
         // Dirección Física
-        Address: formValues.address ? formValues.address : '',
-        ZipCode: formValues.zipCode ? formValues.zipCode : 0,
-        CityId: formValues.city ? formValues.city.id : 0,
-        RegionId: formValues.region ? formValues.region.id : 0,
-        Latitude: formValues.latitude ? formValues.latitude : 0,
-        Longitude: formValues.longitude ? formValues.longitude : 0,
+        address: formValues.address ? formValues.address : '',
+        zipCode: formValues.zipCode ? formValues.zipCode : 0,
+        cityId: formValues.city ? formValues.city.id : 0,
+        regionId: formValues.region ? formValues.region.id : 0,
+        latitude: formValues.latitude ? formValues.latitude : 0,
+        longitude: formValues.longitude ? formValues.longitude : 0,
         // Dirección Postal
-        PostalAddress: formValues.postalAddress ? formValues.postalAddress : '',
-        PostalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
-        PostalCityId: formValues.postalCity ? formValues.postalCity.id : 0,
-        PostalRegionId: formValues.postalRegion ? formValues.postalRegion.id : 0,
+        postalAddress: formValues.postalAddress ? formValues.postalAddress : '',
+        postalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
+        postalCityId: formValues.postalCity ? formValues.postalCity.id : 0,
+        postalRegionId: formValues.postalRegion ? formValues.postalRegion.id : 0,
         // Datos del usuario
-        Phone: formValues.phone ? formValues.phone : '',
-        NonProfit: formValues.nonProfit === 'Yes' ? true : false,
-        FederalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
-        StateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
-        OrganizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
+        phone: formValues.phone ? formValues.phone : '',
+        nonProfit: formValues.nonProfit === 'Yes' ? true : false,
+        federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
+        stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
+        organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
         //
-        Programs: [programId],
+        programs: [programId],
         //
-        Email: formValues.email ? formValues.email : '',
+        email: formValues.email ? formValues.email : '',
       },
-      User: {
+      user: {
         // Datos del Contacto
-        FirstName: formValues.firstName,
-        MiddleName: formValues.middleName,
-        FatherLastName: formValues.fatherLastName,
-        MotherLastName: formValues.motherLastName,
+        firstName: formValues.firstName,
+        middleName: formValues.middleName,
+        fatherLastName: formValues.fatherLastName,
+        motherLastName: formValues.motherLastName,
         // Datos del Correo Electrónico y Cargo
-        AdministrationTitle: formValues.administrationTitle,
-        Email: formValues.email,
+        administrationTitle: formValues.administrationTitle,
+        email: formValues.email,
       },
     };
 

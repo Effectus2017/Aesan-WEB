@@ -1,6 +1,6 @@
 export const PROGRAM_REQUESTS_COLUMNS_SCHEMA = [
     {
-        key: 'title',
+        key: 'applicationNumber',
         label: 'program-requests.list.columns.title',
         sortable: true,
         type: 'text',

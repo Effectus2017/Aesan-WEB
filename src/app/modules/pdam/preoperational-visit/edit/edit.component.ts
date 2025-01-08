@@ -246,13 +246,13 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
     // Construir el objeto de actualización
     const agencyRequest: UpdateAgencyProgramRequest = {
-      AgencyId: this.param.id,
-      ProgramId: formValues.program?.[0]?.id,
-      StatusId: formValues.status?.id,
-      UserId: userId,
-      AppointmentCoordinated: formValues.appointmentCoordinated,
-      AppointmentDate: formValues.appointmentDate,
-      RejectionJustification: formValues.rejectionJustification,
+      agencyId: this.param.id,
+      programId: formValues.program?.[0]?.id,
+      statusId: formValues.status?.id,
+      userId: userId,
+      appointmentCoordinated: formValues.appointmentCoordinated,
+      appointmentDate: formValues.appointmentDate,
+      rejectionJustification: formValues.rejectionJustification,
     };
 
     // Llamar al servicio para actualizar

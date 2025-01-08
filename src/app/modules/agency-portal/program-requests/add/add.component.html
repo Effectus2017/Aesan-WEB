@@ -226,7 +226,8 @@
           <div class="grid grid-cols-1 gap-2">
             <!-- Medio Alternativo -->
             <mat-form-field data-cy="alternative-communication-media-field">
-              <mat-label matTooltip="¿Necesita medios alternatvios para la comunicación de la información del programa como Sistema Brailes para no videntes, letras grandes, cintas de audio, etc.?"
+              <mat-label
+                matTooltip="¿Necesita medios alternatvios para la comunicación de la información del programa como Sistema Brailes para no videntes, letras grandes, cintas de audio, etc.?"
                 >¿Necesita medios alternatvios para la comunicación de la información del programa como Sistema Brailes para no videntes, letras grandes, cintas de audio,
                 etc.?</mat-label
               >
@@ -236,7 +237,6 @@
                 }}</mat-option>
               </mat-select>
             </mat-form-field>
-
           </div>
 
           <div class="grid grid-cols-1 gap-2">
@@ -255,9 +255,80 @@
           <p class="mb-6 text-secondary">Descripción de la seccion</p>
         </div>
 
-        <!-- Tqbla con lsita de escuelas -->
+        <!-- Tabla con lsita de escuelas -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-10">
           <app-generic-table [config]="tableConfig" [handler]="this" #schoolsTable></app-generic-table>
+        </div>
+
+        <!-- Subtitulo de la seccion -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
+          <p class="text-lg font-medium">Merienda</p>
+          <p class="mb-6 text-secondary">Favor indicar el porciento (%) de elegibilidad en las categorías de gratis y reducido.</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-10">
+          <mat-form-field data-cy="free-percentage-field">
+            <mat-label>% Gratis</mat-label>
+            <input matInput type="number" formControlName="freePercentage" [placeholder]="'% Gratis'" />
+          </mat-form-field>
+
+          <mat-form-field data-cy="free-percentage-field">
+            <mat-label>% Gratis</mat-label>
+            <input matInput type="number" formControlName="reducedPercentage" [placeholder]="'% Reducido'" />
+          </mat-form-field>
+
+          <mat-form-field data-cy="sub-total-percentage-field">
+            <mat-label>% Sub-Total</mat-label>
+            <input matInput type="number" formControlName="subTotalPercentage" [placeholder]="'% Sub-Total'" />
+          </mat-form-field>
+
+          <mat-form-field data-cy="paid-percentage-field">
+            <mat-label>% Pagado</mat-label>
+            <input matInput type="number" formControlName="paidPercentage" [placeholder]="'% Pagado'" />
+          </mat-form-field>
+        </div>
+
+        <!-- Subtitulo de la seccion -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
+          <p class="text-lg font-medium">Documentos</p>
+          <p class="mb-6 text-secondary">Documentos requeridos para solicitar el servicio de merienda:.</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+          <div class="grid grid-cols-1 gap-2">
+            <mat-form-field data-cy="document-type-field">
+              <mat-label>Documentos</mat-label>
+              <mat-select multiple formControlName="documentType">
+                <mat-option *ngFor="let type of listOfDocumentTypes" [value]="type">{{ type.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Subtitulo de la seccion -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
+          <p class="text-lg font-medium">Notificacion</p>
+          <p class="mb-6 text-secondary">
+            De acuerdo a la Oficina de Gerencia y Presupuesto de Estados Unidos (OMB, por sus siglas en inglés) toda Autoridad o Institución Auspiciadora cuya cuantía de fondos
+            federales recibidos (de todas las fuentes) en un año fiscal, sea de setecientos cincuenta mil dólares (750,000.00) o más, está obligada a realizar una auditoria en
+            cumplimiento con el Código de Regulaciones Federales 2 parte 200 sub-parte f (2 CFR 200 f).
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
+          <div class="grid grid-cols-1 gap-4">
+            <mat-checkbox  data-cy="checkbox1-field"> $750,000 o más en fondos federales en un año fiscal </mat-checkbox>
+            <mat-checkbox data-cy="checkbox2-field"> $749,999 o menos en fondos federales en un año fiscal </mat-checkbox>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
+          <p class="mb-6 text-secondary">Certifico que nuestra institución ha recibido:</p>
+        </div>
+
+        <!-- Tabla con lista de funetes de ingresos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-10">
+          <app-generic-table [config]="tableConfigIncomeSources" [handler]="this" #incomeSourcesTable></app-generic-table>
         </div>
       </div>
     </form>

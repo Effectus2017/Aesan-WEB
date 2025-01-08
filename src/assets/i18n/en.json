@@ -514,12 +514,76 @@
                         "required": "At least one meal type must be selected"
                     }
                 }
+            },
+            "incomeSources": {
+                "add": {
+                    "title": "Add Income Source",
+                    "description": "Complete the income source details",
+                    "source": {
+                        "label": "Income Source",
+                        "placeholder": "Enter the income source",
+                        "required": "Income source is required",
+                        "maxLength": "Income source cannot exceed 100 characters"
+                    },
+                    "year": {
+                        "label": "Year (From-To)",
+                        "placeholder": "Enter the year (e.g., 2024-2025)",
+                        "required": "Year is required"
+                    },
+                    "amount": {
+                        "label": "Amount",
+                        "placeholder": "Enter the amount",
+                        "required": "Amount is required",
+                        "min": "Amount must be greater than 0"
+                    }
+                },
+                "edit": {
+                    "title": "Edit Income Source"
+                }
             }
         },
         "buttons": {
             "save": "Save",
             "cancel": "Cancel",
-            "close": "Close"
+            "close": "Close",
+            "update": "Update",
+            "add": "Add"
+        },
+        "table": {
+            "name": "Name",
+            "description": "Description",
+            "active": "Active",
+            "actions": "Actions",
+            "edit": "Edit",
+            "delete": "Delete",
+            "add": "Add",
+            "search": "Search",
+            "noData": "No data available",
+            "loading": "Loading...",
+            "itemsPerPage": "Items per page",
+            "nextPage": "Next page",
+            "previousPage": "Previous page",
+            "firstPage": "First page",
+            "lastPage": "Last page",
+            "pageOf": "Page {page} of {totalPages}",
+            "incomeSources": {
+                "source": "Income Source",
+                "amount": "Amount",
+                "year": "Year (From-To)"
+            },
+            "city": "City",
+            "zipCode": "Zip Code",
+            "level": "Level",
+            "schools": {
+                "name": "School Name",
+                "address": "Address",
+                "city": "City",
+                "zipCode": "Zip Code",
+                "level": "Level",
+                "enrollment": "Enrollment",
+                "service": "Service",
+                "facilities": "Facilities"
+            }
         }
     }
 }

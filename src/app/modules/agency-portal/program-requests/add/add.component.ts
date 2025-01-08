@@ -1,6 +1,6 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
 import { NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -32,10 +32,12 @@ import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { schoolsColumnsData } from './columns-data';
+import { INCOME_SOURCES_COLUMNS_SCHEMA, SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
+import { incomeSourcesData, schoolsColumnsData } from './columns-data';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AddSchoolDialogComponent } from '../add-school-dialog/add-school-dialog.component';
+import { AddIncomeSourceDialogComponent } from '../add-income-source-dialog/add-income-source-dialog.component';
+
 
 @Component({
   selector: 'app-agency-program-requests-add',
@@ -68,6 +70,9 @@ import { AddSchoolDialogComponent } from '../add-school-dialog/add-school-dialog
   ],
 })
 export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericAddComponentHandler, OnGenericTableHandler {
+  @ViewChild('schoolsTable') schoolsTable: GenericTableComponent;
+  @ViewChild('incomeSourcesTable') incomeSourcesTable: GenericTableComponent;
+
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
@@ -243,9 +248,25 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     },
   ];
 
+  listOfDocumentTypes = [
+    {
+      id: 1,
+      name: 'Lista de Participantes',
+    },
+    {
+      id: 2,
+      name: 'Plan de Actividades',
+    },
+    {
+      id: 3,
+      name: 'Menú a Utilizar',
+    },
+  ];
+
   param: Agency;
 
   temporarySchools: any[] = [];
+  temporaryIncomeSources: any[] = [];
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -277,6 +298,14 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
       // Medios alternativos para la comunicación
       alternativeCommunicationMedia: [null],
       alternativeCommunicationMediaType: [null],
+
+      // Porcentajes
+      freePercentage: [null],
+      reducedPercentage: [null],
+      subTotalPercentage: [null],
+      paidPercentage: [null],
+      // Documentos
+      documentType: [null],
     }),
     submitButtonShow: false,
     saveButtonShow: false,
@@ -300,11 +329,31 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     addButtonTooltipPosition: 'above',
   };
 
+  tableConfigIncomeSources: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    dataSourceList: [],
+    columnsSchema: INCOME_SOURCES_COLUMNS_SCHEMA,
+    displayedColumns: INCOME_SOURCES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
+    length: 0,
+    addButtonShow: true,
+    addButtonIcon: 'add',
+    addButtonLabel: 'global.buttons.addSchool',
+    addButtonTooltip: 'global.tooltips.addSchool',
+    addButtonTooltipPosition: 'above',
+  };
+
+  private _activeTable: 'schools' | 'incomeSources' = 'schools';
+
   constructor() {}
 
   ngOnInit() {
     this.tableConfig.dataSource.data = schoolsColumnsData;
-
+    this.tableConfigIncomeSources.dataSource.data = incomeSourcesData;
+    this._activeTable = 'schools';
 
     // this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
     //   if (result.body) {
@@ -374,7 +423,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
 
     // Construir el objeto de actualización
     const agencyRequest: AgencyRequest = {
-      Name: formValues.name,
+      name: formValues.name,
       //   CityId: formValues.city?.id,
       //   RegionId: formValues.region?.id,
       //   StatusId: formValues.status?.id,
@@ -559,60 +608,114 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
   // -----------------------------------------------------------------------------------------------------
 
   onTableAdd() {
-    const dialogRef = this._dialog.open(AddSchoolDialogComponent, {
-      data: {
-        schoolId: 0, // ID temporal
-        isTemporary: true, // Indicar que es temporal
-      },
-    });
+    // Determinar qué tabla está activa basado en el evento del botón
+    const isSchoolTable = false;
 
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        // Agregar el hijo a la lista temporal
-        this.temporarySchools.push(result);
-        // Actualizar la tabla
-        this.tableConfig.dataSource.data = this.temporarySchools;
-        this._changeDetectorRef.markForCheck();
-      }
-    });
+    if (isSchoolTable) {
+      const dialogRef = this._dialog.open(AddSchoolDialogComponent, {
+        data: {
+          schoolId: 0,
+          isTemporary: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          this.temporarySchools.push(result);
+          this.tableConfig.dataSource.data = this.temporarySchools;
+          this._changeDetectorRef.markForCheck();
+        }
+      });
+    } else {
+      const dialogRef = this._dialog.open(AddIncomeSourceDialogComponent, {
+        data: {
+          id: 0,
+          isTemporary: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          this.temporaryIncomeSources.push(result);
+          this.tableConfigIncomeSources.dataSource.data = this.temporaryIncomeSources;
+          this._changeDetectorRef.markForCheck();
+        }
+      });
+    }
   }
 
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
 
-    // const schoolToEdit = this.temporarySchools.find((school) => school.id === id);
-    // if (!schoolToEdit) return;
+    // Determinar qué tabla está activa basado en el evento del botón
+    const isSchoolTable = this.tableConfig.dataSource === this.schoolsTable?.config?.dataSource;
 
-    // const dialogRef = this._dialog.open(EditSchoolDialogComponent, {
-    //   data: {
-    //     schoolId: id,
-    //     employeeId: 0,
-    //     lastNames: this.headerConfig.formGroup.get('lastnames').value,
-    //     school: schoolToEdit,
-    //   },
-    // });
+    if (isSchoolTable) {
+      const schoolToEdit = this.temporarySchools.find((school) => school.id === id);
+      if (!schoolToEdit) return;
 
-    // dialogRef.afterClosed().subscribe((result: any) => {
-    //   if (result) {
-    //     // Actualizar el hijo en la lista temporal
-    //     const index = this.temporarySchools.findIndex((school) => school.id === id);
-    //     if (index !== -1) {
-    //       this.temporarySchools[index] = result;
-    //       this.tableConfig.dataSource.data = [...this.temporarySchools];
-    //       this._changeDetectorRef.markForCheck();
-    //     }
-    //   }
-    // });
+      const dialogRef = this._dialog.open(AddSchoolDialogComponent, {
+        data: {
+          ...schoolToEdit,
+          isTemporary: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          const index = this.temporarySchools.findIndex((school) => school.id === id);
+          if (index !== -1) {
+            this.temporarySchools[index] = result;
+            this.tableConfig.dataSource.data = [...this.temporarySchools];
+            this._changeDetectorRef.markForCheck();
+          }
+        }
+      });
+    } else {
+      const incomeSourceToEdit = this.temporaryIncomeSources.find((source) => source.id === id);
+      if (!incomeSourceToEdit) return;
+
+      const dialogRef = this._dialog.open(AddIncomeSourceDialogComponent, {
+        data: {
+          ...incomeSourceToEdit,
+          isTemporary: true,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result: any) => {
+        if (result) {
+          const index = this.temporaryIncomeSources.findIndex((source) => source.id === id);
+          if (index !== -1) {
+            this.temporaryIncomeSources[index] = result;
+            this.tableConfigIncomeSources.dataSource.data = [...this.temporaryIncomeSources];
+            this._changeDetectorRef.markForCheck();
+          }
+        }
+      });
+    }
   }
 
   onTableDelete(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
 
-    // Eliminar el hijo de la lista temporal
-    this.temporarySchools = this.temporarySchools.filter((school) => school.id !== id);
-    this.tableConfig.dataSource.data = this.temporarySchools;
-    this._changeDetectorRef.markForCheck();
+    // Determinar qué tabla está activa basado en el evento del botón
+    const isSchoolTable = this.tableConfig.dataSource === this.schoolsTable?.config?.dataSource;
+
+    if (isSchoolTable) {
+      this.temporarySchools = this.temporarySchools.filter((school) => school.id !== id);
+      this.tableConfig.dataSource.data = this.temporarySchools;
+      this._changeDetectorRef.markForCheck();
+    } else {
+      this.temporaryIncomeSources = this.temporaryIncomeSources.filter((source) => source.id !== id);
+      this.tableConfigIncomeSources.dataSource.data = this.temporaryIncomeSources;
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+
+  // Método para cambiar la tabla activa
+  setActiveTable(table: 'schools' | 'incomeSources') {
+    this._activeTable = table;
   }
 }

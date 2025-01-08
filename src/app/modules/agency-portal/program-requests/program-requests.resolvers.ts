@@ -3,7 +3,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
-import { ProgramsService } from 'app/shared/services/program.service';
+import { ProgramService } from 'app/shared/services/program.service';
 import { UserService } from 'app/shared/services/user.service';
 import { forkJoin } from 'rxjs';
 
@@ -12,13 +12,13 @@ export const initialAgencyProgramRequestsResolver = () => {
   const _geoService: GeoService = inject(GeoService);
   const _userService: UserService = inject(UserService);
   const _authService: AuthService = inject(AuthService);
-  const _programService: ProgramsService = inject(ProgramsService);
+  const _programService: ProgramService = inject(ProgramService);
   const userId = _authService.getUserId();
 
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
-    programId: 1,
+    agencyId: 1,
   };
 
   return forkJoin([

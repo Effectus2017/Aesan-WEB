@@ -1,9 +1,10 @@
 
+// Corresponder a modelos User de la API
 export interface UserRequest {
-    FirstName: string;
-    MiddleName: string;
-    FatherLastName: string;
-    MotherLastName: string;
-    AdministrationTitle: string;
-    Email: string;
+    firstName: string;
+    middleName: string;
+    fatherLastName: string;
+    motherLastName: string;
+    administrationTitle: string;
+    email: string;
 }

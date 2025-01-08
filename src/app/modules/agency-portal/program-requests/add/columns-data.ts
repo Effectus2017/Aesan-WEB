@@ -33,3 +33,18 @@ export const schoolsColumnsData = [
     facilities: 'Salón Comedor', // Almacén, Cocina, Salón Comedor, Otros
   },
 ];
+
+export const incomeSourcesData = [
+  {
+    id: 1,
+    source: 'Fondos Federales',
+    amount: 750000,
+    year: '2024-2025',
+  },
+  {
+    id: 2,
+    source: 'Fondos Estatales',
+    amount: 500000,
+    year: '2024-2025',
+  },
+];

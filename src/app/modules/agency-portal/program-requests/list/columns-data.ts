@@ -1,7 +1,7 @@
 export const programRequestsColumnsData = [
     {
         id: '1',
-        title: 'PDAM-1234',
+        applicationNumber: 'PDAM-1234',
         createdBy: 'Juan Del Pueblo',
         agency: 'FONDITA DE JUAN',
         createdAt: new Date('2024-08-03'),
@@ -24,3 +24,4 @@ export const programRequestsColumnsData = [
         status: 'pending'
     }
 ];
+

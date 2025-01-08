@@ -226,25 +226,24 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
     // Construir el objeto de actualización
     const agencyRequest: AgencyRequest = {
-      Name: formValues.name,
-      CityId: formValues.city?.id,
-      RegionId: formValues.region?.id,
-      StatusId: formValues.status?.id,
-      SdrNumber: formValues.sdrNumber,
-      UieNumber: formValues.uieNumber,
-      EinNumber: formValues.einNumber,
-      Address: formValues.address,
-      ZipCode: formValues.zipCode,
-      PostalAddress: formValues.postalAddress,
-      Email: formValues.email,
-      Phone: formValues.phone,
-      FirstName: formValues.firstName,
-      MiddleName: formValues.middleName,
-      FatherLastName: formValues.fatherLastName,
-      MotherLastName: formValues.motherLastName,
-      AdministrationTitle: formValues.administrationTitle,
-      //
-      Programs: formValues.program ? [formValues.program.id] : [],
+      name: formValues.name,
+      cityId: formValues.city?.id,
+      regionId: formValues.region?.id,
+      statusId: formValues.status?.id,
+      sdrNumber: formValues.sdrNumber,
+      uieNumber: formValues.uieNumber,
+      einNumber: formValues.einNumber,
+      address: formValues.address,
+      zipCode: formValues.zipCode,
+      postalAddress: formValues.postalAddress,
+      email: formValues.email,
+      phone: formValues.phone,
+    //   firstName: formValues.firstName,
+    //   middleName: formValues.middleName,
+    //   fatherLastName: formValues.fatherLastName,
+    //   motherLastName: formValues.motherLastName,
+       administrationTitle: formValues.administrationTitle,
+      programs: formValues.program ? [formValues.program.id] : [],
     };
 
     // Parámetros de consulta

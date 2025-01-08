@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -18,86 +18,80 @@ import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components
 import { PROGRAM_REQUESTS_COLUMNS_SCHEMA } from './columns-schema';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { programRequestsColumnsData } from './columns-data';
+import { ProgramService } from 'app/shared/services/program.service';
+import { AuthService } from 'app/core/auth/auth.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
 
 @Component({
-    selector: 'agency-program-requests-list',
-    templateUrl: './list.component.html',
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations,
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatTableModule,
-        MatPaginatorModule,
-        MatSortModule,
-        MatButtonModule,
-        MatIconModule,
-        MatMenuModule,
-        GenericHeaderComponent,
-        GenericTableComponent
-    ]
+  selector: 'agency-program-requests-list',
+  templateUrl: './list.component.html',
+  encapsulation: ViewEncapsulation.None,
+  animations: fuseAnimations,
+  standalone: true,
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent],
 })
 export class AgencyProgramRequestsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
-    @ViewChild(MatPaginator) paginator: MatPaginator;
-    @ViewChild(MatSort) sort: MatSort;
-    @ViewChild(MatTable) table: MatTable<ProgramRequest>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatTable) table: MatTable<ProgramRequest>;
 
-    private _formBuilder = inject(UntypedFormBuilder);
-    private _programRequestService: ProgramRequestService = inject(ProgramRequestService);
-    private _customRouterService = inject(CustomRouterService);
+  private _formBuilder = inject(UntypedFormBuilder);
+  private _programService: ProgramService = inject(ProgramService);
+  private _authService: AuthService = inject(AuthService);
+  private _programRequestService: ProgramRequestService = inject(ProgramRequestService);
+  private _customRouterService = inject(CustomRouterService);
+  private _changeDetectorRef = inject(ChangeDetectorRef);
 
+  // Configuración del header
+  headerConfig: GenericHeaderConfig = {
+    title: 'program-requests.list.title',
+    formGroup: this._formBuilder.group({
+      name: new FormControl(''),
+    }),
+    searchFieldShow: true,
+    searchInputPlaceholder: 'program-requests.list.search.placeholder',
+    submitButtonText: 'program-requests.list.buttons.save',
+    goToAddButtonShow: true,
+  };
 
-    // Configuración del header
-    headerConfig: GenericHeaderConfig = {
-        title: 'program-requests.list.title',
-        formGroup: this._formBuilder.group({
-            name: new FormControl(''),
-        }),
-        searchFieldShow: true,
-        searchInputPlaceholder: 'program-requests.list.search.placeholder',
-        submitButtonText: 'program-requests.list.buttons.save',
-        goToAddButtonShow: true,
-    };
+  // Configuración de la tabla
+  tableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<ProgramRequest>(),
+    dataSourceList: [],
+    columnsSchema: PROGRAM_REQUESTS_COLUMNS_SCHEMA,
+    displayedColumns: PROGRAM_REQUESTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
+    length: 0,
+  };
 
-    // Configuración de la tabla
-    tableConfig: GenericTableConfig = {
-        dataSource: new MatTableDataSource<ProgramRequest>(),
-        dataSourceList: [],
-        columnsSchema: PROGRAM_REQUESTS_COLUMNS_SCHEMA,
-        displayedColumns: PROGRAM_REQUESTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
-        handler: this,
-        showPaginator: true,
-        pageSize: 25,
-        pageSizeOptions: [25, 50, 100],
-        length: 0,
-    };
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
+  constructor() {}
 
-    constructor() {}
+  ngOnInit(): void {
 
-    ngOnInit(): void {
+    this.tableConfig.dataSource.data = programRequestsColumnsData;
 
-        this.tableConfig.dataSource.data = programRequestsColumnsData;
+    // this._programService.programInscriptions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    //     this.tableConfig.dataSource.data = result.body.data;
+    //     this.tableConfig.length = result.body.count;
+    //     // Mark for check
+    //     this._changeDetectorRef.markForCheck();
+    //   });
 
-        // Cargar datos
-        // this._programRequestService.getRequestsByAgency()
-        //     .pipe(takeUntil(this._unsubscribeAll))
-        //     .subscribe((requests) => {
-        //         this.tableConfig.dataSource.data = requests;
-        //     });
-    }
+  }
 
-    ngOnDestroy(): void {
-        this._unsubscribeAll.next(null);
-        this._unsubscribeAll.complete();
-    }
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
 
-    getPaginator(event?: PageEvent) {
-        // Paginado de tabla
-    }
+  getPaginator(event?: PageEvent) {
+    // Paginado de tabla
+  }
 
-    onAdd(): void {
-
-    }
+  onAdd(): void {}
 }

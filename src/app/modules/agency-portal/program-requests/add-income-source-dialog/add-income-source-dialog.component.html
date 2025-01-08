@@ -1,0 +1,58 @@
+<div class="flex flex-col max-h-screen -m-6 min-w-100">
+  <!-- Header -->
+
+  <div class="flex items-center justify-between h-16 pl-6 pr-3 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ "global.dialogs.incomeSources.add.title" | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto p-6 overflow-y-auto" [formGroup]="incomeSourceForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-1">
+      <!-- Fuente de Ingreso -->
+      <mat-form-field>
+        <mat-label>{{ "global.dialogs.incomeSources.add.source.label" | transloco }}</mat-label>
+        <input matInput [formControlName]="'source'" [placeholder]="'global.dialogs.incomeSources.add.source.placeholder' | transloco" required />
+        <mat-error *ngIf="incomeSourceForm.get('source').hasError('required')">
+          {{ "global.dialogs.incomeSources.add.source.required" | transloco }}
+        </mat-error>
+        <mat-error *ngIf="incomeSourceForm.get('source').hasError('maxLength')">
+          {{ "global.dialogs.incomeSources.add.source.maxLength" | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Año -->
+      <mat-form-field>
+        <mat-label>{{ "global.dialogs.incomeSources.add.year.label" | transloco }}</mat-label>
+        <input matInput [formControlName]="'year'" [placeholder]="'global.dialogs.incomeSources.add.year.placeholder' | transloco" required />
+        <mat-error *ngIf="incomeSourceForm.get('year').hasError('required')">
+          {{ "global.dialogs.incomeSources.add.year.required" | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Monto -->
+      <mat-form-field>
+        <mat-label>{{ "global.dialogs.incomeSources.add.amount.label" | transloco }}</mat-label>
+        <input matInput type="number" [formControlName]="'amount'" [placeholder]="'global.dialogs.incomeSources.add.amount.placeholder' | transloco" required />
+        <mat-error *ngIf="incomeSourceForm.get('amount').hasError('required')">
+          {{ "global.dialogs.incomeSources.add.amount.required" | transloco }}
+        </mat-error>
+        <mat-error *ngIf="incomeSourceForm.get('amount').hasError('min')">
+          {{ "global.dialogs.incomeSources.add.amount.min" | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+          {{ "global.buttons.cancel" | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="incomeSourceForm.invalid">
+          {{ "global.buttons.save" | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

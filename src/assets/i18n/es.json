@@ -513,12 +513,76 @@
                         "required": "Debe seleccionar al menos un tipo de comida"
                     }
                 }
+            },
+            "incomeSources": {
+                "add": {
+                    "title": "Agregar Fuente de Ingreso",
+                    "description": "Complete los detalles de la fuente de ingreso",
+                    "source": {
+                        "label": "Fuente de Ingreso",
+                        "placeholder": "Ingrese la fuente de ingreso",
+                        "required": "La fuente de ingreso es requerida",
+                        "maxLength": "La fuente de ingreso no puede exceder los 100 caracteres"
+                    },
+                    "year": {
+                        "label": "Año (Desde-Hasta)",
+                        "placeholder": "Ingrese el año (ej: 2024-2025)",
+                        "required": "El año es requerido"
+                    },
+                    "amount": {
+                        "label": "Monto",
+                        "placeholder": "Ingrese el monto",
+                        "required": "El monto es requerido",
+                        "min": "El monto debe ser mayor a 0"
+                    }
+                },
+                "edit": {
+                    "title": "Editar Fuente de Ingreso"
+                }
             }
         },
         "buttons": {
             "save": "Guardar",
             "cancel": "Cancelar",
-            "close": "Cerrar"
+            "close": "Cerrar",
+            "update": "Actualizar",
+            "add": "Agregar"
+        },
+        "table": {
+            "name": "Nombre",
+            "description": "Descripción",
+            "active": "Activo",
+            "actions": "Acciones",
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "add": "Agregar",
+            "search": "Buscar",
+            "noData": "No hay datos disponibles",
+            "loading": "Cargando...",
+            "itemsPerPage": "Elementos por página",
+            "nextPage": "Siguiente página",
+            "previousPage": "Página anterior",
+            "firstPage": "Primera página",
+            "lastPage": "Última página",
+            "pageOf": "Página {page} de {totalPages}",
+            "incomeSources": {
+                "source": "Fuente de Ingreso",
+                "amount": "Monto",
+                "year": "Año (Desde-Hasta)"
+            },
+            "city": "Ciudad",
+            "zipCode": "Código Postal",
+            "level": "Nivel",
+            "schools": {
+                "name": "Nombre de la Escuela",
+                "address": "Dirección",
+                "city": "Ciudad",
+                "zipCode": "Código Postal",
+                "level": "Nivel",
+                "enrollment": "Matrícula",
+                "service": "Servicio",
+                "facilities": "Facilidades"
+            }
         }
     }
 }

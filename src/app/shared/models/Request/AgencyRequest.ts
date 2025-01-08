@@ -1,50 +1,45 @@
 export interface AgencyRequest {
-    Id?: number;
-    Name?: string;
-    StatusId?: number;
+    name?: string;
+    statusId?: number;
     // Datos de la Agencia
-    SdrNumber?: number;
-    UieNumber?: number;
-    EinNumber?: number;
-    // Dirección
-    Address?: string;
-    ZipCode?: number;
-    CityId?: number;
-    RegionId?: number;
-    Latitude?: number;
-    Longitude?: number;
+    sdrNumber?: number;
+    uieNumber?: number;
+    einNumber?: number;
+    // Dirección Física
+    address?: string;
+    zipCode?: number;
+    cityId?: number;
+    regionId?: number;
+    latitude?: number;
+    longitude?: number;
     // Dirección Postal
-    PostalAddress?: string;
-    PostalZipCode?: number;
-    PostalCityId?: number;
-    PostalRegionId?: number;
-    // Datos del usuario
-    Email?: string;
-    Phone?: string;
-    // Nuevos campos de elegibilidad
-    NonProfit?: boolean;
-    FederalFundsDenied?: boolean;
-    StateFundsDenied?: boolean;
-    OrganizedAthleticPrograms?: boolean;
-    // Status
-    IsActive?: boolean;
-    IsListable?: boolean;
-    // Datos del usuario
-    FirstName?: string;
-    MiddleName?: string;
-    FatherLastName?: string;
-    MotherLastName?: string;
-    AdministrationTitle?: string;
+    postalAddress?: string;
+    postalCityId?: number;
+    postalRegionId?: number;
+    postalZipCode?: number;
+    // Imágen - Logo
+    imageUrl?: string;
+    email?: string;
+    phone?: string;
+    administrationTitle?: string;
+    // Campos de elegibilidad
+    nonProfit?: boolean;
+    federalFundsDenied?: boolean;
+    stateFundsDenied?: boolean;
+    organizedAthleticPrograms?: boolean;
+    // Campos de estado
+    isActive?: boolean;
+    isListable?: boolean;
     // Programas
-    Programs?: number[];
+    programs?: number[];
 }
 
 export interface UpdateAgencyProgramRequest {
-    AgencyId?: number;
-    StatusId?: number;
-    ProgramId?: number;
-    UserId?: string;
-    RejectionJustification?: string;
-    AppointmentCoordinated?: boolean;
-    AppointmentDate?: string;
+    agencyId?: number;
+    statusId?: number;
+    programId?: number;
+    userId?: string;
+    rejectionJustification?: string;
+    appointmentCoordinated?: boolean;
+    appointmentDate?: string;
 }
