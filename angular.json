@@ -32,7 +32,7 @@
                             "crypto-js/hmac-sha256",
                             "crypto-js/enc-base64",
                             "flat",
-                            "quill-delta"
+                            "quill"
                         ],
                         "assets": [
                             "src/favicon-16x16.png",
@@ -56,9 +56,7 @@
                             "src/@fuse/styles/main.scss",
                             "src/styles/styles.scss",
                             "src/styles/tailwind.scss",
-                            "./node_modules/quill/dist/quill.core.css",
-                            "./node_modules/quill/dist/quill.bubble.css",
-                            "./node_modules/quill/dist/quill.snow.css"
+                            "node_modules/quill/dist/quill.snow.css"
                         ],
                         "scripts": []
                     },
