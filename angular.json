@@ -55,12 +55,19 @@
                             "src/styles/vendors.scss",
                             "src/@fuse/styles/main.scss",
                             "src/styles/styles.scss",
-                            "src/styles/tailwind.scss"
+                            "src/styles/tailwind.scss",
+                            "node_modules/ngx-quill/assets/quill.snow.css"
                         ],
                         "scripts": []
                     },
                     "configurations": {
                         "production": {
+                            "optimization": true,
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -73,7 +80,13 @@
                                     "maximumError": "90kb"
                                 }
                             ],
-                            "outputHashing": "all"
+                            "outputHashing": "all",
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ]
                         },
                         "development": {
                             "buildOptimizer": false,
