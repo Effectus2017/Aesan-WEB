@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { ValidationToProgramComponent } from './validation-to-program.component';
 import { ValidationToProgramListComponent } from './list/list.component';
-import { ValidationToProgramEditResolver, ValidationToProgramListResolver } from './validation-to-program.resolvers';
+import { initialDataValidationToProgramEditResolver, initialDataValidationToProgramListResolver } from './validation-to-program.resolvers';
 import { EditValidationToProgramComponent } from './edit/edit.component';
 
 export default [
@@ -11,16 +11,16 @@ export default [
         children: [
             {
                 path: '',
+                component: ValidationToProgramListComponent,
                 resolve: {
-                    data: ValidationToProgramListResolver
+                    data: initialDataValidationToProgramListResolver
                 },
-                component: ValidationToProgramListComponent
             },
             {
                 path: 'edit/:id',
                 component: EditValidationToProgramComponent,
                 resolve: {
-                    data: ValidationToProgramEditResolver
+                    data: initialDataValidationToProgramEditResolver
                 }
             }
         ]

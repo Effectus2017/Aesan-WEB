@@ -289,8 +289,157 @@ Estos cambios buscan optimizar la experiencia del usuario y mejorar la funcional
   - Interacciones de usuario
 - Se optimizaron los tiempos de espera en las pruebas
 - Se agregaron nuevos casos de prueba para validaciones
-
 ### Documentación
 - Se actualizaron los comentarios en el código para mejor claridad
 - Se documentaron los nuevos métodos y componentes
 - Se agregaron ejemplos de uso en los comentarios
+
+# Changelog - [2024-12-07] a [2025-01-07]
+
+## Cambios Realizados
+
+### Nuevos Componentes y Funcionalidades
+- Se implementó el Portal de Monitores con:
+  - Registro de visitas preoperacionales
+  - Redirección según rol y programa asignado
+- Se implementó el Portal de Agencias con:
+  - Registro de solicitudes de programas
+  - Visualización de lista de solicitudes
+- Se agregó solicitud de cambio de contraseña para usuarios sponsors con contraseña temporal
+
+### Mejoras en Componentes de Edición
+- Se unificó la lógica de guardado en:
+  - `EditValidationToProgramComponent`
+  - `EditMonitorPreoperationalVisitComponent`
+  - `EditProgramRequestComponent`
+- Se implementó manejo consistente de formularios y validaciones
+- Se agregó deshabilitación del formulario durante el guardado
+- Se mejoró el manejo de errores y mensajes de confirmación
+
+### Actualizaciones en Servicios
+- Se mejoró `AgencyService` para:
+  - Actualización de estado de agencia
+  - Actualización de programas
+  - Obtención de datos de agencia
+- Se implementó manejo consistente de parámetros de consulta
+
+### Nuevos Modelos
+- Se crearon nuevas interfaces:
+  - `EducationLevel`
+  - `Facility`
+  - `MealType`
+  - `OperatingPeriod`
+  - `OrganizationType`
+  - `SchoolRequest`
+  - `School`
+
+### Mejoras en UI/UX
+- Se agregaron diálogos de confirmación para:
+  - Éxito en guardado
+  - Errores en operaciones
+  - Rechazo de agencias
+- Se implementaron mensajes traducidos
+- Se mejoró la experiencia durante operaciones asíncronas
+- Se implementó diseño responsive
+
+### Componentes Eliminados
+- Se eliminaron componentes obsoletos:
+  - `BudgetComponent`
+  - `DocumentsComponent`
+  - `RefundsComponent`
+  - Sus respectivos servicios y rutas
+
+### Internacionalización
+- Se actualizaron traducciones para:
+  - Mensajes de error
+  - Diálogos de confirmación
+  - Etiquetas de formularios
+  - Mensajes de validación
+- Se implementó soporte multiidioma para nuevos componentes
+
+### Optimizaciones
+- Se eliminó código comentado obsoleto
+- Se mejoró el manejo de tipos en interfaces
+- Se implementó manejo consistente de suscripciones
+- Se agregaron comentarios descriptivos
+- Se cambió el título de la aplicación de "AESAN" a "NUTRE"
+
+### Testing
+- Se actualizaron pruebas de Cypress
+- Se optimizaron tiempos de espera
+- Se agregaron nuevos casos de prueba para validaciones
+
+# Changelog - [2025-01-08]
+
+## Cambios Realizados
+
+### Nuevos Componentes y Funcionalidades
+- Se implementó el Portal de Monitores con:
+  - Registro de visitas preoperacionales
+  - Redirección según rol y programa asignado
+- Se implementó el Portal de Agencias con:
+  - Registro de solicitudes de programas
+  - Visualización de lista de solicitudes
+- Se agregó solicitud de cambio de contraseña para usuarios sponsors con contraseña temporal
+
+### Mejoras en Componentes de Edición
+- Se unificó la lógica de guardado en:
+  - `EditValidationToProgramComponent`
+  - `EditMonitorPreoperationalVisitComponent` 
+  - `EditProgramRequestComponent`
+- Se implementó manejo consistente de formularios y validaciones
+- Se agregó deshabilitación del formulario durante el guardado
+- Se mejoró el manejo de errores y mensajes de confirmación
+
+### Actualizaciones en Servicios
+- Se actualizó `AgencyService` para:
+  - Actualización de estado de agencia
+  - Actualización de programas
+  - Obtención de datos de agencia
+- Se implementó manejo consistente de parámetros de consulta
+
+### Nuevos Modelos
+- Se crearon nuevas interfaces:
+  - `EducationLevel`
+  - `Facility` 
+  - `MealType`
+  - `OperatingPeriod`
+  - `OrganizationType`
+  - `SchoolRequest`
+  - `School`
+
+### Mejoras en UI/UX
+- Se agregaron diálogos de confirmación para:
+  - Éxito en guardado
+  - Errores en operaciones 
+  - Rechazo de agencias
+- Se implementaron mensajes traducidos
+- Se mejoró la experiencia durante operaciones asíncronas
+- Se implementó diseño responsive
+
+### Componentes Eliminados
+- Se eliminaron componentes obsoletos:
+  - `BudgetComponent`
+  - `DocumentsComponent`
+  - `RefundsComponent`
+  - Sus respectivos servicios y rutas
+
+### Internacionalización
+- Se actualizaron traducciones para:
+  - Mensajes de error
+  - Diálogos de confirmación
+  - Etiquetas de formularios
+  - Mensajes de validación
+- Se implementó soporte multiidioma para nuevos componentes
+
+### Optimizaciones
+- Se eliminó código comentado obsoleto
+- Se mejoró el manejo de tipos en interfaces
+- Se implementó manejo consistente de suscripciones
+- Se agregaron comentarios descriptivos
+- Se cambió el título de la aplicación de "AESAN" a "NUTRE"
+
+### Testing
+- Se actualizaron pruebas de Cypress
+- Se optimizaron tiempos de espera
+- Se agregaron nuevos casos de prueba para validaciones

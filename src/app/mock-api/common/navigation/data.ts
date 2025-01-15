@@ -17,27 +17,27 @@ export const agencyNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_outline:document-text',
         link: '/agency-portal/program-requests'
     },
-    {
-        id: 'documents',
-        title: 'Documentos',
-        type: 'basic',
-        icon: 'heroicons_outline:document',
-        link: '/agency-portal/documents'
-    },
-    {
-        id: 'budget',
-        title: 'Presupuesto',
-        type: 'basic',
-        icon: 'heroicons_outline:currency-dollar',
-        link: '/agency-portal/budget'
-    },
-    {
-        id: 'reimbursements',
-        title: 'Reembolsos',
-        type: 'basic',
-        icon: 'heroicons_outline:receipt-refund',
-        link: '/agency-portal/reimbursements'
-    }
+    // {
+    //     id: 'documents',
+    //     title: 'Documentos',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:document',
+    //     link: '/agency-portal/documents'
+    // },
+    // {
+    //     id: 'budget',
+    //     title: 'Presupuesto',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:currency-dollar',
+    //     link: '/agency-portal/budget'
+    // },
+    // {
+    //     id: 'reimbursements',
+    //     title: 'Reembolsos',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:receipt-refund',
+    //     link: '/agency-portal/reimbursements'
+    // }
 ];
 
 // Mantener las navegaciones existentes...
@@ -49,27 +49,27 @@ export const defaultNavigation: FuseNavigationItem[] = [
     icon: 'hero:home',
     link: '/example',
   },
-  {
-    id: 'documents',
-    title: 'Documentos',
-    type: 'basic',
-    icon: 'heroicons_solid:document',
-    link: '/documents', // Nueva ruta para Documentos
-  },
-  {
-    id: 'budget',
-    title: 'Presupuesto',
-    type: 'basic',
-    icon: 'heroicons_solid:cash',
-    link: '/budget', // Nueva ruta para Presupuesto
-  },
-  {
-    id: 'reimbursements',
-    title: 'Rembolsos',
-    type: 'basic',
-    icon: 'heroicons_solid:cash',
-    link: '/refunds', // Nueva ruta para Rembolsos
-  },
+//   {
+//     id: 'documents',
+//     title: 'Documentos',
+//     type: 'basic',
+//     icon: 'heroicons_solid:document',
+//     link: '/documents', // Nueva ruta para Documentos
+//   },
+//   {
+//     id: 'budget',
+//     title: 'Presupuesto',
+//     type: 'basic',
+//     icon: 'heroicons_solid:cash',
+//     link: '/budget', // Nueva ruta para Presupuesto
+//   },
+//   {
+//     id: 'reimbursements',
+//     title: 'Rembolsos',
+//     type: 'basic',
+//     icon: 'heroicons_solid:cash',
+//     link: '/refunds', // Nueva ruta para Rembolsos
+//   },
   {
     id: 'example',
     title: 'Example',
@@ -87,14 +87,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
   }
 ];
 export const compactNavigation: FuseNavigationItem[] = [
-  {
-    id: 'home',
-    title: 'Dashboard',
-    type: 'basic',
-    icon: 'heroicons_solid:chart-bar',
-    link: '/example',
-    roles: ['Administrator'],
-  },
+//   {
+//     id: 'home',
+//     title: 'Dashboard',
+//     type: 'basic',
+//     icon: 'heroicons_solid:chart-bar',
+//     link: '/example',
+//     roles: ['Administrator'],
+//   },
   {
     id: 'programs',
     title: 'Validación de Programas',
@@ -111,28 +111,28 @@ export const compactNavigation: FuseNavigationItem[] = [
     link: '/pre-operational',
     roles: ['Monitor'],
   },
-  {
-    id: 'documents',
-    title: 'Documentos',
-    type: 'basic',
-    icon: 'heroicons_solid:document',
-    link: '/documents', // Nueva ruta para Documentos
-    roles: ['Administrator'],
-  },
-  {
-    id: 'budget',
-    title: 'Presupuesto',
-    type: 'basic',
-    icon: 'heroicons_solid:banknotes',
-    link: '/budget', // Nueva ruta para Presupuesto
-    roles: ['Administrator'],
-  },
-  {
-    id: 'reimbursements',
-    title: 'Rembolsos',
-    type: 'basic',
-    icon: 'heroicons_solid:banknotes',
-    link: '/refunds', // Nueva ruta para Rembolsos
-    roles: ['Administrator'],
-  }
+//   {
+//     id: 'documents',
+//     title: 'Documentos',
+//     type: 'basic',
+//     icon: 'heroicons_solid:document',
+//     link: '/documents', // Nueva ruta para Documentos
+//     roles: ['Administrator'],
+//   },
+//   {
+//     id: 'budget',
+//     title: 'Presupuesto',
+//     type: 'basic',
+//     icon: 'heroicons_solid:banknotes',
+//     link: '/budget', // Nueva ruta para Presupuesto
+//     roles: ['Administrator'],
+//   },
+//   {
+//     id: 'reimbursements',
+//     title: 'Rembolsos',
+//     type: 'basic',
+//     icon: 'heroicons_solid:banknotes',
+//     link: '/refunds', // Nueva ruta para Rembolsos
+//     roles: ['Administrator'],
+//   }
 ];

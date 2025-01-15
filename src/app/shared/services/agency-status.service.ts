@@ -40,9 +40,7 @@ export class AgencyStatusService {
    * @returns El estado de agencia
    */
   getAgencyStatusById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient
-      .get(`${this.apiUrl}/get-agency-status-by-id`, getHttpOptions(queryParameters))
-      .pipe(tap((response: any) => this._agencyStatus.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-agency-status-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatus.next(response)));
   }
 
   /**
@@ -51,9 +49,7 @@ export class AgencyStatusService {
    * @returns Los estados de agencia
    */
   getAllAgencyStatusFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient
-      .get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters))
-      .pipe(tap((response: any) => this._agencyStatuses.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatuses.next(response)));
   }
 
   /**

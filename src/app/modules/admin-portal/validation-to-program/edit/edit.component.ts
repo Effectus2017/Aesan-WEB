@@ -31,6 +31,7 @@ import { City } from 'app/shared/models/City';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component';
+import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -64,6 +65,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
+  private _agencyStatusService = inject(AgencyStatusService);
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -151,7 +153,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       }
     });
 
-    this._agencyService.agencyStatus$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result.body.data) {
         this.listAgencyStatus = result.body.data;
         this._changeDetectorRef.detectChanges();

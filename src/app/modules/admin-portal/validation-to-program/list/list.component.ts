@@ -13,7 +13,6 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { MatInputModule } from '@angular/material/input';
-import { NgFor, NgIf } from '@angular/common';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 // Importa el esquema de columnas
@@ -146,7 +145,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     this.getAll(0, this.headerConfig.formGroup.value);
   }
 
-  onEdit(event: Event, id: number) {
+  onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
     // navega a la página de edición
