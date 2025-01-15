@@ -25,7 +25,7 @@ jobs:
         run: |
           npm install --legacy-peer-deps
           npm install quill --save
-          npm run prod
+          npm run dev
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
