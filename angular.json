@@ -56,7 +56,9 @@
                             "src/@fuse/styles/main.scss",
                             "src/styles/styles.scss",
                             "src/styles/tailwind.scss",
-                            "node_modules/ngx-quill/assets/quill.snow.css"
+                            "./node_modules/quill/dist/quill.core.css",
+                            "./node_modules/quill/dist/quill.bubble.css",
+                            "./node_modules/quill/dist/quill.snow.css"
                         ],
                         "scripts": []
                     },
