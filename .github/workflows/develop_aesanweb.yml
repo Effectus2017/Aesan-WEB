@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -23,14 +23,18 @@ jobs:
 
       - name: npm install, build, and test
         run: |
-          npm install --force
-          npm run dev
+          npm install
+          npm run build --if-present
+          npm run test --if-present
+
+      - name: Zip artifact for deployment
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -39,7 +43,7 @@ jobs:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write # Esto es necesario para solicitar el JWT
+      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
@@ -47,21 +51,21 @@ jobs:
         with:
           name: node-app
 
+      - name: Unzip artifact for deployment
+        run: unzip release.zip
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AD21727FB99D4E308A2C4DD6696E9AD1 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_34FC6F67EF634A839560840E6327C103 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D9B677AA6D6B4A369B69FF5FE79BDB45 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_87D4CCF054074288BA1CCB9701D871BF }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_08AA83AC5C6C47B684A78ADA9F7CB199 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_3C5A80530EA34D948398780B6E4B4198 }}
 
       - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
         with:
           app-name: 'aesanweb'
           slot-name: 'Production'
           package: .
-
-      - name: logout
-        run: |
-          az logout
+          
