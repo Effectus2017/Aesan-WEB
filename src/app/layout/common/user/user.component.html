@@ -4,14 +4,14 @@
     [matMenuTriggerFor]="userActions">
     <span class="relative">
         <img
-            class="w-7 h-7 rounded-full"
+            class="rounded-full w-7 h-7"
             *ngIf="showAvatar && user.avatar"
             [src]="user.avatar">
         <mat-icon
             *ngIf="!showAvatar || !user.avatar"
             [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
         <span
-            class="absolute right-0 bottom-0 w-2 h-2 rounded-full"
+            class="absolute bottom-0 right-0 w-2 h-2 rounded-full"
             [ngClass]="{'mr-px mb-px': !showAvatar || !user.avatar,
                           'bg-green-500': user.status === 'online',
                           'bg-amber-500': user.status === 'away',
@@ -31,7 +31,7 @@
         </span>
     </button>
     <mat-divider class="my-2"></mat-divider>
-    <button mat-menu-item>
+    <!-- <button mat-menu-item>
         <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
         <span>Profile</span>
     </button>
@@ -45,7 +45,7 @@
         <mat-icon [svgIcon]="'heroicons_outline:ellipsis-horizontal-circle'"></mat-icon>
         <span>Status</span>
     </button>
-    <mat-divider class="my-2"></mat-divider>
+    <mat-divider class="my-2"></mat-divider> -->
     <button
         mat-menu-item
         (click)="signOut()">
@@ -60,7 +60,7 @@
     <button
         mat-menu-item
         (click)="updateUserStatus('online')">
-        <span class="w-4 h-4 mr-3 rounded-full bg-green-500"></span>
+        <span class="w-4 h-4 mr-3 bg-green-500 rounded-full"></span>
         <span>Online</span>
     </button>
     <button
@@ -72,13 +72,13 @@
     <button
         mat-menu-item
         (click)="updateUserStatus('busy')">
-        <span class="w-4 h-4 mr-3 rounded-full bg-red-500"></span>
+        <span class="w-4 h-4 mr-3 bg-red-500 rounded-full"></span>
         <span>Busy</span>
     </button>
     <button
         mat-menu-item
         (click)="updateUserStatus('not-visible')">
-        <span class="w-4 h-4 mr-3 rounded-full bg-gray-400"></span>
+        <span class="w-4 h-4 mr-3 bg-gray-400 rounded-full"></span>
         <span>Invisible</span>
     </button>
 </mat-menu>
