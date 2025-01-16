@@ -164,31 +164,9 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
           break;
       }
 
-    //   switch (this.currentRoute) {
-    //     case 'pacna-portal':
-    //       this.backgroundClass = 'bg-[#F8B100]';
-    //       this.logoPath = 'assets/images/logo/pacna-150x150.png';
-    //       break;
-    //     case 'psav-portal':
-    //       this.backgroundClass = 'bg-[#F26B1E]';
-    //       this.logoPath = 'assets/images/logo/psav-150x150.png';
-    //       break;
-    //     case 'pdam-portal':
-    //       this.backgroundClass = 'bg-[#4C3152]';
-    //       this.logoPath = 'assets/images/logo/pdam-150x150.png';
-    //       break;
-    //     case 'pfhf-portal':
-    //       this.backgroundClass = 'bg-[#28AF66]';
-    //       this.logoPath = 'assets/images/logo/pfhf-150x150.png';
-    //       break;
-    //     case 'finca-portal':
-    //       this.backgroundClass = 'bg-[#2A788A]';
-    //       this.logoPath = 'assets/images/logo/finca-150x150.png';
-    //       break;
-    //     default:
-    //       this.backgroundClass = 'bg-[#003C49]';
-    //       this.logoPath = 'assets/images/logo/aesan.png';
-    //   }
+    } else {
+      this.backgroundClass = 'bg-[#003C49]';
+      this.logoPath = 'assets/images/logo/aesan.png';
     }
   }
 }
