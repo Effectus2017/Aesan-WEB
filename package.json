@@ -7,7 +7,7 @@
     "private": true,
     "scripts": {
         "ng": "ng",
-        "start": "ng serve",
+        "start": "ng serve --configuration local",
         "build": "ng build",
         "watch": "ng build --watch --configuration development",
         "prod": "ng build --configuration production",
@@ -34,6 +34,7 @@
         "luxon": "3.4.4",
         "ng-apexcharts": "1.9.0",
         "ngx-quill": "25.1.1",
+        "ngx-toastr": "^19.0.0",
         "perfect-scrollbar": "1.5.5",
         "rxjs": "7.8.1",
         "tslib": "2.6.2",

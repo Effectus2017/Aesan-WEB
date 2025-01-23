@@ -12,5 +12,8 @@ export interface QueryParameters {
   agencyId?: number;
   imageUrl?: string;
   rejectionJustification?: string;
+  type?: string;
+  fileName?: string;
+  folderTo?: string;
 }
 

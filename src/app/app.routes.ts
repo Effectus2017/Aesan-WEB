@@ -69,8 +69,8 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
       { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
+      { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
     ],
   },
 
@@ -83,7 +83,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
     ],
   },
 
@@ -96,7 +96,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
     ],
   },
 
@@ -122,7 +122,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
     ],
   },
 
@@ -135,7 +135,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
+    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
     ],
   },
 

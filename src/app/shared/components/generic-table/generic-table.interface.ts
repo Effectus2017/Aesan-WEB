@@ -23,8 +23,8 @@ export interface OnGenericTableHandler {
   tableConfig: GenericTableConfig;
   // Funciones
   onTableAdd?: () => void;
-  onTableEdit?: (event: Event, id: number) => void;
-  onTableDelete?: (event: Event, id: number) => void;
+  onTableEdit?: (event: Event, id: any) => void;
+  onTableDelete?: (event: Event, id: any) => void;
   onTableCheckChange?: (event: Event, element: any) => void;
   getPaginator?: (event?: PageEvent) => void;
   // Métodos para obtener datos

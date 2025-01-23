@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NotificationService {
-
-  constructor(private toastr: ToastrService) { }
+  private toastr = inject(ToastrService);
 
   showSuccess = (mensaje: string, titulo?: string) => this.toastr.success(mensaje, titulo);
 
@@ -19,5 +18,4 @@ export class NotificationService {
   noImplementado = () => this.showInfo("Acción no implementada");
 
   clear = () => this.toastr.clear();
-
 }

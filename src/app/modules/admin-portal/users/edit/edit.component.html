@@ -1,0 +1,128 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+  <!-- Header -->
+  <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <!-- Title -->
+      <div class="mt-2">
+        <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">{{ 'users.edit.title' | transloco }}</h2>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="flex flex-row items-center">
+      <button mat-button (click)="onBack()">{{ 'users.edit.buttons.cancel' | transloco }}</button>
+      <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="onSubmit()" type="submit" [disabled]="formRoot.get('datosPersonales').invalid" data-cy="submit-button">
+        {{ 'users.edit.buttons.update' | transloco }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
+    <div class="flex justify-center w-full p-8 py-4 rounded-full sm:justify-start">
+      <img
+        title="Avatar"
+        (click)="fileInput.click()"
+        class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
+        [src]="imageURL ?? 'assets/images/avatars/profile.png'"
+        alt="Profile"
+        (error)="handleMissingImage($event)"
+        data-cy="avatar-image"
+      />
+      <input hidden onclick="this.value=null" (change)="onFileSelected($event)" #fileInput type="file" id="file" data-cy="file-input" />
+    </div>
+
+    <div class="grid grid-cols-12 gap-2 p-8 pb-4">
+      <form [formGroup]="formRoot" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10">
+        <div formGroupName="datosPersonales">
+          <!-- Personal Information -->
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.first-name.label' | transloco }}</mat-label>
+              <input matInput formControlName="firstName" data-cy="name-input" [placeholder]="'users.edit.first-name.placeholder' | transloco" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('firstName').hasError('required')">
+                {{ 'users.edit.first-name.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.last-name.label' | transloco }}</mat-label>
+              <input matInput formControlName="fatherLastName" data-cy="last-name-input" [placeholder]="'users.edit.last-name.placeholder' | transloco" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('fatherLastName').hasError('required')">
+                {{ 'users.edit.last-name.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <!-- Access Information -->
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.email.label' | transloco }}</mat-label>
+              <input matInput formControlName="email" data-cy="email-input" [placeholder]="'users.edit.email.placeholder' | transloco" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')">
+                {{ 'users.edit.email.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.username.label' | transloco }}</mat-label>
+              <input matInput formControlName="userName" data-cy="username-input" [placeholder]="'users.edit.username.placeholder' | transloco" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('userName').hasError('required')">
+                {{ 'users.edit.username.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.role.label' | transloco }}</mat-label>
+              <mat-select formControlName="role" [placeholder]="'users.edit.role.placeholder' | transloco" [compareWith]="compare" data-cy="role-select">
+                <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">
+                  {{ _roles.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="col-span-10 overflow-hidden">
+          <div class="prose-sm prose">
+            <h2 class="my-12">{{ 'users.edit.password-section' | transloco }}</h2>
+          </div>
+        </div>
+        <div formGroupName="password">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.current-password.label' | transloco }}</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="currentPassword" matInput type="password" [formControlName]="'currentPassword'" #currentPassword data-cy="current-password-input" [placeholder]="'users.edit.current-password.placeholder' | transloco" />
+              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="formRoot.get('password').get('currentPassword').hasError('required')">
+                {{ 'users.edit.current-password.required' | transloco }}
+              </mat-error>
+              <mat-error *ngIf="formRoot.get('password').get('currentPassword').hasError('minlength')">
+                {{ 'users.edit.current-password.min-length' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.new-password.label' | transloco }}</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="newPassword" matInput type="password" [formControlName]="'newPassword'" #newPassword data-cy="new-password-input" [placeholder]="'users.edit.new-password.placeholder' | transloco" />
+              <button mat-icon-button type="button" (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')" matSuffix>
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="formRoot.get('password').get('newPassword').hasError('required')">
+                {{ 'users.edit.new-password.required' | transloco }}
+              </mat-error>
+              <mat-error *ngIf="formRoot.get('password').get('newPassword').hasError('minlength')">
+                {{ 'users.edit.new-password.min-length' | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="flex items-center mt-8 mb-4 space-x-6">
+            <button type="submit" class="px-6 ml-auto text-white" mat-flat-button [color]="'primary'" (click)="onSubmit()" data-cy="submit-password-button" [disabled]="formRoot.get('password').invalid">
+              {{ 'users.edit.buttons.update-password' | transloco }}
+            </button>
+          </div>
+        </div>
+        <div class="mt-1 text-md text-hint">{{ 'users.edit.password-requirements' | transloco }}</div>
+      </form>
+    </div>
+  </div>
+</div>

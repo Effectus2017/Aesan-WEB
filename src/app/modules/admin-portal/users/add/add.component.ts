@@ -1,0 +1,187 @@
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+
+import _ from 'lodash';
+import { UsersService } from '../../../../shared/services/users.service';
+import { Subject, takeUntil } from 'rxjs';
+
+
+
+import { UploadService } from 'app/shared/services/upload.service';
+import { RequestUser } from '../users.types';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+import { NgFor, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatIconModule } from '@angular/material/icon';
+import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { FileResponse } from 'app/shared/models/Upload/FileResponse';
+import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
+
+@Component({
+  selector: 'app-users-add',
+  templateUrl: './add.component.html',
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTabsModule, MatInputModule, NgFor, NgIf, MatButtonModule, MatSelectModule, MatIconModule],
+})
+export class UsersAddComponent implements OnInit, OnDestroy {
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
+  private _usersService: UsersService = inject(UsersService);
+  private _uploadService: UploadService = inject(UploadService);
+  private _customRouter: CustomRouterService = inject(CustomRouterService);
+  private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+//   private _clientsService: ClientsService = inject(ClientsService);
+
+  title?: string = 'Agregar usuario';
+
+  formRoot: UntypedFormGroup;
+  imageURL: string;
+  fileToUpload: File = null;
+  fileResponse: FileResponse;
+
+  listRoles = [];
+  listClients = [];
+
+  constructor() {}
+
+  ngOnInit() {
+    this.formRoot = this._formBuilder.group({
+      datosPersonales: this._formBuilder.group(
+        {
+          username: new FormControl(null, [Validators.required, Validators.email]),
+          currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+          newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+          email: new FormControl(null, [Validators.required, Validators.email]),
+          name: new FormControl(null, Validators.required),
+          lastName: new FormControl(null, Validators.required),
+          role: new FormControl(null, Validators.required),
+          client: new FormControl(null, Validators.required),
+        },
+        {
+          validators: this.onPassword.bind(this),
+        }
+      ),
+    });
+
+    // Get the accountings
+    this._usersService.roles$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      this.listRoles = result.body.data;
+      // Mark for check
+      this._changeDetectorRef.markForCheck();
+    });
+
+    // this._clientsService.clients$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    //   this.listClients = result.body.data;
+    //   // Mark for check
+    //   this._changeDetectorRef.markForCheck();
+    // });
+
+  }
+
+  onPassword(formGroup: FormGroup) {
+    const { value: password } = formGroup.get('currentPassword');
+    const { value: confirmPassword } = formGroup.get('newPassword');
+    return password === confirmPassword ? null : { passwordNotMatch: true };
+  }
+
+  onUserName(formGroup: FormGroup) {
+    const { value: username } = formGroup.get('username');
+    const { value: email } = formGroup.get('email');
+    return username === email ? null : { emailNotMatch: true };
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
+
+  onSubmit() {
+    if (this.formRoot.controls.datosPersonales.valid) {
+      this.onAdd(this.formRoot.value.datosPersonales);
+    } else {
+      this.formRoot.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
+      this.formRoot.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
+      this.formRoot.markAllAsTouched();
+    }
+  }
+
+  onAdd(form: any) {
+    const requestParameters: QueryParameters = {};
+
+    const _model: RequestUser = {
+      name: isNullOrUndefinedEmptyStringNullArray(form.name) ? null : form.name,
+      lastName: isNullOrUndefinedEmptyStringNullArray(form.lastName) ? null : form.lastName,
+      userName: isNullOrUndefinedEmptyStringNullArray(form.username) ? null : form.username,
+      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
+      password: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
+      roles: [form.role.name],
+      imageURL: this.imageURL,
+    //   clientId: form.client,
+    };
+
+    this._usersService.add(_model, requestParameters).subscribe({
+      next: (result: any) => {
+        if (result.status === 200) {
+          this._changeDetectorRef.markForCheck();
+        }
+      },
+      error: (error) => {},
+      complete: () => {
+        this.onBack();
+      },
+    });
+  }
+
+  onBack() {
+    this._customRouter.navigate(['users']);
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Upload
+  // -----------------------------------------------------------------------------------------------------
+
+  onFileSelected(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const target = event.target as HTMLInputElement;
+    this.fileToUpload = (target.files as FileList)[0];
+
+    // Imagen
+    let imagenTypes = ['image/jpeg', 'image/jpg', 'image/bmp', 'image/png'];
+    let imagenExt = ['jpeg', 'jpg', 'bmp', 'png'];
+
+    if (_.includes(imagenTypes, this.fileToUpload.type) || _.includes(imagenExt, this.fileToUpload.name)) {
+      this.onUpload(this.fileToUpload, UploadFolderEnum.Imagen);
+    }
+  }
+
+  onUpload(file: File, forlderTo: any) {
+    var requestParameters: QueryParameters = {
+      type: 'userProfile ',
+      fileName: file.name,
+      folderTo: forlderTo,
+    };
+    this._uploadService.fileUpload(requestParameters, file).subscribe({
+      next: (result: any) => {
+        if (result.status === 200) {
+          this.fileResponse = result.body;
+          this.imageURL = this.fileResponse.urlPath;
+          this._changeDetectorRef.markForCheck();
+        }
+      },
+      error: (error: any) => {},
+      complete: () => {},
+    });
+  }
+
+  handleMissingImage(event: Event) {
+    this.imageURL = 'assets/images/avatars/profile.png';
+  }
+}

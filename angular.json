@@ -101,6 +101,20 @@
                                     "with": "src/environments/environment.dev.ts"
                                 }
                             ]
+                        },
+                        "local": {
+                            "buildOptimizer": false,
+                            "optimization": false,
+                            "vendorChunk": true,
+                            "extractLicenses": false,
+                            "sourceMap": true,
+                            "namedChunks": true,
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.ts"
+                                }
+                            ]
                         }
                     },
                     "defaultConfiguration": "production"
@@ -113,9 +127,12 @@
                         },
                         "development": {
                           "buildTarget": "aesanweb:build:development"
+                        },
+                        "local": {
+                          "buildTarget": "aesanweb:build:local"
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "local"
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",

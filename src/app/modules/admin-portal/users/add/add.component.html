@@ -1,0 +1,107 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <!-- Header -->
+
+  <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <!-- Title -->
+      <div class="mt-2">
+        <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">{{ title }}</h2>
+      </div>
+    </div>
+    <!-- Actions -->
+    <div class="flex flex-row items-center mt-4 sm:mt-0">
+      <button mat-button (click)="onBack()" data-cy="cancel-button">Cancel</button>
+      <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="onSubmit()" [disabled]="formRoot.invalid" type="submit" data-cy="submit-button">Crear</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="flex-auto overflow-y-auto sm:p-6 dark:bg-" cdkScrollable>
+    <div class="flex justify-center w-full p-8 py-4 rounded-full sm:justify-start">
+      <img
+        title="Avatar"
+        (click)="fileInput.click()"
+        class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
+        [src]="imageURL ?? 'assets/images/avatars/profile.png'"
+        alt="Profile"
+        (error)="handleMissingImage($event)"
+        data-cy="avatar-image"
+      />
+      <input hidden onclick="this.value=null" (change)="onFileSelected($event)" #fileInput type="file" id="file" data-cy="file-input" />
+    </div>
+    <div class="grid grid-cols-12 gap-2 p-8 pb-4">
+      <form [formGroup]="formRoot" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10 bg-card dark:bg-transparent">
+        <div formGroupName="datosPersonales">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>Nombre </mat-label>
+              <input matInput formControlName="name" data-cy="name-input" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('name').hasError('required')" data-cy="name-error" data-cy-error="name-error"> Requerido </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>Apellido </mat-label>
+              <input matInput formControlName="lastName" data-cy="last-name-input" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('lastName').hasError('required')" data-cy="last-name-error"> Requerido </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>Correo Electronico </mat-label>
+              <input matInput formControlName="email" data-cy="email-input" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')" data-cy="email-error"> Requerido </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto gt-xs:pr-3">
+              <mat-label>Nombre de Usuario </mat-label>
+              <input matInput formControlName="username" data-cy="username-input" />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('username').hasError('required')" data-cy="username-error"> Requerido </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>Roles </mat-label>
+              <mat-select formControlName="role" [placeholder]="'Roles'" data-cy="role-select">
+                <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">{{ _roles.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('role').hasError('required')" data-cy="role-error"> Requerido </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="client-field">
+              <mat-label>Clientes</mat-label>
+              <mat-select formControlName="client" [placeholder]="'Clientes'" data-cy="client-select">
+                <mat-option *ngFor="let _clients of listClients" [value]="_clients.id" data-cy="client-option">{{ _clients.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('client').hasError('required')" data-cy="client-error"> Requerido </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <mat-form-field class="flex-auto" data-cy="current-password-field">
+              <mat-label>Contraseña</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="currentPassword" matInput type="password" [formControlName]="'currentPassword'" #currentPassword data-cy="current-password-input" />
+
+              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix data-cy="toggle-current-password">
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('required')" data-cy="current-password-error"> Requerido </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('minlength')" data-cy="current-password-minlength-error"> Se requiere un mínimo de 8 caracteres </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="new-password-field">
+              <mat-label>Repita la contraseña</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="newPassword" matInput type="password" [formControlName]="'newPassword'" #newPassword data-cy="new-password-input" />
+
+              <button mat-icon-button type="button" (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')" matSuffix data-cy="toggle-new-password">
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('required')" data-cy="new-password-error"> Requerido </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('minlength')" data-cy="new-password-minlength-error"> Se requiere un mínimo de 8 caracteres </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="mt-1 text-md text-hint">Mínimo 8 caracteres. Debe incluir números, letras y caracteres especiales.</div>
+      </form>
+    </div>
+  </div>
+</div>

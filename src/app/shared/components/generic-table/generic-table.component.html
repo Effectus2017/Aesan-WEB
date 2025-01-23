@@ -1,5 +1,5 @@
 <!-- Start of Selection -->
-<div class="flex flex-row justify-end mb-2">
+<div class="flex flex-row justify-end mb-2" *ngIf="config.addButtonShow">
   <button
     class="dark:bg-amber-600 dark:hover:bg-amber-600"
     mat-mini-fab
@@ -7,9 +7,7 @@
     (click)="onAdd()"
     [matTooltip]="config.addButtonTooltip | transloco"
     [matTooltipPosition]="config.addButtonTooltipPosition | transloco"
-    [title]="config.addButtonLabel | transloco"
-    *ngIf="config.addButtonShow"
-  >
+    [title]="config.addButtonLabel | transloco">
     <mat-icon>{{ config.addButtonIcon }}</mat-icon>
   </button>
 </div>

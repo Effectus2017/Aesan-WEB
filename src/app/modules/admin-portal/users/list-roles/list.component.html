@@ -1,0 +1,18 @@
+<div class="absolute inset-0 flex flex-col h-full min-w-0 overflow-hidden">
+    <!-- Header con título y botones -->
+    <app-generic-header [config]="headerConfig" [handler]="this" #rolesHeader></app-generic-header>
+    <!-- Main -->
+    <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable>
+      <app-generic-table [config]="tableConfig" [handler]="this" #rolesTable></app-generic-table>
+    </div>
+    <!-- Paginador -->
+    <mat-paginator
+      class="hidden sm:block"
+      [pageSizeOptions]="tableConfig.pageSizeOptions"
+      [pageSize]="tableConfig.pageSize"
+      [length]="tableConfig.length"
+      (page)="getPaginator($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </div>

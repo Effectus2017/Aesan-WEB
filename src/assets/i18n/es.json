@@ -583,6 +583,77 @@
                 "service": "Servicio",
                 "facilities": "Facilidades"
             }
+        },
+        "search": {
+            "placeholder": "Buscar..."
+        }
+    },
+    "users": {
+        "edit": {
+            "title": "Editar Usuario",
+            "personal-info": "Datos Personales",
+            "access-info": "Datos de Acceso",
+            "password-section": "Editar contraseña",
+            "first-name": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre",
+                "required": "El nombre es requerido"
+            },
+            "last-name": {
+                "label": "Apellido",
+                "placeholder": "Ingrese el apellido",
+                "required": "El apellido es requerido"
+            },
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingrese el correo electrónico",
+                "required": "El correo electrónico es requerido"
+            },
+            "username": {
+                "label": "Nombre de Usuario",
+                "placeholder": "Ingrese el nombre de usuario",
+                "required": "El nombre de usuario es requerido"
+            },
+            "role": {
+                "label": "Roles",
+                "placeholder": "Seleccione un rol",
+                "required": "El rol es requerido"
+            },
+            "current-password": {
+                "label": "Contraseña",
+                "placeholder": "Ingrese la contraseña actual",
+                "required": "La contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "new-password": {
+                "label": "Repita la contraseña",
+                "placeholder": "Ingrese la nueva contraseña",
+                "required": "La nueva contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "password-requirements": "Mínimo 8 caracteres. Debe incluir números, letras y caracteres especiales.",
+            "buttons": {
+                "cancel": "Cancelar",
+                "update": "Actualizar",
+                "update-password": "Actualizar contraseña"
+            }
+        },
+        "list": {
+            "title": "Usuarios",
+            "columns": {
+                "firstName": "Nombre",
+                "fatherLastName": "Apellido",
+                "email": "Correo electrónico",
+                "userName": "Nombre de usuario",
+                "roles": "Rol"
+            },
+            "delete": {
+                "title": "Eliminar",
+                "message": "¿Está seguro que desea eliminar el siguiente ítem?",
+                "confirm": "Eliminar",
+                "success": "Usuario eliminado.",
+                "error": "Usuario no eliminado."
+            }
         }
     }
 }
