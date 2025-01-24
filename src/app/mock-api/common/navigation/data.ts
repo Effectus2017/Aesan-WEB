@@ -5,62 +5,62 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 export const agencyNavigation: FuseNavigationItem[] = [
     {
         id: 'agency-home',
-        title: 'Inicio',
+        title: 'navigation.agency.home',
         type: 'basic',
         icon: 'heroicons_outline:home',
         link: '/agency-portal/home'
     },
     {
         id: 'program-requests',
-        title: 'Solicitudes al Programa',
+        title: 'navigation.agency.program-requests',
         type: 'basic',
         icon: 'heroicons_outline:document-text',
         link: '/agency-portal/program-requests'
     },
     {
         id: 'users',
-        title: 'Usuarios',
-        subtitle: 'Usuarios',
+        title: 'navigation.users.title',
+        subtitle: 'navigation.users.subtitle',
         type: 'group',
         icon: 'mat_solid:user',
         children: [
           {
             id: 'users.list',
-            title: 'Lista',
+            title: 'navigation.users.list',
             type: 'basic',
             icon: 'mat_solid:list',
             link: '/users',
           },
           {
             id: 'users.add',
-            title: 'Agregar',
+            title: 'navigation.users.add',
             type: 'basic',
             icon: 'mat_solid:add',
             link: '/users/add',
           },
           {
             id: 'roles.list',
-            title: 'Roles',
+            title: 'navigation.users.roles',
             type: 'basic',
             icon: 'mat_solid:lock',
             link: '/users/roles',
           },
         ],
-      },
+    },
 ];
 
 // Mantener las navegaciones existentes...
 export const defaultNavigation: FuseNavigationItem[] = [
   {
     id: 'home',
-    title: 'Inicio',
+    title: 'navigation.home',
     type: 'basic',
     icon: 'hero:home',
     link: '/example',
   },
   {
     id: 'program-requests',
-    title: 'Solicitudes al Programa',
+    title: 'navigation.agency.program-requests',
     type: 'basic',
     icon: 'heroicons_outline:document-text',
     link: '/agency-portal/program-requests',
@@ -68,28 +68,28 @@ export const defaultNavigation: FuseNavigationItem[] = [
   },
   {
     id: 'users',
-    title: 'Usuarios',
-    subtitle: 'Usuarios',
+    title: 'navigation.users.title',
+    subtitle: 'navigation.users.subtitle',
     type: 'group',
     icon: 'mat_solid:user',
     children: [
       {
         id: 'users.list',
-        title: 'Lista',
+        title: 'navigation.users.list',
         type: 'basic',
         icon: 'mat_solid:list',
         link: '/users',
       },
       {
         id: 'users.add',
-        title: 'Agregar',
+        title: 'navigation.users.add',
         type: 'basic',
         icon: 'mat_solid:add',
         link: '/users/add',
       },
       {
         id: 'roles.list',
-        title: 'Roles',
+        title: 'navigation.users.roles',
         type: 'basic',
         icon: 'mat_solid:lock',
         link: '/users/roles',
@@ -100,7 +100,7 @@ export const defaultNavigation: FuseNavigationItem[] = [
 export const compactNavigation: FuseNavigationItem[] = [
   {
     id: 'programs',
-    title: 'Validación de Programas',
+    title: 'navigation.programs.validation',
     type: 'basic',
     icon: 'heroicons_solid:home',
     link: '/validation-to-program',
@@ -108,7 +108,7 @@ export const compactNavigation: FuseNavigationItem[] = [
   },
   {
     id: 'pre-operational',
-    title: 'Pre-Operacional',
+    title: 'navigation.pre-operational',
     type: 'basic',
     icon: 'heroicons_solid:check-badge',
     link: '/pre-operational',
@@ -116,8 +116,8 @@ export const compactNavigation: FuseNavigationItem[] = [
   },
   {
     id: 'users',
-    title: 'Usuarios',
-    tooltip: 'Usuarios',
+    title: 'navigation.users.title',
+    tooltip: 'navigation.users.tooltip',
     type: 'aside',
     icon: 'mat_solid:person',
     children: [],

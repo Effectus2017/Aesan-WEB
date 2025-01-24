@@ -12,6 +12,7 @@ import { FuseVerticalNavigationDividerItemComponent } from '@fuse/components/nav
 import { FuseVerticalNavigationGroupItemComponent } from '@fuse/components/navigation/vertical/components/group/group.component';
 import { FuseVerticalNavigationSpacerItemComponent } from '@fuse/components/navigation/vertical/components/spacer/spacer.component';
 import { FuseVerticalNavigationComponent } from '@fuse/components/navigation/vertical/vertical.component';
+import { TranslocoModule } from '@ngneat/transloco';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -19,7 +20,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
     templateUrl    : './aside.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone     : true,
-    imports        : [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent],
+    imports        : [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent, TranslocoModule],
 })
 export class FuseVerticalNavigationAsideItemComponent implements OnChanges, OnInit, OnDestroy
 {

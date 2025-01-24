@@ -119,27 +119,6 @@ export class NavigationService {
         icon: 'heroicons_outline:document-text',
         link: 'program-requests'
       },
-      {
-        id: 'documents',
-        title: 'Documentos',
-        type: 'basic',
-        icon: 'heroicons_outline:document',
-        link: 'documents'
-      },
-      {
-        id: 'budget',
-        title: 'Presupuesto',
-        type: 'basic',
-        icon: 'heroicons_outline:currency-dollar',
-        link: 'budget'
-      },
-      {
-        id: 'reimbursements',
-        title: 'Reembolsos',
-        type: 'basic',
-        icon: 'heroicons_outline:receipt-refund',
-        link: 'reimbursements'
-      }
     ];
   }
 

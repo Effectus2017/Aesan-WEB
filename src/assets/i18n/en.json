@@ -656,5 +656,24 @@
                 "error": "User not deleted."
             }
         }
+    },
+    "navigation": {
+        "agency": {
+            "home": "Home",
+            "program-requests": "Program Requests"
+        },
+        "users": {
+            "title": "Users",
+            "subtitle": "Users",
+            "tooltip": "Users",
+            "list": "List",
+            "add": "Add",
+            "roles": "Roles"
+        },
+        "home": "Home",
+        "programs": {
+            "validation": "Program Validation"
+        },
+        "pre-operational": "Pre-Operational"
     }
 }

@@ -655,5 +655,24 @@
                 "error": "Usuario no eliminado."
             }
         }
+    },
+    "navigation": {
+        "agency": {
+            "home": "Inicio",
+            "program-requests": "Solicitudes al Programa"
+        },
+        "users": {
+            "title": "Usuarios",
+            "subtitle": "Usuarios",
+            "tooltip": "Usuarios",
+            "list": "Lista",
+            "add": "Agregar",
+            "roles": "Roles"
+        },
+        "home": "Inicio",
+        "programs": {
+            "validation": "Validación de Programas"
+        },
+        "pre-operational": "Pre-Operacional"
     }
 }

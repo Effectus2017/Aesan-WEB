@@ -8,6 +8,7 @@ import { FuseHorizontalNavigationComponent } from '@fuse/components/navigation/h
 import { FuseNavigationService } from '@fuse/components/navigation/navigation.service';
 import { FuseNavigationItem } from '@fuse/components/navigation/navigation.types';
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
+import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -15,7 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
     templateUrl    : './basic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone     : true,
-    imports        : [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatMenuModule, MatIconModule],
+    imports        : [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatMenuModule, MatIconModule, TranslocoModule],
 })
 export class FuseHorizontalNavigationBasicItemComponent implements OnInit, OnDestroy
 {
