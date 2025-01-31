@@ -80,6 +80,15 @@ export class UsersService {
     );
   }
 
+  getAllUsersFromDbWithSP(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-users-from-db-with-sp', getHttpOptions(requestParameters)).pipe(
+      tap((response: any) => {
+        this._users.next(response);
+      }),
+      catchError(handleError)
+    );
+  }
+
   getAllRolesFromDb(requestParameters: QueryParameters): Observable<Role[]> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-roles-from-db', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {

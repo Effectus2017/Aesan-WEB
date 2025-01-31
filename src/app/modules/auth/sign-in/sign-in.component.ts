@@ -13,6 +13,8 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 
 @Component({
   selector: 'auth-sign-in',
@@ -33,6 +35,8 @@ import { AuthService } from 'app/core/auth/auth.service';
     MatCheckboxModule,
     MatProgressSpinnerModule,
     TranslocoModule,
+    ThemeToggleComponent,
+    LanguagesComponent,
   ],
 })
 export class AuthSignInComponent implements OnInit {

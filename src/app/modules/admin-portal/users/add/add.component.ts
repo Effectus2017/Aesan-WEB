@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
@@ -26,7 +27,19 @@ import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
   selector: 'app-users-add',
   templateUrl: './add.component.html',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTabsModule, MatInputModule, NgFor, NgIf, MatButtonModule, MatSelectModule, MatIconModule],
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatInputModule,
+    NgFor,
+    NgIf,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    TranslocoModule
+  ],
 })
 export class UsersAddComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -35,9 +48,10 @@ export class UsersAddComponent implements OnInit, OnDestroy {
   private _uploadService: UploadService = inject(UploadService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private _translocoService: TranslocoService = inject(TranslocoService);
 //   private _clientsService: ClientsService = inject(ClientsService);
 
-  title?: string = 'Agregar usuario';
+  title?: string = this._translocoService.translate('users.add.title');
 
   formRoot: UntypedFormGroup;
   imageURL: string;

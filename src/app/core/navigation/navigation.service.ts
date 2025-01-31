@@ -105,16 +105,16 @@ export class NavigationService {
 
   private getAgencyNavigation(): FuseNavigationItem[] {
     return [
-      {
-        id: 'agency-home',
-        title: 'Inicio',
-        type: 'basic',
-        icon: 'heroicons_outline:home',
-        link: 'home'
-      },
+    //   {
+    //     id: 'agency-home',
+    //     title: 'navigation.agency.home',
+    //     type: 'basic',
+    //     icon: 'heroicons_outline:home',
+    //     link: 'home'
+    //   },
       {
         id: 'program-requests',
-        title: 'Solicitudes al Programa',
+        title: 'navigation.agency.program-requests',
         type: 'basic',
         icon: 'heroicons_outline:document-text',
         link: 'program-requests'

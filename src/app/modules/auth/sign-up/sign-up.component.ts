@@ -25,6 +25,8 @@ import { Subject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 
 @Component({
   selector: 'auth-sign-up',
@@ -47,6 +49,8 @@ import { Program } from 'app/shared/models/Program';
     NgFor,
     MatDividerModule,
     MatSnackBarModule,
+    ThemeToggleComponent,
+    LanguagesComponent,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -151,7 +155,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Método para cargar programas
   loadPrograms(): void {
     const queryParams: QueryParameters = {
-      take: 10,
+      take: 25,
       skip: 0,
       alls: true,
     };
@@ -172,7 +176,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Método para cargar ciudades
   loadCities(): void {
     const queryParams: QueryParameters = {
-      take: 10,
+      take: 25,
       skip: 0,
       alls: true,
     };

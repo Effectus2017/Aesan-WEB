@@ -31,7 +31,7 @@ export class UsersListsResolver implements Resolve<any> {
       skip: 0,
     };
 
-    return forkJoin([this._usersService.getAllUsersFromDb(requestParameters)]);
+    return forkJoin([this._usersService.getAllUsersFromDbWithSP(requestParameters)]);
   }
 }
 
