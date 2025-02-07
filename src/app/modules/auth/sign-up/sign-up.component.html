@@ -1,6 +1,6 @@
 <div class="flex flex-col items-center flex-auto min-w-0 sm:justify-center">
   <!-- Theme Toggle and Languages -->
-  <div class="fixed top-4 right-4 z-50 flex items-center gap-2">
+  <div class="fixed z-50 flex items-center gap-2 top-4 right-4">
     <languages></languages>
     <theme-toggle></theme-toggle>
   </div>
@@ -38,8 +38,6 @@
               </mat-select>
             </mat-form-field>
           </div>
-
-
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- nuevo campo Have you been denied or disqualified from state funds in the last seven years? *  -->
@@ -80,7 +78,15 @@
             <!-- UIE Number *  -->
             <mat-form-field data-cy="uie-field">
               <mat-label>{{ "auth.sign-up.uie.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'uieNumber'" placeholder="{{ 'auth.sign-up.uie.placeholder' | transloco }}" type="number" data-cy="uie-input" />
+              <input
+                matInput
+                [formControlName]="'uieNumber'"
+                placeholder="{{ 'auth.sign-up.uie.placeholder' | transloco }}"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
+                data-cy="uie-input"
+              />
             </mat-form-field>
             <!-- State Department Registration Number *  -->
             <mat-form-field data-cy="sdr-field">
@@ -89,14 +95,16 @@
                 matInput
                 [formControlName]="'sdrNumber'"
                 placeholder="{{ 'auth.sign-up.state-department-registration.placeholder' | transloco }}"
-                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
                 data-cy="sdr-input"
               />
             </mat-form-field>
             <!-- EIN *  -->
             <mat-form-field data-cy="ein-field">
               <mat-label>{{ "auth.sign-up.ein.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'einNumber'" placeholder="{{ 'auth.sign-up.ein.placeholder' | transloco }}" type="number" data-cy="ein-input" />
+              <input matInput [formControlName]="'einNumber'" placeholder="{{ 'auth.sign-up.ein.placeholder' | transloco }}" numericOnly data-cy="ein-input" />
             </mat-form-field>
           </div>
 
@@ -111,18 +119,22 @@
               <mat-label>{{ "auth.sign-up.address.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'address'" placeholder="{{ 'auth.sign-up.address.placeholder' | transloco }}" data-cy="address-input" />
             </mat-form-field>
-            <!-- City *  -->
+
+            <!-- City para Dirección Física *  -->
             <mat-form-field data-cy="city-field">
               <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event)" data-cy="city-select">
-                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
+              <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select">
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
+                  {{ city.Name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
+
             <!-- Region *  -->
             <mat-form-field data-cy="region-field">
               <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'region'" data-cy="region-select">
-                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
+              <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.Name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -131,7 +143,7 @@
             <!-- Zip Code *  -->
             <mat-form-field data-cy="zip-code-field">
               <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="zip-code-input" />
+              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
             </mat-form-field>
             <!-- Latitude *  -->
             <mat-form-field data-cy="latitude-field">
@@ -139,10 +151,23 @@
               <input matInput [formControlName]="'latitude'" placeholder="{{ 'auth.sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
             </mat-form-field>
             <!-- Longitude *  -->
-            <mat-form-field data-cy="longitude-field">
-              <mat-label>{{ "auth.sign-up.longitude.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'longitude'" placeholder="{{ 'auth.sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
-            </mat-form-field>
+            <div class="flex items-center gap-2">
+              <mat-form-field data-cy="longitude-field" class="flex-grow">
+                <mat-label>{{ "auth.sign-up.longitude.label" | transloco }}</mat-label>
+                <input matInput [formControlName]="'longitude'" placeholder="{{ 'auth.sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+              </mat-form-field>
+              <button
+                mat-icon-button
+                type="button"
+                class="mt-2"
+                matTooltipPosition="above"
+                matTooltip="{{ 'auth.sign-up.gps-coordinates.tooltip' | transloco }}"
+                (click)="window.open('https://www.gps-coordinates.net/', '_blank')"
+                data-cy="gps-coordinates-button"
+              >
+                <mat-icon class="text-hint">info</mat-icon>
+              </button>
+            </div>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
@@ -163,30 +188,25 @@
               <mat-label>{{ "auth.sign-up.postal-address.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'auth.sign-up.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
             </mat-form-field>
-            <!-- City *  -->
+            <!-- City para Dirección Postal *  -->
             <mat-form-field data-cy="postal-city-field">
               <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'postalCity'" (valueChange)="getRegionsByCityId($event)" data-cy="postal-city-select">
-                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
+              <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.Name }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <!-- Region *  -->
+            <!-- Region para Dirección Postal *  -->
             <mat-form-field data-cy="postal-region-field">
               <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select">
-                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+              <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="comparePostal">
+                <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.Name }}</mat-option>
               </mat-select>
             </mat-form-field>
-            <!-- Zip Code *  -->
+
+            <!-- Postal Zip Code *  -->
             <mat-form-field data-cy="postal-zip-code-field">
               <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-              <input
-                matInput
-                [formControlName]="'postalZipCode'"
-                placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}"
-                type="number"
-                data-cy="postal-zip-code-input"
-              />
+              <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" numericOnly data-cy="postal-zip-code-input" />
             </mat-form-field>
           </div>
 

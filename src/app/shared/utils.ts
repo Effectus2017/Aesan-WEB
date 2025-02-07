@@ -2,6 +2,8 @@ import { HttpParams } from '@angular/common/http';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
+import { UntypedFormGroup } from '@angular/forms';
+import { environment } from 'environments/environment';
 
 // Función genérica para comparar elementos por una propiedad específica
 export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
@@ -92,5 +94,29 @@ export function handleError(error: any) {
   //window.alert(errorMessage);
   return throwError(() => {
     return errorMessage;
+  });
+}
+
+export function disableAllControlsExcept(form: UntypedFormGroup, exceptions: string | string[]): void {
+  if (!environment.production) {
+    return;
+  }
+  const exceptionsArray = typeof exceptions === 'string' ? [exceptions] : exceptions;
+  Object.keys(form.controls).forEach(controlName => {
+    if (!exceptionsArray.includes(controlName)) {
+      const control = form.get(controlName);
+      if (control) {
+        control.disable({ emitEvent: false });
+      }
+    }
+  });
+}
+
+export function enableAllControls(form: UntypedFormGroup): void {
+  Object.keys(form.controls).forEach(controlName => {
+    const control = form.get(controlName);
+    if (control) {
+      control.enable({ emitEvent: false });
+    }
   });
 }

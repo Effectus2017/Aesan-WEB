@@ -151,7 +151,10 @@
                 "title": "Notification",
                 "confirm": "Accept"
             },
-            "select-program-first": "Please select at least one program to continue with registration"
+            "select-program-first": "Please select at least one program to continue with registration",
+            "gps-coordinates": {
+                "tooltip": "Search coordinates"
+            }
         },
         "reset-password": {
             "title": "Reset Password",

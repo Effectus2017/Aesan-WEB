@@ -1,7 +1,7 @@
 import { NgFor, NgIf } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators, FormControl } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -27,6 +27,13 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { CityRegion } from 'app/shared/models/CityRegion';
+import { Observable, forkJoin } from 'rxjs';
+import { map, catchError, of } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { environment } from 'environments/environment';
+import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'auth-sign-up',
@@ -51,6 +58,8 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
     MatSnackBarModule,
     ThemeToggleComponent,
     LanguagesComponent,
+    MatTooltipModule,
+    NumericOnlyDirective
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -77,9 +86,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   listPrograms: Program[] = [];
   listCities: City[] = [];
   listRegions: Region[] = [];
+  listPostalRegions: Region[] = [];
+  listCityRegions: CityRegion[] = [];
 
   // Añadir nueva propiedad para controlar el estado del botón
   isEligible: boolean = true;
+
+  // Agregar esta propiedad
+  protected readonly window = window;
 
   constructor() {}
 
@@ -130,15 +144,15 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     });
 
     // Deshabilitar inicialmente todos los controles excepto program
-    this.disableAllControlsExceptProgram();
+    disableAllControlsExcept(this.signUpForm, 'program');
 
     // Suscribirse a cambios en el control program
     this.signUpForm.get('program').valueChanges
       .subscribe(value => {
         if (value) {
-          this.enableAllControls();
+          enableAllControls(this.signUpForm);
         } else {
-          this.disableAllControlsExceptProgram();
+          disableAllControlsExcept(this.signUpForm, 'program');
         }
       });
 
@@ -175,14 +189,34 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   // Método para cargar ciudades
   loadCities(): void {
-    const queryParams: QueryParameters = {
-      take: 25,
+    const queryParameters: QueryParameters = {
+      take: 1000,
       skip: 0,
+      name: '',
       alls: true,
     };
 
-    this._geoService.getCitiesFromDb(queryParams).subscribe({
+    this._geoService.getCitiesFromDb(queryParameters).subscribe({
       next: (response) => {
+        if (response?.body?.data) {
+          this.listCities = response.body.data;
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar las ciudades:', error);
+      },
+    });
+  }
+
+  // Método para obtener todas las ciudades según el ID de la región
+  getCitiesByRegionId(region: Region): void {
+    const queryParams: QueryParameters = {
+      regionId: region.Id,
+      alls: true,
+    };
+
+    this._geoService.getCitiesByRegionId(queryParams).subscribe({
+      next: (response: HttpResponse<any>) => {
         this.listCities = response.body.data;
       },
       error: (error) => {
@@ -195,21 +229,43 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad
-  getRegionsByCityId(city: City): void {
-    const queryParams: QueryParameters = {
-      cityId: city.id,
-      alls: true,
+  getRegionsByCityId(city: City, target: string): void {
+    if (!city) return;
+
+    const queryParameters: QueryParameters = {
+      cityId: city.Id,
     };
 
-    this._geoService.getRegionsByCityId(queryParams).subscribe({
-      next: (response: HttpResponse<any>) => {
-        this.listRegions = response.body.data;
+    this._geoService.getRegionsByCityId(queryParameters).subscribe({
+      next: (response) => {
+        if (response?.body?.data) {
+          if (target === 'region') {
+            this.listRegions = response.body.data;
+            const regionControl = this.signUpForm.get('region');
+            if (regionControl) {
+              if (this.listRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Física
+                this.signUpForm.patchValue({ region: this.listRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          } else if (target === 'postalRegion') {
+            this.listPostalRegions = response.body.data;
+            const regionControl = this.signUpForm.get('postalRegion');
+            if (regionControl) {
+              if (this.listPostalRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Postal
+                this.signUpForm.patchValue({ postalRegion: this.listPostalRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          }
+        }
       },
       error: (error) => {
-        console.error('Error al cargar las regiones', error);
-      },
-      complete: () => {
-        console.log('Regiones cargadas con éxito');
+        console.error('Error al cargar las regiones:', error);
       },
     });
   }
@@ -219,7 +275,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
 
   signUp(): void {
-    // Return if the form is invalid
     if (this.signUpForm.invalid) {
       this._snackBar.open(
         this._translocoService.translate('auth.sign-up.form-invalid.message'),
@@ -231,8 +286,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
+    const formValues = this.signUpForm.value;
+    const cityId = formValues.city?.id;
+    const regionId = formValues.region?.id;
+    const postalCityId = formValues.postalCity?.id;
+    const postalRegionId = formValues.postalRegion?.id;
+
     // Verificar que se haya seleccionado un programa
-    if (!this.signUpForm.value.program) {
+    if (!formValues.program) {
       this._snackBar.open(
         this._translocoService.translate('auth.sign-up.program.required'),
         this._translocoService.translate('auth.sign-up.program.required-close'),
@@ -242,7 +303,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
 
     // Obtener el ID del programa seleccionado
-    const programId = this.signUpForm.value.program?.id;
+    const programId = formValues.program?.id;
 
     // Validar que el programa sea válido
     if (!programId || typeof programId !== 'number') {
@@ -262,8 +323,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this.showAlert = false;
 
     // Obtener los valores del formulario
-    const formValues = this.signUpForm.value;
-
     const userAgencyRequest: UserAgencyRequest = {
       agency: {
         name: formValues.name ? formValues.name : '',
@@ -274,15 +333,15 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Dirección Física
         address: formValues.address ? formValues.address : '',
         zipCode: formValues.zipCode ? formValues.zipCode : 0,
-        cityId: formValues.city ? formValues.city.id : 0,
-        regionId: formValues.region ? formValues.region.id : 0,
+        cityId: cityId,
+        regionId: regionId,
         latitude: formValues.latitude ? formValues.latitude : 0,
         longitude: formValues.longitude ? formValues.longitude : 0,
         // Dirección Postal
         postalAddress: formValues.postalAddress ? formValues.postalAddress : '',
         postalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
-        postalCityId: formValues.postalCity ? formValues.postalCity.id : 0,
-        postalRegionId: formValues.postalRegion ? formValues.postalRegion.id : 0,
+        postalCityId: postalCityId,
+        postalRegionId: postalRegionId,
         // Datos del usuario
         phone: formValues.phone ? formValues.phone : '',
         nonProfit: formValues.nonProfit === 'Yes' ? true : false,
@@ -306,9 +365,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       },
     };
 
-    const requestParameters: QueryParameters = {};
-    //Registrar el usuario
-    this._userService.registerUserAgency(userAgencyRequest, requestParameters).subscribe({
+    // Registrar el usuario
+    this._userService.registerUserAgency(userAgencyRequest, {}).subscribe({
       next: (response) => {
         console.log('Usuario creado con éxito', response);
         // Navigate to the confirmation required page
@@ -316,23 +374,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error al crear el usuario', error);
+        // Re-enable the form
+        this.signUpForm.enable();
+        // Show error message
+        this._snackBar.open(
+          this._translocoService.translate('auth.sign-up.error.creating-user'),
+          this._translocoService.translate('common.close'),
+          { duration: 5000 }
+        );
       },
       complete: () => {
         console.log('Proceso de creación de usuario completado');
         // Re-enable the form
         this.signUpForm.enable();
-
         // Reset the form
         this.signUpNgForm.resetForm();
-
-        // Set the alert
-        this.alert = {
-          type: 'error',
-          message: this._translocoService.translate('auth.sign-up.error.processing-request'),
-        };
-
-        // Show the alert
-        this.showAlert = true;
       },
     });
   }
@@ -343,21 +399,23 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar elegibilidad para PDAM y PSAV
     if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
-      this.isEligible = false;
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
     } else {
-      this.isEligible = true;
+        this.isEligible = true;
+        enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
@@ -368,43 +426,49 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar elegibilidad para PACNA
     if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
-      this.isEligible = false;
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
     } else {
-      this.isEligible = true;
+        this.isEligible = true;
+        enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
   checkOrganizedAthleticPrograms(): void {
-    const selectedPrograms = this.signUpForm.value.program?.map((program: any) => program.name) || [];
+    const selectedProgram = this.signUpForm.value.program?.name;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === 'Yes';
 
     // Verificar elegibilidad para PACNA
-    if (organizedAthleticPrograms && selectedPrograms.some(program => program === 'PACNA')) {
-      this.isEligible = false;
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
+    if (organizedAthleticPrograms && selectedProgram === 'PACNA') {
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
+    } else {
+        this.isEligible = true;
+        enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
@@ -428,24 +492,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Añadir estos nuevos métodos
-  private disableAllControlsExceptProgram(): void {
-    Object.keys(this.signUpForm.controls).forEach(controlName => {
-      if (controlName !== 'program') {
-        const control = this.signUpForm.get(controlName);
-        if (control) {
-          control.disable({ emitEvent: false });
-        }
-      }
-    });
+  compare(o1: any, o2: any): boolean {
+    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+      return o1.id === o2.id;
+    }
+    return false;
   }
 
-  private enableAllControls(): void {
-    Object.keys(this.signUpForm.controls).forEach(controlName => {
-      const control = this.signUpForm.get(controlName);
-      if (control) {
-        control.enable({ emitEvent: false });
-      }
-    });
+  comparePostal(o1: any, o2: any): boolean {
+    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+      return o1.id === o2.id;
+    }
+    return false;
   }
 }

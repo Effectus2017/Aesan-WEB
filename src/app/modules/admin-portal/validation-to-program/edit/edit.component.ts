@@ -506,7 +506,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   // Método para obtener todas las regiones según el ID de la ciudad
   getRegionsByCityId(city: City): void {
     const queryParams: QueryParameters = {
-      cityId: city.id,
+      cityId: city.Id,
       alls: true,
     };
 

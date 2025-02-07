@@ -150,6 +150,9 @@
             "pacna-not-eligible": {
                 "message": "No es elegible para participar en el programa PACNA",
                 "close": "Cerrar"
+            },
+            "gps-coordinates": {
+                "tooltip": "Buscar coordenadas"
             }
         },
         "reset-password": {
