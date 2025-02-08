@@ -1,4 +1,7 @@
 export interface Region {
-    id: number;
-    name: string;
+    Id: number;
+    Name: string;
+    IsActive: boolean;
+    CreatedAt: Date;
+    UpdatedAt?: Date;
 }

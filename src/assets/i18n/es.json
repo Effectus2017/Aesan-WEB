@@ -150,6 +150,9 @@
             "pacna-not-eligible": {
                 "message": "No es elegible para participar en el programa PACNA",
                 "close": "Cerrar"
+            },
+            "gps-coordinates": {
+                "tooltip": "Buscar coordenadas"
             }
         },
         "reset-password": {
@@ -654,6 +657,54 @@
                 "success": "Usuario eliminado.",
                 "error": "Usuario no eliminado."
             }
+        },
+        "add": {
+            "title": "Agregar usuario",
+            "personal-info": "Datos Personales",
+            "username": {
+                "label": "Nombre de usuario",
+                "placeholder": "Ingrese el nombre de usuario",
+                "required": "El nombre de usuario es requerido"
+            },
+            "current-password": {
+                "label": "Contraseña",
+                "placeholder": "Ingrese la contraseña",
+                "required": "La contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "new-password": {
+                "label": "Repita la contraseña",
+                "placeholder": "Ingrese la contraseña nuevamente",
+                "required": "La confirmación de contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "email": {
+                "label": "Correo electrónico",
+                "placeholder": "Ingrese el correo electrónico",
+                "required": "El correo electrónico es requerido"
+            },
+            "name": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre",
+                "required": "El nombre es requerido"
+            },
+            "lastName": {
+                "label": "Apellido",
+                "placeholder": "Ingrese el apellido",
+                "required": "El apellido es requerido"
+            },
+            "role": {
+                "label": "Rol",
+                "placeholder": "Seleccione un rol",
+                "required": "El rol es requerido"
+            },
+            "client": {
+                "label": "Cliente",
+                "placeholder": "Seleccione un cliente",
+                "required": "El cliente es requerido"
+            },
+            "submit": "Guardar",
+            "back": "Volver"
         }
     },
     "navigation": {

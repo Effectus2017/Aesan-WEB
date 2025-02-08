@@ -10,8 +10,19 @@
     </div>
     <!-- Actions -->
     <div class="flex flex-row items-center mt-4 sm:mt-0">
-      <button mat-button (click)="onBack()" data-cy="cancel-button">Cancel</button>
-      <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="onSubmit()" [disabled]="formRoot.invalid" type="submit" data-cy="submit-button">Crear</button>
+      <button mat-button (click)="onBack()" data-cy="cancel-button" [attr.aria-label]="'users.add.back' | transloco">{{ 'users.add.back' | transloco }}</button>
+      <button
+        class="px-6 ml-3"
+        mat-flat-button
+        [color]="'primary'"
+        (click)="onSubmit()"
+        [disabled]="formRoot.invalid"
+        type="submit"
+        data-cy="submit-button"
+        [attr.aria-label]="'users.add.submit' | transloco"
+      >
+        {{ 'users.add.submit' | transloco }}
+      </button>
     </div>
   </div>
 
@@ -27,80 +38,175 @@
         (error)="handleMissingImage($event)"
         data-cy="avatar-image"
       />
-      <input hidden onclick="this.value=null" (change)="onFileSelected($event)" #fileInput type="file" id="file" data-cy="file-input" />
+      <input
+        hidden
+        onclick="this.value=null"
+        (change)="onFileSelected($event)"
+        #fileInput
+        type="file"
+        id="file"
+        data-cy="file-input"
+        [attr.aria-label]="'Select profile image'"
+      />
     </div>
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
-      <form [formGroup]="formRoot" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10 bg-card dark:bg-transparent">
+      <form [formGroup]="formRoot" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10">
         <div formGroupName="datosPersonales">
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
-              <mat-label>Nombre </mat-label>
-              <input matInput formControlName="name" data-cy="name-input" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('name').hasError('required')" data-cy="name-error" data-cy-error="name-error"> Requerido </mat-error>
+              <mat-label>{{ 'users.add.name.label' | transloco }}</mat-label>
+              <input
+                matInput
+                formControlName="name"
+                [placeholder]="'users.add.name.placeholder' | transloco"
+                data-cy="name-input"
+                [attr.aria-label]="'users.add.name.label' | transloco"
+              />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('name').hasError('required')" data-cy="name-error">
+                {{ 'users.add.name.required' | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
-              <mat-label>Apellido </mat-label>
-              <input matInput formControlName="lastName" data-cy="last-name-input" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('lastName').hasError('required')" data-cy="last-name-error"> Requerido </mat-error>
+              <mat-label>{{ 'users.add.lastName.label' | transloco }}</mat-label>
+              <input
+                matInput
+                formControlName="lastName"
+                [placeholder]="'users.add.lastName.placeholder' | transloco"
+                data-cy="last-name-input"
+                [attr.aria-label]="'users.add.lastName.label' | transloco"
+              />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('lastName').hasError('required')" data-cy="last-name-error">
+                {{ 'users.add.lastName.required' | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
-              <mat-label>Correo Electronico </mat-label>
-              <input matInput formControlName="email" data-cy="email-input" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')" data-cy="email-error"> Requerido </mat-error>
+              <mat-label>{{ 'users.add.email.label' | transloco }}</mat-label>
+              <input
+                matInput
+                formControlName="email"
+                [placeholder]="'users.add.email.placeholder' | transloco"
+                data-cy="email-input"
+                [attr.aria-label]="'users.add.email.label' | transloco"
+              />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')" data-cy="email-error">
+                {{ 'users.add.email.required' | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto gt-xs:pr-3">
-              <mat-label>Nombre de Usuario </mat-label>
-              <input matInput formControlName="username" data-cy="username-input" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('username').hasError('required')" data-cy="username-error"> Requerido </mat-error>
+              <mat-label>{{ 'users.add.username.label' | transloco }}</mat-label>
+              <input
+                matInput
+                formControlName="username"
+                [placeholder]="'users.add.username.placeholder' | transloco"
+                data-cy="username-input"
+                [attr.aria-label]="'users.add.username.label' | transloco"
+              />
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('username').hasError('required')" data-cy="username-error">
+                {{ 'users.add.username.required' | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
-              <mat-label>Roles </mat-label>
-              <mat-select formControlName="role" [placeholder]="'Roles'" data-cy="role-select">
+              <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
+              <mat-select
+                formControlName="role"
+                [placeholder]="'users.add.role.placeholder' | transloco"
+                data-cy="role-select"
+                [attr.aria-label]="'users.add.role.label' | transloco"
+              >
                 <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">{{ _roles.name }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('role').hasError('required')" data-cy="role-error"> Requerido </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('role').hasError('required')" data-cy="role-error">
+                {{ 'users.add.role.required' | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="client-field">
-              <mat-label>Clientes</mat-label>
-              <mat-select formControlName="client" [placeholder]="'Clientes'" data-cy="client-select">
+              <mat-label>{{ 'users.add.client.label' | transloco }}</mat-label>
+              <mat-select
+                formControlName="client"
+                [placeholder]="'users.add.client.placeholder' | transloco"
+                data-cy="client-select"
+                [attr.aria-label]="'users.add.client.label' | transloco"
+              >
                 <mat-option *ngFor="let _clients of listClients" [value]="_clients.id" data-cy="client-option">{{ _clients.name }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('client').hasError('required')" data-cy="client-error"> Requerido </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('client').hasError('required')" data-cy="client-error">
+                {{ 'users.add.client.required' | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto" data-cy="current-password-field">
-              <mat-label>Contraseña</mat-label>
+              <mat-label>{{ 'users.add.current-password.label' | transloco }}</mat-label>
               <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
-              <input id="currentPassword" matInput type="password" [formControlName]="'currentPassword'" #currentPassword data-cy="current-password-input" />
+              <input
+                id="currentPassword"
+                matInput
+                type="password"
+                [formControlName]="'currentPassword'"
+                [placeholder]="'users.add.current-password.placeholder' | transloco"
+                #currentPassword
+                data-cy="current-password-input"
+                [attr.aria-label]="'users.add.current-password.label' | transloco"
+              />
 
-              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix data-cy="toggle-current-password">
+              <button
+                mat-icon-button
+                type="button"
+                (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')"
+                matSuffix
+                data-cy="toggle-current-password"
+                [attr.aria-label]="'Toggle password visibility'"
+              >
                 <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
                 <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
               </button>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('required')" data-cy="current-password-error"> Requerido </mat-error>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('minlength')" data-cy="current-password-minlength-error"> Se requiere un mínimo de 8 caracteres </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('required')" data-cy="current-password-error">
+                {{ 'users.add.current-password.required' | transloco }}
+              </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('currentPassword').hasError('minlength')" data-cy="current-password-minlength-error">
+                {{ 'users.add.current-password.min-length' | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="new-password-field">
-              <mat-label>Repita la contraseña</mat-label>
+              <mat-label>{{ 'users.add.new-password.label' | transloco }}</mat-label>
               <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
-              <input id="newPassword" matInput type="password" [formControlName]="'newPassword'" #newPassword data-cy="new-password-input" />
+              <input
+                id="newPassword"
+                matInput
+                type="password"
+                [formControlName]="'newPassword'"
+                [placeholder]="'users.add.new-password.placeholder' | transloco"
+                #newPassword
+                data-cy="new-password-input"
+                [attr.aria-label]="'users.add.new-password.label' | transloco"
+              />
 
-              <button mat-icon-button type="button" (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')" matSuffix data-cy="toggle-new-password">
+              <button
+                mat-icon-button
+                type="button"
+                (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')"
+                matSuffix
+                data-cy="toggle-new-password"
+                [attr.aria-label]="'Toggle password visibility'"
+              >
                 <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
                 <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
               </button>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('required')" data-cy="new-password-error"> Requerido </mat-error>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('minlength')" data-cy="new-password-minlength-error"> Se requiere un mínimo de 8 caracteres </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('required')" data-cy="new-password-error">
+                {{ 'users.add.new-password.required' | transloco }}
+              </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('newPassword').hasError('minlength')" data-cy="new-password-minlength-error">
+                {{ 'users.add.new-password.min-length' | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
         </div>
-        <div class="mt-1 text-md text-hint">Mínimo 8 caracteres. Debe incluir números, letras y caracteres especiales.</div>
+        <div class="mt-1 text-md text-hint">{{ 'users.add.password-requirements' | transloco }}</div>
       </form>
     </div>
   </div>

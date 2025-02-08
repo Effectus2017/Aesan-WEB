@@ -14,8 +14,7 @@ describe('Pruebas de registro de auspiciador', () => {
     it('Registro exitoso con datos válidos', () => {
         // Seleccionar programa PACNA (permite organizaciones con fines de lucro)
         cy.get('[data-cy=program-select]').click();
-        cy.get('[data-cy=program-option]').contains('PSAV').click(); // Seleccionar PSAV
-        cy.get('[data-cy=program-option]').contains('PDAM').click(); // Seleccionar PDAM también
+        cy.get('[data-cy=program-option]').contains('PDAM').click(); // Seleccionar PDAM
         cy.get('body').click(0, 0); // Cerrar el menú de selección múltiple haciendo clic en la esquina superior izquierda
 
         // Completar campos de elegibilidad
@@ -40,15 +39,15 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=sdr-input]').type(faker.string.numeric(6));
         cy.get('[data-cy=ein-input]').type(faker.string.numeric(6));
 
-        // Ubicación
-        cy.get('[data-cy=city-select]').click();
-        cy.get('[data-cy=city-option]').contains('Arecibo').click();
+        // Seleccionar región
+        cy.get('[data-cy=region-select]').click();
+        cy.get('[data-cy=region-option]').contains('Arecibo').click();
 
         cy.wait(100); // Esperar a que carguen las regiones
 
-        // Seleccionar región
-        cy.get('[data-cy=region-select]').click();
-        cy.get('[data-cy=region-option]').contains('Aguada').click();
+        // Ubicación
+        cy.get('[data-cy=city-select]').click();
+        cy.get('[data-cy=city-option]').contains('Camuy').click();
 
         // Coordenadas geográficas (limitadas a Puerto Rico)
         cy.get('[data-cy=latitude-input]').type(
@@ -67,6 +66,16 @@ describe('Pruebas de registro de auspiciador', () => {
 
         // Seleccionar el checkbox "Same as Physical Address"
         cy.get('[data-cy=same-as-physical-address-checkbox]').click();
+
+        // Seleccionar región
+        cy.get('[data-cy=postal-region-select]').click();
+        cy.get('[data-cy=postal-region-option]').contains('Arecibo').click();
+
+        cy.wait(100); // Esperar a que carguen las regiones
+
+        // Ubicación
+        cy.get('[data-cy=postal-city-select]').click();
+        cy.get('[data-cy=postal-city-option]').contains('Camuy').click();
 
         // // Verificar que los campos de dirección postal se llenan automáticamente
         // cy.get('[data-cy=postal-address-input]').should('have.value', faker.location.streetAddress());

@@ -6,6 +6,7 @@ import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { City } from '../models/City';
 import { Region } from '../models/Region';
+import { CityRegion } from '../models/CityRegion';
 
 @Injectable({
   providedIn: 'root',
@@ -13,9 +14,11 @@ import { Region } from '../models/Region';
 export class GeoService {
   private _cities: BehaviorSubject<City[] | null> = new BehaviorSubject(null);
   private _regions: BehaviorSubject<Region[] | null> = new BehaviorSubject(null);
+  private _cityRegions: BehaviorSubject<CityRegion[] | null> = new BehaviorSubject(null);
 
   private _city: BehaviorSubject<City | null> = new BehaviorSubject(null);
   private _region: BehaviorSubject<Region | null> = new BehaviorSubject(null);
+  private _cityRegion: BehaviorSubject<CityRegion | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/geo`;
 
@@ -52,6 +55,14 @@ export class GeoService {
    */
   get region$(): Observable<Region | null> {
     return this._region.asObservable();
+  }
+
+  get cityRegions$(): Observable<CityRegion[] | null> {
+    return this._cityRegions.asObservable();
+  }
+
+  get cityRegion$(): Observable<CityRegion | null> {
+    return this._cityRegion.asObservable();
   }
 
   /**
@@ -97,5 +108,29 @@ export class GeoService {
    */
   getRegionById(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-region-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._region.next(response)));
+  }
+
+  /**
+   * Obtiene las ciudades disponibles para una región específica
+   * @param queryParameters Los parámetros de consulta que incluyen el ID de la región
+   */
+  getCitiesByRegionId(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-cities-by-region-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response)));
+  }
+
+  /**
+   * Obtiene la relación CityRegion por IDs de ciudad y región
+   * @param queryParameters Los parámetros de consulta que incluyen cityId y regionId
+   */
+  getCityRegion(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-city-region`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cityRegion.next(response)));
+  }
+
+  /**
+   * Obtiene todas las relaciones CityRegion
+   * @param queryParameters Los parámetros de consulta para filtrar las relaciones
+   */
+  getAllCityRegions(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-city-regions`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cityRegions.next(response)));
   }
 }

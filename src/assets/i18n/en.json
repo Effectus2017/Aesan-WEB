@@ -151,7 +151,10 @@
                 "title": "Notification",
                 "confirm": "Accept"
             },
-            "select-program-first": "Please select at least one program to continue with registration"
+            "select-program-first": "Please select at least one program to continue with registration",
+            "gps-coordinates": {
+                "tooltip": "Search coordinates"
+            }
         },
         "reset-password": {
             "title": "Reset Password",
@@ -655,6 +658,54 @@
                 "success": "User deleted.",
                 "error": "User not deleted."
             }
+        },
+        "add": {
+            "title": "Add User",
+            "personal-info": "Personal Information",
+            "username": {
+                "label": "Username",
+                "placeholder": "Enter username",
+                "required": "Username is required"
+            },
+            "current-password": {
+                "label": "Password",
+                "placeholder": "Enter password",
+                "required": "Password is required",
+                "min-length": "Minimum 8 characters required"
+            },
+            "new-password": {
+                "label": "Repeat Password",
+                "placeholder": "Enter password again",
+                "required": "Password confirmation is required",
+                "min-length": "Minimum 8 characters required"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email",
+                "required": "Email is required"
+            },
+            "name": {
+                "label": "First Name",
+                "placeholder": "Enter first name",
+                "required": "First name is required"
+            },
+            "lastName": {
+                "label": "Last Name",
+                "placeholder": "Enter last name",
+                "required": "Last name is required"
+            },
+            "role": {
+                "label": "Role",
+                "placeholder": "Select a role",
+                "required": "Role is required"
+            },
+            "client": {
+                "label": "Client",
+                "placeholder": "Select a client",
+                "required": "Client is required"
+            },
+            "submit": "Save",
+            "back": "Back"
         }
     },
     "navigation": {

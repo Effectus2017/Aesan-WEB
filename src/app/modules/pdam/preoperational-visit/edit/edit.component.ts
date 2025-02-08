@@ -35,6 +35,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NgClass } from '@angular/common';
 import { FuseConfigService } from '@fuse/services/config';
+import { Region } from 'app/shared/models/Region';
 
 @Component({
   selector: 'app-monitor-preoperational-visit-pdam-edit',
@@ -362,10 +363,29 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
    */
   onReject() {}
 
+  getCitiesByRegionId(region: Region): void {
+    const queryParams: QueryParameters = {
+      regionId: region.Id,
+      alls: true,
+    };
+
+    this._geoService.getCitiesByRegionId(queryParams).subscribe({
+      next: (response: HttpResponse<any>) => {
+        this.listCities = response.body.data;
+      },
+      error: (error) => {
+        console.error('Error al cargar las ciudades', error);
+      },
+      complete: () => {
+        console.log('Ciudades cargadas con éxito');
+      },
+    });
+  }
+
   // Método para obtener todas las regiones según el ID de la ciudad
   getRegionsByCityId(city: City): void {
     const queryParams: QueryParameters = {
-      cityId: city.id,
+      cityId: city.Id,
       alls: true,
     };
 
