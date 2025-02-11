@@ -26,6 +26,7 @@ import { GenericTableConfig } from 'app/shared/components/generic-table/generic-
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
+import { AuthService } from 'app/core/auth/auth.service';
 
 // DESCRICION DEL COMPONENTE
 // Este componente se encarga de mostrar la lista de validaciones de aplicación a programas.
@@ -57,6 +58,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   private _agencyService = inject(AgencyService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _authService = inject(AuthService);
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -121,7 +123,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       take: this.tableConfig.pageSize,
       skip: index,
       name: form.name || null,
-      userId: null,
+      userId: this._authService.getUserId(),
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();

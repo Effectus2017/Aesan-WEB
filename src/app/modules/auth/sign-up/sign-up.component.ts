@@ -34,6 +34,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { environment } from 'environments/environment';
 import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { ProgramService } from 'app/shared/services/program.service';
 
 @Component({
   selector: 'auth-sign-up',
@@ -78,6 +79,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _customRouterService = inject(CustomRouterService);
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
+  private _programService = inject(ProgramService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _snackBar = inject(MatSnackBar);
 
@@ -113,6 +115,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
       organizedAthleticPrograms: [null, Validators.required],
+      atRiskService: [{ value: null, disabled: true }],
 
       // Dirección
       address: [null, Validators.required],
@@ -171,10 +174,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const queryParams: QueryParameters = {
       take: 25,
       skip: 0,
-      alls: true,
+      alls: false,
+      names: 'PDAM,PSAV,PACNA',
     };
 
-    this._userService.getAllProgramsFromDb(queryParams).subscribe({
+    this._programService.getAllProgramsFromDb(queryParams).subscribe({
       next: (response) => {
         this.listPrograms = response.body.data;
       },
@@ -192,7 +196,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const queryParameters: QueryParameters = {
       take: 1000,
       skip: 0,
-      name: '',
       alls: true,
     };
 
@@ -348,6 +351,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
+        atRiskService: formValues.atRiskService === 'Yes' ? true : false,
         //
         programs: [programId],
         //
@@ -450,8 +454,46 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const selectedProgram = this.signUpForm.value.program?.name;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === 'Yes';
 
+    // Habilitar/deshabilitar atRiskService basado en la selección
+    const atRiskServiceControl = this.signUpForm.get('atRiskService');
+    if (organizedAthleticPrograms) {
+        atRiskServiceControl.enable();
+        atRiskServiceControl.setValidators([Validators.required]);
+    } else {
+        atRiskServiceControl.disable();
+        atRiskServiceControl.clearValidators();
+        atRiskServiceControl.setValue(null);
+    }
+    atRiskServiceControl.updateValueAndValidity();
+
     // Verificar elegibilidad para PACNA
     if (organizedAthleticPrograms && selectedProgram === 'PACNA') {
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program');
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
+    } else {
+        this.isEligible = true;
+        enableAllControls(this.signUpForm);
+    }
+  }
+
+  checkAtRiskService(): void {
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const atRiskService = this.signUpForm.value.atRiskService === 'Yes';
+
+    // Verificar elegibilidad para PACNA
+    if (atRiskService && selectedProgram === 'PACNA') {
         this.isEligible = false;
         disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
         this._fuseConfirmationService.open({

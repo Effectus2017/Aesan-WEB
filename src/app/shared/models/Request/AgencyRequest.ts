@@ -27,6 +27,7 @@ export interface AgencyRequest {
     federalFundsDenied?: boolean;
     stateFundsDenied?: boolean;
     organizedAthleticPrograms?: boolean;
+    atRiskService?: boolean;
     // Campos de estado
     isActive?: boolean;
     isListable?: boolean;

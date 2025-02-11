@@ -1,8 +1,8 @@
 ---
-description: 
+description: Guia para la escritura de los avances del proyecto Web Angular
 globs: 
 ---
-# 1 - Agregar en [changelog.md](mdc:Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/.changelog/changelog.md) lista de cambios según el o la lista de commits seleccionados.
+# 1 - Agregar en [changelog.md](mdc:Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/Api/.changelog/changelog.md) lista de cambios según el o la lista de commits seleccionados.
 # 2 - Crear en la carpeta .changelog/history un nuevo archivo que corresponda a la/las fechas de los commits agregados en @chaemplo de fecha agregada [2025-01-08] se crea un archivo 2025-01-08.md con la misma lista.
 # 3 - Tomando en cuenta la lista de cambios. Quiero que me des una descripción de los avances y mejoras de ambos proyecto para presentar ante los dueños. Se extenso, detallista y en leguaje humano. En formato Markdown en la carpeta .changelog/human el nombre del archivo tiene que corresponder a la fecha como las creadas en changelog
 # 4 - Todos los achivos creados siempre tiene que tener el prefijo web- en el nombre

@@ -55,6 +55,11 @@
                 "yes": "Yes",
                 "no": "No"
             },
+            "at-risk-service": {
+                "label": "Are you interested in participating in the at-risk snack and dinner service?",
+                "yes": "Yes",
+                "no": "No"
+            },
             "agency": {
                 "label": "Name of the Sponsoring Agency",
                 "placeholder": "Enter the name of the sponsoring agency"
@@ -726,5 +731,10 @@
             "validation": "Program Validation"
         },
         "pre-operational": "Pre-Operational"
+    },
+    "roles": {
+        "list": {
+            "title": "Roles List"
+        }
     }
 }

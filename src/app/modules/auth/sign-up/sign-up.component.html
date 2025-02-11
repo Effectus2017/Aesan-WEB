@@ -67,6 +67,15 @@
                 <mat-option value="No" data-cy="organized-athletic-programs-no">{{ "auth.sign-up.organized-athletic-programs.no" | transloco }}</mat-option>
               </mat-select>
             </mat-form-field>
+
+            <!-- Is the Sponsor interested in participating in the at-risk snack and dinner service? -->
+            <mat-form-field *ngIf="signUpForm.get('organizedAthleticPrograms')?.value === 'Yes'" data-cy="at-risk-service-field">
+              <mat-label>{{ "auth.sign-up.at-risk-service.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
+                <mat-option value="Yes" data-cy="at-risk-service-yes">{{ "auth.sign-up.at-risk-service.yes" | transloco }}</mat-option>
+                <mat-option value="No" data-cy="at-risk-service-no">{{ "auth.sign-up.at-risk-service.no" | transloco }}</mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">

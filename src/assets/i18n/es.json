@@ -49,6 +49,11 @@
                 "yes": "Sí",
                 "no": "No"
             },
+            "at-risk-service": {
+                "label": "¿Está interesado en participar en el servicio de merienda y cena en riesgo?",
+                "yes": "Sí",
+                "no": "No"
+            },
             "sponsor-information": "Información del Patrocinador",
             "sponsor-information-description": "Aquí puede agregar la información del patrocinador",
             "agency": {
@@ -725,5 +730,10 @@
             "validation": "Validación de Programas"
         },
         "pre-operational": "Pre-Operacional"
+    },
+    "roles": {
+        "list": {
+            "title": "Lista de Roles"
+        }
     }
 }
