@@ -70,7 +70,7 @@
           <!-- City *  -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "validation-to-program.edit.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="city" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event)" data-cy="city-select">
+            <mat-select formControlName="city" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select">
               <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -117,7 +117,7 @@
           <!-- Postal City *  -->
           <mat-form-field data-cy="postal-city-field">
             <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'postalCity'" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event)" data-cy="postal-city-select">
+            <mat-select [formControlName]="'postalCity'" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event, 'postalRegion')" data-cy="postal-city-select">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -125,7 +125,7 @@
           <mat-form-field data-cy="postal-region-field">
             <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'postalRegion'" [compareWith]="compareItems" data-cy="postal-region-select">
-              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+              <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <!-- Postal Zip Code *  -->

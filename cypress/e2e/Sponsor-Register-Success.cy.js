@@ -3,7 +3,7 @@ describe('Pruebas de registro de auspiciador', () => {
 
     beforeEach(() => {
         cy.intercept('POST', 'https://localhost:5000/auth/login').as('login');
-        cy.intercept('GET', 'http://localhost:5000/user/get-all-programs-from-db?take=10&skip=0').as('programs');
+        cy.intercept('GET', 'http://localhost:5000/program/get-all-programs-from-db?take=25&skip=0&alls=false&names=PDAM,PSAV,PACNA').as('programs');
         cy.visit('http://localhost:4200');
         cy.wait(100);
         cy.get('[data-cy=sign-up-link]').click();
@@ -39,15 +39,11 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=sdr-input]').type(faker.string.numeric(6));
         cy.get('[data-cy=ein-input]').type(faker.string.numeric(6));
 
-        // Seleccionar región
-        cy.get('[data-cy=region-select]').click();
-        cy.get('[data-cy=region-option]').contains('Arecibo').click();
-
-        cy.wait(100); // Esperar a que carguen las regiones
-
         // Ubicación
         cy.get('[data-cy=city-select]').click();
         cy.get('[data-cy=city-option]').contains('Camuy').click();
+
+        cy.wait(100); // Esperar a que carguen las regiones
 
         // Coordenadas geográficas (limitadas a Puerto Rico)
         cy.get('[data-cy=latitude-input]').type(
@@ -67,21 +63,7 @@ describe('Pruebas de registro de auspiciador', () => {
         // Seleccionar el checkbox "Same as Physical Address"
         cy.get('[data-cy=same-as-physical-address-checkbox]').click();
 
-        // Seleccionar región
-        cy.get('[data-cy=postal-region-select]').click();
-        cy.get('[data-cy=postal-region-option]').contains('Arecibo').click();
-
         cy.wait(100); // Esperar a que carguen las regiones
-
-        // Ubicación
-        cy.get('[data-cy=postal-city-select]').click();
-        cy.get('[data-cy=postal-city-option]').contains('Camuy').click();
-
-        // // Verificar que los campos de dirección postal se llenan automáticamente
-        // cy.get('[data-cy=postal-address-input]').should('have.value', faker.location.streetAddress());
-        // cy.get('[data-cy=postal-city-select]').should('have.value', 'Arecibo');
-        // cy.get('[data-cy=postal-region-select]').should('have.value', 'Aguada');
-        // cy.get('[data-cy=postal-zip-code-input]').should('have.value', faker.string.numeric(5));
 
         // Información del administrador
         cy.get('[data-cy=first-name-input]').type(faker.person.firstName());
@@ -90,7 +72,7 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.get('[data-cy=mother-last-name-input]').type(faker.person.lastName());
 
         // Correo y cargo
-        const email = faker.internet.email();
+        const email = faker.internet.email().toLowerCase();
         cy.get('[data-cy=email-input]').type(email);
         cy.get('[data-cy=admin-title-input]').type(faker.person.jobTitle());
 

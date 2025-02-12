@@ -36,7 +36,6 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
 
   return forkJoin([
     agencyService.getAgencyById(requestParameters),
-     agencyService.getAllAgenciesFromDb({ take: 25, skip: 0, alls: true }),
      agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true }),
      geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
      geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),

@@ -23,7 +23,7 @@
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "auth.sign-up.program.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'program'" data-cy="program-select">
+              <mat-select id="program-select" [formControlName]="'program'" data-cy="program-select">
                 <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">
                   {{ program.name }}
                 </mat-option>
@@ -134,7 +134,7 @@
               <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select">
                 <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
-                  {{ city.Name }}
+                  {{ city.name }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -143,7 +143,7 @@
             <mat-form-field data-cy="region-field">
               <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
-                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.Name }}</mat-option>
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -201,14 +201,14 @@
             <mat-form-field data-cy="postal-city-field">
               <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
-                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.Name }}</mat-option>
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
               </mat-select>
             </mat-form-field>
             <!-- Region para Dirección Postal *  -->
             <mat-form-field data-cy="postal-region-field">
               <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="comparePostal">
-                <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.Name }}</mat-option>
+                <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
               </mat-select>
             </mat-form-field>
 

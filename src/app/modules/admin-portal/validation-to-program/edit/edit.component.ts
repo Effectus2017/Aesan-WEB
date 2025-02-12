@@ -32,6 +32,7 @@ import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
+import { ProgramService } from 'app/shared/services/program.service';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -67,7 +68,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   private _agencyService = inject(AgencyService);
   private _agencyStatusService = inject(AgencyStatusService);
   private _geoService = inject(GeoService);
-  private _userService = inject(UserService);
+  private _programService = inject(ProgramService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
@@ -78,6 +79,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   listPrograms = [];
   listCities = [];
   listRegions = [];
+  listPostalRegions = [];
 
   param: Agency;
 
@@ -142,11 +144,12 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result.body.data) {
         this.listRegions = result.body.data;
+        this.listPostalRegions = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
-    this._userService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result.body.data) {
         this.listPrograms = result.body.data;
         this._changeDetectorRef.detectChanges();
@@ -504,15 +507,37 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad
-  getRegionsByCityId(city: City): void {
+  getRegionsByCityId(city: City, target?: string): void {
+    if (!city) return;
+
     const queryParams: QueryParameters = {
-      cityId: city.Id,
+      cityId: city.id,
       alls: true,
     };
 
     this._geoService.getRegionsByCityId(queryParams).subscribe({
       next: (response: HttpResponse<any>) => {
-        this.listRegions = response.body.data;
+        if (target === 'postalRegion') {
+          this.listPostalRegions = response.body.data;
+          const regionControl = this.headerConfig.formGroup.get('postalRegion');
+          if (regionControl) {
+            if (this.listPostalRegions.length === 1) {
+              this.headerConfig.formGroup.patchValue({ postalRegion: this.listPostalRegions[0] });
+            } else {
+              regionControl.setValue(null);
+            }
+          }
+        } else {
+          this.listRegions = response.body.data;
+          const regionControl = this.headerConfig.formGroup.get('region');
+          if (regionControl) {
+            if (this.listRegions.length === 1) {
+              this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+            } else {
+              regionControl.setValue(null);
+            }
+          }
+        }
       },
       error: (error) => {
         console.error('Error al cargar las regiones', error);

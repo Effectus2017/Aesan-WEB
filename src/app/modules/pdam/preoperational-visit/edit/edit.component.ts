@@ -365,7 +365,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
   getCitiesByRegionId(region: Region): void {
     const queryParams: QueryParameters = {
-      regionId: region.Id,
+      regionId: region.id,
       alls: true,
     };
 
@@ -385,7 +385,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   // Método para obtener todas las regiones según el ID de la ciudad
   getRegionsByCityId(city: City): void {
     const queryParams: QueryParameters = {
-      cityId: city.Id,
+      cityId: city.id,
       alls: true,
     };
 
