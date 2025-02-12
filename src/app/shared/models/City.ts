@@ -1,9 +1,9 @@
 export interface City {
-    Id: number;
-    Name: string;
-    IsActive: boolean;
-    CreatedAt: Date;
-    UpdatedAt?: Date;
+    id: number;
+    name: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt?: Date;
 }
 
 

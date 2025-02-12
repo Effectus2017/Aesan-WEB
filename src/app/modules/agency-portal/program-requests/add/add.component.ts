@@ -577,7 +577,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
   // Método para obtener todas las regiones según el ID de la ciudad
   getRegionsByCityId(city: City): void {
     const queryParams: QueryParameters = {
-      cityId: city.Id,
+      cityId: city.id,
       alls: true,
     };
 

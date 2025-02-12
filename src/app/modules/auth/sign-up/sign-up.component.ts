@@ -1,7 +1,7 @@
 import { NgFor, NgIf } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
 import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators, FormControl } from '@angular/forms';
+import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDividerModule } from '@angular/material/divider';
@@ -28,12 +28,10 @@ import { Program } from 'app/shared/models/Program';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { CityRegion } from 'app/shared/models/CityRegion';
-import { Observable, forkJoin } from 'rxjs';
-import { map, catchError, of } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { environment } from 'environments/environment';
 import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { ProgramService } from 'app/shared/services/program.service';
 
 @Component({
   selector: 'auth-sign-up',
@@ -78,6 +76,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _customRouterService = inject(CustomRouterService);
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
+  private _programService = inject(ProgramService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _snackBar = inject(MatSnackBar);
 
@@ -87,7 +86,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   listCities: City[] = [];
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
-  listCityRegions: CityRegion[] = [];
 
   // Añadir nueva propiedad para controlar el estado del botón
   isEligible: boolean = true;
@@ -113,6 +111,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
       organizedAthleticPrograms: [null, Validators.required],
+      atRiskService: [{ value: null, disabled: true }],
 
       // Dirección
       address: [null, Validators.required],
@@ -171,10 +170,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const queryParams: QueryParameters = {
       take: 25,
       skip: 0,
-      alls: true,
+      alls: false,
+      names: 'PDAM,PSAV,PACNA',
     };
 
-    this._userService.getAllProgramsFromDb(queryParams).subscribe({
+    this._programService.getAllProgramsFromDb(queryParams).subscribe({
       next: (response) => {
         this.listPrograms = response.body.data;
       },
@@ -192,7 +192,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const queryParameters: QueryParameters = {
       take: 1000,
       skip: 0,
-      name: '',
       alls: true,
     };
 
@@ -211,7 +210,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Método para obtener todas las ciudades según el ID de la región
   getCitiesByRegionId(region: Region): void {
     const queryParams: QueryParameters = {
-      regionId: region.Id,
+      regionId: region.id,
       alls: true,
     };
 
@@ -233,7 +232,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if (!city) return;
 
     const queryParameters: QueryParameters = {
-      cityId: city.Id,
+      cityId: city.id,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
@@ -287,10 +286,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
 
     const formValues = this.signUpForm.value;
-    const cityId = formValues.city?.id;
-    const regionId = formValues.region?.id;
-    const postalCityId = formValues.postalCity?.id;
-    const postalRegionId = formValues.postalRegion?.id;
+    const cityId: number = formValues.city?.id;
+    const regionId: number = formValues.region?.id;
+    const postalCityId: number = formValues.postalCity?.id;
+    const postalRegionId: number = formValues.postalRegion?.id;
 
     // Verificar que se haya seleccionado un programa
     if (!formValues.program) {
@@ -348,6 +347,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
+        atRiskService: formValues.atRiskService === 'Yes' ? true : false,
         //
         programs: [programId],
         //
@@ -450,8 +450,46 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const selectedProgram = this.signUpForm.value.program?.name;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === 'Yes';
 
+    // Habilitar/deshabilitar atRiskService basado en la selección
+    const atRiskServiceControl = this.signUpForm.get('atRiskService');
+    if (organizedAthleticPrograms) {
+        atRiskServiceControl.enable();
+        atRiskServiceControl.setValidators([Validators.required]);
+    } else {
+        atRiskServiceControl.disable();
+        atRiskServiceControl.clearValidators();
+        atRiskServiceControl.setValue(null);
+    }
+    atRiskServiceControl.updateValueAndValidity();
+
     // Verificar elegibilidad para PACNA
     if (organizedAthleticPrograms && selectedProgram === 'PACNA') {
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program');
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
+    } else {
+        this.isEligible = true;
+        enableAllControls(this.signUpForm);
+    }
+  }
+
+  checkAtRiskService(): void {
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const atRiskService = this.signUpForm.value.atRiskService === 'Yes';
+
+    // Verificar elegibilidad para PACNA
+    if (atRiskService && selectedProgram === 'PACNA') {
         this.isEligible = false;
         disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
         this._fuseConfirmationService.open({
@@ -475,12 +513,18 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Copiar Dirección Física
   onCheckboxChange(event: any): void {
     if (event.checked) {
+      // Primero asignamos los valores básicos
       this.signUpForm.patchValue({
         postalAddress: this.signUpForm.value.address,
         postalCity: this.signUpForm.value.city,
-        postalRegion: this.signUpForm.value.region,
         postalZipCode: this.signUpForm.value.zipCode,
       });
+
+      // Si hay una ciudad seleccionada, obtenemos sus regiones
+      if (this.signUpForm.value.city) {
+        this.getRegionsByCityId(this.signUpForm.value.city, 'postalRegion');
+      }
+
       this.signUpForm.updateValueAndValidity();
     } else {
       this.signUpForm.patchValue({
@@ -494,14 +538,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   compare(o1: any, o2: any): boolean {
     if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.id === o2.id;
+      return o1.Id === o2.Id;
     }
     return false;
   }
 
   comparePostal(o1: any, o2: any): boolean {
     if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.id === o2.id;
+      return o1.Id === o2.Id;
     }
     return false;
   }

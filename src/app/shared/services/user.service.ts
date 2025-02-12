@@ -77,15 +77,6 @@ export class UserService {
   }
 
   /**
-   * Obtiene todos los programas desde la base de datos.
-   * @param queryParameters Los parámetros de consulta para la paginación y filtrado.
-   * @returns Un observable que emite todos los programas obtenidos.
-   */
-  getAllProgramsFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-programs-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._programs.next(response)));
-  }
-
-  /**
    * Registra un usuario y una agencia.
    * @param model El modelo que contiene los datos del usuario y la agencia.
    * @returns Un observable que emite el resultado de la operación.

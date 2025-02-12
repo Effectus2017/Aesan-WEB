@@ -98,9 +98,9 @@ export function handleError(error: any) {
 }
 
 export function disableAllControlsExcept(form: UntypedFormGroup, exceptions: string | string[]): void {
-  if (!environment.production) {
-    return;
-  }
+//   if (!environment.production) {
+//     return;
+//   }
   const exceptionsArray = typeof exceptions === 'string' ? [exceptions] : exceptions;
   Object.keys(form.controls).forEach(controlName => {
     if (!exceptionsArray.includes(controlName)) {
