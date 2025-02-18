@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewEncapsulation, Input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -17,6 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
   standalone: true,
 })
 export class ThemeToggleComponent implements OnInit {
+  @Input() menuItem: boolean = false;
   isDarkMode: boolean;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 

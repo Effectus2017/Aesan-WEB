@@ -4,7 +4,7 @@
 <!-- Navigation -->
 <ng-container *ngIf="isScreenSmall">
     <fuse-vertical-navigation
-        class="dark bg-gray-900 print:hidden"
+        [class]="backgroundClass + ' dark print:hidden'"
         [mode]="'over'"
         [name]="'mainNavigation'"
         [navigation]="navigation.default"
@@ -12,10 +12,10 @@
         <!-- Navigation header hook -->
         <ng-container fuseVerticalNavigationContentHeader>
             <!-- Logo -->
-            <div class="flex items-center h-20 pt-6 px-8">
+            <div class="flex items-center justify-center h-20 mt-3 mb-4">
                 <img
-                    class="w-24"
-                    src="assets/images/logo/logo-text-on-dark.svg"
+                    class="w-20"
+                    [src]="logoPath"
                     alt="Logo image">
             </div>
         </ng-container>
@@ -26,31 +26,36 @@
 <div class="flex flex-col flex-auto w-full min-w-0">
 
     <!-- Header -->
-    <div class="relative flex flex-0 items-center w-full h-16 sm:h-20 px-4 md:px-6 z-49 shadow dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
+    <div [class]="backgroundClass + ' dark print:hidden'" class="relative flex items-center w-full h-16 px-4 shadow flex-0 sm:h-20 md:px-6 z-49 dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
         <ng-container *ngIf="!isScreenSmall">
             <!-- Logo -->
-            <div class="flex items-center mx-2 lg:mr-8">
+            <div class="flex items-center mx-2 lg:mr-2">
                 <div class="hidden lg:flex">
                     <img
-                        class="dark:hidden w-24"
-                        src="assets/images/logo/logo-text.svg">
+                        class="w-20 dark:hidden"
+                        [src]="logoPath"
+                        alt="Logo image">
                     <img
-                        class="hidden dark:flex w-24"
-                        src="assets/images/logo/logo-text-on-dark.svg">
+                        class="hidden w-20 dark:flex"
+                        [src]="logoPath"
+                        alt="Logo image">
                 </div>
                 <img
-                    class="flex lg:hidden w-8"
-                    src="assets/images/logo/aesan.png">
+                    class="flex w-8 lg:hidden"
+                    [src]="logoPath"
+                    alt="Logo image">
             </div>
             <!-- Horizontal navigation -->
             <fuse-horizontal-navigation
                 class="mr-2"
                 [name]="'mainNavigation'"
-                [navigation]="navigation.horizontal"></fuse-horizontal-navigation>
+                [navigation]="navigation.horizontal">
+            </fuse-horizontal-navigation>
         </ng-container>
         <!-- Navigation toggle button -->
         <ng-container *ngIf="isScreenSmall">
             <button
+                title="Toggle Navigation"
                 mat-icon-button
                 (click)="toggleNavigation('mainNavigation')">
                 <mat-icon [svgIcon]="'heroicons_outline:bars-3'"></mat-icon>
@@ -59,17 +64,7 @@
         <!-- Components -->
         <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
             <languages></languages>
-            <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
-            <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
-            <messages></messages>
-            <notifications></notifications>
-            <button
-                class="lg:hidden"
-                mat-icon-button
-                (click)="quickChat.toggle()">
-                <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
-            </button>
+            <!-- <theme-toggle></theme-toggle> -->
             <user></user>
         </div>
     </div>
@@ -82,11 +77,22 @@
     </div>
 
     <!-- Footer -->
-    <div class="relative flex flex-0 items-center w-full h-14 sm:h-20 px-4 md:px-6 z-49 border-t bg-card dark:bg-transparent print:hidden">
-        <span class="font-medium text-secondary">Fuse &copy; {{currentYear}}</span>
+    <div class="relative flex items-center justify-start w-full px-4 border-t flex-0 h-18 md:px-6 z-49 bg-[#003C49] dark:bg-transparent print:hidden">
+        <div class="flex items-center">
+            <img src="assets/images/logo/aesan-logo-1x.png" alt="Logo" class="mr-2 h-14">
+        </div>
+        <div class="flex flex-row ml-auto text-right text-white gap-9">
+            <div class="flex items-center gap-3">
+                <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:map-pin"></mat-icon>
+                <p class="ml-2 text-sm">P.O. Box 190759 San Juan, PR 00919-0759</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:phone"></mat-icon>
+                <p class="ml-2 text-sm">(787) 759-2000 / Exts. 4055, 6292</p>
+            </div>
+        </div>
     </div>
-
 </div>
 
 <!-- Quick chat -->
-<quick-chat #quickChat="quickChat"></quick-chat>
+<!-- <quick-chat #quickChat="quickChat"></quick-chat> -->

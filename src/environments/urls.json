@@ -1,5 +1,5 @@
 {
-    "localUrl": "http://localhost:5000",
+    "localUrl": "https://localhost:5002",
     "devUrl": "https://aesanapi.azurewebsites.net",
     "prodUrl": "https://aesanapi.azurewebsites.net"
 }

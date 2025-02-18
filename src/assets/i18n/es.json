@@ -35,17 +35,17 @@
                 "no": "No"
             },
             "state-funds-denied": {
-                "label": "¿Has sido denegado o descalificado de fondos estatales en los últimos siete años?",
+                "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
                 "yes": "Sí",
                 "no": "No"
             },
             "federal-funds-denied": {
-                "label": "¿Has sido denegado o descalificado de fondos federales en los últimos siete años?",
+                "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
                 "yes": "Sí",
                 "no": "No"
             },
             "organized-athletic-programs": {
-                "label": "¿El Patrocinador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                "label": "¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
                 "yes": "Sí",
                 "no": "No"
             },
@@ -54,12 +54,12 @@
                 "yes": "Sí",
                 "no": "No"
             },
-            "sponsor-information": "Información del Patrocinador",
-            "sponsor-information-description": "Aquí puede agregar la información del patrocinador",
+            "sponsor-information": "Información del Auspiciador",
+            "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
             "agency": {
-                "label": "Nombre de la Agencia Patrocinadora",
-                "placeholder": "Ingresa el nombre de la agencia patrocinadora",
-                "description": "Información del patrocinador"
+                "label": "Nombre de la Agencia Auspiciadora",
+                "placeholder": "Ingresa el nombre de la agencia auspiciadora",
+                "description": "Información del auspiciador"
             },
             "state-department-registration": {
                 "label": "Número de Registro del Departamento de Estado",
@@ -727,7 +727,7 @@
         },
         "home": "Inicio",
         "programs": {
-            "validation": "Validación de Programas"
+            "validation": "Validación de Programas DARIO"
         },
         "pre-operational": "Pre-Operacional"
     },

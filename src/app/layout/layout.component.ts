@@ -10,6 +10,7 @@ import { EmptyLayoutComponent } from './layouts/empty/empty.component';
 import { CompactLayoutComponent } from './layouts/vertical/compact/compact.component';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
+import { ModernLayoutComponent } from './layouts/horizontal/modern/modern.component';
 
 @Component({
   selector: 'layout',
@@ -21,6 +22,7 @@ import { Navigation } from 'app/core/navigation/navigation.types';
     NgIf,
     EmptyLayoutComponent,
     CompactLayoutComponent,
+    ModernLayoutComponent,
   ],
 })
 export class LayoutComponent implements OnInit, OnDestroy {
@@ -29,22 +31,21 @@ export class LayoutComponent implements OnInit, OnDestroy {
   scheme: 'dark' | 'light';
   theme: string;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-
-  private _navigationService: NavigationService = inject(NavigationService);
   navigation: Navigation;
+
+  private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
+  private _document: any = inject(DOCUMENT);
+  private _renderer2: Renderer2 = inject(Renderer2);
+  private _router: Router = inject(Router);
+  private _fuseConfigService: FuseConfigService = inject(FuseConfigService);
+  private _fuseMediaWatcherService: FuseMediaWatcherService = inject(FuseMediaWatcherService);
+  private _fusePlatformService: FusePlatformService = inject(FusePlatformService);
+  private _navigationService: NavigationService = inject(NavigationService);
 
   /**
    * Constructor
    */
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    @Inject(DOCUMENT) private _document: any,
-    private _renderer2: Renderer2,
-    private _router: Router,
-    private _fuseConfigService: FuseConfigService,
-    private _fuseMediaWatcherService: FuseMediaWatcherService,
-    private _fusePlatformService: FusePlatformService
-  ) {}
+  constructor() {}
 
   // -----------------------------------------------------------------------------------------------------
   // @ Lifecycle hooks

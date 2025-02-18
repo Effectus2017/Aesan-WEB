@@ -1,6 +1,19 @@
-<button
-    mat-icon-button
-    [matTooltip]="'Cambiar tema'"
-    (click)="toggleTheme()">
-    <mat-icon [svgIcon]="isDarkMode ? 'heroicons_solid:sun' : 'heroicons_solid:moon'"></mat-icon>
-</button>
+<ng-container *ngIf="!menuItem">
+    <button
+        mat-icon-button
+        [matTooltip]="isDarkMode ? 'Light mode' : 'Dark mode'"
+        (click)="toggleTheme()">
+        <mat-icon [svgIcon]="isDarkMode ? 'heroicons_solid:sun' : 'heroicons_solid:moon'"></mat-icon>
+    </button>
+</ng-container>
+
+<ng-container *ngIf="menuItem">
+    <button mat-menu-item
+        [matTooltip]="isDarkMode ? 'Light mode' : 'Dark mode'"
+        (click)="toggleTheme()"
+        class="flex items-center h-10 px-4">
+        <mat-icon [svgIcon]="isDarkMode ? 'heroicons_solid:sun' : 'heroicons_solid:moon'" class="mr-3 icon-size-5"></mat-icon>
+        <span *ngIf="isDarkMode">Light mode</span>
+        <span *ngIf="!isDarkMode">Dark mode</span>
+    </button>
+</ng-container>

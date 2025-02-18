@@ -2,9 +2,9 @@ describe('Pruebas de registro de auspiciador', () => {
     const { faker } = require('@faker-js/faker');
 
     beforeEach(() => {
-        cy.intercept('POST', 'https://localhost:5000/auth/login').as('login');
-        cy.intercept('GET', 'http://localhost:5000/program/get-all-programs-from-db?take=25&skip=0&alls=false&names=PDAM,PSAV,PACNA').as('programs');
-        cy.visit('http://localhost:4200');
+        cy.intercept('POST', 'https://localhost:5002/auth/login').as('login');
+        cy.intercept('GET', 'https://localhost:5002/program/get-all-programs-from-db?take=25&skip=0&alls=false&names=PDAM,PSAV,PACNA').as('programs');
+        cy.visit('https://nutre-dev.local:4202');
         cy.wait(100);
         cy.get('[data-cy=sign-up-link]').click();
         cy.wait(100);
@@ -92,7 +92,7 @@ describe('Pruebas de registro de auspiciador', () => {
         });
 
         // Redirigir a la página de inicio de sesión
-        cy.visit('http://localhost:4200');
+        cy.visit('https://nutre-dev.local:4202');
         // Verificar que se redirige a la página de inicio de sesión
         cy.url().should('include', '/sign-in');
 
@@ -104,7 +104,7 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.wait(1000);
 
         // Verificar que se redirige a la página principal
-        cy.visit('http://localhost:4200/admin-portal/validation-to-program');
+        cy.visit('https://nutre-dev.local:4202/admin-portal/validation-to-program');
 
         // Buscar la agencia recién creada
         cy.get('[data-cy=generic-header-search-input]').type(agencyName); // Asumiendo que el nombre de la agencia es el que se generó

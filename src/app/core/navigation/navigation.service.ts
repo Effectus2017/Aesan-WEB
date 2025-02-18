@@ -49,8 +49,9 @@ export class NavigationService {
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       prefix = '/agency-portal/';
       // Si es una agencia, usar la navegación específica de agencia
-      navigation.default = this.getAgencyNavigation();
-      navigation.compact = this.getAgencyNavigation();
+    //   navigation.default = this.getAgencyNavigation();
+    //   navigation.compact = this.getAgencyNavigation();
+    //   navigation.horizontal = this.getAgencyNavigation();
     } else {
       // Ajustar el prefijo según el programa para otros roles
       switch (userPrograms) {
@@ -100,27 +101,31 @@ export class NavigationService {
       navigation.compact = adjustLinks(navigation.compact);
     }
 
+    if (navigation.horizontal) {
+      navigation.horizontal = adjustLinks(navigation.horizontal);
+    }
+
     return navigation;
   }
 
-  private getAgencyNavigation(): FuseNavigationItem[] {
-    return [
-    //   {
-    //     id: 'agency-home',
-    //     title: 'navigation.agency.home',
-    //     type: 'basic',
-    //     icon: 'heroicons_outline:home',
-    //     link: 'home'
-    //   },
-      {
-        id: 'program-requests',
-        title: 'navigation.agency.program-requests',
-        type: 'basic',
-        icon: 'heroicons_outline:document-text',
-        link: 'program-requests'
-      },
-    ];
-  }
+//   private getAgencyNavigation(): FuseNavigationItem[] {
+//     return [
+//     //   {
+//     //     id: 'agency-home',
+//     //     title: 'navigation.agency.home',
+//     //     type: 'basic',
+//     //     icon: 'heroicons_outline:home',
+//     //     link: 'home'
+//     //   },
+//       {
+//         id: 'program-requests',
+//         title: 'navigation.agency.program-requests',
+//         type: 'basic',
+//         icon: 'heroicons_outline:document-text',
+//         link: 'program-requests'
+//       },
+//     ];
+//   }
 
   private isItemAllowed(item: FuseNavigationItem, userRole: string): boolean {
     if (!item.roles || item.roles.length === 0) {

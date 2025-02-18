@@ -2,9 +2,9 @@ describe('Pruebas de registro de auspiciador', () => {
     const { faker } = require('@faker-js/faker');
 
     beforeEach(() => {
-        cy.intercept('POST', 'https://localhost:5000/auth/login').as('login');
-        cy.intercept('GET', 'http://localhost:5000/user/get-all-programs-from-db?take=10&skip=0').as('programs');
-        cy.visit('http://localhost:4200');
+        cy.intercept('POST', 'https://localhost:5002/auth/login').as('login');
+        cy.intercept('GET', 'https://localhost:5002/user/get-all-programs-from-db?take=10&skip=0').as('programs');
+        cy.visit('https://nutre-dev.local:4202');
         cy.wait(100);
         cy.get('[data-cy=sign-up-link]').click();
         cy.wait(100);

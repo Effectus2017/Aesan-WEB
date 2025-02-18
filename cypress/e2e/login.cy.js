@@ -2,11 +2,11 @@ describe('Pruebas de inicio de sesión', () => {
 
     // Interceptar las solicitudes
     beforeEach(() => {
-        cy.intercept('POST', 'https://localhost:5000/auth/login').as('login'); // Interceptar la solicitud de inicio de sesión
+        cy.intercept('POST', 'https://localhost:5002/auth/login').as('login'); // Interceptar la solicitud de inicio de sesión
     });
 
     it('Debería permitir iniciar sesión con credenciales válidas', () => {
-        cy.visit('http://localhost:4200');
+        cy.visit('https://nutre-dev.local:4202');
         // Ingresar el correo electrónico
         cy.get('[data-cy=email-input]').type('admin@admin.com');
 

@@ -10,7 +10,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-
+import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { filter, Subject, takeUntil } from 'rxjs';
@@ -41,17 +41,17 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   logoPath: string;
 
   private _authService = inject(AuthService);
+  private _routeStyleService = inject(RouteStyleService);
+  private _activatedRoute = inject(ActivatedRoute);
+  private _router = inject(Router);
+  private _navigationService = inject(NavigationService);
+  private _fuseMediaWatcherService = inject(FuseMediaWatcherService);
+  private _fuseNavigationService = inject(FuseNavigationService);
 
   /**
    * Constructor
    */
-  constructor(
-    private _activatedRoute: ActivatedRoute,
-    private _router: Router,
-    private _navigationService: NavigationService,
-    private _fuseMediaWatcherService: FuseMediaWatcherService,
-    private _fuseNavigationService: FuseNavigationService
-  ) {}
+  constructor() {}
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -84,10 +84,7 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     });
 
     // Suscribirse a los cambios de ruta
-    this._router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntil(this._unsubscribeAll)
-    ).subscribe(() => {
+    this._router.events.pipe(filter(event => event instanceof NavigationEnd),takeUntil(this._unsubscribeAll)).subscribe(() => {
       this.updateRouteStyles();
     });
 
@@ -127,46 +124,15 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     const rootRoute = this._activatedRoute.snapshot.root;
     const childRoutes = rootRoute.children;
 
-    const userPrograms = this._authService.getUserPrograms();
-
-    if (childRoutes.length > 0 && userPrograms) {
+    if (childRoutes.length > 0) {
       this.currentRoute = childRoutes[0].routeConfig.path;
-
-      // Ajustar el prefijo según el programa para otros roles
-      switch (userPrograms) {
-        case 'PDAM':
-          this.backgroundClass = 'bg-[#4C3152]';
-          this.logoPath = 'assets/images/logo/pdam-150x150.png';
-          break;
-        case 'PSAV':
-          this.backgroundClass = 'bg-[#F26B1E]';
-          this.logoPath = 'assets/images/logo/psav-150x150.png';
-          break;
-        case 'PACNA':
-          this.backgroundClass = 'bg-[#F8B100]';
-          this.logoPath = 'assets/images/logo/pacna-150x150.png';
-          break;
-        case 'PFHF':
-          this.backgroundClass = 'bg-[#28AF66]';
-          this.logoPath = 'assets/images/logo/pfhf-150x150.png';
-          break;
-        case 'PAF':
-          this.backgroundClass = 'bg-[#4C3152]';
-          this.logoPath = 'assets/images/logo/pdam-150x150.png';
-          break;
-        case 'PDFE':
-          this.backgroundClass = 'bg-[#2A788A]';
-          this.logoPath = 'assets/images/logo/pdfe-150x150.png';
-          break;
-        default:
-          this.backgroundClass = 'bg-[#003C49]';
-          this.logoPath = 'assets/images/logo/aesan.png';
-          break;
-      }
-
+      const { backgroundClass, logoPath } = this._routeStyleService.updateRouteStyles();
+      this.backgroundClass = backgroundClass;
+      this.logoPath = logoPath;
     } else {
-      this.backgroundClass = 'bg-[#003C49]';
-      this.logoPath = 'assets/images/logo/aesan.png';
+      const { backgroundClass, logoPath } = this._routeStyleService.updateRouteStyles();
+      this.backgroundClass = backgroundClass;
+      this.logoPath = logoPath;
     }
   }
 }

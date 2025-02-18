@@ -1,11 +1,14 @@
 import { BooleanInput } from '@angular/cdk/coercion';
 import { NgClass, NgIf } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { FuseConfigService } from '@fuse/services/config';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,7 +20,7 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'user',
   standalone: true,
-  imports: [MatButtonModule, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule],
+  imports: [MatButtonModule, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule, MatTooltipModule, ThemeToggleComponent],
 })
 export class UserComponent implements OnInit, OnDestroy {
   /* eslint-disable @typescript-eslint/naming-convention */
@@ -28,7 +31,9 @@ export class UserComponent implements OnInit, OnDestroy {
   user: TokenResponse;
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private _fuseConfigService: FuseConfigService = inject(FuseConfigService);
 
+  isDarkMode: boolean;
   /**
    * Constructor
    */
@@ -49,6 +54,12 @@ export class UserComponent implements OnInit, OnDestroy {
       // Mark for check
       this._changeDetectorRef.markForCheck();
     });
+
+    this._fuseConfigService.config$.pipe(takeUntil(this._unsubscribeAll)).subscribe((config) => {
+        this.isDarkMode = config.scheme === 'dark';
+        // Guardar el tema en localStorage
+        localStorage.setItem('theme', config.scheme);
+      });
   }
 
   /**
@@ -90,4 +101,5 @@ export class UserComponent implements OnInit, OnDestroy {
   signOut(): void {
     this._router.navigate(['/sign-out']);
   }
+
 }

@@ -121,6 +121,15 @@
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "buildTarget": "aesanweb:build:local",
+                        "ssl": true,
+                        "sslKey": "./nutre-dev.local-key.pem",
+                        "sslCert": "./nutre-dev.local.pem",
+                        "host": "nutre-dev.local",
+                        "port": 4202,
+                        "disableHostCheck": true
+                    },
                     "configurations": {
                         "production": {
                           "buildTarget": "aesanweb:build:production"
