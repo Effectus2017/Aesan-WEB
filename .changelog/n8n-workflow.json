@@ -1,0 +1,126 @@
+{
+  "name": "Local Git Changelog Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "cronExpression": "*/5 * * * *",
+        "executeOnce": false,
+        "timezone": "America/New_York"
+      },
+      "name": "Cron",
+      "type": "n8n-nodes-base.cron",
+      "position": [100, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /Volumes/Mac/Proyectos/AESAN/Proyecto/Web && git pull && git log -1 --format='%H'",
+        "executeInLine": true
+      },
+      "name": "Check Latest Commit",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{$node[\"Check Latest Commit\"].json[\"stdout\"]}}",
+              "value2": "={{$workflow.variables(\"lastCommitHash\")}}"
+            }
+          ]
+        }
+      },
+      "name": "Commit Change Detector",
+      "type": "n8n-nodes-base.if",
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "projectPath": "/Volumes/Mac/Proyectos/AESAN/Proyecto/Web",
+        "changelogPaths": {
+          "main": "/.changelog/web-changelog.md",
+          "history": "/.changelog/history/",
+          "human": "/.changelog/human/"
+        },
+        "jsCode": "const commits = items[0].json.commits;\nconst dateRange = getDateRange(commits);\n\nfunction getDateRange(commits) {\n  return {\n    start: commits[0].timestamp,\n    end: commits[commits.length - 1].timestamp\n  };\n}\n\nreturn {json: {\n  commits,\n  dateRange,\n  projectType: 'web'\n}};"
+      },
+      "name": "Process Commits",
+      "type": "n8n-nodes-base.code",
+      "position": [700, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "/Volumes/Mac/Proyectos/AESAN/Proyecto/Web/.changelog/web-changelog.md",
+        "fileContent": "={{$node[\"Format Content\"].json.changelogContent}}",
+        "binaryProperty": "data",
+        "fileName": "web-changelog.md",
+        "fileType": "string"
+      },
+      "name": "Write Changelog Main",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "position": [900, 250]
+    },
+    {
+      "parameters": {
+        "filePath": "=/Volumes/Mac/Proyectos/AESAN/Proyecto/Web/.changelog/history/web-{{$node[\"Process Commits\"].json.dateRange.end}}.md",
+        "fileContent": "={{$node[\"Format Content\"].json.historyContent}}",
+        "binaryProperty": "data",
+        "fileName": "={{'web-' + $node[\"Process Commits\"].json.dateRange.end + '.md'}}",
+        "fileType": "string"
+      },
+      "name": "Write Changelog History",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "position": [900, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "=/Volumes/Mac/Proyectos/AESAN/Proyecto/Web/.changelog/human/web-{{$node[\"Process Commits\"].json.dateRange.end}}.md",
+        "fileContent": "={{$node[\"Format Content\"].json.humanContent}}",
+        "binaryProperty": "data",
+        "fileName": "={{'web-' + $node[\"Process Commits\"].json.dateRange.end + '.md'}}",
+        "fileType": "string"
+      },
+      "name": "Write Changelog Human",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "position": [900, 350]
+    },
+    {
+      "parameters": {
+        "jsCode": "const { commits, dateRange } = items[0].json;\n\nfunction formatChangelog(commits) {\n  // Lógica para formatear el changelog\n}\n\nfunction formatHistory(commits) {\n  // Lógica para formatear el historial\n}\n\nfunction formatHuman(commits) {\n  // Lógica para formatear la descripción humana\n}\n\nreturn {json: {\n  changelogContent: formatChangelog(commits),\n  historyContent: formatHistory(commits),\n  humanContent: formatHuman(commits)\n}};"
+      },
+      "name": "Format Content",
+      "type": "n8n-nodes-base.code",
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "command": "cd /Volumes/Mac/Proyectos/AESAN/Proyecto/Web && git add .changelog/ && git commit -m \"docs: Update changelog files\" && git push origin HEAD",
+        "executeInLine": true
+      },
+      "name": "Git Operations",
+      "type": "n8n-nodes-base.executeCommand",
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Cron": {
+      "main": [["Check Latest Commit"]]
+    },
+    "Check Latest Commit": {
+      "main": [["Commit Change Detector"]]
+    },
+    "Commit Change Detector": {
+      "true": [["Process Commits"]],
+      "false": []
+    },
+    "Process Commits": {
+      "main": [
+        ["Write Changelog Main", "Write Changelog History", "Write Changelog Human"]
+      ]
+    },
+    "Write Changelog Files": {
+      "main": [["Git Operations"]]
+    }
+  }
+}

@@ -499,3 +499,71 @@ Estos cambios buscan optimizar la experiencia del usuario y mejorar la funcional
 ### Correcciones de Bugs
 - Se corrigió el acceso a propiedades de ciudad y región (cambio de `id` a `Id`)
 - Se mejoró el manejo de estados en formularios durante la validación
+
+# Changelog - [2025-02-10]
+
+## Cambios de Prueba y Ajustes
+
+### Mejoras en Testing
+- Se actualizaron las pruebas de integración
+- Se optimizaron los tiempos de espera en pruebas de Cypress
+- Se agregaron nuevos casos de prueba para validaciones de formularios
+
+### Optimizaciones de Código
+- Se realizó limpieza de código no utilizado
+- Se mejoró el manejo de tipos en interfaces
+- Se actualizaron los comentarios en el código para mejor claridad
+
+### Correcciones Menores
+- Se ajustaron estilos en componentes responsive
+- Se corrigieron problemas de visualización en diferentes resoluciones
+- Se mejoró el manejo de estados en formularios 
+
+# Changelog - [2025-02-12] a [2025-02-18]
+
+## Cambios en Diseño y Configuración
+
+### Actualización del Layout
+- Se migró de layout 'compact' a 'modern'
+- Se implementó nuevo diseño de navegación horizontal
+- Se actualizó el footer con información de contacto y logo de AESAN
+- Se mejoró la disposición del menú de usuario
+
+### Mejoras en la Navegación
+- Se implementó soporte multilenguaje en elementos de navegación
+- Se actualizó la estructura de navegación para soportar modo horizontal
+- Se optimizó la navegación para diferentes roles de usuario
+- Se agregó traducción automática de títulos y badges usando `transloco`
+
+### Configuración SSL y Desarrollo Local
+- Se implementó configuración SSL para desarrollo local
+- Se agregó soporte para dominio `nutre-dev.local`
+- Se actualizaron los scripts de inicio para soportar SSL
+- Se configuró proxy inverso para manejo de peticiones HTTPS
+
+### Mejoras en la Interfaz de Usuario
+- Se implementó nuevo selector de tema (claro/oscuro)
+- Se mejoró la integración del selector de idiomas
+- Se actualizó el diseño del menú de usuario
+- Se optimizó la visualización del logo según el tema seleccionado
+
+### Actualizaciones en Testing
+- Se actualizaron las pruebas de Cypress para soportar SSL
+- Se modificaron las URLs de prueba para usar el nuevo dominio local
+- Se actualizaron los interceptores de red en las pruebas
+
+### Optimizaciones de Código
+- Se implementó el patrón de inyección de dependencias usando `inject()`
+- Se mejoró la gestión de estilos según la ruta activa
+- Se optimizó el manejo de temas y configuraciones
+- Se implementó servicio `RouteStyleService` para manejo centralizado de estilos
+
+### Seguridad
+- Se implementó certificado SSL para desarrollo local
+- Se agregaron configuraciones de seguridad para HTTPS
+- Se actualizaron las rutas para usar HTTPS por defecto
+
+### Configuración del Proyecto
+- Se actualizó `angular.json` para soportar SSL
+- Se agregó configuración de proxy para desarrollo local
+- Se actualizaron los scripts de npm para el nuevo entorno 
