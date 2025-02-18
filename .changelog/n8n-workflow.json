@@ -13,8 +13,10 @@
     },
     {
       "parameters": {
-        "command": "cd /Volumes/Mac/Proyectos/AESAN/Proyecto/Web && git pull && git log -1 --format='%H'",
-        "executeInLine": true
+        "command": "cd /Volumes/Mac/Proyectos/AESAN/Proyecto/Web && git log -1 --format='%H'",
+        "executeInLine": true,
+        "timeout": 30000,
+        "workingDirectory": "/Volumes/Mac/Proyectos/AESAN/Proyecto/Web"
       },
       "name": "Check Latest Commit",
       "type": "n8n-nodes-base.executeCommand",
@@ -43,7 +45,7 @@
           "history": "/.changelog/history/",
           "human": "/.changelog/human/"
         },
-        "jsCode": "const commits = items[0].json.commits;\nconst dateRange = getDateRange(commits);\n\nfunction getDateRange(commits) {\n  return {\n    start: commits[0].timestamp,\n    end: commits[commits.length - 1].timestamp\n  };\n}\n\nreturn {json: {\n  commits,\n  dateRange,\n  projectType: 'web'\n}};"
+        "jsCode": "const commits = items[0].json.commits || [];\nconst dateRange = getDateRange(commits);\n\nfunction getDateRange(commits) {\n  if (commits.length === 0) {\n    return { start: null, end: null };\n  }\n  return {\n    start: commits[0].timestamp,\n    end: commits[commits.length - 1].timestamp\n  };\n}\n\nreturn [\n  {\n    json: {\n      commits,\n      dateRange,\n      projectType: 'web'\n    }\n  }\n];"
       },
       "name": "Process Commits",
       "type": "n8n-nodes-base.code",
