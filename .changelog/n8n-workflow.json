@@ -105,18 +105,62 @@
   ],
   "connections": {
     "Cron": {
-      "main": [["Check Latest Commit"]]
+      "main": [
+        [
+          {
+            "node": "Check Latest Commit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Check Latest Commit": {
-      "main": [["Commit Change Detector"]]
+      "main": [
+        [
+          {
+            "node": "Commit Change Detector",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Commit Change Detector": {
-      "true": [["Process Commits"]],
+      "true": [
+        [
+          {
+            "node": "Process Commits",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
       "false": []
     },
     "Process Commits": {
       "main": [
-        ["Write Changelog Main", "Write Changelog History", "Write Changelog Human"]
+        [
+          {
+            "node": "Write Changelog Main",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Changelog History",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Write Changelog Human",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Write Changelog Files": {

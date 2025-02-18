@@ -1,0 +1,60 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "path": "git-commit-log",
+        "methods": ["POST"]
+      },
+      "name": "Git Commit Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [300, 300]
+    },
+    {
+      "parameters": {
+        "command": "git log -1 --pretty=format:\"%h - %an: %s\"",
+        "options": {},
+        "workingDirectory": "/Volumes/Mac/Proyectos/AESAN/Proyecto/Web"
+      },
+      "name": "Get Last Commit",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [600, 300]
+    },
+    {
+      "parameters": {
+        "filePath": "/Volumes/Mac/Proyectos/AESAN/Proyecto/Web/commit-log.txt",
+        "data": "={{$node[\"Get Last Commit\"].json[\"stdout\"]}}",
+        "append": true
+      },
+      "name": "Save Commit Log",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Git Commit Webhook": {
+      "main": [
+        [
+          {
+            "node": "Get Last Commit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last Commit": {
+      "main": [
+        [
+          {
+            "node": "Save Commit Log",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
