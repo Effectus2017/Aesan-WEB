@@ -51,6 +51,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
 
 // Mantener las navegaciones existentes...
 export const defaultNavigation: FuseNavigationItem[] = [
+  // Administrator
   {
     id: 'home',
     title: 'navigation.home',
@@ -67,14 +68,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
       },
     ],
     roles: ['Administrator'],
-  },
-  {
-    id: 'program-requests',
-    title: 'navigation.agency.program-requests',
-    type: 'basic',
-    icon: 'heroicons_outline:document-text',
-    link: '/agency-portal/program-requests',
-    roles: ['Agency'],
   },
   {
     id: 'users',
@@ -105,6 +98,95 @@ export const defaultNavigation: FuseNavigationItem[] = [
         link: '/users/roles',
       },
     ],
+  },
+  // Agency-Administrator
+  {
+    id: 'documents.agency',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/documents',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'forms.agency',
+    title: 'navigation.forms.title',
+    type: 'group',
+    icon: 'heroicons_solid:clipboard-document-list',
+    children: [
+      {
+        id: 'forms.agency.program-application',
+        title: 'navigation.forms.program-application',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+        link: '/forms/agency/program-application',
+      },
+      {
+        id: 'forms.agency.sponsor-organization',
+        title: 'navigation.forms.sponsor-organization',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+        link: '/forms/agency/sponsor-organization',
+      },
+      {
+        id: 'forms.agency.administrative-organization-chart',
+        title: 'navigation.forms.administrative-organization-chart',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+        link: '/forms/agency/administrative-organization-chart',
+      },
+    ],
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'accounting.agency',
+    title: 'navigation.accounting.title',
+    type: 'group',
+    icon: 'heroicons_solid:calculator',
+    children: [
+      {
+        id: 'accounting.agency.budget',
+        title: 'navigation.accounting.budget',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+        link: '/accounting/agency/budget',
+      },
+      {
+        id: 'accounting.agency.financial-management',
+        title: 'navigation.accounting.financial-management',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+      },
+      {
+        id: 'accounting.agency.employee-management',
+        title: 'navigation.accounting.employee-management',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+      },
+      {
+        id: 'accounting.agency.rations-form',
+        title: 'navigation.accounting.rations-form',
+        type: 'basic',
+        icon: 'heroicons_solid:document',
+      },
+    ],
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'dashboard.agency',
+    title: 'navigation.dashboard',
+    type: 'basic',
+    icon: 'heroicons_solid:chart-pie',
+    link: '/dashboard',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'reports.agency',
+    title: 'navigation.reports',
+    type: 'basic',
+    icon: 'heroicons_solid:document-chart-bar',
+    link: '/reports',
+    roles: ['Agency-Administrator'],
   },
 ];
 
@@ -147,8 +229,8 @@ export const futuristicNavigation: FuseNavigationItem[] = [
   },
 ];
 
-// branch component
 export const horizontalNavigation: FuseNavigationItem[] = [
+  // Administrator
   {
     id: 'home',
     title: 'navigation.home',
@@ -164,5 +246,63 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     icon: 'mat_solid:person',
     children: [],
     roles: ['Administrator'],
+  },
+  // Agency-Administrator
+  {
+    id: 'home.agency',
+    title: 'navigation.home',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/program-requests',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'documents.agency',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/documents',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'forms.agency',
+    title: 'navigation.forms.title',
+    type: 'group',
+    icon: 'heroicons_solid:clipboard-document-list',
+    children: [],
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'accounting.agency',
+    title: 'navigation.accounting.title',
+    type: 'group',
+    icon: 'heroicons_solid:calculator',
+    children: [],
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'dashboard.agency',
+    title: 'navigation.dashboard',
+    type: 'basic',
+    icon: 'heroicons_solid:chart-pie',
+    link: '/dashboard',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'reports.agency',
+    title: 'navigation.reports',
+    type: 'basic',
+    icon: 'heroicons_solid:document-chart-bar',
+    link: '/reports',
+    roles: ['Agency-Administrator'],
+  },
+  // Monitor
+  {
+    id: 'home',
+    title: 'navigation.home',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/pre-operational',
+    roles: ['Monitor'],
   },
 ];

@@ -77,76 +77,15 @@ export const appRoutes: Route[] = [
     ],
   },
 
-  {
-    path: 'pacna-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    component: LayoutComponent,
-    resolve: {
-      initialData: initialDataResolver,
-    },
-    children: [
-    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    ],
-  },
-
-  {
-    path: 'psav-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    component: LayoutComponent,
-    resolve: {
-      initialData: initialDataResolver,
-    },
-    children: [
-    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    ],
-  },
-
-  {
-    path: 'pdam-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    component: LayoutComponent,
-    resolve: {
-      initialData: initialDataResolver,
-    },
-    children: [
-      { path: 'pre-operational', loadChildren: () => import('app/modules/pdam/preoperational-visit/preoperational-visit.routes') },
-    ],
-  },
-
-  {
-    path: 'pfhf-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    component: LayoutComponent,
-    resolve: {
-      initialData: initialDataResolver,
-    },
-    children: [
-    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    ],
-  },
-
-  {
-    path: 'paf-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
-    component: LayoutComponent,
-    resolve: {
-      initialData: initialDataResolver,
-    },
-    children: [
-    //   { path: 'example', loadChildren: () => import('app/modules/admin-portal/example/example.routes') },
-    ],
-  },
-
+  // Monitor (Role: Monitor) routes
   {
     path: 'monitor-portal',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
+    data: {
+      layout: 'modern',
+    },
     resolve: {
       initialData: initialDataResolver,
     },
@@ -155,11 +94,15 @@ export const appRoutes: Route[] = [
     ],
   },
 
+  // Agency (sponsor) routes
   {
     path: 'agency-portal',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
+    data: {
+        layout: 'modern',
+      },
     resolve: {
       initialData: initialDataAgencyPortalResolver,
     },

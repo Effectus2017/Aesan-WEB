@@ -730,7 +730,23 @@
         "programs": {
             "validation": "Program Validation"
         },
-        "pre-operational": "Pre-Operational"
+        "pre-operational": "Pre-Operational",
+        "documents": "Documents",
+        "forms": {
+            "title": "Forms",
+            "program-application": "Program Application",
+            "sponsor-organization": "Sponsor Organization",
+            "administrative-organization-chart": "Administrative Organization Chart"
+        },
+        "accounting": {
+            "title": "Accounting",
+            "budget": "Budget",
+            "financial-management": "Financial Management",
+            "employee-management": "Employee Management",
+            "rations-form": "Rations Form"
+        },
+        "dashboard": "Dashboard",
+        "reports": "Reports"
     },
     "roles": {
         "list": {

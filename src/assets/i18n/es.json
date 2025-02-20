@@ -729,7 +729,23 @@
         "programs": {
             "validation": "Validación de Programas"
         },
-        "pre-operational": "Pre-Operacional"
+        "pre-operational": "Pre-Operacional",
+        "documents": "Documentos",
+        "forms": {
+            "title": "Formularios",
+            "program-application": "Solicitud al Programa",
+            "sponsor-organization": "Organización de Auspiciadores",
+            "administrative-organization-chart": "Organigrama Administrativo"
+        },
+        "accounting": {
+            "title": "Contabilidad",
+            "budget": "Presupuesto",
+            "financial-management": "Manejo Financiero",
+            "employee-management": "Manejo de Empleados",
+            "rations-form": "Formulario de Raciones"
+        },
+        "dashboard": "Gráficas",
+        "reports": "Reportes"
     },
     "roles": {
         "list": {

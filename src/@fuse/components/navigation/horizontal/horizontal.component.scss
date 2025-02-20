@@ -42,7 +42,7 @@ fuse-horizontal-navigation {
             .fuse-horizontal-navigation-item-active-forced {
 
                 .fuse-horizontal-navigation-item-title {
-                    @apply text-primary #{'!important'};
+                    @apply text-white #{'!important'};
                 }
 
                 .fuse-horizontal-navigation-item-subtitle {
@@ -54,7 +54,7 @@ fuse-horizontal-navigation {
                 }
 
                 .fuse-horizontal-navigation-item-icon {
-                    @apply text-primary #{'!important'};
+                    @apply text-white #{'!important'};
                 }
             }
         }
