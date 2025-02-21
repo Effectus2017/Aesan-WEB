@@ -12,6 +12,8 @@ import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-t
 import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
+import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
+import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
 @Component({
   selector: 'user',
@@ -20,7 +22,18 @@ import { Subject, takeUntil } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'user',
   standalone: true,
-  imports: [MatButtonModule, MatMenuModule, NgIf, MatIconModule, NgClass, MatDividerModule, MatTooltipModule, ThemeToggleComponent],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    NgIf,
+    LazyImgDirective,
+    OptimizeImagePipe,
+    MatDividerModule,
+    MatTooltipModule,
+    ThemeToggleComponent,
+    NgClass
+  ],
 })
 export class UserComponent implements OnInit, OnDestroy {
   /* eslint-disable @typescript-eslint/naming-convention */

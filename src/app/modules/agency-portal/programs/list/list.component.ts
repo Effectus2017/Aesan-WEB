@@ -17,6 +17,10 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { programCardsData } from './columns-data';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { RouterLink } from '@angular/router';
+import { NgFor, NgIf } from '@angular/common';
+import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
+import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
 @Component({
   selector: 'agency-programs-list',
@@ -24,7 +28,22 @@ import { AuthService } from 'app/core/auth/auth.service';
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent],
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    GenericHeaderComponent,
+    GenericTableComponent,
+    RouterLink,
+    NgFor,
+    NgIf,
+    LazyImgDirective,
+    OptimizeImagePipe
+  ],
 })
 export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;

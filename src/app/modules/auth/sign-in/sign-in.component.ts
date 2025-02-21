@@ -15,6 +15,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { FuseCardComponent } from '@fuse/components/card';
+import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
+import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
 @Component({
   selector: 'auth-sign-in',
@@ -35,9 +38,10 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
     MatCheckboxModule,
     MatProgressSpinnerModule,
     TranslocoModule,
-    ThemeToggleComponent,
     LanguagesComponent,
-  ],
+    LazyImgDirective,
+    OptimizeImagePipe
+],
 })
 export class AuthSignInComponent implements OnInit {
   private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);

@@ -1,8 +1,16 @@
 <!-- Button -->
-<button mat-icon-button [matMenuTriggerFor]="userActions">
-  <span class="relative">
-    <img class="rounded-full w-7 h-7" *ngIf="showAvatar && user.avatar" [src]="user.avatar" />
-    <mat-icon *ngIf="!showAvatar || !user.avatar" [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
+<button
+    mat-icon-button
+    [matMenuTriggerFor]="userActions">
+    <img
+        class="rounded-full w-7 h-7"
+        *ngIf="showAvatar && user.avatar"
+        [lazyImg]="user.avatar | optimizeImage:100"
+        [src]="user.avatar | optimizeImage:100"
+    />
+    <mat-icon
+        *ngIf="!showAvatar || !user.avatar"
+        [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
     <span
       class="absolute bottom-0 right-0 w-2 h-2 rounded-full"
       [ngClass]="{
@@ -13,7 +21,6 @@
         'bg-gray-400': user.status === 'not-visible'
       }"
     ></span>
-  </span>
 </button>
 
 <mat-menu [xPosition]="'before'" #userActions="matMenu">

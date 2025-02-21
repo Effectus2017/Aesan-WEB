@@ -5,8 +5,14 @@
   </div>
   <div class="w-full px-4 py-8 sm:w-auto sm:pl-12 sm:pr-12 sm:rounded-2xl sm:shadow sm:bg-card">
     <div class="w-full mx-auto max-w-80 sm:w-80 sm:mx-0">
-      <div class="">
-        <img src="assets/images/logo/logo.png" alt="Logo" />
+      <!-- Logo -->
+      <div class="flex items-center justify-center mt-2">
+        <img
+          [lazyImg]="'assets/images/logo/logo.png'"
+          [src]="'assets/images/logo/logo.png'"
+          alt="Logo"
+
+        />
       </div>
 
       <div class="mt-4 text-4xl font-extrabold leading-tight tracking-tight text-center">{{ 'auth.sign-in.title' | transloco }}</div>
