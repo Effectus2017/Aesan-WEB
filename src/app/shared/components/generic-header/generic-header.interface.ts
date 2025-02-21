@@ -3,6 +3,7 @@ import { FormGroup } from '@angular/forms';
 export interface GenericHeaderConfig {
   // Propiedades obligatorias
   title: string;
+  agency?: string;
   formGroup?: FormGroup;
 
   // Search Field config

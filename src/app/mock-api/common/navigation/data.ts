@@ -296,6 +296,14 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     link: '/reports',
     roles: ['Agency-Administrator'],
   },
+  {
+    id: 'programs',
+    title: 'navigation.programs.title',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/programs',
+    roles: ['Agency-Administrator'],
+  },
   // Monitor
   {
     id: 'home',
