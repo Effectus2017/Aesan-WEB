@@ -3,7 +3,10 @@
         "welcome-back": "Bienvenido",
         "Project": "Proyecto",
         "Analytics": "Analítica",
-        "read-more": "Leer más"
+        "request-orientation": "Solicitar Orientación",
+        "notification": "Notificación",
+        "orientation-request-sent": "Su solicitud de orientación fue enviada al Coordinador del Programa",
+        "accept": "Aceptar"
     },
     "auth": {
         "sign-in": {
@@ -212,6 +215,7 @@
                     "middleName": "Segundo Nombre",
                     "motherLastName": "Apellido Materno",
                     "createdBy": "Creado por",
+                    "assignedTo": "Asignado a",
                     "createdAt": "Fecha de Creación",
                     "status": "Estatus",
                     "actions": "Acciones"
@@ -229,6 +233,9 @@
         },
         "edit": {
             "title": "Editar Validación de Aplicación al Programa",
+            "monitor": {
+                "label": "Usuarios Monitores"
+            },
             "program": {
                 "label": "Programa al que desea participar:",
                 "placeholder": "Seleccione un programa"

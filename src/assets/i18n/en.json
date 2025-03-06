@@ -212,6 +212,7 @@
                     "middleName": "Middle Name",
                     "motherLastName": "Mother's Last Name",
                     "createdBy": "Created By",
+                    "assignedTo": "Assigned To",
                     "createdAt": "Creation Date",
                     "status": "Status",
                     "actions": "Actions"
@@ -229,6 +230,9 @@
         },
         "edit": {
             "title": "Edit Program Application Validation",
+            "monitor": {
+                "label": "Users Monitor"
+            },
             "program": {
                 "label": "Program you wish to participate in:",
                 "placeholder": "Select a program"
@@ -728,6 +732,7 @@
         },
         "home": "Home",
         "programs": {
+            "title": "Programs",
             "validation": "Program Validation"
         },
         "pre-operational": "Pre-Operational",
@@ -761,7 +766,7 @@
                 "questions": {
                     "who-can-sponsor": {
                         "title": "Who can sponsor this Program?",
-                        "answer": "Children’s institutions and public and private schools that operate non-profit."
+                        "answer": "Children's institutions and public and private schools that operate non-profit."
                     },
                     "what-services": {
                         "title": "What services can sponsors offer?",
@@ -856,6 +861,9 @@
         "welcome-back": "Welcome back",
         "Project": "Project",
         "Analytics": "Analytics",
-        "read-more": "Read more"
+        "request-orientation": "Request Orientation",
+        "notification": "Notification",
+        "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
+        "accept": "Accept"
     }
 }

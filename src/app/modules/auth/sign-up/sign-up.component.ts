@@ -25,9 +25,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
-import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { CityRegion } from 'app/shared/models/CityRegion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -54,11 +52,10 @@ import { ProgramService } from 'app/shared/services/program.service';
     NgFor,
     MatDividerModule,
     MatSnackBarModule,
-    ThemeToggleComponent,
     LanguagesComponent,
     MatTooltipModule,
     NumericOnlyDirective
-  ],
+],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

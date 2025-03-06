@@ -300,7 +300,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     id: 'programs',
     title: 'navigation.programs.title',
     type: 'basic',
-    icon: 'heroicons_solid:home',
+    icon: 'heroicons_solid:cursor-arrow-ripple',
     link: '/programs',
     roles: ['Agency-Administrator'],
   },

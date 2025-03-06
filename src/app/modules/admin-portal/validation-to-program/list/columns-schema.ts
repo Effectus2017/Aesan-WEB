@@ -35,11 +35,12 @@ export const COLUMNS_SCHEMA = [
     type: 'date-time',
     label: 'validation-to-program.list.table.columns.createdAt'
   },
-//   {
-//     key: 'assignedTo',
-//     type: 'text',
-//     label: 'Asignado a'//'validation-to-program.list.table.columns.assignedTo'
-//   },
+  {
+    key: ['monitor.firstName', 'monitor.fatherLastName'],
+    type: 'combined-text',
+    keys: ['monitor.firstName', 'monitor.fatherLastName'], //
+    label: 'validation-to-program.list.table.columns.assignedTo'
+  },
   {
     key: 'actions',
     type: 'button',

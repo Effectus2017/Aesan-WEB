@@ -29,7 +29,11 @@
           </div>
         </div>
         <div class="px-6 pb-4 mt-auto">
-          <button class="w-full px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-600">{{ 'common.read-more' | transloco }}</button>
+          <button
+            (click)="requestOrientation(program)"
+            class="w-full px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-600">
+            {{ 'common.request-orientation' | transloco }}
+          </button>
         </div>
       </div>
     </div>

@@ -5,6 +5,11 @@ import { throwError } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
 import { environment } from 'environments/environment';
 
+// Método auxiliar para verificar si un valor es un array
+export function isArray(value: any): boolean {
+  return Array.isArray(value);
+}
+
 // Función genérica para comparar elementos por una propiedad específica
 export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
   return item1[property] === item2[property];

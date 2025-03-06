@@ -11,6 +11,7 @@ export interface QueryParameters {
   cityId?: number;
   statusId?: number;
   userId?: string;
+  monitorId?: string;
   imageUrl?: string;
   rejectionJustification?: string;
   type?: string;

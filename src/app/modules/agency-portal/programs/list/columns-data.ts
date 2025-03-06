@@ -58,7 +58,12 @@ export const programCardsData = [
         questions: [
             {
                 title: 'programs.list.pfhf.questions.who-can-sponsor.title',
-                answer: 'programs.list.pfhf.questions.who-can-sponsor.answer'
+                subtitle: 'programs.list.pfhf.questions.who-can-sponsor.subtitle',
+                answer: [
+                    'programs.list.pfhf.questions.who-can-sponsor.answer.0',
+                    'programs.list.pfhf.questions.who-can-sponsor.answer.1',
+                    'programs.list.pfhf.questions.who-can-sponsor.answer.2'
+                ]
             },
             {
                 title: 'programs.list.pfhf.questions.what-services.title',

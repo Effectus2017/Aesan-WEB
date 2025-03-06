@@ -19,6 +19,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SharedModule } from 'app/shared/shared.module';
 import { firstValueFrom } from 'rxjs';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
   selector: 'agency-programs-list',
@@ -26,19 +27,7 @@ import { firstValueFrom } from 'rxjs';
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
   standalone: true,
-  imports: [
-    CommonModule,
-    MatTableModule,
-    MatPaginatorModule,
-    MatSortModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    NgFor,
-    NgIf,
-    TranslocoModule,
-    SharedModule
-  ],
+  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, NgIf, TranslocoModule, SharedModule],
 })
 export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -52,6 +41,7 @@ export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGeneric
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService = inject(TranslocoService);
+  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -60,16 +50,12 @@ export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGeneric
 
   programs: any[] = [];
 
-  isArray(value: any): boolean {
-    return Array.isArray(value);
-  }
-
   constructor() {
     // Configurar el idioma activo
     this._translocoService.setActiveLang('es');
 
     // Suscribirse a los cambios de traducción para depuración
-    this._translocoService.events$.subscribe(event => {
+    this._translocoService.events$.subscribe((event) => {
       console.log('Transloco event:', event);
     });
 
@@ -78,49 +64,53 @@ export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGeneric
     console.log('Available languages:', this._translocoService.getAvailableLangs());
   }
 
-  async ngOnInit(): Promise<void> {
-    try {
-      // Esperar a que las traducciones se carguen
-      await firstValueFrom(this._translocoService.load('es'));
-      console.log('Translations loaded successfully');
-
-      // Asignar los datos después de cargar las traducciones
-      this.programs = programCardsData;
-
-      // Verificar las traducciones después de cargar los datos
-      if (this.programs.length > 0) {
-        const firstProgram = this.programs[0];
-        console.log('First program data:', firstProgram);
-
-        // Probar traducción del título
-        const translatedTitle = this._translocoService.translate(firstProgram.title);
-        console.log('First program translated title:', translatedTitle);
-
-        // Probar traducción de una pregunta y sus respuestas
-        if (firstProgram.questions && firstProgram.questions.length > 0) {
-          const firstQuestion = firstProgram.questions[0];
-          console.log('First question translation:', this._translocoService.translate(firstQuestion.title));
-
-          if (Array.isArray(firstQuestion.answer)) {
-            console.log('First question answers:', firstQuestion.answer.map(answer =>
-              this._translocoService.translate(answer)
-            ));
-          } else {
-            console.log('First question answer:', this._translocoService.translate(firstQuestion.answer));
-          }
-        }
-
-        // Verificar traducción del botón "Leer más"
-        console.log('Read more button translation:', this._translocoService.translate('common.read-more'));
-      }
-
-      this._changeDetectorRef.detectChanges();
-    } catch (error) {
-      console.error('Error initializing component:', error);
-    }
+  ngOnInit() {
+    this.programs = programCardsData;
+    this._changeDetectorRef.detectChanges();
   }
 
   ngOnDestroy(): void {}
 
   onAdd(): void {}
+
+  /**
+   * Muestra el diálogo de confirmación cuando el usuario solicita orientación
+   * @param program El programa sobre el que se solicita orientación
+   */
+  requestOrientation(program: any): void {
+    // Configuración del diálogo de confirmación
+    const confirmation = this._fuseConfirmationService.open({
+      title: this._translocoService.translate('common.notification'),
+      message: this._translocoService.translate('common.orientation-request-sent'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:information-circle',
+        color: 'info',
+      },
+      actions: {
+        confirm: {
+          show: true,
+          label: this._translocoService.translate('common.accept'),
+          color: 'primary',
+        },
+        cancel: {
+          show: false,
+        },
+      },
+      dismissible: false,
+    });
+
+    // Opcional: Manejar la respuesta del diálogo
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        console.log(`Solicitud de orientación para el programa ${program.id} confirmada`);
+        // Aquí podríamos agregar lógica adicional si es necesario
+      }
+    });
+  }
+
+  // Método auxiliar para verificar si un valor es un array
+  isArray(value: any): boolean {
+    return Array.isArray(value);
+  }
 }

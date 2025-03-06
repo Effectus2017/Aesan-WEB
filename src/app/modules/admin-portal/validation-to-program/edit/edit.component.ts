@@ -260,6 +260,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       address: formValues.address,
       zipCode: formValues.zipCode,
       postalAddress: formValues.postalAddress,
+      postalZipCode: formValues.postalZipCode,
+      postalCityId: formValues.postalCity?.id,
+      postalRegionId: formValues.postalRegion?.id,
       email: formValues.email,
       phone: formValues.phone,
       administrationTitle: formValues.administrationTitle,
@@ -560,7 +563,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
         console.error('Error al cargar las regiones', error);
       },
       complete: () => {
-        console.log('Regiones cargadas con éxito');
+
       },
     });
   }
