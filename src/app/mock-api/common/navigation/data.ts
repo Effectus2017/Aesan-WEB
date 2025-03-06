@@ -8,14 +8,14 @@ export const agencyNavigation: FuseNavigationItem[] = [
     title: 'navigation.agency.home',
     type: 'basic',
     icon: 'heroicons_outline:home',
-    link: '/agency-portal/home',
+    link: '/home',
   },
   {
     id: 'program-requests',
     title: 'navigation.agency.program-requests',
     type: 'basic',
     icon: 'heroicons_outline:document-text',
-    link: '/agency-portal/program-requests',
+    link: '/program-requests',
   },
   {
     id: 'users',

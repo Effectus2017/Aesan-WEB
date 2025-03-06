@@ -16,5 +16,6 @@ export interface QueryParameters {
   type?: string;
   fileName?: string;
   folderTo?: string;
+  roles?: string[];
 }
 

@@ -1,0 +1,9 @@
+---
+description: Best practices and guidelines for Angular
+globs: **/*.{ts}
+---
+- Use Angular CLI for project setup and management
+- Implement OnPush change detection strategy for better performance
+- Use dependency injection for services
+- Leverage Angular's built-in form validation
+- Implement lazy loading for modules to optimize load times

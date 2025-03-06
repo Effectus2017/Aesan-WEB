@@ -1,35 +1,37 @@
 <div class="flex flex-col flex-auto min-w-0">
-
-    <!-- Main -->
-    <div class="flex-auto p-6 sm:p-10">
-
-        <!-- Grid de tarjetas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-
-            <!-- Tarjeta dinámica -->
-            <div *ngFor="let program of programs">
-            <div *ngFor="let program of programs" class="flex flex-col overflow-hidden bg-white shadow-md rounded-xl">
-                <div class="p-6">
-                    <div class="flex items-center mb-4">
-                        <img class="w-16 h-16 mr-4 rounded-lg" [src]="program.icon" [alt]="program.title" />
-                        <h3 class="text-xl font-semibold text-gray-900">{{program.title}}</h3>
-                    </div>
-                    <div class="space-y-4">
-                        <div *ngFor="let question of program.questions">
-                            <h4 class="mb-2 text-lg font-medium text-gray-900">{{question.title}}</h4>
-                            <p class="text-gray-600">{{question.answer}}</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="px-6 pb-4">
-                    <button class="w-full px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-600">
-                        Leer más
-                    </button>
-                </div>
+  <!-- Main -->
+  <div class="flex-auto p-6 sm:p-10">
+    <!-- Grid de tarjetas -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Tarjeta dinámica -->
+      <div *ngFor="let program of programs" class="flex flex-col h-full overflow-hidden bg-white shadow-md rounded-xl">
+        <div class="flex-1 p-6">
+          <div class="flex items-center mb-4">
+            <img class="w-16 h-16 mr-4 rounded-lg" [src]="program.icon" [alt]="program.title | transloco" [title]="program.title | transloco" />
+            <h3 class="text-xl font-semibold text-gray-900">{{ program.title | transloco }}</h3>
+          </div>
+          <div class="space-y-4">
+            @for (question of program.questions; track question.title) {
+            <div>
+              <h4 class="mb-2 text-lg font-medium text-gray-900">{{ question.title | transloco }}</h4>
+              @if (question.subtitle) {
+              <p class="mb-2 text-gray-600">{{ question.subtitle | transloco }}</p>
+              }
+              <ul class="pl-5 text-gray-600 list-disc">
+                @if (isArray(question.answer)) { @for (answer of question.answer; track answer) {
+                <li class="marker:text-primary">{{ answer | transloco }}</li>
+                } } @else {
+                <li class="marker:text-primary">{{ question.answer | transloco }}</li>
+                }
+              </ul>
             </div>
-
+            }
+          </div>
         </div>
-
+        <div class="px-6 pb-4 mt-auto">
+          <button class="w-full px-4 py-2 text-white transition-colors rounded-lg bg-primary hover:bg-primary-600">{{ 'common.read-more' | transloco }}</button>
+        </div>
+      </div>
     </div>
-
+  </div>
 </div>

@@ -59,10 +59,10 @@ export const appConfig: ApplicationConfig = {
             label: 'Español',
           },
         ],
-        defaultLang: 'en',
-        fallbackLang: 'en',
+        defaultLang: 'es',
+        fallbackLang: 'es',
         reRenderOnLangChange: true,
-        prodMode: true,
+        prodMode: false,
       },
       loader: TranslocoHttpLoader,
     }),
@@ -72,8 +72,8 @@ export const appConfig: ApplicationConfig = {
       useFactory: () => {
         const translocoService = inject(TranslocoService);
         if (isNullOrUndefinedEmptyStringNullArray(localStorage.getItem('language'))) {
-          localStorage.setItem('language', 'en');
-          translocoService.setDefaultLang('en');
+          localStorage.setItem('language', 'es');
+          translocoService.setDefaultLang('es');
         } else {
           translocoService.setDefaultLang(localStorage.getItem('language'));
         }

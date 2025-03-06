@@ -44,6 +44,7 @@ export interface Agency {
     programs?: Program[];
     // User
     user?: User;
+    monitor?: User;
     // Cita coordinada
     appointmentCoordinated?: boolean;
     appointmentDate?: string;

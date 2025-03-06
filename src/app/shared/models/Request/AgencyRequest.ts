@@ -33,6 +33,8 @@ export interface AgencyRequest {
     isListable?: boolean;
     // Programas
     programs?: number[];
+    monitorId?: string;
+    assignedBy?: string;
 }
 
 export interface UpdateAgencyProgramRequest {

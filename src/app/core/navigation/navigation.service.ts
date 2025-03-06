@@ -48,31 +48,11 @@ export class NavigationService {
 
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       prefix = '/agency-portal/';
-      // Si es una agencia, usar la navegación específica de agencia
-    //   navigation.default = this.getAgencyNavigation();
-    //   navigation.compact = this.getAgencyNavigation();
-    //   navigation.horizontal = this.getAgencyNavigation();
+    } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
+      prefix = '/monitor-portal/';
     } else {
       // Ajustar el prefijo según el programa para otros roles
       switch (userPrograms) {
-        case 'PDAM':
-          prefix = '/pdam-portal/';
-          break;
-        case 'PSAV':
-          prefix = '/psav-portal/';
-          break;
-        case 'PACNA':
-          prefix = '/pacna-portal/';
-          break;
-        case 'PFHF':
-          prefix = '/pfhf-portal/';
-          break;
-        case 'PAF':
-          prefix = '/paf-portal/';
-          break;
-        case 'PDFE':
-          prefix = '/pdf-portal/';
-          break;
         default:
           prefix = '/admin-portal/';
           break;
@@ -107,25 +87,6 @@ export class NavigationService {
 
     return navigation;
   }
-
-//   private getAgencyNavigation(): FuseNavigationItem[] {
-//     return [
-//     //   {
-//     //     id: 'agency-home',
-//     //     title: 'navigation.agency.home',
-//     //     type: 'basic',
-//     //     icon: 'heroicons_outline:home',
-//     //     link: 'home'
-//     //   },
-//       {
-//         id: 'program-requests',
-//         title: 'navigation.agency.program-requests',
-//         type: 'basic',
-//         icon: 'heroicons_outline:document-text',
-//         link: 'program-requests'
-//       },
-//     ];
-//   }
 
   private isItemAllowed(item: FuseNavigationItem, userRole: string): boolean {
     if (!item.roles || item.roles.length === 0) {
