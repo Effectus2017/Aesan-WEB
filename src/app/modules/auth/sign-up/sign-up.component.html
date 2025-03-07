@@ -57,14 +57,30 @@
             </mat-form-field>
           </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
             <mat-form-field data-cy="organized-athletic-programs-field">
-              <mat-label>{{ "auth.sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-label matTooltip="{{ 'auth.sign-up.organized-athletic-programs.label' | transloco }}">{{ "auth.sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
                 <mat-option value="Yes" data-cy="organized-athletic-programs-yes">{{ "auth.sign-up.organized-athletic-programs.yes" | transloco }}</mat-option>
                 <mat-option value="No" data-cy="organized-athletic-programs-no">{{ "auth.sign-up.organized-athletic-programs.no" | transloco }}</mat-option>
               </mat-select>
+            </mat-form-field>
+
+            <!-- Tiempo de servicio -->
+            <mat-form-field data-cy="service-time-field">
+              <mat-label matTooltip="{{ 'auth.sign-up.service-time.label' | transloco }}">{{ "auth.sign-up.service-time.label" | transloco }}</mat-label>
+              <input
+                matInput
+                [formControlName]="'serviceTime'"
+                [matDatepicker]="servicePicker"
+                (dateChange)="checkServiceTime()"
+                placeholder="{{ 'auth.sign-up.service-time.placeholder' | transloco }}"
+                data-cy="service-time-input"
+              />
+              <mat-hint>{{ "auth.sign-up.service-time.hint" | transloco }}</mat-hint>
+              <mat-datepicker-toggle matIconSuffix [for]="servicePicker"></mat-datepicker-toggle>
+              <mat-datepicker #servicePicker></mat-datepicker>
             </mat-form-field>
 
             <!-- Is the Sponsor interested in participating in the at-risk snack and dinner service? -->

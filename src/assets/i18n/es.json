@@ -53,6 +53,14 @@
                 "yes": "Sí",
                 "no": "No"
             },
+            "service-time": {
+                "label": "¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha de inicio",
+                "hint": "Fecha desde que la organización comenzó a ofrecer servicios"
+            },
+            "service-time-not-eligible": {
+                "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
+            },
             "at-risk-service": {
                 "label": "¿Está interesado en participar en el servicio de merienda y cena en riesgo?",
                 "yes": "Sí",

@@ -55,6 +55,14 @@
                 "yes": "Yes",
                 "no": "No"
             },
+            "service-time": {
+                "label": "How long has the organization or institution been offering services with an established enrollment?",
+                "placeholder": "Select start date",
+                "hint": "Date since the organization started offering services"
+            },
+            "service-time-not-eligible": {
+                "message": "The organization must have at least one year of service to be eligible for any program."
+            },
             "at-risk-service": {
                 "label": "Are you interested in participating in the at-risk snack and dinner service?",
                 "yes": "Yes",

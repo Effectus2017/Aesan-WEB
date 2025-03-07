@@ -4,10 +4,12 @@ import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fr
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
@@ -54,8 +56,12 @@ import { ProgramService } from 'app/shared/services/program.service';
     MatSnackBarModule,
     LanguagesComponent,
     MatTooltipModule,
-    NumericOnlyDirective
-],
+    NumericOnlyDirective,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatTooltipModule,
+  ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -108,6 +114,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
       organizedAthleticPrograms: [null, Validators.required],
+      serviceTime: [null, Validators.required],
       atRiskService: [{ value: null, disabled: true }],
 
       // Dirección
@@ -344,6 +351,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
+        serviceTime: formValues.serviceTime ? formValues.serviceTime : 0,
         atRiskService: formValues.atRiskService === 'Yes' ? true : false,
         //
         programs: [programId],
@@ -504,6 +512,36 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     } else {
         this.isEligible = true;
         enableAllControls(this.signUpForm); // Habilitar controles
+    }
+  }
+
+  checkServiceTime(): void {
+    const serviceTime = this.signUpForm.value.serviceTime;
+    if (serviceTime) {
+        const today = new Date();
+        const serviceDate = new Date(serviceTime);
+        const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 +
+                            (today.getMonth() - serviceDate.getMonth());
+
+        if (diffInMonths < 12) {
+            this.isEligible = false;
+            disableAllControlsExcept(this.signUpForm, 'program');
+            this._fuseConfirmationService.open({
+                title: this._translocoService.translate('auth.sign-up.notification.title'),
+                message: this._translocoService.translate('auth.sign-up.service-time-not-eligible.message'),
+                actions: {
+                    confirm: {
+                        label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                    },
+                    cancel: {
+                        show: false,
+                    },
+                },
+            });
+        } else {
+            this.isEligible = true;
+            enableAllControls(this.signUpForm);
+        }
     }
   }
 
