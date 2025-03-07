@@ -29,7 +29,7 @@
             "sponsor-information-description": "Here you can add your sponsor information",
             "user-information": "User Information",
             "user-information-description": "Here you can add your user information",
-            "title": "Program Application",
+            "title": "Intent to Participate",
             "program": {
                 "label": "Which program do you want to participate in?",
                 "required": "Please select at least one program",
@@ -56,9 +56,8 @@
                 "no": "No"
             },
             "service-time": {
-                "label": "How long has the organization or institution been offering services with an established enrollment?",
-                "placeholder": "Select start date",
-                "hint": "Date since the organization started offering services"
+                "label": "How long has the organization or institution been providing services with an established enrollment?",
+                "placeholder": "Select the date when the organization began operating"
             },
             "service-time-not-eligible": {
                 "message": "The organization must have at least one year of service to be eligible for any program."
@@ -167,6 +166,12 @@
             "select-program-first": "Please select at least one program to continue with registration",
             "gps-coordinates": {
                 "tooltip": "Search coordinates"
+            },
+            "tax-exemption-status": {
+                "label": "What is the status of your Tax Exemption?"
+            },
+            "tax-exemption-type": {
+                "label": "Tax Exemption Type"
             }
         },
         "reset-password": {

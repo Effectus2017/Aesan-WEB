@@ -24,17 +24,19 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field data-cy="monitor-field">
-            <mat-label>{{ "validation-to-program.edit.monitor.label" | transloco }}</mat-label>
-            <mat-select formControlName="monitor" [compareWith]="compareItems" data-cy="monitor-select">
-              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + ' ' + monitor.fatherLastName }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
+          <!-- Status *  -->
           <mat-form-field data-cy="status-field">
             <mat-label>{{ "validation-to-program.edit.status.label" | transloco }}</mat-label>
             <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select">
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Users Monitor *  -->
+          <mat-form-field data-cy="monitor-field">
+            <mat-label>{{ "validation-to-program.edit.monitor.label" | transloco }}</mat-label>
+            <mat-select formControlName="monitor" [compareWith]="compareItems" data-cy="monitor-select">
+              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + ' ' + monitor.fatherLastName }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

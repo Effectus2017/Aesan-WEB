@@ -29,7 +29,7 @@
             "submit": "Iniciar Sesión"
         },
         "sign-up": {
-            "title": "Aplicación al Programa",
+            "title": "Intención de Participación",
             "program": {
                 "label": "¿A qué programa desea participar?"
             },
@@ -54,9 +54,8 @@
                 "no": "No"
             },
             "service-time": {
-                "label": "¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
-                "placeholder": "Seleccione la fecha de inicio",
-                "hint": "Fecha desde que la organización comenzó a ofrecer servicios"
+                "label": " ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha en que comenzó a operar la organización"
             },
             "service-time-not-eligible": {
                 "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
@@ -170,6 +169,12 @@
             },
             "gps-coordinates": {
                 "tooltip": "Buscar coordenadas"
+            },
+            "tax-exemption-status": {
+                "label": "¿En qué estatus se encuentra su Exención Contributiva?"
+            },
+            "tax-exemption-type": {
+                "label": "Tipo de Exención"
             }
         },
         "reset-password": {
@@ -249,8 +254,8 @@
                 "placeholder": "Seleccione un programa"
             },
             "status": {
-                "label": "Estado:",
-                "placeholder": "Seleccione un estado"
+                "label": "Estatus:",
+                "placeholder": "Seleccione un estatus"
             },
             "agency": {
                 "label": "Nombre de la Agencia Auspiciadora:",
