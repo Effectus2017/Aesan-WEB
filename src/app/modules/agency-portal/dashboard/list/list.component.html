@@ -1,0 +1,31 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Main -->
+  <div class="flex-auto p-6 sm:p-10">
+    <!-- Grid de tarjetas -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <!-- Cards dinámicas basadas en los datos -->
+      <ng-container *ngFor="let card of agencyDashboardCardsData">
+        <div [id]="card.id"
+             class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl"
+             [ngClass]="{
+               'md:col-span-2 lg:col-span-3': card.fullWidth === true,
+               'md:col-span-1 lg:col-span-1': !card.fullWidth
+             }">
+          <div class="flex items-start justify-between">
+            <div class="text-lg font-medium leading-6 tracking-tight truncate">{{ card.title }}</div>
+          </div>
+          <div class="flex flex-col items-center mt-2" *ngIf="!card.isEmptyCard">
+            <div class="font-bold leading-none tracking-tight text-7xl sm:text-8xl" [ngClass]="card.color">{{ card.value }}</div>
+          </div>
+
+          <!-- Tabla para la card "Detalle de los Formularios" -->
+          <div class="mt-4" *ngIf="card.isEmptyCard">
+            <div class="flex-auto overflow-y-auto" cdkScrollable>
+                <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+              </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

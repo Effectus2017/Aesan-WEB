@@ -2,7 +2,11 @@
     "common": {
         "welcome-back": "Bienvenido",
         "Project": "Proyecto",
-        "Analytics": "Analítica"
+        "Analytics": "Analítica",
+        "request-orientation": "Solicitar Orientación",
+        "notification": "Notificación",
+        "orientation-request-sent": "Su solicitud de orientación fue enviada al Coordinador del Programa",
+        "accept": "Aceptar"
     },
     "auth": {
         "sign-in": {
@@ -25,7 +29,7 @@
             "submit": "Iniciar Sesión"
         },
         "sign-up": {
-            "title": "Aplicación al Programa",
+            "title": "Intención de Participación",
             "program": {
                 "label": "¿A qué programa desea participar?"
             },
@@ -48,6 +52,13 @@
                 "label": "¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
                 "yes": "Sí",
                 "no": "No"
+            },
+            "service-time": {
+                "label": " ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha en que comenzó a operar la organización"
+            },
+            "service-time-not-eligible": {
+                "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
             },
             "at-risk-service": {
                 "label": "¿Está interesado en participar en el servicio de merienda y cena en riesgo?",
@@ -158,6 +169,12 @@
             },
             "gps-coordinates": {
                 "tooltip": "Buscar coordenadas"
+            },
+            "tax-exemption-status": {
+                "label": "¿En qué estatus se encuentra su Exención Contributiva?"
+            },
+            "tax-exemption-type": {
+                "label": "Tipo de Exención"
             }
         },
         "reset-password": {
@@ -211,6 +228,7 @@
                     "middleName": "Segundo Nombre",
                     "motherLastName": "Apellido Materno",
                     "createdBy": "Creado por",
+                    "assignedTo": "Asignado a",
                     "createdAt": "Fecha de Creación",
                     "status": "Estatus",
                     "actions": "Acciones"
@@ -228,13 +246,16 @@
         },
         "edit": {
             "title": "Editar Validación de Aplicación al Programa",
+            "monitor": {
+                "label": "Usuarios Monitores"
+            },
             "program": {
                 "label": "Programa al que desea participar:",
                 "placeholder": "Seleccione un programa"
             },
             "status": {
-                "label": "Estado:",
-                "placeholder": "Seleccione un estado"
+                "label": "Estatus:",
+                "placeholder": "Seleccione un estatus"
             },
             "agency": {
                 "label": "Nombre de la Agencia Auspiciadora:",
@@ -727,6 +748,7 @@
         },
         "home": "Inicio",
         "programs": {
+            "title": "Programas",
             "validation": "Validación de Programas"
         },
         "pre-operational": "Pre-Operacional",
@@ -750,6 +772,106 @@
     "roles": {
         "list": {
             "title": "Lista de Roles"
+        }
+    },
+    "programs": {
+        "list": {
+            "title": "Programas",
+            "pdam": {
+                "title": "PDAM",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "¿Quiénes pueden auspiciar este Programa?",
+                        "answer": "Instituciones de niños y escuelas públicas y privadas que operan sin fines de lucro."
+                    },
+                    "what-services": {
+                        "title": "¿Qué servicios pueden ofrecer los auspiciadores?",
+                        "answers": {
+                            "0": "Servir el desayuno completamente gratis y asumir la diferencia en costo entre lo que recibe de reembolso y lo que le cuesta producir la ración.",
+                            "1": "Vender el desayuno a precio razonable, utilizando las guías de elegibilidad para determinar las familias que cualifican para recibir los servicios precio reducido o pagando o servir la bandeja gratis a los que cualifiquen."
+                        }
+                    }
+                }
+            },
+            "pfhf": {
+                "title": "PFHF",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "¿Quiénes pueden auspiciar este programa?",
+                        "subtitle": "Son elegibles para participar escuelas:",
+                        "answer": {
+                            "0": "Participantes del Programa de Almuerzo Escolar.",
+                            "1": "De nivel elemental.",
+                            "2": "Donde el 50% o más de los niños son elegibles para recibir comidas gratis o a precio reducido."
+                        }
+                    },
+                    "what-services": {
+                        "title": "¿Qué servicios pueden ofrecer los auspiciadores?",
+                        "answers": {
+                            "0": "Una merienda durante el horario escolar."
+                        }
+                    }
+                }
+            },
+            "pacna": {
+                "title": "PACNA",
+                "questions": {
+                    "what-is-goal": {
+                        "title": "¿Cuál es la Meta?",
+                        "answer": "La meta es ofrecer, a los niños matriculados en Centros de Cuidado Diurno, comidas balanceadas y enseñar buenos hábitos alimentarios."
+                    },
+                    "who-can-participate": {
+                        "title": "¿Quiénes pueden participar?",
+                        "answers": {
+                            "0": "Organizaciones no residenciales que funcionen sin fines de lucro, ya sean públicas o privadas.",
+                            "1": "Organizaciones privadas que funcionen con fines de lucro, donde el 25 por ciento de los niños matriculados son beneficiarios del Título XX.",
+                            "2": "Ley de Seguro Social.",
+                            "3": "Hogares licenciados de Cuidado Diurno de Niños y registrados bajo una agencia auspiciadora."
+                        }
+                    }
+                }
+            },
+            "paf": {
+                "title": "PAF",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "¿Quiénes pueden auspiciar del PAF?",
+                        "answer": "Niños y Adultos participantes de los Programas de Alimentos que administra la Agencia Estatal, Servicios de Alimentos y Nutrición del Departamento de Educación."
+                    },
+                    "what-services": {
+                        "title": "¿Qué servicios pueden ofrecer los Alimentos Federales a los auspiciadores?",
+                        "answers": {
+                            "0": "Pueden ofrecer los servicios de desayuno, almuerzo, merienda y cena si aplica."
+                        }
+                    }
+                }
+            },
+            "pdfe": {
+                "title": "PDFE",
+                "questions": {
+                    "what-is-farm-to-school": {
+                        "title": "¿Qué es de la granja a la escuela?",
+                        "answers": {
+                            "0": "De la granja a la escuela enriquece la conexión que tienen las comunidades con alimentos frescos y saludables y con los productores locales de alimentos al mejorar la compra de alimentos y las prácticas educativas en las escuelas y los sitios de educación y cuidado infantil. De la granja a la escuela, que incluye la educación y el cuidado de la granja a la primera infancia, permite a los niños y a sus familias tomar decisiones alimentarias informadas, fortaleciendo al mismo tiempo la economía local y contribuyendo a comunidades vibrantes. La implementación de la granja a la escuela difiere según la ubicación, pero siempre incluye uno o más de los siguientes tres elementos centrales.",
+                            "1": "Adquisición: Los alimentos locales se compran, promocionan y sirven en la cafetería o durante las comidas, como refrigerio o en degustaciones en el aula.",
+                            "2": "Educación: Los estudiantes participan en actividades educativas relacionadas con la agricultura, la alimentación, la salud y la nutrición.",
+                            "3": "Huertos escolares: los estudiantes participan en un aprendizaje práctico y experiencial a través de la jardinería."
+                        }
+                    }
+                }
+            },
+            "psav": {
+                "title": "PSAV",
+                "questions": {
+                    "summer-services": {
+                        "title": "¿Cuántos servicios pueden ofrecer los auspiciadores durante el verano?",
+                        "answers": {
+                            "0": "Sitio abierto disponible para los niños de la comunidad pueden ofrecer hasta dos servicios diarios, (uno puede ser almuerzo; el otro puede ser desayuno, merienda o cena)",
+                            "1": "Sitio cerrado, campamento o residencial pueden servir hasta tres (3) comidas diarias; desayuno, almuerzo, merienda o cena."
+                        }
+                    }
+                }
+            }
         }
     }
 }

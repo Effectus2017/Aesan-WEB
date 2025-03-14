@@ -28,11 +28,18 @@ export interface AgencyRequest {
     stateFundsDenied?: boolean;
     organizedAthleticPrograms?: boolean;
     atRiskService?: boolean;
+    // Service Time
+    serviceTime?: Date;
+    // Tax Exemption
+    taxExemptionStatus?: number;
+    taxExemptionType?: number;
     // Campos de estado
     isActive?: boolean;
     isListable?: boolean;
     // Programas
     programs?: number[];
+    monitorId?: string;
+    assignedBy?: string;
 }
 
 export interface UpdateAgencyProgramRequest {

@@ -29,7 +29,7 @@
             "sponsor-information-description": "Here you can add your sponsor information",
             "user-information": "User Information",
             "user-information-description": "Here you can add your user information",
-            "title": "Program Application",
+            "title": "Intent to Participate",
             "program": {
                 "label": "Which program do you want to participate in?",
                 "required": "Please select at least one program",
@@ -54,6 +54,13 @@
                 "label": "Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?",
                 "yes": "Yes",
                 "no": "No"
+            },
+            "service-time": {
+                "label": "How long has the organization or institution been providing services with an established enrollment?",
+                "placeholder": "Select the date when the organization began operating"
+            },
+            "service-time-not-eligible": {
+                "message": "The organization must have at least one year of service to be eligible for any program."
             },
             "at-risk-service": {
                 "label": "Are you interested in participating in the at-risk snack and dinner service?",
@@ -159,6 +166,12 @@
             "select-program-first": "Please select at least one program to continue with registration",
             "gps-coordinates": {
                 "tooltip": "Search coordinates"
+            },
+            "tax-exemption-status": {
+                "label": "What is the status of your Tax Exemption?"
+            },
+            "tax-exemption-type": {
+                "label": "Tax Exemption Type"
             }
         },
         "reset-password": {
@@ -212,6 +225,7 @@
                     "middleName": "Middle Name",
                     "motherLastName": "Mother's Last Name",
                     "createdBy": "Created By",
+                    "assignedTo": "Assigned To",
                     "createdAt": "Creation Date",
                     "status": "Status",
                     "actions": "Actions"
@@ -229,6 +243,9 @@
         },
         "edit": {
             "title": "Edit Program Application Validation",
+            "monitor": {
+                "label": "Users Monitor"
+            },
             "program": {
                 "label": "Program you wish to participate in:",
                 "placeholder": "Select a program"
@@ -728,6 +745,7 @@
         },
         "home": "Home",
         "programs": {
+            "title": "Programs",
             "validation": "Program Validation"
         },
         "pre-operational": "Pre-Operational",
@@ -752,5 +770,113 @@
         "list": {
             "title": "Roles List"
         }
+    },
+    "programs": {
+        "list": {
+            "title": "Programs",
+            "pdam": {
+                "title": "NSLBP",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "Who can sponsor this Program?",
+                        "answer": "Children's institutions and public and private schools that operate non-profit."
+                    },
+                    "what-services": {
+                        "title": "What services can sponsors offer?",
+                        "answers": {
+                            "0": "Serve free breakfast and absorb the difference in cost between the reimbursement and the cost of producing the ration.",
+                            "1": "Sell breakfast at a reasonable price, using the eligibility guidelines to determine families who qualify for free, reduced-price, or paid services, accordingly."
+                        }
+                    }
+                }
+            },
+            "pfhf": {
+                "title": "FFVP",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "Who can sponsor this program?",
+                        "subtitle": "Schools eligible to participate are:",
+                        "answer": {
+                            "0": "Participants of the School Lunch Program",
+                            "1": "Elementary level",
+                            "2": "Where 50% or more of the children are eligible for free or reduced-price meals"
+                        }
+                    },
+                    "what-services": {
+                        "title": "What services can a sponsor offer?",
+                        "answers": {
+                            "0": "A snack during school hours."
+                        }
+                    }
+                }
+            },
+            "pacna": {
+                "title": "CACFP",
+                "questions": {
+                    "what-is-goal": {
+                        "title": "What is the goal?",
+                        "answer": "The goal is to offer children enrolled in Day Care Centers balanced meals and teach good eating habits."
+                    },
+                    "who-can-participate": {
+                        "title": "Who can participate?",
+                        "answers": {
+                            "0": "Non-residential, non-profit organizations, both public or private.",
+                            "1": "Private organizations that operate for profit, wherein 25 percent of enrolled children are beneficiaries of the Social Security Act Title XX.",
+                            "2": "Licensed Child Care Homes registered under a sponsoring agency."
+                        }
+                    }
+                }
+            },
+            "paf": {
+                "title": "FFDP",
+                "questions": {
+                    "who-can-sponsor": {
+                        "title": "Who can be a sponsor of the FDP? Or who can be sponsored by the FDP?",
+                        "answer": "Children and Adults participating in the aforementioned Food Programs administered by the State Agency, Food and Nutrition Services of the Department of Education."
+                    },
+                    "what-services": {
+                        "title": "Through which services can sponsors offer Federal Foods?",
+                        "answers": {
+                            "0": "They can offer the services of breakfast, lunch, and snacks as applicable."
+                        }
+                    }
+                }
+            },
+            "pdfe": {
+                "title": "F2S",
+                "questions": {
+                    "what-is-farm-to-school": {
+                        "title": "What is Farm to School?",
+                        "answers": {
+                            "0": "Farm to school enriches the connection communities have with fresh, healthy food and local food producers by enhancing food purchasing and education practices at schools and early care and education sites. Farm to school, inclusive of farm to early care and education, empowers children and their families to make informed food choices while strengthening the local economy and contributing to vibrant communities. Farm to school implementation differs by location but always includes one or more of the following three core elements",
+                            "1": "Procurement: Local foods are purchased, promoted and served in the cafeteria or at meal times, as a snack or in classroom taste-tests.",
+                            "2": "Education: Students participate in education activities related to agriculture, food, health and nutrition.",
+                            "3": "School gardens: Students engage in hands-on, experiential learning through gardening."
+                        }
+                    }
+                }
+            },
+            "psav": {
+                "title": "SFSP",
+                "questions": {
+                    "summer-services": {
+                        "title": "How many services can sponsors offer during the summer?",
+                        "answers": {
+                            "0": "Open sites available for children in the community can offer up to two daily services, (one can be lunch; the other can be breakfast, snack, or dinner)",
+                            "1": "Enclosed sites, camps, or residential services can serve up to three (3) meals daily; breakfast, lunch, snack, or dinner."
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "common": {
+        "welcome-back": "Welcome back",
+        "Project": "Project",
+        "Analytics": "Analytics",
+        "request-orientation": "Request Orientation",
+        "notification": "Notification",
+        "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
+        "accept": "Accept"
     }
 }

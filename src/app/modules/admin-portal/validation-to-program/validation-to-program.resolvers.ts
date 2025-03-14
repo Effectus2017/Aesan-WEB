@@ -5,6 +5,7 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
+import { UsersService } from 'app/shared/services/users.service';
 import { forkJoin } from 'rxjs';
 
 
@@ -27,7 +28,7 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
   const agencyStatusService = inject(AgencyStatusService);
   const geoService = inject(GeoService);
   const programService = inject(ProgramService);
-
+  const usersService = inject(UsersService);
   const agencyId = route.paramMap.get('id');
 
   const requestParameters: QueryParameters = {
@@ -40,5 +41,6 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
      geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
      geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),
      programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true }),
+     usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: true, roles: ['Monitor'] }),
   ]);
 };

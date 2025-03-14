@@ -4,10 +4,12 @@ import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } fr
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatNativeDateModule } from '@angular/material/core';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
@@ -25,9 +27,7 @@ import { Subject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
-import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { CityRegion } from 'app/shared/models/CityRegion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -54,10 +54,13 @@ import { ProgramService } from 'app/shared/services/program.service';
     NgFor,
     MatDividerModule,
     MatSnackBarModule,
-    ThemeToggleComponent,
     LanguagesComponent,
     MatTooltipModule,
-    NumericOnlyDirective
+    NumericOnlyDirective,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatTooltipModule,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -90,6 +93,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Añadir nueva propiedad para controlar el estado del botón
   isEligible: boolean = true;
 
+  // Tax Exemption Status Options
+  taxExemptionStatusOptions: any[] = [{ id: 1, name: 'En Progreso' }, { id: 2, name: 'Otorgado' }];
+
+  // Tax Exemption Type Options
+  taxExemptionTypeOptions: any[] = [{ id: 1, name: 'Estatal' }, { id: 2, name: 'Federal' }];
+
   // Agregar esta propiedad
   protected readonly window = window;
 
@@ -111,7 +120,16 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
       organizedAthleticPrograms: [null, Validators.required],
+
+      // At Risk Service
       atRiskService: [{ value: null, disabled: true }],
+
+      // Tax Exemption
+      taxExemptionStatus: [null, Validators.required],
+      taxExemptionType: [null, Validators.required],
+
+      // Service Time
+      serviceTime: [null, Validators.required],
 
       // Dirección
       address: [null, Validators.required],
@@ -148,10 +166,30 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Suscribirse a cambios en el control program
     this.signUpForm.get('program').valueChanges
       .subscribe(value => {
+        // Deshabilitar todos los controles excepto program
+        disableAllControlsExcept(this.signUpForm, 'program');
+
         if (value) {
+          // Limpiar todos los valores excepto el programa
+          const currentProgram = this.signUpForm.get('program').value;
+          Object.keys(this.signUpForm.controls).forEach(key => {
+            if (key !== 'program') {
+              this.signUpForm.get(key).reset();
+            }
+          });
+
+          // Habilitar todos los controles
           enableAllControls(this.signUpForm);
-        } else {
-          disableAllControlsExcept(this.signUpForm, 'program');
+
+          // Restablecer el estado de elegibilidad
+          this.isEligible = true;
+
+          // Restablecer el control de atRiskService
+          const atRiskControl = this.signUpForm.get('atRiskService');
+          if (atRiskControl) {
+            atRiskControl.disable();
+            atRiskControl.setValue(null);
+          }
         }
       });
 
@@ -347,7 +385,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
+
+        // At Risk Service
         atRiskService: formValues.atRiskService === 'Yes' ? true : false,
+
+        // Tax Exemption
+        taxExemptionStatus: formValues.taxExemptionStatus,
+        taxExemptionType: formValues.taxExemptionType,
+
+        // Service Time
+        serviceTime: formValues.serviceTime ? formValues.serviceTime : 0,
+
         //
         programs: [programId],
         //
@@ -507,6 +555,36 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     } else {
         this.isEligible = true;
         enableAllControls(this.signUpForm); // Habilitar controles
+    }
+  }
+
+  checkServiceTime(): void {
+    const serviceTime = this.signUpForm.value.serviceTime;
+    if (serviceTime) {
+        const today = new Date();
+        const serviceDate = new Date(serviceTime);
+        const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 +
+                            (today.getMonth() - serviceDate.getMonth());
+
+        if (diffInMonths < 12) {
+            this.isEligible = false;
+            disableAllControlsExcept(this.signUpForm, 'program');
+            this._fuseConfirmationService.open({
+                title: this._translocoService.translate('auth.sign-up.notification.title'),
+                message: this._translocoService.translate('auth.sign-up.service-time-not-eligible.message'),
+                actions: {
+                    confirm: {
+                        label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                    },
+                    cancel: {
+                        show: false,
+                    },
+                },
+            });
+        } else {
+            this.isEligible = true;
+            enableAllControls(this.signUpForm);
+        }
     }
   }
 

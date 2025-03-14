@@ -14,7 +14,7 @@
         </div>
 
         <!-- Program and Status Selection -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
           <mat-form-field data-cy="program-field">
             <mat-label>{{ "validation-to-program.edit.program.label" | transloco }}</mat-label>
             <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select">
@@ -24,10 +24,19 @@
             </mat-select>
           </mat-form-field>
 
+          <!-- Status *  -->
           <mat-form-field data-cy="status-field">
             <mat-label>{{ "validation-to-program.edit.status.label" | transloco }}</mat-label>
             <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select">
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Users Monitor *  -->
+          <mat-form-field data-cy="monitor-field">
+            <mat-label>{{ "validation-to-program.edit.monitor.label" | transloco }}</mat-label>
+            <mat-select formControlName="monitor" [compareWith]="compareItems" data-cy="monitor-select">
+              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + ' ' + monitor.fatherLastName }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -46,12 +55,26 @@
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.einNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="einNumber" [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco" type="number" />
+            <input matInput
+                formControlName="einNumber"
+                [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco"
+                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
+            />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
-            <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" type="number" />
+            <input matInput
+                formControlName="sdrNumber"
+                [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco"
+                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
+            />
           </mat-form-field>
         </div>
 
@@ -88,7 +111,7 @@
           <!-- Zip Code *  -->
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" type="number" />
+            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" />
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field>
@@ -131,7 +154,7 @@
           <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="postal-zip-code-input" />
+            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" data-cy="postal-zip-code-input" />
           </mat-form-field>
         </div>
 

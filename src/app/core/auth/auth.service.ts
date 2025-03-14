@@ -154,7 +154,7 @@ export class AuthService {
     }
     const decodedPayload = atob(payloadPart);
     var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.userId;
+    return user.nameid;
   }
 
   getUserDataFromToken(): TokenResponse | null {

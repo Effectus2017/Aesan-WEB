@@ -109,6 +109,7 @@ export const appRoutes: Route[] = [
     children: [
       { path: 'program-requests', loadChildren: () => import('app/modules/agency-portal/program-requests/program-requests.routes') },
       { path: 'programs', loadChildren: () => import('app/modules/agency-portal/programs/programs.routes') },
+      { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
     ],
   },
 ];

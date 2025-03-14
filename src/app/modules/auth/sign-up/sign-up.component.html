@@ -60,7 +60,9 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
             <mat-form-field data-cy="organized-athletic-programs-field">
-              <mat-label>{{ "auth.sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-label matTooltip="{{ 'auth.sign-up.organized-athletic-programs.label' | transloco }}">{{
+                "auth.sign-up.organized-athletic-programs.label" | transloco
+              }}</mat-label>
               <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
                 <mat-option value="Yes" data-cy="organized-athletic-programs-yes">{{ "auth.sign-up.organized-athletic-programs.yes" | transloco }}</mat-option>
                 <mat-option value="No" data-cy="organized-athletic-programs-no">{{ "auth.sign-up.organized-athletic-programs.no" | transloco }}</mat-option>
@@ -73,6 +75,46 @@
               <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
                 <mat-option value="Yes" data-cy="at-risk-service-yes">{{ "auth.sign-up.at-risk-service.yes" | transloco }}</mat-option>
                 <mat-option value="No" data-cy="at-risk-service-no">{{ "auth.sign-up.at-risk-service.no" | transloco }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <!-- Service Time -->
+            <mat-form-field data-cy="service-time-field">
+              <mat-label>{{ "auth.sign-up.service-time.label" | transloco }}</mat-label>
+              <input
+                matInput
+                [formControlName]="'serviceTime'"
+                [matDatepicker]="servicePicker"
+                (dateChange)="checkServiceTime()"
+                placeholder="{{ 'auth.sign-up.service-time.placeholder' | transloco }}"
+                data-cy="service-time-input"
+              />
+              <mat-datepicker-toggle matIconSuffix [for]="servicePicker"></mat-datepicker-toggle>
+              <mat-datepicker #servicePicker></mat-datepicker>
+              <mat-hint>{{ "auth.sign-up.service-time.hint" | transloco }}</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+            <!-- Tax Exemption Status -->
+            <mat-form-field data-cy="tax-exemption-status-field">
+              <mat-label>{{ "auth.sign-up.tax-exemption-status.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'taxExemptionStatus'" data-cy="tax-exemption-status-input">
+                <mat-option *ngFor="let taxExemptionStatus of taxExemptionStatusOptions" [value]="taxExemptionStatus.id" data-cy="tax-exemption-status-option">
+                  {{ taxExemptionStatus.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Tax Exemption Type -->
+            <mat-form-field data-cy="tax-exemption-type-field">
+              <mat-label>{{ "auth.sign-up.tax-exemption-type.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'taxExemptionType'" data-cy="tax-exemption-type-input">
+                <mat-option *ngFor="let taxExemptionType of taxExemptionTypeOptions" [value]="taxExemptionType.id" data-cy="tax-exemption-type-option">
+                  {{ taxExemptionType.name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
