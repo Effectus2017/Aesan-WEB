@@ -55,12 +55,26 @@
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.einNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="einNumber" [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco" type="number" />
+            <input matInput
+                formControlName="einNumber"
+                [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco"
+                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
+            />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
-            <input matInput formControlName="sdrNumber" [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco" type="number" />
+            <input matInput
+                formControlName="sdrNumber"
+                [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco"
+                type="number"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
+            />
           </mat-form-field>
         </div>
 
@@ -97,7 +111,7 @@
           <!-- Zip Code *  -->
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" type="number" />
+            <input matInput formControlName="zipCode" [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco" />
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field>
@@ -140,7 +154,7 @@
           <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "auth.sign-up.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" type="number" data-cy="postal-zip-code-input" />
+            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'auth.sign-up.zip-code.placeholder' | transloco }}" data-cy="postal-zip-code-input" />
           </mat-form-field>
         </div>
 
