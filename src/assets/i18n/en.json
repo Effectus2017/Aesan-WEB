@@ -57,7 +57,8 @@
             },
             "service-time": {
                 "label": "How long has the organization or institution been providing services with an established enrollment?",
-                "placeholder": "Select the date when the organization began operating"
+                "placeholder": "Select the date when the organization began operating",
+                "hint": "Select the date when the organization will begin offering the service"
             },
             "service-time-not-eligible": {
                 "message": "The organization must have at least one year of service to be eligible for any program."
@@ -409,6 +410,18 @@
     },
     "monitor-preoperational-visit": {
         "title": "Preoperational Visit",
+        "dialog": {
+            "error": {
+                "title": "Error",
+                "message": "An error occurred while processing the preoperational visit",
+                "confirm": "Accept"
+            },
+            "success": {
+                "title": "Success",
+                "message": "The preoperational visit has been processed successfully",
+                "confirm": "Accept"
+            }
+        },
         "edit": {
             "program": {
                 "label": "Program",

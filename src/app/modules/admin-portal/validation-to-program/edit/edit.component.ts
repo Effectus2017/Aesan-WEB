@@ -119,13 +119,13 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalRegion: [null, Validators.required],
 
       // Datos del Contacto
-      firstName: [null, Validators.required],
-      middleName: [null],
-      fatherLastName: [null, Validators.required],
-      motherLastName: [null],
+      firstName: [{ value: null, disabled: true }, Validators.required],
+      middleName: [{ value: null, disabled: true }],
+      fatherLastName: [{ value: null, disabled: true }, Validators.required],
+      motherLastName: [{ value: null, disabled: true }],
 
       // Datos del Administrador
-      email: [null, Validators.email],
+      email: [{ value: null, disabled: true }, Validators.email],
       administrationTitle: [null],
 
       // Monitor
@@ -208,8 +208,8 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       // Dirección
       address: param.address || null,
       zipCode: param.zipCode || null,
-      latitude: param.latitude || null,
-      longitude: param.longitude || null,
+      latitude: param.latitude !== null && param.latitude !== undefined ? param.latitude.toString() : null,
+      longitude: param.longitude !== null && param.longitude !== undefined ? param.longitude.toString() : null,
       // Dirección Postal
       postalAddress: param.postalAddress || null,
       postalZipCode: param.postalZipCode || null,

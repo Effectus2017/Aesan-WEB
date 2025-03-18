@@ -15,7 +15,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field data-cy="program-field">
             <mat-label>{{ "monitor-preoperational-visit.edit.program.label" | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareItems" data-cy="program-select" multiple [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+            <mat-select formControlName="program" [compareWith]="compareItemPrograms" data-cy="program-select" multiple [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
               <mat-option *ngFor="let program of listPrograms" [value]="program" >{{ program.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -185,7 +185,7 @@
             <mat-label>{{ "monitor-preoperational-visit.edit.comments.label" | transloco }}</mat-label>
             <textarea
               matInput
-              formControlName="comment"
+              formControlName="rejectionJustification"
               placeholder="{{ 'monitor-preoperational-visit.edit.comments.placeholder' | transloco }}"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
               rows="4"

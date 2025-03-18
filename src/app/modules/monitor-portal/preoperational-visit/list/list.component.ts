@@ -19,6 +19,9 @@ import { PREOPERATIONAL_VISIT_COLUMNS_SCHEMA } from './columns-schema';
 import { preoperationalVisitColumnsData } from './columns-data';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { AuthService } from 'app/core/auth/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'monitor-preoperational-visit-list',
@@ -38,6 +41,9 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
   private _customRouterService = inject(CustomRouterService);
   private _agencyService: AgencyService = inject(AgencyService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _authService: AuthService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
+
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'preoperational-visit.list.title',
@@ -64,8 +70,11 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
   };
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private id: number;
 
-  constructor() {}
+  constructor() {
+    this.id = Number(this._route.snapshot.paramMap.get('id'));
+  }
 
   ngOnInit(): void {
     // Get the agencies
@@ -91,9 +100,39 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
 
   onAdd(): void {}
 
-  onEdit(event: Event, id: number): void {
+  onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
     this._customRouterService.navigate([`pre-operational/edit/${id}`]);
+  }
+
+  onTableDelete(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  onSearch(): void {
+    const searchTerm = this.headerConfig.formGroup.get('name').value;
+
+    const userId = this._authService.getUserId();
+
+    const requestParameters: QueryParameters = {
+      agencyId: this.id,
+      userId: userId,
+      name: searchTerm,
+    };
+
+    this._agencyService.getAgencyByIdAndUserId(requestParameters).subscribe((result: any) => {
+      this.tableConfig.dataSource.data = result.body.data;
+      this.tableConfig.length = result.body.count;
+      // Lista de datos
+      this.tableConfig.dataSourceList = result.body.data;
+    });
+
+    // Filtrar la lista existente
+    const filteredData = this.tableConfig.dataSourceList.filter(item =>
+      item.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    this.tableConfig.dataSource.data = filteredData;
   }
 }

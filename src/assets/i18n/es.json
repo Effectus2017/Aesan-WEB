@@ -55,7 +55,8 @@
             },
             "service-time": {
                 "label": " ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
-                "placeholder": "Seleccione la fecha en que comenzó a operar la organización"
+                "placeholder": "Seleccione la fecha en que comenzó a operar la organización",
+                "hint": "Seleccione la fecha en que comenzará a ofrecer el servicio"
             },
             "service-time-not-eligible": {
                 "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
@@ -412,6 +413,18 @@
     },
     "monitor-preoperational-visit": {
         "title": "Visita Preoperacional",
+        "dialog": {
+            "error": {
+                "title": "Error",
+                "message": "Ha ocurrido un error al procesar la visita preoperacional",
+                "confirm": "Aceptar"
+            },
+            "success": {
+                "title": "Éxito",
+                "message": "La visita preoperacional ha sido procesada exitosamente",
+                "confirm": "Aceptar"
+            }
+        },
         "edit": {
             "program": {
                 "label": "Programa",

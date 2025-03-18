@@ -24,7 +24,7 @@ export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA = [
         visible: true
     },
     {
-        key: 'comment',
+        key: 'rejectionJustification',
         label: 'preoperational-visit.list.columns.comments',
         sortable: true,
         type: 'text',

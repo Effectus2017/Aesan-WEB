@@ -48,7 +48,8 @@ export interface Agency {
     // Cita coordinada
     appointmentCoordinated?: boolean;
     appointmentDate?: string;
-    comment?: string;
+    // Justificación de Rechazo
+    rejectionJustification?: string;
 }
 
 export interface User {

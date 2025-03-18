@@ -35,6 +35,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NgClass } from '@angular/common';
 import { FuseConfigService } from '@fuse/services/config';
+import { ProgramService } from 'app/shared/services/program.service';
+import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 
 @Component({
   selector: 'app-monitor-preoperational-visit-edit',
@@ -70,8 +72,9 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
+  private _agencyStatusService = inject(AgencyStatusService);
   private _geoService = inject(GeoService);
-  private _userService = inject(UserService);
+  private _programService = inject(ProgramService);
   private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
@@ -122,7 +125,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       // Fecha de Cita
       appointmentDate: [null, Validators.required],
       // Justificación de Rechazo
-      comment: [null],
+      rejectionJustification: [null],
     }),
     submitButtonText: 'monitor-preoperational-visit.edit.submit',
     submitButtonShow: true,
@@ -136,35 +139,35 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
   ngOnInit() {
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
+    if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listCities = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
+        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listRegions = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
-    this._userService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
-        this.listPrograms = result.body.data;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+        if (result.body.data) {
+          this.listPrograms = result.body.data;
+          this._changeDetectorRef.detectChanges();
+        }
+      });
 
-    this._agencyService.agencyStatus$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
+    this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listAgencyStatus = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.onSetForm(result.body);
         this._changeDetectorRef.detectChanges();
       }
@@ -215,11 +218,14 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       middleName: param.user.middleName || null,
       fatherLastName: param.user.fatherLastName || null,
       motherLastName: param.user.motherLastName || null,
+      // Datos del Administrador
+      email: param.email || null,
+      phone: param.phone || null,
       // Datos de la cita
       appointmentCoordinated: param.appointmentCoordinated,
       appointmentDate: param.appointmentDate,
-      // Comentarios
-      comment: param.comment,
+      // Justificación de Rechazo
+      rejectionJustification: param.rejectionJustification,
     });
   }
 
@@ -384,6 +390,10 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
   // Función única para comparar diferentes tipos de elementos
   compareItems<T>(item1: T, item2: T): boolean {
+    return compareByProperty(item1, item2, 'id' as keyof T);
+  }
+
+  compareItemPrograms<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);
   }
 

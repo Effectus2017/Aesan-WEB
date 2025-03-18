@@ -6,7 +6,6 @@ import { TokenResponse } from '../models/user.types';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
-import { Program } from '../models/Program';
 
 /**
  * Servicio para interactuar con los usuarios y sus datos.
@@ -17,7 +16,6 @@ import { Program } from '../models/Program';
 })
 export class UserService {
   private _user: ReplaySubject<TokenResponse> = new ReplaySubject<TokenResponse>(1);
-  private _programs: BehaviorSubject<Program[] | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
 
@@ -40,14 +38,6 @@ export class UserService {
   get user$(): Observable<TokenResponse>
   {
       return this._user.asObservable();
-  }
-
-  /**
-   * Obtiene un observable que emite los programas.
-   * @returns Un observable que emite los programas.
-   */
-  get programs$(): Observable<Program[] | null> {
-    return this._programs.asObservable();
   }
 
   /**

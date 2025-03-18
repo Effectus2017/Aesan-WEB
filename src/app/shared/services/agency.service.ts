@@ -81,9 +81,9 @@ export class AgencyService {
    * @param queryParameters Los parámetros de consulta
    * @returns Los estados de la agencia
    */
-  getAllAgencyStatusFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatus.next(response)));
-  }
+//   getAllAgencyStatusFromDb(queryParameters: QueryParameters): Observable<any> {
+//     return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatus.next(response)));
+//   }
 
   /**
    * Registra una agencia
