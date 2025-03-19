@@ -13,6 +13,7 @@ export class NavigationService implements OnDestroy {
   private _userService = inject(UserService);
   private _navigation: ReplaySubject<Navigation> = new ReplaySubject<Navigation>(1);
   private _unsubscribeAll: Subject<void> = new Subject<void>();
+  private _processedItems = new Set<string>();
 
   constructor() {
     // Suscribirse a los cambios de usuario

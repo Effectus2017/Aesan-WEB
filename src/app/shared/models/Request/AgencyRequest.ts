@@ -7,7 +7,7 @@ export interface AgencyRequest {
     einNumber?: number;
     // Dirección Física
     address?: string;
-    zipCode?: number;
+    zipCode?: string;
     cityId?: number;
     regionId?: number;
     latitude?: number;
@@ -16,7 +16,7 @@ export interface AgencyRequest {
     postalAddress?: string;
     postalCityId?: number;
     postalRegionId?: number;
-    postalZipCode?: number;
+    postalZipCode?: string;
     // Imágen - Logo
     imageUrl?: string;
     email?: string;

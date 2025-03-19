@@ -53,6 +53,7 @@ export interface Agency {
 }
 
 export interface User {
+    id?: string;
     firstName: string;
     middleName: string;
     fatherLastName: string;

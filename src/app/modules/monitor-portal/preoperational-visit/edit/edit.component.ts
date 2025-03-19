@@ -21,7 +21,6 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
-import { UserService } from 'app/shared/services/user.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UpdateAgencyProgramRequest } from 'app/shared/models/Request/AgencyRequest';
 import { compareByProperty, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';

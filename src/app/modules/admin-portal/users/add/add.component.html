@@ -1,14 +1,12 @@
 <div class="absolute inset-0 flex flex-col min-w-0">
   <!-- Header -->
 
-  <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
+  <!-- <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
     <div class="flex-1 min-w-0">
-      <!-- Title -->
       <div class="mt-2">
         <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">{{ title }}</h2>
       </div>
     </div>
-    <!-- Actions -->
     <div class="flex flex-row items-center mt-4 sm:mt-0">
       <button mat-button (click)="onBack()" data-cy="cancel-button" [attr.aria-label]="'users.add.back' | transloco">{{ 'users.add.back' | transloco }}</button>
       <button
@@ -24,7 +22,10 @@
         {{ 'users.add.submit' | transloco }}
       </button>
     </div>
-  </div>
+  </div> -->
+
+  <!-- Header con título y botones -->
+  <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
 
   <!-- Main -->
   <div class="flex-auto overflow-y-auto sm:p-6 dark:bg-" cdkScrollable>
@@ -93,6 +94,9 @@
               <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')" data-cy="email-error">
                 {{ 'users.add.email.required' | transloco }}
               </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('invalidEmailFormat')" data-cy="email-format-error">
+                {{ 'users.add.email.email' | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto gt-xs:pr-3">
               <mat-label>{{ 'users.add.username.label' | transloco }}</mat-label>
@@ -106,9 +110,12 @@
               <mat-error *ngIf="formRoot.get('datosPersonales').get('username').hasError('required')" data-cy="username-error">
                 {{ 'users.add.username.required' | transloco }}
               </mat-error>
+              <mat-error *ngIf="formRoot.get('datosPersonales').get('username').hasError('invalidEmailFormat')" data-cy="username-format-error">
+                {{ 'users.add.username.email' | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div class="grid grid-cols-1 sm:grid-cols-1">
             <mat-form-field class="flex-auto">
               <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
               <mat-select
@@ -121,20 +128,6 @@
               </mat-select>
               <mat-error *ngIf="formRoot.get('datosPersonales').get('role').hasError('required')" data-cy="role-error">
                 {{ 'users.add.role.required' | transloco }}
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="client-field">
-              <mat-label>{{ 'users.add.client.label' | transloco }}</mat-label>
-              <mat-select
-                formControlName="client"
-                [placeholder]="'users.add.client.placeholder' | transloco"
-                data-cy="client-select"
-                [attr.aria-label]="'users.add.client.label' | transloco"
-              >
-                <mat-option *ngFor="let _clients of listClients" [value]="_clients.id" data-cy="client-option">{{ _clients.name }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('client').hasError('required')" data-cy="client-error">
-                {{ 'users.add.client.required' | transloco }}
               </mat-error>
             </mat-form-field>
           </div>

@@ -101,7 +101,7 @@ export class AgencyService {
    * @param queryParameters Los parámetros de consulta
    * @returns La agencia actualizada
    */
-  updateAgency(model: AgencyRequest, queryParameters: QueryParameters): Observable<any> {
+  updateAgency(model: UserAgencyRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-agency`, model, getHttpOptions(queryParameters));
   }
 

@@ -19,12 +19,12 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { Agency, User } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty } from 'app/shared/utils';
+import { compareByProperty, handleFormControls } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -35,6 +35,8 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { UsersService } from 'app/shared/services/users.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
+import { UserRequest } from 'app/shared/models/Request/UserRequest';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -119,14 +121,14 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalRegion: [null, Validators.required],
 
       // Datos del Contacto
-      firstName: [{ value: null, disabled: true }, Validators.required],
-      middleName: [{ value: null, disabled: true }],
-      fatherLastName: [{ value: null, disabled: true }, Validators.required],
-      motherLastName: [{ value: null, disabled: true }],
+      firstName: [{ value: null }, Validators.required],
+      middleName: [{ value: null }],
+      fatherLastName: [{ value: null }, Validators.required],
+      motherLastName: [{ value: null }],
 
       // Datos del Administrador
       email: [{ value: null, disabled: true }, Validators.email],
-      administrationTitle: [null],
+      administrationTitle: [{ value: null }],
 
       // Monitor
       monitor: [null],
@@ -259,6 +261,8 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       einNumber: formValues.einNumber,
       address: formValues.address,
       zipCode: formValues.zipCode,
+      latitude: parseFloat(formValues.latitude),
+      longitude: parseFloat(formValues.longitude),
       postalAddress: formValues.postalAddress,
       postalZipCode: formValues.postalZipCode,
       postalCityId: formValues.postalCity?.id,
@@ -271,13 +275,28 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       assignedBy: assignedBy,
     };
 
+    const userRequest: UserRequest = {
+      id: this.param.user.id,
+      firstName: formValues.firstName,
+      middleName: formValues.middleName,
+      fatherLastName: formValues.fatherLastName,
+      motherLastName: formValues.motherLastName,
+      administrationTitle: formValues.administrationTitle,
+      email: formValues.email,
+    };
+
+    const userAgencyRequest: UserAgencyRequest = {
+      agency: agencyRequest,
+      user: userRequest,
+    };
+
     // Parámetros de consulta
     const queryParams: QueryParameters = {
       agencyId: this.param.id,
     };
 
     // Llamar al servicio para actualizar
-    this._agencyService.updateAgency(agencyRequest, queryParams).subscribe({
+    this._agencyService.updateAgency(userAgencyRequest, queryParams).subscribe({
       next: (response) => {
         if (response.body) {
           this._fuseConfirmationService.open({
@@ -319,17 +338,12 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       },
       error: (error) => {
         console.error('Error al actualizar la agencia:', error);
-        this.headerConfig.formGroup.enable();
+        this.enableEditableFormControls();
       },
       complete: () => {
         console.log('Actualización completada');
-        this.headerConfig.formGroup.enable();
-
-        const queryParams: QueryParameters = {
-          agencyId: this.param.id,
-        };
-
-        this._agencyService.getAgencyById(queryParams).subscribe();
+        this.enableEditableFormControls();
+        this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
       },
     });
   }
@@ -383,13 +397,11 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
             },
           },
         });
+        this.enableEditableFormControls();
       },
       complete: () => {
-        const queryParams: QueryParameters = {
-          agencyId: this.param.id,
-        };
-
-        this._agencyService.getAgencyById(queryParams).subscribe();
+        this.enableEditableFormControls();
+        this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
       },
     });
   }
@@ -399,62 +411,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
    */
   onReject() {
     this.showRejectDialog();
-    // const queryParams: QueryParameters = {
-    //   agencyId: this.param.id,
-    //   statusId: 6, // Suponiendo que 6 es el ID para rechazar la agencia
-    //   rejectionJustification: 'La solicitud ha sido rechazada debido a la falta de documentación necesaria.',
-    // };
-
-    // this._agencyService.updateAgencyStatus(queryParams).subscribe({
-    //   next: (response) => {
-    //     if (response.body) {
-    //       this._fuseConfirmationService.open({
-    //         title: this._translocoService.translate('dialog.reject.title'),
-    //         icon: {
-    //           show: true,
-    //           name: 'heroicons_outline:check-circle',
-    //           color: 'success',
-    //         },
-    //         message: this._translocoService.translate('dialog.reject.message'),
-    //         actions: {
-    //           confirm: {
-    //             label: this._translocoService.translate('dialog.reject.confirm'),
-    //           },
-    //           cancel: {
-    //             show: false,
-    //           },
-    //         },
-    //       });
-    //     }
-    //   },
-    //   error: (error) => {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('dialog.error.title'),
-    //       icon: {
-    //         show: true,
-    //         name: 'heroicons_outline:exclamation-circle',
-    //         color: 'warn',
-    //       },
-    //       message: 'Ocurrió un error al rechazar la agencia. Por favor, inténtelo de nuevo más tarde.',
-    //       actions: {
-    //         confirm: {
-    //           label: 'Aceptar',
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //     console.error(error);
-    //   },
-    //   complete: () => {
-    //     const queryParams: QueryParameters = {
-    //       agencyId: this.param.id,
-    //     };
-
-    //     this._agencyService.getAgencyById(queryParams).subscribe();
-    //   },
-    // });
   }
 
   /**
@@ -516,9 +472,10 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
                 },
               },
             });
-            console.error(error);
+            this.enableEditableFormControls();
           },
           complete: () => {
+            this.enableEditableFormControls();
             this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
           },
         });
@@ -572,4 +529,16 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   compareItems<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);
   }
+
+
+  /**
+   * Habilita los controles editables del formulario
+   */
+  private enableEditableFormControls(): void {
+    // Habilitar todos los controles excepto email y otros campos sensibles
+    handleFormControls(this.headerConfig.formGroup, 'enable', {
+        controls: ['email'],
+        mode: 'exclude'
+    });
+}
 }

@@ -143,7 +143,9 @@
             },
             "email": {
                 "label": "Email",
-                "placeholder": "Enter the email"
+                "placeholder": "Enter the email",
+                "required": "Email is required",
+                "email": "Please enter a valid email address"
             },
             "submit": "Submit Aplication",
             "pacna-not-eligible": {
@@ -651,7 +653,8 @@
             "username": {
                 "label": "Username",
                 "placeholder": "Enter username",
-                "required": "Username is required"
+                "required": "Username is required",
+                "email": "Please enter a valid email address"
             },
             "role": {
                 "label": "Roles",
@@ -687,11 +690,12 @@
                 "roles": "Role"
             },
             "delete": {
-                "title": "Delete",
-                "message": "Are you sure you want to delete this item?",
+                "title": "Delete User",
+                "message": "Are you sure you want to delete this user?",
                 "confirm": "Delete",
-                "success": "User deleted.",
-                "error": "User not deleted."
+                "cancel": "Cancel",
+                "success": "User successfully deleted.",
+                "error": "An error occurred while deleting the user."
             }
         },
         "add": {
@@ -714,10 +718,12 @@
                 "required": "Password confirmation is required",
                 "min-length": "Minimum 8 characters required"
             },
+            "password-requirements": "Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.",
             "email": {
                 "label": "Email",
                 "placeholder": "Enter email",
-                "required": "Email is required"
+                "required": "Email is required",
+                "email": "Please enter a valid email address"
             },
             "name": {
                 "label": "First Name",

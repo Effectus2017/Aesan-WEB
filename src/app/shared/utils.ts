@@ -125,3 +125,30 @@ export function enableAllControls(form: UntypedFormGroup): void {
     }
   });
 }
+
+export function handleFormControls(form: UntypedFormGroup, action: 'enable' | 'disable', config: {
+    controls?: string[];
+    mode?: 'include' | 'exclude';
+    emitEvent?: boolean;
+} = {}): void {
+    const {
+        controls = [],
+        mode = 'include',
+        emitEvent = false
+    } = config;
+
+    Object.keys(form.controls).forEach(controlName => {
+        const control = form.get(controlName);
+        if (!control) return;
+
+        const shouldModify = mode === 'include'
+            ? controls.includes(controlName)
+            : !controls.includes(controlName);
+
+        if (shouldModify) {
+            action === 'enable'
+                ? control.enable({ emitEvent })
+                : control.disable({ emitEvent });
+        }
+    });
+}

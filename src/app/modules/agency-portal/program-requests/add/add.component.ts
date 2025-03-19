@@ -37,6 +37,8 @@ import { incomeSourcesData, schoolsColumnsData } from './columns-data';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AddSchoolDialogComponent } from '../add-school-dialog/add-school-dialog.component';
 import { AddIncomeSourceDialogComponent } from '../add-income-source-dialog/add-income-source-dialog.component';
+import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
+import { UserRequest } from 'app/shared/models/Request/UserRequest';
 
 
 @Component({
@@ -444,13 +446,28 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
       //   Programs: formValues.program ? formValues.program.map((program: any) => program.id) : [],
     };
 
+    const userRequest: UserRequest = {
+      id: this.param.user.id,
+      firstName: formValues.firstName,
+      middleName: formValues.middleName,
+      fatherLastName: formValues.fatherLastName,
+      motherLastName: formValues.motherLastName,
+      email: formValues.email,
+      administrationTitle: formValues.administrationTitle,
+    };
+
+    const userAgencyRequest: UserAgencyRequest = {
+      agency: agencyRequest,
+      user: userRequest,
+    };
+
     // Parámetros de consulta
     const queryParams: QueryParameters = {
       agencyId: this.param.id,
     };
 
     // Llamar al servicio para actualizar
-    this._agencyService.updateAgency(agencyRequest, queryParams).subscribe({
+    this._agencyService.updateAgency(userAgencyRequest, queryParams).subscribe({
       next: (response) => {
         if (response.body) {
           this._fuseConfirmationService.open({

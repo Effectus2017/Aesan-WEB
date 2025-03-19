@@ -649,12 +649,14 @@
             "email": {
                 "label": "Correo Electrónico",
                 "placeholder": "Ingrese el correo electrónico",
-                "required": "El correo electrónico es requerido"
+                "required": "El correo electrónico es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
             },
             "username": {
-                "label": "Nombre de Usuario",
+                "label": "Nombre de usuario",
                 "placeholder": "Ingrese el nombre de usuario",
-                "required": "El nombre de usuario es requerido"
+                "required": "El nombre de usuario es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
             },
             "role": {
                 "label": "Roles",
@@ -690,11 +692,12 @@
                 "roles": "Rol"
             },
             "delete": {
-                "title": "Eliminar",
-                "message": "¿Está seguro que desea eliminar el siguiente ítem?",
+                "title": "Eliminar Usuario",
+                "message": "¿Está seguro que desea eliminar este usuario?",
                 "confirm": "Eliminar",
-                "success": "Usuario eliminado.",
-                "error": "Usuario no eliminado."
+                "cancel": "Cancelar",
+                "success": "Usuario eliminado exitosamente.",
+                "error": "Ha ocurrido un error al eliminar el usuario."
             }
         },
         "add": {
@@ -717,10 +720,12 @@
                 "required": "La confirmación de contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
+            "password-requirements": "La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.",
             "email": {
                 "label": "Correo electrónico",
                 "placeholder": "Ingrese el correo electrónico",
-                "required": "El correo electrónico es requerido"
+                "required": "El correo electrónico es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
             },
             "name": {
                 "label": "Nombre",

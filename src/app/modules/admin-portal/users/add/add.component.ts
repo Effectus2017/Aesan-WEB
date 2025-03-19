@@ -1,13 +1,11 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { Subject, takeUntil } from 'rxjs';
-
-
 
 import { UploadService } from 'app/shared/services/upload.service';
 import { RequestUser } from '../users.types';
@@ -22,6 +20,8 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
+import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
+import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 
 @Component({
   selector: 'app-users-add',
@@ -38,10 +38,12 @@ import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
     MatButtonModule,
     MatSelectModule,
     MatIconModule,
-    TranslocoModule
+    TranslocoModule,
+    GenericHeaderComponent
   ],
 })
-export class UsersAddComponent implements OnInit, OnDestroy {
+export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _usersService: UsersService = inject(UsersService);
@@ -49,9 +51,16 @@ export class UsersAddComponent implements OnInit, OnDestroy {
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService: TranslocoService = inject(TranslocoService);
-//   private _clientsService: ClientsService = inject(ClientsService);
 
-  title?: string = this._translocoService.translate('users.add.title');
+  headerConfig: GenericHeaderConfig = {
+    title: 'users.add.title',
+    formGroup: this._formBuilder.group({
+      name: new FormControl(''),
+    }),
+    searchFieldShow: true,
+    searchInputPlaceholder: 'global.search.placeholder',
+    goToAddButtonShow: true,
+  };
 
   formRoot: UntypedFormGroup;
   imageURL: string;
@@ -61,20 +70,32 @@ export class UsersAddComponent implements OnInit, OnDestroy {
   listRoles = [];
   listClients = [];
 
+  // Validador personalizado para email
+  emailValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null;
+      }
+      // Expresión regular para validar email con dominio
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      const valid = emailRegex.test(control.value);
+      return valid ? null : { invalidEmailFormat: true };
+    };
+  }
+
   constructor() {}
 
   ngOnInit() {
     this.formRoot = this._formBuilder.group({
       datosPersonales: this._formBuilder.group(
         {
-          username: new FormControl(null, [Validators.required, Validators.email]),
+          username: new FormControl({value: null, disabled: true}, [Validators.required, Validators.email, this.emailValidator()]),
           currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
           newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          email: new FormControl(null, [Validators.required, Validators.email]),
+          email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()]),
           name: new FormControl(null, Validators.required),
           lastName: new FormControl(null, Validators.required),
           role: new FormControl(null, Validators.required),
-          client: new FormControl(null, Validators.required),
         },
         {
           validators: this.onPassword.bind(this),
@@ -82,18 +103,19 @@ export class UsersAddComponent implements OnInit, OnDestroy {
       ),
     });
 
+    // Suscribirse a los cambios del campo email
+    this.formRoot.get('datosPersonales.email').valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(value => {
+        this.formRoot.get('datosPersonales.username').setValue(value);
+      });
+
     // Get the accountings
     this._usersService.roles$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       this.listRoles = result.body.data;
       // Mark for check
       this._changeDetectorRef.markForCheck();
     });
-
-    // this._clientsService.clients$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //   this.listClients = result.body.data;
-    //   // Mark for check
-    //   this._changeDetectorRef.markForCheck();
-    // });
 
   }
 
@@ -117,7 +139,7 @@ export class UsersAddComponent implements OnInit, OnDestroy {
 
   onSubmit() {
     if (this.formRoot.controls.datosPersonales.valid) {
-      this.onAdd(this.formRoot.value.datosPersonales);
+      this.submitForm(this.formRoot.value.datosPersonales);
     } else {
       this.formRoot.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
       this.formRoot.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
@@ -125,18 +147,21 @@ export class UsersAddComponent implements OnInit, OnDestroy {
     }
   }
 
-  onAdd(form: any) {
+  onAdd(): void {
+    // Implementación requerida por OnGenericHeaderHandlers
+  }
+
+  submitForm(form: any) {
     const requestParameters: QueryParameters = {};
 
     const _model: RequestUser = {
       name: isNullOrUndefinedEmptyStringNullArray(form.name) ? null : form.name,
       lastName: isNullOrUndefinedEmptyStringNullArray(form.lastName) ? null : form.lastName,
-      userName: isNullOrUndefinedEmptyStringNullArray(form.username) ? null : form.username,
+      userName: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       password: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
       roles: [form.role.name],
       imageURL: this.imageURL,
-    //   clientId: form.client,
     };
 
     this._usersService.add(_model, requestParameters).subscribe({
