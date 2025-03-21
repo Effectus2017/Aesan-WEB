@@ -133,6 +133,7 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
     const filteredData = this.tableConfig.dataSourceList.filter(item =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
     this.tableConfig.dataSource.data = filteredData;
   }
 }

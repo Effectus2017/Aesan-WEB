@@ -15,6 +15,7 @@ import { AgencyStatus } from '../models/AgencyStatus';
 export class AgencyService {
   private _agencies: BehaviorSubject<Agency[] | null> = new BehaviorSubject(null);
   private _agency: BehaviorSubject<Agency | null> = new BehaviorSubject(null);
+  private _agenciesList: BehaviorSubject<Agency[] | null> = new BehaviorSubject(null);
 
   private _agencyStatus: BehaviorSubject<AgencyStatus[] | null> = new BehaviorSubject(null);
 
@@ -29,6 +30,14 @@ export class AgencyService {
    */
   get agencies$(): Observable<Agency[] | null> {
     return this._agencies.asObservable();
+  }
+
+  /**
+   * Obtiene todas las agencias de la base de datos
+   * @returns Las agencias
+   */
+  get agenciesList$(): Observable<Agency[] | null> {
+    return this._agenciesList.asObservable();
   }
 
   /**
@@ -77,13 +86,13 @@ export class AgencyService {
   }
 
   /**
-   * Obtiene todos los estados de la agencia
+   * Obtiene todas las agencias de la base de datos
    * @param queryParameters Los parámetros de consulta
-   * @returns Los estados de la agencia
+   * @returns Las agencias
    */
-//   getAllAgencyStatusFromDb(queryParameters: QueryParameters): Observable<any> {
-//     return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatus.next(response)));
-//   }
+  getAllAgenciesList(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-agencies-list`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agenciesList.next(response)));
+  }
 
   /**
    * Registra una agencia

@@ -21,6 +21,7 @@ export interface GenericHeaderConfig {
   submitButtonShow?: boolean;
   submitButtonText?: string;
   submitLoadingText?: string;
+  submitDisabled?: boolean;
 
   // Save Button config
   saveButtonShow?: boolean;

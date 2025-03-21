@@ -42,17 +42,17 @@
     </a>
     }
 
-    <!-- Botón Guardar -->
-    @if (config.saveButtonShow) {
-    <button class="bg-[#F39B1A]" type="button" title="Guardar" mat-flat-button color="primary" (click)="onSave()">
-      {{ config.saveButtonText | transloco }}
-    </button>
-    }
-
     <!-- Botón Cancelar -->
     @if (config.cancelButtonShow) {
     <button type="button" title="Cancelar" (click)="onCancel($event)" mat-button>
       {{ config.cancelButtonText | transloco }}
+    </button>
+    }
+
+    <!-- Botón Guardar -->
+    @if (config.saveButtonShow) {
+    <button class="bg-[#F39B1A]" type="button" title="Guardar" mat-flat-button color="primary" (click)="onSave()">
+      {{ config.saveButtonText | transloco }}
     </button>
     }
 
@@ -65,7 +65,16 @@
 
     <!-- Botón Submit -->
     @if (config.submitButtonShow) {
-    <button type="submit" title="Crear" mat-raised-button color="primary" class="ml-2" [disabled]="isLoading" (click)="onSubmit()" data-cy="generic-header-submit-button">
+    <button
+      type="submit"
+      title="Crear"
+      mat-raised-button
+      color="primary"
+      class="ml-2"
+      [disabled]="isLoading || config.submitDisabled"
+      (click)="onSubmit()"
+      data-cy="generic-header-submit-button"
+    >
       <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
       <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
     </button>

@@ -1,20 +1,7 @@
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+
   <!-- Header -->
-  <div class="flex flex-col items-center p-6 border-b sm:flex-row flex-0 sm:justify-between sm:py-3 sm:px-10 bg-card dark:bg-transparent">
-    <div class="flex-1 min-w-0">
-      <!-- Title -->
-      <div class="mt-2">
-        <h2 class="text-4xl font-extrabold leading-7 tracking-tight truncate sm:text-3xl sm:leading-10">{{ 'users.edit.title' | transloco }}</h2>
-      </div>
-    </div>
-    <!-- Actions -->
-    <div class="flex flex-row items-center">
-      <button mat-button (click)="onBack()">{{ 'users.edit.buttons.cancel' | transloco }}</button>
-      <button class="px-6 ml-3" mat-flat-button [color]="'primary'" (click)="onSubmit()" type="submit" [disabled]="formRoot.get('datosPersonales').invalid" data-cy="submit-button">
-        {{ 'users.edit.buttons.update' | transloco }}
-      </button>
-    </div>
-  </div>
+  <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
 
   <!-- Main -->
   <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
@@ -32,39 +19,46 @@
     </div>
 
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
-      <form [formGroup]="formRoot" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10">
+      <form [formGroup]="headerConfig.formGroup" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10">
         <div formGroupName="datosPersonales">
           <!-- Personal Information -->
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
             <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.edit.first-name.label' | transloco }}</mat-label>
-              <input matInput formControlName="firstName" data-cy="name-input" [placeholder]="'users.edit.first-name.placeholder' | transloco" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('firstName').hasError('required')">
-                {{ 'users.edit.first-name.required' | transloco }}
+              <mat-label>{{ 'users.edit.firstName.label' | transloco }}</mat-label>
+              <input matInput formControlName="firstName" data-cy="name-input" [placeholder]="'users.edit.firstName.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('firstName').hasError('required')">
+                {{ 'users.edit.firstName.required' | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.edit.last-name.label' | transloco }}</mat-label>
-              <input matInput formControlName="fatherLastName" data-cy="last-name-input" [placeholder]="'users.edit.last-name.placeholder' | transloco" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('fatherLastName').hasError('required')">
-                {{ 'users.edit.last-name.required' | transloco }}
+              <mat-label>{{ 'users.edit.middleName.label' | transloco }}</mat-label>
+              <input matInput formControlName="middleName" data-cy="middle-name-input" [placeholder]="'users.edit.middleName.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('middleName').hasError('required')">
+                {{ 'users.edit.middleName.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.fatherLastName.label' | transloco }}</mat-label>
+              <input matInput formControlName="fatherLastName" data-cy="father-last-name-input" [placeholder]="'users.edit.fatherLastName.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('fatherLastName').hasError('required')">
+                {{ 'users.edit.fatherLastName.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.edit.motherLastName.label' | transloco }}</mat-label>
+              <input matInput formControlName="motherLastName" data-cy="mother-last-name-input" [placeholder]="'users.edit.motherLastName.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('motherLastName').hasError('required')">
+                {{ 'users.edit.motherLastName.required' | transloco }}
               </mat-error>
             </mat-form-field>
           </div>
           <!-- Access Information -->
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
               <mat-label>{{ 'users.edit.email.label' | transloco }}</mat-label>
               <input matInput formControlName="email" data-cy="email-input" [placeholder]="'users.edit.email.placeholder' | transloco" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('email').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('required')">
                 {{ 'users.edit.email.required' | transloco }}
-              </mat-error>
-            </mat-form-field>
-            <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.edit.username.label' | transloco }}</mat-label>
-              <input matInput formControlName="userName" data-cy="username-input" [placeholder]="'users.edit.username.placeholder' | transloco" />
-              <mat-error *ngIf="formRoot.get('datosPersonales').get('userName').hasError('required')">
-                {{ 'users.edit.username.required' | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
@@ -92,10 +86,10 @@
                 <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
                 <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
               </button>
-              <mat-error *ngIf="formRoot.get('password').get('currentPassword').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('required')">
                 {{ 'users.edit.current-password.required' | transloco }}
               </mat-error>
-              <mat-error *ngIf="formRoot.get('password').get('currentPassword').hasError('minlength')">
+              <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('minlength')">
                 {{ 'users.edit.current-password.min-length' | transloco }}
               </mat-error>
             </mat-form-field>
@@ -107,18 +101,13 @@
                 <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
                 <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
               </button>
-              <mat-error *ngIf="formRoot.get('password').get('newPassword').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('required')">
                 {{ 'users.edit.new-password.required' | transloco }}
               </mat-error>
-              <mat-error *ngIf="formRoot.get('password').get('newPassword').hasError('minlength')">
+              <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('minlength')">
                 {{ 'users.edit.new-password.min-length' | transloco }}
               </mat-error>
             </mat-form-field>
-          </div>
-          <div class="flex items-center mt-8 mb-4 space-x-6">
-            <button type="submit" class="px-6 ml-auto text-white" mat-flat-button [color]="'primary'" (click)="onSubmit()" data-cy="submit-password-button" [disabled]="formRoot.get('password').invalid">
-              {{ 'users.edit.buttons.update-password' | transloco }}
-            </button>
           </div>
         </div>
         <div class="mt-1 text-md text-hint">{{ 'users.edit.password-requirements' | transloco }}</div>

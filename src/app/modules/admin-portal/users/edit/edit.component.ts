@@ -15,10 +15,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { TranslocoModule } from '@ngneat/transloco';
+import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
+import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { AgencyService } from 'app/shared/services/agency.service';
 
 
 @Component({
@@ -37,19 +40,31 @@ import { TranslocoModule } from '@ngneat/transloco';
     MatSelectModule,
     MatIconModule,
     TranslocoModule,
+    GenericHeaderComponent,
   ],
 })
-export class UsersEditComponent implements OnInit, OnDestroy {
+export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private route: ActivatedRoute = inject(ActivatedRoute);
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _usersService: UsersService = inject(UsersService);
+  private _agencyService: AgencyService = inject(AgencyService);
   private _uploadService: UploadService = inject(UploadService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
-  title?: string = 'Editar usuario';
-  formRoot: UntypedFormGroup;
+  headerConfig: GenericHeaderConfig = {
+    title: 'users.edit.title',
+    saveButtonShow: true,
+    saveButtonText: 'users.edit.buttons.update',
+    submitButtonShow: true,
+    submitButtonText: 'users.edit.buttons.update-password',
+    submitDisabled: true,
+    cancelButtonShow: true,
+    cancelButtonText: 'users.edit.buttons.cancel',
+  };
+
+//   formRoot: UntypedFormGroup;
   imageURL: string;
   fileToUpload: File = null;
   fileResponse: FileResponse;
@@ -58,17 +73,19 @@ export class UsersEditComponent implements OnInit, OnDestroy {
   user?: any;
 
   listRoles: any[] = [];
-  listClients: any[] = [];
+  listAgencies: any[] = [];
 
   constructor() {}
 
   ngOnInit() {
-    this.formRoot = this._formBuilder.group({
+
+    this.headerConfig.formGroup = this._formBuilder.group({
       datosPersonales: this._formBuilder.group({
-        userName: new FormControl(null, [Validators.required, Validators.email]),
-        email: new FormControl({ value: null, readonly: true }, [Validators.required, Validators.email]),
+        email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email]),
         firstName: new FormControl(null, Validators.required),
+        middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
+        motherLastName: new FormControl(null),
         role: new FormControl(null, Validators.required),
       }),
       password: this._formBuilder.group(
@@ -95,8 +112,12 @@ export class UsersEditComponent implements OnInit, OnDestroy {
       this.listRoles = result.body.data;
 
       if (this.user) {
-        this.formRoot.controls.datosPersonales.patchValue({
-          role: this.user.roles[0],
+
+        // bsucar el rol en la lista de roles
+        const role = this.listRoles.find((role: any) => role.name === this.user.roles[0]);
+
+        this.headerConfig.formGroup.controls.datosPersonales.patchValue({
+          role: role,
         });
       }
 
@@ -104,11 +125,20 @@ export class UsersEditComponent implements OnInit, OnDestroy {
       this._changeDetectorRef.markForCheck();
     });
 
-    // this._clientsService.clients$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //   this.listClients = result.body.data;
-    //   // Mark for check
-    //   this._changeDetectorRef.markForCheck();
-    // });
+    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.listAgencies = result.body.data;
+      }
+    });
+
+    // Suscribirse a los cambios del formulario para actualizar el estado del botón
+    this.headerConfig.formGroup.get('password').valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        // Actualizar el estado del botón basado en la validación del formulario
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.get('password').invalid;
+        this._changeDetectorRef.markForCheck();
+      });
   }
 
   onPassword(formGroup: FormGroup) {
@@ -134,14 +164,15 @@ export class UsersEditComponent implements OnInit, OnDestroy {
     this.user = param;
     this.imageURL = param.imageURL;
 
-    this.formRoot.controls.datosPersonales.patchValue({
-      userName: this.user.userName,
+    this.headerConfig.formGroup.controls.datosPersonales.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
+      middleName: this.user.middleName,
       fatherLastName: this.user.fatherLastName,
+      motherLastName: this.user.motherLastName,
     });
 
-    this.formRoot.get('datosPersonales').get('userName').disable();
+     this.disableEditableFormControls();
   }
 
   getWithQueryString() {
@@ -164,24 +195,55 @@ export class UsersEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit() {
-    if (this.formRoot.controls.datosPersonales.valid) {
-      this.onUpdate(this.formRoot.value.datosPersonales);
+    if (this.headerConfig.formGroup.controls.password.valid) {
+      this.onUpdatePassword(this.headerConfig.formGroup.value.password);
     } else {
-      this.formRoot.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
-      this.formRoot.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
-      this.formRoot.markAllAsTouched();
+      this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.markAllAsTouched();
     }
+  }
+
+  onSave(): void {
+    if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
+        this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
+      } else {
+        this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
+        this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
+        this.headerConfig.formGroup.markAllAsTouched();
+      }
+  }
+
+  onCancel(): void {
+    this._customRouter.navigate(['users']);
   }
 
   onUpdate(form: any) {
     const requestParameters: QueryParameters = {};
 
+    // si correo es null, no se puede actualizar
+    if (isNullOrUndefinedEmptyStringNullArray(form.email) && isNullOrUndefinedEmptyStringNullArray(this.user.email)) {
+      this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
+      return;
+    }
+
+    // si rol es null, no se puede actualizar
+    if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
+      this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+      return;
+    }
+
     const _model: RequestUser = {
       id: this.id,
-      name: isNullOrUndefinedEmptyStringNullArray(form.name) ? null : form.name,
-      lastName: isNullOrUndefinedEmptyStringNullArray(form.lastName) ? null : form.lastName,
-      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
+      firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
+      middleName: isNullOrUndefinedEmptyStringNullArray(form.middleName) ? null : form.middleName,
+      fatherLastName: isNullOrUndefinedEmptyStringNullArray(form.fatherLastName) ? null : form.fatherLastName,
+      motherLastName: isNullOrUndefinedEmptyStringNullArray(form.motherLastName) ? null : form.motherLastName,
+      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
       userName: this.user.userName,
+      imageURL: this.imageURL,
       roles: [form.role.name],
     };
 
@@ -194,7 +256,7 @@ export class UsersEditComponent implements OnInit, OnDestroy {
       },
       error: (error) => {},
       complete: () => {
-        //this.onBack();
+        //this.enableEditableFormControls();
       },
     });
   }
@@ -202,11 +264,11 @@ export class UsersEditComponent implements OnInit, OnDestroy {
   onUpdatePassword(form: any) {
     const _model: ChangePassword = {
       id: this.user.id,
-      email: isNullOrUndefinedEmptyStringNullArray(this.formRoot.controls.datosPersonales.value.email) ? null : this.formRoot.controls.datosPersonales.value.email,
-      password: isNullOrUndefinedEmptyStringNullArray(this.formRoot.controls.contrasena.value.currentPassword)
+      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
+      password: isNullOrUndefinedEmptyStringNullArray(form.currentPassword)
         ? null
-        : this.formRoot.controls.contrasena.value.currentPassword,
-      newPassword: isNullOrUndefinedEmptyStringNullArray(this.formRoot.controls.contrasena.value.newPassword) ? null : this.formRoot.controls.contrasena.value.newPassword,
+        : form.currentPassword,
+      newPassword: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
     };
 
     this._usersService.changePassword(_model, null).subscribe({
@@ -220,10 +282,6 @@ export class UsersEditComponent implements OnInit, OnDestroy {
         //this.onBack();
       },
     });
-  }
-
-  onBack() {
-    this._customRouter.navigate(['users']);
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -271,7 +329,7 @@ export class UsersEditComponent implements OnInit, OnDestroy {
 
   compare(o1: any, o2: any): boolean {
     if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.name === o2;
+      return o1 === o2;
     }
     return false;
   }
@@ -281,5 +339,27 @@ export class UsersEditComponent implements OnInit, OnDestroy {
       return o1.name.split(' ').join('') === o2;
     }
     return false;
+  }
+
+  /**
+   * Habilita los controles editables del formulario
+   */
+  private enableEditableFormControls(): void {
+    // Habilitar todos los controles excepto email y otros campos sensibles
+    handleFormControls(this.headerConfig.formGroup.get('datosPersonales') as UntypedFormGroup, 'enable', {
+      controls: ['email', 'userName'],
+      mode: 'exclude',
+    });
+  }
+
+  /**
+   * Deshabilita los controles editables del formulario
+   */
+  private disableEditableFormControls(): void {
+    // Deshabilitar todos los controles excepto email y otros campos sensibles
+    handleFormControls(this.headerConfig.formGroup.get('datosPersonales') as UntypedFormGroup, 'disable', {
+      controls: ['email', 'userName'],
+      mode: 'include',
+    });
   }
 }

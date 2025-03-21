@@ -2,9 +2,10 @@ import { Routes } from '@angular/router';
 import { UsersComponent } from './users.component';
 import { UsersListComponent } from './list/list.component';
 import { UsersAddComponent } from './add/add.component';
-import { AddUsersResolver, EditUsersResolver, RolesListsResolver, UsersListsResolver } from './users.resolvers';
+import { initialAddUsersResolver, initialAgenciesUsersListResolver, initialEditUsersResolver, initialRolesResolver, UsersListsResolver } from './users.resolvers';
 import { UsersEditComponent } from './edit/edit.component';
 import { RolesListComponent } from './list-roles/list.component';
+import { AgenciesUsersListComponent } from './list-agencies/list.component';
 
 export default [
   {
@@ -23,21 +24,28 @@ export default [
         path: 'add',
         component: UsersAddComponent,
         resolve: {
-          data: AddUsersResolver,
+          data: initialAddUsersResolver,
         },
       },
       {
         path: 'edit/:id',
         component: UsersEditComponent,
         resolve: {
-          data: EditUsersResolver,
+          data: initialEditUsersResolver,
         },
       },
       {
         path: 'roles',
         component: RolesListComponent,
         resolve: {
-          data: RolesListsResolver,
+          data: initialRolesResolver,
+        },
+      },
+      {
+        path: 'agencies',
+        component: AgenciesUsersListComponent,
+        resolve: {
+          data: initialAgenciesUsersListResolver,
         },
       },
     ],

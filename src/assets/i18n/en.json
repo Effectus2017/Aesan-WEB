@@ -635,16 +635,6 @@
             "personal-info": "Personal Information",
             "access-info": "Access Information",
             "password-section": "Edit Password",
-            "first-name": {
-                "label": "First Name",
-                "placeholder": "Enter first name",
-                "required": "First name is required"
-            },
-            "last-name": {
-                "label": "Last Name",
-                "placeholder": "Enter last name",
-                "required": "Last name is required"
-            },
             "email": {
                 "label": "Email",
                 "placeholder": "Enter email",
@@ -678,10 +668,31 @@
                 "cancel": "Cancel",
                 "update": "Update",
                 "update-password": "Update Password"
+            },
+            "firstName": {
+                "label": "First Name",
+                "placeholder": "Enter first name",
+                "required": "First name is required"
+            },
+            "middleName": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "fatherLastName": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter father's last name",
+                "required": "Father's last name is required"
+            },
+            "motherLastName": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter mother's last name"
             }
         },
         "list": {
             "title": "Users",
+            "search": {
+                "placeholder": "Search user"
+            },
             "columns": {
                 "firstName": "First Name",
                 "fatherLastName": "Last Name",
@@ -746,7 +757,30 @@
                 "required": "Client is required"
             },
             "submit": "Save",
-            "back": "Back"
+            "back": "Back",
+            "firstName": {
+                "label": "First Name",
+                "placeholder": "Enter first name",
+                "required": "First name is required"
+            },
+            "middleName": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "fatherLastName": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter father's last name",
+                "required": "Father's last name is required"
+            },
+            "motherLastName": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter mother's last name"
+            },
+            "agency": {
+                "label": "Agency",
+                "placeholder": "Select an agency",
+                "required": "Agency is required"
+            }
         }
     },
     "navigation": {

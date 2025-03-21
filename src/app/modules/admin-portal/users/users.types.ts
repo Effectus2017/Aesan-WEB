@@ -16,15 +16,17 @@ export interface UserToken {
 
   export interface RequestUser {
     id?: string;
-    name?: string;
-    lastName?: string;
+    firstName?: string;
+    middleName?: string;
+    fatherLastName?: string;
+    motherLastName?: string;
     email?: string;
     emailConfirmed?: boolean;
     imageURL?: string;
     userName?: string;
     roles?: string[];
     password?: string;
-    clientId?: string;
+    agencyId?: string;
   }
 
   export interface Token {

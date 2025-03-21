@@ -22,6 +22,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { AgencyService } from 'app/shared/services/agency.service';
 
 @Component({
   selector: 'app-users-add',
@@ -47,6 +48,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _usersService: UsersService = inject(UsersService);
+  private _agencyService: AgencyService = inject(AgencyService);
   private _uploadService: UploadService = inject(UploadService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -54,21 +56,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
-    formGroup: this._formBuilder.group({
-      name: new FormControl(''),
-    }),
-    searchFieldShow: true,
-    searchInputPlaceholder: 'global.search.placeholder',
-    goToAddButtonShow: true,
+    saveButtonShow: true,
+    saveButtonText: 'users.add.submit',
   };
 
-  formRoot: UntypedFormGroup;
   imageURL: string;
   fileToUpload: File = null;
   fileResponse: FileResponse;
 
   listRoles = [];
-  listClients = [];
+  listAgencies = [];
 
   // Validador personalizado para email
   emailValidator(): ValidatorFn {
@@ -86,16 +83,19 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   constructor() {}
 
   ngOnInit() {
-    this.formRoot = this._formBuilder.group({
+    this.headerConfig.formGroup = this._formBuilder.group({
       datosPersonales: this._formBuilder.group(
         {
           username: new FormControl({value: null, disabled: true}, [Validators.required, Validators.email, this.emailValidator()]),
           currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
           newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
           email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()]),
-          name: new FormControl(null, Validators.required),
-          lastName: new FormControl(null, Validators.required),
+          firstName: new FormControl(null, Validators.required),
+          middleName: new FormControl(null),
+          fatherLastName: new FormControl(null, Validators.required),
+          motherLastName: new FormControl(null),
           role: new FormControl(null, Validators.required),
+          agency: new FormControl(null, Validators.required),
         },
         {
           validators: this.onPassword.bind(this),
@@ -104,15 +104,22 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     });
 
     // Suscribirse a los cambios del campo email
-    this.formRoot.get('datosPersonales.email').valueChanges
+    this.headerConfig.formGroup.get('datosPersonales.email').valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(value => {
-        this.formRoot.get('datosPersonales.username').setValue(value);
+        this.headerConfig.formGroup.get('datosPersonales.username').setValue(value);
       });
 
     // Get the accountings
     this._usersService.roles$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       this.listRoles = result.body.data;
+      // Mark for check
+      this._changeDetectorRef.markForCheck();
+    });
+
+    // Get the agencies list
+    this._agencyService.agenciesList$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      this.listAgencies = result.body;
       // Mark for check
       this._changeDetectorRef.markForCheck();
     });
@@ -137,26 +144,40 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this._unsubscribeAll.complete();
   }
 
-  onSubmit() {
-    if (this.formRoot.controls.datosPersonales.valid) {
-      this.submitForm(this.formRoot.value.datosPersonales);
-    } else {
-      this.formRoot.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
-      this.formRoot.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
-      this.formRoot.markAllAsTouched();
-    }
-  }
-
-  onAdd(): void {
-    // Implementación requerida por OnGenericHeaderHandlers
+  onSave(): void {
+    if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
+        this.submitForm(this.headerConfig.formGroup.value.datosPersonales);
+      } else {
+        this.headerConfig.formGroup.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
+        this.headerConfig.formGroup.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
+        this.headerConfig.formGroup.markAllAsTouched();
+      }
   }
 
   submitForm(form: any) {
-    const requestParameters: QueryParameters = {};
+    const requestParameters: QueryParameters = {
+        agencyId: form.agency.id,
+    };
+
+    // si correo es null, no se puede actualizar
+    if (isNullOrUndefinedEmptyStringNullArray(form.email)) {
+        this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
+        this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
+        return;
+      }
+
+      // si rol es null, no se puede actualizar
+      if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
+        this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
+        this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+        return;
+      }
 
     const _model: RequestUser = {
-      name: isNullOrUndefinedEmptyStringNullArray(form.name) ? null : form.name,
-      lastName: isNullOrUndefinedEmptyStringNullArray(form.lastName) ? null : form.lastName,
+      firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
+      middleName: isNullOrUndefinedEmptyStringNullArray(form.middleName) ? null : form.middleName,
+      fatherLastName: isNullOrUndefinedEmptyStringNullArray(form.fatherLastName) ? null : form.fatherLastName,
+      motherLastName: isNullOrUndefinedEmptyStringNullArray(form.motherLastName) ? null : form.motherLastName,
       userName: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       password: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,

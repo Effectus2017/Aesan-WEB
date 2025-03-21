@@ -636,16 +636,6 @@
             "personal-info": "Datos Personales",
             "access-info": "Datos de Acceso",
             "password-section": "Editar contraseña",
-            "first-name": {
-                "label": "Nombre",
-                "placeholder": "Ingrese el nombre",
-                "required": "El nombre es requerido"
-            },
-            "last-name": {
-                "label": "Apellido",
-                "placeholder": "Ingrese el apellido",
-                "required": "El apellido es requerido"
-            },
             "email": {
                 "label": "Correo Electrónico",
                 "placeholder": "Ingrese el correo electrónico",
@@ -680,10 +670,31 @@
                 "cancel": "Cancelar",
                 "update": "Actualizar",
                 "update-password": "Actualizar contraseña"
+            },
+            "firstName": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre",
+                "required": "El nombre es requerido"
+            },
+            "middleName": {
+                "label": "Segundo nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "fatherLastName": {
+                "label": "Apellido paterno",
+                "placeholder": "Ingrese el apellido paterno",
+                "required": "El apellido paterno es requerido"
+            },
+            "motherLastName": {
+                "label": "Apellido materno",
+                "placeholder": "Ingrese el apellido materno"
             }
         },
         "list": {
             "title": "Usuarios",
+            "search": {
+                "placeholder": "Buscar usuario"
+            },
             "columns": {
                 "firstName": "Nombre",
                 "fatherLastName": "Apellido",
@@ -706,7 +717,8 @@
             "username": {
                 "label": "Nombre de usuario",
                 "placeholder": "Ingrese el nombre de usuario",
-                "required": "El nombre de usuario es requerido"
+                "required": "El nombre de usuario es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
             },
             "current-password": {
                 "label": "Contraseña",
@@ -727,28 +739,36 @@
                 "required": "El correo electrónico es requerido",
                 "email": "Debe ingresar un correo electrónico válido"
             },
-            "name": {
+            "firstName": {
                 "label": "Nombre",
                 "placeholder": "Ingrese el nombre",
                 "required": "El nombre es requerido"
             },
-            "lastName": {
-                "label": "Apellido",
-                "placeholder": "Ingrese el apellido",
-                "required": "El apellido es requerido"
+            "middleName": {
+                "label": "Segundo nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "fatherLastName": {
+                "label": "Apellido paterno",
+                "placeholder": "Ingrese el apellido paterno",
+                "required": "El apellido paterno es requerido"
+            },
+            "motherLastName": {
+                "label": "Apellido materno",
+                "placeholder": "Ingrese el apellido materno"
             },
             "role": {
                 "label": "Rol",
                 "placeholder": "Seleccione un rol",
                 "required": "El rol es requerido"
             },
-            "client": {
-                "label": "Cliente",
-                "placeholder": "Seleccione un cliente",
-                "required": "El cliente es requerido"
-            },
             "submit": "Guardar",
-            "back": "Volver"
+            "back": "Volver",
+            "agency": {
+                "label": "Agencia",
+                "placeholder": "Seleccione una agencia",
+                "required": "La agencia es requerida"
+            }
         }
     },
     "navigation": {

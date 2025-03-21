@@ -1,5 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -19,9 +19,8 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency, User } from 'app/shared/models/Agency';
+import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
-import { UserService } from 'app/shared/services/user.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
 import { compareByProperty, handleFormControls } from 'app/shared/utils';
@@ -140,7 +139,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     rejectButtonText: 'validation-to-program.edit.reject',
     rejectButtonShow: true,
   };
-
 
   constructor() {}
 
@@ -519,9 +517,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       error: (error) => {
         console.error('Error al cargar las regiones', error);
       },
-      complete: () => {
-
-      },
+      complete: () => {},
     });
   }
 
@@ -530,15 +526,14 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     return compareByProperty(item1, item2, 'id' as keyof T);
   }
 
-
   /**
    * Habilita los controles editables del formulario
    */
   private enableEditableFormControls(): void {
     // Habilitar todos los controles excepto email y otros campos sensibles
     handleFormControls(this.headerConfig.formGroup, 'enable', {
-        controls: ['email'],
-        mode: 'exclude'
+      controls: ['email'],
+      mode: 'exclude',
     });
-}
+  }
 }
