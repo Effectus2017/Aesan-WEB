@@ -6,6 +6,6 @@ export interface UserRequest {
     middleName: string;
     fatherLastName: string;
     motherLastName: string;
-    administrationTitle: string;
+    administrationTitle?: string;
     email: string;
 }

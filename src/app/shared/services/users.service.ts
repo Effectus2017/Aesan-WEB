@@ -62,6 +62,11 @@ export class UsersService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
+  /**
+   * Obtiene un usuario por su ID desde la base de datos
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   getUserByIdFromDb(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-user-by-id', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {
@@ -71,6 +76,11 @@ export class UsersService {
     );
   }
 
+  /**
+   * Obtiene todos los usuarios desde la base de datos
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   getAllUsersFromDb(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-users-from-db', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {
@@ -80,6 +90,11 @@ export class UsersService {
     );
   }
 
+  /**
+   * Obtiene todos los usuarios desde la base de datos con SP
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   getAllUsersFromDbWithSP(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-users-from-db-with-sp', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {
@@ -89,6 +104,11 @@ export class UsersService {
     );
   }
 
+  /**
+   * Obtiene todos los roles desde la base de datos
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<Role[]>
+   */
   getAllRolesFromDb(requestParameters: QueryParameters): Observable<Role[]> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-roles-from-db', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {
@@ -98,20 +118,68 @@ export class UsersService {
     );
   }
 
+  /**
+   * Agrega un usuario a la base de datos
+   * @param param Parámetros del usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   add(param: RequestUser, requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/add-user-to-db', param, getHttpOptions(requestParameters)).pipe(catchError(handleError));
   }
 
+  /**
+   * Agrega un usuario a la base de datos
+   * @param param Parámetros del usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   update(param: RequestUser, requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.put<any>(`${this.apiUrl}` + '/update-user-from-db', param, getHttpOptions(requestParameters)).pipe(catchError(handleError));
   }
 
+  /**
+   * Elimina un usuario de la base de datos
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
   delete(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.delete<any>(`${this.apiUrl}` + '/delete-user-from-db', getHttpOptions(requestParameters)).pipe(catchError(handleError));
   }
 
-  changePassword(param: any, requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/change-password', param, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  /**
+   * Cambia la contraseña de un usuario, solo para uso del usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  changePassword(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/change-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
   }
 
+  /**
+   * Resetea la contraseña de un usuario, solo para uso del administrador
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  resetPassword(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/reset-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
+   * Forza una nueva contraseña para un usuario, solo para uso del administrador
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  forcePassword(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/force-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
+   * Olvida la contraseña de un usuario, para uso del usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  forgotPassword(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/forgot-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
 }

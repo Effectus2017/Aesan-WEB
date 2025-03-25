@@ -79,5 +79,23 @@
       <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
     </button>
     }
+
+
+    <!-- Botón Custom -->
+    @if (config.customButtonShow) {
+    <button
+        type="button"
+        title="Custom"
+        [color]="config.customButtonColor"
+        class="ml-2"
+        [disabled]="isLoading || config.customButtonDisabled"
+        (click)="onCustom()"
+        mat-raised-button
+        data-cy="generic-header-custom-button"
+    >
+        <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+        <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.customButtonText | transloco) }}</span>
+    </button>
+    }
   </form>
 </div>

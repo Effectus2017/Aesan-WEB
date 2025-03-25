@@ -31,6 +31,11 @@ export interface GenericHeaderConfig {
   rejectButtonShow?: boolean;
   rejectButtonText?: string;
 
+  // Custom Button config
+  customButtonShow?: boolean;
+  customButtonText?: string;
+  customButtonColor?: string;
+  customButtonDisabled?: boolean;
   // Clear Button config
   clearVisible?: boolean;
 
@@ -78,6 +83,11 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de rechazar
    */
   onReject?: () => void;
+
+  /**
+   * Manejador para el evento custom
+   */
+  onCustom?: () => void;
 
   /**
    * Manejador para el evento de limpiar

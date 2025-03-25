@@ -32,15 +32,6 @@ export class AuthService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
-
-  forgotPassword(email: string): Observable<any> {
-    return this._httpClient.post('api/auth/forgot-password', email);
-  }
-
-  resetPassword(resetModel: { email: string; temporaryPassword: string; newPassword: string }): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/reset-password`, resetModel);
-  }
-
   signIn(credentials: { userName: string; password: string }): Observable<any> {
     if (this._authenticated) {
       return throwError('User is already logged in.');

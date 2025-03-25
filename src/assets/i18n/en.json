@@ -175,6 +175,12 @@
             },
             "tax-exemption-type": {
                 "label": "Tax Exemption Type"
+            },
+            "new-password-repeat": {
+                "label": "Repeat New Password",
+                "placeholder": "Enter new password again",
+                "required": "Password confirmation is required",
+                "min-length": "Minimum 8 characters required"
             }
         },
         "reset-password": {
@@ -247,7 +253,7 @@
         "edit": {
             "title": "Edit Program Application Validation",
             "monitor": {
-                "label": "Users Monitor"
+                "label": "Assigned to:"
             },
             "program": {
                 "label": "Program you wish to participate in:",
@@ -658,12 +664,18 @@
                 "min-length": "Minimum 8 characters required"
             },
             "new-password": {
-                "label": "Repeat Password",
+                "label": "New Password",
                 "placeholder": "Enter new password",
                 "required": "New password is required",
                 "min-length": "Minimum 8 characters required"
             },
-            "password-requirements": "Minimum 8 characters. Must include numbers, letters and special characters.",
+            "new-password-repeat": {
+                "label": "Repeat New Password",
+                "placeholder": "Enter new password again",
+                "required": "Password confirmation is required",
+                "min-length": "Minimum 8 characters required"
+            },
+            "password-requirements": "NOTE: The password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character. Also, only using the 'Update Password' button will update the user's password.",
             "buttons": {
                 "cancel": "Cancel",
                 "update": "Update",

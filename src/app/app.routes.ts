@@ -91,6 +91,7 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'pre-operational', loadChildren: () => import('app/modules/monitor-portal/preoperational-visit/preoperational-visit.routes') },
+      { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
     ],
   },
 

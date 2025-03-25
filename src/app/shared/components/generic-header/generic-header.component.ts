@@ -71,4 +71,8 @@ export class GenericHeaderComponent {
   onClean(event: Event) {
     this.handler.onClean(event);
   }
+
+  onCustom() {
+    this.handler.onCustom();
+  }
 }

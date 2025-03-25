@@ -18,5 +18,9 @@ export interface QueryParameters {
   fileName?: string;
   folderTo?: string;
   roles?: string[];
+  password?: string;
+  newPassword?: string;
+  temporaryPassword?: string;
+  email?: string;
 }
 

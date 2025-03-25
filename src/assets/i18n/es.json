@@ -10,23 +10,29 @@
     },
     "auth": {
         "sign-in": {
-            "title": "Iniciar Sesión",
+            "title": "Iniciar sesión",
             "no-account": "¿No tienes una cuenta?",
-            "sign-up": "Registrarse",
+            "sign-up": "Regístrate",
             "email": {
-                "label": "Correo Electrónico",
-                "placeholder": "Ingresa tu correo electrónico",
+                "label": "Correo electrónico",
+                "placeholder": "Ingrese su correo electrónico",
                 "required": "El correo electrónico es requerido",
-                "invalid": "Por favor ingresa un correo electrónico válido"
+                "invalid": "Por favor ingrese un correo electrónico válido"
             },
             "password": {
                 "label": "Contraseña",
-                "placeholder": "Ingresa tu contraseña",
+                "placeholder": "Ingrese su contraseña",
                 "required": "La contraseña es requerida"
             },
             "remember-me": "Recordarme",
             "forgot-password": "¿Olvidaste tu contraseña?",
-            "submit": "Iniciar Sesión"
+            "submit": "Iniciar sesión",
+            "error": {
+                "connection": "No se pudo conectar con el servidor. Por favor, verifique su conexión a internet.",
+                "credentials": "Las credenciales ingresadas son incorrectas",
+                "server": "Error en el servidor. Por favor, intente nuevamente más tarde.",
+                "unknown": "Ha ocurrido un error inesperado. Por favor, intente nuevamente."
+            }
         },
         "sign-up": {
             "title": "Intención de Participación",
@@ -176,6 +182,12 @@
             },
             "tax-exemption-type": {
                 "label": "Tipo de Exención"
+            },
+            "new-password-repeat": {
+                "label": "Repetir Nueva Contraseña",
+                "placeholder": "Ingrese la nueva contraseña nuevamente",
+                "required": "La confirmación de la contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
             }
         },
         "reset-password": {
@@ -188,7 +200,8 @@
             "new-password": {
                 "label": "Nueva Contraseña",
                 "placeholder": "Ingresa tu nueva contraseña",
-                "required": "La nueva contraseña es requerida"
+                "required": "La nueva contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
             },
             "confirm-password": {
                 "label": "Confirmar Contraseña",
@@ -248,7 +261,7 @@
         "edit": {
             "title": "Editar Validación de Aplicación al Programa",
             "monitor": {
-                "label": "Usuarios Monitores"
+                "label": "Asignado a:"
             },
             "program": {
                 "label": "Programa al que desea participar:",
@@ -654,18 +667,24 @@
                 "required": "El rol es requerido"
             },
             "current-password": {
-                "label": "Contraseña",
+                "label": "Contraseña Actual",
                 "placeholder": "Ingrese la contraseña actual",
                 "required": "La contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
             "new-password": {
-                "label": "Repita la contraseña",
+                "label": "Nueva Contraseña",
                 "placeholder": "Ingrese la nueva contraseña",
                 "required": "La nueva contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
-            "password-requirements": "Mínimo 8 caracteres. Debe incluir números, letras y caracteres especiales.",
+            "new-password-repeat": {
+                "label": "Repetir Nueva Contraseña",
+                "placeholder": "Ingrese la nueva contraseña nuevamente",
+                "required": "La confirmación de la contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Ademas solo usando el boton 'Actualizar contraseña', se actualizara la contraseña del usuario.",
             "buttons": {
                 "cancel": "Cancelar",
                 "update": "Actualizar",

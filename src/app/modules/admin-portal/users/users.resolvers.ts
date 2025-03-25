@@ -6,7 +6,6 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from '../../../shared/services/users.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 
-
 @Injectable({
   providedIn: 'root',
 })
@@ -36,99 +35,6 @@ export class UsersListsResolver implements Resolve<any> {
   }
 }
 
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class AddUsersResolver implements Resolve<any> {
-//   /**
-//    * Constructor
-//    */
-//   constructor(private _usersService: UsersService) {}
-
-//   // -----------------------------------------------------------------------------------------------------
-//   // @ Public methods
-//   // -----------------------------------------------------------------------------------------------------
-
-//   /**
-//    * Resolver
-//    *
-//    * @param route
-//    * @param state
-//    */
-//   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-//     const requestParameters: QueryParameters = {
-//       take: 25,
-//       skip: 0,
-//     };
-//     return forkJoin([
-//       this._usersService.getAllRolesFromDb(requestParameters),
-//     ]);
-//   }
-// }
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class EditUsersResolver implements Resolve<any> {
-//   /**
-//    * Constructor
-//    */
-//   constructor(private _usersService: UsersService) {}
-
-//   // -----------------------------------------------------------------------------------------------------
-//   // @ Public methods
-//   // -----------------------------------------------------------------------------------------------------
-
-//   /**
-//    * Resolver
-//    *
-//    * @param route
-//    * @param state
-//    */
-//   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-//     const requestUser: QueryParameters = {
-//       userId: route.paramMap.get('id'),
-//     };
-//     return forkJoin([
-//       this._usersService.getUserByIdFromDb(requestUser),
-//       this._usersService.getAllRolesFromDb({
-//         take: 25,
-//         skip: 0,
-//       }),
-//     ]);
-//   }
-// }
-
-// @Injectable({
-//   providedIn: 'root',
-// })
-// export class RolesListsResolver implements Resolve<any> {
-//   /**
-//    * Constructor
-//    */
-//   constructor(private _usersService: UsersService) {}
-
-//   // -----------------------------------------------------------------------------------------------------
-//   // @ Public methods
-//   // -----------------------------------------------------------------------------------------------------
-
-//   /**
-//    * Resolver
-//    *
-//    * @param route
-//    * @param state
-//    */
-//   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-//     const requestParameters: QueryParameters = {
-//       take: 25,
-//       skip: 0,
-//     };
-
-//     return forkJoin([this._usersService.getAllRolesFromDb(requestParameters)]);
-//   }
-// }
-
-
 export const initialAgenciesUsersListResolver: ResolveFn<any> = () => {
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
@@ -137,35 +43,32 @@ export const initialAgenciesUsersListResolver: ResolveFn<any> = () => {
     skip: 0,
   };
 
-  return forkJoin([usersService.getAllUsersFromDbWithSP(requestParameters),
-  ]);
+  return forkJoin([usersService.getAllUsersFromDbWithSP(requestParameters)]);
 };
 
 export const initialRolesResolver: ResolveFn<any> = () => {
   const usersService = inject(UsersService);
 
-  return forkJoin([usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
-  ]);
+  return forkJoin([usersService.getAllRolesFromDb({ take: 25, skip: 0 })]);
 };
 
 export const initialAddUsersResolver: ResolveFn<any> = () => {
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
 
-  return forkJoin([agencyService.getAllAgenciesList({ name: 'NUTRE', alls: false }), usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
-  ]);
+  return forkJoin([agencyService.getAllAgenciesList({ name: 'NUTRE', alls: false }), usersService.getAllRolesFromDb({ take: 25, skip: 0 })]);
 };
 
 export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-    const agencyService = inject(AgencyService);
-    const usersService = inject(UsersService);
+  const agencyService = inject(AgencyService);
+  const usersService = inject(UsersService);
 
-    return forkJoin([
-      agencyService.getAllAgenciesList({ name: 'NUTRE', alls: false }),
-      usersService.getUserByIdFromDb({ userId: route.paramMap.get('id'),}),
-      usersService.getAllRolesFromDb({
-        take: 25,
-        skip: 0,
-      }),
-    ]);
-  };
+  return forkJoin([
+    agencyService.getAllAgenciesList({ alls: true }),
+    usersService.getUserByIdFromDb({ userId: route.paramMap.get('id') }),
+    usersService.getAllRolesFromDb({
+      take: 25,
+      skip: 0,
+    }),
+  ]);
+};

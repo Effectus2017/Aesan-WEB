@@ -9,6 +9,8 @@ import { RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { UsersService } from 'app/shared/services/users.service';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -34,7 +36,7 @@ export class AuthForgotPasswordComponent implements OnInit
      * Constructor
      */
     constructor(
-        private _authService: AuthService,
+        private _usersService: UsersService,
         private _formBuilder: UntypedFormBuilder,
     )
     {
@@ -76,8 +78,12 @@ export class AuthForgotPasswordComponent implements OnInit
         // Hide the alert
         this.showAlert = false;
 
+        const requestParameters: QueryParameters = {
+            email: this.forgotPasswordForm.get('email').value,
+        };
+
         // Forgot password
-        this._authService.forgotPassword(this.forgotPasswordForm.get('email').value)
+        this._usersService.forgotPassword(requestParameters)
             .pipe(
                 finalize(() =>
                 {

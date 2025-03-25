@@ -22,7 +22,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { AgencyService } from 'app/shared/services/agency.service';
-
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
   selector: 'app-users-edit',
@@ -50,6 +50,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _usersService: UsersService = inject(UsersService);
   private _agencyService: AgencyService = inject(AgencyService);
   private _uploadService: UploadService = inject(UploadService);
+  private _authService: AuthService = inject(AuthService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
 
@@ -60,8 +61,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     submitButtonShow: true,
     submitButtonText: 'users.edit.buttons.update-password',
     submitDisabled: true,
-    cancelButtonShow: true,
-    cancelButtonText: 'users.edit.buttons.cancel',
+    customButtonShow: true,
+    customButtonText: 'users.edit.buttons.force-password',
+    customButtonColor: 'primary',
   };
 
 //   formRoot: UntypedFormGroup;
@@ -75,7 +77,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   listRoles: any[] = [];
   listAgencies: any[] = [];
 
-  constructor() {}
+  userRole: string = null;
+
+  constructor() {
+    this.userRole = this._authService.getUserRole();
+  }
 
   ngOnInit() {
 
@@ -87,14 +93,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
         role: new FormControl(null, Validators.required),
+        agency: new FormControl(null, Validators.required),
       }),
       password: this._formBuilder.group(
         {
           currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
           newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-        },
-        {
-          validators: this.onPassword.bind(this),
         }
       ),
     });
@@ -125,11 +129,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this._changeDetectorRef.markForCheck();
     });
 
-    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listAgencies = result.body.data;
-      }
-    });
+    this._agencyService.agenciesList$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+        this.listAgencies = result.body;
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+      });
 
     // Suscribirse a los cambios del formulario para actualizar el estado del botón
     this.headerConfig.formGroup.get('password').valueChanges
@@ -194,6 +198,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.getUserByIdFromDb(requestParameters).subscribe();
   }
 
+  // Para cuando se actualiza la contraseña. submit button
   onSubmit() {
     if (this.headerConfig.formGroup.controls.password.valid) {
       this.onUpdatePassword(this.headerConfig.formGroup.value.password);
@@ -204,6 +209,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     }
   }
 
+  // Para cuando se actualiza el usuario. save button
   onSave(): void {
     if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
         this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
@@ -214,10 +220,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       }
   }
 
+  // Para cuando se cancela el usuario. cancel button
   onCancel(): void {
     this._customRouter.navigate(['users']);
   }
 
+  // Para cuando se actualiza el usuario, excepto la contraseña
   onUpdate(form: any) {
     const requestParameters: QueryParameters = {};
 
@@ -245,6 +253,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       userName: this.user.userName,
       imageURL: this.imageURL,
       roles: [form.role.name],
+      agencyId: form.agency.id,
     };
 
     this._usersService.update(_model, requestParameters).subscribe({
@@ -261,17 +270,16 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     });
   }
 
+  // Para cuando se actualiza la contraseña, para uso del usuario
   onUpdatePassword(form: any) {
-    const _model: ChangePassword = {
-      id: this.user.id,
-      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
-      password: isNullOrUndefinedEmptyStringNullArray(form.currentPassword)
-        ? null
-        : form.currentPassword,
-      newPassword: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
+
+    const requestParameters: QueryParameters = {
+      userId: this.id,
+      password: form.currentPassword,
+      newPassword: form.newPassword,
     };
 
-    this._usersService.changePassword(_model, null).subscribe({
+    this._usersService.changePassword(requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
           this._changeDetectorRef.markForCheck();
@@ -279,8 +287,41 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       },
       error: (error) => {},
       complete: () => {
-        //this.onBack();
+
       },
+    });
+  }
+
+  // Para cuando se resetea la contraseña, para uso del administrador
+  onResetPassword() {
+    const requestParameters: QueryParameters = {
+      userId: this.id,
+      password: this.headerConfig.formGroup.value.password.newPassword,
+      newPassword: this.headerConfig.formGroup.value.password.newPassword,
+    };
+
+    this._usersService.resetPassword(requestParameters).subscribe({
+      next: (result: any) => {},
+      error: (error) => {},
+      complete: () => {},
+    });
+  }
+
+  // Para cuando se fuerza la contraseña. custom button
+  onCustom() {
+    this.onForcePassword();
+  }
+
+  // Para cuando se fuerza la contraseña. custom button
+  onForcePassword() {
+    const requestParameters: QueryParameters = {
+      userId: this.id,
+    };
+
+    this._usersService.forcePassword(requestParameters).subscribe({
+      next: (result: any) => {},
+      error: (error) => {},
+      complete: () => {},
     });
   }
 
@@ -339,17 +380,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       return o1.name.split(' ').join('') === o2;
     }
     return false;
-  }
-
-  /**
-   * Habilita los controles editables del formulario
-   */
-  private enableEditableFormControls(): void {
-    // Habilitar todos los controles excepto email y otros campos sensibles
-    handleFormControls(this.headerConfig.formGroup.get('datosPersonales') as UntypedFormGroup, 'enable', {
-      controls: ['email', 'userName'],
-      mode: 'exclude',
-    });
   }
 
   /**

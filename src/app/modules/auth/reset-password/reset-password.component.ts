@@ -11,6 +11,8 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { UsersService } from 'app/shared/services/users.service';
 
 @Component({
   selector: 'auth-reset-password',
@@ -35,7 +37,7 @@ export class ResetPasswordComponent implements OnInit {
   @ViewChild('resetPasswordNgForm') resetPasswordNgForm: NgForm;
 
   private _activatedRoute = inject(ActivatedRoute);
-  private _authService = inject(AuthService);
+  private _usersService = inject(UsersService);
   private _formBuilder = inject(UntypedFormBuilder);
   private _router = inject(Router);
 
@@ -79,14 +81,13 @@ export class ResetPasswordComponent implements OnInit {
     this.resetPasswordForm.disable();
     this.showAlert = false;
 
-    const resetModel = {
+    const requestParameters: QueryParameters = {
       email: this._activatedRoute.snapshot.queryParams['email'],
       temporaryPassword: this.resetPasswordForm.get('tempPassword').value,
       newPassword: this.resetPasswordForm.get('newPassword').value,
     };
 
-    // TODO: Implementar el servicio de reset en AuthService
-    this._authService.resetPassword(resetModel).subscribe({
+    this._usersService.resetPassword(requestParameters).subscribe({
       next: (response) => {
         this.alert = {
           type: 'success',
@@ -98,7 +99,7 @@ export class ResetPasswordComponent implements OnInit {
         setTimeout(() => {
           // Redirigir al componente de reset password con el email como parámetro
           this._router.navigate(['/sign-in'], {
-            queryParams: { email: resetModel.email },
+            queryParams: { email: requestParameters.email },
           });
         }, 3000);
       },
