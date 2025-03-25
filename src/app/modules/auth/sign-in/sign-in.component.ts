@@ -111,6 +111,16 @@ export class AuthSignInComponent implements OnInit {
         // Re-enable the form
         this.signInForm.enable();
 
+        if (!response.status) {
+          // Error de conexión
+          this.alert = {
+            type: 'error',
+            message: 'auth.sign-in.error.connection',
+          };
+          this.showAlert = true;
+          return;
+        }
+
         if (response.status === 409) {
           // Redirigir al componente de reset password con el email como parámetro
           this._router.navigate(['/reset-password'], {
@@ -126,10 +136,17 @@ export class AuthSignInComponent implements OnInit {
           // Set the alert
           this.alert = {
             type: 'error',
-            message: response.error.message,
+            message: response.error.message || 'auth.sign-in.error.credentials',
           };
 
           // Show the alert
+          this.showAlert = true;
+        } else {
+          // Set the alert for other errors
+          this.alert = {
+            type: 'error',
+            message: 'auth.sign-in.error.server',
+          };
           this.showAlert = true;
         }
       },

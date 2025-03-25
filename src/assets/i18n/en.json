@@ -22,7 +22,13 @@
             },
             "remember-me": "Remember Me",
             "forgot-password": "Forgot Your Password?",
-            "submit": "Sign In"
+            "submit": "Sign In",
+            "error": {
+                "connection": "Could not connect to the server. Please check your internet connection.",
+                "credentials": "The entered credentials are incorrect",
+                "server": "Server error. Please try again later.",
+                "unknown": "An unexpected error has occurred. Please try again."
+            }
         },
         "sign-up": {
             "sponsor-information": "Sponsor Information",
