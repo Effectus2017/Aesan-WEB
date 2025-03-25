@@ -72,8 +72,16 @@ export class AuthSignInComponent implements OnInit {
     // Register the navigation component
     this._fuseNavigationService.registerComponent('authSignIn', this);
 
-    // Obtener el email de los query params
+    // Obtener el email y error de los query params
     this._activatedRoute.queryParams.subscribe(params => {
+      if (params['error'] === 'connection') {
+        this.alert = {
+          type: 'error',
+          message: 'auth.sign-in.error.connection'
+        };
+        this.showAlert = true;
+      }
+
       if (!params['email']) {
         return;
       }

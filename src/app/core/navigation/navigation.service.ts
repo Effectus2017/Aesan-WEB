@@ -68,15 +68,12 @@ export class NavigationService implements OnDestroy {
   get(): Observable<Navigation> {
     return this._httpClient.get<Navigation>('api/common/navigation').pipe(
       map((navigation) => {
-        console.log('Navegación obtenida, ajustando por rol...');
         return this.adjustNavigationByUserRole(navigation);
       }),
       tap((navigation) => {
-        console.log('Emitiendo nueva navegación...');
         this._navigation.next(navigation);
       }),
       catchError((error) => {
-        console.error('Error al obtener la navegación:', error);
         throw error;
       })
     );
@@ -86,18 +83,14 @@ export class NavigationService implements OnDestroy {
    * Reload navigation
    */
   reloadNavigation(): void {
-    console.log('Iniciando recarga de navegación...');
     const userRole = this._authService.getUserRole();
-    console.log('Rol actual del usuario:', userRole);
 
     if (!userRole) {
-      console.log('No hay rol de usuario, omitiendo recarga de navegación');
       return;
     }
 
     this.get().pipe(
       catchError((error) => {
-        console.error('Error al recargar la navegación:', error);
         return [];
       })
     ).subscribe({
@@ -111,8 +104,6 @@ export class NavigationService implements OnDestroy {
     const userAgency = this._authService.getUserAgency();
     const userPrograms = this._authService.getUserPrograms();
 
-    console.log('Ajustando navegación para:', { userRole, userAgency, userPrograms });
-
     // Determinar el prefijo de la ruta basado en el rol y programa
     let prefix = this.getRoutePrefix(userRole, userPrograms);
 
@@ -120,7 +111,6 @@ export class NavigationService implements OnDestroy {
       return items
         .filter((item) => {
           const allowed = this.isItemAllowed(item, userRole);
-          console.log(`Item ${item.id}: ${allowed ? 'permitido' : 'no permitido'} para rol ${userRole}`);
           return allowed;
         })
         .map((item) => {
@@ -129,7 +119,6 @@ export class NavigationService implements OnDestroy {
             // Limpiar la ruta antes de agregar el prefijo
             const cleanLink = this.cleanRoute(newItem.link);
             newItem.link = `${prefix}${cleanLink}`;
-            console.log(`Ajustando link: ${item.link} -> ${newItem.link}`);
           }
           if (newItem.children) {
             newItem.children = adjustLinks(newItem.children);

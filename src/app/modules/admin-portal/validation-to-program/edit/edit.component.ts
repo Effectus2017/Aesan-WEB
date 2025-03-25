@@ -23,7 +23,7 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, handleFormControls } from 'app/shared/utils';
+import { compareByProperty, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -194,7 +194,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   }
 
   onSetForm(param: Agency) {
-    console.log(param);
+
     this.param = param;
     this.headerConfig.formGroup.patchValue({
       name: param.name || null,
