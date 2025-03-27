@@ -8,10 +8,12 @@
       <!-- Logo -->
       <div class="flex items-center justify-center mt-2">
         <img
-          [lazyImg]="'assets/images/logo/logo.png'"
           [src]="'assets/images/logo/logo.png'"
           alt="Logo"
-
+          class="w-auto"
+          fetchpriority="high"
+          loading="eager"
+          decoding="sync"
         />
       </div>
 
@@ -35,8 +37,15 @@
 
         <mat-form-field class="w-full" data-cy="password-field">
           <mat-label>{{ 'auth.sign-in.password.label' | transloco }}</mat-label>
-          <input id="password" matInput type="password" [formControlName]="'password'" #passwordField placeholder="{{ 'auth.sign-in.password.placeholder' | transloco }}" data-cy="password-input" />
-          <button mat-icon-button type="button" (click)="passwordField.type === 'password' ? (passwordField.type = 'text') : (passwordField.type = 'password')" matSuffix>
+          <input id="password" matInput type="password" [formControlName]="'password'" #passwordField placeholder="{{ 'auth.sign-in.password.placeholder' | transloco }}" data-cy="password-input" autocomplete="current-password" />
+          <button
+            mat-icon-button
+            type="button"
+            (click)="passwordField.type === 'password' ? (passwordField.type = 'text') : (passwordField.type = 'password')"
+            matSuffix
+            [title]="passwordField.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            [attr.aria-label]="passwordField.type === 'password' ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+          >
             <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
             <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
           </button>

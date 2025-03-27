@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 
 // Caché global para almacenar las imágenes ya cargadas
 const IMAGE_CACHE = new Map<string, string>();
-const LOAD_TIMEOUT = 3000; // 3 segundos de timeout para la carga
+const LOAD_TIMEOUT = 1500; // 1.5 segundos de timeout para la carga
 
 @Directive({
     selector: '[lazyImg]',
@@ -11,7 +11,6 @@ const LOAD_TIMEOUT = 3000; // 3 segundos de timeout para la carga
 })
 export class LazyImgDirective implements OnInit, OnDestroy {
     @Input() lazyImg: string;
-    private placeholderSrc = 'assets/images/placeholder.png';
     private observer: IntersectionObserver;
     private loadTimeout: number;
 
@@ -30,16 +29,11 @@ export class LazyImgDirective implements OnInit, OnDestroy {
 
         // Configurar loading lazy nativo del navegador
         img.loading = 'lazy';
+        img.decoding = 'async'; // Usar decodificación asíncrona
 
-        // Si no hay URL de imagen, usar placeholder
+        // Si no hay URL de imagen, no hacer nada
         if (!this.lazyImg) {
-            img.src = this.placeholderSrc;
             return;
-        }
-
-        // Establecer placeholder mientras carga
-        if (img.src !== this.lazyImg) {
-            img.src = this.placeholderSrc;
         }
 
         // Verificar si la imagen ya está en caché
@@ -60,8 +54,8 @@ export class LazyImgDirective implements OnInit, OnDestroy {
             });
         }, {
             // Configuración para cargar la imagen un poco antes de que sea visible
-            rootMargin: '50px',
-            threshold: 0.1
+            rootMargin: '100px', // Aumentar el margen para precargar antes
+            threshold: 0.01 // Reducir el umbral para cargar más temprano
         });
 
         this.observer.observe(img);
@@ -91,7 +85,6 @@ export class LazyImgDirective implements OnInit, OnDestroy {
         this.loadTimeout = window.setTimeout(() => {
             tempImage.src = ''; // Cancelar la carga
             console.warn(`Timeout loading image: ${this.lazyImg}`);
-            img.src = this.placeholderSrc;
         }, LOAD_TIMEOUT);
 
         // Cuando la imagen termine de cargar
@@ -113,8 +106,6 @@ export class LazyImgDirective implements OnInit, OnDestroy {
                 window.clearTimeout(this.loadTimeout);
             }
             console.error(`Error loading image: ${this.lazyImg}`);
-            // Mantener el placeholder en caso de error
-            img.src = this.placeholderSrc;
         };
 
         // Iniciar la carga

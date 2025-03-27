@@ -175,11 +175,27 @@ export class UsersService {
   }
 
   /**
-   * Olvida la contraseña de un usuario, para uso del usuario
+   * Actualiza la contraseña temporal de un usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  updateTemporalPassword(requestParameters: QueryParameters): Observable<any> {
+    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/update-temporal-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
+   * Por si el usuario se olvida su contraseña, se le envia un correo con la contraseña temporal
    * @param requestParameters Parámetros de la solicitud
    * @returns Observable<any>
    */
   forgotPassword(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/forgot-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
+   * Limpia el estado del usuario actual
+   */
+  clearState(): void {
+    this._user.next(null);
   }
 }

@@ -122,7 +122,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       // ¿Se coordinó cita con el auspiciador?
       appointmentCoordinated: [null, Validators.required],
       // Fecha de Cita
-      appointmentDate: [null, Validators.required],
+      appointmentDate: [null],
       // Justificación de Rechazo
       rejectionJustification: [null],
     }),
@@ -137,6 +137,19 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   constructor() {}
 
   ngOnInit() {
+    // Agregar el observador para appointmentCoordinated
+    this.headerConfig.formGroup.get('appointmentCoordinated').valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((value: boolean) => {
+        const appointmentDateControl = this.headerConfig.formGroup.get('appointmentDate');
+        if (value === true) {
+          appointmentDateControl.setValidators([Validators.required]);
+        } else {
+          appointmentDateControl.clearValidators();
+        }
+        appointmentDateControl.updateValueAndValidity();
+      });
+
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
     if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listCities = result.body.data;
@@ -244,8 +257,8 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    // Obtener los valores del formulario
-    const formValues = this.headerConfig.formGroup.value;
+    // Obtener los valores del formulario incluyendo los campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
 
     const userId = this._authService.getUserId();
 

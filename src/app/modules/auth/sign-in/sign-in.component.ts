@@ -13,9 +13,7 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
-import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { FuseCardComponent } from '@fuse/components/card';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
@@ -38,9 +36,7 @@ import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
     MatCheckboxModule,
     MatProgressSpinnerModule,
     TranslocoModule,
-    LanguagesComponent,
-    LazyImgDirective,
-    OptimizeImagePipe
+    LanguagesComponent
 ],
 })
 export class AuthSignInComponent implements OnInit {
@@ -131,7 +127,7 @@ export class AuthSignInComponent implements OnInit {
 
         if (response.status === 409) {
           // Redirigir al componente de reset password con el email como parámetro
-          this._router.navigate(['/reset-password'], {
+          this._router.navigate(['/update-password'], {
             queryParams: { email: this.signInForm.get('email').value },
           });
           return;

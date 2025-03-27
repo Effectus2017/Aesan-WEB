@@ -296,46 +296,54 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     // Llamar al servicio para actualizar
     this._agencyService.updateAgency(userAgencyRequest, queryParams).subscribe({
       next: (response) => {
-        if (response.body) {
-          this._fuseConfirmationService.open({
-            title: this._translocoService.translate('dialog.success.title'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:check-circle',
-              color: 'success',
-            },
-            message: this._translocoService.translate('dialog.success.message'),
-            actions: {
-              confirm: {
-                label: this._translocoService.translate('dialog.success.confirm'),
+
+        switch (response.status) {
+          case 200:
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('dialog.success.title'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:check-circle',
+                color: 'success',
               },
-              cancel: {
-                show: false,
+              message: this._translocoService.translate('dialog.success.message'),
+            });
+            break;
+          case 400:
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('dialog.error.title'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-circle',
+                color: 'error',
               },
-            },
-          });
-        } else {
-          this._fuseConfirmationService.open({
+              message: this._translocoService.translate('dialog.error.message'),
+            });
+            break;
+          default:
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('dialog.error.title'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-circle',
+                color: 'error',
+              },
+              message: this._translocoService.translate('dialog.error.message'),
+            });
+            break;
+        }
+
+      },
+      error: (error) => {
+        this._fuseConfirmationService.open({
             title: this._translocoService.translate('dialog.error.title'),
             icon: {
               show: true,
-              name: 'heroicons_outline:x-circle',
+              name: 'heroicons_outline:exclamation-circle',
               color: 'error',
             },
-            message: this._translocoService.translate('dialog.error.message'),
-            actions: {
-              confirm: {
-                label: this._translocoService.translate('dialog.error.confirm'),
-              },
-              cancel: {
-                show: false,
-              },
-            },
-          });
-        }
-      },
-      error: (error) => {
-        console.error('Error al actualizar la agencia:', error);
+          message: this._translocoService.translate('dialog.error.message'),
+        });
         this.enableEditableFormControls();
       },
       complete: () => {

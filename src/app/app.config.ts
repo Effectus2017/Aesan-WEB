@@ -3,7 +3,7 @@ import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject } from 
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading } from '@angular/router';
+import { PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading, withRouterConfig } from '@angular/router';
 import { provideFuse } from '@fuse';
 import { provideTransloco, TranslocoService } from '@ngneat/transloco';
 import { firstValueFrom } from 'rxjs';
@@ -14,17 +14,22 @@ import { mockApiServices } from 'app/mock-api';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { isNullOrUndefinedEmptyStringNullArray } from './shared/utils';
 import { provideToastr, ToastrModule } from 'ngx-toastr';
-import { cacheInterceptor } from './shared/cache';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideHttpClient(
-      withInterceptors([
-        cacheInterceptor
-      ])
+    provideHttpClient(),
+
+    provideRouter(
+        appRoutes,
+        withPreloading(PreloadAllModules),
+        withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
+        withRouterConfig({
+            onSameUrlNavigation: 'reload',
+            paramsInheritanceStrategy: 'always',
+            urlUpdateStrategy: 'eager'
+          })
     ),
-    provideRouter(appRoutes, withPreloading(PreloadAllModules), withInMemoryScrolling({ scrollPositionRestoration: 'enabled' })),
 
     // Material Date Adapter
     {

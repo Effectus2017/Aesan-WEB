@@ -200,8 +200,7 @@
             "new-password": {
                 "label": "Nueva Contraseña",
                 "placeholder": "Ingresa tu nueva contraseña",
-                "required": "La nueva contraseña es requerida",
-                "min-length": "Se requiere un mínimo de 8 caracteres"
+                "required": "La nueva contraseña es requerida"
             },
             "confirm-password": {
                 "label": "Confirmar Contraseña",
@@ -209,7 +208,15 @@
                 "required": "La confirmación de contraseña es requerida"
             },
             "passwords-must-match": "Las contraseñas deben coincidir",
-            "submit": "Cambiar Contraseña"
+            "submit": "Cambiar Contraseña",
+            "error": {
+                "not-updated": "No se pudo actualizar la contraseña. Por favor, verifica que la contraseña temporal sea correcta e intenta nuevamente.",
+                "invalid-temp-password": "La contraseña temporal ingresada no es válida",
+                "server-error": "Ha ocurrido un error en el servidor. Por favor, intenta nuevamente más tarde."
+            },
+            "success": {
+                "password-updated": "Tu contraseña ha sido actualizada exitosamente"
+            }
         }
     },
     "validation-to-program": {
@@ -343,7 +350,7 @@
     "dialog": {
         "success": {
             "title": "Éxito",
-            "message": "La agencia ha sido aprobada con éxito.",
+            "message": "La agencia ha sido actualizada con éxito.",
             "confirm": "Aceptar"
         },
         "error": {
@@ -648,7 +655,7 @@
             "title": "Editar Usuario",
             "personal-info": "Datos Personales",
             "access-info": "Datos de Acceso",
-            "password-section": "Editar contraseña",
+            "password-section": "Editar Contraseña",
             "email": {
                 "label": "Correo Electrónico",
                 "placeholder": "Ingrese el correo electrónico",
@@ -656,13 +663,13 @@
                 "email": "Debe ingresar un correo electrónico válido"
             },
             "username": {
-                "label": "Nombre de usuario",
+                "label": "Nombre de Usuario",
                 "placeholder": "Ingrese el nombre de usuario",
                 "required": "El nombre de usuario es requerido",
                 "email": "Debe ingresar un correo electrónico válido"
             },
             "role": {
-                "label": "Roles",
+                "label": "Rol",
                 "placeholder": "Seleccione un rol",
                 "required": "El rol es requerido"
             },
@@ -684,11 +691,12 @@
                 "required": "La confirmación de la contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
-            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Ademas solo usando el boton 'Actualizar contraseña', se actualizara la contraseña del usuario.",
+            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Además, solo usando el botón 'Actualizar Contraseña', se actualizará la contraseña del usuario.",
             "buttons": {
                 "cancel": "Cancelar",
                 "update": "Actualizar",
-                "update-password": "Actualizar contraseña"
+                "update-password": "Actualizar Contraseña",
+                "force-password": "Forzar Cambio de Contraseña"
             },
             "firstName": {
                 "label": "Nombre",
@@ -696,17 +704,24 @@
                 "required": "El nombre es requerido"
             },
             "middleName": {
-                "label": "Segundo nombre",
+                "label": "Segundo Nombre",
                 "placeholder": "Ingrese el segundo nombre"
             },
             "fatherLastName": {
-                "label": "Apellido paterno",
+                "label": "Apellido Paterno",
                 "placeholder": "Ingrese el apellido paterno",
                 "required": "El apellido paterno es requerido"
             },
             "motherLastName": {
-                "label": "Apellido materno",
+                "label": "Apellido Materno",
                 "placeholder": "Ingrese el apellido materno"
+            },
+            "messages": {
+                "force-password": {
+                    "title": "Cambio de Contraseña",
+                    "success": "Se ha generado una nueva contraseña temporal y se ha enviado por correo electrónico al usuario.",
+                    "error": "Ha ocurrido un error al generar la contraseña temporal."
+                }
             }
         },
         "list": {
@@ -731,10 +746,10 @@
             }
         },
         "add": {
-            "title": "Agregar usuario",
+            "title": "Agregar Usuario",
             "personal-info": "Datos Personales",
             "username": {
-                "label": "Nombre de usuario",
+                "label": "Nombre de Usuario",
                 "placeholder": "Ingrese el nombre de usuario",
                 "required": "El nombre de usuario es requerido",
                 "email": "Debe ingresar un correo electrónico válido"
@@ -746,14 +761,14 @@
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
             "new-password": {
-                "label": "Repita la contraseña",
+                "label": "Repetir Contraseña",
                 "placeholder": "Ingrese la contraseña nuevamente",
                 "required": "La confirmación de contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
             "password-requirements": "La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.",
             "email": {
-                "label": "Correo electrónico",
+                "label": "Correo Electrónico",
                 "placeholder": "Ingrese el correo electrónico",
                 "required": "El correo electrónico es requerido",
                 "email": "Debe ingresar un correo electrónico válido"
@@ -764,16 +779,16 @@
                 "required": "El nombre es requerido"
             },
             "middleName": {
-                "label": "Segundo nombre",
+                "label": "Segundo Nombre",
                 "placeholder": "Ingrese el segundo nombre"
             },
             "fatherLastName": {
-                "label": "Apellido paterno",
+                "label": "Apellido Paterno",
                 "placeholder": "Ingrese el apellido paterno",
                 "required": "El apellido paterno es requerido"
             },
             "motherLastName": {
-                "label": "Apellido materno",
+                "label": "Apellido Materno",
                 "placeholder": "Ingrese el apellido materno"
             },
             "role": {
@@ -784,7 +799,7 @@
             "submit": "Guardar",
             "back": "Volver",
             "agency": {
-                "label": "Agencia",
+                "label": "Agencia a la que pertenece",
                 "placeholder": "Seleccione una agencia",
                 "required": "La agencia es requerida"
             }

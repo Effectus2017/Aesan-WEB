@@ -33,6 +33,7 @@ export default [
         resolve: {
           data: initialEditUsersResolver,
         },
+        runGuardsAndResolvers: 'always',
       },
       {
         path: 'roles',

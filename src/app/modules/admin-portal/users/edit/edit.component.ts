@@ -23,6 +23,8 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { TranslocoService } from '@ngneat/transloco';
 
 @Component({
   selector: 'app-users-edit',
@@ -53,6 +55,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _authService: AuthService = inject(AuthService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _translocoService = inject(TranslocoService);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
@@ -131,6 +135,14 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     this._agencyService.agenciesList$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
         this.listAgencies = result.body;
+
+        if (this.user) {
+          const agency = this.listAgencies.find((agency: any) => agency.id === this.user.agencyId);
+          this.headerConfig.formGroup.controls.datosPersonales.patchValue({
+            agency: agency,
+          });
+        }
+
         // Mark for check
         this._changeDetectorRef.markForCheck();
       });
@@ -173,21 +185,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       firstName: this.user.firstName,
       middleName: this.user.middleName,
       fatherLastName: this.user.fatherLastName,
-      motherLastName: this.user.motherLastName,
+      motherLastName: this.user.motherLastName
     });
 
      this.disableEditableFormControls();
-  }
-
-  getWithQueryString() {
-    this.route.paramMap.subscribe((params) => {
-      if (params.get('id')) {
-        if (!isNullOrUndefinedEmptyStringNullArray(params.get('id'))) {
-          this.id = params.get('id');
-          this.getById();
-        }
-      }
-    });
   }
 
   getById() {
@@ -259,7 +260,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.update(_model, requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
-          this._usersService.getUserByIdFromDb(requestParameters).subscribe();
+          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
         }
       },
@@ -282,12 +283,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.changePassword(requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
+          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
         }
       },
       error: (error) => {},
       complete: () => {
-
       },
     });
   }
@@ -319,9 +320,50 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     };
 
     this._usersService.forcePassword(requestParameters).subscribe({
-      next: (result: any) => {},
-      error: (error) => {},
-      complete: () => {},
+      next: (result: any) => {
+        if (result.status === 200) {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.edit.messages.force-password.title'),
+            message: this._translocoService.translate('users.edit.messages.force-password.success'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success'
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('common.accept'),
+                color: 'primary'
+              },
+              cancel: {
+                show: false
+              }
+            }
+          });
+        }
+      },
+      error: (error) => {
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.edit.messages.force-password.title'),
+          message: this._translocoService.translate('users.edit.messages.force-password.error'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('common.accept'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      }
     });
   }
 

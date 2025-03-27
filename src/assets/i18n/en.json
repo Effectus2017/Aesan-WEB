@@ -207,7 +207,15 @@
                 "required": "Password confirmation is required"
             },
             "passwords-must-match": "Passwords must match",
-            "submit": "Change Password"
+            "submit": "Change Password",
+            "error": {
+                "not-updated": "Password could not be updated. Please verify that the temporary password is correct and try again.",
+                "invalid-temp-password": "The temporary password entered is not valid",
+                "server-error": "A server error has occurred. Please try again later."
+            },
+            "success": {
+                "password-updated": "Your password has been successfully updated"
+            }
         }
     },
     "validation-to-program": {
@@ -341,7 +349,7 @@
     "dialog": {
         "success": {
             "title": "Success",
-            "message": "The agency has been approved successfully.",
+            "message": "The agency has been updated successfully.",
             "confirm": "Accept"
         },
         "error": {
@@ -704,6 +712,13 @@
             "motherLastName": {
                 "label": "Mother's Last Name",
                 "placeholder": "Enter mother's last name"
+            },
+            "messages": {
+                "force-password": {
+                    "title": "Password Change",
+                    "success": "A new temporary password has been generated and sent to the user's email.",
+                    "error": "An error occurred while generating the temporary password."
+                }
             }
         },
         "list": {
@@ -795,7 +810,7 @@
                 "placeholder": "Enter mother's last name"
             },
             "agency": {
-                "label": "Agency",
+                "label": "Agency to which the user belongs",
                 "placeholder": "Select an agency",
                 "required": "Agency is required"
             }
