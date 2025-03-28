@@ -677,6 +677,9 @@
                 "required": "Password is required",
                 "min-length": "Minimum 8 characters required"
             },
+            "password": {
+                "toggle-visibility": "Show password"
+            },
             "new-password": {
                 "label": "New Password",
                 "placeholder": "Enter new password",
@@ -693,7 +696,8 @@
             "buttons": {
                 "cancel": "Cancel",
                 "update": "Update",
-                "update-password": "Update Password"
+                "update-password": "Update Password",
+                "force-password": "Force Password Change"
             },
             "firstName": {
                 "label": "First Name",
@@ -719,6 +723,20 @@
                     "success": "A new temporary password has been generated and sent to the user's email.",
                     "error": "An error occurred while generating the temporary password."
                 }
+            },
+            "isActive": {
+                "label": "Active User"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Temporary Password Activated"
+            },
+            "emailConfirmed": {
+                "label": "Email Confirmed"
+            },
+            "avatar": {
+                "title": "Avatar",
+                "alt": "Avatar of the user",
+                "select": "Select Avatar"
             }
         },
         "list": {
@@ -731,7 +749,11 @@
                 "fatherLastName": "Last Name",
                 "email": "Email",
                 "userName": "Username",
-                "roles": "Role"
+                "roles": "Role",
+                "avatar": "Avatar",
+                "isActive": "Active",
+                "isTemporalPasswordActived": "Temporary Password Activated",
+                "emailConfirmed": "Email Confirmed"
             },
             "delete": {
                 "title": "Delete User",
@@ -740,6 +762,10 @@
                 "cancel": "Cancel",
                 "success": "User successfully deleted.",
                 "error": "An error occurred while deleting the user."
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete"
             }
         },
         "add": {
@@ -807,12 +833,22 @@
             },
             "motherLastName": {
                 "label": "Mother's Last Name",
-                "placeholder": "Enter mother's last name"
+                "placeholder": "Enter mother's last name",
+                "required": "Mother's last name is required"
             },
             "agency": {
                 "label": "Agency to which the user belongs",
                 "placeholder": "Select an agency",
                 "required": "Agency is required"
+            },
+            "isActive": {
+                "label": "Active User"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Temporary Password Activated"
+            },
+            "emailConfirmed": {
+                "label": "Email Confirmed"
             }
         }
     },

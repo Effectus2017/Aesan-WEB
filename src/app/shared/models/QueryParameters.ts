@@ -22,5 +22,6 @@ export interface QueryParameters {
   newPassword?: string;
   temporaryPassword?: string;
   email?: string;
+  token?: string;
 }
 

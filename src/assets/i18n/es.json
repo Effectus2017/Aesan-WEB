@@ -679,6 +679,9 @@
                 "required": "La contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
+            "password": {
+                "toggle-visibility": "Mostrar contraseña"
+            },
             "new-password": {
                 "label": "Nueva Contraseña",
                 "placeholder": "Ingrese la nueva contraseña",
@@ -722,6 +725,20 @@
                     "success": "Se ha generado una nueva contraseña temporal y se ha enviado por correo electrónico al usuario.",
                     "error": "Ha ocurrido un error al generar la contraseña temporal."
                 }
+            },
+            "isActive": {
+                "label": "Usuario Activo"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Contraseña Temporal Activada"
+            },
+            "emailConfirmed": {
+                "label": "Correo Electrónico Confirmado"
+            },
+            "avatar": {
+                "title": "Foto de Perfil",
+                "alt": "Foto de perfil del usuario",
+                "select": "Seleccionar Foto de Perfil"
             }
         },
         "list": {
@@ -732,9 +749,12 @@
             "columns": {
                 "firstName": "Nombre",
                 "fatherLastName": "Apellido",
-                "email": "Correo electrónico",
-                "userName": "Nombre de usuario",
-                "roles": "Rol"
+                "email": "Correo Electrónico",
+                "roles": "Roles",
+                "avatar": "Foto de Perfil",
+                "isActive": "Activo",
+                "isTemporalPasswordActived": "Contraseña Temporal Activada",
+                "emailConfirmed": "Correo Electrónico Confirmado"
             },
             "delete": {
                 "title": "Eliminar Usuario",
@@ -743,6 +763,10 @@
                 "cancel": "Cancelar",
                 "success": "Usuario eliminado exitosamente.",
                 "error": "Ha ocurrido un error al eliminar el usuario."
+            },
+            "actions": {
+                "edit": "Editar",
+                "delete": "Eliminar"
             }
         },
         "add": {
@@ -789,7 +813,8 @@
             },
             "motherLastName": {
                 "label": "Apellido Materno",
-                "placeholder": "Ingrese el apellido materno"
+                "placeholder": "Ingrese el apellido materno",
+                "required": "El apellido materno es requerido"
             },
             "role": {
                 "label": "Rol",

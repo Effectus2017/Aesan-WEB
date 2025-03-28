@@ -20,13 +20,15 @@ export interface UserToken {
     middleName?: string;
     fatherLastName?: string;
     motherLastName?: string;
-    email?: string;
-    emailConfirmed?: boolean;
-    imageURL?: string;
     userName?: string;
-    roles?: string[];
+    email?: string;
     password?: string;
-    agencyId?: string;
+    roles?: string[];
+    imageURL?: string;
+    agencyId?: number;
+    isActive?: boolean;
+    isTemporalPasswordActived?: boolean;
+    emailConfirmed?: boolean;
   }
 
   export interface Token {

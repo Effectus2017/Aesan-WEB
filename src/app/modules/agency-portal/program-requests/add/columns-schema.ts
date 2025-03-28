@@ -1,32 +1,34 @@
-export const SCHOOLS_COLUMNS_SCHEMA = [
+import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
+
+export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.schools.name',
   },
   {
     key: 'address',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.schools.address',
   },
   {
     key: 'city',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.schools.city',
   },
   {
     key: 'zipCode',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.schools.zipCode',
   },
   {
     key: 'level',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.schools.level',
   },
   {
     key: 'actions',
-    type: 'button',
+    type: 'button' as const,
     label: 'global.table.actions',
     buttons: [
       {
@@ -41,25 +43,25 @@ export const SCHOOLS_COLUMNS_SCHEMA = [
   },
 ];
 
-export const INCOME_SOURCES_COLUMNS_SCHEMA = [
+export const INCOME_SOURCES_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'source',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.incomeSources.source',
   },
   {
     key: 'year',
-    type: 'text',
+    type: 'text' as const,
     label: 'global.table.incomeSources.year',
   },
   {
     key: 'amount',
-    type: 'number',
+    type: 'text' as const,
     label: 'global.table.incomeSources.amount',
   },
   {
     key: 'actions',
-    type: 'button',
+    type: 'button' as const,
     label: 'global.table.actions',
     buttons: [
       {

@@ -1,4 +1,6 @@
-export const AGENCY_DASHBOARD_COLUMNS_SCHEMA = [
+import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
+
+export const AGENCY_DASHBOARD_COLUMNS_SCHEMA: ColumnSchema[] = [
     {
         key: 'nombre',
         type: 'text',

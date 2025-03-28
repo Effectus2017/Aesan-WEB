@@ -1,4 +1,6 @@
-export const PROGRAM_REQUESTS_COLUMNS_SCHEMA = [
+import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
+
+export const PROGRAM_REQUESTS_COLUMNS_SCHEMA: ColumnSchema[] = [
     {
         key: 'applicationNumber',
         label: 'program-requests.list.columns.title',

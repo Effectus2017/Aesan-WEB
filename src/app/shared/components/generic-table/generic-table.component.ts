@@ -61,9 +61,12 @@ export class GenericTableComponent implements OnInit {
    * Llama a la función onTableCheckChange del handler proporcionado.
    * @param event El evento de cambio del checkbox.
    * @param element El elemento de la fila que contiene el checkbox.
+   * @param key La clave o claves del valor a cambiar en el elemento.
    */
-  onCheckboxChange(event: MatCheckboxChange, element: any, key: string): void {
-    //this.handler.onTableCheckChange(event, element);
+  onCheckboxChange(event: MatCheckboxChange, element: any, key: string | string[]): void {
+    if (this.handler && this.handler.onTableCheckChange) {
+      this.handler.onTableCheckChange(event, element);
+    }
   }
 
   /**
@@ -97,4 +100,13 @@ export class GenericTableComponent implements OnInit {
     return Array.isArray(col.key) ? col.key[0] : col.key;
   }
 
+  /**
+   * Maneja el error cuando una imagen no se puede cargar
+   * @param event El evento de error
+   * @param defaultImage La imagen por defecto a mostrar
+   */
+  handleMissingImage(event: Event, defaultImage: string): void {
+    const imgElement = event.target as HTMLImageElement;
+    imgElement.src = defaultImage || 'assets/images/avatars/profile.png';
+  }
 }

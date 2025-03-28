@@ -6,15 +6,24 @@
   <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
     <div class="flex justify-center w-full p-8 py-4 rounded-full sm:justify-start">
       <img
-        title="Avatar"
+        title="{{ 'users.edit.avatar.title' | transloco }}"
         (click)="fileInput.click()"
         class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
         [src]="imageURL ?? 'assets/images/avatars/profile.png'"
-        alt="Profile"
+        [alt]="'users.edit.avatar.alt' | transloco"
         (error)="handleMissingImage($event)"
         data-cy="avatar-image"
       />
-      <input hidden onclick="this.value=null" (change)="onFileSelected($event)" #fileInput type="file" id="file" data-cy="file-input" />
+      <input
+        hidden
+        onclick="this.value=null"
+        (change)="onFileSelected($event)"
+        #fileInput
+        type="file"
+        id="file"
+        data-cy="file-input"
+        [attr.aria-label]="'users.edit.avatar.select' | transloco"
+      />
     </div>
 
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
@@ -24,28 +33,56 @@
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.firstName.label" | transloco }}</mat-label>
-              <input matInput formControlName="firstName" data-cy="name-input" [placeholder]="'users.edit.firstName.placeholder' | transloco" />
+              <input
+                matInput
+                formControlName="firstName"
+                data-cy="name-input"
+                [placeholder]="'users.edit.firstName.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.firstName.label' | transloco"
+                [title]="'users.edit.firstName.label' | transloco"
+              />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('firstName').hasError('required')">
                 {{ "users.edit.firstName.required" | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.middleName.label" | transloco }}</mat-label>
-              <input matInput formControlName="middleName" data-cy="middle-name-input" [placeholder]="'users.edit.middleName.placeholder' | transloco" />
+              <input
+                matInput
+                formControlName="middleName"
+                data-cy="middle-name-input"
+                [placeholder]="'users.edit.middleName.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.middleName.label' | transloco"
+                [title]="'users.edit.middleName.label' | transloco"
+              />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('middleName').hasError('required')">
                 {{ "users.edit.middleName.required" | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.fatherLastName.label" | transloco }}</mat-label>
-              <input matInput formControlName="fatherLastName" data-cy="father-last-name-input" [placeholder]="'users.edit.fatherLastName.placeholder' | transloco" />
+              <input
+                matInput
+                formControlName="fatherLastName"
+                data-cy="father-last-name-input"
+                [placeholder]="'users.edit.fatherLastName.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.fatherLastName.label' | transloco"
+                [title]="'users.edit.fatherLastName.label' | transloco"
+              />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('fatherLastName').hasError('required')">
                 {{ "users.edit.fatherLastName.required" | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.motherLastName.label" | transloco }}</mat-label>
-              <input matInput formControlName="motherLastName" data-cy="mother-last-name-input" [placeholder]="'users.edit.motherLastName.placeholder' | transloco" />
+              <input
+                matInput
+                formControlName="motherLastName"
+                data-cy="mother-last-name-input"
+                [placeholder]="'users.edit.motherLastName.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.motherLastName.label' | transloco"
+                [title]="'users.edit.motherLastName.label' | transloco"
+              />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('motherLastName').hasError('required')">
                 {{ "users.edit.motherLastName.required" | transloco }}
               </mat-error>
@@ -55,14 +92,27 @@
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
-              <input matInput formControlName="email" data-cy="email-input" [placeholder]="'users.edit.email.placeholder' | transloco" />
+              <input
+                matInput
+                formControlName="email"
+                data-cy="email-input"
+                [placeholder]="'users.edit.email.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.email.label' | transloco"
+                [title]="'users.edit.email.label' | transloco"
+              />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('required')">
                 {{ "users.edit.email.required" | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>
-              <mat-select formControlName="role" [placeholder]="'users.edit.role.placeholder' | transloco" [compareWith]="compare" data-cy="role-select">
+              <mat-select
+                formControlName="role"
+                [placeholder]="'users.edit.role.placeholder' | transloco"
+                [compareWith]="compare"
+                data-cy="role-select"
+                [attr.aria-label]="'users.edit.role.label' | transloco"
+              >
                 <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">
                   {{ _roles.name }}
                 </mat-option>
@@ -86,6 +136,26 @@
               </mat-error>
             </mat-form-field>
           </div>
+          @if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {
+          <!-- Nuevos checkboxes para estados del usuario -->
+          <div class="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-3">
+            <mat-checkbox formControlName="isActive" [attr.aria-label]="'users.edit.isActive.label' | transloco" data-cy="is-active-checkbox">
+              {{ "users.edit.isActive.label" | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox
+              formControlName="isTemporalPasswordActived"
+              [attr.aria-label]="'users.edit.isTemporalPasswordActived.label' | transloco"
+              data-cy="temporal-password-checkbox"
+            >
+              {{ "users.edit.isTemporalPasswordActived.label" | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox formControlName="emailConfirmed" [attr.aria-label]="'users.edit.emailConfirmed.label' | transloco" data-cy="email-confirmed-checkbox">
+              {{ "users.edit.emailConfirmed.label" | transloco }}
+            </mat-checkbox>
+          </div>
+          }
         </div>
         <div class="col-span-10 overflow-hidden">
           <div class="prose-sm prose">
@@ -108,10 +178,24 @@
                 #currentPassword
                 data-cy="current-password-input"
                 [placeholder]="'users.edit.current-password.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.current-password.label' | transloco"
+                [title]="'users.edit.current-password.label' | transloco"
+                autocomplete="current-password"
               />
-              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')"
+                matSuffix
+                [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                [title]="'users.edit.password.toggle-visibility' | transloco"
+              >
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('required')">
                 {{ "users.edit.current-password.required" | transloco }}
@@ -132,10 +216,24 @@
                 #newPassword
                 data-cy="new-password-input"
                 [placeholder]="'users.edit.new-password.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.new-password.label' | transloco"
+                [title]="'users.edit.new-password.label' | transloco"
+                autocomplete="new-password"
               />
-              <button mat-icon-button type="button" (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')" matSuffix>
-                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')"
+                matSuffix
+                [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                [title]="'users.edit.password.toggle-visibility' | transloco"
+              >
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('required')">
                 {{ "users.edit.new-password.required" | transloco }}
@@ -145,6 +243,7 @@
               </mat-error>
             </mat-form-field>
           </div>
+
           } @else if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {
           <!-- Si el usuario es administrador, se muestra el formulario de cambio de contraseña -->
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -160,10 +259,24 @@
                 #currentPassword
                 data-cy="current-password-input"
                 [placeholder]="'users.edit.current-password.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.current-password.label' | transloco"
+                [title]="'users.edit.current-password.label' | transloco"
+                autocomplete="new-password"
               />
-              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')"
+                matSuffix
+                [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                [title]="'users.edit.password.toggle-visibility' | transloco"
+              >
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('required')">
                 {{ "users.edit.current-password.required" | transloco }}
@@ -184,10 +297,23 @@
                 #newPasswordRepeat
                 data-cy="new-password-repeat-input"
                 [placeholder]="'users.edit.new-password-repeat.placeholder' | transloco"
+                [attr.aria-label]="'users.edit.new-password-repeat.label' | transloco"
+                [title]="'users.edit.new-password-repeat.label' | transloco"
               />
-              <button mat-icon-button type="button" (click)="newPasswordRepeat.type === 'password' ? (newPasswordRepeat.type = 'text') : (newPasswordRepeat.type = 'password')" matSuffix>
-                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              <button
+                mat-icon-button
+                type="button"
+                (click)="newPasswordRepeat.type === 'password' ? (newPasswordRepeat.type = 'text') : (newPasswordRepeat.type = 'password')"
+                matSuffix
+                [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                [title]="'users.edit.password.toggle-visibility' | transloco"
+              >
+                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
+                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('required')">
                 {{ "users.edit.new-password.required" | transloco }}
@@ -197,6 +323,7 @@
               </mat-error>
             </mat-form-field>
           </div>
+
           }
         </div>
         <div class="mt-1 text-md text-hint">{{ "users.edit.password-requirements" | transloco }}</div>

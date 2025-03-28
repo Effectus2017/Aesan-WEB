@@ -16,6 +16,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
@@ -39,6 +40,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
     MatButtonModule,
     MatSelectModule,
     MatIconModule,
+    MatCheckboxModule,
     TranslocoModule,
     GenericHeaderComponent
   ],
@@ -93,9 +95,12 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           firstName: new FormControl(null, Validators.required),
           middleName: new FormControl(null),
           fatherLastName: new FormControl(null, Validators.required),
-          motherLastName: new FormControl(null),
+          motherLastName: new FormControl(null, Validators.required),
           role: new FormControl(null, Validators.required),
           agency: new FormControl(null, Validators.required),
+          isActive: new FormControl(true),
+          isTemporalPasswordActived: new FormControl(true),
+          emailConfirmed: new FormControl(false),
         },
         {
           validators: this.onPassword.bind(this),
@@ -183,6 +188,9 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       password: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
       roles: [form.role.name],
       imageURL: this.imageURL,
+      isActive: form.isActive,
+      isTemporalPasswordActived: form.isTemporalPasswordActived,
+      emailConfirmed: form.emailConfirmed,
     };
 
     this._usersService.add(_model, requestParameters).subscribe({

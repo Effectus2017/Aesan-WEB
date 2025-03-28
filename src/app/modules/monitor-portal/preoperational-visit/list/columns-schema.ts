@@ -1,9 +1,11 @@
-export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA = [
+import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
+
+export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA: ColumnSchema[] = [
     {
         key: 'name',
         label: 'preoperational-visit.list.columns.agency',
         sortable: true,
-        type: 'text',
+        type: 'text' as const,
         searchable: true,
         visible: true
     },
@@ -11,7 +13,7 @@ export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA = [
         key: 'uieNumber',
         label: 'preoperational-visit.list.columns.uie',
         sortable: true,
-        type: 'text',
+        type: 'text' as const,
         searchable: true,
         visible: true
     },
@@ -19,7 +21,7 @@ export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA = [
         key: 'status.name',
         label: 'preoperational-visit.list.columns.status',
         sortable: true,
-        type: 'text',
+        type: 'text' as const,
         searchable: true,
         visible: true
     },
@@ -27,13 +29,13 @@ export const PREOPERATIONAL_VISIT_COLUMNS_SCHEMA = [
         key: 'rejectionJustification',
         label: 'preoperational-visit.list.columns.comments',
         sortable: true,
-        type: 'text',
+        type: 'text' as const,
         searchable: true,
         visible: true
     },
     {
         key: 'actions',
-        type: 'button',
+        type: 'button' as const,
         label: 'preoperational-visit.list.columns.actions',
         buttons: [
           {

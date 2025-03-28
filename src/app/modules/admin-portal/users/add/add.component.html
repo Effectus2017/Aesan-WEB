@@ -109,6 +109,7 @@
                 [placeholder]="'users.add.username.placeholder' | transloco"
                 data-cy="username-input"
                 [attr.aria-label]="'users.add.username.label' | transloco"
+                autocomplete="username"
               />
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('username').hasError('required')" data-cy="username-error">
                 {{ 'users.add.username.required' | transloco }}
@@ -151,6 +152,34 @@
               </mat-error>
             </mat-form-field>
           </div>
+
+          <!-- Nuevos checkboxes para estados del usuario -->
+          <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-3">
+            <mat-checkbox
+              formControlName="isActive"
+              [attr.aria-label]="'users.add.isActive.label' | transloco"
+              data-cy="is-active-checkbox"
+            >
+              {{ 'users.add.isActive.label' | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox
+              formControlName="isTemporalPasswordActived"
+              [attr.aria-label]="'users.add.isTemporalPasswordActived.label' | transloco"
+              data-cy="temporal-password-checkbox"
+            >
+              {{ 'users.add.isTemporalPasswordActived.label' | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox
+              formControlName="emailConfirmed"
+              [attr.aria-label]="'users.add.emailConfirmed.label' | transloco"
+              data-cy="email-confirmed-checkbox"
+            >
+              {{ 'users.add.emailConfirmed.label' | transloco }}
+            </mat-checkbox>
+          </div>
+
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
             <mat-form-field class="flex-auto" data-cy="current-password-field">
               <mat-label>{{ 'users.add.current-password.label' | transloco }}</mat-label>
@@ -164,6 +193,7 @@
                 #currentPassword
                 data-cy="current-password-input"
                 [attr.aria-label]="'users.add.current-password.label' | transloco"
+                autocomplete="current-password"
               />
 
               <button
@@ -197,6 +227,7 @@
                 #newPassword
                 data-cy="new-password-input"
                 [attr.aria-label]="'users.add.new-password.label' | transloco"
+                autocomplete="new-password"
               />
 
               <button

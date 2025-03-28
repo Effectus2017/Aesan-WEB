@@ -1,4 +1,6 @@
-export const COLUMNS_SCHEMA = [
+import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
+
+export const COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
@@ -22,7 +24,7 @@ export const COLUMNS_SCHEMA = [
   {
     key: ['user.firstName', 'user.fatherLastName'],
     type: 'combined-text',
-    keys: ['user.firstName', 'user.fatherLastName'], //
+    keys: ['user.firstName', 'user.fatherLastName'],
     label: 'validation-to-program.list.table.columns.createdBy'
   },
   {
@@ -38,7 +40,7 @@ export const COLUMNS_SCHEMA = [
   {
     key: ['monitor.firstName', 'monitor.fatherLastName'],
     type: 'combined-text',
-    keys: ['monitor.firstName', 'monitor.fatherLastName'], //
+    keys: ['monitor.firstName', 'monitor.fatherLastName'],
     label: 'validation-to-program.list.table.columns.assignedTo'
   },
   {

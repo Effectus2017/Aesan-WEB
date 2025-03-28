@@ -25,6 +25,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-users-edit',
@@ -43,6 +44,7 @@ import { TranslocoService } from '@ngneat/transloco';
     MatIconModule,
     TranslocoModule,
     GenericHeaderComponent,
+    MatCheckboxModule,
   ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -98,6 +100,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         motherLastName: new FormControl(null),
         role: new FormControl(null, Validators.required),
         agency: new FormControl(null, Validators.required),
+        isActive: new FormControl(null),
+        isTemporalPasswordActived: new FormControl(null),
+        emailConfirmed: new FormControl(null),
       }),
       password: this._formBuilder.group(
         {
@@ -185,7 +190,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       firstName: this.user.firstName,
       middleName: this.user.middleName,
       fatherLastName: this.user.fatherLastName,
-      motherLastName: this.user.motherLastName
+      motherLastName: this.user.motherLastName,
+      isActive: this.user.isActive,
+      isTemporalPasswordActived: this.user.isTemporalPasswordActived,
+      emailConfirmed: this.user.emailConfirmed,
     });
 
      this.disableEditableFormControls();
@@ -255,6 +263,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       imageURL: this.imageURL,
       roles: [form.role.name],
       agencyId: form.agency.id,
+      isActive: form.isActive,
+      isTemporalPasswordActived: form.isTemporalPasswordActived,
+      emailConfirmed: form.emailConfirmed,
     };
 
     this._usersService.update(_model, requestParameters).subscribe({
