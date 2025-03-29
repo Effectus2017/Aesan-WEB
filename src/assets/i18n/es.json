@@ -217,6 +217,20 @@
             "success": {
                 "password-updated": "Tu contraseña ha sido actualizada exitosamente"
             }
+        },
+        "forgot-password": {
+            "title": "Recuperar Contraseña",
+            "subtitle": "Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña",
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingresa tu correo electrónico",
+                "required": "El correo electrónico es requerido",
+                "invalid": "Por favor ingresa un correo electrónico válido"
+            },
+            "submit": "Enviar Enlace",
+            "back-to-login": "Volver a Iniciar Sesión",
+            "success": "Se ha enviado un enlace de restablecimiento. Si estás registrado en el sistema, recibirás un correo electrónico con instrucciones.",
+            "error": "No se pudo procesar la solicitud. Por favor, verifica el correo electrónico e intenta nuevamente."
         }
     },
     "validation-to-program": {
@@ -680,7 +694,25 @@
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
             "password": {
-                "toggle-visibility": "Mostrar contraseña"
+                "toggle-visibility": "Mostrar contraseña",
+                "success": {
+                    "title": "Contraseña actualizada",
+                    "message": "Contraseña actualizada exitosamente"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error al actualizar la contraseña"
+                },
+                "reset": {
+                    "success": {
+                        "title": "Contraseña restablecida",
+                        "message": "Contraseña restablecida exitosamente"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "Error al restablecer la contraseña"
+                    }
+                }
             },
             "new-password": {
                 "label": "Nueva Contraseña",
@@ -724,6 +756,16 @@
                     "title": "Cambio de Contraseña",
                     "success": "Se ha generado una nueva contraseña temporal y se ha enviado por correo electrónico al usuario.",
                     "error": "Ha ocurrido un error al generar la contraseña temporal."
+                },
+                "avatar": {
+                    "title": "Avatar",
+                    "success": "Avatar actualizado exitosamente",
+                    "error": "Error al actualizar el avatar"
+                },
+                "upload": {
+                    "title": "Subida de imagen",
+                    "success": "Imagen subida exitosamente",
+                    "error": "Error al subir la imagen"
                 }
             },
             "isActive": {
@@ -827,6 +869,16 @@
                 "label": "Agencia a la que pertenece",
                 "placeholder": "Seleccione una agencia",
                 "required": "La agencia es requerida"
+            }
+        },
+        "update": {
+            "success": {
+                "title": "Usuario actualizado",
+                "message": "Usuario actualizado exitosamente"
+            },
+            "error": {
+                "title": "Error",
+                "message": "Error al actualizar el usuario"
             }
         }
     },

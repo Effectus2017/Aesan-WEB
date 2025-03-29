@@ -187,12 +187,30 @@ export class UsersService {
   }
 
   /**
-   * Por si el usuario se olvida su contraseña, se le envia un correo con la contraseña temporal
-   * @param requestParameters Parámetros de la solicitud
-   * @returns Observable<any>
+   * Inicia el proceso de recuperación de contraseña
+   * @param queryParameters Contiene el correo electrónico del usuario
+   * @returns Observable con el resultado de la operación
    */
-  forgotPassword(requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.post<any>(`${this.apiUrl}` + '/forgot-password', null, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  forgotPassword(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/forgot-password`, null, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Valida un token de restablecimiento de contraseña
+   * @param queryParameters Contiene el correo y el token a validar
+   * @returns Observable con el resultado de la validación
+   */
+  validateResetToken(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/validate-reset-token`, null, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Restablece la contraseña usando un token válido
+   * @param queryParameters Contiene el correo, el token y la nueva contraseña
+   * @returns Observable con el resultado de la operación
+   */
+  resetPasswordWithToken(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/reset-password-with-token`, null, getHttpOptions(queryParameters));
   }
 
   /**
@@ -233,28 +251,18 @@ export class UsersService {
   }
 
   /**
-   * Valida un token de restablecimiento de contraseña.
-   * @param queryParameters Los parámetros de consulta que incluyen el email y token.
-   * @returns Un observable que emite el resultado de la validación.
-   */
-  validateResetToken(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/validate-reset-token`, null, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
-    );
-  }
-
-  /**
-   * Restablece la contraseña usando un token válido.
-   * @param queryParameters Los parámetros de consulta que incluyen el email, token y nueva contraseña.
+   * Actualiza el avatar del usuario.
+   * @param userId El ID del usuario.
+   * @param imageUrl La URL de la imagen del avatar.
    * @returns Un observable que emite el resultado de la operación.
    */
-  resetPasswordWithToken(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/reset-password-with-token`, null, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
+  updateUserAvatar(userId: string, imageUrl: string): Observable<any> {
+    const requestBody = {
+      userId: userId,
+      imageUrl: imageUrl
+    };
+    return this._httpClient.put(`${this.apiUrl}/update-user-avatar`, requestBody).pipe(
+      catchError(handleError)
     );
   }
 }

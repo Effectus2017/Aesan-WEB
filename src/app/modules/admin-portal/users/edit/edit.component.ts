@@ -245,11 +245,21 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       return;
     }
 
-    // si rol es null, no se puede actualizar
-    if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
-      this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
-      this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
-      return;
+    // Verificar si el rol está deshabilitado (cuando el usuario edita su propio perfil)
+    const loggedInUserId = this._authService.getUserId();
+    let roleName: string;
+
+    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('datosPersonales.role').disabled) {
+      // Si el rol está deshabilitado, usar el rol actual del usuario
+      roleName = this.user.roles[0];
+    } else {
+      // Si el rol no está deshabilitado, verificar que no sea nulo
+      if (isNullOrUndefinedEmptyStringNullArray(form.role?.name)) {
+        this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
+        this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+        return;
+      }
+      roleName = form.role.name;
     }
 
     const _model: RequestUser = {
@@ -261,7 +271,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
       userName: this.user.userName,
       imageURL: this.imageURL,
-      roles: [form.role.name],
+      roles: [roleName],
       agencyId: form.agency.id,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
@@ -273,9 +283,51 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         if (result.status === 200) {
           this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
+
+          // Mostrar mensaje de éxito
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.update.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.update.success.message'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success'
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('dialog.success.confirm'),
+                color: 'primary'
+              },
+              cancel: {
+                show: false
+              }
+            }
+          });
         }
       },
-      error: (error) => {},
+      error: (error) => {
+        // Mostrar mensaje de error
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.update.error.title'),
+          message: this._translocoService.translate('users.update.error.message'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      },
       complete: () => {
         //this.enableEditableFormControls();
       },
@@ -296,9 +348,51 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         if (result.status === 200) {
           this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
+
+          // Mostrar mensaje de éxito
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.password.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.password.success.message'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success'
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('dialog.success.confirm'),
+                color: 'primary'
+              },
+              cancel: {
+                show: false
+              }
+            }
+          });
         }
       },
-      error: (error) => {},
+      error: (error) => {
+        // Mostrar mensaje de error
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.password.error.title'),
+          message: this._translocoService.translate('users.password.error.message'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      },
       complete: () => {
       },
     });
@@ -313,8 +407,55 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     };
 
     this._usersService.resetPassword(requestParameters).subscribe({
-      next: (result: any) => {},
-      error: (error) => {},
+      next: (result: any) => {
+        if (result.status === 200) {
+          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+          this._changeDetectorRef.markForCheck();
+
+          // Mostrar mensaje de éxito
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.password.reset.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.password.reset.success.message'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success'
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('dialog.success.confirm'),
+                color: 'primary'
+              },
+              cancel: {
+                show: false
+              }
+            }
+          });
+        }
+      },
+      error: (error) => {
+        // Mostrar mensaje de error
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.password.reset.error.title'),
+          message: this._translocoService.translate('users.password.reset.error.message'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      },
       complete: () => {},
     });
   }
@@ -344,7 +485,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             actions: {
               confirm: {
                 show: true,
-                label: this._translocoService.translate('common.accept'),
+                label: this._translocoService.translate('dialog.success.confirm'),
                 color: 'primary'
               },
               cancel: {
@@ -366,7 +507,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           actions: {
             confirm: {
               show: true,
-              label: this._translocoService.translate('common.accept'),
+              label: this._translocoService.translate('dialog.error.confirm'),
               color: 'primary'
             },
             cancel: {
@@ -409,10 +550,111 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         if (result.status === 200) {
           this.fileResponse = result.body;
           this.imageURL = this.fileResponse.urlPath;
+
+          // Actualizar el avatar del usuario automáticamente
+          this._usersService.updateUserAvatar(this.id, this.imageURL).subscribe({
+            next: (avatarResult: any) => {
+              // Comprobar si la operación fue exitosa
+              const isSuccess = avatarResult && (
+                avatarResult.status === 200 ||
+                (avatarResult.body && (avatarResult.body.valid === true || avatarResult.body.statusCode === 200))
+              );
+
+              if (isSuccess) {
+                this._fuseConfirmationService.open({
+                  title: this._translocoService.translate('users.edit.messages.avatar.title'),
+                  message: avatarResult.body?.message || this._translocoService.translate('users.edit.messages.avatar.success'),
+                  icon: {
+                    show: true,
+                    name: 'heroicons_outline:check-circle',
+                    color: 'success'
+                  },
+                  actions: {
+                    confirm: {
+                      show: true,
+                      label: this._translocoService.translate('dialog.success.confirm'),
+                      color: 'primary'
+                    },
+                    cancel: {
+                      show: false
+                    }
+                  }
+                });
+
+                // Actualizar la vista
+                this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+              } else {
+                // Si no es éxito pero tampoco hubo un error, mostrar un mensaje genérico
+                this._fuseConfirmationService.open({
+                  title: this._translocoService.translate('users.edit.messages.avatar.title'),
+                  message: this._translocoService.translate('users.edit.messages.avatar.error'),
+                  icon: {
+                    show: true,
+                    name: 'heroicons_outline:exclamation-circle',
+                    color: 'error'
+                  },
+                  actions: {
+                    confirm: {
+                      show: true,
+                      label: this._translocoService.translate('dialog.error.confirm'),
+                      color: 'primary'
+                    },
+                    cancel: {
+                      show: false
+                    }
+                  }
+                });
+              }
+            },
+            error: (error) => {
+              // Mostrar mensaje de error
+              this._fuseConfirmationService.open({
+                title: this._translocoService.translate('users.edit.messages.avatar.title'),
+                message: this._translocoService.translate('users.edit.messages.avatar.error'),
+                icon: {
+                  show: true,
+                  name: 'heroicons_outline:exclamation-circle',
+                  color: 'error'
+                },
+                actions: {
+                  confirm: {
+                    show: true,
+                    label: this._translocoService.translate('dialog.error.confirm'),
+                    color: 'primary'
+                  },
+                  cancel: {
+                    show: false
+                  }
+                }
+              });
+            }
+          });
+
           this._changeDetectorRef.markForCheck();
         }
       },
-      error: (error: any) => {},
+      error: (error: any) => {
+        // Mostrar mensaje de error
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.edit.messages.upload.title'),
+          message: this._translocoService.translate('users.edit.messages.upload.error'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      },
       complete: () => {},
     });
   }
@@ -444,5 +686,14 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       controls: ['email', 'userName'],
       mode: 'include',
     });
+
+    // Obtener el ID del usuario logueado
+    const loggedInUserId = this._authService.getUserId();
+
+    // Si el usuario que se está editando es el mismo que está logueado,
+    // deshabilitar el campo de rol para evitar que cambie su propio rol
+    if (loggedInUserId === this.id) {
+      this.headerConfig.formGroup.get('datosPersonales.role').disable();
+    }
   }
 }

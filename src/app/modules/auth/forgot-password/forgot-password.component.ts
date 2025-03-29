@@ -5,12 +5,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
-import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UsersService } from 'app/shared/services/users.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -19,7 +20,19 @@ import { finalize } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    imports      : [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatProgressSpinnerModule, RouterLink],
+    imports      : [
+        NgIf,
+        FuseAlertComponent,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatProgressSpinnerModule,
+        RouterLink,
+        TranslocoModule,
+        LanguagesComponent
+    ],
 })
 export class AuthForgotPasswordComponent implements OnInit
 {
@@ -38,8 +51,9 @@ export class AuthForgotPasswordComponent implements OnInit
     constructor(
         private _usersService: UsersService,
         private _formBuilder: UntypedFormBuilder,
-    )
-    {
+        private _router: Router,
+        private _translocoService: TranslocoService
+    ) {
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -103,15 +117,20 @@ export class AuthForgotPasswordComponent implements OnInit
                     // Set the alert
                     this.alert = {
                         type   : 'success',
-                        message: 'Password reset sent! You\'ll receive an email if you are registered on our system.',
+                        message: 'auth.forgot-password.success',
                     };
+
+                    // Redirect to the sign-in page after a delay
+                    setTimeout(() => {
+                        this._router.navigate(['/sign-in']);
+                    }, 3000);
                 },
-                (response) =>
+                (error) =>
                 {
                     // Set the alert
                     this.alert = {
                         type   : 'error',
-                        message: 'Email does not found! Are you sure you are already a member?',
+                        message: 'auth.forgot-password.error',
                     };
                 },
             );

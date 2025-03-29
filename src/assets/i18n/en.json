@@ -216,6 +216,20 @@
             "success": {
                 "password-updated": "Your password has been successfully updated"
             }
+        },
+        "forgot-password": {
+            "title": "Reset Password",
+            "subtitle": "Enter your email and we will send you a link to reset your password",
+            "email": {
+                "label": "Email Address",
+                "placeholder": "Enter your email",
+                "required": "Email address is required",
+                "invalid": "Please enter a valid email address"
+            },
+            "submit": "Send Reset Link",
+            "back-to-login": "Back to Sign In",
+            "success": "Reset link sent! You'll receive an email if you are registered on our system.",
+            "error": "Request could not be processed. Please verify your email and try again."
         }
     },
     "validation-to-program": {
@@ -677,9 +691,6 @@
                 "required": "Password is required",
                 "min-length": "Minimum 8 characters required"
             },
-            "password": {
-                "toggle-visibility": "Show password"
-            },
             "new-password": {
                 "label": "New Password",
                 "placeholder": "Enter new password",
@@ -722,6 +733,16 @@
                     "title": "Password Change",
                     "success": "A new temporary password has been generated and sent to the user's email.",
                     "error": "An error occurred while generating the temporary password."
+                },
+                "avatar": {
+                    "title": "Avatar",
+                    "success": "Avatar updated successfully",
+                    "error": "Error updating avatar"
+                },
+                "upload": {
+                    "title": "Image Upload",
+                    "success": "Image uploaded successfully",
+                    "error": "Error uploading image"
                 }
             },
             "isActive": {
@@ -737,6 +758,27 @@
                 "title": "Avatar",
                 "alt": "Avatar of the user",
                 "select": "Select Avatar"
+            },
+            "password": {
+                "toggle-visibility": "Show password",
+                "success": {
+                    "title": "Password Updated",
+                    "message": "Password updated successfully"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error updating password"
+                },
+                "reset": {
+                    "success": {
+                        "title": "Password Reset",
+                        "message": "Password reset successfully"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "Error resetting password"
+                    }
+                }
             }
         },
         "list": {
@@ -849,6 +891,16 @@
             },
             "emailConfirmed": {
                 "label": "Email Confirmed"
+            }
+        },
+        "update": {
+            "success": {
+                "title": "User Updated",
+                "message": "User updated successfully"
+            },
+            "error": {
+                "title": "Error",
+                "message": "Error updating user"
             }
         }
     },

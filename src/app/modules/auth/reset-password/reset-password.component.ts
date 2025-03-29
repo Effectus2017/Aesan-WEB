@@ -47,30 +47,57 @@ export class ResetPasswordComponent implements OnInit {
   };
   resetPasswordForm: UntypedFormGroup;
   showAlert: boolean = false;
+  isLoading: boolean = true;
+  token: string;
+  email: string;
 
   ngOnInit(): void {
     // Crear el formulario
-    this.resetPasswordForm = this._formBuilder.group(
-      {
-        tempPassword: ['', Validators.required],
-        newPassword: ['', Validators.required],
-        confirmPassword: ['', Validators.required],
-      },
-      {
-        validator: this.passwordMatchValidator,
-      }
-    );
+    this.resetPasswordForm = this._formBuilder.group({
+      password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', Validators.required]
+    }, {
+      validator: this.passwordMatchValidator
+    });
 
-    // Obtener el email de los query params
+    // Obtener el token y email de los query params
     this._activatedRoute.queryParams.subscribe((params) => {
-      if (!params['email']) {
+      this.token = params['token'];
+      this.email = params['email'];
+
+      if (!this.token || !this.email) {
         this._router.navigate(['/sign-in']);
+        return;
       }
+
+      // Validar el token
+      this.validateToken();
     });
   }
 
+  private async validateToken(): Promise<void> {
+    try {
+      const requestParameters: QueryParameters = {
+        email: this.email,
+        token: this.token
+      };
+
+      await this._usersService.validateResetToken(requestParameters).toPromise();
+      this.isLoading = false;
+    } catch (error) {
+      this.alert = {
+        type: 'error',
+        message: 'El enlace de restablecimiento no es válido o ha expirado'
+      };
+      this.showAlert = true;
+      setTimeout(() => {
+        this._router.navigate(['/forgot-password']);
+      }, 3000);
+    }
+  }
+
   passwordMatchValidator(g: UntypedFormGroup) {
-    return g.get('newPassword').value === g.get('confirmPassword').value ? null : { mismatch: true };
+    return g.get('password').value === g.get('confirmPassword').value ? null : { mismatch: true };
   }
 
   resetPassword(): void {
@@ -82,35 +109,34 @@ export class ResetPasswordComponent implements OnInit {
     this.showAlert = false;
 
     const requestParameters: QueryParameters = {
-      email: this._activatedRoute.snapshot.queryParams['email'],
-      temporaryPassword: this.resetPasswordForm.get('tempPassword').value,
-      newPassword: this.resetPasswordForm.get('newPassword').value,
+      email: this.email,
+      token: this.token,
+      newPassword: this.resetPasswordForm.get('password').value
     };
 
-    this._usersService.resetPassword(requestParameters).subscribe({
-      next: (response) => {
+    this._usersService.resetPasswordWithToken(requestParameters).subscribe({
+      next: () => {
         this.alert = {
           type: 'success',
-          message: 'Tu contraseña ha sido actualizada exitosamente',
+          message: 'Tu contraseña ha sido actualizada exitosamente'
         };
         this.showAlert = true;
 
-        // Redireccionar al login después de 2 segundos
+        // Redireccionar al login después de 3 segundos
         setTimeout(() => {
-          // Redirigir al componente de reset password con el email como parámetro
           this._router.navigate(['/sign-in'], {
-            queryParams: { email: requestParameters.email },
+            queryParams: { email: this.email }
           });
         }, 3000);
       },
-      error: (response) => {
+      error: (error) => {
         this.resetPasswordForm.enable();
         this.alert = {
           type: 'error',
-          message: response.error.message,
+          message: error.error?.message || 'Ha ocurrido un error al restablecer la contraseña'
         };
         this.showAlert = true;
-      },
+      }
     });
   }
 }
