@@ -26,6 +26,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
 
 @Component({
   selector: 'app-users-edit',
@@ -45,6 +46,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     TranslocoModule,
     GenericHeaderComponent,
     MatCheckboxModule,
+    SafeImageUrlPipe,
   ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -183,7 +185,13 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   onSetForm(param: any) {
     this.id = param.id;
     this.user = param;
-    this.imageURL = param.imageURL;
+
+    // Limpiar la URL de la imagen si contiene barras invertidas
+    if (param.imageURL) {
+      this.imageURL = this._uploadService.normalizeImageUrl(param.imageURL);
+    } else {
+      this.imageURL = param.imageURL;
+    }
 
     this.headerConfig.formGroup.controls.datosPersonales.patchValue({
       email: this.user.email,
@@ -549,7 +557,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       next: (result: any) => {
         if (result.status === 200) {
           this.fileResponse = result.body;
-          this.imageURL = this.fileResponse.urlPath;
+          // Normalizar la URL para evitar problemas con barras invertidas
+          this.imageURL = this._uploadService.normalizeImageUrl(this.fileResponse.urlPath);
 
           // Actualizar el avatar del usuario automáticamente
           this._usersService.updateUserAvatar(this.id, this.imageURL).subscribe({

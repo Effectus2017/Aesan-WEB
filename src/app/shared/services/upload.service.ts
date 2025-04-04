@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { QueryParameters } from '../models/QueryParameters';
 import { environment } from 'environments/environment';
 import { Constants } from '../const';
-import { getHttpOptions } from '../utils';
+import { getHttpOptions, normalizeImageUrl } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -19,5 +19,14 @@ export class UploadService {
     formData.append('upFile', file);
     const query = getHttpOptions(params).params.toString();
     return this.http.post<any>(this.apiUrl + `?${query}`, formData, Constants.headersUpload);
+  }
+
+  /**
+   * Normaliza una URL de imagen para asegurar que las barras invertidas se manejen correctamente
+   * @param imageUrl URL de la imagen a normalizar
+   * @returns URL normalizada
+   */
+  normalizeImageUrl(imageUrl: string): string {
+    return normalizeImageUrl(imageUrl);
   }
 }

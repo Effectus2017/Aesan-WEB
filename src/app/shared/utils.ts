@@ -15,6 +15,20 @@ export function compareByProperty<T extends { [key: string]: any }>(item1: T, it
   return item1[property] === item2[property];
 }
 
+/**
+ * Normaliza una URL de imagen para asegurar que las barras invertidas se manejen correctamente
+ * @param imageUrl URL de la imagen a normalizar
+ * @returns URL normalizada
+ */
+export function normalizeImageUrl(imageUrl: string | null | undefined): string | null | undefined {
+  if (!imageUrl) {
+    return imageUrl;
+  }
+  // Reemplaza dobles barras invertidas por barras normales
+  // y luego reemplaza barras invertidas simples por barras normales
+  return imageUrl.replace(/\\\\/g, '/').replace(/\\/g, '/');
+}
+
 // Obtiene las opciones de la petición HTTP
 export function getHttpOptions(model: QueryParameters) {
   if (isNullOrUndefinedEmptyStringNullArray(model)) {

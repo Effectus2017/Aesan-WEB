@@ -4,9 +4,7 @@
 
 ### 1. **Instalar mkcert**
 
-- **Windows**: `choco install mkcert`
 - **Mac**: `brew install mkcert`
-- **Linux**: Sigue las instrucciones de [mkcert](https://github.com/FiloSottile/mkcert).
 
 ### 2. **Generar el Certificado**
 

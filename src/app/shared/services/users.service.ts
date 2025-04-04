@@ -11,6 +11,7 @@ import { getHttpOptions } from '../utils';
 import { TokenResponse } from '../models/user.types';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
 import { throwError } from 'rxjs';
+import { UploadService } from './upload.service';
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +25,10 @@ export class UsersService {
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
 
-  constructor(private _httpClient: HttpClient) {}
+  constructor(
+    private _httpClient: HttpClient,
+    private _uploadService: UploadService
+  ) {}
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -257,9 +261,12 @@ export class UsersService {
    * @returns Un observable que emite el resultado de la operación.
    */
   updateUserAvatar(userId: string, imageUrl: string): Observable<any> {
+    // Limpia la URL de escape de barras invertidas que pueden causar problemas
+    const cleanImageUrl = this._uploadService.normalizeImageUrl(imageUrl);
+
     const requestBody = {
       userId: userId,
-      imageUrl: imageUrl
+      imageUrl: cleanImageUrl
     };
     return this._httpClient.put(`${this.apiUrl}/update-user-avatar`, requestBody).pipe(
       catchError(handleError)

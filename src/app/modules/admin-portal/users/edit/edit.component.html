@@ -9,7 +9,7 @@
         title="{{ 'users.edit.avatar.title' | transloco }}"
         (click)="fileInput.click()"
         class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
-        [src]="imageURL ?? 'assets/images/avatars/profile.png'"
+        [src]="imageURL || 'assets/images/avatars/profile.png'"
         [alt]="'users.edit.avatar.alt' | transloco"
         (error)="handleMissingImage($event)"
         data-cy="avatar-image"

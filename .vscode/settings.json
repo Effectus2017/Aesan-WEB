@@ -2,5 +2,15 @@
   "files.exclude": {
     "**/node_modules": true,
     "**/dist": true,
-  }
+  },
+  "spellright.language": [
+    "es",
+    "en"
+  ],
+  "spellright.documentTypes": [
+    "markdown",
+    "latex",
+    "plaintext",
+    "typescript"
+  ]
 }
