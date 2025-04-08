@@ -99,6 +99,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Tax Exemption Type Options
   taxExemptionTypeOptions: any[] = [{ id: 1, name: 'Estatal' }, { id: 2, name: 'Federal' }];
 
+  // Basic Education Registry Options
+  basicEducationRegistryOptions: any[] = [
+    { id: 1, name: 'Otorgado' },
+    { id: 2, name: 'En Proceso' },
+    { id: 3, name: 'No' }
+  ];
+
   // Agregar esta propiedad
   protected readonly window = window;
 
@@ -117,6 +124,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos de la Agencia
       nonProfit: [null, Validators.required],
+      basicEducationRegistry: [null, Validators.required],
       federalFundsDenied: [null, Validators.required],
       stateFundsDenied: [null, Validators.required],
       organizedAthleticPrograms: [null, Validators.required],
@@ -190,7 +198,19 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
             atRiskControl.disable();
             atRiskControl.setValue(null);
           }
+
+          // Verificar el registro de educación básica si ya tiene un valor
+          const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
+          if (basicEducationRegistry) {
+            this.checkBasicEducationRegistry();
+          }
         }
+      });
+
+    // Suscribirse a cambios en el control basicEducationRegistry
+    this.signUpForm.get('basicEducationRegistry').valueChanges
+      .subscribe(() => {
+        this.checkBasicEducationRegistry();
       });
 
     // Cargar ciudades y programas
@@ -364,9 +384,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       agency: {
         name: formValues.name ? formValues.name : '',
         // Datos de la Agencia
-        sdrNumber: formValues.sdrNumber ? formValues.sdrNumber : 0,
-        uieNumber: formValues.uieNumber ? formValues.uieNumber : 0,
-        einNumber: formValues.einNumber ? formValues.einNumber : 0,
+        sdrNumber: formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0,
+        uieNumber: formValues.uieNumber ? parseInt(formValues.uieNumber) : 0,
+        einNumber: formValues.einNumber ? parseInt(formValues.einNumber) : 0,
         // Dirección Física
         address: formValues.address ? formValues.address : '',
         zipCode: formValues.zipCode ? formValues.zipCode : 0,
@@ -382,6 +402,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Datos del usuario
         phone: formValues.phone ? formValues.phone : '',
         nonProfit: formValues.nonProfit === 'Yes' ? true : false,
+        basicEducationRegistry: formValues.basicEducationRegistry ? formValues.basicEducationRegistry : 0,
         federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
         stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
         organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
@@ -626,5 +647,34 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return o1.Id === o2.Id;
     }
     return false;
+  }
+
+  checkBasicEducationRegistry(): void {
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
+
+    console.log('Programa seleccionado:', selectedProgram);
+    console.log('Valor de basicEducationRegistry:', basicEducationRegistry);
+
+    // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
+    if (basicEducationRegistry === 3 && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program');
+        this._fuseConfirmationService.open({
+            title: this._translocoService.translate('auth.sign-up.notification.title'),
+            message: this._translocoService.translate('auth.sign-up.basic-education-not-eligible.message'),
+            actions: {
+                confirm: {
+                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+                },
+                cancel: {
+                    show: false,
+                },
+            },
+        });
+    } else {
+        this.isEligible = true;
+        enableAllControls(this.signUpForm);
+    }
   }
 }

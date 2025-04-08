@@ -40,11 +40,15 @@ export class LanguagesComponent implements OnInit, OnDestroy {
     // Get the available languages from transloco
     this.availableLangs = this._translocoService.getAvailableLangs();
 
+    // Get the saved language from localStorage or use 'en' as default
+    const savedLang = localStorage.getItem('language') || 'en';
+    this._translocoService.setActiveLang(savedLang);
+
     // Subscribe to language changes
     this._translocoService.langChanges$.subscribe((activeLang) => {
       // Get the active lang
       this.activeLang = activeLang;
-      // aca guardar en local storage el idioma por defecto
+      // Save the selected language in localStorage
       localStorage.setItem('language', activeLang);
 
       // Update the navigation

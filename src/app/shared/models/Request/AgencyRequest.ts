@@ -24,6 +24,7 @@ export interface AgencyRequest {
     administrationTitle?: string;
     // Campos de elegibilidad
     nonProfit?: boolean;
+    basicEducationRegistry?: number;
     federalFundsDenied?: boolean;
     stateFundsDenied?: boolean;
     organizedAthleticPrograms?: boolean;

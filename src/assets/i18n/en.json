@@ -46,6 +46,12 @@
                 "yes": "Yes",
                 "no": "No"
             },
+            "basic-education-registry": {
+                "label": "Do you have Basic Education Registry Certification?",
+                "granted": "Granted",
+                "in-progress": "In Progress",
+                "no": "No"
+            },
             "state-funds-denied": {
                 "label": "Have you been denied or disqualified from state funds in the last 7 years?",
                 "yes": "Yes",
@@ -159,7 +165,10 @@
                 "close": "Close"
             },
             "pdam-psav-not-eligible": {
-                "message": "You are not eligible to participate in the PDAM or PSAV programs."
+                "message": "You are not eligible to participate in the PDAM or PSAV programs"
+            },
+            "basic-education-not-eligible": {
+                "message": "To participate in PDAM or PSAV programs, you must have the Basic Education Registry granted or in progress"
             },
             "processing-request": {
                 "message": "An error occurred while processing your request. Please try again later."

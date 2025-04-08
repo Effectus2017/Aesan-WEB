@@ -44,6 +44,12 @@
                 "yes": "Sí",
                 "no": "No"
             },
+            "basic-education-registry": {
+                "label": "¿Posee Certificación de Registro de Educación Básica?",
+                "granted": "Otorgado",
+                "in-progress": "En Proceso",
+                "no": "No"
+            },
             "state-funds-denied": {
                 "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
                 "yes": "Sí",
@@ -166,6 +172,9 @@
             },
             "pdam-psav-not-eligible": {
                 "message": "No es elegible para participar en los programas PDAM o PSAV"
+            },
+            "basic-education-not-eligible": {
+                "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
             },
             "error": {
                 "processing-request": "Ha ocurrido un error al procesar su solicitud. Por favor, intente nuevamente"

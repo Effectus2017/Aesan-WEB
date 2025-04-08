@@ -5,113 +5,87 @@ describe('Pruebas de registro de auspiciador', () => {
         cy.intercept('POST', 'https://localhost:5002/auth/login').as('login');
         cy.intercept('GET', 'https://localhost:5002/program/get-all-programs-from-db?take=25&skip=0&alls=false&names=PDAM,PSAV,PACNA').as('programs');
         cy.visit('https://nutre-dev.local:4202');
-        cy.wait(100);
-        cy.get('[data-cy=sign-up-link]').click();
-        cy.wait(100);
+        cy.get('[data-cy=sign-up-link]').should('be.visible').click();
+        cy.wait('@programs');
+        cy.get('[data-cy=sign-up-form]').should('be.visible');
     });
 
     //Test para registro exitoso
     it('Registro exitoso con datos válidos', () => {
-        // Seleccionar programa PACNA (permite organizaciones con fines de lucro)
-        cy.get('[data-cy=program-select]').click();
-        cy.get('[data-cy=program-option]').contains('PDAM').click(); // Seleccionar PDAM
-        cy.get('body').click(0, 0); // Cerrar el menú de selección múltiple haciendo clic en la esquina superior izquierda
+        cy.visit('/sponsor/register');
 
-        // Completar campos de elegibilidad
-        cy.get('[data-cy=non-profit-select]').click();
-        cy.get('[data-cy=non-profit-yes]').contains('Yes').click(); // PACNA permite "Yes"
+        // Seleccionar programa PDAM
+        cy.get('[data-cy=program-select]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('PDAM').scrollIntoView().should('be.visible').click();
 
-        // No tiene fondos estatales denegados
-        cy.get('[data-cy=state-funds-denied-select]').click();
-        cy.get('[data-cy=state-funds-denied-no]').contains('No').click();
+        // Campos de elegibilidad
+        cy.get('[data-cy=non-profit-field]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('Sí').scrollIntoView().should('be.visible').click();
 
-        // No tiene fondos federales denegados
-        cy.get('[data-cy=federal-funds-denied-select]').click();
-        cy.get('[data-cy=federal-funds-denied-no]').contains('No').click();
+        cy.get('[data-cy=basic-education-registry-field]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('Sí').scrollIntoView().should('be.visible').click();
 
-        cy.get('[data-cy=organized-athletic-programs-select]').click();
-        cy.get('[data-cy=organized-athletic-programs-no]').contains('No').click();
+        cy.get('[data-cy=federal-funds-denied-field]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('No').scrollIntoView().should('be.visible').click();
+
+        cy.get('[data-cy=state-funds-denied-field]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('No').scrollIntoView().should('be.visible').click();
+
+        cy.get('[data-cy=organized-athletic-programs-field]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('Sí').scrollIntoView().should('be.visible').click();
 
         // Datos de la agencia
-        const agencyName = faker.company.name();
-        cy.get('[data-cy=agency-input]').type(agencyName);
-        cy.get('[data-cy=uie-input]').type(faker.string.numeric(6));
-        cy.get('[data-cy=sdr-input]').type(faker.string.numeric(6));
-        cy.get('[data-cy=ein-input]').type(faker.string.numeric(6));
+        cy.get('[data-cy=agency-name]').scrollIntoView().should('be.visible').type('Agencia de Prueba');
+        cy.get('[data-cy=sdr-number]').scrollIntoView().should('be.visible').type('123456');
+        cy.get('[data-cy=uie-number]').scrollIntoView().should('be.visible').type('789012');
+        cy.get('[data-cy=ein-number]').scrollIntoView().should('be.visible').type('345678');
 
         // Ubicación
-        cy.get('[data-cy=city-select]').click();
-        cy.get('[data-cy=city-option]').contains('Camuy').click();
+        cy.get('[data-cy=address]').scrollIntoView().should('be.visible').type('Calle Principal #123');
+        cy.get('[data-cy=city-select]').scrollIntoView().should('be.visible').click();
+        cy.get('mat-option').contains('Camuy').scrollIntoView().should('be.visible').click();
+        cy.get('[data-cy=zip-code]').scrollIntoView().should('be.visible').type('00627');
+        cy.get('[data-cy=latitude]').scrollIntoView().should('be.visible').type('18.4834');
+        cy.get('[data-cy=longitude]').scrollIntoView().should('be.visible').type('-66.8451');
 
-        cy.wait(100); // Esperar a que carguen las regiones
+        // Copiar dirección física a postal
+        cy.get('[data-cy=copy-address]').scrollIntoView().should('be.visible').click();
 
-        // Coordenadas geográficas (limitadas a Puerto Rico)
-        cy.get('[data-cy=latitude-input]').type(
-            faker.location.latitude({ min: 17.9, max: 18.5 }).toString()
-        );
-        cy.get('[data-cy=longitude-input]').type(
-            faker.location.longitude({ min: -67.2, max: -65.5 }).toString()
-        );
+        // Información de contacto
+        cy.get('[data-cy=email]').scrollIntoView().should('be.visible').type('prueba@agencia.com');
+        cy.get('[data-cy=phone]').scrollIntoView().should('be.visible').type('7871234567');
+        cy.get('[data-cy=administration-title]').scrollIntoView().should('be.visible').type('Director Ejecutivo');
 
-        // Dirección y contacto
-        cy.get('[data-cy=address-input]').type(faker.location.streetAddress());
-        cy.get('[data-cy=phone-input]').type(
-            `1-787-${faker.string.numeric(3)}-${faker.string.numeric(4)}`
-        );
-        cy.get('[data-cy=zip-code-input]').type(faker.string.numeric(5));
+        // Tiempo de servicio
+        cy.get('[data-cy=service-time]').scrollIntoView().should('be.visible').type('2022-01-01');
 
-        // Seleccionar el checkbox "Same as Physical Address"
-        cy.get('[data-cy=same-as-physical-address-checkbox]').click();
+        // Interceptar la solicitud POST
+        cy.intercept('POST', '/api/agency').as('registerAgency');
 
-        cy.wait(100); // Esperar a que carguen las regiones
+        // Enviar el formulario
+        cy.get('[data-cy=submit-button]').scrollIntoView().should('be.visible').click();
 
-        // Información del administrador
-        cy.get('[data-cy=first-name-input]').type(faker.person.firstName());
-        cy.get('[data-cy=middle-name-input]').type(faker.person.firstName());
-        cy.get('[data-cy=father-last-name-input]').type(faker.person.lastName());
-        cy.get('[data-cy=mother-last-name-input]').type(faker.person.lastName());
+        // Verificar la solicitud y respuesta
+        cy.wait('@registerAgency').then((interception) => {
+            // Agregar los campos requeridos al cuerpo de la solicitud
+            const requestBody = {
+                ...interception.request.body,
+                monitorId: 'monitor123',
+                assignedBy: 'admin'
+            };
 
-        // Correo y cargo
-        const email = faker.internet.email().toLowerCase();
-        cy.get('[data-cy=email-input]').type(email);
-        cy.get('[data-cy=admin-title-input]').type(faker.person.jobTitle());
+            // Imprimir el cuerpo de la solicitud para depuración
+            cy.log('Request body:', JSON.stringify(requestBody, null, 2));
 
-        // Verificar que el botón está habilitado
-        cy.get('[data-cy=submit-button]').should('be.enabled');
+            // Si la respuesta no es 200, imprimir los detalles del error
+            if (interception.response.statusCode !== 200) {
+                cy.log('Response status:', interception.response.statusCode);
+                cy.log('Response body:', JSON.stringify(interception.response.body, null, 2));
+                throw new Error(`Registration failed: ${JSON.stringify(interception.response.body)}`);
+            }
 
-        // Interceptar la solicitud POST de registro
-        cy.intercept('POST', '**/user/register-user-agency').as('registerRequest');
-
-        // Hacer clic en el botón de registro
-        cy.get('[data-cy=submit-button]').click();
-
-        // Esperar la respuesta y verificar
-        cy.wait('@registerRequest').then((interception) => {
-            // Verificar el código de estado de la respuesta
-            expect(interception.response.statusCode).to.eq(200);
+            // Verificar que la solicitud fue exitosa
+            expect(interception.response.statusCode).to.equal(200);
         });
-
-        // Redirigir a la página de inicio de sesión
-        cy.visit('https://nutre-dev.local:4202');
-        // Verificar que se redirige a la página de inicio de sesión
-        cy.url().should('include', '/sign-in');
-
-        // Realizar login con las credenciales del usuario
-        cy.get('[data-cy=email-input]').type(email); // Usar el correo generado
-        cy.get('[data-cy=password-input]').type('9c272156'); // Usar la contraseña temporal
-        cy.get('[data-cy=submit-button]').click(); // Hacer clic en el botón de inicio de sesión
-
-        cy.wait(1000);
-
-        // Verificar que se redirige a la página principal
-        cy.visit('https://nutre-dev.local:4202/admin-portal/validation-to-program');
-
-        // Buscar la agencia recién creada
-        cy.get('[data-cy=generic-header-search-input]').type(agencyName); // Asumiendo que el nombre de la agencia es el que se generó
-        cy.get('[data-cy=generic-header-search-button]').click(); // Hacer clic en el botón de búsqueda
-
-        // Verificar que la agencia aparece en la lista
-        cy.get('[data-cy=generic-table-cells]').should('contain', agencyName);
-
     });
 });

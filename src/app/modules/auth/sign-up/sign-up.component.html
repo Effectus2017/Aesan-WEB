@@ -18,7 +18,7 @@
             <p class="font-bold text-red-500">{{ "auth.sign-up.select-program-first" | transloco }}</p>
           </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "auth.sign-up.program.label" | transloco }}</mat-label>
@@ -34,6 +34,16 @@
               <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
                 <mat-option value="Yes" data-cy="non-profit-yes">{{ "auth.sign-up.non-profit.yes" | transloco }}</mat-option>
                 <mat-option value="No" data-cy="non-profit-no">{{ "auth.sign-up.non-profit.no" | transloco }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- Basic Education Registry *  -->
+            <mat-form-field data-cy="basic-education-registry-field">
+              <mat-label>{{ "auth.sign-up.basic-education-registry.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'basicEducationRegistry'" data-cy="basic-education-registry-select">
+                <mat-option *ngFor="let option of basicEducationRegistryOptions" [value]="option.id" data-cy="basic-education-registry-option">
+                  {{ option.name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
