@@ -1,0 +1,13 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <app-generic-header
+        [config]="headerConfig"
+        (action)="onHeaderAction($event)">
+    </app-generic-header>
+
+    <!-- Table -->
+    <app-generic-table
+        [config]="tableConfig"
+        (action)="onTableAction($event)">
+    </app-generic-table>
+</div>

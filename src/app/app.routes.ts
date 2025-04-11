@@ -75,6 +75,7 @@ export const appRoutes: Route[] = [
     children: [
       { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
+      { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') },
     ],
   },
 

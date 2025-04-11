@@ -22,7 +22,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { UpdateAgencyProgramRequest } from 'app/shared/models/Request/AgencyRequest';
+import { UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from 'app/shared/models/Request/AgencyRequest';
 import { compareByProperty, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -263,40 +263,43 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
     const userId = this._authService.getUserId();
 
     // Construir el objeto de actualización
-    const agencyRequest: UpdateAgencyProgramRequest = {
+    const agencyRequest: UpdateAgencyInscriptionRequest = {
       agencyId: this.param.id,
-      programId: formValues.program?.[0]?.id,
       statusId: formValues.status?.id,
-      userId: userId,
       appointmentCoordinated: formValues.appointmentCoordinated,
       appointmentDate: formValues.appointmentDate,
       rejectionJustification: formValues.rejectionJustification,
     };
 
     // Llamar al servicio para actualizar
-    this._agencyService.updateAgencyProgram(agencyRequest, null).subscribe({
+    this._agencyService.updateAgencyInscription(agencyRequest, null).subscribe({
       next: (response) => {
-        if (response.body) {
-          this._fuseConfirmationService.open({
-            title: this._translocoService.translate('dialog.success.title'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:check-circle',
-              color: 'success',
-            },
-            message: this._translocoService.translate('monitor-preoperational-visit.dialog.success.message'),
-            actions: {
-              confirm: {
-                label: this._translocoService.translate('monitor-preoperational-visit.dialog.success.confirm'),
+
+        switch (response.body) {
+          case true:
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('dialog.success.title'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:check-circle',
+                color: 'success',
               },
-              cancel: {
-                show: false,
+              message: this._translocoService.translate('dialog.success.message'),
+              actions: {
+                confirm: {
+                  label: this._translocoService.translate('dialog.success.confirm'),
+                },
+                cancel: {
+                  show: false,
+                },
               },
-            },
-          });
-        } else {
-          this.showErrorDialog();
+            });
+            break;
+          default:
+            this.showErrorDialog();
+            break;
         }
+
       },
       error: (error) => {
         this.showErrorDialog();

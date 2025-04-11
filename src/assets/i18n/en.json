@@ -4,6 +4,15 @@
         "Project": "Program Application",
         "Analytics": "Analytics"
     },
+    "common": {
+        "welcome-back": "Welcome back",
+        "Project": "Project",
+        "Analytics": "Analytics",
+        "request-orientation": "Request Orientation",
+        "notification": "Notification",
+        "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
+        "accept": "Accept"
+    },
     "auth": {
         "sign-in": {
             "title": "Sign In",
@@ -1053,13 +1062,73 @@
             }
         }
     },
-    "common": {
-        "welcome-back": "Welcome back",
-        "Project": "Project",
-        "Analytics": "Analytics",
-        "request-orientation": "Request Orientation",
-        "notification": "Notification",
-        "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
-        "accept": "Accept"
+    "documents": {
+        "title": "Documents",
+        "list": {
+            "title": "Documents List",
+            "search": {
+                "placeholder": "Search documents..."
+            },
+            "buttons": {
+                "upload": "Upload Document",
+                "clear": "Clear Search"
+            },
+            "table": {
+                "columns": {
+                    "fileName": "File Name",
+                    "documentType": "Document Type",
+                    "description": "Description",
+                    "fileSize": "File Size",
+                    "contentType": "Content Type",
+                    "uploadedBy": "Uploaded by",
+                    "uploadDate": "Upload Date",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "download": "Download",
+                    "delete": "Delete"
+                }
+            },
+            "empty": {
+                "title": "No documents",
+                "description": "No documents found matching the search criteria"
+            }
+        },
+        "upload": {
+            "title": "Upload Document",
+            "form": {
+                "documentType": {
+                    "label": "Document Type",
+                    "placeholder": "Select document type"
+                },
+                "description": {
+                    "label": "Description",
+                    "placeholder": "Enter a description for the document"
+                },
+                "file": {
+                    "label": "File",
+                    "placeholder": "Select a file or drag it here",
+                    "hint": "Allowed formats: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG"
+                }
+            },
+            "buttons": {
+                "upload": "Upload",
+                "cancel": "Cancel"
+            }
+        },
+        "messages": {
+            "upload": {
+                "success": "Document has been uploaded successfully",
+                "error": "Error uploading document"
+            },
+            "delete": {
+                "confirmation": "Are you sure you want to delete this document?",
+                "success": "Document has been deleted successfully",
+                "error": "Error deleting document"
+            },
+            "download": {
+                "error": "Error downloading document"
+            }
+        }
     }
 }

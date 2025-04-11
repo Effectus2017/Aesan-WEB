@@ -48,6 +48,11 @@ export interface UpdateAgencyProgramRequest {
     statusId?: number;
     programId?: number;
     userId?: string;
+}
+
+export interface UpdateAgencyInscriptionRequest {
+    agencyId?: number;
+    statusId?: number;
     rejectionJustification?: string;
     appointmentCoordinated?: boolean;
     appointmentDate?: string;

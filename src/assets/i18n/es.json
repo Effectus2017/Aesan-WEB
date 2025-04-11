@@ -910,7 +910,6 @@
             "validation": "Validación de Programas"
         },
         "pre-operational": "Pre-Operacional",
-        "documents": "Documentos",
         "forms": {
             "title": "Formularios",
             "program-application": "Solicitud al Programa",
@@ -1029,6 +1028,75 @@
                         }
                     }
                 }
+            }
+        }
+    },
+    "documents": {
+        "title": "Documentos",
+        "list": {
+            "title": "Lista de Documentos",
+            "search": {
+                "placeholder": "Buscar documentos..."
+            },
+            "buttons": {
+                "upload": "Subir Documento",
+                "clear": "Limpiar Búsqueda"
+            },
+            "table": {
+                "columns": {
+                    "fileName": "Nombre del Documento",
+                    "documentType": "Tipo de Documento",
+                    "description": "Descripción",
+                    "fileSize": "Tamaño del Documento",
+                    "contentType": "Tipo de Contenido",
+                    "uploadedBy": "Subido por",
+                    "uploadDate": "Fecha de Subida",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "download": "Descargar",
+                    "delete": "Eliminar"
+                }
+            },
+            "empty": {
+                "title": "No hay documentos",
+                "description": "No hay documentos que coincidan con los criterios de búsqueda"
+            }
+        },
+        "upload": {
+            "title": "Subir Documento",
+            "form": {
+                "documentType": {
+                    "label": "Tipo de Documento",
+                    "placeholder": "Seleccionar tipo de documento"
+                },
+                "description": {
+                    "label": "Descripción",
+                    "placeholder": "Ingrese una descripción para el documento"
+                },
+                "file": {
+                    "label": "Archivo",
+                    "placeholder": "Seleccionar un archivo o arrastrarlo aquí",
+                    "hint": "Formatos permitidos: PDF, DOC, DOCX, XLS, XLSX, JPG, PNG"
+                }
+            },
+            "buttons": {
+                "upload": "Subir",
+                "cancel": "Cancelar"
+            }
+        },
+        "messages": {
+            "upload": {
+                "success": "Documento subido exitosamente",
+                "error": "Error al subir el documento"
+            },
+            "delete": {
+                "confirmation": "¿Está seguro que desea eliminar este documento?",
+                "success": "Documento eliminado exitosamente",
+                "error": "Error al eliminar el documento"
+            },
+            "download": {
+                "error": "Error al descargar el documento"
             }
         }
     }

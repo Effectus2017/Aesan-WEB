@@ -5,7 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
-import { AgencyRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
+import { AgencyRequest, UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
 import { Agency } from '../models/Agency';
 import { AgencyStatus } from '../models/AgencyStatus';
 
@@ -141,6 +141,16 @@ export class AgencyService {
    */
   updateAgencyProgram(model: UpdateAgencyProgramRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-agency-program`, model, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Actualiza la inscripción de una agencia
+   * @param model La inscripción de la agencia
+   * @param queryParameters Los parámetros de consulta
+   * @returns La inscripción de la agencia actualizada
+   */
+  updateAgencyInscription(model: UpdateAgencyInscriptionRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-agency-inscription`, model, getHttpOptions(queryParameters));
   }
 
   /**
