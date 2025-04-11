@@ -2,12 +2,15 @@
     <!-- Header -->
     <app-generic-header
         [config]="headerConfig"
-        (action)="onHeaderAction($event)">
+        (action)="onHeaderAction($event)"
+        [handler]="this"
+        #documentsHeader>
     </app-generic-header>
 
     <!-- Table -->
     <app-generic-table
         [config]="tableConfig"
-        (action)="onTableAction($event)">
+        [handler]="this"
+        #documentsTable>
     </app-generic-table>
 </div>

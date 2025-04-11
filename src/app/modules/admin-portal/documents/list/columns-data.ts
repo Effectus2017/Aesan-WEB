@@ -1,4 +1,4 @@
-export const MOCK_DATA = [
+export const DOCUMENTS_DATA = [
   {
     id: 1,
     fileName: 'Certificado_Incorporacion.pdf',
@@ -68,5 +68,20 @@ export const MOCK_DATA = [
     },
     uploadDate: '2024-03-11T11:30:00',
     fileUrl: 'https://storage.aesan.pr.gov/agencies/1/cert_bomberos.pdf'
+  },
+  {
+    id: 6,
+    fileName: 'Certificado_Incorporacion.xlsx',
+    documentType: 'Certificado de Incorporación',
+    description: 'Certificado de incorporación de la agencia',
+    fileSize: 2048576, // 2MB
+    contentType: 'application/vnd.ms-excel',
+    uploadedByUser: {
+      firstName: 'Juan',
+      fatherLastName: 'Pérez'
+    },
+    uploadDate: '2024-03-15T10:30:00',
+    fileUrl: 'https://storage.aesan.pr.gov/agencies/1/certificado_incorporacion.xlsx'
   }
+
 ];

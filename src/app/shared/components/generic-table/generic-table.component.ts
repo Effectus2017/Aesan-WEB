@@ -55,6 +55,15 @@ export class GenericTableComponent implements OnInit {
     this.handler.onTableDelete(event, id);
   }
 
+  /**
+   * Método para manejar la descarga de un elemento de la tabla.
+   * Llama a la función onTableDownload del handler proporcionado.
+   * @param event El evento de descarga.
+   * @param id El ID del elemento a descargar.
+   */
+  onDownload(event: Event, id: number): void {
+    this.handler.onTableDownload(event, id);
+  }
 
   /**
    * Método para manejar el cambio de estado de un checkbox en la tabla.
@@ -86,10 +95,10 @@ export class GenericTableComponent implements OnInit {
 
   /**
    * Esta función se encarga de obtener el valor de una propiedad anidada en un objeto.
-   * Si el path es un arreglo, se concatenan los valores de las propiedades anidadadas
+   * Si el path es un arreglo, se concatenan los valores de las propiedades anidadas
    * separados por un espacio.
    *
-   * @param element El objeto que contiene las propiedades anidadadas.
+   * @param element El objeto que contiene las propiedades anidadas.
    * @param path El camino a la propiedad anidada. Puede ser una cadena o un arreglo de cadenas.
    * @returns El valor de la propiedad anidada o undefined si no se encuentra.
    */
@@ -108,5 +117,67 @@ export class GenericTableComponent implements OnInit {
   handleMissingImage(event: Event, defaultImage: string): void {
     const imgElement = event.target as HTMLImageElement;
     imgElement.src = defaultImage || 'assets/images/avatars/profile.png';
+  }
+
+  /**
+   * Obtiene el icono correspondiente al tipo de archivo
+   * @param element El elemento que contiene el tipo de archivo
+   * @param col La configuración de la columna
+   * @returns El nombre del icono de Material a mostrar
+   */
+  getFileTypeIcon(element: any, col: any): string {
+    if (col.key === 'fileIcon') {
+      const contentType = element.contentType?.toLowerCase();
+      if (!contentType || !col.fileTypeConfig?.iconMap) {
+        return 'insert_drive_file';
+      }
+      // Primero intentamos con el tipo MIME completo
+      let iconConfig = col.fileTypeConfig.iconMap[contentType];
+      if (!iconConfig) {
+        // Si no encontramos, intentamos con la extensión
+        const extension = contentType.split('/')[1];
+        iconConfig = col.fileTypeConfig.iconMap[extension] || col.fileTypeConfig.iconMap['default'];
+      }
+      return iconConfig?.icon || 'insert_drive_file';
+    }
+    return 'insert_drive_file';
+  }
+
+  getFileTypeIconColor(element: any, col: any): string {
+    if (col.key === 'fileIcon') {
+      const contentType = element.contentType?.toLowerCase();
+      if (!contentType || !col.fileTypeConfig?.iconMap) {
+        return '#757575';
+      }
+      // Primero intentamos con el tipo MIME completo
+      let iconConfig = col.fileTypeConfig.iconMap[contentType];
+      if (!iconConfig) {
+        // Si no encontramos, intentamos con la extensión
+        const extension = contentType.split('/')[1];
+        iconConfig = col.fileTypeConfig.iconMap[extension] || col.fileTypeConfig.iconMap['default'];
+      }
+      return iconConfig?.color || '#757575';
+    }
+    return '#757575';
+  }
+
+  getFileTypeDisplayText(element: any, col: any): string {
+    const contentType = element.contentType?.toLowerCase();
+    if (!contentType) {
+      return 'Archivo';
+    }
+    // Buscamos la configuración en la primera columna (fileIcon)
+    const fileTypeConfig = this.config.columnsSchema.find(col => col.key === 'fileIcon')?.fileTypeConfig;
+    if (!fileTypeConfig?.iconMap) {
+      return 'Archivo';
+    }
+    // Primero intentamos con el tipo MIME completo
+    let iconConfig = fileTypeConfig.iconMap[contentType];
+    if (!iconConfig) {
+      // Si no encontramos, intentamos con la extensión
+      const extension = contentType.split('/')[1];
+      iconConfig = fileTypeConfig.iconMap[extension] || fileTypeConfig.iconMap['default'];
+    }
+    return iconConfig?.displayText || 'Archivo';
   }
 }

@@ -49,15 +49,17 @@ export const USERS_COLUMNS_SCHEMA: ColumnSchema[] = [
       label: 'users.list.columns.emailConfirmed',
     },
     {
-      key: 'button',
+      key: 'buttons',
       type: 'button',
       label: '',
       buttons: [
         {
           key: 'edit',
+          label: 'users.list.buttons.edit',
         },
         {
           key: 'delete',
+          label: 'users.list.buttons.delete',
         },
       ],
     },
