@@ -1,15 +1,16 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
@@ -18,8 +19,8 @@ import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
-import { COLUMNS_SCHEMA } from './columns-schema';
-import { MOCK_DATA } from './columns-data';
+import { DOCUMENTS_COLUMNS_SCHEMA } from './columns-schema';
+import { DOCUMENTS_DATA } from './columns-data';
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
@@ -38,10 +39,11 @@ import { TranslocoModule } from '@ngneat/transloco';
     MatTableModule,
     MatInputModule,
     MatSnackBarModule,
+    MatDialogModule,
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
-    TranslocoModule
+    TranslocoModule,
   ]
 })
 export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
@@ -51,29 +53,29 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _snackBar = inject(MatSnackBar);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _dialog = inject(MatDialog);
 
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource(MOCK_DATA),
-    dataSourceList: MOCK_DATA,
-    columnsSchema: COLUMNS_SCHEMA,
-    displayedColumns: COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    dataSource: new MatTableDataSource(DOCUMENTS_DATA),
+    dataSourceList: DOCUMENTS_DATA,
+    columnsSchema: DOCUMENTS_COLUMNS_SCHEMA,
+    displayedColumns: DOCUMENTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
-    length: MOCK_DATA.length
+    length: DOCUMENTS_DATA.length
   };
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'documents.list.title',
     formGroup: this._formBuilder.group({
-      fileName: new FormControl(''),
-      documentType: new FormControl('')
+      name: new FormControl(''),
     }),
     searchFieldShow: true,
     searchInputPlaceholder: 'documents.list.search.placeholder',
@@ -90,18 +92,6 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
-  }
-
-  // Manejador de eventos de la tabla
-  onTableAction(event: any): void {
-    switch (event.action) {
-      case 'download':
-        this.downloadFile(event.row);
-        break;
-      case 'delete':
-        this.deleteFile(event.row);
-        break;
-    }
   }
 
   // Manejador de eventos del header
@@ -122,8 +112,8 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
     // Resetea el formulario
     this.headerConfig.formGroup.reset();
     // Restaura los datos originales
-    this.tableConfig.dataSource.data = MOCK_DATA;
-    this.tableConfig.dataSourceList = MOCK_DATA;
+    this.tableConfig.dataSource.data = DOCUMENTS_DATA;
+    this.tableConfig.dataSourceList = DOCUMENTS_DATA;
     this._changeDetectorRef.markForCheck();
   }
 
@@ -134,55 +124,26 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
     console.log('Página:', pageIndex, 'Tamaño:', event.pageSize);
   }
 
-  // Métodos privados para manejar las acciones
-  private downloadFile(file: any): void {
-    // Aquí iría la lógica para descargar el archivo
-    window.open(file.fileUrl, '_blank');
+  // Manejador de eventos de la tabla
+  onTableEdit(event: Event, id: string): void {
+    console.log('Editar archivo con ID:', id);
   }
 
-  private deleteFile(file: any): void {
-    this._fuseConfirmationService.open({
-      title: 'documents.dialog.delete.title',
-      message: 'documents.dialog.delete.message',
-      icon: {
-        show: true,
-        name: 'heroicons_outline:exclamation-triangle',
-        color: 'warn'
-      },
-      actions: {
-        confirm: {
-          label: 'documents.dialog.delete.confirm'
-        },
-        cancel: {
-          label: 'documents.dialog.delete.cancel'
-        }
-      }
-    }).afterClosed().subscribe((result) => {
-      if (result === 'confirmed') {
-        // Aquí iría la lógica para eliminar el archivo
-        this._snackBar.open('Archivo eliminado con éxito', 'Cerrar', {
-          duration: 3000
-        });
-      }
-    });
+  // Manejador de eventos de la tabla
+  onTableDownload(event: Event, id: string): void {
+    console.log('Descargar archivo con ID:', id);
   }
 
-  private uploadFile(): void {
-    // Aquí iría la lógica para subir un nuevo archivo
+  // Manejador de eventos de la tabla
+  onTableDelete(event: Event, id: string): void {
+    console.log('Eliminar archivo con ID:', id);
   }
 
-  private searchFiles(filters: any): void {
-    // Aquí iría la lógica para buscar archivos
-    console.log('Buscando con filtros:', filters);
-    // Por ahora, solo filtramos los datos mock
-    const filteredData = MOCK_DATA.filter(file =>
-      (!filters.fileName || file.fileName.toLowerCase().includes(filters.fileName.toLowerCase())) &&
-      (!filters.documentType || file.documentType.toLowerCase().includes(filters.documentType.toLowerCase()))
-    );
+  uploadFile(): void {
+    console.log('Subir archivo');
+  }
 
-    this.tableConfig.dataSource.data = filteredData;
-    this.tableConfig.dataSourceList = filteredData;
-    this.tableConfig.length = filteredData.length;
-    this._changeDetectorRef.markForCheck();
+  searchFiles(filters: any): void {
+    console.log('Buscar archivos con filtros:', filters);
   }
 }

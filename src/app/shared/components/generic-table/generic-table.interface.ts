@@ -10,12 +10,23 @@ export interface ImageConfig {
   alt?: string;
 }
 
+export interface FileTypeConfig {
+  iconMap: { [key: string]: FileTypeIcon };
+}
+
+export interface FileTypeIcon {
+  icon: string;
+  color: string;
+  displayText: string;
+}
+
 export interface ColumnSchema {
   key: string | string[];
-  type: 'text' | 'date' | 'date-time' | 'check' | 'button' | 'boolean' | 'combined-text' | 'image';
+  type: 'text' | 'date' | 'date-time' | 'check' | 'button' | 'boolean' | 'combined-text' | 'image' | 'file-type' | 'content-type-text';
   label: string;
   buttons?: { key: string; label?: string }[];
   imageConfig?: ImageConfig;
+  fileTypeConfig?: FileTypeConfig;
   keys?: string[];
   visible?: boolean;
   sortable?: boolean;
@@ -47,6 +58,7 @@ export interface OnGenericTableHandler {
   onTableAdd?: () => void;
   onTableEdit?: (event: Event, id: any) => void;
   onTableDelete?: (event: Event, id: any) => void;
+  onTableDownload?: (event: Event, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;
   getPaginator?: (event?: PageEvent) => void;
   // Métodos para obtener datos

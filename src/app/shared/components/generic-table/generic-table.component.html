@@ -8,7 +8,8 @@
     [matTooltip]="config.addButtonTooltip | transloco"
     [matTooltipPosition]="config.addButtonTooltipPosition | transloco"
     [title]="config.addButtonLabel | transloco"
-    [attr.aria-label]="config.addButtonLabel | transloco">
+    [attr.aria-label]="config.addButtonLabel | transloco"
+  >
     <mat-icon [attr.aria-hidden]="true">{{ config.addButtonIcon }}</mat-icon>
   </button>
 </div>
@@ -19,34 +20,33 @@
       {{ col.label | transloco }}
     </th>
     <td mat-cell *matCellDef="let element" data-cy="generic-table-cells">
-      @switch (col.type) {
-      @case ('check') {
-      <mat-checkbox
-        [checked]="getNestedValue(element, col.key)"
-        (change)="onCheckboxChange($event, element, col.key)"
-        [attr.aria-label]="col.label | transloco">
-      </mat-checkbox>
-      }
-      @case ('image') {
+      @switch (col.type) { @case ('check') {
+      <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"> </mat-checkbox>
+      } @case ('image') {
       <img
         [src]="getNestedValue(element, col.key) || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
         [style.width]="col.imageConfig?.width || '40px'"
         [style.height]="col.imageConfig?.height || '40px'"
         [class]="col.imageConfig?.class || 'rounded-full object-cover'"
         alt="Profile"
-        [attr.alt]="(col.imageConfig?.alt || col.label) | transloco"
+        [attr.alt]="col.imageConfig?.alt || col.label | transloco"
         title="Profile"
-        [attr.title]="(col.imageConfig?.alt || col.label) | transloco"
-        [attr.aria-label]="(col.imageConfig?.alt || col.label) | transloco"
+        [attr.title]="col.imageConfig?.alt || col.label | transloco"
+        [attr.aria-label]="col.imageConfig?.alt || col.label | transloco"
         (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
       />
-      }
-      @case ('date') {
+      } @case ('date') {
       {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
       } @case ('date-time') {
       {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
       } @case ('text') {
       {{ getNestedValue(element, col.key) }}
+      } @case ('file-type') {
+      <div class="flex items-center justify-center">
+        <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
+      </div>
+      } @case ('content-type-text') {
+      {{ getFileTypeDisplayText(element, col) }}
       } @case ('combined-text') {
       {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
       } @case ('boolean') {
@@ -54,28 +54,45 @@
       } @case ('button') {
       <div class="flex flex-row justify-center gap-2">
         @for (button of col?.buttons; track button) {
+
+        @if (button.key === 'edit') {
         <button
           [title]="'users.list.actions.' + button.key | transloco"
-          *ngIf="button.key === 'edit'"
           type="button"
           mat-icon-button
-          color="warm"
           (click)="onEdit($event, element.id)"
-          [attr.aria-label]="'users.list.actions.' + button.key | transloco">
-          <span class="sr-only">{{'users.list.actions.' + button.key | transloco}}</span>
-          <mat-icon [svgIcon]="button.key === 'edit' ? 'mat_solid:launch' : 'mat_solid:delete'" [attr.aria-hidden]="true"></mat-icon>
+          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+        >
+          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+          <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
         </button>
+        }
+
+        @if (button.key === 'delete') {
         <button
           [title]="'users.list.actions.' + button.key | transloco"
-          *ngIf="button.key === 'delete'"
           type="button"
           mat-icon-button
-          color="warm"
           (click)="onDelete($event, element.id)"
-          [attr.aria-label]="'users.list.actions.' + button.key | transloco">
-          <span class="sr-only">{{'users.list.actions.' + button.key | transloco}}</span>
-          <mat-icon [svgIcon]="button.key === 'edit' ? 'mat_solid:launch' : 'mat_solid:delete'" [attr.aria-hidden]="true"></mat-icon>
+          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+        >
+          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+          <mat-icon [svgIcon]="'mat_solid:delete'" [attr.aria-hidden]="true" style="color: red;"></mat-icon>
         </button>
+        }
+
+        @if (button.key === 'download') {
+        <button
+          [title]="'users.list.actions.' + button.key | transloco"
+          type="button"
+          mat-icon-button
+          (click)="onDownload($event, element.id)"
+          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+        >
+          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+          <mat-icon [svgIcon]="'mat_solid:download'" [attr.aria-hidden]="true" style="color: green;"></mat-icon>
+        </button>
+        }
         }
       </div>
       } @default {
@@ -98,57 +115,79 @@
       <span class="font-medium">{{ col.label | transloco }}:</span>
       }
       <span>
-        @switch (col.type) {
-        @case ('check') {
+        @switch (col.type) { @case ('check') {
         <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"></mat-checkbox>
-        }
-        @case ('image') {
+        } @case ('image') {
         <img
           [src]="getNestedValue(element, col.key) || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
           [style.width]="col.imageConfig?.width || '40px'"
           [style.height]="col.imageConfig?.height || '40px'"
           [class]="col.imageConfig?.class || 'rounded-full object-cover'"
           alt="Profile"
-          [attr.alt]="(col.imageConfig?.alt || col.label) | transloco"
+          [attr.alt]="col.imageConfig?.alt || col.label | transloco"
           title="Profile"
-          [attr.title]="(col.imageConfig?.alt || col.label) | transloco"
-          [attr.aria-label]="(col.imageConfig?.alt || col.label) | transloco"
+          [attr.title]="col.imageConfig?.alt || col.label | transloco"
+          [attr.aria-label]="col.imageConfig?.alt || col.label | transloco"
           (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
         />
-        }
-        @case ('date') {
+        } @case ('date') {
         {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
         } @case ('date-time') {
         {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
         } @case ('text') {
         {{ getNestedValue(element, col.key) }}
+        } @case ('file-type') {
+        <div class="flex items-center justify-center">
+          <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
+        </div>
+        } @case ('content-type-text') {
+        {{ getFileTypeDisplayText(element, col) }}
         } @case ('combined-text') {
         {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
         } @case ('boolean') {
         {{ getNestedValue(element, col.key) ? "Si" : "No" }}
         } @case ('button') {
-        <div class="gap-2">
-          @for (button of col?.buttons; track button) { @if (button.key === 'edit') {
-          <button
-            [title]="'users.list.actions.edit' | transloco"
-            type="button"
-            mat-flat-button
-            color="primary"
-            (click)="onEdit($event, element.id)"
-            [attr.aria-label]="'users.list.actions.edit' | transloco">
-            Editar
-          </button>
-          } @if (button.key === 'delete') {
-          <button
-            [title]="'users.list.actions.delete' | transloco"
-            type="button"
-            mat-flat-button
-            color="warm"
-            (click)="onDelete($event, element.id)"
-            [attr.aria-label]="'users.list.actions.delete' | transloco">
-            Eliminar
-          </button>
-          } }
+        <div class="flex flex-row gap-2">
+        @for (button of col?.buttons; track button) {
+
+            @if (button.key === 'edit') {
+            <button
+                [title]="'users.list.actions.edit' | transloco"
+                type="button"
+                mat-flat-button
+                color="primary"
+                (click)="onEdit($event, element.id)"
+                [attr.aria-label]="'users.list.actions.edit' | transloco"
+            >
+                Editar
+            </button>
+            }
+            @if (button.key === 'delete') {
+            <button
+                [title]="'users.list.actions.delete' | transloco"
+                type="button"
+                mat-flat-button
+                color="warm"
+                (click)="onDelete($event, element.id)"
+                [attr.aria-label]="'users.list.actions.delete' | transloco"
+            >
+                Eliminar
+            </button>
+            }
+            @if (button.key === 'download') {
+            <button
+                [title]="'users.list.actions.download' | transloco"
+                type="button"
+                mat-flat-button
+                color="primary"
+                (click)="onDownload($event, element.id)"
+                [attr.aria-label]="'users.list.actions.download' | transloco"
+            >
+                Descargar
+            </button>
+            }
+
+        }
         </div>
         } @default {
         {{ getNestedValue(element, col.key) }}

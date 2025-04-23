@@ -99,6 +99,15 @@ export const defaultNavigation: FuseNavigationItem[] = [
       },
     ],
   },
+    // Administrator
+    {
+        id: 'documents',
+        title: 'navigation.documents',
+        type: 'basic',
+        icon: 'heroicons_solid:document-duplicate',
+        link: '/documents',
+        roles: ['Administrator'],
+      },
   // Agency-Administrator
   {
     id: 'documents.agency',
@@ -237,6 +246,14 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     type: 'group',
     icon: 'heroicons_solid:home',
     children: [],
+    roles: ['Administrator'],
+  },
+  {
+    id: 'documents',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/documents',
     roles: ['Administrator'],
   },
   {
