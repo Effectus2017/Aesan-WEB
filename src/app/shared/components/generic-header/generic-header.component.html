@@ -87,7 +87,7 @@
         type="button"
         title="Custom"
         [color]="config.customButtonColor"
-        class="ml-2"
+        class="ml-2 {{ config.customButtonClass }}"
         [disabled]="isLoading || config.customButtonDisabled"
         (click)="onCustom()"
         mat-raised-button
@@ -96,6 +96,36 @@
         <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
         <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.customButtonText | transloco) }}</span>
     </button>
+    }
+
+
+    <!-- Botón Upload -->
+    @if (config.uploadButtonShow) {
+    <button
+        type="button"
+        title="Subir"
+        [color]="config.uploadButtonColor"
+        [class]="config.uploadButtonClass"
+        (click)="fileUploadInput.click()"
+        mat-raised-button
+        [disabled]="isLoading || config.uploadButtonDisabled"
+        data-cy="generic-header-upload-button"
+
+    >
+        <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+        <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.uploadButtonText | transloco) }}</span>
+    </button>
+    <input
+        hidden
+        onclick="this.value=null"
+        (change)="onHeaderUploadFile($event)"
+        #fileUploadInput
+        type="file"
+        id="file"
+        data-cy="file-input"
+        accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+        [attr.aria-label]="'users.edit.avatar.select' | transloco"
+      />
     }
   </form>
 </div>

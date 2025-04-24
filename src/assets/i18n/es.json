@@ -817,7 +817,8 @@
             },
             "actions": {
                 "edit": "Editar",
-                "delete": "Eliminar"
+                "delete": "Eliminar",
+                "download": "Descargar"
             }
         },
         "add": {

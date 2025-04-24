@@ -21,10 +21,12 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { DOCUMENTS_COLUMNS_SCHEMA } from './columns-schema';
 import { DOCUMENTS_DATA } from './columns-data';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { TranslocoModule } from '@ngneat/transloco';
 import { UploadService } from 'app/shared/services/upload.service';
+import { TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
+
 
 @Component({
   selector: 'app-documents-list',
@@ -56,11 +58,10 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _snackBar = inject(MatSnackBar);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _dialog = inject(MatDialog);
   private _uploadService = inject(UploadService);
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
-  private _dialog = inject(MatDialog);
-
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -94,9 +95,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
 
   agencyId: number;
 
-  constructor() {
-
-  }
+  constructor() {}
 
   ngOnInit(): void {
     // Obtener el ID de la agencia del usuario actual
@@ -143,7 +142,6 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
     console.log('Eliminar archivo con ID:', id);
   }
 
-  // Manejador de eventos del header
   onHeaderUploadFile(event: Event): void {
     event.stopPropagation();
     event.preventDefault();

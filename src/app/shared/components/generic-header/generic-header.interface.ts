@@ -35,9 +35,17 @@ export interface GenericHeaderConfig {
   customButtonShow?: boolean;
   customButtonText?: string;
   customButtonColor?: string;
+  customButtonClass?: string;
   customButtonDisabled?: boolean;
   // Clear Button config
   clearVisible?: boolean;
+
+  // Upload Button config
+  uploadButtonShow?: boolean;
+  uploadButtonText?: string;
+  uploadButtonColor?: string;
+  uploadButtonClass?: string;
+  uploadButtonDisabled?: boolean;
 
   // Loading config
   isLoading?: boolean;
@@ -93,4 +101,9 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de limpiar
    */
   onClean?: (event: Event) => void;
+
+  /**
+   * Manejador para el evento de subir
+   */
+  onHeaderUploadFile?: (event: Event) => void;
 }

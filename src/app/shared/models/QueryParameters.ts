@@ -23,5 +23,16 @@ export interface QueryParameters {
   temporaryPassword?: string;
   email?: string;
   token?: string;
+  /**
+   * Descripción del archivo que se está subiendo.
+   * Ejemplos: "userProfile", "agencyDocument", "agencyLogo", etc.
+   */
+  description?: string;
+  /**
+   * Tipo de documento que se está subiendo.
+   * Este campo representa una categorización o tipo de documento, no el tipo MIME del archivo.
+   * Ejemplos: "contrato", "factura", "reporte", "certificado", etc.
+   */
+  documentType?: string;
 }
 

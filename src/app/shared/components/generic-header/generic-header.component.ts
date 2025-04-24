@@ -42,6 +42,15 @@ export class GenericHeaderComponent {
   @Input() saveButtonShow: boolean = false;
   @Input() saveButtonText: string = 'Save'; // TODO: Change this to the correct translation key
 
+  // Upload Button config
+  @Input() uploadButtonShow: boolean = false;
+  @Input() uploadButtonText: string = 'Upload'; // TODO: Change this to the correct translation key
+  @Input() uploadButtonColor: string = 'primary';
+  @Input() uploadButtonClass: string = '';
+  @Input() uploadButtonDisabled: boolean = false;
+
+
+
   // Clear Button config
   @Input() clearVisible: boolean = false;
 
@@ -74,5 +83,10 @@ export class GenericHeaderComponent {
 
   onCustom() {
     this.handler.onCustom();
+  }
+
+  //
+  onHeaderUploadFile(event: Event) {
+    this.handler.onHeaderUploadFile(event);
   }
 }

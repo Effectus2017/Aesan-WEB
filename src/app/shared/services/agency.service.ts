@@ -5,7 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
-import { AgencyRequest, UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
+import { UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
 import { Agency } from '../models/Agency';
 import { AgencyStatus } from '../models/AgencyStatus';
 

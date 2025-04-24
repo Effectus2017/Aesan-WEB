@@ -825,7 +825,8 @@
             },
             "actions": {
                 "edit": "Edit",
-                "delete": "Delete"
+                "delete": "Delete",
+                "download": "Download"
             }
         },
         "add": {

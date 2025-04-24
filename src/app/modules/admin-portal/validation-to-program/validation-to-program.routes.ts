@@ -11,14 +11,14 @@ export default [
         children: [
             {
                 path: '',
-                component: ValidationToProgramListComponent,
+                loadComponent: () => import('./list/list.component').then(c => c.ValidationToProgramListComponent),
                 resolve: {
                     data: initialDataValidationToProgramListResolver
                 },
             },
             {
                 path: 'edit/:id',
-                component: EditValidationToProgramComponent,
+                loadComponent: () => import('./edit/edit.component').then(c => c.EditValidationToProgramComponent),
                 resolve: {
                     data: initialDataValidationToProgramEditResolver
                 }

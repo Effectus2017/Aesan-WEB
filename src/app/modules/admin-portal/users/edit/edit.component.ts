@@ -46,7 +46,7 @@ import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
     TranslocoModule,
     GenericHeaderComponent,
     MatCheckboxModule,
-    SafeImageUrlPipe,
+    //SafeImageUrlPipe,
   ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -548,17 +548,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   }
 
   onUpload(file: File, forlderTo: any) {
+
     var requestParameters: QueryParameters = {
-      type: 'userProfile ',
-      fileName: file.name,
-      folderTo: forlderTo,
+        userId: this.id,
+        description: 'userProfile',
+        documentType: 'userProfile',
     };
-    this._uploadService.fileUpload(requestParameters, file).subscribe({
-      next: (result: any) => {
-        if (result.status === 200) {
-          this.fileResponse = result.body;
+
+    this._uploadService.uploadUserAvatar(requestParameters, file).subscribe({
+      next: (result) => {
+        if (result) {
           // Normalizar la URL para evitar problemas con barras invertidas
-          this.imageURL = this._uploadService.normalizeImageUrl(this.fileResponse.urlPath);
+          this.imageURL = this._uploadService.normalizeImageUrl(result.url);
 
           // Actualizar el avatar del usuario automáticamente
           this._usersService.updateUserAvatar(this.id, this.imageURL).subscribe({
@@ -642,7 +643,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           this._changeDetectorRef.markForCheck();
         }
       },
-      error: (error: any) => {
+      error: (error) => {
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.edit.messages.upload.title'),
@@ -663,8 +664,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             }
           }
         });
-      },
-      complete: () => {},
+      }
     });
   }
 

@@ -1,20 +1,3 @@
-// export interface TokenResponse {
-//   id: string;
-//   name: string;
-//   lastName: string;
-//   avatar?: string;
-//   status?: string;
-//   unique_name?: string;
-//   email?: string;
-//   role?: string;
-//   nameid?: string;
-//   nbf?: number;
-//   exp?: number;
-//   iat?: number;
-//   agency?: string;
-//   programs?: string;
-// }
-
 export interface TokenResponse {
   nameid: string;
   unique_name: string;
@@ -26,6 +9,7 @@ export interface TokenResponse {
   lastName: string;
   email: string;
   agency?: string;
+  agencyId?: number;
   programs?: string;
   programIds?: string;
   nbf: number;

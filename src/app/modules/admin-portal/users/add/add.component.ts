@@ -24,6 +24,7 @@ import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
   selector: 'app-users-add',
@@ -55,6 +56,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService: TranslocoService = inject(TranslocoService);
+  private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
@@ -231,21 +233,42 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   }
 
   onUpload(file: File, forlderTo: any) {
+
     var requestParameters: QueryParameters = {
-      type: 'userProfile ',
-      fileName: file.name,
-      folderTo: forlderTo,
+        userId: null,
+        description: 'userProfile',
+        documentType: 'userProfile',
     };
-    this._uploadService.fileUpload(requestParameters, file).subscribe({
-      next: (result: any) => {
-        if (result.status === 200) {
-          this.fileResponse = result.body;
-          this.imageURL = this.fileResponse.urlPath;
+
+    this._uploadService.uploadUserAvatar(requestParameters, file).subscribe({
+      next: (result) => {
+        if (result) {
+          this.imageURL = this._uploadService.normalizeImageUrl(result.url);
           this._changeDetectorRef.markForCheck();
         }
       },
-      error: (error: any) => {},
-      complete: () => {},
+      error: (error) => {
+        // Mostrar mensaje de error
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.edit.messages.upload.title'),
+          message: this._translocoService.translate('users.edit.messages.upload.error'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error'
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary'
+            },
+            cancel: {
+              show: false
+            }
+          }
+        });
+      }
     });
   }
 

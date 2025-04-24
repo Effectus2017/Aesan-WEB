@@ -148,6 +148,16 @@ export class AuthService {
     return user.nameid;
   }
 
+  getAgencyId(): number | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
+    return user.agencyId;
+  }
+
   getUserDataFromToken(): TokenResponse | null {
     const token = this.accessToken;
     if (!token) {
