@@ -40,8 +40,12 @@ export const DOCUMENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
   },
   {
     key: 'fileSize',
-    type: 'text',
+    type: 'file-size',
     label: 'documents.list.table.columns.fileSize',
+    fileSizeConfig: {
+      unit: 'MB',
+      decimals: 2
+    }
   },
   {
     key: 'contentType',
@@ -49,9 +53,8 @@ export const DOCUMENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'documents.list.table.columns.contentType',
   },
   {
-    key: ['uploadedByUser.firstName', 'uploadedByUser.fatherLastName'],
-    type: 'combined-text',
-    keys: ['uploadedByUser.firstName', 'uploadedByUser.fatherLastName'],
+    key: 'uploadedByName',
+    type: 'text',
     label: 'documents.list.table.columns.uploadedBy',
   },
   {

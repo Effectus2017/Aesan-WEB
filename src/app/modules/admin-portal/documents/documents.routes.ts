@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { initialDataDocumentsListResolver } from './documents.resolvers';
 
 export default [
     {
@@ -7,7 +8,9 @@ export default [
             {
                 path: '',
                 loadComponent: () => import('./list/list.component').then(c => c.DocumentsListComponent),
-                title: 'Documentos'
+                resolve: {
+                    data: initialDataDocumentsListResolver
+                }
             }
         ]
     }
