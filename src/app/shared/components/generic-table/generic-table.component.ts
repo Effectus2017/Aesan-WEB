@@ -28,6 +28,19 @@ export class GenericTableComponent implements OnInit {
   }
 
   /**
+   * Convierte un tamaño en bytes a MB con el número especificado de decimales
+   * @param bytes Tamaño en bytes
+   * @param decimals Número de decimales a mostrar
+   * @param unit Unidad a mostrar (por defecto MB)
+   * @returns Tamaño en MB como string con la unidad
+   */
+  formatFileSize(bytes: number, decimals: number = 2, unit: string = 'MB'): string {
+    if (!bytes) return `0 ${unit}`;
+    const mb = bytes / (1024 * 1024);
+    return `${mb.toFixed(decimals)} ${unit}`;
+  }
+
+  /**
    * Método para manejar la adición de un elemento a la tabla.
    * Llama a la función onTableAdd del handler proporcionado.
    */

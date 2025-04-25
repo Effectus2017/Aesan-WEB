@@ -34,5 +34,10 @@ export interface QueryParameters {
    * Ejemplos: "contrato", "factura", "reporte", "certificado", etc.
    */
   documentType?: string;
+  /**
+   * Tamaño del archivo en bytes.
+   * Se obtiene automáticamente del archivo subido usando file.Length
+   */
+  fileSize?: number;
 }
 

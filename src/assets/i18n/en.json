@@ -379,6 +379,10 @@
         }
     },
     "dialog": {
+        "confirm": {
+            "yes": "Yes",
+            "no": "No"
+        },
         "success": {
             "title": "Success",
             "message": "The agency has been updated successfully.",
@@ -1066,9 +1070,9 @@
     "documents": {
         "title": "Documents",
         "list": {
-            "title": "Documents List",
+            "title": "Documents",
             "search": {
-                "placeholder": "Search documents..."
+                "placeholder": "Search documents"
             },
             "buttons": {
                 "upload": "Upload Document",
@@ -1119,10 +1123,13 @@
         },
         "messages": {
             "upload": {
+                "title": "Error uploading file",
+                "invalidType": "File type not allowed",
                 "success": "Document has been uploaded successfully",
                 "error": "Error uploading document"
             },
             "delete": {
+                "title": "Delete Document",
                 "confirmation": "Are you sure you want to delete this document?",
                 "success": "Document has been deleted successfully",
                 "error": "Error deleting document"

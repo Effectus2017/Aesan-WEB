@@ -93,7 +93,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   };
 
   agencyId: number;
-
+  userId: string;
   constructor() {
 
   }
@@ -101,6 +101,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   ngOnInit(): void {
     // Obtener el ID de la agencia del usuario actual
     this.agencyId = this._authService.getAgencyId();
+    this.userId = this._authService.getUserId();
   }
 
   ngOnDestroy(): void {
@@ -182,6 +183,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
       // Crear los parámetros de consulta
       const params: QueryParameters = {
         agencyId: this.agencyId,
+        userId: this.userId,
         description: 'agencyDocument',
         documentType: 'factura'
       };

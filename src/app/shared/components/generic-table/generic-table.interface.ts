@@ -20,13 +20,43 @@ export interface FileTypeIcon {
   displayText: string;
 }
 
+export interface ButtonConfig {
+  key: string;
+  label?: string;
+}
+
+export interface FileSizeConfig {
+  /**
+   * Número de decimales a mostrar en el tamaño del archivo
+   * @default 2
+   */
+  decimals?: number;
+  /**
+   * Unidad en la que se mostrará el tamaño del archivo
+   * @default 'MB'
+   */
+  unit?: string;
+}
+
 export interface ColumnSchema {
   key: string | string[];
-  type: 'text' | 'date' | 'date-time' | 'check' | 'button' | 'boolean' | 'combined-text' | 'image' | 'file-type' | 'content-type-text';
+  type:
+    | 'text'
+    | 'check'
+    | 'image'
+    | 'date'
+    | 'date-time'
+    | 'file-type'
+    | 'file-size'
+    | 'content-type-text'
+    | 'combined-text'
+    | 'boolean'
+    | 'button';
   label: string;
-  buttons?: { key: string; label?: string }[];
+  buttons?: ButtonConfig[];
   imageConfig?: ImageConfig;
   fileTypeConfig?: FileTypeConfig;
+  fileSizeConfig?: FileSizeConfig;
   keys?: string[];
   visible?: boolean;
   sortable?: boolean;

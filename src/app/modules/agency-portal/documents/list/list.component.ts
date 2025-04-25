@@ -3,7 +3,7 @@ import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } fro
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +26,8 @@ import { UploadService } from 'app/shared/services/upload.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-
+import { AgencyFilesService } from 'app/shared/services/agency-files.service';
+import { AgencyFile } from 'app/shared/models/AgencyFile';
 
 @Component({
   selector: 'app-documents-list',
@@ -49,7 +50,7 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
     GenericTableComponent,
     GenericHeaderComponent,
     TranslocoModule,
-  ]
+  ],
 })
 export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   // Inyección de servicios
@@ -62,20 +63,21 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _uploadService = inject(UploadService);
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
+  private _agencyFilesService = inject(AgencyFilesService);
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource(DOCUMENTS_DATA),
-    dataSourceList: DOCUMENTS_DATA,
+    dataSource: new MatTableDataSource<AgencyFile>(),
+    dataSourceList: [],
     columnsSchema: DOCUMENTS_COLUMNS_SCHEMA,
     displayedColumns: DOCUMENTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
-    length: DOCUMENTS_DATA.length
+    length: 0,
   };
 
   // Configuración del header
@@ -94,12 +96,24 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   };
 
   agencyId: number;
-
+  userId: string;
   constructor() {}
 
   ngOnInit(): void {
     // Obtener el ID de la agencia del usuario actual
     this.agencyId = this._authService.getAgencyId();
+    this.userId = this._authService.getUserId();
+
+    this._agencyFilesService.files$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      this.tableConfig.dataSource.data = result.body.data;
+      this.tableConfig.length = result.body.count;
+
+      // Lista de datos
+      this.tableConfig.dataSourceList = result.body.data;
+
+      // Marcar para que se actualice la vista
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -115,8 +129,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
     // Resetea el formulario
     this.headerConfig.formGroup.reset();
     // Restaura los datos originales
-    this.tableConfig.dataSource.data = DOCUMENTS_DATA;
-    this.tableConfig.dataSourceList = DOCUMENTS_DATA;
+    this.getAll(0, this.headerConfig.formGroup.value);
     this._changeDetectorRef.markForCheck();
   }
 
@@ -127,19 +140,140 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
     console.log('Página:', pageIndex, 'Tamaño:', event.pageSize);
   }
 
+  // Métodos para obtener datos
+  getAll(index: number, form: any) {
+    const requestParameters: QueryParameters = {
+      take: this.tableConfig.pageSize,
+      skip: index,
+      alls: true,
+      agencyId: this.agencyId,
+      name: form.name || null,
+    };
+
+    this._agencyFilesService.getAgencyFiles(requestParameters).subscribe();
+  }
+
   // Manejador de eventos de la tabla
   onTableEdit(event: Event, id: string): void {
-    console.log('Editar archivo con ID:', id);
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Obtener el archivo por su ID
+    const params: QueryParameters = {
+      id: parseInt(id),
+    };
+
+    this._agencyFilesService.getAgencyFileById(params).subscribe({
+      next: (response) => {
+        if (response?.body?.fileUrl) {
+          // Abrir el archivo en una nueva pestaña
+          window.open(response.body.fileUrl, '_blank');
+        } else {
+          this._snackBar.open(this._translocoService.translate('documents.list.messages.open.error'), this._translocoService.translate('dialog.error.close'), {
+            duration: 3000,
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error al abrir el archivo:', error);
+        this._snackBar.open(this._translocoService.translate('documents.list.messages.open.error'), this._translocoService.translate('dialog.error.close'), { duration: 3000 });
+      },
+    });
+  }
+
+  onSearch() {
+    if (this.headerConfig.formGroup.valid) {
+      this.getAll(0, this.headerConfig.formGroup.value);
+      this.headerConfig.clearVisible = true;
+    }
   }
 
   // Manejador de eventos de la tabla
   onTableDownload(event: Event, id: string): void {
-    console.log('Descargar archivo con ID:', id);
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Obtener el archivo por su ID
+    const params: QueryParameters = {
+      id: parseInt(id),
+    };
+
+    this._agencyFilesService.getAgencyFileById(params).subscribe({
+      next: (response) => {
+        if (response?.body?.fileUrl) {
+          // Crear un elemento <a> temporal
+          const link = document.createElement('a');
+          link.href = response.body.fileUrl;
+          link.download = response.body.fileName || 'documento';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          this._snackBar.open(this._translocoService.translate('documents.list.messages.download.error'), this._translocoService.translate('dialog.error.close'), {
+            duration: 3000,
+          });
+        }
+      },
+      error: (error) => {
+        console.error('Error al descargar el archivo:', error);
+        this._snackBar.open(this._translocoService.translate('documents.list.messages.download.error'), this._translocoService.translate('dialog.error.close'), { duration: 3000 });
+      },
+    });
   }
 
   // Manejador de eventos de la tabla
   onTableDelete(event: Event, id: string): void {
-    console.log('Eliminar archivo con ID:', id);
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Mostrar diálogo de confirmación
+    this._fuseConfirmationService
+      .open({
+        title: this._translocoService.translate('documents.messages.delete.title'),
+        message: this._translocoService.translate('documents.messages.delete.confirmation'),
+        icon: {
+          show: true,
+          name: 'heroicons_outline:exclamation-circle',
+          color: 'warn',
+        },
+        actions: {
+          confirm: {
+            show: true,
+            label: this._translocoService.translate('dialog.confirm.yes'),
+            color: 'warn',
+          },
+          cancel: {
+            show: true,
+            label: this._translocoService.translate('dialog.confirm.no'),
+          },
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === 'confirmed') {
+          // Eliminar el archivo si se confirma
+          const params: QueryParameters = {
+            id: parseInt(id),
+          };
+
+          this._agencyFilesService.deleteAgencyFile(params).subscribe({
+            next: () => {
+              // Mostrar mensaje de éxito
+              this._snackBar.open(this._translocoService.translate('documents.list.messages.delete.success'), this._translocoService.translate('dialog.success.close'), {
+                duration: 3000,
+              });
+
+              this.getAll(0, this.headerConfig.formGroup.value);
+            },
+            error: (error) => {
+              console.error('Error al eliminar el archivo:', error);
+              this._snackBar.open(this._translocoService.translate('documents.list.messages.delete.error'), this._translocoService.translate('dialog.error.ok'), {
+                duration: 3000,
+              });
+            },
+          });
+        }
+      });
   }
 
   onHeaderUploadFile(event: Event): void {
@@ -156,23 +290,23 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
 
       if (!allowedTypes.includes(fileExt)) {
         this._fuseConfirmationService.open({
-          title: this._translocoService.translate('documents.list.messages.upload.title'),
-          message: this._translocoService.translate('documents.list.messages.upload.invalidType'),
+          title: this._translocoService.translate('documents.messages.upload.title'),
+          message: this._translocoService.translate('documents.messages.upload.invalidType'),
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
         return;
       }
@@ -180,8 +314,9 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
       // Crear los parámetros de consulta
       const params: QueryParameters = {
         agencyId: this.agencyId,
+        userId: this.userId,
         description: 'agencyDocument',
-        documentType: 'factura'
+        documentType: 'factura',
       };
 
       // Subir el archivo usando el servicio
@@ -189,24 +324,26 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
         next: (response) => {
           // Mostrar mensaje de éxito
           this._fuseConfirmationService.open({
-            title: this._translocoService.translate('documents.list.messages.upload.title'),
-            message: this._translocoService.translate('documents.list.messages.upload.success'),
+            title: this._translocoService.translate('documents.messages.upload.title'),
+            message: this._translocoService.translate('documents.messages.upload.success'),
             icon: {
               show: true,
               name: 'heroicons_outline:check-circle',
-              color: 'success'
+              color: 'success',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
+
+          this.getAll(0, this.headerConfig.formGroup.value);
 
           // Recargar la lista de documentos
           // TODO: Implementar la recarga de documentos
@@ -215,25 +352,25 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
         error: (error) => {
           // Mostrar mensaje de error
           this._fuseConfirmationService.open({
-            title: this._translocoService.translate('documents.list.messages.upload.title'),
-            message: this._translocoService.translate('documents.list.messages.upload.error'),
+            title: this._translocoService.translate('documents.messages.upload.title'),
+            message: this._translocoService.translate('documents.messages.upload.error'),
             icon: {
               show: true,
               name: 'heroicons_outline:exclamation-circle',
-              color: 'error'
+              color: 'error',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.error.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
-        }
+        },
       });
     }
   }

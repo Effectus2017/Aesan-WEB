@@ -371,10 +371,15 @@
         }
     },
     "dialog": {
+        "confirm": {
+            "yes": "Sí",
+            "no": "No"
+        },
         "success": {
             "title": "Éxito",
             "message": "La agencia ha sido actualizada con éxito.",
-            "confirm": "Aceptar"
+            "confirm": "Aceptar",
+            "close": "Cerrar"
         },
         "error": {
             "title": "Error",
@@ -1089,16 +1094,19 @@
         },
         "messages": {
             "upload": {
+                "title": "Error al subir archivo",
                 "success": "Documento subido exitosamente",
-                "error": "Error al subir el documento"
+                "invalidType": "Tipo de archivo no permitido",
+                "error": "Error al subir el archivo"
             },
             "delete": {
+                "title": "Eliminar Documento",
                 "confirmation": "¿Está seguro que desea eliminar este documento?",
                 "success": "Documento eliminado exitosamente",
                 "error": "Error al eliminar el documento"
             },
             "download": {
-                "error": "Error al descargar el documento"
+                "error": "Error al descargar el archivo"
             }
         }
     }

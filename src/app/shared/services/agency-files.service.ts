@@ -17,7 +17,6 @@ export class AgencyFilesService {
 
   // Inyección de servicios
   private _httpClient = inject(HttpClient);
-  private _authService = inject(AuthService);
   private _baseUrl = `${environment.baseHttpUrl}/agency-files`;
 
   constructor() {}
@@ -41,9 +40,9 @@ export class AgencyFilesService {
    * @param queryParameters Los parámetros de consulta
    * @returns Observable con la información del archivo
    */
-  getAgencyFileById(queryParameters: QueryParameters): Observable<AgencyFile> {
-    return this._httpClient.get<AgencyFile>(`${this._baseUrl}/get-agency-file-by-id`, getHttpOptions(queryParameters)).pipe(
-      tap((response: AgencyFile) => {
+  getAgencyFileById(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get<any>(`${this._baseUrl}/get-agency-file-by-id`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => {
         this._file.next(response);
       })
     );
@@ -54,10 +53,10 @@ export class AgencyFilesService {
    * @param queryParameters Los parámetros de consulta
    * @returns Observable con la lista paginada de archivos
    */
-  getAgencyFiles(queryParameters: QueryParameters): Observable<AgencyFilesResponse> {
-    return this._httpClient.get<AgencyFilesResponse>(`${this._baseUrl}/get-agency-files-from-db`, getHttpOptions(queryParameters)).pipe(
-      tap((response: AgencyFilesResponse) => {
-        this._files.next(response.data);
+  getAgencyFiles(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get<any>(`${this._baseUrl}/get-agency-files-from-db`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => {
+        this._files.next(response);
       })
     );
   }
