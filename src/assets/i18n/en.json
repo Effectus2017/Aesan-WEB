@@ -1138,5 +1138,153 @@
                 "error": "Error downloading document"
             }
         }
+    },
+    "agency-pdam": {
+        "title": "PDAM Application",
+        "from-intent": "(Comes from Intent to Participate)",
+        "sponsor-profile": {
+            "title": "Sponsor Profile",
+            "description": "Enter the sponsor's information",
+            "sponsor-name": {
+                "label": "Sponsor Name",
+                "placeholder": "Enter sponsor name"
+            },
+            "representative-name": {
+                "label": "Representative Name",
+                "placeholder": "Enter representative name"
+            },
+            "program-persons": {
+                "label": "Program Persons",
+                "placeholder": "Enter number of program persons"
+            }
+        },
+        "address": {
+            "title": "Address",
+            "description": "Enter the address information",
+            "postal": {
+                "label": "Postal Address",
+                "placeholder": "Enter postal address"
+            },
+            "physical": {
+                "label": "Physical Address",
+                "placeholder": "Enter physical address"
+            },
+            "phone": {
+                "label": "Phone Number",
+                "placeholder": "Enter phone number"
+            }
+        },
+        "uie-info": {
+            "title": "UIE Information",
+            "description": "Enter the UIE information",
+            "uie-number": {
+                "label": "UIE Number",
+                "placeholder": "Enter UIE number"
+            },
+            "corporation-number": {
+                "label": "Corporation Number",
+                "placeholder": "Enter corporation number"
+            },
+            "employer-number": {
+                "label": "Employer Number",
+                "placeholder": "Enter employer number"
+            }
+        },
+        "coordinates": {
+            "latitude": {
+                "label": "Latitude",
+                "placeholder": "Enter latitude"
+            },
+            "longitude": {
+                "label": "Longitude",
+                "placeholder": "Enter longitude"
+            }
+        },
+        "vision-mission": {
+            "title": "Vision and Mission",
+            "description": "Enter the organization's vision and mission",
+            "vision": {
+                "label": "Vision",
+                "placeholder": "Enter organization's vision"
+            },
+            "mission": {
+                "label": "Mission",
+                "placeholder": "Enter organization's mission"
+            },
+            "objectives": {
+                "label": "Objectives",
+                "placeholder": "Enter organization's objectives"
+            }
+        },
+        "participation": {
+            "title": "Participation Type",
+            "description": "Select the type of participation",
+            "type": {
+                "label": "Participation Type",
+                "placeholder": "Select participation type"
+            }
+        },
+        "additional-programs": {
+            "title": "Additional Programs Operated by the Authority (applies to renewals)",
+            "description": "Select additional programs you participate in",
+            "federal-food": {
+                "label": "Federal Food Program"
+            },
+            "special-milk": {
+                "label": "Special Milk Program"
+            },
+            "farm-to-school": {
+                "label": "Farm to School Program"
+            },
+            "summer-ebt": {
+                "label": "Summer EBT Program"
+            },
+            "farm-to-summer": {
+                "label": "Farm to Summer Program"
+            },
+            "fresh-fruits": {
+                "label": "Fresh Fruits Program"
+            }
+        },
+        "civil-rights": {
+            "title": "Civil Rights",
+            "description": "Civil rights compliance information",
+            "other-languages": {
+                "label": "Need Other Languages",
+                "placeholder": "Select if other languages are needed"
+            },
+            "interpreter": {
+                "label": "Need Interpreter",
+                "placeholder": "Select if interpreter is needed"
+            },
+            "alternative-means": {
+                "label": "Alternative Means of Communication",
+                "braille": "Braille",
+                "audio": "Audio",
+                "large-text": "Large Text",
+                "sign-language": "Sign Language",
+                "other": "Other"
+            },
+            "pre-award": {
+                "label": "Pre-Award Review",
+                "placeholder": "Select if pre-award review is needed"
+            },
+            "informed-persons": {
+                "label": "Informed Persons",
+                "placeholder": "Select if persons have been informed"
+            },
+            "informed-date": {
+                "label": "Date Informed",
+                "placeholder": "Select date when persons were informed"
+            },
+            "explanation": {
+                "label": "Additional Explanation",
+                "placeholder": "Enter any additional explanation"
+            }
+        },
+        "edit": {
+            "submit": "Submit Application",
+            "save": "Save Changes"
+        }
     }
 }

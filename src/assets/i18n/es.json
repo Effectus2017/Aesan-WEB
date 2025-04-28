@@ -1109,5 +1109,185 @@
                 "error": "Error al descargar el archivo"
             }
         }
+    },
+    "agency-pdam": {
+        "title": "Programa de Desayuno, Almuerzo y Merienda Escolar",
+        "from-intent": "(Viene de la Intención de Participación)",
+        "sponsor-profile": {
+            "title": "Perfil del Auspiciador",
+            "description": "Ingrese la información del auspiciador",
+            "sponsor-name": {
+                "label": "Nombre del Auspiciador",
+                "placeholder": "Ingrese el nombre del auspiciador"
+            },
+            "representative-name": {
+                "label": "Nombre del Representante",
+                "placeholder": "Ingrese el nombre del representante"
+            },
+            "program-persons": {
+                "label": "Personas del Programa",
+                "placeholder": "Ingrese el número de personas del programa"
+            }
+        },
+        "address": {
+            "title": "Dirección",
+            "description": "Ingrese la información de dirección",
+            "postal": {
+                "label": "Dirección Postal",
+                "placeholder": "Ingrese la dirección postal"
+            },
+            "physical": {
+                "label": "Dirección Física",
+                "placeholder": "Ingrese la dirección física"
+            },
+            "phone": {
+                "label": "Número de Teléfono",
+                "placeholder": "Ingrese el número de teléfono"
+            }
+        },
+        "uie-info": {
+            "title": "Información UIE",
+            "description": "Ingrese la información de UIE",
+            "uie-number": {
+                "label": "Número UIE",
+                "placeholder": "Ingrese el número UIE"
+            },
+            "corporation-number": {
+                "label": "Número de Corporación",
+                "placeholder": "Ingrese el número de corporación"
+            },
+            "employer-number": {
+                "label": "Número de Empleador",
+                "placeholder": "Ingrese el número de empleador"
+            }
+        },
+        "coordinates": {
+            "latitude": {
+                "label": "Latitud",
+                "placeholder": "Ingrese la latitud"
+            },
+            "longitude": {
+                "label": "Longitud",
+                "placeholder": "Ingrese la longitud"
+            }
+        },
+        "vision-mission": {
+            "title": "Visión y Misión",
+            "description": "Ingrese la visión y misión de la organización",
+            "vision": {
+                "label": "Visión",
+                "placeholder": "Ingrese la visión de la organización"
+            },
+            "mission": {
+                "label": "Misión",
+                "placeholder": "Ingrese la misión de la organización"
+            },
+            "objectives": {
+                "label": "Objetivos",
+                "placeholder": "Ingrese los objetivos de la organización"
+            }
+        },
+        "participation": {
+            "title": "Tipo de Participación",
+            "description": "Seleccione el tipo de participación",
+            "type": {
+                "label": "Tipo de Participación",
+                "placeholder": "Seleccione el tipo de participación"
+            }
+        },
+        "additional-programs": {
+            "title": "Programas Adicionales que Opera la Autoridad (aplica a renovaciones)",
+            "description": "Seleccione los programas adicionales en los que participa",
+            "federal-food": {
+                "label": "Programa Federal de Alimentos"
+            },
+            "special-milk": {
+                "label": "Programa Especial de Leche"
+            },
+            "farm-to-school": {
+                "label": "Programa de la Granja a la Escuela"
+            },
+            "summer-ebt": {
+                "label": "Programa EBT de Verano"
+            },
+            "farm-to-summer": {
+                "label": "Programa de la Granja al Verano"
+            },
+            "fresh-fruits": {
+                "label": "Programa de Frutas Frescas"
+            }
+        },
+        "nutrition-division": {
+            "title": "División de Nutrición",
+            "description": "Seleccione la división de nutrición",
+            "menu": {
+                "label": "¿Menú diseñado por la AEA?"
+            },
+            "document": {
+                "button": "Subir Documento",
+                "label": "En caso de seleccionar No, deberá incluir el menú que estará utilizando"
+            }
+        },
+        "civil-rights": {
+            "title": "Derechos Civiles",
+            "description": "Información de cumplimiento de derechos civiles",
+            "other-languages": {
+                "label": "Necesita Otros Idiomas",
+                "placeholder": "Seleccione si necesita otros idiomas"
+            },
+            "interpreter": {
+                "label": "¿Necesita el auspiciador material informativo en otros idiomas, además de español e inglés?",
+                "placeholder": "Seleccione si necesita intérprete"
+            },
+            "alternative-means": {
+                "label": "Necesita algún medio alternativo:",
+                "braille": "Braille",
+                "audio": "Audio",
+                "large-text": "Letras Grandes",
+                "sign-language": "Lenguaje de Señas",
+                "other": "Otro"
+            },
+            "pre-award": {
+                "label": "¿Realizó el Pre Award?",
+                "button": "Subir Documento"
+            },
+            "relay-service": {
+                "label": "¿Conocen las personas sordas o con dificultad de audición o discapacidades del habla (si aplica), que pueden comunicarse con USDA por medio del Federal Relay Service al (800) 877-8339?"
+            },
+            "informed-persons": {
+                "label": "Personas Informadas",
+                "placeholder": "Seleccione si las personas han sido informadas"
+            },
+            "informed-date": {
+                "label": "Existe evidencia de que estas personas fueron informadas? Si la respuesta es no, indique la fecha y cómo se le proveerá el material informativo"
+            },
+            "site-organization": {
+                "label": "Organización de Sitios",
+                "placeholder": "Ingrese la organización de sitios"
+            },
+            "explanation": {
+                "label": "Explique"
+            }
+        },
+        "edit": {
+            "submit": "Enviar Solicitud",
+            "save": "Guardar Cambios"
+        },
+        "table": {
+            "columns": {
+                "agencyName": "Nombre de Sitio",
+                "initDate": "Fecha de Inicio",
+                "address": "Dirección Física",
+                "postalCode": "Dirección Postal",
+                "city": "Pueblo",
+                "region": "Región",
+                "fullName": "Nombre y Apellido",
+                "phoneNumber": "Teléfono",
+                "actions": "Acciones"
+            },
+            "buttons": {
+                "edit": "Editar"
+            }
+        }
     }
 }

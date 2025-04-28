@@ -1,15 +1,12 @@
 <div class="flex flex-col flex-auto min-w-0">
     <!-- Header -->
-    <app-generic-header
-        [config]="headerConfig"
-        [handler]="this"
-        #documentsHeader>
-    </app-generic-header>
+    <app-generic-header [config]="headerConfig" [handler]="this" #documentsHeader></app-generic-header>
 
     <!-- Table -->
-    <app-generic-table
-        [config]="tableConfig"
-        [handler]="this"
-        #documentsTable>
-    </app-generic-table>
+    <div class="flex-auto overflow-y-auto" cdkScrollable>
+        <app-generic-table [config]="tableConfig" [handler]="this" #documentsTable></app-generic-table>
+    </div>
+
+    <!-- Paginador -->
+    <mat-paginator class="hidden sm:block" [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
 </div>

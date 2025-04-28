@@ -114,6 +114,7 @@ export const appRoutes: Route[] = [
       { path: 'programs', loadChildren: () => import('app/modules/agency-portal/programs/programs.routes') },
       { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents/documents.routes') },
+      { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
     ],
   },
 ];
