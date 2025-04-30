@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AgencyFormsComponent } from './forms.component';
-
+import { initialPDAMAgencyFormsRequestsResolver } from './forms.resolvers';
 export default [
     {
         path     : '',
@@ -10,7 +10,7 @@ export default [
                 path: 'pdam-solicitud',
                 loadComponent: () => import('./pdam-solicitud/pdam-solicitud.component').then(c => c.AgencyPDAMSolicitudComponent),
                 resolve: {
-                    //data: initialAgencyFormsRequestsResolver
+                    data: initialPDAMAgencyFormsRequestsResolver
                 }
             }
         ]

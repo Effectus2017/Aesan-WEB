@@ -1087,7 +1087,9 @@
                     "contentType": "Content Type",
                     "uploadedBy": "Uploaded by",
                     "uploadDate": "Upload Date",
-                    "actions": "Actions"
+                    "actions": "Actions",
+                    "expirationDate": "Expiration Date",
+                    "isDeleted": "Deleted"
                 },
                 "buttons": {
                     "download": "Download",
@@ -1123,7 +1125,7 @@
         },
         "messages": {
             "upload": {
-                "title": "Error uploading file",
+                "title": "Upload Document",
                 "invalidType": "File type not allowed",
                 "success": "Document has been uploaded successfully",
                 "error": "Error uploading document"

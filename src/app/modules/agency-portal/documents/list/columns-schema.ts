@@ -63,6 +63,16 @@ export const DOCUMENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'documents.list.table.columns.uploadDate',
   },
   {
+    key: 'expirationDate',
+    type: 'date-time',
+    label: 'documents.list.table.columns.expirationDate',
+  },
+  {
+    key: 'isDeleted',
+    type: 'boolean',
+    label: 'documents.list.table.columns.isDeleted',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'documents.list.table.columns.actions',

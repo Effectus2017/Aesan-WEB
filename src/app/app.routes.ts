@@ -110,10 +110,15 @@ export const appRoutes: Route[] = [
       initialData: initialDataAgencyPortalResolver,
     },
     children: [
+      // Program requests, listado de solicitudes de programas
       { path: 'program-requests', loadChildren: () => import('app/modules/agency-portal/program-requests/program-requests.routes') },
+      // Programs, listado de programas
       { path: 'programs', loadChildren: () => import('app/modules/agency-portal/programs/programs.routes') },
+      // Dashboard, dashboard de la agencia
       { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
+      // Documents, listado de documentos
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents/documents.routes') },
+      // Forms, listado de formularios para solicitar programas
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
     ],
   },

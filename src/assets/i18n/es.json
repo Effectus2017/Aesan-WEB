@@ -1058,7 +1058,9 @@
                     "contentType": "Tipo de Contenido",
                     "uploadedBy": "Subido por",
                     "uploadDate": "Fecha de Subida",
-                    "actions": "Acciones"
+                    "actions": "Acciones",
+                    "expirationDate": "Fecha de Expiración",
+                    "isDeleted": "Eliminado"
                 },
                 "buttons": {
                     "download": "Descargar",
@@ -1094,7 +1096,7 @@
         },
         "messages": {
             "upload": {
-                "title": "Error al subir archivo",
+                "title": "Subida de Documento",
                 "success": "Documento subido exitosamente",
                 "invalidType": "Tipo de archivo no permitido",
                 "error": "Error al subir el archivo"
@@ -1113,52 +1115,51 @@
     "agency-pdam": {
         "title": "Programa de Desayuno, Almuerzo y Merienda Escolar",
         "from-intent": "(Viene de la Intención de Participación)",
+        "request-number": {
+            "label": "Número de Solicitud",
+            "placeholder": "Ingrese el número de solicitud"
+        },
+        "request-type": {
+            "label": "Tipo de Solicitud",
+            "placeholder": "Seleccione el tipo de solicitud"
+        },
         "sponsor-profile": {
             "title": "Perfil del Auspiciador",
             "description": "Ingrese la información del auspiciador",
             "sponsor-name": {
-                "label": "Nombre del Auspiciador",
-                "placeholder": "Ingrese el nombre del auspiciador"
+                "label": "Nombre del Auspiciador:"
             },
             "representative-name": {
-                "label": "Nombre del Representante",
-                "placeholder": "Ingrese el nombre del representante"
+                "label": "Representante autorizado"
             },
             "program-persons": {
-                "label": "Personas del Programa",
-                "placeholder": "Ingrese el número de personas del programa"
+                "label": "Personas a cargo del Programa:"
             }
         },
         "address": {
             "title": "Dirección",
             "description": "Ingrese la información de dirección",
             "postal": {
-                "label": "Dirección Postal",
-                "placeholder": "Ingrese la dirección postal"
+                "label": "Dirección Postal"
             },
             "physical": {
-                "label": "Dirección Física",
-                "placeholder": "Ingrese la dirección física"
+                "label": "Dirección Física"
             },
             "phone": {
-                "label": "Número de Teléfono",
-                "placeholder": "Ingrese el número de teléfono"
+                "label": "Número de Teléfono"
             }
         },
         "uie-info": {
             "title": "Información UIE",
             "description": "Ingrese la información de UIE",
             "uie-number": {
-                "label": "Número UIE",
-                "placeholder": "Ingrese el número UIE"
+                "label": "# UEI:"
             },
             "corporation-number": {
-                "label": "Número de Corporación",
-                "placeholder": "Ingrese el número de corporación"
+                "label": "# Registro de Corporación:"
             },
             "employer-number": {
-                "label": "Número de Empleador",
-                "placeholder": "Ingrese el número de empleador"
+                "label": "# Seguro Social Patronal:"
             }
         },
         "coordinates": {
@@ -1185,6 +1186,9 @@
             "objectives": {
                 "label": "Objetivos",
                 "placeholder": "Ingrese los objetivos de la organización"
+            },
+            "participation": {
+                "label": "¿Bajo cuál de las siguientes alternativas desea participar?"
             }
         },
         "participation": {
@@ -1232,12 +1236,12 @@
             "title": "Derechos Civiles",
             "description": "Información de cumplimiento de derechos civiles",
             "other-languages": {
-                "label": "Necesita Otros Idiomas",
-                "placeholder": "Seleccione si necesita otros idiomas"
+                "label": "¿Necesita el auspiciador material informativo en otros idiomas, además de español e inglés?",
+                "placeholder": "Seleccione una alternativa"
             },
             "interpreter": {
-                "label": "¿Necesita el auspiciador material informativo en otros idiomas, además de español e inglés?",
-                "placeholder": "Seleccione si necesita intérprete"
+                "label": "¿Necesita un interprete para diferentes idiomas?",
+                "placeholder": "Seleccione una alternativa"
             },
             "alternative-means": {
                 "label": "Necesita algún medio alternativo:",
@@ -1259,15 +1263,17 @@
                 "placeholder": "Seleccione si las personas han sido informadas"
             },
             "informed-date": {
-                "label": "Existe evidencia de que estas personas fueron informadas? Si la respuesta es no, indique la fecha y cómo se le proveerá el material informativo"
+                "title": "Existe evidencia de que estas personas fueron informadas? Si la respuesta es no, indique la fecha y cómo se le proveerá el material informativo",
+                "label": "Fecha",
+                "placeholder": "Ingrese la fecha"
             },
-            "site-organization": {
-                "label": "Organización de Sitios",
-                "placeholder": "Ingrese la organización de sitios"
-            },
+
             "explanation": {
                 "label": "Explique"
             }
+        },
+        "site-organization": {
+            "title": "Organización de Sitios"
         },
         "edit": {
             "submit": "Enviar Solicitud",

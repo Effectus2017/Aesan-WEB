@@ -5,82 +5,110 @@
   <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-6 sm:grid-cols-3 sm:col-span-9">
+          <!-- Número de solicitud -->
+          <mat-form-field>
+            <mat-label>{{ "agency-pdam.request-number.label" | transloco }}</mat-label>
+            <input matInput formControlName="requestNumber" [placeholder]="'agency-pdam.request-number.placeholder' | transloco" aria-label="Número de solicitud" disabled />
+          </mat-form-field>
+
+          <!-- Tipo de solicitud -->
+          <mat-form-field>
+            <mat-label>{{ "agency-pdam.request-type.label" | transloco }}</mat-label>
+            <mat-select
+              formControlName="requestType"
+              [placeholder]="'agency-pdam.request-type.placeholder' | transloco"
+              [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }"
+            >
+              <mat-option *ngFor="let option of listRequestType" [value]="option.id">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Fecha de solicitud -->
+          <mat-form-field>
+            <mat-label>Fecha de solicitud</mat-label>
+            <input matInput [matDatepicker]="requestDatePicker" formControlName="requestDate" placeholder="Seleccione la fecha de solicitud" aria-label="Fecha de solicitud" />
+            <mat-datepicker-toggle matIconSuffix [for]="requestDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #requestDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
         <!-- Perfil del Auspiciador Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
-          <p class="text-lg font-medium">{{ "agency-pdam.sponsor-profile.title" | transloco }}</p>
+          <p class="text-2xl font-medium">{{ "agency-pdam.sponsor-profile.title" | transloco }}</p>
         </div>
 
         <!-- Información del Auspiciador -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.sponsor-profile.sponsor-name.label" | transloco }}:</span>
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-6 sm:grid-cols-2 sm:col-span-9">
+          <!-- Nombre del auspiciador -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.sponsor-profile.sponsor-name.label" | transloco }}:</span>
             <span class="text-lg">{{ sponsorName }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
           </div>
 
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.sponsor-profile.representative-name.label" | transloco }}:</span>
+          <!-- UIEs -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.uie-info.uie-number.label" | transloco }}:</span>
+            <span class="text-lg">{{ uieNumber }}</span>
+          </div>
+
+          <!-- Representante autorizado -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.sponsor-profile.representative-name.label" | transloco }}:</span>
             <span class="text-lg">{{ representativeName }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
           </div>
 
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.sponsor-profile.program-persons.label" | transloco }}:</span>
+          <!-- # Registro de Corporación -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.uie-info.corporation-number.label" | transloco }}:</span>
+            <span class="text-lg">{{ corporationNumber }}</span>
+          </div>
+
+          <!-- Personas programadas -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.sponsor-profile.program-persons.label" | transloco }}:</span>
             <span class="text-lg">{{ programPersons }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
           </div>
 
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.address.postal.label" | transloco }}:</span>
-            <span class="text-lg">{{ postalAddress }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
+          <!-- # Seguro Social Patronal: -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.uie-info.employer-number.label" | transloco }}:</span>
+            <span class="text-lg">{{ employerNumber }}</span>
           </div>
 
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.address.physical.label" | transloco }}:</span>
+          <!-- Dirección física -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.address.physical.label" | transloco }}:</span>
             <span class="text-lg">{{ physicalAddress }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
           </div>
 
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.address.phone.label" | transloco }}:</span>
+          <!-- Latitud -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.coordinates.latitude.label" | transloco }}:</span>
+            <span class="text-lg">{{ latitude | number : "1.2-2" }}°</span>
+          </div>
+
+          <!-- Dirección postal -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.address.postal.label" | transloco }}:</span>
+            <span class="text-lg">{{ postalAddress }}</span>
+          </div>
+
+          <!-- Longitud -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.coordinates.longitude.label" | transloco }}:</span>
+            <span class="text-lg">{{ longitude | number : "1.2-2" }}°</span>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="flex flex-row items-center gap-2">
+            <span class="text-lg font-bold">{{ "agency-pdam.address.phone.label" | transloco }}:</span>
             <span class="text-lg">{{ phoneNumber }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.uie-info.uie-number.label" | transloco }}:</span>
-            <span class="text-lg">{{ uieNumber | number }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.uie-info.corporation-number.label" | transloco }}:</span>
-            <span class="text-lg">{{ corporationNumber | number }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.uie-info.employer-number.label" | transloco }}:</span>
-            <span class="text-lg">{{ employerNumber | number }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.coordinates.latitude.label" | transloco }}:</span>
-            <span class="text-lg">{{ latitude | number : "1.6-6" }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.coordinates.longitude.label" | transloco }}:</span>
-            <span class="text-lg">{{ longitude | number : "1.6-6" }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
           </div>
         </div>
 
         <!-- Visión y Misión Fields -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-9">
           <mat-form-field>
             <mat-label>{{ "agency-pdam.vision-mission.vision.label" | transloco }}</mat-label>
             <textarea
@@ -109,7 +137,7 @@
         </div>
 
         <!-- Objetivos Section -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-9">
           <mat-form-field>
             <mat-label>{{ "agency-pdam.vision-mission.objectives.label" | transloco }}</mat-label>
             <textarea
@@ -124,14 +152,10 @@
           </mat-form-field>
         </div>
 
-        <!-- Tipo de Participación Section -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">¿Bajo cuál de las siguientes alternativas desea participar?</p>
-        </div>
-
         <!-- Tipo de Participación Field -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-9">
           <mat-form-field>
+            <mat-label>{{ "agency-pdam.vision-mission.participation.label" | transloco }}</mat-label>
             <mat-select formControlName="participationType" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
               <mat-option *ngFor="let option of listParticipationType" [value]="option.id">{{ option.name }}</mat-option>
             </mat-select>
@@ -141,13 +165,13 @@
         <!-- <mat-divider class="my-2"></mat-divider> -->
 
         <!-- Programas Adicionales Section -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-6 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "agency-pdam.additional-programs.title" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "agency-pdam.additional-programs.description" | transloco }}</p>
         </div>
 
         <!-- Programas Adicionales Checkboxes -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-9">
           <mat-checkbox formControlName="federalFoodProgram">
             {{ "agency-pdam.additional-programs.federal-food.label" | transloco }}
           </mat-checkbox>
@@ -174,26 +198,26 @@
         </div>
 
         <!-- Division de nutricion -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-8 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "agency-pdam.nutrition-division.title" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "agency-pdam.nutrition-division.description" | transloco }}</p>
         </div>
 
-        <div class="grid items-center grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid items-center grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-9">
           <mat-form-field>
             <mat-label>{{ "agency-pdam.nutrition-division.menu.label" | transloco }}</mat-label>
             <mat-select formControlName="participationType" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
               <mat-option *ngFor="let option of listNutritionDivision" [value]="option.id">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
+          <!--
           <div class="flex items-center justify-center gap-4">
             <p class="font-medium text-md">{{ "agency-pdam.nutrition-division.document.label" | transloco }}</p>
             <button mat-raised-button color="primary" class="h-[3.5rem]">
               <mat-icon class="mr-2">upload</mat-icon>
               {{ "agency-pdam.nutrition-division.document.button" | transloco }}
             </button>
-          </div>
+          </div> -->
         </div>
 
         <!-- Derechos Civiles Section -->
@@ -203,7 +227,8 @@
         </div>
 
         <!-- Derechos Civiles Fields -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-9">
+          <!-- ¿Necesita el auspiciador material informativo en otros idiomas, además de español e inglés ? -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.other-languages.label" | transloco }}</mat-label>
             <mat-select formControlName="needsOtherLanguages" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
@@ -211,6 +236,7 @@
             </mat-select>
           </mat-form-field>
 
+          <!-- Explicación adicional -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.explanation.label" | transloco }}</mat-label>
             <input
@@ -221,6 +247,7 @@
             />
           </mat-form-field>
 
+          <!-- ¿Necesita un interprete para diferentes idiomas? -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.interpreter.label" | transloco }}</mat-label>
             <mat-select formControlName="needsInterpreter" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
@@ -228,6 +255,7 @@
             </mat-select>
           </mat-form-field>
 
+          <!-- Explicación adicional -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.explanation.label" | transloco }}</mat-label>
             <input
@@ -240,7 +268,7 @@
         </div>
 
         <!-- Medios Alternativos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" formGroupName="alternativeMeans">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-9" formGroupName="alternativeMeans">
           <p class="font-medium text-md">{{ "agency-pdam.civil-rights.alternative-means.label" | transloco }}</p>
 
           <div class="grid grid-cols-2 gap-4">
@@ -267,23 +295,16 @@
         </div>
 
         <!-- Pre Award y Personas Informadas -->
-        <div class="grid items-center grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid items-center grid-cols-1 col-span-12 gap-4 mt-6 sm:grid-cols-2 sm:col-span-9">
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.pre-award.label" | transloco }}</mat-label>
             <mat-select formControlName="preAward" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
               <mat-option *ngFor="let option of listYesNo" [value]="option.value">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <div class="flex items-center justify-start gap-4">
-            <button mat-raised-button color="primary" class="h-[3.5rem]">
-              <mat-icon class="mr-2">upload</mat-icon>
-              {{ "agency-pdam.civil-rights.pre-award.button" | transloco }}
-            </button>
-          </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-9">
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.relay-service.label" | transloco }}</mat-label>
             <mat-select formControlName="relayService" [ngClass]="{ 'text-slate-300': isDarkMode, 'text-slate-700': !isDarkMode }">
@@ -292,15 +313,12 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <div class="flex flex-col">
-            <span class="text-lg font-medium">{{ "agency-pdam.sponsor-profile.sponsor-name.label" | transloco }}:</span>
-            <span class="text-lg">{{ sponsorName }}</span>
-            <span class="text-lg text-secondary">({{ "agency-pdam.from-intent" | transloco }})</span>
-          </div>
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-2 sm:grid-cols-1 sm:col-span-9">
+          <p class="text-lg font-medium">{{ "agency-pdam.civil-rights.informed-date.title" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-9">
+          <!-- fecha -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.informed-date.label" | transloco }}</mat-label>
             <input
@@ -315,6 +333,7 @@
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
 
+          <!-- Explicación adicional -->
           <mat-form-field>
             <mat-label>{{ "agency-pdam.civil-rights.explanation.label" | transloco }}</mat-label>
             <input matInput formControlName="explanation" />

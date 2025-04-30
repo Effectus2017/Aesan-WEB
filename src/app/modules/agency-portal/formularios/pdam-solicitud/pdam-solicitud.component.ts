@@ -116,6 +116,11 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
     { id: 2, name: 'No', value: false }
   ];
 
+  listRequestType = [
+    { id: 1, name: 'Nueva' },
+    { id: 2, name: 'Renovación' }
+  ];
+
   param: Agency;
 
   // Configuración de la tabla

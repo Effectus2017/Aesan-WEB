@@ -267,9 +267,12 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
             },
             error: (error) => {
               console.error('Error al eliminar el archivo:', error);
+
               this._snackBar.open(this._translocoService.translate('documents.list.messages.delete.error'), this._translocoService.translate('dialog.error.ok'), {
                 duration: 3000,
               });
+
+              this.getAll(0, this.headerConfig.formGroup.value);
             },
           });
         }
