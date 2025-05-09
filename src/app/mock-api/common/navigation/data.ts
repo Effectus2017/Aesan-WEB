@@ -70,6 +70,31 @@ export const defaultNavigation: FuseNavigationItem[] = [
     roles: ['Administrator'],
   },
   {
+    id: 'documents',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/documents',
+    roles: ['Administrator'],
+  },
+  // Administrator
+  {
+    id: 'administration',
+    title: 'navigation.administration.title',
+    type: 'group',
+    icon: 'heroicons_solid:building-office',
+    children: [
+      {
+        id: 'administration.agency-status',
+        title: 'navigation.administration.agency-status',
+        type: 'basic',
+        icon: 'heroicons_solid:building-office',
+        link: '/agency-status',
+      },
+    ],
+    roles: ['Administrator'],
+  },
+  {
     id: 'users',
     title: 'navigation.users.title',
     subtitle: 'navigation.users.subtitle',
@@ -99,15 +124,15 @@ export const defaultNavigation: FuseNavigationItem[] = [
       },
     ],
   },
-    // Administrator
-    {
-        id: 'documents',
-        title: 'navigation.documents',
-        type: 'basic',
-        icon: 'heroicons_solid:document-duplicate',
-        link: '/documents',
-        roles: ['Administrator'],
-      },
+  // Administrator
+  {
+    id: 'documents',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/documents',
+    roles: ['Administrator'],
+  },
   // Agency-Administrator
   {
     id: 'documents.agency',
@@ -115,6 +140,14 @@ export const defaultNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-duplicate',
     link: '/documents',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'documents.schools',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_outline:academic-cap',
+    link: '/schools',
     roles: ['Agency-Administrator'],
   },
   {
@@ -192,45 +225,6 @@ export const defaultNavigation: FuseNavigationItem[] = [
   },
 ];
 
-export const compactNavigation: FuseNavigationItem[] = [
-  {
-    id: 'programs',
-    title: 'navigation.programs.validation',
-    type: 'basic',
-    icon: 'heroicons_solid:home',
-    link: '/validation-to-program',
-    roles: ['Administrator'],
-  },
-  {
-    id: 'pre-operational',
-    title: 'navigation.pre-operational',
-    type: 'basic',
-    icon: 'heroicons_solid:check-badge',
-    link: '/pre-operational',
-    roles: ['Monitor'],
-  },
-  {
-    id: 'users',
-    title: 'navigation.users.title',
-    tooltip: 'navigation.users.tooltip',
-    type: 'aside',
-    icon: 'mat_solid:person',
-    children: [],
-    link: '/users',
-    roles: ['Administrator'],
-  },
-];
-
-export const futuristicNavigation: FuseNavigationItem[] = [
-  {
-    id: 'home',
-    title: 'navigation.home',
-    type: 'basic',
-    icon: 'heroicons_outline:home',
-    link: '/example',
-  },
-];
-
 export const horizontalNavigation: FuseNavigationItem[] = [
   // Administrator
   {
@@ -241,6 +235,7 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     children: [],
     roles: ['Administrator'],
   },
+  // Administrator
   {
     id: 'documents',
     title: 'navigation.documents',
@@ -254,6 +249,14 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     title: 'navigation.users.title',
     type: 'group',
     icon: 'mat_solid:person',
+    children: [],
+    roles: ['Administrator'],
+  },
+  {
+    id: 'administration',
+    title: 'navigation.administration.title',
+    type: 'group',
+    icon: 'heroicons_solid:building-office',
     children: [],
     roles: ['Administrator'],
   },
@@ -272,6 +275,14 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-duplicate',
     link: '/documents',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'documents.schools',
+    title: 'navigation.schools',
+    type: 'basic',
+    icon: 'heroicons_solid:document-duplicate',
+    link: '/schools',
     roles: ['Agency-Administrator'],
   },
   {

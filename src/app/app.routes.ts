@@ -76,6 +76,7 @@ export const appRoutes: Route[] = [
       { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
       { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') },
+      { path: 'agency-status', loadChildren: () => import('app/modules/admin-portal/agency-status/agency-status.routes') },
     ],
   },
 
@@ -120,6 +121,8 @@ export const appRoutes: Route[] = [
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents/documents.routes') },
       // Forms, listado de formularios para solicitar programas
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
+      // Schools, listado de escuelas
+      { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes').then(m => m.default) },
     ],
   },
 ];

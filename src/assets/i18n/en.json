@@ -961,7 +961,8 @@
             "rations-form": "Rations Form"
         },
         "dashboard": "Dashboard",
-        "reports": "Reports"
+        "reports": "Reports",
+        "agency-status": "Agency Statuses"
     },
     "roles": {
         "list": {

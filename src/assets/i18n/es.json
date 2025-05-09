@@ -130,8 +130,8 @@
                 "placeholder": "Ingresa el número de UIE"
             },
             "ein": {
-                "label": "Número de Identificación del Empleador (EIN)",
-                "placeholder": "Ingresa el número de identificación del empleador (EIN)"
+                "label": "Número de Seguro Social Patronal (EIN)",
+                "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)"
             },
             "latitude": {
                 "label": "Latitud",
@@ -263,7 +263,7 @@
                     "adminTitle": "Título Admin.",
                     "nonProfit": "Sin Fines de Lucro",
                     "uieNumber": "# UIE",
-                    "einNumber": "Número de Identificación del Empleador (EIN)",
+                    "einNumber": "Número de Seguro Social Patronal (EIN)",
                     "ssPatronal": "Número de Registro del Departamento de Estado",
                     "latitude": "Latitud",
                     "longitude": "Longitud",
@@ -459,8 +459,18 @@
             }
         }
     },
+    "monitor-initial-visit-evaluation": {
+        "title": "Visita Inicial y Evaluación",
+        "dialog": {
+            "error": {
+                "title": "Error",
+                "message": "Ha ocurrido un error al procesar la evaluación de la visita inicial",
+                "confirm": "Aceptar"
+            }
+        }
+    },
     "monitor-preoperational-visit": {
-        "title": "Visita Preoperacional",
+        "title": "Visita Inicial y Evaluación",
         "dialog": {
             "error": {
                 "title": "Error",
@@ -479,8 +489,8 @@
                 "placeholder": "Seleccione un programa"
             },
             "status": {
-                "label": "Estado",
-                "placeholder": "Seleccione un estado"
+                "label": "Estatus",
+                "placeholder": "Seleccione un estatus"
             },
             "agency": {
                 "label": "Nombre de la Agencia",
@@ -531,12 +541,12 @@
                 "placeholder": "(xxx) xxx-xxxx"
             },
             "appointment-coordinated": {
-                "label": "Cita Coordinada",
-                "placeholder": "Seleccione si la cita está coordinada"
+                "label": "Visita Coordinada",
+                "placeholder": "Seleccione si la visita está coordinada"
             },
             "appointment-date": {
-                "label": "Fecha de Cita",
-                "placeholder": "Seleccione la fecha de la cita"
+                "label": "Fecha de Visita",
+                "placeholder": "Seleccione la fecha de la visita"
             },
             "comments": {
                 "label": "Comentarios",
@@ -921,7 +931,9 @@
             "title": "Formularios",
             "program-application": "Solicitud al Programa",
             "sponsor-organization": "Organización de Auspiciadores",
-            "administrative-organization-chart": "Organigrama Administrativo"
+            "administrative-organization-chart": "Organigrama Administrativo",
+            "pdam-solicitation": "Solicitud PDAM",
+            "psav-solicitation": "Solicitud PSAV"
         },
         "accounting": {
             "title": "Contabilidad",
@@ -931,7 +943,13 @@
             "rations-form": "Formulario de Raciones"
         },
         "dashboard": "Gráficas",
-        "reports": "Reportes"
+        "reports": "Reportes",
+        "agency-status": "Estados de Agencia",
+        "schools": "Escuelas",
+        "administration": {
+            "title": "Administración",
+            "agency-status": "Estados de Agencia"
+        }
     },
     "roles": {
         "list": {
@@ -1294,6 +1312,41 @@
             "buttons": {
                 "edit": "Editar"
             }
+        }
+    },
+    "schools": {
+        "title": "Escuelas",
+        "list": {
+            "title": "Lista de Escuelas",
+            "table": {
+                "columns": {
+                    "id": "ID",
+                    "name": "Nombre",
+                    "address": "Dirección",
+                    "city": "Ciudad",
+                    "region": "Región",
+                    "actions": "Acciones"
+                }
+            }
+        }
+    },
+    "agency-status": {
+        "title": "Estados de Agencia",
+        "list": {
+            "title": "Lista de Estados de Agencia",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Nombre",
+                    "nameEN": "Nombre en Inglés",
+                    "isActive": "Activo",
+                    "displayOrder": "Orden de Visualización",
+                    "actions": "Acciones"
+                }
+            }
+        },
+        "add": {
+            "title": "Agregar Estado de Agencia"
         }
     }
 }

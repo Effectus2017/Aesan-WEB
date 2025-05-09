@@ -36,6 +36,7 @@ import { UsersService } from 'app/shared/services/users.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
 import { UserRequest } from 'app/shared/models/Request/UserRequest';
+import { CustomRouterService } from 'app/shared/services/custom-router.service';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -79,6 +80,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   private _translocoService = inject(TranslocoService);
   private _snackBar = inject(MatSnackBar);
   private _dialog = inject(MatDialog);
+  private _customRouterService = inject(CustomRouterService);
 
   listAgencyStatus = [];
   listPrograms = [];
@@ -348,8 +350,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       },
       complete: () => {
         console.log('Actualización completada');
-        this.enableEditableFormControls();
-        this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+        //this.enableEditableFormControls();
+        //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+        this._customRouterService.navigate([`admin/validation-to-program/list`]);
       },
     });
   }
@@ -406,8 +409,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
         this.enableEditableFormControls();
       },
       complete: () => {
-        this.enableEditableFormControls();
-        this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+        //this.enableEditableFormControls();
+        //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+        //this._customRouterService.navigate([`admin/validation-to-program/list`]);
       },
     });
   }
@@ -481,8 +485,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
             this.enableEditableFormControls();
           },
           complete: () => {
-            this.enableEditableFormControls();
-            this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+            //this.enableEditableFormControls();
+            //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
+            //this._customRouterService.navigate([`admin/validation-to-program/list`]);
           },
         });
       }

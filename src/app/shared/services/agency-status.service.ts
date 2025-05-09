@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { AgencyStatus } from '../models/AgencyStatus';
+import { AgencyStatusRequest } from '../models/Request/AgencyStatusRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -58,7 +59,7 @@ export class AgencyStatusService {
    * @param queryParameters Los parámetros de consulta
    * @returns El estado de agencia insertado
    */
-  insertAgencyStatus(agencyStatus: AgencyStatus, queryParameters: QueryParameters): Observable<any> {
+  insertAgencyStatus(agencyStatus: AgencyStatus | AgencyStatusRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-agency-status`, agencyStatus, getHttpOptions(queryParameters));
   }
 

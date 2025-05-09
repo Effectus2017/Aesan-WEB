@@ -125,10 +125,10 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       appointmentDate: [null],
       // Justificación de Rechazo
       rejectionJustification: [null],
+      // Comentarios
+      comments: [null],
     }),
-    submitButtonText: 'monitor-preoperational-visit.edit.submit',
-    submitButtonShow: true,
-    saveButtonText: 'monitor-preoperational-visit.edit.save',
+    saveButtonText: 'global.buttons.save',
     saveButtonShow: true,
   };
 
@@ -254,12 +254,11 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       return;
     }
 
-    // Disable the form
-    this.headerConfig.formGroup.disable();
 
     // Obtener los valores del formulario incluyendo los campos deshabilitados
     const formValues = this.headerConfig.formGroup.getRawValue();
 
+    // Obtener el ID del usuario autenticado
     const userId = this._authService.getUserId();
 
     // Construir el objeto de actualización
@@ -303,11 +302,9 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
       },
       error: (error) => {
         this.showErrorDialog();
-        this.headerConfig.formGroup.enable();
       },
       complete: () => {
         console.log('Actualización completada');
-        this.headerConfig.formGroup.enable();
 
         const queryParams: QueryParameters = {
           agencyId: this.param.id,
@@ -369,11 +366,13 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
         });
       },
       complete: () => {
-        const queryParams: QueryParameters = {
-          agencyId: this.param.id,
-        };
+        // const queryParams: QueryParameters = {
+        //   agencyId: this.param.id,
+        // };
 
-        this._agencyService.getAgencyById(queryParams).subscribe();
+        // this._agencyService.getAgencyById(queryParams).subscribe();
+
+        this._customRouterService.navigate([`pre-operational/list`]);
       },
     });
   }
