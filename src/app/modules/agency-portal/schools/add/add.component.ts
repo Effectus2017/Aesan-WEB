@@ -18,6 +18,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
+import { TranslocoModule } from '@ngneat/transloco';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+
 
 // Importar servicios de catálogos cuando existan
 // import { CityService, RegionService, ... } from 'app/shared/services/...';
@@ -36,7 +39,8 @@ import { Subject, takeUntil } from 'rxjs';
     GenericHeaderComponent,
     NgIf,
     NgForOf,
-
+    TranslocoModule,
+    MatDatepickerModule,
   ],
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
@@ -69,38 +73,38 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   isLoading = false;
 
   headerConfig: GenericHeaderConfig = {
-    title: 'Agregar Escuela',
+    title: 'schools.add.title',
     formGroup: this._formBuilder.group({
-      name: ['', Validators.required],
-      startDate: [null],
-      address: ['', Validators.required],
-      postalAddress: [''],
-      zipCode: ['', Validators.required],
-      cityId: [null, Validators.required],
-      regionId: [null, Validators.required],
-      areaCode: [''],
-      adminFullName: [''],
-      phone: [''],
-      phoneExtension: [''],
-      mobile: [''],
-      baseYear: [null],
-      nextRenewalYear: [null],
-      organizationTypeId: [null, Validators.required],
-      educationLevelId: [null, Validators.required],
-      operatingPeriodId: [null, Validators.required],
-      kitchenTypeId: [null],
-      groupTypeId: [null],
-      deliveryTypeId: [null],
-      sponsorTypeId: [null],
-      applicantTypeId: [null],
-      operatingPolicyId: [null],
+      name: ['', Validators.required], // Nombre de la escuela
+      startDate: [null], // Fecha de inicio de la escuela
+      address: ['', Validators.required], // Dirección física
+      postalAddress: [''], // Dirección postal
+      zipCode: ['', Validators.required], // Código postal
+      cityId: [null, Validators.required], // Ciudad
+      regionId: [null, Validators.required], // Región
+      areaCode: [''], // Código de área
+      adminFullName: [''], // Nombre del administrador
+      phone: [''], // Teléfono
+      phoneExtension: [''], // Extensión de teléfono
+      mobile: [''], // Teléfono móvil
+      baseYear: [null], // Año base
+      nextRenewalYear: [null], // Año de renovación
+      organizationTypeId: [null, Validators.required], // Tipo de organización
+      educationLevelId: [null, Validators.required], // Nivel de educación
+      operatingPeriodId: [null, Validators.required], // Periodo de operación
+      kitchenTypeId: [null], // Tipo de cocina
+      groupTypeId: [null], // Tipo de grupo
+      deliveryTypeId: [null], // Tipo de entrega
+      sponsorTypeId: [null], // Tipo de patrocinador
+      applicantTypeId: [null], // Tipo de solicitante
+      operatingPolicyId: [null], // Política de operación
       facilityIds: [[]], // multi-select
       satelliteSchoolIds: [[]], // multi-select
     }),
     saveButtonShow: true,
-    saveButtonText: 'Crear',
+    saveButtonText: 'schools.add.buttons.save',
     cancelButtonShow: true,
-    cancelButtonText: 'Cancelar',
+    cancelButtonText: 'schools.add.buttons.cancel',
   };
 
   constructor() {}

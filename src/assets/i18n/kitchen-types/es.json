@@ -1,0 +1,41 @@
+{
+    "kitchen-type": {
+        "list": {
+            "title": "Tipos de cocina",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Nombre",
+                    "nameEN": "Nombre en inglés",
+                    "isActive": "Activo",
+                    "displayOrder": "Orden",
+                    "actions": "Acciones"
+                }
+            }
+        },
+        "add": {
+            "title": "Agregar Tipo de Cocina",
+            "name": "Nombre",
+            "name-placeholder": "Nombre en español",
+            "name-error": "El nombre es obligatorio",
+            "name-en": "Nombre en inglés",
+            "name-en-placeholder": "Nombre en inglés",
+            "name-en-error": "El nombre en inglés es obligatorio",
+            "position": "Posición",
+            "position-placeholder": "Posición en la lista"
+        },
+        "edit": {
+            "title": "Editar Tipo de Cocina",
+            "name": "Nombre",
+            "name-placeholder": "Nombre en español",
+            "name-error": "El nombre es obligatorio",
+            "name-en": "Nombre en inglés",
+            "name-en-placeholder": "Nombre en inglés",
+            "name-en-error": "El nombre en inglés es obligatorio",
+            "display-order": "Orden de visualización",
+            "display-order-placeholder": "Orden de visualización",
+            "display-order-error": "El orden es obligatorio",
+            "is-active": "Activo"
+        }
+    }
+}

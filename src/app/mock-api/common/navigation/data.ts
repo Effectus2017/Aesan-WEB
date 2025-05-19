@@ -91,6 +91,13 @@ export const defaultNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:building-office',
         link: '/agency-status',
       },
+      {
+        id: 'administration.kitchen-types',
+        title: 'navigation.administration.kitchen-types',
+        type: 'basic',
+        icon: 'heroicons_solid:building-office',
+        link: '/kitchen-type',
+      },
     ],
     roles: ['Administrator'],
   },
@@ -275,6 +282,14 @@ export const horizontalNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-duplicate',
     link: '/documents',
+    roles: ['Agency-Administrator'],
+  },
+  {
+    id: 'household',
+    title: 'navigation.documents',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/household',
     roles: ['Agency-Administrator'],
   },
   {

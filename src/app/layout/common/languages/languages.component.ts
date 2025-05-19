@@ -121,21 +121,6 @@ export class LanguagesComponent implements OnInit, OnDestroy {
     // Get the flat navigation data
     const navigation = navComponent.navigation;
 
-    // Get the Project dashboard item and update its title
-    // const projectDashboardItem = this._fuseNavigationService.getItem('programs', navigation);
-    // if (projectDashboardItem) {
-    //   this._translocoService
-    //     .selectTranslate('Project')
-    //     .pipe(take(1))
-    //     .subscribe((translation) => {
-    //       // Set the title
-    //       projectDashboardItem.title = translation;
-
-    //       // Refresh the navigation component
-    //       navComponent.refresh();
-    //     });
-    // }
-
     // Get the Analytics dashboard item and update its title
     const analyticsDashboardItem = this._fuseNavigationService.getItem('side-menu.analytics', navigation);
     if (analyticsDashboardItem) {

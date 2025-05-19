@@ -1,0 +1,49 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'environments/environment';
+import { getHttpOptions } from '../utils';
+import { QueryParameters } from '../models/QueryParameters';
+import { KitchenType } from '../models/KitchenType';
+import { KitchenTypeRequest } from '../models/Request/KitchenTypeRequest';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class KitchenTypeService {
+  private _kitchenTypes: BehaviorSubject<KitchenType[] | null> = new BehaviorSubject(null);
+  private _kitchenType: BehaviorSubject<KitchenType | null> = new BehaviorSubject(null);
+
+  private apiUrl = `${environment.baseHttpUrl}/kitchen-type`;
+  private _httpClient = inject(HttpClient);
+
+  constructor() {}
+
+  get kitchenTypes$(): Observable<KitchenType[] | null> {
+    return this._kitchenTypes.asObservable();
+  }
+
+  get kitchenType$(): Observable<KitchenType | null> {
+    return this._kitchenType.asObservable();
+  }
+
+  getKitchenTypeById(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-kitchen-type-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._kitchenType.next(response)));
+  }
+
+  getAllKitchenTypesFromDb(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-kitchen-types-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._kitchenTypes.next(response)));
+  }
+
+  insertKitchenType(kitchenType: KitchenType | KitchenTypeRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/insert-kitchen-type`, kitchenType, getHttpOptions(queryParameters));
+  }
+
+  updateKitchenType(kitchenType: KitchenType, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-kitchen-type`, kitchenType, getHttpOptions(queryParameters));
+  }
+
+  deleteKitchenType(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.delete(`${this.apiUrl}/delete-kitchen-type`, getHttpOptions(queryParameters));
+  }
+}

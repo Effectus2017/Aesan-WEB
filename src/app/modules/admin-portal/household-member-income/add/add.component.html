@@ -1,0 +1,37 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <app-generic-header
+    [config]="{ title: 'household-member-income.add.title', formGroup: form, goToAddButtonShow: false }"
+    [handler]="this"
+  ></app-generic-header>
+  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <form [formGroup]="form" (ngSubmit)="onSave()" class="space-y-4">
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>{{ 'household-member-income.add.form.memberId' | transloco }}</mat-label>
+        <input matInput formControlName="memberId" type="number" placeholder="{{ 'household-member-income.add.form.memberId' | transloco }}" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>{{ 'household-member-income.add.form.incomeTypeId' | transloco }}</mat-label>
+        <input matInput formControlName="incomeTypeId" type="number" placeholder="{{ 'household-member-income.add.form.incomeTypeId' | transloco }}" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>{{ 'household-member-income.add.form.amount' | transloco }}</mat-label>
+        <input matInput formControlName="amount" type="number" placeholder="{{ 'household-member-income.add.form.amount' | transloco }}" />
+      </mat-form-field>
+      <mat-form-field appearance="fill" class="w-full">
+        <mat-label>{{ 'household-member-income.add.form.frequencyId' | transloco }}</mat-label>
+        <input matInput formControlName="frequencyId" type="number" placeholder="{{ 'household-member-income.add.form.frequencyId' | transloco }}" />
+      </mat-form-field>
+      <mat-checkbox formControlName="isActive">
+        {{ 'household-member-income.add.form.isActive' | transloco }}
+      </mat-checkbox>
+      <div class="flex gap-2 mt-4">
+        <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">
+          {{ 'household-member-income.add.form.save' | transloco }}
+        </button>
+        <button mat-stroked-button type="button" (click)="onCancel()">
+          {{ 'household-member-income.add.form.cancel' | transloco }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

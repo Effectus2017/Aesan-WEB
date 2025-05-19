@@ -5,71 +5,159 @@
   <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <!-- Sponsor Information Section -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "schools.add.information" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.add.information-description" | transloco }}</p>
+        </div>
         <!-- Información general -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" required placeholder="Nombre de la escuela" />
-            <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">El nombre es obligatorio</mat-error>
+            <mat-label>{{ "schools.add.name" | transloco }}</mat-label>
+            <input matInput formControlName="name" required placeholder="{{ 'schools.add.name-placeholder' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.add.name-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Dirección</mat-label>
-            <input matInput formControlName="address" required placeholder="Dirección física" />
-            <mat-error *ngIf="headerConfig.formGroup.get('address').hasError('required')">La dirección es obligatoria</mat-error>
+            <mat-label>{{ "schools.add.address" | transloco }}</mat-label>
+            <input matInput formControlName="address" required placeholder="{{ 'schools.add.address-placeholder' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('address').hasError('required')">{{ "schools.add.address-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Código Postal</mat-label>
-            <input matInput formControlName="zipCode" required placeholder="Código postal" />
-            <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">El código postal es obligatorio</mat-error>
+            <mat-label>{{ "schools.add.zip-code" | transloco }}</mat-label>
+            <input matInput formControlName="zipCode" required placeholder="{{ 'schools.add.zip-code-placeholder' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">{{ "schools.add.zip-code-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Ciudad</mat-label>
+            <mat-label>{{ "schools.add.city" | transloco }}</mat-label>
             <mat-select formControlName="cityId" required>
               <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('cityId').hasError('required')">La ciudad es obligatoria</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('cityId').hasError('required')">{{ "schools.add.city-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Región</mat-label>
+            <mat-label>{{ "schools.add.region" | transloco }}</mat-label>
             <mat-select formControlName="regionId" required>
               <mat-option *ngFor="let region of regions" [value]="region.id">{{ region.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('regionId').hasError('required')">La región es obligatoria</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('regionId').hasError('required')">{{ "schools.add.region-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Tipo de Organización</mat-label>
+            <mat-label>{{ "schools.add.organization-type" | transloco }}</mat-label>
             <mat-select formControlName="organizationTypeId" required>
               <mat-option *ngFor="let org of organizationTypes" [value]="org.id">{{ org.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('organizationTypeId').hasError('required')">El tipo de organización es obligatorio</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('organizationTypeId').hasError('required')">{{ "schools.add.organization-type-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Nivel Educativo</mat-label>
+            <mat-label>{{ "schools.add.education-level" | transloco }}</mat-label>
             <mat-select formControlName="educationLevelId" required>
               <mat-option *ngFor="let level of educationLevels" [value]="level.id">{{ level.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('educationLevelId').hasError('required')">El nivel educativo es obligatorio</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('educationLevelId').hasError('required')">{{ "schools.add.education-level-error" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Período de Funcionamiento</mat-label>
+            <mat-label>{{ "schools.add.operating-period" | transloco }}</mat-label>
             <mat-select formControlName="operatingPeriodId" required>
               <mat-option *ngFor="let period of operatingPeriods" [value]="period.id">{{ period.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('operatingPeriodId').hasError('required')">El período es obligatorio</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingPeriodId').hasError('required')">{{ "schools.add.operating-period-error" | transloco }}</mat-error>
           </mat-form-field>
         </div>
         <!-- Facilidades y satélites -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Facilidades</mat-label>
+            <mat-label>{{ "schools.add.facilities" | transloco }}</mat-label>
             <mat-select formControlName="facilityIds" multiple>
               <mat-option *ngFor="let facility of facilities" [value]="facility.id">{{ facility.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Escuelas Satélite</mat-label>
+            <mat-label>{{ "schools.add.satellite-schools" | transloco }}</mat-label>
             <mat-select formControlName="satelliteSchoolIds" multiple>
               <mat-option *ngFor="let school of schools" [value]="school.id">{{ school.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+        <!-- Información de contacto y administrativa -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.postal-address" | transloco }}</mat-label>
+            <input matInput formControlName="postalAddress" placeholder="{{ 'schools.add.postal-address-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.area-code" | transloco }}</mat-label>
+            <input matInput formControlName="areaCode" placeholder="{{ 'schools.add.area-code-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.admin-full-name" | transloco }}</mat-label>
+            <input matInput formControlName="adminFullName" placeholder="{{ 'schools.add.admin-full-name-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.phone" | transloco }}</mat-label>
+            <input matInput formControlName="phone" placeholder="{{ 'schools.add.phone-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.phone-extension" | transloco }}</mat-label>
+            <input matInput formControlName="phoneExtension" placeholder="{{ 'schools.add.phone-extension-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.mobile" | transloco }}</mat-label>
+            <input matInput formControlName="mobile" placeholder="{{ 'schools.add.mobile-placeholder' | transloco }}" />
+          </mat-form-field>
+        </div>
+        <!-- Fechas y años -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.start-date" | transloco }}</mat-label>
+            <input matInput [matDatepicker]="pickerStart" formControlName="startDate" placeholder="{{ 'schools.add.start-date-placeholder' | transloco }}" />
+            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+            <mat-datepicker #pickerStart></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.base-year" | transloco }}</mat-label>
+            <input matInput type="number" formControlName="baseYear" placeholder="{{ 'schools.add.base-year-placeholder' | transloco }}" />
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.next-renewal-year" | transloco }}</mat-label>
+            <input matInput type="number" formControlName="nextRenewalYear" placeholder="{{ 'schools.add.next-renewal-year-placeholder' | transloco }}" />
+          </mat-form-field>
+        </div>
+        <!-- Catálogos opcionales -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.kitchen-type" | transloco }}</mat-label>
+            <mat-select formControlName="kitchenTypeId" [disabled]="kitchenTypes.length === 0">
+              <mat-option *ngFor="let kitchen of kitchenTypes" [value]="kitchen.id">{{ kitchen.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.group-type" | transloco }}</mat-label>
+            <mat-select formControlName="groupTypeId" [disabled]="groupTypes.length === 0">
+              <mat-option *ngFor="let group of groupTypes" [value]="group.id">{{ group.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.delivery-type" | transloco }}</mat-label>
+            <mat-select formControlName="deliveryTypeId" [disabled]="deliveryTypes.length === 0">
+              <mat-option *ngFor="let delivery of deliveryTypes" [value]="delivery.id">{{ delivery.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.sponsor-type" | transloco }}</mat-label>
+            <mat-select formControlName="sponsorTypeId" [disabled]="sponsorTypes.length === 0">
+              <mat-option *ngFor="let sponsor of sponsorTypes" [value]="sponsor.id">{{ sponsor.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.applicant-type" | transloco }}</mat-label>
+            <mat-select formControlName="applicantTypeId" [disabled]="applicantTypes.length === 0">
+              <mat-option *ngFor="let applicant of applicantTypes" [value]="applicant.id">{{ applicant.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ "schools.add.operating-policy" | transloco }}</mat-label>
+            <mat-select formControlName="operatingPolicyId" [disabled]="operatingPolicies.length === 0">
+              <mat-option *ngFor="let policy of operatingPolicies" [value]="policy.id">{{ policy.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

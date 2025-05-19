@@ -73,10 +73,16 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
+      // Validation to program (Role: Admin)
       { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
+      // Users (Role: Admin)
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
-      { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents/documents.routes') },
+      // Documents (Role: Admin)
+      { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents-files/documents.routes') },
+      // Agency status (Role: Admin)
       { path: 'agency-status', loadChildren: () => import('app/modules/admin-portal/agency-status/agency-status.routes') },
+      // Kitchen types (Role: Admin)
+      { path: 'kitchen-type', loadChildren: () => import('app/modules/admin-portal/kitchen-type/kitchen-type.routes') },
     ],
   },
 
@@ -118,11 +124,15 @@ export const appRoutes: Route[] = [
       // Dashboard, dashboard de la agencia
       { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
       // Documents, listado de documentos
-      { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents/documents.routes') },
+      { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents-files/documents.routes') },
       // Forms, listado de formularios para solicitar programas
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
       // Schools, listado de escuelas
       { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes').then(m => m.default) },
+      // Household, listado de hogares
+      { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
+      // Household member, listado de miembros del hogar
+      { path: 'household-member', loadChildren: () => import('app/modules/agency-portal/household-member/household-member.routes') },
     ],
   },
 ];

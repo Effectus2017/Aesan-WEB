@@ -1,0 +1,36 @@
+{
+  "title": "Hogares",
+  "list": {
+    "header": "Listado de Hogares"
+  },
+  "add": {
+    "header": "Alta de Hogar"
+  },
+  "edit": {
+    "header": "Edición de Hogar"
+  },
+  "fields": {
+    "street": "Calle",
+    "apartment": "Apartamento",
+    "city": "Ciudad",
+    "region": "Región",
+    "zipcode": "Código Postal",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "completedBy": "Completado por",
+    "completedDate": "Fecha de completado"
+  },
+  "actions": {
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "cancel": "Cancelar"
+  },
+  "messages": {
+    "successAdd": "Hogar agregado exitosamente.",
+    "successEdit": "Hogar actualizado exitosamente.",
+    "successDelete": "Hogar eliminado exitosamente.",
+    "error": "Ocurrió un error. Por favor, intente nuevamente."
+  }
+}

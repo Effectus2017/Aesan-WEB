@@ -907,50 +907,7 @@
             }
         }
     },
-    "navigation": {
-        "agency": {
-            "home": "Inicio",
-            "program-requests": "Solicitudes al Programa"
-        },
-        "users": {
-            "title": "Usuarios",
-            "subtitle": "Usuarios",
-            "tooltip": "Usuarios",
-            "list": "Lista",
-            "add": "Agregar",
-            "roles": "Roles"
-        },
-        "home": "Inicio",
-        "programs": {
-            "title": "Programas",
-            "validation": "Validación de Programas"
-        },
-        "pre-operational": "Pre-Operacional",
-        "documents": "Documentos",
-        "forms": {
-            "title": "Formularios",
-            "program-application": "Solicitud al Programa",
-            "sponsor-organization": "Organización de Auspiciadores",
-            "administrative-organization-chart": "Organigrama Administrativo",
-            "pdam-solicitation": "Solicitud PDAM",
-            "psav-solicitation": "Solicitud PSAV"
-        },
-        "accounting": {
-            "title": "Contabilidad",
-            "budget": "Presupuesto",
-            "financial-management": "Manejo Financiero",
-            "employee-management": "Manejo de Empleados",
-            "rations-form": "Formulario de Raciones"
-        },
-        "dashboard": "Gráficas",
-        "reports": "Reportes",
-        "agency-status": "Estados de Agencia",
-        "schools": "Escuelas",
-        "administration": {
-            "title": "Administración",
-            "agency-status": "Estados de Agencia"
-        }
-    },
+
     "roles": {
         "list": {
             "title": "Lista de Roles"

@@ -3,11 +3,6 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 // Esquema de columnas para el listado de escuelas
 export const SCHOOLS_COLUMNS: ColumnSchema[] = [
   {
-    key: 'id',
-    type: 'text',
-    label: 'schools.list.table.columns.id',
-  },
-  {
     key: 'name',
     type: 'text',
     label: 'schools.list.table.columns.name',
