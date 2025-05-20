@@ -1,8 +1,0 @@
----
-description: Best practices for internationalization with Transloco
-globs: **/*.{ts}
----
-- Use lazy loading for language files to improve initial load time
-- Implement fallback languages for missing translations
-- Use Transloco's pipes for efficient translation in templates
-- Keep translation keys consistent and descriptive

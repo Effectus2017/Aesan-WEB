@@ -48,3 +48,8 @@ Thumbs.db
 .cursor
 .guias
 cursor_docs
+bump-version.sh
+update-version.sh
+*.DS_Store
+nutre-dev.local-key.pem
+nutre-dev.local.pem
