@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "list": {
+      "title": "Permissions",
+      "search": {
+        "placeholder": "Search permission"
+      },
+      "table": {
+        "columns": {
+          "id": "Id",
+          "name": "Name",
+          "description": "Description",
+          "active": "Active",
+          "actions": "Actions"
+        }
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "buttons": {
+        "add": "Add",
+        "clear": "Clear",
+        "save": "Save"
+      }
+    },
+    "add": {
+      "title": "Add Permission",
+      "form": {
+        "name": "Name",
+        "name_required": "The name is required",
+        "description": "Description",
+        "description_required": "The description is required"
+      }
+    },
+    "edit": {
+      "title": "Edit Permission"
+    }
+  }
+}

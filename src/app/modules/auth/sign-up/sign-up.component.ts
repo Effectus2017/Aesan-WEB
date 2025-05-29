@@ -1,6 +1,6 @@
 import { NgFor, NgIf } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
-import { Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -32,6 +32,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { ProgramService } from 'app/shared/services/program.service';
+import { optionSelectionData } from 'app/shared/common-data';
+import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { takeUntil } from 'rxjs';
 
 @Component({
   selector: 'auth-sign-up',
@@ -39,6 +43,7 @@ import { ProgramService } from 'app/shared/services/program.service';
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     NgIf,
     FormsModule,
@@ -82,8 +87,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _programService = inject(ProgramService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _snackBar = inject(MatSnackBar);
-
+  private _optionSelectionService = inject(OptionSelectionService);
   private _translocoService = inject(TranslocoService);
+  private _changeDetectorRef = inject(ChangeDetectorRef);
 
   listPrograms: Program[] = [];
   listCities: City[] = [];
@@ -93,18 +99,39 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Añadir nueva propiedad para controlar el estado del botón
   isEligible: boolean = true;
 
-  // Tax Exemption Status Options
-  taxExemptionStatusOptions: any[] = [{ id: 1, name: 'En Progreso' }, { id: 2, name: 'Otorgado' }];
+  // Yes No Options (1, 2)
+  // Si (1) y No (2)
+  yesNoOptions: OptionSelection[] = [];
 
-  // Tax Exemption Type Options
-  taxExemptionTypeOptions: any[] = [{ id: 1, name: 'Estatal' }, { id: 2, name: 'Federal' }];
+  // ¿En qué estatus se encuentra su Exención Contributiva?
+  // In what status is your Tax Exemption?
+  // En Proceso (3), Otorgado (4), Denegado (5)
+  exceptionStatus: OptionSelection[] = [];
 
-  // Basic Education Registry Options
-  basicEducationRegistryOptions: any[] = [
-    { id: 1, name: 'Otorgado' },
-    { id: 2, name: 'En Proceso' },
-    { id: 3, name: 'No' }
-  ];
+  // ¿Qué tipo de Exención Contributiva tiene?
+  // What type of Tax Exemption does it have?
+  // Estatal (11), Federal (12)
+  taxExemptionType: OptionSelection[] = [];
+
+  // Basic Education Registry Options (4, 5, 6)
+  //basicEducationRegistryOptions = optionSelectionData.filter(option => option.optionKey === 'taxExemptionStatus');
+
+  // Tipo de Entidad
+  // Type of Entity
+  // Gobierno (13), Privado (14)
+  typeOfEntity: OptionSelection[] = [];
+
+  // Tipo de Solicitante
+  // Type of Applicant
+  // Laico (15), Base de fe (16)
+  typeOfApplicant: OptionSelection[] = [];
+
+  // ¿De poseer un contrato Público Alianza especifique su modalidad?
+  // If you have a Public Alliance contract, please specify the type of contract
+  // Socio-Económico (17), Híbrido (18)
+  publicAllianceContract: OptionSelection[] = [];
+
+  currentLang: string = 'es';
 
   // Agregar esta propiedad
   protected readonly window = window;
@@ -112,6 +139,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   constructor() {}
 
   ngOnInit(): void {
+    // Suscribirse a cambios de idioma
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+      //this._changeDetectorRef.detectChanges();
+    });
+
     // Create the form
     this.signUpForm = this._formBuilder.group({
       name: [null, Validators.required],
@@ -123,18 +156,46 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       einNumber: [null, [Validators.required]],
 
       // Datos de la Agencia
+
+      // ¿Es una organización sin fines de lucro?
+      // Is it a non-profit organization?
+      // Si (1) y No (2)
       nonProfit: [null, Validators.required],
-      basicEducationRegistry: [null, Validators.required],
-      federalFundsDenied: [null, Validators.required],
+
+      // ¿Posee Certificación de Registro de Educación Básica?
+      // Do you have Basic Education Registry Certification?
+      // En Proceso (3), Otorgado (4), Denegado (5)
+      basicEducationRegistryId: [null, Validators.required],
+
+      // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
+      // Have you been denied or disqualified from state funds in the last seven years?
+      // Si (1) y No (2)
       stateFundsDenied: [null, Validators.required],
+
+      // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
+      // Have you been denied or disqualified from federal funds in the last seven years?
+      // Si (1) y No (2)
+      federalFundsDenied: [null, Validators.required],
+
+      // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+      // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
+      // Si (1) y No (2)
       organizedAthleticPrograms: [null, Validators.required],
 
-      // At Risk Service
+      // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
+      // Is the Sponsor interested in participating in the at-risk snack and dinner service?
+      // Si (1) y No (2)
       atRiskService: [{ value: null, disabled: true }],
 
-      // Tax Exemption
-      taxExemptionStatus: [null, Validators.required],
-      taxExemptionType: [null, Validators.required],
+      // ¿En qué estatus se encuentra su Exención Contributiva?"
+      // In what status is your Tax Exemption?
+      // En Proceso (3), Otorgado (4), Denegado (5)
+      taxExemptionStatusId: [null, Validators.required],
+
+      // ¿Qué tipo de Exención Contributiva tiene?
+      // What type of Tax Exemption does it have?
+      // Estatal (11), Federal (12)
+      taxExemptionTypeId: [null, Validators.required],
 
       // Service Time
       serviceTime: [null, Validators.required],
@@ -166,103 +227,143 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       email: [null, [Validators.required, Validators.email]],
       phone: [null, [Validators.required]],
       administrationTitle: [null, Validators.required],
+
+      // Tipo de Entidad
+      // Type of Entity
+      // Gobierno (13), Privado (14)
+      typeOfEntityId: [null, Validators.required],
+
+      // Tipo de Solicitante
+      // Type of Applicant
+      // Laico (15), Base de fe (16)
+      typeOfApplicantId: [null, Validators.required],
+
+      // ¿De poseer un contrato Público Alianza especifique su modalidad?
+      // If you have a Public Alliance contract, please specify the type of contract
+      // Socio-Económico (17), Híbrido (18)
+      publicAllianceContractId: [null, Validators.required],
+
+      // National Youth Program
+      // ¿Su Institución es un Programa Nacional de Juventud?
+      // Si (1) y No (2)
+      nationalYouthProgram: [null],
     });
 
     // Deshabilitar inicialmente todos los controles excepto program
     disableAllControlsExcept(this.signUpForm, 'program');
 
     // Suscribirse a cambios en el control program
-    this.signUpForm.get('program').valueChanges
-      .subscribe(value => {
-        // Deshabilitar todos los controles excepto program
-        disableAllControlsExcept(this.signUpForm, 'program');
+    this.signUpForm.get('program').valueChanges.subscribe((value) => {
+      // Deshabilitar todos los controles excepto program
+      disableAllControlsExcept(this.signUpForm, 'program');
 
-        if (value) {
-          // Limpiar todos los valores excepto el programa
-          const currentProgram = this.signUpForm.get('program').value;
-          Object.keys(this.signUpForm.controls).forEach(key => {
-            if (key !== 'program') {
-              this.signUpForm.get(key).reset();
-            }
-          });
-
-          // Habilitar todos los controles
-          enableAllControls(this.signUpForm);
-
-          // Restablecer el estado de elegibilidad
-          this.isEligible = true;
-
-          // Restablecer el control de atRiskService
-          const atRiskControl = this.signUpForm.get('atRiskService');
-          if (atRiskControl) {
-            atRiskControl.disable();
-            atRiskControl.setValue(null);
+      if (value) {
+        // Limpiar todos los valores excepto el programa
+        const currentProgram = this.signUpForm.get('program').value;
+        Object.keys(this.signUpForm.controls).forEach((key) => {
+          if (key !== 'program') {
+            this.signUpForm.get(key).reset();
           }
+        });
 
-          // Verificar el registro de educación básica si ya tiene un valor
-          const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
-          if (basicEducationRegistry) {
-            this.checkBasicEducationRegistry();
-          }
+        // Habilitar todos los controles
+        enableAllControls(this.signUpForm);
+
+        // Restablecer el estado de elegibilidad
+        this.isEligible = true;
+
+        // Restablecer el control de atRiskService
+        const atRiskControl = this.signUpForm.get('atRiskService');
+
+        if (atRiskControl) {
+          atRiskControl.disable();
+          atRiskControl.setValue(null);
         }
-      });
+
+        // --- Lógica para nationalYouthProgram ---
+        const nationalYouthProgramControl = this.signUpForm.get('nationalYouthProgram');
+        if (currentProgram?.name === 'PSAV') {
+          nationalYouthProgramControl.setValidators([Validators.required]);
+        } else {
+          nationalYouthProgramControl.clearValidators();
+          nationalYouthProgramControl.setValue(null); // Limpiar si no es PSAV
+        }
+        nationalYouthProgramControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // Verificar el registro de educación básica si ya tiene un valor
+        const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
+        if (basicEducationRegistry) {
+          this.checkBasicEducationRegistry();
+        }
+      }
+    });
 
     // Suscribirse a cambios en el control basicEducationRegistry
-    this.signUpForm.get('basicEducationRegistry').valueChanges
-      .subscribe(() => {
-        this.checkBasicEducationRegistry();
-      });
+    this.signUpForm.get('basicEducationRegistryId').valueChanges.subscribe(() => {
+      this.checkBasicEducationRegistry();
+    });
 
-    // Cargar ciudades y programas
-    this.loadCities();
-    this.loadPrograms();
+    // Suscribirse a cambios en el control typeOfEntity
+    this.signUpForm.get('typeOfEntityId').valueChanges.subscribe(() => {
+      this.checkTypeOfEntity();
+    });
+
+    // Cargar programas
+    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listPrograms = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    // Cargar ciudades
+    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listCities = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    // Cargar opciones
+    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        // Yes No Options (1, 2)
+        this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+
+        // ¿En qué estatus se encuentra su Exención Contributiva?
+        // In what status is your Tax Exemption?
+        // En Proceso (3), Otorgado (4), Denegado (5)
+        this.exceptionStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'exceptionStatus');
+
+        // ¿Qué tipo de Exención Contributiva tiene?
+        // What type of Tax Exemption does it have?
+        // Estatal (11), Federal (12)
+        this.taxExemptionType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'taxExemptionType');
+
+        // Tipo de Entidad
+        // Type of Entity
+        // Gobierno (13), Privado (14)
+        this.typeOfEntity = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfEntity');
+
+        // Tipo de Solicitante
+        // Type of Applicant
+        // Laico (15), Base de fe (16)
+        this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+
+        // ¿De poseer un contrato Público Alianza especifique su modalidad?
+        // If you have a Public Alliance contract, please specify the type of contract
+        // Socio-Económico (17), Híbrido (18)
+        this.publicAllianceContract = result.body.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
+
+        this._changeDetectorRef.detectChanges();
+      }
+    });
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
-  }
-
-  // Método para cargar programas
-  loadPrograms(): void {
-    const queryParams: QueryParameters = {
-      take: 25,
-      skip: 0,
-      alls: false,
-      names: 'PDAM,PSAV,PACNA',
-    };
-
-    this._programService.getAllProgramsFromDb(queryParams).subscribe({
-      next: (response) => {
-        this.listPrograms = response.body.data;
-      },
-      error: (error) => {
-        console.error('Error al cargar los programas', error);
-      },
-      complete: () => {
-        console.log('Programas cargados con éxito');
-      },
-    });
-  }
-
-  // Método para cargar ciudades
-  loadCities(): void {
-    const queryParameters: QueryParameters = {
-      take: 1000,
-      skip: 0,
-      alls: true,
-    };
-
-    this._geoService.getCitiesFromDb(queryParameters).subscribe({
-      next: (response) => {
-        if (response?.body?.data) {
-          this.listCities = response.body.data;
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar las ciudades:', error);
-      },
-    });
   }
 
   // Método para obtener todas las ciudades según el ID de la región
@@ -333,11 +434,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   signUp(): void {
     if (this.signUpForm.invalid) {
-      this._snackBar.open(
-        this._translocoService.translate('auth.sign-up.form-invalid.message'),
-        this._translocoService.translate('auth.sign-up.form-invalid.close'),
-        { duration: 5000 }
-      );
+      this._snackBar.open(this._translocoService.translate('auth.sign-up.form-invalid.message'), this._translocoService.translate('auth.sign-up.form-invalid.close'), {
+        duration: 5000,
+      });
 
       this.signUpForm.markAllAsTouched();
       return;
@@ -351,11 +450,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar que se haya seleccionado un programa
     if (!formValues.program) {
-      this._snackBar.open(
-        this._translocoService.translate('auth.sign-up.program.required'),
-        this._translocoService.translate('auth.sign-up.program.required-close'),
-        { duration: 5000 }
-      );
+      this._snackBar.open(this._translocoService.translate('auth.sign-up.program.required'), this._translocoService.translate('auth.sign-up.program.required-close'), {
+        duration: 5000,
+      });
       return;
     }
 
@@ -399,28 +496,63 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         postalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
         postalCityId: postalCityId,
         postalRegionId: postalRegionId,
-        // Datos del usuario
-        phone: formValues.phone ? formValues.phone : '',
-        nonProfit: formValues.nonProfit === 'Yes' ? true : false,
-        basicEducationRegistry: formValues.basicEducationRegistry ? formValues.basicEducationRegistry : 0,
-        federalFundsDenied: formValues.federalFundsDenied === 'Yes' ? true : false,
-        stateFundsDenied: formValues.stateFundsDenied === 'Yes' ? true : false,
-        organizedAthleticPrograms: formValues.organizedAthleticPrograms === 'Yes' ? true : false,
-
-        // At Risk Service
-        atRiskService: formValues.atRiskService === 'Yes' ? true : false,
-
-        // Tax Exemption
-        taxExemptionStatus: formValues.taxExemptionStatus,
-        taxExemptionType: formValues.taxExemptionType,
-
         // Service Time
         serviceTime: formValues.serviceTime ? formValues.serviceTime : 0,
-
-        //
+        // Programas
         programs: [programId],
-        //
+        // Datos del Correo Electrónico
         email: formValues.email ? formValues.email : '',
+        // Datos del usuario
+        phone: formValues.phone ? formValues.phone : '',
+        // ¿Es una organización sin fines de lucro?
+        // Is it a non-profit organization?
+        // Si (1) y No (2)
+        nonProfit: formValues.nonProfit,
+        // ¿Posee Certificación de Registro de Educación Básica?
+        // Do you have Basic Education Registry Certification?
+        // En Proceso (3), Otorgado (4), Denegado (5)
+        basicEducationRegistryId: formValues.basicEducationRegistryId ? formValues.basicEducationRegistryId : 0,
+        // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
+        // Have you been denied or disqualified from federal funds in the last seven years?
+        // Si (1) y No (2)
+        federalFundsDenied: formValues.federalFundsDenied,
+        // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
+        // Have you been denied or disqualified from state funds in the last seven years?
+        // Si (1) y No (2)
+        stateFundsDenied: formValues.stateFundsDenied,
+        // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+        // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
+        // Si (1) y No (2)
+        organizedAthleticPrograms: formValues.organizedAthleticPrograms,
+        // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
+        // Is the Sponsor interested in participating in the at-risk snack and dinner service?
+        // Si (1) y No (2)
+        // At Risk Service
+        atRiskService: formValues.atRiskService == null ? false : formValues.atRiskService,
+        // ¿En qué estatus se encuentra su Exención Contributiva?
+        // In what status is your Tax Exemption?
+        // En Proceso (3), Otorgado (4), Denegado (5)
+        taxExemptionStatusId: formValues.taxExemptionStatusId,
+        // ¿Qué tipo de Exención Contributiva tiene?
+        // What type of Tax Exemption does it have?
+        // Estatal (11), Federal (12)
+        taxExemptionTypeId: formValues.taxExemptionTypeId,
+        // Tipo de Entidad
+        // Type of Entity
+        // Gobierno (13), Privado (14)
+        typeOfEntityId: formValues.typeOfEntityId,
+        // Tipo de Solicitante
+        // Type of Applicant
+        // Laico (15), Base de fe (16)
+        typeOfApplicantId: formValues.typeOfApplicantId,
+        // ¿De poseer un contrato Público Alianza especifique su modalidad?
+        // If you have a Public Alliance contract, please specify the type of contract
+        // Socio-Económico (17), Híbrido (18)
+        publicAllianceContractId: formValues.publicAllianceContractId,
+        // National Youth Program
+        // ¿Su Institución es un Programa Nacional de Juventud?
+        // Si (1) y No (2)
+        nationalYouthProgram: formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram,
       },
       user: {
         // Datos del Contacto
@@ -437,23 +569,25 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Registrar el usuario
     this._userService.registerUserAgency(userAgencyRequest, {}).subscribe({
       next: (response) => {
-        console.log('Usuario creado con éxito', response);
+        // Mostrar mensaje de éxito del backend
+        const message = response?.value?.message || this._translocoService.translate('auth.sign-up.success.default');
+        this._snackBar.open(message, this._translocoService.translate('common.close'), { duration: 5000 });
         // Navigate to the confirmation required page
         this._customRouterService.navigate(['/sign-in']);
       },
       error: (error) => {
-        console.error('Error al crear el usuario', error);
+        // Mostrar mensaje de error del backend si existe
+        let errorMessage = this._translocoService.translate('auth.sign-up.error.creating-user');
+        if (error?.error?.value?.message) {
+          errorMessage = error.error.value.message;
+        } else if (error?.error?.message) {
+          errorMessage = error.error.message;
+        }
+        this._snackBar.open(errorMessage, this._translocoService.translate('common.close'), { duration: 5000 });
         // Re-enable the form
         this.signUpForm.enable();
-        // Show error message
-        this._snackBar.open(
-          this._translocoService.translate('auth.sign-up.error.creating-user'),
-          this._translocoService.translate('common.close'),
-          { duration: 5000 }
-        );
       },
       complete: () => {
-        console.log('Proceso de creación de usuario completado');
         // Re-enable the form
         this.signUpForm.enable();
         // Reset the form
@@ -462,154 +596,176 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     });
   }
 
+  // Si la agencia no es una organización sin fines de lucro, deshabilitar el formulario
+  // Si la agencia es una organización sin fines de lucro, habilitar el formulario
   nonProfitChange(event: any): void {
     const selectedProgram = this.signUpForm.value.program?.name;
-    const isNotNonProfit = this.signUpForm.value.nonProfit === 'No';
+    const isNotNonProfit = this.signUpForm.value.nonProfit === false;
 
     // Verificar elegibilidad para PDAM y PSAV
     if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-        this._fuseConfirmationService.open({
-            title: this._translocoService.translate('auth.sign-up.notification.title'),
-            message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
-            actions: {
-                confirm: {
-                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                },
-                cancel: {
-                    show: false,
-                },
-            },
-        });
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
     } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm); // Habilitar controles
+      this.isEligible = true;
+      enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
+  // deprecated, deshabilitar este método
+  // Si la agencia no acepta fondos estatales o federales, deshabilitar el formulario
+  // Si la agencia acepta fondos estatales o federales, habilitar el formulario
   checkFundsEligibility(): void {
+
+    // TODO: deshabilitar este método
+    return;
+
     const selectedProgram = this.signUpForm.value.program?.name;
-    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === 'Yes';
-    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === 'Yes';
+    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === true;
+    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === true;
 
     // Verificar elegibilidad para PACNA
     if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-        this._fuseConfirmationService.open({
-            title: this._translocoService.translate('auth.sign-up.notification.title'),
-            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
-            actions: {
-                confirm: {
-                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                },
-                cancel: {
-                    show: false,
-                },
-            },
-        });
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
     } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm); // Habilitar controles
+      this.isEligible = true;
+      enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
   checkOrganizedAthleticPrograms(): void {
     const selectedProgram = this.signUpForm.value.program?.name;
-    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === 'Yes';
+    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
 
     // Habilitar/deshabilitar atRiskService basado en la selección
     const atRiskServiceControl = this.signUpForm.get('atRiskService');
     if (organizedAthleticPrograms) {
-        atRiskServiceControl.enable();
-        atRiskServiceControl.setValidators([Validators.required]);
+      atRiskServiceControl.enable();
+      atRiskServiceControl.setValidators([Validators.required]);
     } else {
-        atRiskServiceControl.disable();
-        atRiskServiceControl.clearValidators();
-        atRiskServiceControl.setValue(null);
+      atRiskServiceControl.disable();
+      atRiskServiceControl.clearValidators();
+      atRiskServiceControl.setValue(null);
     }
     atRiskServiceControl.updateValueAndValidity();
 
     // Verificar elegibilidad para PACNA
     if (organizedAthleticPrograms && selectedProgram === 'PACNA') {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program');
-        this._fuseConfirmationService.open({
-            title: this._translocoService.translate('auth.sign-up.notification.title'),
-            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
-            actions: {
-                confirm: {
-                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                },
-                cancel: {
-                    show: false,
-                },
-            },
-        });
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
     } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm);
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
     }
   }
 
   checkAtRiskService(): void {
     const selectedProgram = this.signUpForm.value.program?.name;
-    const atRiskService = this.signUpForm.value.atRiskService === 'Yes';
+    const atRiskService = this.signUpForm.value.atRiskService === true;
 
     // Verificar elegibilidad para PACNA
     if (atRiskService && selectedProgram === 'PACNA') {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-        this._fuseConfirmationService.open({
-            title: this._translocoService.translate('auth.sign-up.notification.title'),
-            message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
-            actions: {
-                confirm: {
-                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                },
-                cancel: {
-                    show: false,
-                },
-            },
-        });
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
     } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm); // Habilitar controles
+      this.isEligible = true;
+      enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
 
   checkServiceTime(): void {
     const serviceTime = this.signUpForm.value.serviceTime;
     if (serviceTime) {
-        const today = new Date();
-        const serviceDate = new Date(serviceTime);
-        const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 +
-                            (today.getMonth() - serviceDate.getMonth());
+      const today = new Date();
+      const serviceDate = new Date(serviceTime);
+      const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
 
-        if (diffInMonths < 12) {
-            this.isEligible = false;
-            disableAllControlsExcept(this.signUpForm, 'program');
-            this._fuseConfirmationService.open({
-                title: this._translocoService.translate('auth.sign-up.notification.title'),
-                message: this._translocoService.translate('auth.sign-up.service-time-not-eligible.message'),
-                actions: {
-                    confirm: {
-                        label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                    },
-                    cancel: {
-                        show: false,
-                    },
-                },
-            });
-        } else {
-            this.isEligible = true;
-            enableAllControls(this.signUpForm);
-        }
+      if (diffInMonths < 12) {
+        this.isEligible = false;
+        disableAllControlsExcept(this.signUpForm, 'program');
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('auth.sign-up.notification.title'),
+          message: this._translocoService.translate('auth.sign-up.service-time-not-eligible.message'),
+          actions: {
+            confirm: {
+              label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            },
+            cancel: {
+              show: false,
+            },
+          },
+        });
+      } else {
+        this.isEligible = true;
+        enableAllControls(this.signUpForm);
+      }
+    }
+  }
+
+  // Check Type of Entity
+  // Si es Gobierno, asignar automáticamente Socio-Económico (id: 1)
+  // Si no es Gobierno, limpiar el campo
+  checkTypeOfEntity(): void {
+    const typeOfEntity = this.signUpForm.value.typeOfEntityId;
+    if (typeOfEntity === 1) {
+      this.signUpForm.patchValue({ publicAllianceContract: 1 });
+    } else {
+      this.signUpForm.patchValue({ publicAllianceContract: null });
     }
   }
 
   // Copiar Dirección Física
+  // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
+  // Si el checkbox no está marcado, limpiar los campos de la dirección postal
   onCheckboxChange(event: any): void {
     if (event.checked) {
       // Primero asignamos los valores básicos
@@ -635,6 +791,40 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Check Basic Education Registry
+  // Si el programa es PDAM o PSAV y el registro de educación básica es "No" (id: 3), deshabilitar el formulario
+  // Si el programa no es PDAM o PSAV o el registro de educación básica no es "No", habilitar el formulario
+  checkBasicEducationRegistry(): void {
+    const selectedProgram = this.signUpForm.value.program?.name;
+    const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
+
+    console.log('Programa seleccionado:', selectedProgram);
+    console.log('Valor de basicEducationRegistry:', basicEducationRegistry);
+
+    // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
+    if (basicEducationRegistry === 3 && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('auth.sign-up.notification.title'),
+        message: this._translocoService.translate('auth.sign-up.basic-education-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
+    } else {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+    }
+  }
+
+  // Compare methods
+
   compare(o1: any, o2: any): boolean {
     if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
       return o1.Id === o2.Id;
@@ -647,34 +837,5 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return o1.Id === o2.Id;
     }
     return false;
-  }
-
-  checkBasicEducationRegistry(): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
-    const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
-
-    console.log('Programa seleccionado:', selectedProgram);
-    console.log('Valor de basicEducationRegistry:', basicEducationRegistry);
-
-    // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
-    if (basicEducationRegistry === 3 && ['PDAM', 'PSAV'].includes(selectedProgram)) {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program');
-        this._fuseConfirmationService.open({
-            title: this._translocoService.translate('auth.sign-up.notification.title'),
-            message: this._translocoService.translate('auth.sign-up.basic-education-not-eligible.message'),
-            actions: {
-                confirm: {
-                    label: this._translocoService.translate('auth.sign-up.notification.confirm'),
-                },
-                cancel: {
-                    show: false,
-                },
-            },
-        });
-    } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm);
-    }
   }
 }

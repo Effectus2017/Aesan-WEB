@@ -1,0 +1,171 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <form [formGroup]="headerConfig.formGroup">
+      <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">Haga una lista de todos los bebés, niños y estudiantes hasta el grado 12 miembros de su hogar</p>
+          <p class="mb-3 text-secondary">
+            Definición de Miembro del Hogar: "Cualquier persona que vive con usted y comparte ingresos y gastos, aunque no sea familia." Niños adoptivos temporales ("Foster") que
+            cumplen con la definición de migrante, sin hogar, o fugitivo son elegibles para la comida gratuita. Para más información, lea "Como solicitar comida escolar gratuita y
+            de precio reducido".
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+          <!-- Table -->
+          <div class="flex-auto overflow-y-auto" cdkScrollable>
+            <app-generic-table [config]="tableHouseholdMembersConfig" [handler]="this" #householdMembersTable></app-generic-table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">Participación en programas de ayuda social</p>
+          <p class="mb-6 text-secondary">
+            ¿Participa cualquier miembro de su hogar, incluyéndose a usted, en uno o más de los siguientes programas: SNAP, TANF, o FDPIR? Circule su respuesta: Sí / NO
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field>
+            <mat-label>¿Participa en programas de ayuda social?</mat-label>
+            <mat-select [formControlName]="'participationInSocialPrograms'">
+              <mat-option *ngFor="let option of isYesNoOptions" [value]="option.id">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field *ngIf="headerConfig.formGroup.get('participationInSocialPrograms').value === isYesNoOptions[0].id">
+            <mat-label>Escriba sólo un número de caso en este espacio.</mat-label>
+            <input matInput [formControlName]="'caseNumber'" />
+            <mat-error *ngIf="headerConfig.formGroup.get('caseNumber').hasError('required')">
+              {{ "readability-module.add.caseNumber.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">Ingreso del Niño</p>
+          <p class="mb-6 text-secondary">
+            A veces los niños del hogar ganan dinero. Favor de incluir aquí el ingreso total ganado por todos los miembros del hogar listados en el PASO 1. No tiene que incluir los
+            niños adoptivos temporales (Foster).
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+          <!-- Table -->
+          <div class="flex-auto overflow-y-auto" cdkScrollable>
+            <app-generic-table [config]="tableHouseholdIncomeChildConfig" [handler]="this" #householdIncomeChildTable></app-generic-table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">Todos los Miembros Adultos del Hogar</p>
+          <p class="mb-6 text-secondary">
+            Haga una lista de todos los miembros del hogar no listados en el PASO 1 (incluyéndose a Ud.) sin importar si reciben o no ingresos. Para cada miembro del hogar en la
+            lista que recibe un ingreso, anote el ingreso total de cada fuente en dólares redondeados. Si no reciben ingresos de ninguna fuente, escribe "0". pone "0" o deja en
+            blanco cualquier espacio, usted certifica (jura) que no hay ingresos.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+          <!-- Table -->
+          <div class="flex-auto overflow-y-auto" cdkScrollable>
+            <app-generic-table [config]="tableHouseholdIncomeConfig" [handler]="this" #householdIncomeTable></app-generic-table>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">Información de Contacto y Firma de Adulto</p>
+          <p class="mb-6 text-secondary">
+            *Certifico (juro) que toda la información en esta solicitud es cierta y que todo ingreso se ha reportado. Entiendo que esta información se da con el propósito de
+            recibir fondos federales y que los funcionarios de la escuela pueden verificar tal información. Soy consciente de que si falsifico información a propósito, mis hijos
+            pueden perder los beneficios de comida y me pueden procesar de acuerdo con las leyes estatales y federales que aplican.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <!-- First Name *  -->
+          <mat-form-field data-cy="first-name-field">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="firstName" required />
+            <mat-error *ngIf="headerConfig.formGroup.get('firstName').hasError('required')"> Nombre es obligatorio </mat-error>
+          </mat-form-field>
+
+          <!-- Middle Name *  -->
+          <mat-form-field data-cy="middle-name-field">
+            <mat-label>Nombre del medio</mat-label>
+            <input matInput formControlName="middleName" />
+            <mat-error *ngIf="headerConfig.formGroup.get('middleName').hasError('required')"> Nombre del medio es obligatorio </mat-error>
+          </mat-form-field>
+
+          <!-- Father Last Name *  -->
+          <mat-form-field data-cy="father-last-name-field">
+            <mat-label>Apellido Paterno</mat-label>
+            <input matInput formControlName="fatherLastName" required />
+            <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName').hasError('required')"> Apellido es obligatorio </mat-error>
+          </mat-form-field>
+
+          <!-- Mother Last Name *  -->
+          <mat-form-field data-cy="mother-last-name-field">
+            <mat-label>Apellido Materno</mat-label>
+            <input matInput formControlName="motherLastName" />
+            <mat-error *ngIf="headerConfig.formGroup.get('motherLastName').hasError('required')"> Nombre de la madre es obligatorio </mat-error>
+          </mat-form-field>
+
+          <!-- Address *  -->
+          <mat-form-field data-cy="address-field">
+            <mat-label>Dirección</mat-label>
+            <input matInput [formControlName]="'address'" placeholder="Dirección" data-cy="address-input" />
+          </mat-form-field>
+
+          <!-- Código postal -->
+          <mat-form-field>
+            <mat-label>Código postal</mat-label>
+            <input matInput formControlName="zipCode" required />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')"> Código postal es obligatorio </mat-error>
+          </mat-form-field>
+
+          <!-- Region *  -->
+          <mat-form-field data-cy="region-field">
+            <mat-label>{{ "auth.sign-up.region.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
+              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- City para Dirección Física *  -->
+          <mat-form-field data-cy="city-field">
+            <mat-label>{{ "auth.sign-up.city.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
+                {{ city.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Teléfono -->
+          <mat-form-field>
+            <mat-label>Teléfono</mat-label>
+            <input matInput formControlName="phone" type="tel" />
+          </mat-form-field>
+
+          <!-- Email -->
+          <mat-form-field>
+            <mat-label>Email</mat-label>
+            <input matInput formControlName="email" type="email" />
+          </mat-form-field>
+
+          <!-- Fecha de hoy -->
+          <mat-form-field>
+            <mat-label>Fecha de hoy</mat-label>
+            <input matInput [matDatepicker]="todayDate" formControlName="todayDate" placeholder="Seleccione la fecha de hoy" aria-label="Fecha de hoy" />
+            <mat-datepicker-toggle matIconSuffix [for]="todayDate"></mat-datepicker-toggle>
+            <mat-datepicker #todayDate></mat-datepicker>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

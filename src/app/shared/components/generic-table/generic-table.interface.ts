@@ -79,19 +79,32 @@ export interface GenericTableConfig<T = any> {
   addButtonLabel?: string;
   addButtonTooltip?: string;
   addButtonTooltipPosition?: 'above' | 'below' | 'left'  | 'right';
+  tableId?: string;
+  onAddButtonClick?: (event?: Event) => void;
 }
 
 export interface OnGenericTableHandler {
   // Lista de datos
   tableConfig: GenericTableConfig;
   // Funciones
-  onTableAdd?: () => void;
+  onTableAdd?: (event: Event, element: any) => void;
   onTableEdit?: (event: Event, id: any) => void;
   onTableDelete?: (event: Event, id: any) => void;
   onTableDownload?: (event: Event, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;
+  onAddButtonClick?: (event?: Event, tableId?: string) => void;
   getPaginator?: (event?: PageEvent) => void;
   // Métodos para obtener datos
   getById?: (id: number) => void;
   getAll?: (index: number, form: any) => void;
 }
+
+export interface GenericTableButtonConfig {
+    key: string;
+    label: string;
+    icon?: string;
+    color?: 'primary' | 'accent' | 'warn';
+    svgIcon?: string;
+    tooltip?: string;
+    action?: (event: Event, element: any) => void;
+  }

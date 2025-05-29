@@ -1,0 +1,126 @@
+<div class="flex flex-col max-h-screen -m-6 min-w-240">
+  <!-- Header -->
+
+  <div class="flex items-center justify-between h-16 pl-6 pr-3 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ "global.dialogs.incomeSources.add.title" | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto p-6 overflow-y-auto" [formGroup]="householdIncomeForm" (ngSubmit)="onSubmit()">
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-1">
+      <!-- Nombre y Apellido -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!-- Nombre -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-member-dialog.name" | transloco }}</mat-label>
+          <input matInput [formControlName]="'name'" required />
+          <mat-error *ngIf="householdIncomeForm.get('name').hasError('required')">
+            {{ "readability-module.household-member-dialog.name-required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('name').hasError('maxLength')">
+            {{ "readability-module.household-member-dialog.name-maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+        <!-- Apellido -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-member-dialog.last-name" | transloco }}</mat-label>
+          <input matInput [formControlName]="'lastName'" required />
+          <mat-error *ngIf="householdIncomeForm.get('lastName').hasError('required')">
+            {{ "readability-module.household-member-dialog.last-name-required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('lastName').hasError('maxLength')">
+            {{ "readability-module.household-member-dialog.last-name-maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Ingreso y Con que frecuencia? -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!--Ingreso -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-income-dialog.income" | transloco }}</mat-label>
+          <input matInput type="number" [formControlName]="'incomeOne'" required min="0" step="0.01" />
+          <mat-error *ngIf="householdIncomeForm.get('incomeOne').hasError('required')">
+            {{ "readability-module.household-income-dialog.income-required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('incomeOne').hasError('maxLength')">
+            {{ "readability-module.household-income-dialog.income-maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Con que frecuencia? -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-income-dialog.income-frequency" | transloco }}</mat-label>
+          <mat-select [formControlName]="'incomeFrequencyOne'">
+            <mat-option *ngFor="let option of isIncomeFrequencyOptions" [value]="option.id">{{ option.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+      @if(!data.isChild) {
+      <!-- Ingreso y Con que frecuencia? -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!--Ingreso (Asistencia publica, munetencion de menores, pension matrimonial, etc) -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-income-dialog.income-two" | transloco }}</mat-label>
+          <input matInput type="number" [formControlName]="'incomeTwo'" required min="0" step="0.01" />
+          <mat-error *ngIf="householdIncomeForm.get('incomeTwo').hasError('required')">
+            {{ "readability-module.household-income-dialog.income-two-required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('incomeTwo').hasError('min')">
+            {{ "readability-module.household-income-dialog.income-two-min" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('incomeTwo').hasError('maxLength')">
+            {{ "readability-module.household-income-dialog.income-two-maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Con que frecuencia? -->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-income-dialog.income-frequency" | transloco }}</mat-label>
+          <mat-select [formControlName]="'incomeFrequencyTwo'">
+            <mat-option *ngFor="let option of isIncomeFrequencyOptions" [value]="option.id">{{ option.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Ingreso y Con que frecuencia? -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!--Pension, Jubilacion, otros ingresos-->
+        <mat-form-field>
+          <mat-label>{{ "readability-module.household-income-dialog.income-three" | transloco }}</mat-label>
+          <input matInput type="number" [formControlName]="'incomeThree'" required min="0" step="0.01" />
+          <mat-error *ngIf="householdIncomeForm.get('incomeThree').hasError('required')">
+            {{ "readability-module.household-income-dialog.income-three-required" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('incomeThree').hasError('min')">
+            {{ "readability-module.household-income-dialog.income-three-min" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="householdIncomeForm.get('incomeThree').hasError('maxLength')">
+            {{ "readability-module.household-income-dialog.income-three-maxLength" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Con que frecuencia? -->
+        <mat-form-field>
+            <mat-label>{{ "readability-module.household-income-dialog.income-frequency-three" | transloco }}</mat-label>
+            <mat-select [formControlName]="'incomeFrequencyThree'">
+              <mat-option *ngFor="let option of isIncomeFrequencyOptions" [value]="option.id">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+      </div>
+    }
+    </div>
+    <!-- Actions -->
+    <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+      <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+        {{ "global.buttons.cancel" | transloco }}
+      </button>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="householdIncomeForm.invalid">
+        {{ "global.buttons.save" | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

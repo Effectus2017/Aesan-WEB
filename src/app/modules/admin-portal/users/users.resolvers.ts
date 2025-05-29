@@ -5,6 +5,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from '../../../shared/services/users.service';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { PermissionService } from 'app/shared/services/permission.service';
 
 @Injectable({
   providedIn: 'root',
@@ -62,6 +63,7 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
 export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
+  const permissionService = inject(PermissionService);
 
   return forkJoin([
     agencyService.getAllAgenciesList({ alls: true }),
@@ -69,6 +71,9 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     usersService.getAllRolesFromDb({
       take: 25,
       skip: 0,
+    }),
+    permissionService.getUserPermissions({
+      userId: route.paramMap.get('id'),
     }),
   ]);
 };

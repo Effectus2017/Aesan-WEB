@@ -1,0 +1,46 @@
+{
+    "permissions": {
+        "list": {
+            "title": "Permisos",
+            "search": {
+                "placeholder": "Buscar permiso"
+            },
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Nombre",
+                    "description": "Descripción",
+                    "active": "Activo",
+                    "actions": "Acciones"
+                }
+            },
+            "actions": {
+                "edit": "Editar",
+                "delete": "Eliminar"
+            },
+            "buttons": {
+                "add": "Agregar",
+                "clear": "Limpiar",
+                "save": "Guardar"
+            }
+        },
+        "add": {
+            "title": "Agregar Permiso",
+            "form": {
+                "name": "Nombre",
+                "name_required": "El nombre es obligatorio",
+                "description": "Descripción",
+                "description_required": "La descripción es obligatoria"
+            }
+        },
+        "edit": {
+            "title": "Editar Permiso",
+            "form": {
+                "name": "Nombre",
+                "name_required": "El nombre es obligatorio",
+                "description": "Descripción",
+                "description_required": "La descripción es obligatoria"
+            }
+        }
+    }
+}

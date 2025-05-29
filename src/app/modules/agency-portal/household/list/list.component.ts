@@ -42,7 +42,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     TranslocoModule,
   ],
 })
-export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class HouseholdListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _householdService = inject(HouseholdService);
   private _customRouterService = inject(CustomRouterService);

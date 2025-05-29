@@ -3,16 +3,51 @@ import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
-import { environment } from 'environments/environment';
 
-// Método auxiliar para verificar si un valor es un array
-export function isArray(value: any): boolean {
-  return Array.isArray(value);
+/**
+ * Compara dos elementos
+ * @param o1 Elemento 1
+ * @param o2 Elemento 2
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
+export function compare(o1: any, o2: any): boolean {
+  if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+    return o1 === o2;
+  }
+  return false;
 }
 
-// Función genérica para comparar elementos por una propiedad específica
+/**
+ * Compara dos elementos por una propiedad específica
+ * @param o1 Elemento 1
+ * @param o2 Elemento 2
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
+export function compareString(o1: any, o2: any): boolean {
+  if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+    return o1.name.split(' ').join('') === o2;
+  }
+  return false;
+}
+
+/**
+ * Compara dos elementos por una propiedad específica
+ * @param item1 Elemento 1
+ * @param item2 Elemento 2
+ * @param property Propiedad a comparar
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
 export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
-  return item1[property] === item2[property];
+    return item1[property] === item2[property];
+  }
+
+/**
+ * Verifica si un valor es un array
+ * @param value Valor a verificar
+ * @returns true si el valor es un array, false en caso contrario
+ */
+export function isArray(value: any): boolean {
+  return Array.isArray(value);
 }
 
 /**
@@ -118,7 +153,7 @@ export function handleError(error: any) {
 
 export function disableAllControlsExcept(form: UntypedFormGroup, exceptions: string | string[]): void {
   const exceptionsArray = typeof exceptions === 'string' ? [exceptions] : exceptions;
-  Object.keys(form.controls).forEach(controlName => {
+  Object.keys(form.controls).forEach((controlName) => {
     if (!exceptionsArray.includes(controlName)) {
       const control = form.get(controlName);
       if (control) {
@@ -129,7 +164,7 @@ export function disableAllControlsExcept(form: UntypedFormGroup, exceptions: str
 }
 
 export function enableAllControls(form: UntypedFormGroup): void {
-  Object.keys(form.controls).forEach(controlName => {
+  Object.keys(form.controls).forEach((controlName) => {
     const control = form.get(controlName);
     if (control) {
       control.enable({ emitEvent: false });
@@ -137,29 +172,67 @@ export function enableAllControls(form: UntypedFormGroup): void {
   });
 }
 
-export function handleFormControls(form: UntypedFormGroup, action: 'enable' | 'disable', config: {
+export function handleFormControls(
+  form: UntypedFormGroup,
+  action: 'enable' | 'disable',
+  config: {
     controls?: string[];
     mode?: 'include' | 'exclude';
     emitEvent?: boolean;
-} = {}): void {
-    const {
-        controls = [],
-        mode = 'include',
-        emitEvent = false
-    } = config;
+  } = {}
+): void {
+  const { controls = [], mode = 'include', emitEvent = false } = config;
 
-    Object.keys(form.controls).forEach(controlName => {
-        const control = form.get(controlName);
-        if (!control) return;
+  Object.keys(form.controls).forEach((controlName) => {
+    const control = form.get(controlName);
+    if (!control) return;
 
-        const shouldModify = mode === 'include'
-            ? controls.includes(controlName)
-            : !controls.includes(controlName);
+    const shouldModify = mode === 'include' ? controls.includes(controlName) : !controls.includes(controlName);
 
-        if (shouldModify) {
-            action === 'enable'
-                ? control.enable({ emitEvent })
-                : control.disable({ emitEvent });
-        }
-    });
+    if (shouldModify) {
+      action === 'enable' ? control.enable({ emitEvent }) : control.disable({ emitEvent });
+    }
+  });
+}
+
+/**
+ * Converts a boolean value to the corresponding option id for a Yes/No dropdown.
+ * @param value Boolean value to convert (true/false)
+ * @param options Array of options with 'id' and 'name' fields (should include 'Si' and 'No')
+ * @returns The id for 'Si' if true, the id for 'No' if false, or '' if undefined
+ * @example
+ *   // options = [{id: 1, name: 'Si'}, {id: 2, name: 'No'}]
+ *   mapBooleanToYesNoOptionId(true, options) // returns 1
+ *   mapBooleanToYesNoOptionId(false, options) // returns 2
+ */
+export function mapBooleanToYesNoOptionId(value: boolean | undefined, options: { id: number; name: string }[]): number | '' {
+  const yesOption = options.find((opt) => opt.name === 'Si');
+  const noOption = options.find((opt) => opt.name === 'No');
+  if (!yesOption || !noOption) {
+    throw new Error('Options array must include both "Si" and "No" options');
+  }
+  if (value === true) return yesOption.id;
+  if (value === false) return noOption.id;
+  return '';
+}
+
+/**
+ * Converts an option id from a Yes/No dropdown to a boolean value.
+ * @param id Option id to convert
+ * @param options Array of options with 'id' and 'name' fields (should include 'Si' and 'No')
+ * @returns true if id is for 'Si', false if for 'No', undefined otherwise
+ * @example
+ *   // options = [{id: 1, name: 'Si'}, {id: 2, name: 'No'}]
+ *   mapYesNoOptionIdToBoolean(1, options) // returns true
+ *   mapYesNoOptionIdToBoolean(2, options) // returns false
+ */
+export function mapYesNoOptionIdToBoolean(id: number, options: { id: number; name: string }[]): boolean | undefined {
+  const yesOption = options.find((opt) => opt.name === 'Si');
+  const noOption = options.find((opt) => opt.name === 'No');
+  if (!yesOption || !noOption) {
+    throw new Error('Options array must include both "Si" and "No" options');
+  }
+  if (id === yesOption.id) return true;
+  if (id === noOption.id) return false;
+  return undefined;
 }

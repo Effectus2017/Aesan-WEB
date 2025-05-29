@@ -39,5 +39,11 @@ export interface QueryParameters {
    * Se obtiene automáticamente del archivo subido usando file.Length
    */
   fileSize?: number;
+  /**
+   * Clave de la opción de selección.
+   * Ejemplos: "yesNo", "exceptionStatus", "incomeFrequency", "taxExemptionType", "typeOfEntity", "typeOfApplicant"
+   */
+  optionKey?: string;
+  optionNamesExclude?: string;
 }
 

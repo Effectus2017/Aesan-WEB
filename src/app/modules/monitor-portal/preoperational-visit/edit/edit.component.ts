@@ -22,7 +22,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from 'app/shared/models/Request/AgencyRequest';
+import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
 import { compareByProperty, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';

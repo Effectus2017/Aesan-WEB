@@ -51,30 +51,19 @@
                 "required-close": "Close"
             },
             "non-profit": {
-                "label": "Is it a non-profit organization?",
-                "yes": "Yes",
-                "no": "No"
+                "label": "Is it a non-profit organization?"
             },
             "basic-education-registry": {
-                "label": "Do you have Basic Education Registry Certification?",
-                "granted": "Granted",
-                "in-progress": "In Progress",
-                "no": "No"
+                "label": "Do you have Basic Education Registry Certification?"
             },
             "state-funds-denied": {
-                "label": "Have you been denied or disqualified from state funds in the last 7 years?",
-                "yes": "Yes",
-                "no": "No"
+                "label": "Have you been denied or disqualified from state funds in the last 7 years?"
             },
             "federal-funds-denied": {
-                "label": "Have you been denied or disqualified from federal funds in the last 7 years?",
-                "yes": "Yes",
-                "no": "No"
+                "label": "Have you been denied or disqualified from federal funds in the last 7 years?"
             },
             "organized-athletic-programs": {
-                "label": "Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?",
-                "yes": "Yes",
-                "no": "No"
+                "label": "Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?"
             },
             "service-time": {
                 "label": "How long has the organization or institution been providing services with an established enrollment?",
@@ -85,9 +74,7 @@
                 "message": "The organization must have at least one year of service to be eligible for any program."
             },
             "at-risk-service": {
-                "label": "Are you interested in participating in the at-risk snack and dinner service?",
-                "yes": "Yes",
-                "no": "No"
+                "label": "Are you interested in participating in the at-risk snack and dinner service?"
             },
             "agency": {
                 "label": "Name of the Sponsoring Agency",
@@ -205,6 +192,18 @@
                 "placeholder": "Enter new password again",
                 "required": "Password confirmation is required",
                 "min-length": "Minimum 8 characters required"
+            },
+            "type-of-entity": {
+                "label": "Type of Entity"
+            },
+            "type-of-applicant": {
+                "label": "Type of Applicant"
+            },
+            "public-alliance-contract": {
+                "label": "If you have a Public Alliance contract, please specify the type of contract"
+            },
+            "national-youth-program": {
+                "label": "Is your institution a National Youth Program?"
             }
         },
         "reset-password": {
@@ -938,7 +937,8 @@
             "tooltip": "Users",
             "list": "List",
             "add": "Add",
-            "roles": "Roles"
+            "roles": "Roles",
+            "permissions": "Permissions"
         },
         "home": "Home",
         "programs": {
@@ -962,7 +962,12 @@
         },
         "dashboard": "Dashboard",
         "reports": "Reports",
-        "agency-status": "Agency Statuses"
+        "agency-status": "Agency Statuses",
+        "administration": {
+            "title": "Administration",
+            "agency-status": "Agency Statuses",
+            "kitchen-types": "Kitchen Types"
+        }
     },
     "roles": {
         "list": {

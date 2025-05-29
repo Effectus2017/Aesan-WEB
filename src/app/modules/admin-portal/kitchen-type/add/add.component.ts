@@ -15,6 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
 
 @Component({
   selector: 'app-add-kitchen-type',
@@ -84,6 +85,7 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
     if (this.headerConfig.formGroup.valid) {
       const pos = this.headerConfig.formGroup.get('position').value;
       let displayOrder = 1;
+
       if (this.kitchenTypes.length === 0 || pos > this.kitchenTypes.length) {
         displayOrder = this.kitchenTypes.length > 0 ? Math.max(...this.kitchenTypes.map(s => s.displayOrder)) + 10 : 10;
       } else if (pos === 1) {
@@ -93,13 +95,16 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
         const next = this.kitchenTypes[pos - 1]?.displayOrder;
         displayOrder = next ? (prev + next) / 2 : prev + 10;
       }
+
       const newType: KitchenTypeRequest = {
         name: this.headerConfig.formGroup.get('name').value,
         nameEN: this.headerConfig.formGroup.get('nameEN').value,
         isActive: this.headerConfig.formGroup.get('isActive').value,
         displayOrder,
       };
-      this._kitchenTypeService.insertKitchenType(newType, {}).subscribe(() => {
+
+      const kitchenTypeRequest: QueryParameters = {};
+      this._kitchenTypeService.insertKitchenType(newType, kitchenTypeRequest).subscribe(() => {
         this._snackBar.open('Tipo de cocina creado correctamente', 'Cerrar', { duration: 3000 });
         this._customRouterService.navigate([`kitchen-type`]);
       });

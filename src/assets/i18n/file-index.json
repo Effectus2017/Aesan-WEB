@@ -3,5 +3,10 @@
   "./assets/i18n/en.json",
   "./assets/i18n/schools/es.json",
   "./assets/i18n/kitchen-types/es.json",
-  "./assets/i18n/navigation/es.json"
+  "./assets/i18n/navigation/es.json",
+  "./assets/i18n/legibility/es.json",
+  "./assets/i18n/permissions/es.json",
+  "./assets/i18n/permissions/en.json",
+  "./assets/i18n/users/es.json",
+  "./assets/i18n/users/en.json"
 ]

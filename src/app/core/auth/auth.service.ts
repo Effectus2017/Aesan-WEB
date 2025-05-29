@@ -12,6 +12,7 @@ export class AuthService {
   private _httpClient = inject(HttpClient);
   private _userService = inject(UserService);
   private apiUrl = `${environment.baseHttpUrl}/auth`;
+  private _permissions: string[] = [];
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -26,6 +27,18 @@ export class AuthService {
 
   get accessToken(): string {
     return localStorage.getItem('accessToken') ?? '';
+  }
+
+  get permissions(): string[] {
+    return this._permissions;
+  }
+
+  set permissions(permissions: string[]) {
+    this._permissions = permissions;
+  }
+
+  hasPermission(permission: string): boolean {
+    return this._permissions.includes(permission);
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -49,6 +62,9 @@ export class AuthService {
 
         // Store the user on the user service
         this._userService.user = user;
+
+        // Store the permissions
+        this._permissions = user.permissions ?? [];
 
         // Return a new observable with the response
         return of(response);
@@ -188,5 +204,9 @@ export class AuthService {
         console.error('Error al decodificar el token:', error);
         return null;
     }
+  }
+
+  getUserPermissions(): string[] {
+    return this._permissions;
   }
 }

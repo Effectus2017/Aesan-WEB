@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, compareString, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -27,6 +27,12 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { PERMISSIONS_COLUMNS_SCHEMA } from './columns-schema';
+import { MatTableDataSource } from '@angular/material/table';
+import { Permission } from 'app/shared/models/Permission';
+import { PermissionService } from 'app/shared/services/permission.service';
 
 @Component({
   selector: 'app-users-edit',
@@ -46,7 +52,7 @@ import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
     TranslocoModule,
     GenericHeaderComponent,
     MatCheckboxModule,
-    //SafeImageUrlPipe,
+    GenericTableComponent,
   ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -61,39 +67,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
+  private _permissionsService: PermissionService = inject(PermissionService);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
-    saveButtonShow: true,
-    saveButtonText: 'users.edit.buttons.update',
-    submitButtonShow: true,
-    submitButtonText: 'users.edit.buttons.update-password',
-    submitDisabled: true,
-    customButtonShow: true,
-    customButtonText: 'users.edit.buttons.force-password',
-    customButtonColor: 'primary',
-  };
-
-//   formRoot: UntypedFormGroup;
-  imageURL: string;
-  fileToUpload: File = null;
-  fileResponse: FileResponse;
-
-  id?: string = null;
-  user?: any;
-
-  listRoles: any[] = [];
-  listAgencies: any[] = [];
-
-  userRole: string = null;
-
-  constructor() {
-    this.userRole = this._authService.getUserRole();
-  }
-
-  ngOnInit() {
-
-    this.headerConfig.formGroup = this._formBuilder.group({
+    formGroup: this._formBuilder.group({
       datosPersonales: this._formBuilder.group({
         email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email]),
         firstName: new FormControl(null, Validators.required),
@@ -112,7 +90,64 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
         }
       ),
+    }),
+    saveButtonShow: true,
+    saveButtonText: 'users.edit.buttons.update',
+    submitButtonShow: true,
+    submitButtonText: 'users.edit.buttons.update-password',
+    submitDisabled: true,
+    customButtonShow: true,
+    customButtonText: 'users.edit.buttons.force-password',
+    customButtonColor: 'primary',
+  };
+
+  tableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<Permission>(),
+    dataSourceList: [],
+    columnsSchema: PERMISSIONS_COLUMNS_SCHEMA,
+    displayedColumns: PERMISSIONS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSize: 15,
+    pageSizeOptions: [15, 50, 100],
+    length: 0,
+    addButtonShow: true,
+    addButtonIcon: 'add',
+    addButtonLabel: 'global.buttons.addPermission',
+    addButtonTooltip: 'global.tooltips.addPermission',
+    addButtonTooltipPosition: 'above',
+    onAddButtonClick: (event: Event, tableId?: string) => {
+      console.log('add button clicked', event, tableId);
+    },
+  };
+
+  imageURL: string;
+  fileToUpload: File = null;
+  fileResponse: FileResponse;
+
+  id?: string = null;
+  user?: any;
+
+  listRoles: any[] = [];
+  listAgencies: any[] = [];
+
+  userRole: string = null;
+
+  compare = compare;
+  compareString = compareString;
+
+  constructor() {
+    this.userRole = this._authService.getUserRole();
+
+    this._permissionsService.permissionsUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      this.tableConfig.dataSourceList = result.body.data;
+      this.tableConfig.dataSource.data = result.body.data;
+      this.tableConfig.length = result.body.count;
+      this._changeDetectorRef.markForCheck();
     });
+  }
+
+  ngOnInit() {
 
     this._usersService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
@@ -670,20 +705,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   handleMissingImage(event: Event) {
     this.imageURL = 'assets/images/avatars/profile.png';
-  }
-
-  compare(o1: any, o2: any): boolean {
-    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1 === o2;
-    }
-    return false;
-  }
-
-  compareString(o1: any, o2: any): boolean {
-    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.name.split(' ').join('') === o2;
-    }
-    return false;
   }
 
   /**

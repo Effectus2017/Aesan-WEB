@@ -6,3 +6,10 @@ export const environment = {
   v100: 1.0,
   loginEnable: false,
 };
+
+// if (!environment.production) {
+//   import('@stagewise/toolbar').then(({ initToolbar }) => {
+//     const stagewiseConfig = { plugins: [] };
+//     initToolbar(stagewiseConfig);
+//   });
+// }

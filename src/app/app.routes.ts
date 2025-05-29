@@ -83,6 +83,10 @@ export const appRoutes: Route[] = [
       { path: 'agency-status', loadChildren: () => import('app/modules/admin-portal/agency-status/agency-status.routes') },
       // Kitchen types (Role: Admin)
       { path: 'kitchen-type', loadChildren: () => import('app/modules/admin-portal/kitchen-type/kitchen-type.routes') },
+      // Permissions (Role: Admin)
+      { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes').then(m => m.default) },
+      // Option selection (Role: Admin)
+      { path: 'option-selection', loadChildren: () => import('app/modules/admin-portal/option-selection/option-selection.routes') },
     ],
   },
 
@@ -117,22 +121,24 @@ export const appRoutes: Route[] = [
       initialData: initialDataAgencyPortalResolver,
     },
     children: [
-      // Program requests, listado de solicitudes de programas
+      // Program requests, listado de solicitudes de programas (Role: Agency)
       { path: 'program-requests', loadChildren: () => import('app/modules/agency-portal/program-requests/program-requests.routes') },
-      // Programs, listado de programas
+      // Programs, listado de programas (Role: Agency)
       { path: 'programs', loadChildren: () => import('app/modules/agency-portal/programs/programs.routes') },
-      // Dashboard, dashboard de la agencia
+      // Dashboard, dashboard de la agencia (Role: Agency)
       { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
-      // Documents, listado de documentos
+      // Documents, listado de documentos (Role: Agency)
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents-files/documents.routes') },
-      // Forms, listado de formularios para solicitar programas
+      // Forms, listado de formularios para solicitar programas (Role: Agency)
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
-      // Schools, listado de escuelas
+      // Schools, listado de escuelas (Role: Agency)
       { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes').then(m => m.default) },
-      // Household, listado de hogares
+      // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
-      // Household member, listado de miembros del hogar
+      // Household member, listado de miembros del hogar (Role: Agency)
       { path: 'household-member', loadChildren: () => import('app/modules/agency-portal/household-member/household-member.routes') },
+      // Legibility module, listado de módulos de elegibilidad (Role: Agency)
+      { path: 'legibility', loadChildren: () => import('app/modules/agency-portal/legibility/legibility.routes') },
     ],
   },
 ];

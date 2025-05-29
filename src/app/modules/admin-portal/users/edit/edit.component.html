@@ -323,10 +323,15 @@
               </mat-error>
             </mat-form-field>
           </div>
-
           }
         </div>
         <div class="mt-1 text-md text-hint">{{ "users.edit.password-requirements" | transloco }}</div>
+        <div class="col-span-10 overflow-hidden">
+          <div class="prose-sm prose">
+            <h2 class="my-12">{{ "users.edit.permissions-section" | transloco }}</h2>
+          </div>
+        </div>
+        <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
       </form>
     </div>
   </div>

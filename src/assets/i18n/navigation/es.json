@@ -2,7 +2,8 @@
     "navigation": {
         "agency": {
             "home": "Inicio",
-            "program-requests": "Solicitudes al Programa"
+            "program-requests": "Solicitudes al Programa",
+            "legibility": "Elegibilidad"
         },
         "users": {
             "title": "Usuarios",
@@ -10,7 +11,8 @@
             "tooltip": "Usuarios",
             "list": "Lista",
             "add": "Agregar",
-            "roles": "Roles"
+            "roles": "Roles",
+            "permissions": "Permisos"
         },
         "home": "Inicio",
         "programs": {
@@ -41,7 +43,8 @@
         "administration": {
             "title": "Administración",
             "agency-status": "Estados de Agencia",
-            "kitchen-types": "Tipos de Cocina"
+            "kitchen-types": "Tipos de Cocina",
+            "permissions": "Permisos"
         }
     }
 }

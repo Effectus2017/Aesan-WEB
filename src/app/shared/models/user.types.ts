@@ -12,6 +12,7 @@ export interface TokenResponse {
   agencyId?: number;
   programs?: string;
   programIds?: string;
+  permissions?: string[];
   nbf: number;
   exp: number;
   iat: number;
@@ -22,6 +23,7 @@ export interface Token {
   access_token: string;
   expires_in: number;
   refresh_token: string;
+  permissions: string[];
 }
 
 export interface Role {

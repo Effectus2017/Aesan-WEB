@@ -31,7 +31,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
     TranslocoModule
   ],
 })
-export class EditComponent implements OnInit, OnGenericHeaderHandlers {
+export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _householdService = inject(HouseholdService);
   private _cdr = inject(ChangeDetectorRef);

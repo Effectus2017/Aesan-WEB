@@ -1,0 +1,222 @@
+{
+    "users": {
+        "edit": {
+            "title": "Editar Usuario",
+            "personal-info": "Datos Personales",
+            "access-info": "Datos de Acceso",
+            "password-section": "Editar Contraseña",
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingrese el correo electrónico",
+                "required": "El correo electrónico es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
+            },
+            "username": {
+                "label": "Nombre de Usuario",
+                "placeholder": "Ingrese el nombre de usuario",
+                "required": "El nombre de usuario es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
+            },
+            "role": {
+                "label": "Rol",
+                "placeholder": "Seleccione un rol",
+                "required": "El rol es requerido"
+            },
+            "current-password": {
+                "label": "Contraseña Actual",
+                "placeholder": "Ingrese la contraseña actual",
+                "required": "La contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "password": {
+                "toggle-visibility": "Mostrar contraseña",
+                "success": {
+                    "title": "Contraseña actualizada",
+                    "message": "Contraseña actualizada exitosamente"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error al actualizar la contraseña"
+                },
+                "reset": {
+                    "success": {
+                        "title": "Contraseña restablecida",
+                        "message": "Contraseña restablecida exitosamente"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "Error al restablecer la contraseña"
+                    }
+                }
+            },
+            "new-password": {
+                "label": "Nueva Contraseña",
+                "placeholder": "Ingrese la nueva contraseña",
+                "required": "La nueva contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "new-password-repeat": {
+                "label": "Repetir Nueva Contraseña",
+                "placeholder": "Ingrese la nueva contraseña nuevamente",
+                "required": "La confirmación de la contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Además, solo usando el botón 'Actualizar Contraseña', se actualizará la contraseña del usuario.",
+            "buttons": {
+                "cancel": "Cancelar",
+                "update": "Actualizar",
+                "update-password": "Actualizar Contraseña",
+                "force-password": "Forzar Cambio de Contraseña"
+            },
+            "firstName": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre",
+                "required": "El nombre es requerido"
+            },
+            "middleName": {
+                "label": "Segundo Nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "fatherLastName": {
+                "label": "Apellido Paterno",
+                "placeholder": "Ingrese el apellido paterno",
+                "required": "El apellido paterno es requerido"
+            },
+            "motherLastName": {
+                "label": "Apellido Materno",
+                "placeholder": "Ingrese el apellido materno"
+            },
+            "messages": {
+                "force-password": {
+                    "title": "Cambio de Contraseña",
+                    "success": "Se ha generado una nueva contraseña temporal y se ha enviado por correo electrónico al usuario.",
+                    "error": "Ha ocurrido un error al generar la contraseña temporal."
+                },
+                "avatar": {
+                    "title": "Avatar",
+                    "success": "Avatar actualizado exitosamente",
+                    "error": "Error al actualizar el avatar"
+                },
+                "upload": {
+                    "title": "Subida de imagen",
+                    "success": "Imagen subida exitosamente",
+                    "error": "Error al subir la imagen"
+                }
+            },
+            "isActive": {
+                "label": "Usuario Activo"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Contraseña Temporal Activada"
+            },
+            "emailConfirmed": {
+                "label": "Correo Electrónico Confirmado"
+            },
+            "avatar": {
+                "title": "Foto de Perfil",
+                "alt": "Foto de perfil del usuario",
+                "select": "Seleccionar Foto de Perfil"
+            },
+            "permissions-section": "Permisos asignados"
+        },
+        "list": {
+            "title": "Usuarios",
+            "search": {
+                "placeholder": "Buscar usuario"
+            },
+            "columns": {
+                "firstName": "Nombre",
+                "fatherLastName": "Apellido",
+                "email": "Correo Electrónico",
+                "roles": "Roles",
+                "avatar": "Foto de Perfil",
+                "isActive": "Activo",
+                "isTemporalPasswordActived": "Contraseña Temporal Activada",
+                "emailConfirmed": "Correo Electrónico Confirmado"
+            },
+            "delete": {
+                "title": "Eliminar Usuario",
+                "message": "¿Está seguro que desea eliminar este usuario?",
+                "confirm": "Eliminar",
+                "cancel": "Cancelar",
+                "success": "Usuario eliminado exitosamente.",
+                "error": "Ha ocurrido un error al eliminar el usuario."
+            },
+            "actions": {
+                "edit": "Editar",
+                "delete": "Eliminar",
+                "download": "Descargar"
+            }
+        },
+        "add": {
+            "title": "Agregar Usuario",
+            "personal-info": "Datos Personales",
+            "username": {
+                "label": "Nombre de Usuario",
+                "placeholder": "Ingrese el nombre de usuario",
+                "required": "El nombre de usuario es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
+            },
+            "current-password": {
+                "label": "Contraseña",
+                "placeholder": "Ingrese la contraseña",
+                "required": "La contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "new-password": {
+                "label": "Repetir Contraseña",
+                "placeholder": "Ingrese la contraseña nuevamente",
+                "required": "La confirmación de contraseña es requerida",
+                "min-length": "Se requiere un mínimo de 8 caracteres"
+            },
+            "password-requirements": "La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial.",
+            "email": {
+                "label": "Correo Electrónico",
+                "placeholder": "Ingrese el correo electrónico",
+                "required": "El correo electrónico es requerido",
+                "email": "Debe ingresar un correo electrónico válido"
+            },
+            "firstName": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre",
+                "required": "El nombre es requerido"
+            },
+            "middleName": {
+                "label": "Segundo Nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "fatherLastName": {
+                "label": "Apellido Paterno",
+                "placeholder": "Ingrese el apellido paterno",
+                "required": "El apellido paterno es requerido"
+            },
+            "motherLastName": {
+                "label": "Apellido Materno",
+                "placeholder": "Ingrese el apellido materno",
+                "required": "El apellido materno es requerido"
+            },
+            "role": {
+                "label": "Rol",
+                "placeholder": "Seleccione un rol",
+                "required": "El rol es requerido"
+            },
+            "submit": "Guardar",
+            "back": "Volver",
+            "agency": {
+                "label": "Agencia a la que pertenece",
+                "placeholder": "Seleccione una agencia",
+                "required": "La agencia es requerida"
+            }
+        },
+        "update": {
+            "success": {
+                "title": "Usuario actualizado",
+                "message": "Usuario actualizado exitosamente"
+            },
+            "error": {
+                "title": "Error",
+                "message": "Error al actualizar el usuario"
+            }
+        }
+    }
+}

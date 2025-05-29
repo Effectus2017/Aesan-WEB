@@ -101,45 +101,42 @@ export class NavigationService implements OnDestroy {
 
   private adjustNavigationByUserRole(navigation: Navigation): Navigation {
     const userRole = this._authService.getUserRole();
-    const userAgency = this._authService.getUserAgency();
-    const userPrograms = this._authService.getUserPrograms();
 
-    // Determinar el prefijo de la ruta basado en el rol y programa
-    let prefix = this.getRoutePrefix(userRole, userPrograms);
-
-    const adjustLinks = (items: FuseNavigationItem[]): FuseNavigationItem[] => {
-      return items
-        .filter((item) => {
-          const allowed = this.isItemAllowed(item, userRole);
-          return allowed;
-        })
-        .map((item) => {
-          const newItem = { ...item };
-          if (newItem.link && !this.isExternalLink(newItem.link)) {
-            // Limpiar la ruta antes de agregar el prefijo
-            const cleanLink = this.cleanRoute(newItem.link);
-            newItem.link = `${prefix}${cleanLink}`;
-          }
-          if (newItem.children) {
-            newItem.children = adjustLinks(newItem.children);
-          }
-          return newItem;
-        });
-    };
-
-    const result = { ...navigation };
-
-    if (result.default) {
-      result.default = adjustLinks(result.default);
+    let nav: FuseNavigationItem[] = [];
+    if (userRole === 'Administrator') {
+      nav = navigation.admin ?? [];
+    } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+      nav = navigation.agency ?? [];
+    } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
+      nav = navigation.monitor ?? [];
     }
-    if (result.compact) {
-      result.compact = adjustLinks(result.compact);
-    }
-    if (result.horizontal) {
-      result.horizontal = adjustLinks(result.horizontal);
+    // Agrega los ítems compartidos si existen
+    if (navigation.shared && navigation.shared.length > 0) {
+      nav = [...nav, ...navigation.shared];
     }
 
-    return result;
+    // Aplica el ajuste de rutas y permisos como antes
+    const adjusted = this.adjustLinks(nav, userRole);
+
+    // Devuelve tanto default como horizontal para compatibilidad con los layouts
+    return { default: adjusted, horizontal: adjusted };
+  }
+
+  private adjustLinks(items: FuseNavigationItem[], userRole: string): FuseNavigationItem[] {
+    let prefix = this.getRoutePrefix(userRole, '');
+    return items
+      .filter((item) => this.isItemAllowed(item, userRole))
+      .map((item) => {
+        const newItem = { ...item };
+        if (newItem.link && !this.isExternalLink(newItem.link)) {
+          const cleanLink = this.cleanRoute(newItem.link);
+          newItem.link = `${prefix}${cleanLink}`;
+        }
+        if (newItem.children) {
+          newItem.children = this.adjustLinks(newItem.children, userRole);
+        }
+        return newItem;
+      });
   }
 
   private getRoutePrefix(userRole: string, userPrograms: string): string {
@@ -176,9 +173,22 @@ export class NavigationService implements OnDestroy {
   }
 
   private isItemAllowed(item: FuseNavigationItem, userRole: string): boolean {
-    if (!item.roles || item.roles.length === 0) {
+    // Si no hay restricciones, mostrar
+    if ((!item.roles || item.roles.length === 0) && (!item.permissions || item.permissions.length === 0)) {
       return true;
     }
-    return item.roles.includes(userRole);
+
+    // Validar por rol
+    if (item.roles && item.roles.length > 0 && item.roles.includes(userRole)) {
+      return true;
+    }
+
+    // Validar por permisos
+    if (item.permissions && item.permissions.length > 0) {
+      const userPermissions = this._authService.getUserPermissions?.() || [];
+      return item.permissions.some((perm) => userPermissions.includes(perm));
+    }
+
+    return false;
   }
 }

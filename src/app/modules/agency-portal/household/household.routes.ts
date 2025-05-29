@@ -9,18 +9,18 @@ export default [
     children: [
       {
         path: 'list',
-        loadComponent: () => import('./list/list.component').then((c) => c.ListComponent),
+        loadComponent: () => import('./list/list.component').then((c) => c.HouseholdListComponent),
         resolve: {
           data: initialDataHouseholdListResolver,
         },
       },
       {
         path: 'add',
-        loadComponent: () => import('./add/add.component').then((c) => c.AddComponent),
+        loadComponent: () => import('./add/add.component').then((c) => c.HouseholdAddComponent),
       },
       {
         path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then((c) => c.EditComponent),
+        loadComponent: () => import('./edit/edit.component').then((c) => c.HouseholdEditComponent),
         resolve: {
           data: initialDataHouseholdEditResolver,
         },

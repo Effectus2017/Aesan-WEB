@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
-import { GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
+import { GenericTableButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
@@ -17,6 +17,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;
   @Input() handler: OnGenericTableHandler;
+  @Input() darkMode: boolean = false;
 
   ngOnInit(): void {
 
@@ -41,11 +42,49 @@ export class GenericTableComponent implements OnInit {
   }
 
   /**
-   * Método para manejar la adición de un elemento a la tabla.
-   * Llama a la función onTableAdd del handler proporcionado.
+   * Método para manejar el clic en el botón de adición.
+   * Llama a la función onAddButtonClick del handler proporcionado.
+   * @param event El evento de clic.
    */
-  onAdd(): void {
-    this.handler.onTableAdd();
+  onAddButtonClick(event?: Event): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (this.config.onAddButtonClick) {
+      this.config.onAddButtonClick(event);
+    } else if (this.handler?.onAddButtonClick) {
+      this.handler.onAddButtonClick(event);
+    }
+  }
+
+  onButtonClick(event: Event, button: GenericTableButtonConfig, element: any): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (button.action) {
+      button.action(event, element);
+      return;
+    }
+
+    switch (button.key) {
+      case 'add':
+        if (this.handler?.onTableAdd) {
+          this.handler.onTableAdd(event, element);
+        }
+        break;
+      case 'edit':
+        if (this.handler?.onTableEdit) {
+          this.handler.onTableEdit(event, element.id);
+        }
+        break;
+      case 'delete':
+        if (this.handler?.onTableDelete) {
+          this.handler.onTableDelete(event, element.id);
+        }
+        break;
+    }
   }
 
   /**

@@ -1,0 +1,81 @@
+{
+    "readability-module": {
+        "household-member-dialog": {
+            "name": "Nombre",
+            "name-placeholder": "Nombre",
+            "name-required": "El nombre es requerido",
+            "name-maxLength": "El nombre debe tener máximo 100 caracteres",
+            "last-name": "Apellido",
+            "last-name-placeholder": "Apellido",
+            "last-name-required": "El apellido es requerido",
+            "last-name-maxLength": "El apellido debe tener máximo 100 caracteres",
+            "age": "Edad",
+            "age-required": "La edad es requerida",
+            "age-min": "La edad debe ser mayor o igual a 0",
+            "is-student": "Estudiante",
+            "is-student-yes": "Si",
+            "is-student-no": "No",
+            "grade": "Grado",
+            "grade-required": "El grado es requerido",
+            "id-dining-room": "ID Comedor",
+            "id-dining-room-required": "El ID del comedor es requerido",
+            "id-dining-room-placeholder": "ID del comedor",
+            "foster": "Foster",
+            "foster-yes": "Si",
+            "foster-no": "No",
+            "migrant": "Migrante",
+            "migrant-yes": "Si",
+            "migrant-no": "No"
+        },
+        "household-income-dialog": {
+            "title": "Agregar Fuente de Ingreso",
+            "income": "Ingreso",
+            "income-required": "El ingreso es requerido",
+            "income-min": "El ingreso debe ser mayor o igual a 0",
+            "income-maxLength": "El ingreso debe tener máximo 100 caracteres",
+            "income-frequency": "¿Con que frecuencia?",
+            "income-frequency-required": "La frecuencia de ingreso es requerida",
+            "income-frequency-min": "La frecuencia de ingreso debe ser mayor o igual a 0",
+            "income-frequency-maxLength": "La frecuencia de ingreso debe tener máximo 100 caracteres",
+
+            "income-two": "Asistencia publica, munetencion de menores, pension matrimonial",
+            "income-two-required": "El ingreso es requerido",
+            "income-two-min": "El ingreso debe ser mayor o igual a 0",
+            "income-two-maxLength": "El ingreso debe tener máximo 100 caracteres",
+            "income-frequency-two": "¿Con que frecuencia?",
+            "income-frequency-two-required": "La frecuencia de ingreso es requerida",
+            "income-frequency-two-min": "La frecuencia de ingreso debe ser mayor o igual a 0",
+            "income-frequency-two-maxLength": "La frecuencia de ingreso debe tener máximo 100 caracteres",
+
+            "income-three": "Pension, Jubilacion, otros ingresos",
+            "income-three-required": "El ingreso es requerido",
+            "income-three-min": "El ingreso debe ser mayor o igual a 0",
+            "income-three-maxLength": "El ingreso debe tener máximo 100 caracteres",
+            "income-frequency-three": "¿Con que frecuencia?",
+            "income-frequency-three-required": "La frecuencia de ingreso es requerida",
+            "income-frequency-three-min": "La frecuencia de ingreso debe ser mayor o igual a 0",
+            "income-frequency-three-maxLength": "La frecuencia de ingreso debe tener máximo 100 caracteres"
+
+        },
+        "add": {
+            "title": "Solicitud para Comida Escolar Gratuita y de Precio Reducido",
+            "householdMembers": {
+                "columns": {
+                    "name": "Nombre",
+                    "lastName": "Apellido",
+                    "age": "Edad",
+                    "isStudent": "Estudiante",
+                    "grade": "Grado",
+                    "idDiningRoom": "ID Comedor",
+                    "isFoster": "Foster",
+                    "isMigrant": "Migrante"
+                }
+            },
+            "householdIncome": {
+                "columns": {
+                    "income": "Ingreso"
+                }
+            }
+        }
+    }
+}

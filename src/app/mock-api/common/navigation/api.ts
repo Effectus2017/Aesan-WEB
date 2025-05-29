@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { FuseMockApiService } from '@fuse/lib/mock-api';
-import { defaultNavigation, horizontalNavigation } from 'app/mock-api/common/navigation/data';
+import { adminNavigation } from './navigation.admin';
+import { agencyNavigation } from './navigation.agency';
+import { monitorNavigation } from './navigation.monitor';
+import { sharedNavigation } from './navigation.shared';
 import { cloneDeep } from 'lodash-es';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationMockApi {
-  private readonly _defaultNavigation: FuseNavigationItem[] = defaultNavigation;
-  private readonly _horizontalNavigation: FuseNavigationItem[] = horizontalNavigation;
+  private readonly _adminNavigation: FuseNavigationItem[] = adminNavigation;
+  private readonly _agencyNavigation: FuseNavigationItem[] = agencyNavigation;
+  private readonly _monitorNavigation: FuseNavigationItem[] = monitorNavigation;
+  private readonly _sharedNavigation: FuseNavigationItem[] = sharedNavigation;
 
   /**
    * Constructor
@@ -29,25 +34,13 @@ export class NavigationMockApi {
     // @ Navigation - GET
     // -----------------------------------------------------------------------------------------------------
     this._fuseMockApiService.onGet('api/common/navigation').reply(() => {
-
-      // Fill horizontal navigation children using the default navigation
-      this._horizontalNavigation.forEach((horizontalNavItem) =>
-      {
-          this._defaultNavigation.forEach((defaultNavItem) =>
-          {
-              if ( defaultNavItem.id === horizontalNavItem.id )
-              {
-                  horizontalNavItem.children = cloneDeep(defaultNavItem.children);
-              }
-          });
-      });
-
-      // Return the response
       return [
         200,
         {
-          default: cloneDeep(this._defaultNavigation),
-          horizontal: cloneDeep(this._horizontalNavigation),
+          admin: cloneDeep(this._adminNavigation),
+          agency: cloneDeep(this._agencyNavigation),
+          monitor: cloneDeep(this._monitorNavigation),
+          shared: cloneDeep(this._sharedNavigation),
         },
       ];
     });
