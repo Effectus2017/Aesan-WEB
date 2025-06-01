@@ -59,7 +59,6 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<ProgramRequest>(),
-    dataSourceList: [],
     columnsSchema: PREOPERATIONAL_VISIT_COLUMNS_SCHEMA,
     displayedColumns: PREOPERATIONAL_VISIT_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -81,9 +80,6 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
     this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       this.tableConfig.dataSource.data = result.body.data;
       this.tableConfig.length = result.body.count;
-      // Lista de datos
-      this.tableConfig.dataSourceList = result.body.data;
-
       // Mark for check
       this._changeDetectorRef.markForCheck();
     });
@@ -126,11 +122,11 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
       this.tableConfig.dataSource.data = result.body.data;
       this.tableConfig.length = result.body.count;
       // Lista de datos
-      this.tableConfig.dataSourceList = result.body.data;
+      this.tableConfig.dataSource.data = result.body.data;
     });
 
     // Filtrar la lista existente
-    const filteredData = this.tableConfig.dataSourceList.filter(item =>
+    const filteredData = this.tableConfig.dataSource.data.filter(item =>
       item.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 

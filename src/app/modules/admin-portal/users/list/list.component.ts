@@ -56,7 +56,6 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    dataSourceList: [],
     columnsSchema: USERS_COLUMNS_SCHEMA,
     displayedColumns: USERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,

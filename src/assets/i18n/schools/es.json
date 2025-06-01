@@ -1,54 +1,148 @@
 {
     "schools": {
+        "title": "Sitios",
+        "list": {
+            "title": "Lista de Sitios",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Nombre",
+                    "address": "Dirección",
+                    "city": "Ciudad",
+                    "region": "Región",
+                    "actions": "Acciones"
+                }
+            }
+        },
         "add": {
-            "title": "Agregar Escuela",
+            "title": "Agregar Sitio",
             "information": "Información",
-            "information-description": "Información de la escuela",
-            "name": "Nombre",
-            "name-placeholder": "Nombre de la escuela",
-            "name-error": "El nombre de la escuela es requerido",
-            "address": "Dirección",
-            "address-placeholder": "Dirección de la escuela",
-            "address-error": "La dirección de la escuela es requerida",
-            "zip-code": "Código postal",
-            "zip-code-placeholder": "Código postal de la escuela",
-            "zip-code-error": "El código postal es requerido",
-            "city": "Ciudad",
-            "city-error": "La ciudad es requerida",
-            "region": "Región",
-            "region-error": "La región es requerida",
-            "organization-type": "Tipo de organización",
-            "organization-type-error": "El tipo de organización es requerido",
-            "education-level": "Nivel educativo",
-            "education-level-error": "El nivel educativo es requerido",
-            "operating-period": "Periodo de operación",
-            "operating-period-error": "El periodo de operación es requerido",
-            "facilities": "Facilidades",
-            "satellite-schools": "Escuelas satélite",
-            "postal-address": "Dirección postal",
-            "postal-address-placeholder": "Dirección postal de la escuela",
-            "area-code": "Código de área",
-            "area-code-placeholder": "Código de área de la escuela",
-            "admin-full-name": "Nombre del administrador",
-            "admin-full-name-placeholder": "Nombre completo del administrador",
-            "phone": "Teléfono",
-            "phone-placeholder": "Teléfono de contacto",
-            "phone-extension": "Extensión de teléfono",
-            "phone-extension-placeholder": "Extensión",
-            "mobile": "Teléfono móvil",
-            "mobile-placeholder": "Teléfono móvil de contacto",
-            "base-year": "Año base",
-            "base-year-placeholder": "Año base de la escuela",
-            "next-renewal-year": "Año de renovación",
-            "next-renewal-year-placeholder": "Próximo año de renovación",
-            "start-date": "Fecha de inicio",
-            "start-date-placeholder": "Seleccione la fecha de inicio",
-            "kitchen-type": "Tipo de cocina",
-            "group-type": "Tipo de grupo",
-            "delivery-type": "Tipo de entrega",
-            "sponsor-type": "Tipo de auspiciador",
-            "applicant-type": "Tipo de solicitante",
-            "operating-policy": "Política de funcionamiento",
+            "information-description": "Información del sitio",
+            "name": {
+                "label": "Nombre",
+                "placeholder": "Nombre del sitio",
+                "required": "El nombre del sitio es requerido"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Dirección del sitio",
+                "required": "La dirección del sitio es requerida"
+            },
+            "zip-code": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio",
+                "required": "El código postal es requerido"
+            },
+            "city": {
+                "label": "Ciudad",
+                "placeholder": "Ciudad del sitio",
+                "required": "La ciudad es requerida"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Región del sitio",
+                "required": "La región es requerida"
+            },
+            "organization-type": {
+                "label": "Tipo de organización",
+                "placeholder": "Tipo de organización del sitio",
+                "required": "El tipo de organización es requerido"
+            },
+            "education-level": {
+                "label": "Nivel educativo",
+                "placeholder": "Nivel educativo del sitio",
+                "required": "El nivel educativo es requerido"
+            },
+            "operating-period": {
+                "label": "Periodo de operación",
+                "placeholder": "Periodo de operación del sitio",
+                "required": "El periodo de operación es requerido"
+            },
+            "facilities": {
+                "label": "Facilidades",
+                "placeholder": "Facilidades del sitio",
+                "required": "Las facilidades son requeridas"
+            },
+            "satellite-schools": {
+                "label": "Sitios satélite",
+                "placeholder": "Sitios satélite del sitio",
+                "required": "Los sitios satélite son requeridos"
+            },
+            "postal-address": {
+                "label": "Dirección postal",
+                "placeholder": "Dirección postal del sitio",
+                "required": "La dirección postal es requerida"
+            },
+            "area-code": {
+                "label": "Código de área",
+                "placeholder": "Código de área del sitio",
+                "required": "El código de área es requerido"
+            },
+            "admin-full-name": {
+                "label": "Nombre del administrador",
+                "placeholder": "Nombre completo del administrador",
+                "required": "El nombre del administrador es requerido"
+            },
+            "phone": {
+                "label": "Teléfono",
+                "placeholder": "Teléfono de contacto",
+                "required": "El teléfono es requerido"
+            },
+            "phone-extension": {
+                "label": "Extensión de teléfono",
+                "placeholder": "Extensión",
+                "required": "La extensión de teléfono es requerida"
+            },
+            "mobile": {
+                "label": "Teléfono móvil",
+                "placeholder": "Teléfono móvil de contacto",
+                "required": "El teléfono móvil es requerido"
+            },
+            "base-year": {
+                "label": "Año base",
+                "placeholder": "Año base del sitio",
+                "required": "El año base es requerido"
+            },
+            "next-renewal-year": {
+                "label": "Año de renovación",
+                "placeholder": "Próximo año de renovación",
+                "required": "El año de renovación es requerido"
+            },
+            "start-date": {
+                "label": "Fecha de inicio",
+                "placeholder": "Seleccione la fecha de inicio",
+                "required": "La fecha de inicio es requerida"
+            },
+            "kitchen-type": {
+                "label": "Tipo de cocina",
+                "placeholder": "Tipo de cocina del sitio",
+                "required": "El tipo de cocina es requerido"
+            },
+            "group-type": {
+                "label": "Tipo de grupo",
+                "placeholder": "Tipo de grupo del sitio",
+                "required": "El tipo de grupo es requerido"
+            },
+            "delivery-type": {
+                "label": "Tipo de entrega",
+                "placeholder": "Tipo de entrega del sitio",
+                "required": "El tipo de entrega es requerido"
+            },
+            "sponsor-type": {
+                "label": "Tipo de auspiciador",
+                "placeholder": "Tipo de auspiciador del sitio",
+                "required": "El tipo de auspiciador es requerido"
+            },
+            "applicant-type": {
+                "label": "Tipo de solicitante",
+                "placeholder": "Tipo de solicitante del sitio",
+                "required": "El tipo de solicitante es requerido"
+            },
+            "operating-policy": {
+                "label": "Política de funcionamiento",
+                "placeholder": "Política de funcionamiento del sitio",
+                "required": "La política de funcionamiento es requerida"
+            },
             "buttons": {
                 "save": "Guardar",
                 "cancel": "Cancelar"

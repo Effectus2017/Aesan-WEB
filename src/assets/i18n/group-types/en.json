@@ -1,0 +1,41 @@
+{
+    "group-type": {
+        "list": {
+            "title": "Group Types",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Name",
+                    "nameEN": "Name in English",
+                    "isActive": "Active",
+                    "displayOrder": "Order",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "add": {
+            "title": "Add Group Type",
+            "name": "Name",
+            "name-placeholder": "Name in Spanish",
+            "name-error": "Name is required",
+            "name-en": "Name in English",
+            "name-en-placeholder": "Name in English",
+            "name-en-error": "Name in English is required",
+            "position": "Position",
+            "position-placeholder": "Position in the list"
+        },
+        "edit": {
+            "title": "Edit Group Type",
+            "name": "Name",
+            "name-placeholder": "Name in Spanish",
+            "name-error": "Name is required",
+            "name-en": "Name in English",
+            "name-en-placeholder": "Name in English",
+            "name-en-error": "Name in English is required",
+            "display-order": "Display Order",
+            "display-order-placeholder": "Display order",
+            "display-order-error": "Order is required",
+            "is-active": "Active"
+        }
+    }
+}

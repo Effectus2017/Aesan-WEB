@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -18,12 +18,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
-
-// Importar servicios de catálogos cuando existan
-// import { CityService, RegionService, ... } from 'app/shared/services/...';
+import { optionSelectionData } from 'app/shared/common-data';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { MatTableDataSource } from '@angular/material/table';
+import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { GroupTypeService } from 'app/shared/services/group-type.service';
+import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 
 @Component({
   selector: 'app-schools-add',
@@ -41,6 +45,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     NgForOf,
     TranslocoModule,
     MatDatepickerModule,
+    GenericTableComponent,
   ],
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
@@ -55,22 +60,27 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _operatingPolicyService = inject(OperatingPolicyService);
   private _snackBar = inject(MatSnackBar);
   private _customRouter = inject(CustomRouterService);
-
+  private _translocoService = inject(TranslocoService);
+  private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _groupTypeService = inject(GroupTypeService);
+  private _sponsorTypeService = inject(SponsorTypeService);
   // catálogos
   cities = [];
   regions = [];
   organizationTypes = [];
   educationLevels = [];
   operatingPeriods = [];
-  kitchenTypes = [];
-  groupTypes = [];
-  deliveryTypes = [];
-  sponsorTypes = [];
-  applicantTypes = [];
-  operatingPolicies = [];
+  deliveryTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfDelivery');
+  sponsorTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfSponsor');
+  applicantTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfApplicant');
+  operatingPolicies: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfOperatingPolicy');
   facilities = [];
   schools = [];
   isLoading = false;
+
+  kitchenTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfKitchen');
+  groupTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfGroup');
+  currentLang: string = 'es';
 
   headerConfig: GenericHeaderConfig = {
     title: 'schools.add.title',
@@ -107,38 +117,69 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     cancelButtonText: 'schools.add.buttons.cancel',
   };
 
+  satelliteSchoolsConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: SATELLITE_SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: SATELLITE_SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    addButtonShow: true,
+    addButtonLabel: 'schools.add.buttons.addSatelliteSchool',
+    addButtonTooltip: 'schools.add.buttons.addSatelliteSchoolTooltip',
+    addButtonTooltipPosition: 'above',
+    addButtonIcon: 'add',
+    tableId: 'satelliteSchoolsTable',
+    onAddButtonClick: (event: Event) => this.onTableAddSatelliteSchool(event, null),
+  };
+
   constructor() {}
 
   ngOnInit(): void {
     this.isLoading = true;
 
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.cities = res.body?.data || [];
+    // Transloco
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
     });
 
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.regions = res.body?.data || [];
+    // Cities
+    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
+      this.cities = response.body?.data || [];
     });
 
-    this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.organizationTypes = res.body?.data || [];
+    // Regions
+    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
+      this.regions = response.body?.data || [];
     });
 
-    this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.educationLevels = res.body?.data || [];
+    // Group types
+    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
+      this.groupTypes = response.body?.data || [];
     });
 
-    this._operatingPeriodService.operatingPeriods$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.operatingPeriods = res.body?.data || [];
+    // Sponsor types
+    this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
+      this.sponsorTypes = response.body?.data || [];
     });
 
-    this._facilityService.facilities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.facilities = res.body?.data || [];
-    });
+    // this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
+    //   this.organizationTypes = res.body?.data || [];
+    // });
 
-    this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-      this.operatingPolicies = res.body?.data || [];
-    });
+    // this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
+    //   this.educationLevels = res.body?.data || [];
+    // });
+
+    // this._operatingPeriodService.operatingPeriods$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
+    //   this.operatingPeriods = res.body?.data || [];
+    // });
+
+    // this._facilityService.facilities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
+    //   this.facilities = res.body?.data || [];
+    // });
+
+    // this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
+    //   this.operatingPolicies = res.body?.data || [];
+    // });
     // Cargar catálogos opcionales si existen
     // this.kitchenTypeService.getAllKitchenTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
     //   this.kitchenTypes = res.body?.data || [];
@@ -175,5 +216,9 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   onCancel() {
     this._customRouter.navigate(['schools/list']);
+  }
+
+  onTableAddSatelliteSchool(event: Event, element: any) {
+    console.log('onTableAddSatelliteSchool', event, element);
   }
 }

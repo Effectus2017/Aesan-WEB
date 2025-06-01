@@ -101,6 +101,7 @@ export class NavigationService implements OnDestroy {
 
   private adjustNavigationByUserRole(navigation: Navigation): Navigation {
     const userRole = this._authService.getUserRole();
+    const userPermissions = this._authService.getUserPermissions?.() || [];
 
     let nav: FuseNavigationItem[] = [];
     if (userRole === 'Administrator') {
@@ -116,16 +117,16 @@ export class NavigationService implements OnDestroy {
     }
 
     // Aplica el ajuste de rutas y permisos como antes
-    const adjusted = this.adjustLinks(nav, userRole);
+    const adjusted = this.adjustLinks(nav, userRole, userPermissions);
 
     // Devuelve tanto default como horizontal para compatibilidad con los layouts
     return { default: adjusted, horizontal: adjusted };
   }
 
-  private adjustLinks(items: FuseNavigationItem[], userRole: string): FuseNavigationItem[] {
+  private adjustLinks(items: FuseNavigationItem[], userRole: string, userPermissions: string[]): FuseNavigationItem[] {
     let prefix = this.getRoutePrefix(userRole, '');
     return items
-      .filter((item) => this.isItemAllowed(item, userRole))
+      .filter((item) => this.isItemAllowedByPermissions(item, userPermissions))
       .map((item) => {
         const newItem = { ...item };
         if (newItem.link && !this.isExternalLink(newItem.link)) {
@@ -133,7 +134,7 @@ export class NavigationService implements OnDestroy {
           newItem.link = `${prefix}${cleanLink}`;
         }
         if (newItem.children) {
-          newItem.children = this.adjustLinks(newItem.children, userRole);
+          newItem.children = this.adjustLinks(newItem.children, userRole, userPermissions);
         }
         return newItem;
       });
@@ -190,5 +191,19 @@ export class NavigationService implements OnDestroy {
     }
 
     return false;
+  }
+
+  private isItemAllowedByPermissions(item: FuseNavigationItem, userPermissions: string[]): boolean {
+    if (!item.permissions || item.permissions.length === 0) {
+      return true;
+    }
+    return item.permissions.some((perm) => userPermissions.includes(perm));
+  }
+
+  private isItemAllowedByRole(item: FuseNavigationItem, userRole: string): boolean {
+    if (!item.roles || item.roles.length === 0) {
+      return true;
+    }
+    return item.roles.includes(userRole);
   }
 }

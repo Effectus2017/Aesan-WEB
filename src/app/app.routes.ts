@@ -83,6 +83,10 @@ export const appRoutes: Route[] = [
       { path: 'agency-status', loadChildren: () => import('app/modules/admin-portal/agency-status/agency-status.routes') },
       // Kitchen types (Role: Admin)
       { path: 'kitchen-type', loadChildren: () => import('app/modules/admin-portal/kitchen-type/kitchen-type.routes') },
+      // Group types (Role: Admin)
+      { path: 'group-type', loadChildren: () => import('app/modules/admin-portal/group-type/group-type.routes') },
+      // Sponsor types (Role: Admin)
+      { path: 'sponsor-type', loadChildren: () => import('app/modules/admin-portal/sponsor-type/sponsor-type.routes') },
       // Permissions (Role: Admin)
       { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes').then(m => m.default) },
       // Option selection (Role: Admin)

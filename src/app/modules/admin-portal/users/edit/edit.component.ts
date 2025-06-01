@@ -140,7 +140,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.userRole = this._authService.getUserRole();
 
     this._permissionsService.permissionsUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSourceList = result.body.data;
       this.tableConfig.dataSource.data = result.body.data;
       this.tableConfig.length = result.body.count;
       this._changeDetectorRef.markForCheck();

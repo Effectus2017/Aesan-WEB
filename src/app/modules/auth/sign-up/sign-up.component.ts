@@ -334,7 +334,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // ¿En qué estatus se encuentra su Exención Contributiva?
         // In what status is your Tax Exemption?
         // En Proceso (3), Otorgado (4), Denegado (5)
-        this.exceptionStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'exceptionStatus');
+        this.exceptionStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'exceptionStatus' && option.id !== 5);
 
         // ¿Qué tipo de Exención Contributiva tiene?
         // What type of Tax Exemption does it have?

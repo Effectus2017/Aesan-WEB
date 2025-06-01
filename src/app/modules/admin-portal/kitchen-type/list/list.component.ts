@@ -83,11 +83,9 @@ export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTab
         const dataWithOrder = result.body.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
         this.tableConfig.dataSource.data = dataWithOrder;
         this.tableConfig.length = result.body.count;
-        this.tableConfig.dataSourceList = dataWithOrder;
       } else {
         this.tableConfig.dataSource.data = [];
         this.tableConfig.length = 0;
-        this.tableConfig.dataSourceList = [];
       }
       this._changeDetectorRef.markForCheck();
     });

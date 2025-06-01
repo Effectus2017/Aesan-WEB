@@ -63,7 +63,6 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<Permission>(),
-    dataSourceList: [],
     columnsSchema: PERMISSIONS_COLUMNS_SCHEMA,
     displayedColumns: PERMISSIONS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -82,7 +81,6 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
     if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.tableConfig.dataSource.data = result.body.data;
         this.tableConfig.length = result.body.count;
-        this.tableConfig.dataSourceList = result.body.data;
         this._changeDetectorRef.markForCheck();
       }
     });

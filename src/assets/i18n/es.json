@@ -1052,22 +1052,6 @@
             }
         }
     },
-    "schools": {
-        "title": "Escuelas",
-        "list": {
-            "title": "Lista de Escuelas",
-            "table": {
-                "columns": {
-                    "id": "ID",
-                    "name": "Nombre",
-                    "address": "Dirección",
-                    "city": "Ciudad",
-                    "region": "Región",
-                    "actions": "Acciones"
-                }
-            }
-        }
-    },
     "agency-status": {
         "title": "Estados de Agencia",
         "list": {

@@ -66,7 +66,6 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<School>(),
-    dataSourceList: [],
     columnsSchema: SCHOOLS_COLUMNS,
     displayedColumns: SCHOOLS_COLUMNS.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -85,11 +84,9 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
         const dataWithOrder = result.body.data.map((item: any, idx: number) => ({ ...item, displayOrderUI: idx + 1 }));
         this.tableConfig.dataSource.data = dataWithOrder;
         this.tableConfig.length = result.body.count;
-        this.tableConfig.dataSourceList = dataWithOrder;
       } else {
         this.tableConfig.dataSource.data = [];
         this.tableConfig.length = 0;
-        this.tableConfig.dataSourceList = [];
       }
       this._changeDetectorRef.markForCheck();
     });

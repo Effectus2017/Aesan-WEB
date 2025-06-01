@@ -70,7 +70,6 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<AgencyFile>(),
-    dataSourceList: [],
     columnsSchema: DOCUMENTS_COLUMNS_SCHEMA,
     displayedColumns: DOCUMENTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,

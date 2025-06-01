@@ -134,6 +134,16 @@ export class AuthService {
     return user.role;
   }
 
+  getUserPermissions(): string[] | null {
+    const payloadPart = this.accessToken.split('.')[1];
+    if (!payloadPart) {
+        return null;
+    }
+    const decodedPayload = atob(payloadPart);
+    var user = JSON.parse(decodedPayload) as TokenResponse;
+    return user.permissions ?? [];
+  }
+
   getUserAgency(): string | null {
     const payloadPart = this.accessToken.split('.')[1];
     if (!payloadPart) {
@@ -206,7 +216,5 @@ export class AuthService {
     }
   }
 
-  getUserPermissions(): string[] {
-    return this._permissions;
-  }
+
 }

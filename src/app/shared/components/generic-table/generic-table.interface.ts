@@ -66,7 +66,7 @@ export interface ColumnSchema {
 
 export interface GenericTableConfig<T = any> {
   dataSource: MatTableDataSource<T>;
-  dataSourceList: T[];
+  dataSourceList?: T[];
   columnsSchema: ColumnSchema[];
   displayedColumns: string[];
   handler?: any;

@@ -1,0 +1,59 @@
+{
+  "sponsor-type": {
+    "list": {
+      "title": "Sponsor Types",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "name": "Name",
+          "nameEN": "Name in English",
+          "isActive": "Active",
+          "displayOrder": "Display Order",
+          "actions": "Actions"
+        }
+      },
+      "search": {
+        "placeholder": "Search sponsor type..."
+      },
+      "buttons": {
+        "add": "Add",
+        "clear": "Clear",
+        "save": "Search"
+      }
+    },
+    "add": {
+      "title": "Add Sponsor Type",
+      "name": "Name",
+      "name-placeholder": "Name in Spanish",
+      "name-error": "Name is required",
+      "nameEN": "Name in English",
+      "nameEN-placeholder": "Name in English",
+      "nameEN-error": "Name in English is required",
+      "displayOrder": "Display Order",
+      "displayOrder-placeholder": "Display order",
+      "displayOrder-error": "Order is required",
+      "isActive": "Active",
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Sponsor Type",
+      "name": "Name",
+      "name-placeholder": "Name in Spanish",
+      "name-error": "Name is required",
+      "nameEN": "Name in English",
+      "nameEN-placeholder": "Name in English",
+      "nameEN-error": "Name in English is required",
+      "displayOrder": "Display Order",
+      "displayOrder-placeholder": "Display order",
+      "displayOrder-error": "Order is required",
+      "isActive": "Active",
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    }
+  }
+}
