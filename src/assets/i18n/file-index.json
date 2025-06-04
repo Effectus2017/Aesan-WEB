@@ -1,16 +1,38 @@
 [
   "./assets/i18n/es.json",
   "./assets/i18n/en.json",
+
+  "./assets/i18n/dialogs/es.json",
+  "./assets/i18n/dialogs/en.json",
+
   "./assets/i18n/schools/es.json",
+  "./assets/i18n/schools/en.json",
+
   "./assets/i18n/kitchen-types/es.json",
+  "./assets/i18n/kitchen-types/en.json",
+
   "./assets/i18n/group-types/es.json",
   "./assets/i18n/group-types/en.json",
+
   "./assets/i18n/sponsor-types/es.json",
   "./assets/i18n/sponsor-types/en.json",
+
+  "./assets/i18n/operating-policy/es.json",
+  "./assets/i18n/operating-policy/en.json",
+
+  "./assets/i18n/households/es.json",
+  "./assets/i18n/households/en.json",
+
   "./assets/i18n/navigation/es.json",
+
   "./assets/i18n/legibility/es.json",
+
   "./assets/i18n/permissions/es.json",
   "./assets/i18n/permissions/en.json",
+
+  "./assets/i18n/validation-to-program/es.json",
+  "./assets/i18n/validation-to-program/en.json",
+
   "./assets/i18n/users/es.json",
   "./assets/i18n/users/en.json"
 ]

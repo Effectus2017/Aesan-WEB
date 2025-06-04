@@ -1,0 +1,53 @@
+{
+    "navigation": {
+        "agency": {
+            "home": "Home",
+            "program-requests": "Program Requests",
+            "legibility": "Eligibility"
+        },
+        "users": {
+            "title": "Users",
+            "subtitle": "Users",
+            "tooltip": "Users",
+            "list": "List",
+            "add": "Add",
+            "roles": "Roles",
+            "permissions": "Permissions"
+        },
+        "home": "Home",
+        "programs": {
+            "title": "Programs",
+            "validation": "Program Validation"
+        },
+        "pre-operational": "Pre-Operational",
+        "documents": "Documents",
+        "forms": {
+            "title": "Forms",
+            "program-application": "Program Application",
+            "sponsor-organization": "Sponsor Organization",
+            "administrative-organization-chart": "Administrative Organization Chart",
+            "pdam-solicitation": "PDAM Solicitation",
+            "psav-solicitation": "PSAV Solicitation"
+        },
+        "accounting": {
+            "title": "Accounting",
+            "budget": "Budget",
+            "financial-management": "Financial Management",
+            "employee-management": "Employee Management",
+            "rations-form": "Rations Form"
+        },
+        "dashboard": "Charts",
+        "reports": "Reports",
+        "agency-status": "Agency Status",
+        "schools": "Sites",
+        "administration": {
+            "title": "Administration",
+            "agency-status": "Agency Status",
+            "kitchen-types": "Kitchen Types",
+            "group-types": "Group Types",
+            "permissions": "Permissions",
+            "sponsor-types": "Sponsor Types",
+            "operating-policies": "Operating Policies"
+        }
+    }
+}

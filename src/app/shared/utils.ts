@@ -3,6 +3,9 @@ import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
+import { inject } from '@angular/core';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Compara dos elementos
@@ -29,6 +32,19 @@ export function compareString(o1: any, o2: any): boolean {
   }
   return false;
 }
+
+/**
+ * Compara dos elementos por una propiedad específica
+ * @param o1 Elemento 1
+ * @param o2 Elemento 2
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
+export function comparePostal(o1: any, o2: any): boolean {
+    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+      return o1.Id === o2.Id;
+    }
+    return false;
+  }
 
 /**
  * Compara dos elementos por una propiedad específica
@@ -235,4 +251,52 @@ export function mapYesNoOptionIdToBoolean(id: number, options: { id: number; nam
   if (id === yesOption.id) return true;
   if (id === noOption.id) return false;
   return undefined;
+}
+
+/**
+ * Muestra un diálogo de éxito usando FuseConfirmationService
+ * Utiliza inyección de dependencias interna para obtener los servicios necesarios
+ */
+export function showSuccessDialog(message: string = 'dialog.success.message'): void {
+  const fuseConfirmationService = inject(FuseConfirmationService);
+  const translocoService = inject(TranslocoService);
+
+  fuseConfirmationService.open({
+    title: translocoService.translate('dialog.success.title'),
+    icon: {
+      show: true,
+      name: 'heroicons_outline:check-circle',
+      color: 'success',
+    },
+    message: translocoService.translate(message),
+    actions: {
+      confirm: {
+        label: translocoService.translate('dialog.success.confirm'),
+      },
+    },
+  });
+}
+
+/**
+ * Muestra un diálogo de error usando FuseConfirmationService
+ * Utiliza inyección de dependencias interna para obtener los servicios necesarios
+ */
+export function showErrorDialog(message: string = 'dialog.error.message'): void {
+  const fuseConfirmationService = inject(FuseConfirmationService);
+  const translocoService = inject(TranslocoService);
+
+  fuseConfirmationService.open({
+    title: translocoService.translate('dialog.error.title'),
+    icon: {
+      show: true,
+      name: 'heroicons_outline:x-circle',
+      color: 'error',
+    },
+    message: translocoService.translate(message),
+    actions: {
+      confirm: {
+        label: translocoService.translate('dialog.error.confirm'),
+      },
+    },
+  });
 }

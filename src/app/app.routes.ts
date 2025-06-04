@@ -87,6 +87,8 @@ export const appRoutes: Route[] = [
       { path: 'group-type', loadChildren: () => import('app/modules/admin-portal/group-type/group-type.routes') },
       // Sponsor types (Role: Admin)
       { path: 'sponsor-type', loadChildren: () => import('app/modules/admin-portal/sponsor-type/sponsor-type.routes') },
+      // Operating policies (Role: Admin)
+      { path: 'operating-policy', loadChildren: () => import('app/modules/admin-portal/operating-policy/operating-policy.routes') },
       // Permissions (Role: Admin)
       { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes').then(m => m.default) },
       // Option selection (Role: Admin)

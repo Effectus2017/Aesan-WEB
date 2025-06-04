@@ -1,0 +1,28 @@
+<div class="absolute inset-0 flex flex-col min-w-0">
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <form [formGroup]="headerConfig.formGroup">
+      <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ 'operating-policy.edit.name' | transloco }}</mat-label>
+            <input matInput formControlName="name" required placeholder="{{ 'operating-policy.edit.name-placeholder' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ 'operating-policy.edit.name-error' | transloco }}</mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ 'operating-policy.edit.nameEN' | transloco }}</mat-label>
+            <input matInput formControlName="nameEN" required placeholder="{{ 'operating-policy.edit.nameEN-placeholder' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('nameEN').hasError('required')">{{ 'operating-policy.edit.nameEN-error' | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-span-12 sm:col-span-4 flex flex-col gap-4">
+          <mat-form-field appearance="fill">
+            <mat-label>{{ 'operating-policy.edit.displayOrder' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="displayOrder" required placeholder="Ej: 1" />
+          </mat-form-field>
+          <mat-checkbox formControlName="isActive">{{ 'operating-policy.edit.isActive' | transloco }}</mat-checkbox>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

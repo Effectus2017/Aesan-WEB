@@ -45,7 +45,9 @@
             "agency-status": "Estados de Agencia",
             "kitchen-types": "Tipos de Cocina",
             "group-types": "Tipos de Grupo",
-            "permissions": "Permisos"
+            "permissions": "Permisos",
+            "sponsor-types": "Tipos de Auspiciador",
+            "operating-policies": "Políticas Operativas"
         }
     }
 }

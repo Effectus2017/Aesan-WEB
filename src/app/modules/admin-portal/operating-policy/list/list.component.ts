@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -10,21 +10,20 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
-import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { KITCHEN_TYPE_COLUMNS_SCHEMA } from './columns-schema';
+import { OPERATING_POLICY_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
-import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
-import { KitchenType } from 'app/shared/models/KitchenType';
+import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
+import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-  selector: 'app-admin-kitchen-type-list',
+  selector: 'app-admin-operating-policy-list',
   templateUrl: './list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
@@ -44,30 +43,30 @@ import { AuthService } from 'app/core/auth/auth.service';
     TranslocoModule,
   ],
 })
-export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class OperatingPolicyListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
-  private _kitchenTypeService = inject(KitchenTypeService);
+  private _operatingPolicyService = inject(OperatingPolicyService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
-    title: 'kitchen-type.list.title',
+    title: 'operating-policy.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'kitchen-type.list.search.placeholder',
-    submitButtonText: 'kitchen-type.list.buttons.save',
+    searchInputPlaceholder: 'operating-policy.list.search.placeholder',
+    submitButtonText: 'operating-policy.list.buttons.save',
     goToAddButtonShow: true,
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<KitchenType>(),
+    dataSource: new MatTableDataSource<OperatingPolicy>(),
     dataSourceList: [],
-    columnsSchema: KITCHEN_TYPE_COLUMNS_SCHEMA,
-    displayedColumns: KITCHEN_TYPE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: OPERATING_POLICY_COLUMNS_SCHEMA,
+    displayedColumns: OPERATING_POLICY_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
@@ -78,7 +77,7 @@ export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTab
   constructor() {}
 
   ngOnInit() {
-    this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result && result.body) {
         const dataWithOrder = result.body.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
         this.tableConfig.dataSource.data = dataWithOrder;
@@ -96,13 +95,6 @@ export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     this._unsubscribeAll.complete();
   }
 
-  onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
-    }
-  }
-
   getAll(index: number, form: any) {
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
@@ -110,30 +102,22 @@ export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTab
       name: form.name || null,
       userId: this._authService.getUserId(),
     };
-    this._kitchenTypeService.getAllKitchenTypesFromDb(requestParameters).subscribe();
-  }
-
-  getPaginator(event?: PageEvent) {
-    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
-    this.tableConfig.pageSize = event.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
-  }
-
-  onClean(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.headerConfig.clearVisible = false;
-    this.headerConfig.formGroup.reset();
-    this.getAll(0, this.headerConfig.formGroup.value);
+    this._operatingPolicyService.getAllOperatingPoliciesFromDb(requestParameters).subscribe();
   }
 
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`kitchen-type/edit/${id}`]);
+    this._customRouterService.navigate([`operating-policy/edit/${id}`]);
   }
 
   onAdd() {
-    this._customRouterService.navigate(['kitchen-type/add']);
+    this._customRouterService.navigate(['operating-policy/add']);
+  }
+
+  getPaginator(event?: PageEvent) {
+    const index = event && event.pageIndex ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event ? event.pageSize : this.tableConfig.pageSize;
+    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
   }
 }

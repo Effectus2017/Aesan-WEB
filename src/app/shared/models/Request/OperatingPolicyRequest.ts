@@ -1,5 +1,4 @@
-export interface OperatingPolicy {
-  id: number;
+export interface OperatingPolicyRequest {
   name: string;
   nameEN: string;
   isActive: boolean;

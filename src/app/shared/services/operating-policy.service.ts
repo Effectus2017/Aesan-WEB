@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { OperatingPolicy } from '../models/OperatingPolicy';
+import { OperatingPolicyRequest } from '../models/Request/OperatingPolicyRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +63,7 @@ export class OperatingPolicyService {
    * @param queryParameters Los parámetros de consulta
    * @returns La política operativa insertada
    */
-  insertOperatingPolicy(operatingPolicy: OperatingPolicy, queryParameters: QueryParameters): Observable<any> {
+  insertOperatingPolicy(operatingPolicy: OperatingPolicy | OperatingPolicyRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-operating-policy`, operatingPolicy, getHttpOptions(queryParameters));
   }
 

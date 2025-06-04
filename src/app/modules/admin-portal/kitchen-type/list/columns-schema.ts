@@ -1,6 +1,6 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-export const COLUMNS_SCHEMA: ColumnSchema[] = [
+export const KITCHEN_TYPE_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'id',
     type: 'text',

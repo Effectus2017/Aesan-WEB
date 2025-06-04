@@ -8,7 +8,6 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { KitchenTypeRequest } from 'app/shared/models/Request/KitchenTypeRequest';
 import { KitchenType } from 'app/shared/models/KitchenType';
 import { MatSelectModule } from '@angular/material/select';
@@ -16,6 +15,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
 
 @Component({
   selector: 'app-add-kitchen-type',
@@ -81,8 +81,16 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
     });
   }
 
+  /**
+   * Guarda el tipo de cocina
+   */
   onSave() {
-    if (this.headerConfig.formGroup.valid) {
+    if (this.headerConfig.formGroup.invalid) {
+      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', { duration: 5000 });
+      this.headerConfig.formGroup.markAllAsTouched();
+      return;
+    }
+
       const pos = this.headerConfig.formGroup.get('position').value;
       let displayOrder = 1;
 
@@ -104,13 +112,29 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
       };
 
       const kitchenTypeRequest: QueryParameters = {};
-      this._kitchenTypeService.insertKitchenType(newType, kitchenTypeRequest).subscribe(() => {
-        this._snackBar.open('Tipo de cocina creado correctamente', 'Cerrar', { duration: 3000 });
-        this._customRouterService.navigate([`kitchen-type`]);
+      this._kitchenTypeService.insertKitchenType(newType, kitchenTypeRequest).subscribe({
+        next: (result: any) => {
+          switch (result.body) {
+            case true:
+              showSuccessDialog();
+              break;
+            default:
+              showErrorDialog();
+              break;
+          }
+        },
+        error: (error) => {
+          showErrorDialog();
+        },
+        complete: () => {
+          this._customRouterService.navigate([`kitchen-type`]);
+        },
       });
-    }
   }
 
+  /**
+   * Cancela la creación del tipo de cocina
+   */
   onCancel() {
     this._customRouterService.navigate([`kitchen-type`]);
   }

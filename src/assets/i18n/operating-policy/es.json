@@ -1,0 +1,52 @@
+{
+  "operating-policy": {
+    "list": {
+      "title": "Políticas Operativas",
+      "search": {
+        "placeholder": "Buscar políticas operativas"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "search": "Buscar",
+        "add": "Agregar Política Operativa"
+      },
+      "columns": {
+        "name": "Nombre",
+        "nameEN": "Nombre (EN)",
+        "isActive": "Activo",
+        "displayOrder": "Orden",
+        "actions": "Acciones"
+      }
+    },
+    "add": {
+      "title": "Agregar Política Operativa",
+      "name": "Nombre",
+      "name-placeholder": "Ingrese el nombre de la política operativa",
+      "name-error": "El nombre es requerido",
+      "nameEN": "Nombre (Inglés)",
+      "nameEN-placeholder": "Ingrese el nombre de la política operativa en inglés",
+      "nameEN-error": "El nombre en inglés es requerido",
+      "isActive": "Activo",
+      "position": "Posición",
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    },
+    "edit": {
+      "title": "Editar Política Operativa",
+      "name": "Nombre",
+      "name-placeholder": "Ingrese el nombre de la política operativa",
+      "name-error": "El nombre es requerido",
+      "nameEN": "Nombre (Inglés)",
+      "nameEN-placeholder": "Ingrese el nombre de la política operativa en inglés",
+      "nameEN-error": "El nombre en inglés es requerido",
+      "displayOrder": "Orden de Visualización",
+      "isActive": "Activo",
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    }
+  }
+}

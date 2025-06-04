@@ -29,7 +29,7 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { ProgramService } from 'app/shared/services/program.service';
 import { optionSelectionData } from 'app/shared/common-data';
@@ -135,6 +135,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   // Agregar esta propiedad
   protected readonly window = window;
+
+  // Compare methods
+  compare = compare;
+  comparePostal = comparePostal;
 
   constructor() {}
 
@@ -823,19 +827,4 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Compare methods
-
-  compare(o1: any, o2: any): boolean {
-    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.Id === o2.Id;
-    }
-    return false;
-  }
-
-  comparePostal(o1: any, o2: any): boolean {
-    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.Id === o2.Id;
-    }
-    return false;
-  }
 }

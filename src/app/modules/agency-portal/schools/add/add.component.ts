@@ -28,6 +28,13 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
+import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { City } from 'app/shared/models/City';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { Region } from 'app/shared/models/Region';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatIconModule } from '@angular/material/icon';
+import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 
 @Component({
   selector: 'app-schools-add',
@@ -46,6 +53,8 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
     TranslocoModule,
     MatDatepickerModule,
     GenericTableComponent,
+    MatTooltipModule,
+    MatIconModule,
   ],
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
@@ -65,33 +74,48 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _groupTypeService = inject(GroupTypeService);
   private _sponsorTypeService = inject(SponsorTypeService);
   // catálogos
-  cities = [];
-  regions = [];
+  listCities: City[] = [];
+  listRegions: Region[] = [];
+  listPostalRegions: Region[] = [];
+
+  // catálogos
   organizationTypes = [];
   educationLevels = [];
   operatingPeriods = [];
-  deliveryTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfDelivery');
-  sponsorTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfSponsor');
-  applicantTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfApplicant');
-  operatingPolicies: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfOperatingPolicy');
+  deliveryTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfDelivery');
+  sponsorTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfSponsor');
+  applicantTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfApplicant');
+  operatingPolicies: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfOperatingPolicy');
   facilities = [];
   schools = [];
   isLoading = false;
 
-  kitchenTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfKitchen');
-  groupTypes: OptionSelection[] = optionSelectionData.filter(option => option.optionKey === 'typesOfGroup');
+  kitchenTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfKitchen');
+  groupTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfGroup');
   currentLang: string = 'es';
 
   headerConfig: GenericHeaderConfig = {
     title: 'schools.add.title',
     formGroup: this._formBuilder.group({
       name: ['', Validators.required], // Nombre de la escuela
-      startDate: [null], // Fecha de inicio de la escuela
+
       address: ['', Validators.required], // Dirección física
-      postalAddress: [''], // Dirección postal
       zipCode: ['', Validators.required], // Código postal
-      cityId: [null, Validators.required], // Ciudad
-      regionId: [null, Validators.required], // Región
+      city: [null, Validators.required], // Ciudad
+      region: [null, Validators.required], // Región
+      latitude: [null, Validators.required], // Latitud
+      longitude: [null, Validators.required], // Longitud
+
+      // Copiar dirección física
+      sameAsPhysicalAddress: [false],
+
+      // Dirección postal
+      postalAddress: [''], // Dirección postal
+      postalZipCode: [''], // Código postal
+      postalCity: [null, Validators.required], // Ciudad
+      postalRegion: [null, Validators.required], // Región
+
+      startDate: [null], // Fecha de inicio de la escuela
       areaCode: [''], // Código de área
       adminFullName: [''], // Nombre del administrador
       phone: [''], // Teléfono
@@ -131,6 +155,13 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     onAddButtonClick: (event: Event) => this.onTableAddSatelliteSchool(event, null),
   };
 
+  // Agregar esta propiedad
+  protected readonly window = window;
+
+  // Compare methods
+  compare = compare;
+  comparePostal = comparePostal;
+
   constructor() {}
 
   ngOnInit(): void {
@@ -143,22 +174,34 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
     // Cities
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      this.cities = response.body?.data || [];
+      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
+        this.listCities = response.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
     });
 
     // Regions
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      this.regions = response.body?.data || [];
+      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
+        this.listRegions = response.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
     });
 
     // Group types
     this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      this.groupTypes = response.body?.data || [];
+      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
+        this.groupTypes = response.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
     });
 
     // Sponsor types
     this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      this.sponsorTypes = response.body?.data || [];
+      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
+        this.sponsorTypes = response.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
     });
 
     // this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
@@ -200,7 +243,40 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   }
 
   onSubmit() {
-    if (this.headerConfig.formGroup.invalid) return;
+    if (this.headerConfig.formGroup.invalid) {
+        this._snackBar.open('Por favor, complete todos los campos requeridos', 'Cerrar', { duration: 3000 });
+        this.headerConfig.formGroup.markAllAsTouched();
+        return;
+    }
+
+    const formValues = this.headerConfig.formGroup.value;
+    const cityId: number = formValues.city?.id;
+    const regionId: number = formValues.region?.id;
+    const postalCityId: number = formValues.postalCity?.id;
+    const postalRegionId: number = formValues.postalRegion?.id;
+
+    // Obtener los valores del formulario
+    const schoolRequest: SchoolRequest = {
+      name: formValues.name,
+      address: formValues.address,
+      zipCode: formValues.zipCode,
+      cityId: cityId,
+      regionId: regionId,
+      postalAddress: formValues.postalAddress || null,
+      postalZipCode: formValues.postalZipCode || null,
+      postalCityId: postalCityId || null,
+      postalRegionId: postalRegionId || null,
+      educationLevelId: formValues.educationLevelId,
+      organizationTypeId: formValues.organizationTypeId,
+      operatingPeriodId: formValues.operatingPeriodId,
+      kitchenTypeId: formValues.kitchenTypeId,
+      groupTypeId: formValues.groupTypeId,
+      deliveryTypeId: formValues.deliveryTypeId,
+      sponsorTypeId: formValues.sponsorTypeId,
+      applicantTypeId: formValues.applicantTypeId,
+      operatingPolicyId: formValues.operatingPolicyId,
+    };
+
     this.isLoading = true;
     this._schoolService.insertSchool(this.headerConfig.formGroup.value, {}).subscribe({
       next: () => {
@@ -210,7 +286,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       error: (err) => {
         this._snackBar.open('Error al crear la escuela: ' + (err?.error?.message || err), 'Cerrar', { duration: 5000 });
         this.isLoading = false;
-      }
+      },
     });
   }
 
@@ -220,5 +296,75 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   onTableAddSatelliteSchool(event: Event, element: any) {
     console.log('onTableAddSatelliteSchool', event, element);
+  }
+
+  // Método para obtener todas las regiones según el ID de la ciudad
+  getRegionsByCityId(city: City, target: string): void {
+    if (!city) return;
+
+    const queryParameters: QueryParameters = {
+      cityId: city.id,
+    };
+
+    this._geoService.getRegionsByCityId(queryParameters).subscribe({
+      next: (response) => {
+        if (response?.body?.data) {
+          if (target === 'region') {
+            this.listRegions = response.body.data;
+            const regionControl = this.headerConfig.formGroup.get('region');
+            if (regionControl) {
+              if (this.listRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Física
+                this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          } else if (target === 'postalRegion') {
+            this.listPostalRegions = response.body.data;
+            const regionControl = this.headerConfig.formGroup.get('postalRegion');
+            if (regionControl) {
+              if (this.listPostalRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Postal
+                this.headerConfig.formGroup.patchValue({ postalRegion: this.listPostalRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar las regiones:', error);
+      },
+    });
+  }
+
+  // Copiar Dirección Física
+  // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
+  // Si el checkbox no está marcado, limpiar los campos de la dirección postal
+  onCheckboxChange(event: any): void {
+    if (event.checked) {
+      // Primero asignamos los valores básicos
+      this.headerConfig.formGroup.patchValue({
+        postalAddress: this.headerConfig.formGroup.value.address,
+        postalCity: this.headerConfig.formGroup.value.city,
+        postalZipCode: this.headerConfig.formGroup.value.zipCode,
+      });
+
+      // Si hay una ciudad seleccionada, obtenemos sus regiones
+      if (this.headerConfig.formGroup.value.city) {
+        this.getRegionsByCityId(this.headerConfig.formGroup.value.city, 'postalRegion');
+      }
+
+      this.headerConfig.formGroup.updateValueAndValidity();
+    } else {
+      this.headerConfig.formGroup.patchValue({
+        postalAddress: '',
+        postalCity: '',
+        postalRegion: '',
+        postalZipCode: '',
+      });
+    }
   }
 }

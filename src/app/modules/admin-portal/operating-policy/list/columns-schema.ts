@@ -1,45 +1,38 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-export const SPONSOR_TYPE_COLUMNS_SCHEMA: ColumnSchema[] = [
-  {
-    key: 'id',
-    type: 'text',
-    label: 'sponsor-type.list.columns.id',
-    sortable: true,
-    visible: false,
-  },
+export const OPERATING_POLICY_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
-    label: 'sponsor-type.list.columns.name',
+    label: 'operating-policy.list.columns.name',
     sortable: true,
     visible: true,
   },
   {
     key: 'nameEN',
     type: 'text',
-    label: 'sponsor-type.list.columns.nameEN',
+    label: 'operating-policy.list.columns.nameEN',
     sortable: true,
     visible: true,
   },
   {
     key: 'isActive',
     type: 'boolean',
-    label: 'sponsor-type.list.columns.isActive',
+    label: 'operating-policy.list.columns.isActive',
     sortable: true,
     visible: true,
   },
   {
     key: 'displayOrder',
     type: 'text',
-    label: 'sponsor-type.list.columns.displayOrder',
+    label: 'operating-policy.list.columns.displayOrder',
     sortable: true,
     visible: true,
   },
   {
     key: 'actions',
     type: 'button',
-    label: 'sponsor-type.list.columns.actions',
+    label: 'operating-policy.list.columns.actions',
     visible: true,
   },
 ];

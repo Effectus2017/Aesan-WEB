@@ -60,6 +60,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:building-office',
         link: '/sponsor-type',
       },
+      {
+        id: 'administration.operating-policies',
+        title: 'navigation.administration.operating-policies',
+        type: 'basic',
+        icon: 'heroicons_solid:building-office',
+        link: '/operating-policy',
+      },
     ],
     roles: ['Administrator'],
   },

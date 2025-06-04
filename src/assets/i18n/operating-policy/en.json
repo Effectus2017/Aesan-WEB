@@ -1,0 +1,53 @@
+{
+  "operating-policy": {
+    "list": {
+      "title": "Operating Policies",
+      "search": {
+        "placeholder": "Search operating policies"
+      },
+      "buttons": {
+        "save": "Save",
+        "search": "Search",
+        "add": "Add Operating Policy"
+      },
+      "columns": {
+        "id": "ID",
+        "name": "Name",
+        "nameEN": "Name (EN)",
+        "isActive": "Active",
+        "displayOrder": "Order",
+        "actions": "Actions"
+      }
+    },
+    "add": {
+      "title": "Add Operating Policy",
+      "name": "Name",
+      "name-placeholder": "Enter the operating policy name",
+      "name-error": "Name is required",
+      "nameEN": "Name (English)",
+      "nameEN-placeholder": "Enter the operating policy name in English",
+      "nameEN-error": "Name in English is required",
+      "isActive": "Active",
+      "position": "Position",
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Operating Policy",
+      "name": "Name",
+      "name-placeholder": "Enter the operating policy name",
+      "name-error": "Name is required",
+      "nameEN": "Name (English)",
+      "nameEN-placeholder": "Enter the operating policy name in English",
+      "nameEN-error": "Name in English is required",
+      "displayOrder": "Display Order",
+      "isActive": "Active",
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    }
+  }
+}

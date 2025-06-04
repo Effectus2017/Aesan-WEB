@@ -1,0 +1,14 @@
+{
+  "dialog": {
+    "success": {
+      "title": "Operation Successful",
+      "message": "The operation has been completed successfully.",
+      "confirm": "OK"
+    },
+    "error": {
+      "title": "Error",
+      "message": "An error occurred during the operation. Please try again.",
+      "confirm": "OK"
+    }
+  }
+}

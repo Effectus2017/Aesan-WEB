@@ -11,159 +11,120 @@
           <p class="mb-6 text-secondary">{{ "schools.add.information-description" | transloco }}</p>
         </div>
         <!-- Información general -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <!-- name -->
           <mat-form-field class="w-full" data-cy="name-field">
             <mat-label>{{ "schools.add.name.label" | transloco }}</mat-label>
             <input matInput formControlName="name" required placeholder="{{ 'schools.add.name.placeholder' | transloco }}" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.add.name.required" | transloco }}</mat-error>
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="address-field">
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <p class="text-lg font-medium">{{ "schools.add.address.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.add.address.description" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Address *  -->
+          <mat-form-field data-cy="address-field">
             <mat-label>{{ "schools.add.address.label" | transloco }}</mat-label>
-            <input matInput formControlName="address" required placeholder="{{ 'schools.add.address.placeholder' | transloco }}" />
-            <mat-error *ngIf="headerConfig.formGroup.get('address').hasError('required')">{{ "schools.add.address.required" | transloco }}</mat-error>
+            <input matInput [formControlName]="'address'" placeholder="{{ 'schools.add.address.placeholder' | transloco }}" data-cy="address-input" />
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="zip-code-field">
-            <mat-label>{{ "schools.add.zip-code.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" required placeholder="{{ 'schools.add.zip-code.placeholder' | transloco }}" />
-            <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">{{ "schools.add.zip-code.required" | transloco }}</mat-error>
-          </mat-form-field>
-        </div>
 
-        <!-- Region y ciudad -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <mat-form-field class="w-full" data-cy="city-field">
+          <!-- City para Dirección Física *  -->
+          <mat-form-field data-cy="city-field">
             <mat-label>{{ "schools.add.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="cityId" required>
-              <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
+            <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
+                {{ city.name }}
+              </mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('cityId').hasError('required')">{{ "schools.add.city.required" | transloco }}</mat-error>
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="region-field">
+
+          <!-- Region *  -->
+          <mat-form-field data-cy="region-field">
             <mat-label>{{ "schools.add.region.label" | transloco }}</mat-label>
-            <mat-select formControlName="regionId" required>
-              <mat-option *ngFor="let region of regions" [value]="region.id">{{ region.name }}</mat-option>
+            <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
+              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('regionId').hasError('required')">{{ "schools.add.region.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Organization and Education -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
-          <mat-form-field class="w-full" data-cy="organization-type-field">
-            <mat-label>{{ "schools.add.organization-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="organizationTypeId" required>
-              <mat-option *ngFor="let org of organizationTypes" [value]="org.id">{{ org.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('organizationTypeId').hasError('required')">{{ "schools.add.organization-type.required" | transloco }}</mat-error>
+          <!-- Zip Code *  -->
+          <mat-form-field data-cy="zip-code-field">
+            <mat-label>{{ "schools.add.zip-code.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'zipCode'" placeholder="{{ 'schools.add.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="education-level-field">
-            <mat-label>{{ "schools.add.education-level.label" | transloco }}</mat-label>
-            <mat-select formControlName="educationLevelId" required>
-              <mat-option *ngFor="let level of educationLevels" [value]="level.id">{{ level.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('educationLevelId').hasError('required')">{{ "schools.add.education-level.required" | transloco }}</mat-error>
+          <!-- Latitude *  -->
+          <mat-form-field data-cy="latitude-field">
+            <mat-label>{{ "schools.add.latitude.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'latitude'" placeholder="{{ 'schools.add.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="operating-period-field">
-            <mat-label>{{ "schools.add.operating-period.label" | transloco }}</mat-label>
-            <mat-select formControlName="operatingPeriodId" required>
-              <mat-option *ngFor="let period of operatingPeriods" [value]="period.id">{{ period.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('operatingPeriodId').hasError('required')">{{ "schools.add.operating-period.required" | transloco }}</mat-error>
-          </mat-form-field>
+          <!-- Longitude *  -->
+          <div class="flex items-center gap-2">
+            <mat-form-field data-cy="longitude-field" class="flex-grow">
+              <mat-label>{{ "schools.add.longitude.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'longitude'" placeholder="{{ 'schools.add.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              class="mt-2"
+              matTooltipPosition="above"
+              matTooltip="{{ 'schools.add.gps-coordinates.tooltip' | transloco }}"
+              (click)="window.open('https://www.gps-coordinates.net/', '_blank')"
+              data-cy="gps-coordinates-button"
+            >
+              <mat-icon class="text-hint">info</mat-icon>
+            </button>
+          </div>
         </div>
 
-        <!-- Información de contacto y administrativa -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <mat-form-field class="w-full" data-cy="postal-address-field">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "schools.add.postal-address.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.add.postal-address.description" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4 sm:col-span-8">
+          <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{
+            "schools.add.same-as-physical-address.label" | transloco
+          }}</mat-checkbox>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+          <!-- Postal Address *  -->
+          <!-- cambiar texto a address unicamente -->
+          <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "schools.add.postal-address.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" placeholder="{{ 'schools.add.postal-address.placeholder' | transloco }}" />
+            <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'schools.add.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="area-code-field">
-            <mat-label>{{ "schools.add.area-code.label" | transloco }}</mat-label>
-            <input matInput formControlName="areaCode" placeholder="{{ 'schools.add.area-code.placeholder' | transloco }}" />
+          <!-- City para Dirección Postal *  -->
+          <mat-form-field data-cy="postal-city-field">
+            <mat-label>{{ "schools.add.city.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="admin-full-name-field">
-            <mat-label>{{ "schools.add.admin-full-name.label" | transloco }}</mat-label>
-            <input matInput formControlName="adminFullName" placeholder="{{ 'schools.add.admin-full-name.placeholder' | transloco }}" />
+          <!-- Region para Dirección Postal *  -->
+          <mat-form-field data-cy="postal-region-field">
+            <mat-label>{{ "schools.add.region.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="comparePostal">
+              <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+            </mat-select>
           </mat-form-field>
-          <mat-form-field class="w-full" data-cy="phone-field">
-            <mat-label>{{ "schools.add.phone.label" | transloco }}</mat-label>
-            <input matInput formControlName="phone" placeholder="{{ 'schools.add.phone.placeholder' | transloco }}" />
-          </mat-form-field>
-          <mat-form-field class="w-full" data-cy="phone-extension-field">
-            <mat-label>{{ "schools.add.phone-extension.label" | transloco }}</mat-label>
-            <input matInput formControlName="phoneExtension" placeholder="{{ 'schools.add.phone-extension.placeholder' | transloco }}" />
-          </mat-form-field>
-          <mat-form-field class="w-full" data-cy="mobile-field">
-            <mat-label>{{ "schools.add.mobile.label" | transloco }}</mat-label>
-            <input matInput formControlName="mobile" placeholder="{{ 'schools.add.mobile.placeholder' | transloco }}" />
+
+          <!-- Postal Zip Code *  -->
+          <mat-form-field data-cy="postal-zip-code-field">
+            <mat-label>{{ "schools.add.zip-code.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'schools.add.zip-code.placeholder' | transloco }}" numericOnly data-cy="postal-zip-code-input" />
           </mat-form-field>
         </div>
-        <!-- Fechas y años -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
-          <mat-form-field class="w-full" data-cy="start-date-field">
-            <mat-label>{{ "schools.add.start-date.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="pickerStart" formControlName="startDate" placeholder="{{ 'schools.add.start-date.placeholder' | transloco }}" />
-            <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
-            <mat-datepicker #pickerStart></mat-datepicker>
-          </mat-form-field>
-          <mat-form-field class="w-full" data-cy="base-year-field">
-            <mat-label>{{ "schools.add.base-year.label" | transloco }}</mat-label>
-            <input matInput type="number" formControlName="baseYear" placeholder="{{ 'schools.add.base-year.placeholder' | transloco }}" />
-          </mat-form-field>
-          <mat-form-field class="w-full" data-cy="next-renewal-year-field">
-            <mat-label>{{ "schools.add.next-renewal-year.label" | transloco }}</mat-label>
-            <input matInput type="number" formControlName="nextRenewalYear" placeholder="{{ 'schools.add.next-renewal-year.placeholder' | transloco }}" />
-          </mat-form-field>
-        </div>
-        <!-- Catálogos opcionales -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
-          <!-- Tipo de cocina -->
-          <mat-form-field class="w-full" data-cy="kitchen-type-field">
-            <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="kitchenTypeId" [disabled]="kitchenTypes.length === 0">
-              <mat-option *ngFor="let kitchen of kitchenTypes" [value]="kitchen.id">{{ currentLang === "en" ? kitchen.nameEN : kitchen.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Tipo de Grupo -->
-          <mat-form-field class="w-full" data-cy="group-type-field">
-            <mat-label>{{ "schools.add.group-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="groupTypeId" [disabled]="groupTypes.length === 0">
-              <mat-option *ngFor="let group of groupTypes" [value]="group.id">{{ currentLang === "en" ? group.nameEN : group.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Tipo de Entrega -->
-          <mat-form-field class="w-full" data-cy="delivery-type-field">
-            <mat-label>{{ "schools.add.delivery-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="deliveryTypeId" [disabled]="deliveryTypes.length === 0">
-              <mat-option *ngFor="let delivery of deliveryTypes" [value]="delivery.id">{{ currentLang === "en" ? delivery.nameEN : delivery.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Tipo de auspiciador -->
-          <mat-form-field class="w-full" data-cy="sponsor-type-field">
-            <mat-label>{{ "schools.add.sponsor-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="sponsorTypeId" [disabled]="sponsorTypes.length === 0">
-              <mat-option *ngFor="let sponsor of sponsorTypes" [value]="sponsor.id">{{ currentLang === "en" ? sponsor.nameEN : sponsor.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Tipo de solicitante -->
-          <mat-form-field class="w-full" data-cy="applicant-type-field">
-            <mat-label>{{ "schools.add.applicant-type.label" | transloco }}</mat-label>
-            <mat-select formControlName="applicantTypeId" [disabled]="applicantTypes.length === 0">
-              <mat-option *ngFor="let applicant of applicantTypes" [value]="applicant.id">{{ currentLang === "en" ? applicant.nameEN : applicant.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <!-- Política de funcionamiento -->
-          <mat-form-field class="w-full" data-cy="operating-policy-field">
-            <mat-label>{{ "schools.add.operating-policy.label" | transloco }}</mat-label>
-            <mat-select formControlName="operatingPolicyId" [disabled]="operatingPolicies.length === 0">
-              <mat-option *ngFor="let policy of operatingPolicies" [value]="policy.id">{{ currentLang === "en" ? policy.nameEN : policy.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
+
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-8">
-        <!-- Sitios satélite -->
-        <app-generic-table [config]="satelliteSchoolsConfig" #satelliteSchoolsTable [handler]="this"></app-generic-table>
+          <!-- Sitios satélite -->
+          <app-generic-table [config]="satelliteSchoolsConfig" #satelliteSchoolsTable [handler]="this"></app-generic-table>
         </div>
       </div>
     </form>
