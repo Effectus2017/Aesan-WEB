@@ -17,23 +17,22 @@ import { MatSelectModule } from '@angular/material/select';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-  selector: 'app-edit-option-selection',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-    TranslocoModule,
-    MatSelectModule,
-  ],
+    selector: 'app-edit-option-selection',
+    templateUrl: './edit.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+        TranslocoModule,
+        MatSelectModule,
+    ]
 })
 export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

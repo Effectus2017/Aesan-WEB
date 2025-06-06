@@ -24,12 +24,11 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'monitor-preoperational-visit-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent],
+    selector: 'monitor-preoperational-visit-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent]
 })
 export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;

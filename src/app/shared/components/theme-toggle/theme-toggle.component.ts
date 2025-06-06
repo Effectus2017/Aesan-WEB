@@ -7,14 +7,13 @@ import { FuseConfigService } from '@fuse/services/config';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'theme-toggle',
-  templateUrl: './theme-toggle.component.html',
-  styleUrls: ['./theme-toggle.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  exportAs: 'themeToggle',
-  imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule],
-  standalone: true,
+    selector: 'theme-toggle',
+    templateUrl: './theme-toggle.component.html',
+    styleUrls: ['./theme-toggle.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    exportAs: 'themeToggle',
+    imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule]
 })
 export class ThemeToggleComponent implements OnInit {
   @Input() menuItem: boolean = false;

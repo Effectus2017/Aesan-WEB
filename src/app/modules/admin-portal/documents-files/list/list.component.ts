@@ -30,27 +30,26 @@ import { AgencyFilesService } from 'app/shared/services/agency-files.service';
 import { AgencyFile } from 'app/shared/models/AgencyFile';
 
 @Component({
-  selector: 'app-documents-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    MatSnackBarModule,
-    MatDialogModule,
-    RouterModule,
-    GenericTableComponent,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-documents-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        MatSnackBarModule,
+        MatDialogModule,
+        RouterModule,
+        GenericTableComponent,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   // Inyección de servicios

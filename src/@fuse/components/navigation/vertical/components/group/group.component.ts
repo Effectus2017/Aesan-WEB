@@ -13,11 +13,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-vertical-navigation-group-item',
-    templateUrl    : './group.component.html',
+    selector: 'fuse-vertical-navigation-group-item',
+    templateUrl: './group.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, forwardRef(() => FuseVerticalNavigationGroupItemComponent), FuseVerticalNavigationSpacerItemComponent, TranslocoModule],
+    imports: [NgClass, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, forwardRef(() => FuseVerticalNavigationGroupItemComponent), FuseVerticalNavigationSpacerItemComponent, TranslocoModule]
 })
 export class FuseVerticalNavigationGroupItemComponent implements OnInit, OnDestroy
 {

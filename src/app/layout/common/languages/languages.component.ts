@@ -7,13 +7,12 @@ import { AvailableLangs, TranslocoService } from '@ngneat/transloco';
 import { take } from 'rxjs';
 
 @Component({
-  selector: 'languages',
-  templateUrl: './languages.component.html',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  exportAs: 'languages',
-  standalone: true,
-  imports: [MatButtonModule, MatMenuModule, NgTemplateOutlet, NgFor],
+    selector: 'languages',
+    templateUrl: './languages.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    exportAs: 'languages',
+    imports: [MatButtonModule, MatMenuModule, NgTemplateOutlet, NgFor]
 })
 export class LanguagesComponent implements OnInit, OnDestroy {
   availableLangs: AvailableLangs;

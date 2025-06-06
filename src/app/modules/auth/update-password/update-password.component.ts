@@ -14,23 +14,22 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
 
 @Component({
-  selector: 'auth-update-password',
-  templateUrl: './update-password.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    NgIf,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    FuseAlertComponent,
-    TranslocoModule,
-  ],
+    selector: 'auth-update-password',
+    templateUrl: './update-password.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        FuseAlertComponent,
+        TranslocoModule,
+    ]
 })
 export class UpdatePasswordComponent implements OnInit {
   @ViewChild('updatePasswordNgForm') updatePasswordNgForm: NgForm;

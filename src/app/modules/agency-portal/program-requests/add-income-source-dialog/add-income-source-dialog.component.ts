@@ -22,26 +22,25 @@ export interface IncomeSourceDialogData {
 }
 
 @Component({
-  selector: 'app-add-income-source-dialog',
-  templateUrl: './add-income-source-dialog.component.html',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TextFieldModule,
-    TranslocoModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-    MatSelectModule,
-    DarkModeTextDirective,
-    NgIf,
-    NgFor,
-    MatOptionModule,
-  ],
+    selector: 'app-add-income-source-dialog',
+    templateUrl: './add-income-source-dialog.component.html',
+    imports: [
+        MatIconModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        TextFieldModule,
+        TranslocoModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule,
+        MatSelectModule,
+        DarkModeTextDirective,
+        NgIf,
+        NgFor,
+        MatOptionModule,
+    ]
 })
 export class AddIncomeSourceDialogComponent {
   incomeSourceForm: UntypedFormGroup;

@@ -32,25 +32,24 @@ import { AuthService } from 'app/core/auth/auth.service';
 // Este componente se encarga de mostrar la lista de validaciones de aplicación a programas.
 
 @Component({
-  selector: 'app-admin-validation-to-program-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    RouterModule,
-    GenericTableComponent,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-admin-validation-to-program-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        RouterModule,
+        GenericTableComponent,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   // Inyeccion de servicios

@@ -40,27 +40,26 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
 // import {MatTimepickerModule} from '@angular/material/timepicker';
 
 @Component({
-  selector: 'app-schools-add',
-  templateUrl: './add.component.html',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    GenericHeaderComponent,
-    NgIf,
-    NgForOf,
-    TranslocoModule,
-    MatDatepickerModule,
-    MatTooltipModule,
-    MatIconModule,
-    MatDatepickerModule,
-    // MatTimepickerModule,
-    MatIconModule,
-  ],
+    selector: 'app-schools-add',
+    templateUrl: './add.component.html',
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        GenericHeaderComponent,
+        NgIf,
+        NgForOf,
+        TranslocoModule,
+        MatDatepickerModule,
+        MatTooltipModule,
+        MatIconModule,
+        MatDatepickerModule,
+        // MatTimepickerModule,
+        MatIconModule,
+    ]
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

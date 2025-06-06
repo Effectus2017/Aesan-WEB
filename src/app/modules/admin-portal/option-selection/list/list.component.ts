@@ -24,26 +24,25 @@ import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-  selector: 'app-option-selection-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    RouterModule,
-    GenericTableComponent,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-option-selection-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        RouterModule,
+        GenericTableComponent,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class OptionSelectionListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

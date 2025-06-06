@@ -34,28 +34,27 @@ import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 
 @Component({
-  selector: 'add-school-dialog',
-  templateUrl: './add-school-dialog.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    MatIconModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TextFieldModule,
-    TranslocoModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-    MatSelectModule,
-    DarkModeTextDirective,
-    NgIf,
-    NgFor,
-    MatOptionModule,
-  ],
+    selector: 'add-school-dialog',
+    templateUrl: './add-school-dialog.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        MatIconModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        TextFieldModule,
+        TranslocoModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule,
+        MatSelectModule,
+        DarkModeTextDirective,
+        NgIf,
+        NgFor,
+        MatOptionModule,
+    ]
 })
 export class AddSchoolDialogComponent implements OnInit, OnDestroy {
   @ViewChild('formDirective') formView: FormGroupDirective;

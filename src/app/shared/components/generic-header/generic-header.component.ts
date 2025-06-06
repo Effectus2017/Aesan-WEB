@@ -12,11 +12,10 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from './generic-header.i
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
-  selector: 'app-generic-header',
-  templateUrl: './generic-header.component.html',
-  standalone: true,
-  animations: fuseAnimations,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink, TranslocoModule],
+    selector: 'app-generic-header',
+    templateUrl: './generic-header.component.html',
+    animations: fuseAnimations,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink, TranslocoModule]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;

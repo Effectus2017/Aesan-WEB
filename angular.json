@@ -15,11 +15,12 @@
             "prefix": "app",
             "architect": {
                 "build": {
-                    "builder": "@angular-devkit/build-angular:browser",
+                    "builder": "@angular-devkit/build-angular:application",
                     "options": {
-                        "outputPath": "dist/aesanweb",
+                        "outputPath": {
+                          "base": "dist/aesanweb"
+                        },
                         "index": "src/index.html",
-                        "main": "src/main.ts",
                         "polyfills": [
                             "zone.js"
                         ],
@@ -58,7 +59,8 @@
                             "src/styles/tailwind.scss",
                             "node_modules/quill/dist/quill.snow.css"
                         ],
-                        "scripts": []
+                        "scripts": [],
+                        "browser": "src/main.ts"
                     },
                     "configurations": {
                         "production": {
@@ -66,8 +68,6 @@
                             "sourceMap": false,
                             "namedChunks": false,
                             "extractLicenses": true,
-                            "vendorChunk": false,
-                            "buildOptimizer": true,
                             "budgets": [
                                 {
                                     "type": "initial",
@@ -89,9 +89,7 @@
                             ]
                         },
                         "development": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
+                          "optimization": false,
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true,
@@ -103,9 +101,7 @@
                             ]
                         },
                         "local": {
-                            "buildOptimizer": false,
-                            "optimization": false,
-                            "vendorChunk": true,
+                          "optimization": false,
                             "extractLicenses": false,
                             "sourceMap": true,
                             "namedChunks": true,

@@ -16,21 +16,20 @@ import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-t
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'compact-layout',
-  templateUrl: './compact.component.html',
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    FuseLoadingBarComponent,
-    MatButtonModule,
-    MatIconModule,
-    LanguagesComponent,
-    UserComponent,
-    NgIf,
-    RouterOutlet,
-    FuseVerticalNavigationComponent,
-    ThemeToggleComponent
-],
+    selector: 'compact-layout',
+    templateUrl: './compact.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FuseLoadingBarComponent,
+        MatButtonModule,
+        MatIconModule,
+        LanguagesComponent,
+        UserComponent,
+        NgIf,
+        RouterOutlet,
+        FuseVerticalNavigationComponent,
+        ThemeToggleComponent
+    ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {
   isScreenSmall: boolean;

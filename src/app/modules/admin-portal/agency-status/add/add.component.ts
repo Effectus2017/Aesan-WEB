@@ -17,24 +17,23 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 
 @Component({
-  selector: 'app-add-agency-status',
-  templateUrl: './add.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    GenericHeaderComponent,
-  ],
+    selector: 'app-add-agency-status',
+    templateUrl: './add.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        GenericHeaderComponent,
+    ]
 })
 export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

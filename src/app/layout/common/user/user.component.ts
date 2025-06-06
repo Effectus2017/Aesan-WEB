@@ -16,24 +16,23 @@ import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
 @Component({
-  selector: 'user',
-  templateUrl: './user.component.html',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  exportAs: 'user',
-  standalone: true,
-  imports: [
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    NgIf,
-    LazyImgDirective,
-    OptimizeImagePipe,
-    MatDividerModule,
-    MatTooltipModule,
-    ThemeToggleComponent,
-    NgClass
-  ],
+    selector: 'user',
+    templateUrl: './user.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    exportAs: 'user',
+    imports: [
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        NgIf,
+        LazyImgDirective,
+        OptimizeImagePipe,
+        MatDividerModule,
+        MatTooltipModule,
+        ThemeToggleComponent,
+        NgClass
+    ]
 })
 export class UserComponent implements OnInit, OnDestroy {
   /* eslint-disable @typescript-eslint/naming-convention */

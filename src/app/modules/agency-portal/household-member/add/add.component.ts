@@ -13,22 +13,21 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 
 @Component({
-  selector: 'app-add-household-member',
-  templateUrl: './add.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-    TranslocoModule
-  ],
+    selector: 'app-add-household-member',
+    templateUrl: './add.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+        TranslocoModule
+    ]
 })
 export class AddHouseholdMemberComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

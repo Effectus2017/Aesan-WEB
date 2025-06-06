@@ -14,21 +14,20 @@ import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'modern-layout',
-  templateUrl: './modern.component.html',
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    FuseLoadingBarComponent,
-    NgIf,
-    FuseVerticalNavigationComponent,
-    FuseHorizontalNavigationComponent,
-    MatButtonModule,
-    MatIconModule,
-    LanguagesComponent,
-    UserComponent,
-    RouterOutlet
-  ],
+    selector: 'modern-layout',
+    templateUrl: './modern.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FuseLoadingBarComponent,
+        NgIf,
+        FuseVerticalNavigationComponent,
+        FuseHorizontalNavigationComponent,
+        MatButtonModule,
+        MatIconModule,
+        LanguagesComponent,
+        UserComponent,
+        RouterOutlet
+    ]
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy {
   isScreenSmall: boolean;

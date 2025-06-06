@@ -10,17 +10,16 @@ import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 
 @Component({
-  selector: 'app-schools-edit',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    MatButtonModule,
-    GenericHeaderComponent,
-  ],
+    selector: 'app-schools-edit',
+    templateUrl: './edit.component.html',
+    imports: [
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        MatButtonModule,
+        GenericHeaderComponent,
+    ]
 })
 export class EditSchoolComponent implements OnInit {
   schoolForm: FormGroup;

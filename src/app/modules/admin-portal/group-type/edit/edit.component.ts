@@ -16,22 +16,21 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-  selector: 'app-edit-group-type',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-edit-group-type',
+    templateUrl: './edit.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class EditGroupTypeComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

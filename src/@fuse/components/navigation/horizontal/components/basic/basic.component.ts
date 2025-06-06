@@ -12,11 +12,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-horizontal-navigation-basic-item',
-    templateUrl    : './basic.component.html',
+    selector: 'fuse-horizontal-navigation-basic-item',
+    templateUrl: './basic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatMenuModule, MatIconModule, TranslocoModule],
+    imports: [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatMenuModule, MatIconModule, TranslocoModule]
 })
 export class FuseHorizontalNavigationBasicItemComponent implements OnInit, OnDestroy
 {

@@ -18,25 +18,24 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
 
 @Component({
-  selector: 'app-add-kitchen-type',
-  templateUrl: './add.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatSelectModule,
-    GenericHeaderComponent,
-    TranslocoModule
-  ],
+    selector: 'app-add-kitchen-type',
+    templateUrl: './add.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatSelectModule,
+        GenericHeaderComponent,
+        TranslocoModule
+    ]
 })
 export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

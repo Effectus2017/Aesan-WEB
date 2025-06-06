@@ -24,25 +24,24 @@ import { GroupType } from 'app/shared/models/GroupType';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-  selector: 'app-admin-group-type-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    RouterModule,
-    GenericTableComponent,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-admin-group-type-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        RouterModule,
+        GenericTableComponent,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

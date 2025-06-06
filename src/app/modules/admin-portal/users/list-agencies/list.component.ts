@@ -24,12 +24,11 @@ import { ToastrModule } from 'ngx-toastr';
 import { TranslocoService } from "@ngneat/transloco";
 
 @Component({
-  selector: 'app-list-agencies-users',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone   : true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatInputModule, RouterModule, GenericHeaderComponent, GenericTableComponent, ToastrModule]
+    selector: 'app-list-agencies-users',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatInputModule, RouterModule, GenericHeaderComponent, GenericTableComponent, ToastrModule]
 })
 export class AgenciesUsersListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
 

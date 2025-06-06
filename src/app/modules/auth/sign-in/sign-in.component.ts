@@ -18,26 +18,25 @@ import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
 @Component({
-  selector: 'auth-sign-in',
-  templateUrl: './sign-in.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    RouterLink,
-    FuseAlertComponent,
-    NgIf,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatCheckboxModule,
-    MatProgressSpinnerModule,
-    TranslocoModule,
-    LanguagesComponent
-],
+    selector: 'auth-sign-in',
+    templateUrl: './sign-in.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        RouterLink,
+        FuseAlertComponent,
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatCheckboxModule,
+        MatProgressSpinnerModule,
+        TranslocoModule,
+        LanguagesComponent
+    ]
 })
 export class AuthSignInComponent implements OnInit {
   private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);

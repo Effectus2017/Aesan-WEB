@@ -14,21 +14,20 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 
 @Component({
-  selector: 'app-edit-agency-status',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-  ],
+    selector: 'app-edit-agency-status',
+    templateUrl: './edit.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+    ]
 })
 export class EditAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers {
   form: FormGroup;

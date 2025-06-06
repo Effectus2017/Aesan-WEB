@@ -15,23 +15,22 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
 
 @Component({
-  selector: 'auth-reset-password',
-  templateUrl: './reset-password.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    NgIf,
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule,
-    MatProgressSpinnerModule,
-    FuseAlertComponent,
-    TranslocoModule,
-  ],
+    selector: 'auth-reset-password',
+    templateUrl: './reset-password.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        NgIf,
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatIconModule,
+        MatProgressSpinnerModule,
+        FuseAlertComponent,
+        TranslocoModule,
+    ]
 })
 export class ResetPasswordComponent implements OnInit {
   @ViewChild('resetPasswordNgForm') resetPasswordNgForm: NgForm;

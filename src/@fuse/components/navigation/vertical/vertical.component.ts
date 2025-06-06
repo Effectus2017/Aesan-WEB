@@ -18,15 +18,14 @@ import { FuseUtilsService } from '@fuse/services/utils/utils.service';
 import { delay, filter, merge, ReplaySubject, Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-vertical-navigation',
-    templateUrl    : './vertical.component.html',
-    styleUrls      : ['./vertical.component.scss'],
-    animations     : fuseAnimations,
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'fuse-vertical-navigation',
+    templateUrl: './vertical.component.html',
+    styleUrls: ['./vertical.component.scss'],
+    animations: fuseAnimations,
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    exportAs       : 'fuseVerticalNavigation',
-    standalone     : true,
-    imports        : [FuseScrollbarDirective, NgFor, NgIf, FuseVerticalNavigationAsideItemComponent, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent],
+    exportAs: 'fuseVerticalNavigation',
+    imports: [FuseScrollbarDirective, NgFor, NgIf, FuseVerticalNavigationAsideItemComponent, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent]
 })
 export class FuseVerticalNavigationComponent implements OnChanges, OnInit, AfterViewInit, OnDestroy
 {

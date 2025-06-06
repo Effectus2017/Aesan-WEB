@@ -17,21 +17,20 @@ import { GenericHeaderConfig } from 'app/shared/components/generic-header/generi
 import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-add-permission',
-  templateUrl: './add.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TranslocoModule,
-    MatIconModule,
-    GenericHeaderComponent,
-    NgIf
-  ],
+    selector: 'app-add-permission',
+    templateUrl: './add.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        TranslocoModule,
+        MatIconModule,
+        GenericHeaderComponent,
+        NgIf
+    ]
 })
 export class AddPermissionComponent implements OnInit, OnDestroy {
   form: FormGroup;

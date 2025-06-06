@@ -23,12 +23,11 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 
 @Component({
-  selector: 'agency-program-requests-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent],
+    selector: 'agency-program-requests-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent]
 })
 export class AgencyProgramRequestsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;

@@ -10,15 +10,14 @@ import { FuseHorizontalNavigationBranchItemComponent } from './components/branch
 import { FuseHorizontalNavigationSpacerItemComponent } from './components/spacer/spacer.component';
 
 @Component({
-    selector       : 'fuse-horizontal-navigation',
-    templateUrl    : './horizontal.component.html',
-    styleUrls      : ['./horizontal.component.scss'],
-    animations     : fuseAnimations,
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'fuse-horizontal-navigation',
+    templateUrl: './horizontal.component.html',
+    styleUrls: ['./horizontal.component.scss'],
+    animations: fuseAnimations,
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    exportAs       : 'fuseHorizontalNavigation',
-    standalone     : true,
-    imports        : [NgFor, NgIf, FuseHorizontalNavigationBasicItemComponent, FuseHorizontalNavigationBranchItemComponent, FuseHorizontalNavigationSpacerItemComponent],
+    exportAs: 'fuseHorizontalNavigation',
+    imports: [NgFor, NgIf, FuseHorizontalNavigationBasicItemComponent, FuseHorizontalNavigationBranchItemComponent, FuseHorizontalNavigationSpacerItemComponent]
 })
 export class FuseHorizontalNavigationComponent implements OnChanges, OnInit, OnDestroy
 {

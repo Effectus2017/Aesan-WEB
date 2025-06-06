@@ -3,12 +3,11 @@
     "compileOnSave": false,
     "compilerOptions": {
         "resolveJsonModule": true,
-        "allowSyntheticDefaultImports": true,
         "baseUrl": "./src",
         "outDir": "./dist/out-tsc",
+        "esModuleInterop": true,
         "sourceMap": true,
         "declaration": false,
-        "downlevelIteration": true,
         "experimentalDecorators": true,
         "moduleResolution": "node",
         "importHelpers": true,

@@ -17,20 +17,19 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { NgIf } from '@angular/common';
 
 @Component({
-  selector: 'app-edit-permission',
-  templateUrl: './edit.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TranslocoModule,
-    GenericHeaderComponent,
-    NgIf
-  ],
+    selector: 'app-edit-permission',
+    templateUrl: './edit.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [
+        ReactiveFormsModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        TranslocoModule,
+        GenericHeaderComponent,
+        NgIf
+    ]
 })
 export class EditPermissionComponent implements OnInit, OnDestroy {
   form: FormGroup;

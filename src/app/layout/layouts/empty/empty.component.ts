@@ -5,11 +5,10 @@ import { FuseLoadingBarComponent } from '@fuse/components/loading-bar';
 import { Subject } from 'rxjs';
 
 @Component({
-    selector     : 'empty-layout',
-    templateUrl  : './empty.component.html',
+    selector: 'empty-layout',
+    templateUrl: './empty.component.html',
     encapsulation: ViewEncapsulation.None,
-    standalone   : true,
-    imports      : [FuseLoadingBarComponent, NgIf, RouterOutlet],
+    imports: [FuseLoadingBarComponent, NgIf, RouterOutlet]
 })
 export class EmptyLayoutComponent implements OnDestroy
 {

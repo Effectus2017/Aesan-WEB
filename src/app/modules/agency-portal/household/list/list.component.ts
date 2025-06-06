@@ -22,25 +22,24 @@ import { HouseholdService } from 'app/shared/services/household.service';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-  selector: 'agency-portal-household-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatButtonModule,
-    MatIconModule,
-    MatPaginatorModule,
-    MatTableModule,
-    MatInputModule,
-    RouterModule,
-    GenericTableComponent,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'agency-portal-household-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatButtonModule,
+        MatIconModule,
+        MatPaginatorModule,
+        MatTableModule,
+        MatInputModule,
+        RouterModule,
+        GenericTableComponent,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class HouseholdListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

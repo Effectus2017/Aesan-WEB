@@ -13,17 +13,16 @@ import { Navigation } from 'app/core/navigation/navigation.types';
 import { ModernLayoutComponent } from './layouts/horizontal/modern/modern.component';
 
 @Component({
-  selector: 'layout',
-  templateUrl: './layout.component.html',
-  styleUrls: ['./layout.component.scss'],
-  encapsulation: ViewEncapsulation.None,
-  standalone: true,
-  imports: [
-    NgIf,
-    EmptyLayoutComponent,
-    CompactLayoutComponent,
-    ModernLayoutComponent,
-  ],
+    selector: 'layout',
+    templateUrl: './layout.component.html',
+    styleUrls: ['./layout.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        NgIf,
+        EmptyLayoutComponent,
+        CompactLayoutComponent,
+        ModernLayoutComponent,
+    ]
 })
 export class LayoutComponent implements OnInit, OnDestroy {
   config: FuseConfig;

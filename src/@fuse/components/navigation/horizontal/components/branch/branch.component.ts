@@ -12,11 +12,10 @@ import { FuseNavigationItem } from '@fuse/components/navigation/navigation.types
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule } from '@ngneat/transloco';
 @Component({
-    selector       : 'fuse-horizontal-navigation-branch-item',
-    templateUrl    : './branch.component.html',
+    selector: 'fuse-horizontal-navigation-branch-item',
+    templateUrl: './branch.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgIf, NgClass, MatMenuModule, NgTemplateOutlet, NgFor, FuseHorizontalNavigationBasicItemComponent, forwardRef(() => FuseHorizontalNavigationBranchItemComponent), FuseHorizontalNavigationDividerItemComponent, MatTooltipModule, MatIconModule, TranslocoModule],
+    imports: [NgIf, NgClass, MatMenuModule, NgTemplateOutlet, NgFor, FuseHorizontalNavigationBasicItemComponent, forwardRef(() => FuseHorizontalNavigationBranchItemComponent), FuseHorizontalNavigationDividerItemComponent, MatTooltipModule, MatIconModule, TranslocoModule]
 })
 export class FuseHorizontalNavigationBranchItemComponent implements OnInit, OnDestroy
 {

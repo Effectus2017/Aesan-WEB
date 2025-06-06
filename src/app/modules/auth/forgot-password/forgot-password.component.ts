@@ -15,12 +15,11 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { finalize } from 'rxjs';
 
 @Component({
-    selector     : 'auth-forgot-password',
-    templateUrl  : './forgot-password.component.html',
+    selector: 'auth-forgot-password',
+    templateUrl: './forgot-password.component.html',
     encapsulation: ViewEncapsulation.None,
-    animations   : fuseAnimations,
-    standalone   : true,
-    imports      : [
+    animations: fuseAnimations,
+    imports: [
         NgIf,
         FuseAlertComponent,
         FormsModule,
@@ -32,7 +31,7 @@ import { finalize } from 'rxjs';
         RouterLink,
         TranslocoModule,
         LanguagesComponent
-    ],
+    ]
 })
 export class AuthForgotPasswordComponent implements OnInit
 {

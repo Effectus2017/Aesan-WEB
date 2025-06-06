@@ -16,22 +16,21 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
 
 @Component({
-  selector: 'app-edit-kitchen-type',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-    TranslocoModule,
-  ],
+    selector: 'app-edit-kitchen-type',
+    templateUrl: './edit.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+        TranslocoModule,
+    ]
 })
 export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

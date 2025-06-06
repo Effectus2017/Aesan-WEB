@@ -7,17 +7,16 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
-  selector: 'app-reject-dialog',
-  standalone: true,
-  imports: [
-    MatDialogModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    TranslocoModule
-  ],
-  templateUrl: './reject-dialog.component.html'
+    selector: 'app-reject-dialog',
+    imports: [
+        MatDialogModule,
+        MatButtonModule,
+        MatFormFieldModule,
+        MatInputModule,
+        FormsModule,
+        TranslocoModule
+    ],
+    templateUrl: './reject-dialog.component.html'
 })
 export class RejectDialogComponent {
   constructor(

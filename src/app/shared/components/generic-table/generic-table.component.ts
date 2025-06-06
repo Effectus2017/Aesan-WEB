@@ -8,11 +8,10 @@ import { GenericTableButtonConfig, GenericTableConfig, OnGenericTableHandler } f
 import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
-  selector: 'app-generic-table',
-  templateUrl: './generic-table.component.html',
-  standalone: true,
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, TranslocoModule],
+    selector: 'app-generic-table',
+    templateUrl: './generic-table.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, TranslocoModule]
 })
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;

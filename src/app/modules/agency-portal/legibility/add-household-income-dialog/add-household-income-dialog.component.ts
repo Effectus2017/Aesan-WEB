@@ -28,26 +28,25 @@ export interface HouseholdIncomeDialogData {
 }
 
 @Component({
-  selector: 'app-add-household-income-dialog',
-  templateUrl: './add-household-income-dialog.component.html',
-  standalone: true,
-  imports: [
-    MatIconModule,
-    ReactiveFormsModule,
-    FormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    TextFieldModule,
-    TranslocoModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatButtonModule,
-    MatSelectModule,
-    DarkModeTextDirective,
-    NgIf,
-    NgFor,
-    MatOptionModule,
-  ],
+    selector: 'app-add-household-income-dialog',
+    templateUrl: './add-household-income-dialog.component.html',
+    imports: [
+        MatIconModule,
+        ReactiveFormsModule,
+        FormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        TextFieldModule,
+        TranslocoModule,
+        MatDatepickerModule,
+        MatNativeDateModule,
+        MatButtonModule,
+        MatSelectModule,
+        DarkModeTextDirective,
+        NgIf,
+        NgFor,
+        MatOptionModule,
+    ]
 })
 export class AddHouseholdIncomeDialogComponent {
   householdIncomeForm: UntypedFormGroup;

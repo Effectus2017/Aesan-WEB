@@ -29,26 +29,25 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GeoService } from 'app/shared/services/geo.service';
 
 @Component({
-  selector: 'agency-portal-readability-module-add',
-  templateUrl: './add.component.html',
-  standalone: true,
-  encapsulation: ViewEncapsulation.None,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatCheckboxModule,
-    CommonModule,
-    MatSnackBarModule,
-    GenericHeaderComponent,
-    TranslocoModule,
-    GenericTableComponent,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule
-  ],
+    selector: 'agency-portal-readability-module-add',
+    templateUrl: './add.component.html',
+    encapsulation: ViewEncapsulation.None,
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatInputModule,
+        MatButtonModule,
+        MatCheckboxModule,
+        CommonModule,
+        MatSnackBarModule,
+        GenericHeaderComponent,
+        TranslocoModule,
+        GenericTableComponent,
+        MatSelectModule,
+        MatDatepickerModule,
+        MatNativeDateModule
+    ]
 })
 export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

@@ -17,15 +17,14 @@ import { AGENCY_DASHBOARD_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 
 @Component({
-  selector: 'agency-dashboard-list',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [CommonModule,
-    MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, NgIf, TranslocoModule,
-    SharedModule,
-    GenericTableComponent],
+    selector: 'agency-dashboard-list',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [CommonModule,
+        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, NgIf, TranslocoModule,
+        SharedModule,
+        GenericTableComponent]
 })
 export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _changeDetectorRef = inject(ChangeDetectorRef);

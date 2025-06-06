@@ -16,11 +16,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-vertical-navigation-aside-item',
-    templateUrl    : './aside.component.html',
+    selector: 'fuse-vertical-navigation-aside-item',
+    templateUrl: './aside.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent, TranslocoModule],
+    imports: [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, FuseVerticalNavigationCollapsableItemComponent, FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent, TranslocoModule]
 })
 export class FuseVerticalNavigationAsideItemComponent implements OnChanges, OnInit, OnDestroy
 {

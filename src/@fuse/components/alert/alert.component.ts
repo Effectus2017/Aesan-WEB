@@ -10,15 +10,14 @@ import { FuseUtilsService } from '@fuse/services/utils/utils.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-alert',
-    templateUrl    : './alert.component.html',
-    styleUrls      : ['./alert.component.scss'],
-    encapsulation  : ViewEncapsulation.None,
+    selector: 'fuse-alert',
+    templateUrl: './alert.component.html',
+    styleUrls: ['./alert.component.scss'],
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    animations     : fuseAnimations,
-    exportAs       : 'fuseAlert',
-    standalone     : true,
-    imports        : [NgIf, MatIconModule, MatButtonModule],
+    animations: fuseAnimations,
+    exportAs: 'fuseAlert',
+    imports: [NgIf, MatIconModule, MatButtonModule]
 })
 export class FuseAlertComponent implements OnChanges, OnInit, OnDestroy
 {

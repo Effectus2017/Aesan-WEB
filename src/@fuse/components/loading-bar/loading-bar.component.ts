@@ -6,13 +6,12 @@ import { FuseLoadingService } from '@fuse/services/loading';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector     : 'fuse-loading-bar',
-    templateUrl  : './loading-bar.component.html',
-    styleUrls    : ['./loading-bar.component.scss'],
+    selector: 'fuse-loading-bar',
+    templateUrl: './loading-bar.component.html',
+    styleUrls: ['./loading-bar.component.scss'],
     encapsulation: ViewEncapsulation.None,
-    exportAs     : 'fuseLoadingBar',
-    standalone   : true,
-    imports      : [NgIf, MatProgressBarModule],
+    exportAs: 'fuseLoadingBar',
+    imports: [NgIf, MatProgressBarModule]
 })
 export class FuseLoadingBarComponent implements OnChanges, OnInit, OnDestroy
 {

@@ -18,12 +18,11 @@ import { GenericHeaderConfig } from 'app/shared/components/generic-header/generi
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 
 @Component({
-  selector: 'app-list-roles',
-  templateUrl: './list.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone   : true,
-  imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTableModule, GenericTableComponent, GenericHeaderComponent, MatPaginatorModule]
+    selector: 'app-list-roles',
+    templateUrl: './list.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatTableModule, GenericTableComponent, GenericHeaderComponent, MatPaginatorModule]
 })
 export class RolesListComponent implements OnInit, OnDestroy {
 

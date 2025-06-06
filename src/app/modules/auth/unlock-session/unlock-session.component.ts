@@ -13,12 +13,11 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
-  selector: 'auth-unlock-session',
-  templateUrl: './unlock-session.component.html',
-  encapsulation: ViewEncapsulation.None,
-  animations: fuseAnimations,
-  standalone: true,
-  imports: [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
+    selector: 'auth-unlock-session',
+    templateUrl: './unlock-session.component.html',
+    encapsulation: ViewEncapsulation.None,
+    animations: fuseAnimations,
+    imports: [NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink]
 })
 export class AuthUnlockSessionComponent implements OnInit {
   @ViewChild('unlockSessionNgForm') unlockSessionNgForm: NgForm;

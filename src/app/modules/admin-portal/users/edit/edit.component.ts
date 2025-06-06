@@ -35,25 +35,24 @@ import { Permission } from 'app/shared/models/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
 
 @Component({
-  selector: 'app-users-edit',
-  templateUrl: './edit.component.html',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatTabsModule,
-    MatInputModule,
-    NgFor,
-    NgIf,
-    MatButtonModule,
-    MatSelectModule,
-    MatIconModule,
-    TranslocoModule,
-    GenericHeaderComponent,
-    MatCheckboxModule,
-    GenericTableComponent,
-  ],
+    selector: 'app-users-edit',
+    templateUrl: './edit.component.html',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatTabsModule,
+        MatInputModule,
+        NgFor,
+        NgIf,
+        MatButtonModule,
+        MatSelectModule,
+        MatIconModule,
+        TranslocoModule,
+        GenericHeaderComponent,
+        MatCheckboxModule,
+        GenericTableComponent,
+    ]
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

@@ -6,11 +6,10 @@ import { FuseNavigationItem } from '@fuse/components/navigation/navigation.types
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-horizontal-navigation-spacer-item',
-    templateUrl    : './spacer.component.html',
+    selector: 'fuse-horizontal-navigation-spacer-item',
+    templateUrl: './spacer.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass],
+    imports: [NgClass]
 })
 export class FuseHorizontalNavigationSpacerItemComponent implements OnInit, OnDestroy
 {

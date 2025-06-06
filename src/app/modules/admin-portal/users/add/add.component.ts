@@ -27,24 +27,23 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-  selector: 'app-users-add',
-  templateUrl: './add.component.html',
-  standalone: true,
-  imports: [
-    FormsModule,
-    ReactiveFormsModule,
-    MatFormFieldModule,
-    MatTabsModule,
-    MatInputModule,
-    NgFor,
-    NgIf,
-    MatButtonModule,
-    MatSelectModule,
-    MatIconModule,
-    MatCheckboxModule,
-    TranslocoModule,
-    GenericHeaderComponent
-  ],
+    selector: 'app-users-add',
+    templateUrl: './add.component.html',
+    imports: [
+        FormsModule,
+        ReactiveFormsModule,
+        MatFormFieldModule,
+        MatTabsModule,
+        MatInputModule,
+        NgFor,
+        NgIf,
+        MatButtonModule,
+        MatSelectModule,
+        MatIconModule,
+        MatCheckboxModule,
+        TranslocoModule,
+        GenericHeaderComponent
+    ]
 })
 export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
 

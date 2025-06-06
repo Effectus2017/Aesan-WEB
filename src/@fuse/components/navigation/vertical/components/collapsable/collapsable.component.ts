@@ -16,12 +16,11 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-vertical-navigation-collapsable-item',
-    templateUrl    : './collapsable.component.html',
-    animations     : fuseAnimations,
+    selector: 'fuse-vertical-navigation-collapsable-item',
+    templateUrl: './collapsable.component.html',
+    animations: fuseAnimations,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, forwardRef(() => FuseVerticalNavigationCollapsableItemComponent), FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent, TranslocoModule],
+    imports: [NgClass, MatTooltipModule, NgIf, MatIconModule, NgFor, FuseVerticalNavigationBasicItemComponent, forwardRef(() => FuseVerticalNavigationCollapsableItemComponent), FuseVerticalNavigationDividerItemComponent, FuseVerticalNavigationGroupItemComponent, FuseVerticalNavigationSpacerItemComponent, TranslocoModule]
 })
 export class FuseVerticalNavigationCollapsableItemComponent implements OnInit, OnDestroy
 {

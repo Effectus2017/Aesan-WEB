@@ -11,11 +11,10 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-    selector       : 'fuse-vertical-navigation-basic-item',
-    templateUrl    : './basic.component.html',
+    selector: 'fuse-vertical-navigation-basic-item',
+    templateUrl: './basic.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone     : true,
-    imports        : [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatIconModule, TranslocoModule],
+    imports: [NgClass, NgIf, RouterLink, RouterLinkActive, MatTooltipModule, NgTemplateOutlet, MatIconModule, TranslocoModule]
 })
 export class FuseVerticalNavigationBasicItemComponent implements OnInit, OnDestroy
 {
