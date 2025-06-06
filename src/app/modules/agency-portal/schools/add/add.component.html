@@ -321,11 +321,45 @@
             </mat-form-field>
         </div>
 
+        <!-- Servicios que operará y horario -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <p class="text-lg font-medium">{{ "schools.add.services-and-schedule.label" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "schools.add.services-and-schedule.description" | transloco }}</p>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+            <!-- Desayuno (si, no) -->
+                <mat-form-field data-cy="breakfast-field">
+              <mat-label>{{ "schools.add.breakfast.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <!-- Horario desde y hasta para el desayuno -->
+            <mat-form-field data-cy="breakfast-schedule-field">
+              <mat-label>{{ "schools.add.breakfast-schedule.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'breakfastSchedule'" placeholder="{{ 'schools.add.breakfast-schedule.placeholder' | transloco }}" data-cy="breakfast-schedule-input" />
+              <mat-datepicker-toggle matSuffix [for]="breakfastSchedulePicker"></mat-datepicker-toggle>
+              <mat-datepicker #breakfastSchedulePicker></mat-datepicker>
+            </mat-form-field>
+
+
+            <!-- <mat-form-field data-cy="breakfast-schedule-field">
+                <mat-label>{{ "schools.add.breakfast-schedule.label" | transloco }}</mat-label>
+                <input matInput placeholder="{{ 'schools.add.breakfast-schedule.placeholder' | transloco }}" [matTimepicker]="picker">
+                <mat-timepicker-toggle matIconSuffix [for]="picker"/>
+                <mat-timepicker #picker/>
+              </mat-form-field> -->
+
+          </div>
+
         <!-- Sitios satélite -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-8">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-8"> -->
           <!-- Sitios satélite -->
-          <app-generic-table [config]="satelliteSchoolsConfig" #satelliteSchoolsTable [handler]="this"></app-generic-table>
-        </div>
+          <!-- <app-generic-table [config]="satelliteSchoolsConfig" #satelliteSchoolsTable [handler]="this"></app-generic-table> -->
+        <!-- </div> -->
       </div>
     </form>
   </div>

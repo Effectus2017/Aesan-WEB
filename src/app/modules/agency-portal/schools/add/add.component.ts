@@ -20,12 +20,10 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { optionSelectionData } from 'app/shared/common-data';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
@@ -39,6 +37,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
+// import {MatTimepickerModule} from '@angular/material/timepicker';
 
 @Component({
   selector: 'app-schools-add',
@@ -59,6 +58,8 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
     MatTooltipModule,
     MatIconModule,
     MatDatepickerModule,
+    // MatTimepickerModule,
+    MatIconModule,
   ],
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
