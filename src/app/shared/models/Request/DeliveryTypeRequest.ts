@@ -1,4 +1,6 @@
-export interface OrganizationType {
+
+
+export interface DeliveryTypeRequest {
     id: number;
     name: string;
     nameEN: string;

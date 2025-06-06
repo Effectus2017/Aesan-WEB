@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -13,18 +13,18 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { GROUP_TYPE_COLUMNS_SCHEMA } from './columns-schema';
+import { ORGANIZATION_TYPE_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
-import { GroupTypeService } from 'app/shared/services/group-type.service';
-import { GroupType } from 'app/shared/models/GroupType';
+import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
+import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-  selector: 'app-admin-group-type-list',
+  selector: 'app-organization-type-list',
   templateUrl: './list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
@@ -44,30 +44,30 @@ import { AuthService } from 'app/core/auth/auth.service';
     TranslocoModule,
   ],
 })
-export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class OrganizationTypeListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
-  private _groupTypeService = inject(GroupTypeService);
+  private _organizationTypeService = inject(OrganizationTypeService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
-    title: 'group-type.list.title',
+    title: 'organization-type.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'group-type.list.search.placeholder',
-    submitButtonText: 'group-type.list.buttons.save',
+    searchInputPlaceholder: 'organization-type.list.search.placeholder',
+    submitButtonText: 'organization-type.list.buttons.save',
     goToAddButtonShow: true,
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<GroupType>(),
+    dataSource: new MatTableDataSource<OrganizationType>(),
     dataSourceList: [],
-    columnsSchema: GROUP_TYPE_COLUMNS_SCHEMA,
-    displayedColumns: GROUP_TYPE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: ORGANIZATION_TYPE_COLUMNS_SCHEMA,
+    displayedColumns: ORGANIZATION_TYPE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
@@ -78,7 +78,7 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
   constructor() {}
 
   ngOnInit() {
-    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result && result.body) {
         const dataWithOrder = result.body.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
         this.tableConfig.dataSource.data = dataWithOrder;
@@ -89,6 +89,8 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
       }
       this._changeDetectorRef.markForCheck();
     });
+    // Carga inicial
+    this.getAll(0, this.headerConfig.formGroup.value);
   }
 
   ngOnDestroy(): void {
@@ -110,7 +112,7 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
       name: form.name || null,
       userId: this._authService.getUserId(),
     };
-    this._groupTypeService.getAllGroupTypesFromDb(requestParameters).subscribe();
+    this._organizationTypeService.getAllOrganizationTypesFromDb(requestParameters).subscribe();
   }
 
   getPaginator(event?: PageEvent) {
@@ -130,10 +132,10 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`group-type/edit/${id}`]);
+    this._customRouterService.navigate([`organization-type/edit/${id}`]);
   }
 
   onAdd() {
-    this._customRouterService.navigate(['group-type/add']);
+    this._customRouterService.navigate(['organization-type/add']);
   }
 }

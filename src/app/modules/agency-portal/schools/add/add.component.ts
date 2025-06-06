@@ -35,6 +35,10 @@ import { Region } from 'app/shared/models/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
+import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
+import { DeliveryType } from 'app/shared/models/DeliveryType';
 
 @Component({
   selector: 'app-schools-add',
@@ -52,9 +56,9 @@ import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
     NgForOf,
     TranslocoModule,
     MatDatepickerModule,
-    GenericTableComponent,
     MatTooltipModule,
     MatIconModule,
+    MatDatepickerModule,
   ],
 })
 export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
@@ -73,67 +77,169 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
   private _sponsorTypeService = inject(SponsorTypeService);
+  private _optionSelectionService = inject(OptionSelectionService);
+  private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   // catálogos
   listCities: City[] = [];
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
 
+  // Yes No Options (1, 2)
+  // Si (1) y No (2)
+  yesNoOptions: OptionSelection[] = [];
+
   // catálogos
   organizationTypes = [];
   educationLevels = [];
   operatingPeriods = [];
-  deliveryTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfDelivery');
-  sponsorTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfSponsor');
-  applicantTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfApplicant');
-  operatingPolicies: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfOperatingPolicy');
+
+
+  // Tipo de entrega
+  // Delivery type
+  deliveryTypes: DeliveryType[] = [];
+
+  // Tipo de auspiciador
+  // Sponsor type
+  sponsorTypes: OptionSelection[] = [];
+
+  // Tipo de solicitante
+  // Applicant type
+  applicantTypes: OptionSelection[] = [];
+
+  // Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido
+  // Residential type
+  residentialTypes: OptionSelection[] = [];
+
+  // Política de funcionamiento
+  // Operating policies
+  operatingPolicies: OptionSelection[] = [];
   facilities = [];
   schools = [];
   isLoading = false;
 
-  kitchenTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfKitchen');
-  groupTypes: OptionSelection[] = optionSelectionData.filter((option) => option.optionKey === 'typesOfGroup');
+  // Tipo de cocina
+  // Type of kitchen
+  kitchenTypes: OptionSelection[] = [];
+
+  // Tipo de grupo
+  // Type of group
+  groupTypes: OptionSelection[] = [];
+
+  // Lenguaje actual
   currentLang: string = 'es';
 
   headerConfig: GenericHeaderConfig = {
     title: 'schools.add.title',
     formGroup: this._formBuilder.group({
-      name: ['', Validators.required], // Nombre de la escuela
+      // Información General / General Information
+      // Nombre de la escuela - Campo requerido para identificar la escuela
+      // School name - Required field for identifying the school
+      name: ['', Validators.required],
+      // Dirección física - Campo requerido para la ubicación de la escuela
+      // Physical address - Required field for school location
+      address: ['', Validators.required],
+      // Ciudad - Campo requerido para la ubicación de la escuela
+      // City - Required field for school location
+      city: [null, Validators.required],
+      // Región - Campo requerido para la ubicación de la escuela
+      // Region - Required field for school location
+      region: [null, Validators.required],
+      // Código postal - Campo requerido para la ubicación de la escuela
+      // ZIP code - Required field for school location
+      zipCode: ['', Validators.required],
+      // Latitud - Campo requerido para coordenadas geográficas
+      // Latitude - Required field for geographical coordinates
+      latitude: [null, Validators.required],
+      // Longitud - Campo requerido para coordenadas geográficas
+      // Longitude - Required field for geographical coordinates
+      longitude: [null, Validators.required],
 
-      address: ['', Validators.required], // Dirección física
-      zipCode: ['', Validators.required], // Código postal
-      city: [null, Validators.required], // Ciudad
-      region: [null, Validators.required], // Región
-      latitude: [null, Validators.required], // Latitud
-      longitude: [null, Validators.required], // Longitud
-
-      // Copiar dirección física
+      // Copia de Dirección Física / Physical Address Copy
+      // Alternar para copiar la dirección física a la dirección postal
+      // Toggle to copy physical address to postal address
       sameAsPhysicalAddress: [false],
 
-      // Dirección postal
-      postalAddress: [''], // Dirección postal
-      postalZipCode: [''], // Código postal
-      postalCity: [null, Validators.required], // Ciudad
-      postalRegion: [null, Validators.required], // Región
+      // Dirección Postal / Postal Address
+      // Dirección postal - Dirección alternativa para correspondencia
+      // Postal address - Alternative mailing address
+      postalAddress: [''],
+      // Ciudad postal - Requerido para correspondencia
+      // Postal city - Required for mailing purposes
+      postalCity: [null, Validators.required],
+      // Región postal - Requerido para correspondencia
+      // Postal region - Required for mailing purposes
+      postalRegion: [null, Validators.required],
+      // Código postal - Para correspondencia
+      // Postal ZIP code - For mailing purposes
+      postalZipCode: [''],
 
-      startDate: [null], // Fecha de inicio de la escuela
-      areaCode: [''], // Código de área
-      adminFullName: [''], // Nombre del administrador
-      phone: [''], // Teléfono
-      phoneExtension: [''], // Extensión de teléfono
-      mobile: [''], // Teléfono móvil
-      baseYear: [null], // Año base
-      nextRenewalYear: [null], // Año de renovación
-      organizationTypeId: [null, Validators.required], // Tipo de organización
-      educationLevelId: [null, Validators.required], // Nivel de educación
-      operatingPeriodId: [null, Validators.required], // Periodo de operación
-      kitchenTypeId: [null], // Tipo de cocina
-      groupTypeId: [null], // Tipo de grupo
-      deliveryTypeId: [null], // Tipo de entrega
-      sponsorTypeId: [null], // Tipo de patrocinador
-      applicantTypeId: [null], // Tipo de solicitante
-      operatingPolicyId: [null], // Política de operación
-      facilityIds: [[]], // multi-select
-      satelliteSchoolIds: [[]], // multi-select
+      // Información Administrativa / Administrative Information
+      // Estado sin fines de lucro - Campo requerido que indica si la escuela es sin fines de lucro
+      // Non-profit status - Required field indicating if the school is non-profit
+      nonProfit: [null, Validators.required],
+      // Fecha de inicio - Cuando la escuela comenzó operaciones
+      // School start date - When the school began operations
+      startDate: [null],
+      // Año base - Año de referencia para operaciones de la escuela
+      // Base year - Reference year for school operations
+      baseYear: [null],
+      // Año de renovación - Año de renovación del contrato
+      // Renewal year - Year of contract renewal
+      renewalYear: [null],
+      // Tipo de organización - Campo requerido para clasificación de la escuela
+      // Organization type - Required field for school classification
+      organizationType: [null, Validators.required],
+      // Nivel educativo - Campo requerido para tipo de escuela
+      // Education level - Required field for school type
+      educationLevelId: [null, Validators.required],
+      // Días de operación - Días cuando la escuela opera
+      // Operating days - Days when the school operates
+      operatingDays: [''],
+
+      // Datos Operativos / Operational Data
+      // Tipo de cocina - Tipo de instalación de cocina
+      // Kitchen type - Type of kitchen facility
+      kitchenTypeId: [null],
+      // Tipo de grupo - Clasificación de grupos de estudiantes
+      // Group type - Classification of student groups
+      groupTypeId: [null],
+      // Tipo de entrega - Método de entrega de servicio
+      // Delivery type - Method of service delivery
+      deliveryTypeId: [null],
+      // Tipo de auspiciador - Tipo de patrocinio de la escuela
+      // Sponsor type - Type of school sponsorship
+      sponsorTypeId: [null],
+      // Tipo de solicitante - Tipo de solicitante de la escuela
+      // Applicant type - Type of school applicant
+      applicantTypeId: [null],
+      // Tipo de residencial - Campo requerido para clasificación RCCI (Residencial/No Residencial)
+      // Residential type - Required field for RCCI classification (Residential/Non-residential)
+      residentialTypeId: [null],
+      // Política de operación - Directrices operativas de la escuela
+      // Operating policy - School's operational guidelines
+      operatingPolicyId: [null],
+      // Disponibilidad de almacén - Indica si la escuela tiene instalaciones de almacenamiento
+      // Warehouse availability - Indicates if school has storage facilities
+      hasWarehouse: [null],
+      // Disponibilidad de comedor - Indica si la escuela tiene instalaciones de comedor
+      // Dining room availability - Indicates if school has dining facilities
+      hasDiningRoom: [null],
+
+      // Administrador/Representante Autorizado
+      // Administrator/Authorized Representative
+      // Nombre Completo del Administrador o Representante
+      // Full name of the administrator or representative
+      administratorAuthorizedName: [''],
+      // Teléfono del Sitio
+      // Site phone
+      sitePhone: [''],
+      // Extensión
+      // Extension
+      extension: [''],
+      // Teléfono Móvil
+      // Mobile phone
+      mobilePhone: [''],
     }),
     saveButtonShow: true,
     saveButtonText: 'schools.add.buttons.save',
@@ -172,73 +278,78 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       this.currentLang = lang;
     });
 
+    // Cargar opciones
+    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        // Yes No
+        this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+        // Tipo de residencial
+        this.residentialTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+        // Tipo de solicitante
+        this.applicantTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      }
+    });
+
     // Cities
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-        this.listCities = response.body.data;
+    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listCities = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Regions
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-        this.listRegions = response.body.data;
+    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listRegions = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
-    // Group types
-    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-        this.groupTypes = response.body.data;
+    // Types of kitchen
+    // Tipo de cocina
+    this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.kitchenTypes = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
-    // Sponsor types
-    this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((response: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-        this.sponsorTypes = response.body.data;
+    // Types of group
+    // Tipo de grupo
+    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.groupTypes = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
 
-    // this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-    //   this.organizationTypes = res.body?.data || [];
-    // });
+    // Types of sponsor
+    // Tipo de auspiciador
+    this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.sponsorTypes = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
 
-    // this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-    //   this.educationLevels = res.body?.data || [];
-    // });
+    // Operating policies
+    this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.operatingPolicies = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
 
-    // this._operatingPeriodService.operatingPeriods$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-    //   this.operatingPeriods = res.body?.data || [];
-    // });
+    // Tipos de entrega
+    // Types of delivery
+    this._deliveryTypeService.deliveryTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.deliveryTypes = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
 
-    // this._facilityService.facilities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-    //   this.facilities = res.body?.data || [];
-    // });
-
-    // this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((res: any) => {
-    //   this.operatingPolicies = res.body?.data || [];
-    // });
-    // Cargar catálogos opcionales si existen
-    // this.kitchenTypeService.getAllKitchenTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
-    //   this.kitchenTypes = res.body?.data || [];
-    // });
-    // this.groupTypeService.getAllGroupTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
-    //   this.groupTypes = res.body?.data || [];
-    // });
-    // this.deliveryTypeService.getAllDeliveryTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
-    //   this.deliveryTypes = res.body?.data || [];
-    // });
-    // this.sponsorTypeService.getAllSponsorTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
-    //   this.sponsorTypes = res.body?.data || [];
-    // });
-    // this.applicantTypeService.getAllApplicantTypesFromDb({ take: 1000, skip: 0 }).subscribe((res: any) => {
-    //   this.applicantTypes = res.body?.data || [];
-    // });
     this.isLoading = false;
   }
 
@@ -275,6 +386,8 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       sponsorTypeId: formValues.sponsorTypeId,
       applicantTypeId: formValues.applicantTypeId,
       operatingPolicyId: formValues.operatingPolicyId,
+      latitude: formValues.latitude,
+      longitude: formValues.longitude,
     };
 
     this.isLoading = true;

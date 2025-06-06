@@ -1,11 +1,11 @@
 import { Routes } from '@angular/router';
-import { PermissionsComponent } from './permissions.component';
+import { PermissionsListComponent } from './list/list.component';
 import { initialDataPermissionsListResolver, initialDataPermissionsEditResolver } from './permissions.resolvers';
 
 export default [
     {
         path     : '',
-        component: PermissionsComponent,
+        component: PermissionsListComponent,
         children: [
             {
                 path: '',

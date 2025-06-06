@@ -1,22 +1,22 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ActivatedRoute, Router } from '@angular/router';
-import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { ActivatedRoute } from '@angular/router';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { KitchenType } from 'app/shared/models/KitchenType';
+import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
+import { showErrorDialog, showSuccessDialog } from 'app/shared/utils';
 
 @Component({
-  selector: 'app-edit-kitchen-type',
+  selector: 'app-edit-delivery-type',
   templateUrl: './edit.component.html',
   standalone: true,
   encapsulation: ViewEncapsulation.None,
@@ -33,25 +33,26 @@ import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
     TranslocoModule,
   ],
 })
-export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers {
+export class EditDeliveryTypeComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
-  private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   private _route = inject(ActivatedRoute);
   private _cdr = inject(ChangeDetectorRef);
   private _transloco = inject(TranslocoService);
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
 
-  kitchenTypeId: number;
-  currentLang: string;
+  deliveryTypeId: number;
+  deliveryTypes: DeliveryType[] = [];
+  positionOptions: { label: string; value: number }[] = [];
 
   headerConfig: GenericHeaderConfig = {
-    title: 'kitchen-type.edit.title',
+    title: 'delivery-type.edit.title',
     formGroup: this._formBuilder.group({
       name: [null, Validators.required],
       nameEN: [null, Validators.required],
       isActive: [true],
-      displayOrder: [0, Validators.required],
+      position: [1, Validators.required],
     }),
     saveButtonShow: true,
     saveButtonText: 'global.buttons.save',
@@ -60,23 +61,26 @@ export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers
     goToAddButtonShow: false,
   };
 
-  constructor() {}
+  currentLang: string;
 
   ngOnInit(): void {
+    // Transloco
     this.currentLang = this._transloco.getActiveLang();
 
-    this._kitchenTypeService.kitchenType$.subscribe((result: any) => {
-      this.kitchenTypeId = result.body.id;
+    this.deliveryTypeId = +this._route.snapshot.paramMap.get('id');
+
+    this._deliveryTypeService.deliveryType$.subscribe((result: any) => {
+      this.deliveryTypeId = result.body.id;
       this.onSetForm(result.body);
     });
   }
 
-  onSetForm(param: KitchenType) {
+  onSetForm(param: DeliveryType) {
     this.headerConfig.formGroup.patchValue({
       name: param.name,
       nameEN: param.nameEN,
       isActive: param.isActive,
-      displayOrder: param.displayOrder,
+      position: param.displayOrder,
     });
   }
 
@@ -89,15 +93,15 @@ export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers
 
     const formValues = this.headerConfig.formGroup.getRawValue();
 
-    const kitchenTypeRequest: KitchenType = {
-      id: this.kitchenTypeId,
+    const deliveryTypeRequest: DeliveryType = {
+      id: this.deliveryTypeId,
       name: formValues.name,
       nameEN: formValues.nameEN,
       isActive: formValues.isActive,
-      displayOrder: formValues.displayOrder,
+      displayOrder: formValues.position,
     };
 
-    this._kitchenTypeService.updateKitchenType(kitchenTypeRequest, {}).subscribe({
+    this._deliveryTypeService.updateDeliveryType(deliveryTypeRequest, {}).subscribe({
       next: (result: any) => {
         switch (result.body) {
           case true:
@@ -112,12 +116,12 @@ export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers
         showErrorDialog();
       },
       complete: () => {
-        this._customRouterService.navigate(['kitchen-type']);
+        this._customRouterService.navigate(['delivery-type']);
       },
     });
   }
 
   onCancel() {
-    this._customRouterService.navigate(['kitchen-type']);
+    this._customRouterService.navigate(['delivery-type']);
   }
 }

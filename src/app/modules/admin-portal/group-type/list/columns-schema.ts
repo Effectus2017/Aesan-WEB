@@ -1,11 +1,6 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-export const COLUMNS_SCHEMA: ColumnSchema[] = [
-  {
-    key: 'id',
-    type: 'text',
-    label: 'group-type.list.table.columns.id',
-  },
+export const GROUP_TYPE_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
@@ -18,7 +13,7 @@ export const COLUMNS_SCHEMA: ColumnSchema[] = [
   },
   {
     key: 'isActive',
-    type: 'text',
+    type: 'boolean',
     label: 'group-type.list.table.columns.isActive',
   },
   {

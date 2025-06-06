@@ -1,0 +1,58 @@
+{
+  "list": {
+    "title": "Organization Types",
+    "search": {
+      "placeholder": "Search organization type"
+    },
+    "table": {
+      "columns": {
+        "id": "ID",
+        "name": "Name",
+        "nameEN": "Name (EN)",
+        "isActive": "Active",
+        "displayOrder": "Order",
+        "actions": "Actions"
+      },
+      "buttons": {
+        "edit": "Edit"
+      }
+    },
+    "buttons": {
+      "add": "Add organization type",
+      "save": "Save"
+    }
+  },
+  "add": {
+    "title": "Add organization type",
+    "name": "Name",
+    "name-placeholder": "Enter name",
+    "name-error": "Name is required",
+    "name-en": "Name (EN)",
+    "name-en-placeholder": "Enter name in English",
+    "name-en-error": "Name in English is required",
+    "position": "Position",
+    "position-error": "Position is required",
+    "is-active": "Active",
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  },
+  "edit": {
+    "title": "Edit organization type",
+    "name": "Name",
+    "name-placeholder": "Enter name",
+    "name-error": "Name is required",
+    "name-en": "Name (EN)",
+    "name-en-placeholder": "Enter name in English",
+    "name-en-error": "Name in English is required",
+    "display-order": "Order",
+    "display-order-placeholder": "Enter order",
+    "display-order-error": "Order is required",
+    "is-active": "Active",
+    "buttons": {
+      "save": "Save",
+      "cancel": "Cancel"
+    }
+  }
+}

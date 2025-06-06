@@ -1,0 +1,199 @@
+{
+    "schools": {
+        "title": "Sites",
+        "list": {
+            "title": "Site List",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Name",
+                    "address": "Address",
+                    "city": "City",
+                    "region": "Region",
+                    "actions": "Actions"
+                }
+            }
+        },
+        "add": {
+            "title": "Add Site",
+            "information": "Information",
+            "information-description": "Site information",
+            "name": {
+                "label": "Name",
+                "placeholder": "Site name",
+                "required": "Site name is required"
+            },
+            "address": {
+                "label": "Address",
+                "placeholder": "Site address",
+                "required": "Site address is required"
+            },
+            "city": {
+                "label": "City",
+                "placeholder": "Site city",
+                "required": "City is required"
+            },
+            "region": {
+                "label": "Region",
+                "placeholder": "Site region",
+                "required": "Region is required"
+            },
+            "zip-code": {
+                "label": "Zip Code",
+                "placeholder": "Site zip code",
+                "required": "Zip code is required"
+            },
+            "latitude": {
+                "label": "Latitude",
+                "placeholder": "Site latitude"
+            },
+            "longitude": {
+                "label": "Longitude",
+                "placeholder": "Site longitude"
+            },
+            "gps-coordinates": {
+                "tooltip": "Open GPS coordinates tool"
+            },
+            "postal-address": {
+                "label": "Postal Address",
+                "placeholder": "Site postal address",
+                "required": "Postal address is required"
+            },
+            "same-as-physical-address": {
+                "label": "Same as physical address"
+            },
+            "postalCity": {
+                "label": "City",
+                "placeholder": "Postal city"
+            },
+            "postalRegion": {
+                "label": "Region",
+                "placeholder": "Postal region"
+            },
+            "postalZipCode": {
+                "label": "Zip Code",
+                "placeholder": "Postal zip code"
+            },
+            "administrative-information": {
+                "label": "Administrative Information",
+                "description": "Site administrative information"
+            },
+            "organization-type": {
+                "label": "Is it a non-profit organization?",
+                "placeholder": "Is it a non-profit organization?",
+                "required": "This field is required"
+            },
+            "non-profit": {
+                "label": "Is it a non-profit organization?"
+            },
+            "start-date": {
+                "label": "Start Date",
+                "placeholder": "Select start date",
+                "required": "Start date is required"
+            },
+            "base-year": {
+                "label": "Base Year",
+                "placeholder": "Site base year",
+                "required": "Base year is required"
+            },
+            "renewal-year": {
+                "label": "Renewal Year",
+                "placeholder": "Next renewal year",
+                "required": "Renewal year is required"
+            },
+            "organizationType": {
+                "label": "Organization Type"
+            },
+            "education-level": {
+                "label": "Education Level",
+                "placeholder": "Site education level",
+                "required": "Education level is required"
+            },
+            "operating-days": {
+                "label": "Operating Days",
+                "placeholder": "Site operating days"
+            },
+            "operational-information": {
+                "label": "Operational Data",
+                "description": "Site operational information"
+            },
+            "kitchen-type": {
+                "label": "Kitchen Type",
+                "placeholder": "Site kitchen type",
+                "required": "Kitchen type is required"
+            },
+            "group-type": {
+                "label": "Group Type",
+                "placeholder": "Site group type",
+                "required": "Group type is required"
+            },
+            "delivery-type": {
+                "label": "Delivery Type",
+                "placeholder": "Site delivery type",
+                "required": "Delivery type is required"
+            },
+            "sponsor-type": {
+                "label": "Sponsor Type",
+                "placeholder": "Site sponsor type",
+                "required": "Sponsor type is required"
+            },
+            "applicant-type": {
+                "label": "Applicant Type",
+                "placeholder": "Site applicant type",
+                "required": "Applicant type is required"
+            },
+            "residential-type": {
+                "label": "Residential Type",
+                "placeholder": "Site residential type",
+                "required": "Residential type is required"
+            },
+            "operating-policy": {
+                "label": "Operating Policy",
+                "placeholder": "Site operating policy",
+                "required": "Operating policy is required"
+            },
+            "has-warehouse": {
+                "label": "Has Warehouse?",
+                "placeholder": "Has Warehouse?",
+                "required": "Has Warehouse?"
+            },
+            "has-dining-room": {
+                "label": "Has Dining Room?",
+                "placeholder": "Has Dining Room?",
+                "required": "Has Dining Room?"
+            },
+            "administrator-authorized": {
+                "label": "Authorized Administrator/Representative",
+                "description": "Authorized administrator/representative information"
+            },
+            "administrator-authorized-name": {
+                "label": "Full Name of Administrator or Representative",
+                "placeholder": "Full name of administrator or representative",
+                "required": "Full name of administrator or representative is required"
+            },
+            "site-phone": {
+                "label": "Site Phone",
+                "placeholder": "Site phone",
+                "required": "Site phone is required"
+            },
+            "extension": {
+                "label": "Extension",
+                "placeholder": "Extension",
+                "required": "Extension is required"
+            },
+            "mobile-phone": {
+                "label": "Mobile Phone",
+                "placeholder": "Mobile phone",
+                "required": "Mobile phone is required"
+            },
+            "services-and-schedule": {
+                "label": "Services and Schedule",
+                "description": "Information about services and schedule"
+            },
+            "buttons": {
+                "save": "Save",
+                "cancel": "Cancel"
+            }
+        }
+    }
+}

@@ -1,0 +1,58 @@
+{
+  "list": {
+    "title": "Tipos de organización",
+    "search": {
+      "placeholder": "Buscar tipo de organización"
+    },
+    "table": {
+      "columns": {
+        "id": "ID",
+        "name": "Nombre",
+        "nameEN": "Nombre (EN)",
+        "isActive": "Activo",
+        "displayOrder": "Orden",
+        "actions": "Acciones"
+      },
+      "buttons": {
+        "edit": "Editar"
+      }
+    },
+    "buttons": {
+      "add": "Agregar tipo de organización",
+      "save": "Guardar"
+    }
+  },
+  "add": {
+    "title": "Agregar tipo de organización",
+    "name": "Nombre",
+    "name-placeholder": "Ingrese el nombre",
+    "name-error": "El nombre es obligatorio",
+    "name-en": "Nombre (EN)",
+    "name-en-placeholder": "Ingrese el nombre en inglés",
+    "name-en-error": "El nombre en inglés es obligatorio",
+    "position": "Posición",
+    "position-error": "La posición es obligatoria",
+    "is-active": "Activo",
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    }
+  },
+  "edit": {
+    "title": "Editar tipo de organización",
+    "name": "Nombre",
+    "name-placeholder": "Ingrese el nombre",
+    "name-error": "El nombre es obligatorio",
+    "name-en": "Nombre (EN)",
+    "name-en-placeholder": "Ingrese el nombre en inglés",
+    "name-en-error": "El nombre en inglés es obligatorio",
+    "display-order": "Orden",
+    "display-order-placeholder": "Ingrese el orden",
+    "display-order-error": "El orden es obligatorio",
+    "is-active": "Activo",
+    "buttons": {
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    }
+  }
+}

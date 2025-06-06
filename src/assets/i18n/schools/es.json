@@ -28,11 +28,6 @@
                 "placeholder": "Dirección del sitio",
                 "required": "La dirección del sitio es requerida"
             },
-            "zip-code": {
-                "label": "Código postal",
-                "placeholder": "Código postal del sitio",
-                "required": "El código postal es requerido"
-            },
             "city": {
                 "label": "Ciudad",
                 "placeholder": "Ciudad del sitio",
@@ -43,105 +38,157 @@
                 "placeholder": "Región del sitio",
                 "required": "La región es requerida"
             },
-            "organization-type": {
-                "label": "Tipo de organización",
-                "placeholder": "Tipo de organización del sitio",
-                "required": "El tipo de organización es requerido"
+            "zip-code": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio",
+                "required": "El código postal es requerido"
             },
-            "education-level": {
-                "label": "Nivel educativo",
-                "placeholder": "Nivel educativo del sitio",
-                "required": "El nivel educativo es requerido"
+            "latitude": {
+                "label": "Latitud",
+                "placeholder": "Latitud del sitio"
             },
-            "operating-period": {
-                "label": "Periodo de operación",
-                "placeholder": "Periodo de operación del sitio",
-                "required": "El periodo de operación es requerido"
+            "longitude": {
+                "label": "Longitud",
+                "placeholder": "Longitud del sitio"
             },
-            "facilities": {
-                "label": "Facilidades",
-                "placeholder": "Facilidades del sitio",
-                "required": "Las facilidades son requeridas"
-            },
-            "satellite-schools": {
-                "label": "Sitios satélite",
-                "placeholder": "Sitios satélite del sitio",
-                "required": "Los sitios satélite son requeridos"
+            "gps-coordinates": {
+                "tooltip": "Abrir herramienta de coordenadas GPS"
             },
             "postal-address": {
                 "label": "Dirección postal",
                 "placeholder": "Dirección postal del sitio",
                 "required": "La dirección postal es requerida"
             },
-            "area-code": {
-                "label": "Código de área",
-                "placeholder": "Código de área del sitio",
-                "required": "El código de área es requerido"
+            "same-as-physical-address": {
+                "label": "Igual que la dirección física"
             },
-            "admin-full-name": {
-                "label": "Nombre del administrador",
-                "placeholder": "Nombre completo del administrador",
-                "required": "El nombre del administrador es requerido"
+            "postalCity": {
+                "label": "Ciudad",
+                "placeholder": "Ciudad del sitio"
             },
-            "phone": {
-                "label": "Teléfono",
-                "placeholder": "Teléfono de contacto",
-                "required": "El teléfono es requerido"
+            "postalRegion": {
+                "label": "Región",
+                "placeholder": "Región del sitio"
             },
-            "phone-extension": {
-                "label": "Extensión de teléfono",
-                "placeholder": "Extensión",
-                "required": "La extensión de teléfono es requerida"
+            "postalZipCode": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio"
             },
-            "mobile": {
-                "label": "Teléfono móvil",
-                "placeholder": "Teléfono móvil de contacto",
-                "required": "El teléfono móvil es requerido"
+            "administrative-information": {
+                "label": "Información Administrativa",
+                "description": "Información administrativa del sitio"
             },
-            "base-year": {
-                "label": "Año base",
-                "placeholder": "Año base del sitio",
-                "required": "El año base es requerido"
+            "organization-type": {
+                "label": "¿Es una organización sin fines de lucro?",
+                "placeholder": "¿Es una organización sin fines de lucro?",
+                "required": "El campo es requerido"
             },
-            "next-renewal-year": {
-                "label": "Año de renovación",
-                "placeholder": "Próximo año de renovación",
-                "required": "El año de renovación es requerido"
+            "non-profit": {
+                "label": "¿Es una organización sin fines de lucro?"
             },
             "start-date": {
                 "label": "Fecha de inicio",
                 "placeholder": "Seleccione la fecha de inicio",
                 "required": "La fecha de inicio es requerida"
             },
+            "base-year": {
+                "label": "Año base",
+                "placeholder": "Año base del sitio",
+                "required": "El año base es requerido"
+            },
+            "renewal-year": {
+                "label": "Año de renovación",
+                "placeholder": "Próximo año de renovación",
+                "required": "El año de renovación es requerido"
+            },
+            "organizationType": {
+                "label": "Tipo de organización"
+            },
+            "education-level": {
+                "label": "Nivel educativo",
+                "placeholder": "Nivel educativo del sitio",
+                "required": "El nivel educativo es requerido"
+            },
+            "operating-days": {
+                "label": "Días de funcionamiento",
+                "placeholder": "Días de funcionamiento del sitio"
+            },
+            "operational-information": {
+                "label": "Datos Operacionales",
+                "description": "Información operacional del sitio"
+            },
             "kitchen-type": {
-                "label": "Tipo de cocina",
+                "label": "Tipo de Cocina",
                 "placeholder": "Tipo de cocina del sitio",
                 "required": "El tipo de cocina es requerido"
             },
             "group-type": {
-                "label": "Tipo de grupo",
+                "label": "Tipo de Grupo",
                 "placeholder": "Tipo de grupo del sitio",
                 "required": "El tipo de grupo es requerido"
             },
             "delivery-type": {
-                "label": "Tipo de entrega",
+                "label": "Tipo de Entrega",
                 "placeholder": "Tipo de entrega del sitio",
                 "required": "El tipo de entrega es requerido"
             },
             "sponsor-type": {
-                "label": "Tipo de auspiciador",
+                "label": "Tipo de Auspiciador",
                 "placeholder": "Tipo de auspiciador del sitio",
                 "required": "El tipo de auspiciador es requerido"
             },
             "applicant-type": {
-                "label": "Tipo de solicitante",
+                "label": "Tipo de Solicitante",
                 "placeholder": "Tipo de solicitante del sitio",
                 "required": "El tipo de solicitante es requerido"
             },
+            "residential-type": {
+                "label": "Tipo de Residencial",
+                "placeholder": "Tipo de residencial del sitio",
+                "required": "El tipo de residencial es requerido"
+            },
             "operating-policy": {
-                "label": "Política de funcionamiento",
+                "label": "Política de Funcionamiento",
                 "placeholder": "Política de funcionamiento del sitio",
                 "required": "La política de funcionamiento es requerida"
+            },
+            "has-warehouse": {
+                "label": "¿Cuenta con un Almacén?",
+                "placeholder": "¿Cuenta con un Almacén?",
+                "required": "¿Cuenta con un Almacén?"
+            },
+            "has-dining-room": {
+                "label": "¿Cuenta con un Salón Comedor?",
+                "placeholder": "¿Cuenta con un Salón Comedor?",
+                "required": "¿Cuenta con un Salón Comedor?"
+            },
+            "administrator-authorized": {
+                "label": "Administrador/Representante Autorizado",
+                "description": "Información del administrador/representante autorizado"
+            },
+            "administrator-authorized-name": {
+                "label": "Nombre Completo del Administrador o Representante",
+                "placeholder": "Nombre completo del administrador o representante",
+                "required": "El nombre completo del administrador o representante es requerido"
+            },
+            "site-phone": {
+                "label": "Teléfono del Sitio",
+                "placeholder": "Teléfono del sitio",
+                "required": "El teléfono del sitio es requerido"
+            },
+            "extension": {
+                "label": "Extensión",
+                "placeholder": "Extensión",
+                "required": "La extensión es requerida"
+            },
+            "mobile-phone": {
+                "label": "Teléfono Móvil",
+                "placeholder": "Teléfono móvil",
+                "required": "El teléfono móvil es requerido"
+            },
+            "services-and-schedule": {
+                "label": "Servicios que operará y horario",
+                "description": "Información de los servicios que operará y horario"
             },
             "buttons": {
                 "save": "Guardar",

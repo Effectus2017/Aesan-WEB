@@ -90,9 +90,11 @@ export const appRoutes: Route[] = [
       // Operating policies (Role: Admin)
       { path: 'operating-policy', loadChildren: () => import('app/modules/admin-portal/operating-policy/operating-policy.routes') },
       // Permissions (Role: Admin)
-      { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes').then(m => m.default) },
+      { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes') },
       // Option selection (Role: Admin)
       { path: 'option-selection', loadChildren: () => import('app/modules/admin-portal/option-selection/option-selection.routes') },
+      // Organization types (Role: Admin)
+      { path: 'organization-type', loadChildren: () => import('app/modules/admin-portal/organization-type/organization-type.routes') },
     ],
   },
 
