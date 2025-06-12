@@ -2,11 +2,6 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 
 export const KITCHEN_TYPE_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: 'id',
-    type: 'text',
-    label: 'kitchen-type.list.table.columns.id',
-  },
-  {
     key: 'name',
     type: 'text',
     label: 'kitchen-type.list.table.columns.name',

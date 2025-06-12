@@ -14,6 +14,7 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
+import { CenterTypeService } from 'app/shared/services/center-type.service';
 
 export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const schoolService = inject(SchoolService);
@@ -34,8 +35,8 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
   // Geographic operations service
   // Servicio para operaciones geográficas
   const geoService = inject(GeoService);
-  // Organization types service
-  // Servicio para tipos de organización
+  // Organization types school service
+  // Servicio para Tipos de organización de Escuelas -- Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
   const organizationTypeService = inject(OrganizationTypeService);
   // Education levels service
   // Servicio para niveles de educación
@@ -64,6 +65,9 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
   // Delivery types service
   // Servicio para tipos de entrega
   const deliveryTypeService = inject(DeliveryTypeService);
+  // Center types service
+  // Servicio para tipos de centro
+  const centerTypeService = inject(CenterTypeService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -97,8 +101,8 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Regions service
     // Servicio para regiones
     geoService.getRegionsFromDb(requestParameters),
-    // Organization types service
-    // Servicio para tipos de organización
+    // Organization types school service
+    // Servicio para Tipos de organización de Escuelas -- Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
     organizationTypeService.getAllOrganizationTypesFromDb(requestParameters),
     // Education levels service
     // Servicio para niveles de educación
@@ -115,5 +119,8 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Types of delivery
     // Tipos de entrega
     deliveryTypeService.getAllDeliveryTypesFromDb(requestParameters),
+    // Types of center
+    // Tipos de centro
+    centerTypeService.getAllCenterTypesFromDb(requestParameters),
   ]);
 };

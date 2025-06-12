@@ -37,5 +37,8 @@
   "./assets/i18n/users/en.json",
 
   "./assets/i18n/organization-type/es.json",
-  "./assets/i18n/organization-type/en.json"
+  "./assets/i18n/organization-type/en.json",
+
+  "./assets/i18n/center-types/es.json",
+  "./assets/i18n/center-types/en.json"
 ]

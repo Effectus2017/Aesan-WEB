@@ -36,9 +36,6 @@ export interface IncomeSourceDialogData {
         MatNativeDateModule,
         MatButtonModule,
         MatSelectModule,
-        DarkModeTextDirective,
-        NgIf,
-        NgFor,
         MatOptionModule,
     ]
 })

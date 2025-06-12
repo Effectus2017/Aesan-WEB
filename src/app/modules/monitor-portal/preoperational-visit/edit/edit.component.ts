@@ -23,7 +23,7 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareByProperty, isNullOrUndefinedEmptyStringNullArray, showErrorDialog, showSuccessDialog } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -275,23 +275,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
         switch (response.body) {
           case true:
-            this._fuseConfirmationService.open({
-              title: this._translocoService.translate('dialog.success.title'),
-              icon: {
-                show: true,
-                name: 'heroicons_outline:check-circle',
-                color: 'success',
-              },
-              message: this._translocoService.translate('dialog.success.message'),
-              actions: {
-                confirm: {
-                  label: this._translocoService.translate('dialog.success.confirm'),
-                },
-                cancel: {
-                  show: false,
-                },
-              },
-            });
+            showSuccessDialog();
             break;
           default:
             this.showErrorDialog();

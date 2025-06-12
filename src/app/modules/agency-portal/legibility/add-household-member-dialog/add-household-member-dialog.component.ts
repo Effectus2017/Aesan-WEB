@@ -1,8 +1,8 @@
 import { Component, inject, Inject } from '@angular/core';
-import { CommonModule, NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,7 +11,6 @@ import { TextFieldModule } from '@angular/cdk/text-field';
 import { MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
-import { DarkModeTextDirective } from 'app/shared/directives/dark-mode-text.directive';
 import { optionSelectionData } from 'app/shared/common-data';
 import { mapBooleanToYesNoOptionId, mapYesNoOptionIdToBoolean } from 'app/shared/utils';
 
@@ -42,7 +41,6 @@ export interface HouseholdMemberDialogData {
         MatNativeDateModule,
         MatButtonModule,
         MatSelectModule,
-        DarkModeTextDirective,
         NgIf,
         NgFor,
         MatOptionModule,

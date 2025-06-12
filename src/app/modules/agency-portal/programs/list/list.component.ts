@@ -26,7 +26,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, NgIf, TranslocoModule, SharedModule]
+    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, TranslocoModule, SharedModule]
 })
 export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;

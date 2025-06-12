@@ -47,6 +47,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/kitchen-type',
       },
       {
+        id: 'administration.residential-types',
+        title: 'navigation.administration.residential-types',
+        type: 'basic',
+        icon: 'heroicons_solid:building-office',
+        link: '/residential-type',
+      },
+      {
         id: 'administration.organization-types',
         title: 'navigation.administration.organization-types',
         type: 'basic',

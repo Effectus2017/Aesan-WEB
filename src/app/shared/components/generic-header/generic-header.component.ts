@@ -15,6 +15,7 @@ import { TranslocoModule } from '@ngneat/transloco';
     selector: 'app-generic-header',
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
+    standalone: true,
     imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink, TranslocoModule]
 })
 export class GenericHeaderComponent {

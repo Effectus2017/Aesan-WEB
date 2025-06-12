@@ -28,6 +28,7 @@
                 "placeholder": "Site address",
                 "required": "Site address is required"
             },
+            "address-description": "Site address",
             "city": {
                 "label": "City",
                 "placeholder": "Site city",
@@ -59,6 +60,7 @@
                 "placeholder": "Site postal address",
                 "required": "Postal address is required"
             },
+            "postal-address-description": "Postal address of the site",
             "same-as-physical-address": {
                 "label": "Same as physical address"
             },
@@ -142,10 +144,15 @@
                 "placeholder": "Site applicant type",
                 "required": "Applicant type is required"
             },
+            "center-type": {
+                "label": "Center Type",
+                "placeholder": "Site center type",
+                "required": "Center type is required"
+            },
             "residential-type": {
-                "label": "Residential Type",
-                "placeholder": "Site residential type",
-                "required": "Residential type is required"
+                "label": "Residential Type (RCCI)",
+                "placeholder": "Site residential type (RCCI)",
+                "required": "Residential type (RCCI) is required"
             },
             "operating-policy": {
                 "label": "Operating Policy",
@@ -190,6 +197,44 @@
                 "label": "Services and Schedule",
                 "description": "Information about services and schedule"
             },
+            "breakfast": {
+                "label": "Breakfast",
+                "placeholder": "Breakfast"
+            },
+            "breakfast-from": {
+                "label": "Breakfast From",
+                "placeholder": "Breakfast from"
+            },
+            "breakfast-to": {
+                "label": "Breakfast To",
+                "placeholder": "Breakfast to"
+            },
+            "lunch": {
+                "label": "Lunch",
+                "placeholder": "Lunch"
+            },
+            "lunch-from": {
+                "label": "Lunch From",
+                "placeholder": "Lunch from"
+            },
+            "lunch-to": {
+                "label": "Lunch To",
+                "placeholder": "Lunch to"
+            },
+
+            "snack": {
+                "label": "Snack",
+                "placeholder": "Snack"
+            },
+            "snack-from": {
+                "label": "Snack From",
+                "placeholder": "Snack from"
+            },
+            "snack-to": {
+                "label": "Snack To",
+                "placeholder": "Snack to"
+            },
+
             "buttons": {
                 "save": "Save",
                 "cancel": "Cancel"

@@ -26,7 +26,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, showErrorDialog, showSuccessDialog } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { Region } from 'app/shared/models/Region';
@@ -37,11 +37,18 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
-// import {MatTimepickerModule} from '@angular/material/timepicker';
+import {MatTimepickerModule} from '@angular/material/timepicker';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { CenterType } from 'app/shared/models/CenterType';
+import { CenterTypeService } from 'app/shared/services/center-type.service';
+import { OrganizationType } from 'app/shared/models/OrganizationType';
+import { SponsorType } from 'app/shared/models/SponsorType';
 
 @Component({
     selector: 'app-schools-add',
     templateUrl: './add.component.html',
+    providers: [provideNativeDateAdapter()],
+    standalone: true,
     imports: [
         ReactiveFormsModule,
         MatFormFieldModule,
@@ -57,7 +64,7 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
         MatTooltipModule,
         MatIconModule,
         MatDatepickerModule,
-        // MatTimepickerModule,
+        MatTimepickerModule,
         MatIconModule,
     ]
 })
@@ -66,10 +73,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
   private _geoService = inject(GeoService);
-  private _organizationTypeService = inject(OrganizationTypeService);
-  private _educationLevelService = inject(EducationLevelService);
-  private _operatingPeriodService = inject(OperatingPeriodService);
-  private _facilityService = inject(FacilityService);
   private _operatingPolicyService = inject(OperatingPolicyService);
   private _snackBar = inject(MatSnackBar);
   private _customRouter = inject(CustomRouterService);
@@ -80,6 +83,9 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _optionSelectionService = inject(OptionSelectionService);
   private _kitchenTypeService = inject(KitchenTypeService);
   private _deliveryTypeService = inject(DeliveryTypeService);
+  private _centerTypeService = inject(CenterTypeService);
+  private _organizationTypeService = inject(OrganizationTypeService);
+
   // catálogos
   listCities: City[] = [];
   listRegions: Region[] = [];
@@ -90,10 +96,22 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   yesNoOptions: OptionSelection[] = [];
 
   // catálogos
-  organizationTypes = [];
-  educationLevels = [];
-  operatingPeriods = [];
+  // Tipo de Organización Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
+  // Organization type - Required field for school classification
+  organizationTypes: OrganizationType[] = [];
 
+  // Nivel educativo - Campo requerido para tipo de escuela
+  // Education level - Required field for school type
+  educationLevels = [
+    {id: 1, name: 'Kinder'},
+    {id: 2, name: 'Elemental'},
+    {id: 3, name: 'Intermedio'},
+    {id: 4, name: 'Superior'},
+  ];
+
+  // Centro - Campo requerido para clasificación de la escuela
+  // Center - Required field for school classification
+  centerTypes: CenterType[] = [];
 
   // Tipo de entrega
   // Delivery type
@@ -101,22 +119,20 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   // Tipo de auspiciador
   // Sponsor type
-  sponsorTypes: OptionSelection[] = [];
+  sponsorType: SponsorType[] = [];
 
   // Tipo de solicitante
-  // Applicant type
-  applicantTypes: OptionSelection[] = [];
+  // Type of applicant
+  typeOfApplicant: OptionSelection[] = [];
 
   // Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido
-  // Residential type
-  residentialTypes: OptionSelection[] = [];
+  // Type of residential
+  // Pernoctan (17), No Pernoctan (18)
+  typeOfResidential: OptionSelection[] = [];
 
   // Política de funcionamiento
   // Operating policies
   operatingPolicies: OptionSelection[] = [];
-  facilities = [];
-  schools = [];
-  isLoading = false;
 
   // Tipo de cocina
   // Type of kitchen
@@ -129,6 +145,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Lenguaje actual
   currentLang: string = 'es';
 
+  // Header config
   headerConfig: GenericHeaderConfig = {
     title: 'schools.add.title',
     formGroup: this._formBuilder.group({
@@ -154,12 +171,10 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Longitud - Campo requerido para coordenadas geográficas
       // Longitude - Required field for geographical coordinates
       longitude: [null, Validators.required],
-
       // Copia de Dirección Física / Physical Address Copy
       // Alternar para copiar la dirección física a la dirección postal
       // Toggle to copy physical address to postal address
       sameAsPhysicalAddress: [false],
-
       // Dirección Postal / Postal Address
       // Dirección postal - Dirección alternativa para correspondencia
       // Postal address - Alternative mailing address
@@ -173,7 +188,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Código postal - Para correspondencia
       // Postal ZIP code - For mailing purposes
       postalZipCode: [''],
-
       // Información Administrativa / Administrative Information
       // Estado sin fines de lucro - Campo requerido que indica si la escuela es sin fines de lucro
       // Non-profit status - Required field indicating if the school is non-profit
@@ -183,49 +197,54 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       startDate: [null],
       // Año base - Año de referencia para operaciones de la escuela
       // Base year - Reference year for school operations
-      baseYear: [null],
+      // (tipo text-SOLO DISABLED)
+      baseYear: [{value: null, disabled: true}, [Validators.pattern(/^\d{4}$/)]],
       // Año de renovación - Año de renovación del contrato
       // Renewal year - Year of contract renewal
-      renewalYear: [null],
+      // (tipo text-SOLO DISABLED)
+      renewalYear: [{value: null, disabled: true}, [Validators.pattern(/^\d{4}$/)]],
       // Tipo de organización - Campo requerido para clasificación de la escuela
       // Organization type - Required field for school classification
       organizationType: [null, Validators.required],
+      // Centro - Campo requerido para clasificación de la escuela
+      // Center - Required field for school classification
+      centerType: [null, Validators.required],
       // Nivel educativo - Campo requerido para tipo de escuela
       // Education level - Required field for school type
-      educationLevelId: [null, Validators.required],
+      educationLevel: [null, Validators.required],
       // Días de operación - Días cuando la escuela opera
       // Operating days - Days when the school operates
       operatingDays: [''],
-
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
-      kitchenTypeId: [null],
+      kitchenType: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
-      groupTypeId: [null],
+      groupType: [null],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
-      deliveryTypeId: [null],
+      deliveryType: [null],
       // Tipo de auspiciador - Tipo de patrocinio de la escuela
       // Sponsor type - Type of school sponsorship
-      sponsorTypeId: [null],
+      sponsorType: [null],
       // Tipo de solicitante - Tipo de solicitante de la escuela
-      // Applicant type - Type of school applicant
-      applicantTypeId: [null],
-      // Tipo de residencial - Campo requerido para clasificación RCCI (Residencial/No Residencial)
+      // Type of applicant - Type of school applicant
+      // Laico (15), Base de fe (16)
+      typeOfApplicant: [null],
+      // Tipo de residencial - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Residential type - Required field for RCCI classification (Residential/Non-residential)
-      residentialTypeId: [null],
+      // Pernoctan (17), No Pernoctan (18)
+      typeOfResidential: [null],
       // Política de operación - Directrices operativas de la escuela
       // Operating policy - School's operational guidelines
-      operatingPolicyId: [null],
+      operatingPolicy: [null],
       // Disponibilidad de almacén - Indica si la escuela tiene instalaciones de almacenamiento
       // Warehouse availability - Indicates if school has storage facilities
-      hasWarehouse: [null],
+      hasWarehouse: [false],
       // Disponibilidad de comedor - Indica si la escuela tiene instalaciones de comedor
       // Dining room availability - Indicates if school has dining facilities
-      hasDiningRoom: [null],
-
+      hasDiningRoom: [false],
       // Administrador/Representante Autorizado
       // Administrator/Authorized Representative
       // Nombre Completo del Administrador o Representante
@@ -240,11 +259,42 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Teléfono Móvil
       // Mobile phone
       mobilePhone: [''],
+      // Desayuno (si, no)
+      // Breakfast (yes, no)
+      breakfast: [false],
+      // Horario desde para el desayuno
+      // Breakfast schedule from
+      breakfastFrom: [null],
+      // Horario hasta para el desayuno
+      // Breakfast schedule to
+      breakfastTo: [null],
+      // Almuerzo (si, no)
+      // Lunch (yes, no)
+      lunch: [false],
+      // Horario desde para el almuerzo
+      // Lunch schedule from
+      lunchFrom: [null],
+      // Horario hasta para el almuerzo
+      // Lunch schedule to
+      lunchTo: [null],
+      // Merienda (si, no)
+      // Snack (yes, no)
+      snack: [false],
+      // Horario desde para la merienda
+      // Snack schedule from
+      snackFrom: [null],
+      // Horario hasta para la merienda
+      // Snack schedule to
+      snackTo: [null],
     }),
     saveButtonShow: true,
     saveButtonText: 'schools.add.buttons.save',
     cancelButtonShow: true,
     cancelButtonText: 'schools.add.buttons.cancel',
+    // Submit button
+    submitButtonShow: true,
+    submitButtonText: 'schools.add.buttons.submit',
+
   };
 
   satelliteSchoolsConfig: GenericTableConfig = {
@@ -268,6 +318,8 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   compare = compare;
   comparePostal = comparePostal;
 
+  isLoading = false;
+
   constructor() {}
 
   ngOnInit(): void {
@@ -284,9 +336,25 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
         // Yes No
         this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
         // Tipo de residencial
-        this.residentialTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+        this.typeOfResidential = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
         // Tipo de solicitante
-        this.applicantTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+        this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      }
+    });
+
+    // Tipo de centro
+    this._centerTypeService.centerTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.centerTypes = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    // Tipo de organización de Escuelas -- Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
+    this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.organizationTypes = result.body.data;
+        this._changeDetectorRef.detectChanges();
       }
     });
 
@@ -328,7 +396,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de auspiciador
     this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.sponsorTypes = result.body.data;
+        this.sponsorType = result.body.data;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -366,38 +434,199 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     const postalCityId: number = formValues.postalCity?.id;
     const postalRegionId: number = formValues.postalRegion?.id;
 
+    // Nivel educativo
+    const educationLevelId: number = formValues.educationLevel?.id;
+    // Tipo de organización
+    const organizationTypeId: number = formValues.organizationType?.id;
+    // Días de operación
+    const operatingDays: number = formValues.operatingDays;
+    // Tipo de cocina
+    const kitchenTypeId: number = formValues.kitchenType?.id;
+    // Tipo de grupo
+    const groupTypeId: number = formValues.groupType?.id;
+    // Tipo de entrega
+    const deliveryTypeId: number = formValues.deliveryType?.id;
+    // Tipo de auspiciador
+    const sponsorTypeId: number = formValues.sponsorType?.id ?? null;
+    // Tipo de solicitante
+    // Laico (15), Base de fe (16)
+    const applicantTypeId: number = formValues.typeOfApplicant?.id;
+    // Tipo de centro
+    const centerTypeId: number = formValues.centerType?.id;
+    // Tipo de residencial - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
+    // Type of residential - Required field for RCCI classification (Residential/Non-residential)
+    // Pernoctan (17), No Pernoctan (18)
+    const residentialTypeId: number = formValues.typeOfResidential?.id;
+    // Política de operación
+    const operatingPolicyId: number = formValues.operatingPolicy?.id;
+
     // Obtener los valores del formulario
     const schoolRequest: SchoolRequest = {
+      // Información General / General Information
+      // Nombre de la escuela - Campo requerido para identificar la escuela
+      // School name - Required field for identifying the school
       name: formValues.name,
+      // Dirección física - Campo requerido para la ubicación de la escuela
+      // Physical address - Required field for school location
       address: formValues.address,
-      zipCode: formValues.zipCode,
+      // Ciudad - Campo requerido para la ubicación de la escuela
+      // City - Required field for school location
       cityId: cityId,
+      // Región - Campo requerido para la ubicación de la escuela
+      // Region - Required field for school location
       regionId: regionId,
+      // Código postal - Campo requerido para la ubicación de la escuela
+      // ZIP code - Required field for school location
+      zipCode: formValues.zipCode,
+
+      // Copia de Dirección Física / Physical Address Copy
+      // Alternar para copiar la dirección física a la dirección postal
+      // Toggle to copy physical address to postal address
+      sameAsPhysicalAddress: formValues.sameAsPhysicalAddress ?? null,
+
+      // Dirección Postal / Postal Address
+      // Dirección postal - Dirección alternativa para correspondencia
+      // Postal address - Alternative mailing address
       postalAddress: formValues.postalAddress || null,
-      postalZipCode: formValues.postalZipCode || null,
+      // Ciudad postal - Requerido para correspondencia
+      // Postal city - Required for mailing purposes
       postalCityId: postalCityId || null,
+      // Región postal - Requerido para correspondencia
+      // Postal region - Required for mailing purposes
       postalRegionId: postalRegionId || null,
-      educationLevelId: formValues.educationLevelId,
-      organizationTypeId: formValues.organizationTypeId,
-      operatingPeriodId: formValues.operatingPeriodId,
-      kitchenTypeId: formValues.kitchenTypeId,
-      groupTypeId: formValues.groupTypeId,
-      deliveryTypeId: formValues.deliveryTypeId,
-      sponsorTypeId: formValues.sponsorTypeId,
-      applicantTypeId: formValues.applicantTypeId,
-      operatingPolicyId: formValues.operatingPolicyId,
-      latitude: formValues.latitude,
-      longitude: formValues.longitude,
+      // Código postal postal - Requerido para correspondencia
+      // Postal ZIP code - Required for mailing purposes
+      postalZipCode: formValues.postalZipCode || null,
+
+      // Coordenadas Geográficas / Geographical Coordinates
+      // Latitud - Campo requerido para ubicación
+      // Latitude - Required field for location
+      latitude: formValues.latitude ?? null,
+      // Longitud - Campo requerido para ubicación
+      // Longitude - Required field for location
+      longitude: formValues.longitude ?? null,
+
+      // Información Administrativa / Administrative Information
+      // Nivel educativo - Campo requerido para tipo de escuela
+      // Education level - Required field for school type
+      educationLevelId: educationLevelId,
+      // Tipo de organización - Campo requerido para clasificación de la escuela
+      // Organization type - Required field for school classification
+      organizationTypeId: organizationTypeId,
+      // Tipo de centro - Campo requerido para clasificación de la escuela (Orfanato/Centro de tratamiento residencial para salud mental/Centro Correccional Juvenil)
+      // Center type - Required field for school classification
+      centerTypeId: centerTypeId,
+      // Días de operación - Campo requerido para horario de la escuela
+      // Operating days - Required field for school schedule
+      operatingDays: Number(operatingDays),
+
+      // Información Operacional / Operational Information
+      // Tipo de cocina - Campo requerido para servicio de alimentos
+      // Kitchen type - Required field for food service
+      kitchenTypeId: kitchenTypeId,
+      // Tipo de grupo - Campo requerido para clasificación
+      // Group type - Required field for classification
+      groupTypeId: groupTypeId,
+      // Tipo de entrega - Campo requerido para servicio de alimentos
+      // Delivery type - Required field for food service
+      deliveryTypeId: deliveryTypeId,
+      // Tipo de auspiciador - Campo requerido para clasificación
+      // Sponsor type - Required field for classification
+      sponsorTypeId: sponsorTypeId,
+      // Tipo de solicitante - Campo requerido para clasificación
+      // Applicant type - Required field for classification
+      applicantTypeId: applicantTypeId,
+      // Política de operación - Campo requerido para operación
+      // Operating policy - Required field for operation
+      operatingPolicyId: operatingPolicyId,
+
+      // Tipo de Institución Infantil Residencial (RCCI) - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
+      // Type of Residential Institution (RCCI) - Required field for RCCI classification (Residential/Non-residential)
+      residentialTypeId: residentialTypeId,
+      // Información Adicional / Additional Information
+      // Sin fines de lucro - Indicador de organización
+      // Non-profit - Organization indicator
+      nonProfit: formValues.nonProfit ?? null,
+      // Fecha de inicio - Campo para registro histórico
+      // Start date - Field for historical record
+      startDate: formValues.startDate ?? null,
+      // Año base - Campo para registro histórico
+      // Base year - Field for historical record
+      baseYear: formValues.baseYear ?? null,
+      // Año de renovación - Campo para registro histórico
+      // Renewal year - Field for historical record
+      renewalYear: formValues.renewalYear ?? null,
+      // Tiene almacén - Indicador de infraestructura
+      // Has warehouse - Infrastructure indicator
+      hasWarehouse: formValues.hasWarehouse ?? null,
+      // Tiene comedor - Indicador de infraestructura
+      // Has dining room - Infrastructure indicator
+      hasDiningRoom: formValues.hasDiningRoom ?? null,
+
+      // Información de Contacto / Contact Information
+      // Nombre del administrador autorizado - Campo para contacto
+      // Authorized administrator name - Contact field
+      administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
+      // Teléfono del sitio - Campo para contacto
+      // Site phone - Contact field
+      sitePhone: formValues.sitePhone ?? null,
+      // Extensión - Campo para contacto
+      // Extension - Contact field
+      extension: formValues.extension ?? null,
+      // Teléfono móvil - Campo para contacto
+      // Mobile phone - Contact field
+      mobilePhone: formValues.mobilePhone ?? null,
+
+      // Servicios y Horarios / Services and Schedules
+      // Desayuno - Indicador de servicio
+      // Breakfast - Service indicator
+      breakfast: formValues.breakfast ?? null,
+      // Horario desde para el desayuno
+      // Breakfast schedule from
+      breakfastFrom: formValues.breakfastFrom ?? null,
+      // Horario hasta para el desayuno
+      // Breakfast schedule to
+      breakfastTo: formValues.breakfastTo ?? null,
+      // Almuerzo - Indicador de servicio
+      // Lunch - Service indicator
+      lunch: formValues.lunch ?? null,
+      // Horario desde para el almuerzo
+      // Lunch schedule from
+      lunchFrom: formValues.lunchFrom ?? null,
+      // Horario hasta para el almuerzo
+      // Lunch schedule to
+      lunchTo: formValues.lunchTo ?? null,
+      // Merienda - Indicador de servicio
+      // Snack - Service indicator
+      snack: formValues.snack ?? null,
+      // Horario desde para la merienda
+      // Snack schedule from
+      snackFrom: formValues.snackFrom ?? null,
+      // Horario hasta para la merienda
+      // Snack schedule to
+      snackTo: formValues.snackTo ?? null,
+
+      // Si la escuela es la principal
+      // If the school is the main school
+      isMainSchool: true,
     };
 
     this.isLoading = true;
-    this._schoolService.insertSchool(this.headerConfig.formGroup.value, {}).subscribe({
-      next: () => {
-        this._snackBar.open('Escuela creada correctamente', 'Cerrar', { duration: 3000 });
-        this._customRouter.navigate(['schools/list']);
+    this._schoolService.insertSchool(schoolRequest, {}).subscribe({
+      next: (result: any) => {
+        switch (result.body) {
+          case true:
+            showSuccessDialog();
+            break;
+          default:
+            showErrorDialog();
+            break;
+        }
       },
       error: (err) => {
-        this._snackBar.open('Error al crear la escuela: ' + (err?.error?.message || err), 'Cerrar', { duration: 5000 });
+        showErrorDialog();
+      },
+      complete: () => {
         this.isLoading = false;
       },
     });

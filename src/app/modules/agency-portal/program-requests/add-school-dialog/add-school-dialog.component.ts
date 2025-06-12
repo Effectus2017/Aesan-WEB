@@ -154,14 +154,14 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
       const schoolRequest: SchoolRequest = {
         name: this.form.get('Name').value,
         educationLevelId: this.form.get('EducationLevelId').value,
-        operatingPeriodId: this.form.get('OperatingPeriodId').value,
+       //operatingPeriodId: this.form.get('OperatingPeriodId').value,
         address: this.form.get('Address').value,
         cityId: this.form.get('CityId').value,
         regionId: this.form.get('RegionId').value,
         zipCode: this.form.get('ZipCode').value,
         organizationTypeId: this.form.get('OrganizationTypeId').value,
-        facilityIds: this.form.get('FacilityIds').value,
-        mealTypeIds: this.form.get('MealTypeIds').value
+        //facilityIds: this.form.get('FacilityIds').value,
+        //mealTypeIds: this.form.get('MealTypeIds').value
       };
 
       if (this.data.isTemporary) {

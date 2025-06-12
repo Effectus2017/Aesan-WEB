@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { School } from '../models/School';
+import { SchoolRequest } from '../models/Request/SchoolRequest';
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +63,7 @@ export class SchoolService {
    * @param queryParameters Los parámetros de consulta
    * @returns La escuela insertada
    */
-  insertSchool(school: School, queryParameters: QueryParameters): Observable<any> {
+  insertSchool(school: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-school`, school, getHttpOptions(queryParameters));
   }
 

@@ -1,0 +1,29 @@
+{
+  "residential-type": {
+    "list": {
+      "title": "Tipos de Residencial",
+      "search": {
+        "placeholder": "Buscar tipo de residencial"
+      },
+      "buttons": {
+        "save": "Buscar"
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Nombre",
+          "nameEN": "Nombre (EN)",
+          "isActive": "Activo",
+          "displayOrder": "Orden",
+          "actions": "Acciones"
+        }
+      }
+    },
+    "add": {
+      "title": "Agregar Tipo de Residencial"
+    },
+    "edit": {
+      "title": "Editar Tipo de Residencial"
+    }
+  }
+}

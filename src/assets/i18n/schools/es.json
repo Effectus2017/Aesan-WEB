@@ -19,7 +19,7 @@
             "information": "Información",
             "information-description": "Información del sitio",
             "name": {
-                "label": "Nombre",
+                "label": "Nombre del sitio",
                 "placeholder": "Nombre del sitio",
                 "required": "El nombre del sitio es requerido"
             },
@@ -28,6 +28,7 @@
                 "placeholder": "Dirección del sitio",
                 "required": "La dirección del sitio es requerida"
             },
+            "address.description": "Datos de la dirección física del sitio",
             "city": {
                 "label": "Ciudad",
                 "placeholder": "Ciudad del sitio",
@@ -59,6 +60,7 @@
                 "placeholder": "Dirección postal del sitio",
                 "required": "La dirección postal es requerida"
             },
+            "postal-address.description": "Datos de la dirección postal del sitio",
             "same-as-physical-address": {
                 "label": "Igual que la dirección física"
             },
@@ -79,9 +81,14 @@
                 "description": "Información administrativa del sitio"
             },
             "organization-type": {
-                "label": "¿Es una organización sin fines de lucro?",
-                "placeholder": "¿Es una organización sin fines de lucro?",
+                "label": "Tipo de organización",
+                "placeholder": "Tipo de organización del sitio",
                 "required": "El campo es requerido"
+            },
+            "center": {
+                "label": "Centros",
+                "placeholder": "Centros del sitio",
+                "required": "Los centros son requeridos"
             },
             "non-profit": {
                 "label": "¿Es una organización sin fines de lucro?"
@@ -142,10 +149,15 @@
                 "placeholder": "Tipo de solicitante del sitio",
                 "required": "El tipo de solicitante es requerido"
             },
+            "center-type": {
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
+            },
             "residential-type": {
-                "label": "Tipo de Residencial",
-                "placeholder": "Tipo de residencial del sitio",
-                "required": "El tipo de residencial es requerido"
+                "label": "Tipo de Institución Infantil Residencial (RCCI)",
+                "placeholder": "Tipo de institución infantil residencial (RCCI) del sitio",
+                "required": "El tipo de institución infantil residencial (RCCI) es requerido"
             },
             "operating-policy": {
                 "label": "Política de Funcionamiento",
@@ -189,6 +201,42 @@
             "services-and-schedule": {
                 "label": "Servicios que operará y horario",
                 "description": "Información de los servicios que operará y horario"
+            },
+            "breakfast": {
+                "label": "Desayuno",
+                "placeholder": "Desayuno"
+            },
+            "breakfast-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "breakfast-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "lunch": {
+                "label": "Almuerzo",
+                "placeholder": "Almuerzo"
+            },
+            "lunch-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "lunch-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack": {
+                "label": "Merienda",
+                "placeholder": "Merienda"
+            },
+            "snack-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
             },
             "buttons": {
                 "save": "Guardar",

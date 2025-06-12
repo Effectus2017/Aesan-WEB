@@ -48,7 +48,9 @@
             "group-types": "Group Types",
             "permissions": "Permissions",
             "sponsor-types": "Sponsor Types",
-            "operating-policies": "Operating Policies"
+            "operating-policies": "Operating Policies",
+            "center-types": "Center Types",
+            "residential-types": "Residential Types"
         }
     }
 }

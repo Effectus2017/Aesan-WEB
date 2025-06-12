@@ -15,17 +15,47 @@ export interface SchoolRequest {
     postalZipCode?: number;
     postalCityId?: number;
     postalRegionId?: number;
+    sameAsPhysicalAddress?: boolean;
 
-    // Datos de la Escuela
-    educationLevelId?: number;
-    operatingPeriodId?: number;
+    // Información Administrativa
     organizationTypeId?: number;
-    applicantTypeId?: number;
-    operatingPolicyId?: number;
-    sponsorTypeId?: number;
-    deliveryTypeId?: number;
-    groupTypeId?: number;
+    centerTypeId?: number;
+    nonProfit?: boolean;
+    startDate?: string;
+    baseYear?: number;
+    renewalYear?: number;
+    educationLevelId?: number;
+    operatingDays?: number;
+
+    // Información Operacional
     kitchenTypeId?: number;
-    facilityIds?: number[];
-    mealTypeIds?: number[];
+    groupTypeId?: number;
+    deliveryTypeId?: number;
+    sponsorTypeId?: number;
+    applicantTypeId?: number;
+    residentialTypeId?: number;
+    operatingPolicyId?: number;
+    hasWarehouse?: boolean;
+    hasDiningRoom?: boolean;
+
+    // Administrador/Representante Autorizado
+    administratorAuthorizedName?: string;
+    sitePhone?: string;
+    extension?: string;
+    mobilePhone?: string;
+
+    // Servicios y Horarios
+    breakfast?: boolean;
+    breakfastFrom?: string;
+    breakfastTo?: string;
+    lunch?: boolean;
+    lunchFrom?: string;
+    lunchTo?: string;
+    snack?: boolean;
+    snackFrom?: string;
+    snackTo?: string;
+
+    // Si la escuela es la principal
+    isMainSchool?: boolean;
+
 }

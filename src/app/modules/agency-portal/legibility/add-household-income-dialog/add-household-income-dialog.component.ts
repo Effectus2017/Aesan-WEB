@@ -42,7 +42,7 @@ export interface HouseholdIncomeDialogData {
         MatNativeDateModule,
         MatButtonModule,
         MatSelectModule,
-        DarkModeTextDirective,
+        // DarkModeTextDirective,
         NgIf,
         NgFor,
         MatOptionModule,
