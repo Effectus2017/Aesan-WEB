@@ -30,6 +30,7 @@
           <mat-form-field data-cy="address-field">
             <mat-label>{{ "schools.add.address.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'address'" placeholder="{{ 'schools.add.address.placeholder' | transloco }}" data-cy="address-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('address').hasError('required')">{{ "schools.add.address.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- City para Dirección Física *  -->
@@ -40,6 +41,7 @@
                 {{ city.name }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('city').hasError('required')">{{ "schools.add.city.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Region *  -->
@@ -48,6 +50,7 @@
             <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('region').hasError('required')">{{ "schools.add.region.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
@@ -56,17 +59,20 @@
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "schools.add.zip-code.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'zipCode'" placeholder="{{ 'schools.add.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">{{ "schools.add.zip-code.required" | transloco }}</mat-error>
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field data-cy="latitude-field">
             <mat-label>{{ "schools.add.latitude.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'latitude'" placeholder="{{ 'schools.add.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('latitude').hasError('required')">{{ "schools.add.latitude.required" | transloco }}</mat-error>
           </mat-form-field>
           <!-- Longitude *  -->
           <div class="flex items-center gap-2">
             <mat-form-field data-cy="longitude-field" class="flex-grow">
               <mat-label>{{ "schools.add.longitude.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'longitude'" placeholder="{{ 'schools.add.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+              <mat-error *ngIf="headerConfig.formGroup.get('longitude').hasError('required')">{{ "schools.add.longitude.required" | transloco }}</mat-error>
             </mat-form-field>
             <button
               mat-icon-button
@@ -106,6 +112,7 @@
             <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('postalCity').hasError('required')">{{ "schools.add.city.required" | transloco }}</mat-error>
           </mat-form-field>
           <!-- Region para Dirección Postal *  -->
           <mat-form-field data-cy="postal-region-field">
@@ -113,6 +120,7 @@
             <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="comparePostal">
               <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('postalRegion').hasError('required')">{{ "schools.add.region.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Postal Zip Code *  -->
@@ -139,6 +147,7 @@
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('nonProfit').hasError('required')">{{ "schools.add.non-profit.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
@@ -177,14 +186,16 @@
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select">
               <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">{{ option.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "schools.add.organization-type.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Centro -->
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.add.center.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'centerTypes'" data-cy="center-select">
+            <mat-select [formControlName]="'centerType'" data-cy="center-select">
               <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ option.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.add.center.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Nivel educativo -->
@@ -193,6 +204,7 @@
             <mat-select [formControlName]="'educationLevel'" data-cy="education-level-select">
               <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('educationLevel').hasError('required')">{{ "schools.add.education-level.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Días de funcionamiento=Esto entiendo que aplica solo para PSAV, pero te valido -->

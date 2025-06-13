@@ -46,6 +46,17 @@ export function comparePostal(o1: any, o2: any): boolean {
     return false;
   }
 
+  /**
+   * Compara dos elementos por una propiedad específica
+   * @param item1 Elemento 1
+   * @param item2 Elemento 2
+   * @param property Propiedad a comparar
+   * @returns true si los elementos son iguales, false en caso contrario
+   */
+  export function compareItems<T>(item1: T, item2: T): boolean {
+    return compareByProperty(item1, item2, 'id' as keyof T);
+  }
+
 /**
  * Compara dos elementos por una propiedad específica
  * @param item1 Elemento 1
@@ -253,50 +264,29 @@ export function mapYesNoOptionIdToBoolean(id: number, options: { id: number; nam
   return undefined;
 }
 
-/**
- * Muestra un diálogo de éxito usando FuseConfirmationService
- * Utiliza inyección de dependencias interna para obtener los servicios necesarios
- */
-export function showSuccessDialog(message: string = 'dialog.success.message'): void {
-  const fuseConfirmationService = inject(FuseConfirmationService);
-  const translocoService = inject(TranslocoService);
 
-  fuseConfirmationService.open({
-    title: translocoService.translate('dialog.success.title'),
-    icon: {
-      show: true,
-      name: 'heroicons_outline:check-circle',
-      color: 'success',
-    },
-    message: translocoService.translate(message),
-    actions: {
-      confirm: {
-        label: translocoService.translate('dialog.success.confirm'),
-      },
-    },
-  });
+
+/**
+ * Convierte una fecha a un string de formato HH:mm:ss
+ * @param date Fecha a convertir
+ * @returns String de formato HH:mm:ss o null si la fecha es null
+ */
+export function toTimeString(date: Date | string | null): string | null {
+  if (!date) return null;
+  if (typeof date === 'string') return date.length === 8 ? date : null; // ya es HH:mm:ss
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
+  return `${hours}:${minutes}:${seconds}`;
 }
 
 /**
- * Muestra un diálogo de error usando FuseConfirmationService
- * Utiliza inyección de dependencias interna para obtener los servicios necesarios
+ * Convierte un string de formato HH:mm:ss a un objeto Date
+ * @param timeString String de formato HH:mm:ss
+ * @returns Objeto Date o null si el string es null
  */
-export function showErrorDialog(message: string = 'dialog.error.message'): void {
-  const fuseConfirmationService = inject(FuseConfirmationService);
-  const translocoService = inject(TranslocoService);
-
-  fuseConfirmationService.open({
-    title: translocoService.translate('dialog.error.title'),
-    icon: {
-      show: true,
-      name: 'heroicons_outline:x-circle',
-      color: 'error',
-    },
-    message: translocoService.translate(message),
-    actions: {
-      confirm: {
-        label: translocoService.translate('dialog.error.confirm'),
-      },
-    },
-  });
+export function toTimeDate(timeString: string | null): Date | null {
+  if (!timeString) return null;
+  const [hours, minutes, seconds] = timeString.split(':').map(Number);
+  return new Date(2000, 1, 1, hours, minutes, seconds);
 }

@@ -23,7 +23,7 @@ export const initialMonitorPreoperationalVisitResolver = () => {
   };
 
   return forkJoin([
-    _programService.getAllProgramInscriptions(requestParameters),
+    //_programService.getAllProgramInscriptions(requestParameters),
     _agencyService.getAllAgenciesFromDb(requestParameters),
   ]);
 };

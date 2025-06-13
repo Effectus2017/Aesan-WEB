@@ -108,7 +108,7 @@ export class HouseholdListComponent implements OnInit, OnDestroy, OnGenericTable
       //street: form.street || null,
       userId: this._authService.getUserId(),
     };
-    this._householdService.getAll(requestParameters).subscribe((result: any) => {
+    this._householdService.getAllHouseholdsFromDb(requestParameters).subscribe((result: any) => {
       if (result && result.body) {
         const data = result.body.data || [];
         this.tableConfig.dataSource.data = data;

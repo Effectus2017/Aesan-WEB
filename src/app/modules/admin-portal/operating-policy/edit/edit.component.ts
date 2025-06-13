@@ -1,19 +1,18 @@
-import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
+import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ActivatedRoute, Router } from '@angular/router';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'app-edit-operating-policy',
@@ -36,8 +35,8 @@ export class EditOperatingPolicyComponent implements OnInit, OnGenericHeaderHand
   private _formBuilder = inject(UntypedFormBuilder);
   private _operatingPolicyService = inject(OperatingPolicyService);
   private _transloco = inject(TranslocoService);
-  private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
+  private _notificationService = inject(NotificationService);
 
   operatingPolicyId: number;
   currentLang: string;
@@ -81,7 +80,7 @@ export class EditOperatingPolicyComponent implements OnInit, OnGenericHeaderHand
 
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
-        this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', { duration: 5000 });
+        this._notificationService.showError('El formulario es inválido. Por favor, complete todos los campos requeridos.');
         this.headerConfig.formGroup.markAllAsTouched();
         return;
     }
@@ -100,15 +99,15 @@ export class EditOperatingPolicyComponent implements OnInit, OnGenericHeaderHand
       next: (result: any) => {
         switch (result.body) {
           case true:
-            showSuccessDialog();
+            this._notificationService.showSuccessDialog();
             break;
           default:
-            showErrorDialog();
+            this._notificationService.showErrorDialog();
             break;
         }
       },
       error: (err) => {
-        showErrorDialog();
+        this._notificationService.showErrorDialog();
       },
       complete: () => {
         this._customRouterService.navigate(['operating-policy/list']);

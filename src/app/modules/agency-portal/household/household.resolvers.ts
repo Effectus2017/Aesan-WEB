@@ -11,12 +11,12 @@ export const initialDataHouseholdListResolver: ResolveFn<any> = (route: Activate
     alls: true,
   };
   return forkJoin([
-    householdService.getAll(requestParameters)
+    householdService.getAllHouseholdsFromDb(requestParameters)
   ]);
 };
 
 export const initialDataHouseholdEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const householdService = inject(HouseholdService);
   const id = Number(route.paramMap.get('id'));
-  return householdService.getById(id);
+  return householdService.getHouseholdById({ id });
 };

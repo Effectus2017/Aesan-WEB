@@ -27,6 +27,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GeoService } from 'app/shared/services/geo.service';
+import { HouseholdRequest } from 'app/shared/models/Request/HouseholdRequest';
 
 @Component({
     selector: 'agency-portal-readability-module-add',
@@ -149,7 +150,8 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
   onSave() {
     if (this.headerConfig.formGroup.valid) {
       const newHousehold = this.headerConfig.formGroup.value;
-      this._householdService.add(newHousehold).subscribe(() => {
+
+      this._householdService.insertHousehold(newHousehold, {}).subscribe(() => {
         this._snackBar.open('Módulo de legibilidad creado correctamente', 'Cerrar', { duration: 3000 });
         this._customRouterService.navigate(['agency-portal']);
       });

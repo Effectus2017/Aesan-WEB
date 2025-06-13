@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,10 +11,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GeoService } from 'app/shared/services/geo.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
-import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
-import { FacilityService } from 'app/shared/services/facility.service';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -26,7 +23,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, showErrorDialog, showSuccessDialog } from 'app/shared/utils';
+import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { Region } from 'app/shared/models/Region';
@@ -43,6 +40,9 @@ import { CenterType } from 'app/shared/models/CenterType';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { SponsorType } from 'app/shared/models/SponsorType';
+import { EducationLevel } from 'app/shared/models/EducationLevel';
+import { AuthService } from 'app/core/auth/auth.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'app-schools-add',
@@ -63,7 +63,6 @@ import { SponsorType } from 'app/shared/models/SponsorType';
         MatDatepickerModule,
         MatTooltipModule,
         MatIconModule,
-        MatDatepickerModule,
         MatTimepickerModule,
         MatIconModule,
     ]
@@ -74,7 +73,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _schoolService = inject(SchoolService);
   private _geoService = inject(GeoService);
   private _operatingPolicyService = inject(OperatingPolicyService);
-  private _snackBar = inject(MatSnackBar);
+  private _notificationService = inject(NotificationService);
   private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -85,6 +84,8 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _deliveryTypeService = inject(DeliveryTypeService);
   private _centerTypeService = inject(CenterTypeService);
   private _organizationTypeService = inject(OrganizationTypeService);
+  private _educationLevelService = inject(EducationLevelService);
+  private _authService = inject(AuthService);
 
   // catálogos
   listCities: City[] = [];
@@ -95,19 +96,13 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Si (1) y No (2)
   yesNoOptions: OptionSelection[] = [];
 
-  // catálogos
   // Tipo de Organización Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for school classification
   organizationTypes: OrganizationType[] = [];
 
   // Nivel educativo - Campo requerido para tipo de escuela
   // Education level - Required field for school type
-  educationLevels = [
-    {id: 1, name: 'Kinder'},
-    {id: 2, name: 'Elemental'},
-    {id: 3, name: 'Intermedio'},
-    {id: 4, name: 'Superior'},
-  ];
+  educationLevels: EducationLevel[] = [];
 
   // Centro - Campo requerido para clasificación de la escuela
   // Center - Required field for school classification
@@ -145,7 +140,9 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Lenguaje actual
   currentLang: string = 'es';
 
-  // Header config
+  // Header config and reactive form
+  // Configuración del header y formulario reactivo
+  // Header config and reactive form
   headerConfig: GenericHeaderConfig = {
     title: 'schools.add.title',
     formGroup: this._formBuilder.group({
@@ -320,10 +317,16 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   isLoading = false;
 
+  // Agencia Id
+  agencyId: number = 0;
+
   constructor() {}
 
   ngOnInit(): void {
     this.isLoading = true;
+
+    // Obtener Agencia desde local storage desde AuthService
+    this.agencyId = this._authService.getAgencyId();
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -418,21 +421,47 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       }
     });
 
+    // Nivel educativo - Campo requerido para escuela
+    // Education level - Required field for school type
+    // Kinder (1), Elementary (2), Intermediate (3), Superior (4)
+    this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.educationLevels = result.body.data;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     this.isLoading = false;
   }
 
+  // Método para enviar el formulario
   onSubmit() {
+    // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
-        this._snackBar.open('Por favor, complete todos los campos requeridos', 'Cerrar', { duration: 3000 });
+        this._notificationService.showError('Por favor, complete todos los campos requeridos');
         this.headerConfig.formGroup.markAllAsTouched();
         return;
     }
 
     const formValues = this.headerConfig.formGroup.value;
+    // Ciudad
     const cityId: number = formValues.city?.id;
+    // Región
     const regionId: number = formValues.region?.id;
+    // Ciudad postal
     const postalCityId: number = formValues.postalCity?.id;
+    // Región postal
     const postalRegionId: number = formValues.postalRegion?.id;
+
+    // Horario de desayuno
+    const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
+    const breakfastTo: string = toTimeString(formValues.breakfastTo);
+    // Horario de almuerzo
+    const lunchFrom: string = toTimeString(formValues.lunchFrom);
+    const lunchTo: string = toTimeString(formValues.lunchTo);
+    // Horario de merienda
+    const snackFrom: string = toTimeString(formValues.snackFrom);
+    const snackTo: string = toTimeString(formValues.snackTo);
 
     // Nivel educativo
     const educationLevelId: number = formValues.educationLevel?.id;
@@ -462,6 +491,8 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
     // Obtener los valores del formulario
     const schoolRequest: SchoolRequest = {
+      // Agencia Id
+      agencyId: this.agencyId,
       // Información General / General Information
       // Nombre de la escuela - Campo requerido para identificar la escuela
       // School name - Required field for identifying the school
@@ -478,12 +509,10 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Código postal - Campo requerido para la ubicación de la escuela
       // ZIP code - Required field for school location
       zipCode: formValues.zipCode,
-
       // Copia de Dirección Física / Physical Address Copy
       // Alternar para copiar la dirección física a la dirección postal
       // Toggle to copy physical address to postal address
       sameAsPhysicalAddress: formValues.sameAsPhysicalAddress ?? null,
-
       // Dirección Postal / Postal Address
       // Dirección postal - Dirección alternativa para correspondencia
       // Postal address - Alternative mailing address
@@ -497,7 +526,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Código postal postal - Requerido para correspondencia
       // Postal ZIP code - Required for mailing purposes
       postalZipCode: formValues.postalZipCode || null,
-
       // Coordenadas Geográficas / Geographical Coordinates
       // Latitud - Campo requerido para ubicación
       // Latitude - Required field for location
@@ -505,7 +533,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Longitud - Campo requerido para ubicación
       // Longitude - Required field for location
       longitude: formValues.longitude ?? null,
-
       // Información Administrativa / Administrative Information
       // Nivel educativo - Campo requerido para tipo de escuela
       // Education level - Required field for school type
@@ -519,7 +546,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Días de operación - Campo requerido para horario de la escuela
       // Operating days - Required field for school schedule
       operatingDays: Number(operatingDays),
-
       // Información Operacional / Operational Information
       // Tipo de cocina - Campo requerido para servicio de alimentos
       // Kitchen type - Required field for food service
@@ -539,7 +565,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Política de operación - Campo requerido para operación
       // Operating policy - Required field for operation
       operatingPolicyId: operatingPolicyId,
-
       // Tipo de Institución Infantil Residencial (RCCI) - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Type of Residential Institution (RCCI) - Required field for RCCI classification (Residential/Non-residential)
       residentialTypeId: residentialTypeId,
@@ -576,35 +601,34 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Teléfono móvil - Campo para contacto
       // Mobile phone - Contact field
       mobilePhone: formValues.mobilePhone ?? null,
-
       // Servicios y Horarios / Services and Schedules
       // Desayuno - Indicador de servicio
       // Breakfast - Service indicator
       breakfast: formValues.breakfast ?? null,
       // Horario desde para el desayuno
       // Breakfast schedule from
-      breakfastFrom: formValues.breakfastFrom ?? null,
+      breakfastFrom: breakfastFrom ?? null,
       // Horario hasta para el desayuno
       // Breakfast schedule to
-      breakfastTo: formValues.breakfastTo ?? null,
+      breakfastTo: breakfastTo ?? null,
       // Almuerzo - Indicador de servicio
       // Lunch - Service indicator
       lunch: formValues.lunch ?? null,
       // Horario desde para el almuerzo
       // Lunch schedule from
-      lunchFrom: formValues.lunchFrom ?? null,
+      lunchFrom: lunchFrom ?? null,
       // Horario hasta para el almuerzo
       // Lunch schedule to
-      lunchTo: formValues.lunchTo ?? null,
+      lunchTo: lunchTo ?? null,
       // Merienda - Indicador de servicio
       // Snack - Service indicator
       snack: formValues.snack ?? null,
       // Horario desde para la merienda
       // Snack schedule from
-      snackFrom: formValues.snackFrom ?? null,
+      snackFrom: snackFrom ?? null,
       // Horario hasta para la merienda
       // Snack schedule to
-      snackTo: formValues.snackTo ?? null,
+      snackTo: snackTo ?? null,
 
       // Si la escuela es la principal
       // If the school is the main school
@@ -612,35 +636,61 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     };
 
     this.isLoading = true;
+
+
+    // Disable the form
+    this.headerConfig.formGroup.disable();
+
     this._schoolService.insertSchool(schoolRequest, {}).subscribe({
       next: (result: any) => {
         switch (result.body) {
           case true:
-            showSuccessDialog();
+            this._notificationService.showSuccessDialog();
             break;
           default:
-            showErrorDialog();
+            this._notificationService.showErrorDialog();
             break;
         }
       },
       error: (err) => {
-        showErrorDialog();
+        this._notificationService.showErrorDialog();
+        this.headerConfig.formGroup.enable();
       },
       complete: () => {
         this.isLoading = false;
+        // Enable the form
+        this.headerConfig.formGroup.enable();
+        // Reset the form
+        this.headerConfig.formGroup.reset();
+
+        const baseYearControl = this.headerConfig.formGroup.get('baseYear');
+        const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
+
+        // Disable the base year and renewal year fields
+        if (baseYearControl) {
+          baseYearControl.disable();
+          baseYearControl.setValue(null);
+        }
+        if (renewalYearControl) {
+          renewalYearControl.disable();
+          renewalYearControl.setValue(null);
+        }
       },
     });
   }
 
+  // Método para cancelar la operación
   onCancel() {
     this._customRouter.navigate(['schools/list']);
   }
 
+  // Método para agregar una escuela satélite
   onTableAddSatelliteSchool(event: Event, element: any) {
     console.log('onTableAddSatelliteSchool', event, element);
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad
+  // Get all regions by city ID
   getRegionsByCityId(city: City, target: string): void {
     if (!city) return;
 
@@ -685,6 +735,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Copiar Dirección Física
   // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
   // Si el checkbox no está marcado, limpiar los campos de la dirección postal
+  // If the checkbox is not checked, clear the postal address fields
   onCheckboxChange(event: any): void {
     if (event.checked) {
       // Primero asignamos los valores básicos

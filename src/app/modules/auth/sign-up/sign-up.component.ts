@@ -32,40 +32,39 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { ProgramService } from 'app/shared/services/program.service';
-import { optionSelectionData } from 'app/shared/common-data';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { takeUntil } from 'rxjs';
 
 @Component({
-    selector: 'auth-sign-up',
-    templateUrl: './sign-up.component.html',
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        NgIf,
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        MatButtonModule,
-        MatCheckboxModule,
-        MatProgressSpinnerModule,
-        MatSelectModule,
-        MatIconModule,
-        TranslocoModule,
-        NgFor,
-        MatDividerModule,
-        MatSnackBarModule,
-        LanguagesComponent,
-        MatTooltipModule,
-        NumericOnlyDirective,
-        MatDatepickerModule,
-        MatNativeDateModule,
-        MatInputModule,
-        MatTooltipModule,
-    ]
+  selector: 'auth-sign-up',
+  templateUrl: './sign-up.component.html',
+  encapsulation: ViewEncapsulation.None,
+  animations: fuseAnimations,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    NgIf,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCheckboxModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatIconModule,
+    TranslocoModule,
+    NgFor,
+    MatDividerModule,
+    MatSnackBarModule,
+    LanguagesComponent,
+    MatTooltipModule,
+    NumericOnlyDirective,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatInputModule,
+    MatTooltipModule,
+  ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -446,10 +445,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
 
     const formValues = this.signUpForm.value;
-    const cityId: number = formValues.city?.id;
-    const regionId: number = formValues.region?.id;
-    const postalCityId: number = formValues.postalCity?.id;
-    const postalRegionId: number = formValues.postalRegion?.id;
 
     // Verificar que se haya seleccionado un programa
     if (!formValues.program) {
@@ -458,6 +453,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       });
       return;
     }
+
+    const cityId: number = formValues.city?.id;
+    const regionId: number = formValues.region?.id;
+    const postalCityId: number = formValues.postalCity?.id;
+    const postalRegionId: number = formValues.postalRegion?.id;
 
     // Obtener el ID del programa seleccionado
     const programId = formValues.program?.id;
@@ -631,7 +631,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si la agencia no acepta fondos estatales o federales, deshabilitar el formulario
   // Si la agencia acepta fondos estatales o federales, habilitar el formulario
   checkFundsEligibility(): void {
-
     // TODO: deshabilitar este método
     return;
 
@@ -825,5 +824,4 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       enableAllControls(this.signUpForm);
     }
   }
-
 }

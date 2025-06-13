@@ -8,7 +8,7 @@ export default [
     component: HouseholdComponent,
     children: [
       {
-        path: 'list',
+        path: '',
         loadComponent: () => import('./list/list.component').then((c) => c.HouseholdListComponent),
         resolve: {
           data: initialDataHouseholdListResolver,

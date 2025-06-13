@@ -140,7 +140,7 @@ export const appRoutes: Route[] = [
       // Forms, listado de formularios para solicitar programas (Role: Agency)
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
       // Schools, listado de escuelas (Role: Agency)
-      { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes').then(m => m.default) },
+      { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes') },
       // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)

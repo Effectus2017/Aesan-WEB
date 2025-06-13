@@ -7,7 +7,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { KitchenTypeRequest } from 'app/shared/models/Request/KitchenTypeRequest';
 import { KitchenType } from 'app/shared/models/KitchenType';
 import { MatSelectModule } from '@angular/material/select';
@@ -15,7 +15,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'app-add-kitchen-type',
@@ -42,7 +42,7 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
   private _kitchenTypeService = inject(KitchenTypeService);
   private _cdr = inject(ChangeDetectorRef);
   private _transloco = inject(TranslocoService);
-  private _snackBar = inject(MatSnackBar);
+  private _notificationService = inject(NotificationService);
   private _customRouterService = inject(CustomRouterService);
 
   currentLang: string;
@@ -85,7 +85,7 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
    */
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
-      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', { duration: 5000 });
+      this._notificationService.showError('El formulario es inválido. Por favor, complete todos los campos requeridos.');
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -115,15 +115,15 @@ export class AddKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers 
         next: (result: any) => {
           switch (result.body) {
             case true:
-              showSuccessDialog();
+              this._notificationService.showSuccessDialog();
               break;
             default:
-              showErrorDialog();
+              this._notificationService.showErrorDialog();
               break;
           }
         },
         error: (error) => {
-          showErrorDialog();
+          this._notificationService.showErrorDialog();
         },
         complete: () => {
           this._customRouterService.navigate([`kitchen-type`]);

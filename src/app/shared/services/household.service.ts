@@ -1,30 +1,83 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from 'environments/environment';
+import { getHttpOptions } from '../utils';
+import { QueryParameters } from '../models/QueryParameters';
+import { HouseholdRequest } from '../models/Request/HouseholdRequest';
+import { Household } from '../models/Household';
+
 
 @Injectable({ providedIn: 'root' })
 export class HouseholdService {
-  private baseUrl = '/api/household';
+  private _households: BehaviorSubject<Household[] | null> = new BehaviorSubject(null);
+  private _household: BehaviorSubject<Household | null> = new BehaviorSubject(null);
 
-  constructor(private http: HttpClient) {}
+  private apiUrl = `${environment.baseHttpUrl}/household`;
+  private _httpClient = inject(HttpClient);
 
-  getAll(params?: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/list`, { params });
+  constructor() {}
+
+  /**
+   * Obtiene todos los hogares
+   * @returns Todos los hogares
+   */
+  get households$(): Observable<Household[] | null> {
+    return this._households.asObservable();
   }
 
-  getById(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${id}`);
+  /**
+   * Obtiene un hogar
+   * @returns Un hogar
+   */
+  get household$(): Observable<Household | null> {
+    return this._household.asObservable();
   }
 
-  add(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/add`, data);
+  /**
+   * Obtiene un hogar por su ID
+   * @param id El ID del hogar
+   * @returns El hogar
+   */
+  getHouseholdById(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-household-by-id`, getHttpOptions(queryParameters))
+      .pipe(tap((response: any) => this._household.next(response)));
   }
 
-  update(id: number, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/edit/${id}`, data);
+  /**
+   * Obtiene todos los hogares de la base de datos
+   * @param queryParameters Los parámetros de consulta
+   * @returns Todos los hogares
+   */
+  getAllHouseholdsFromDb(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-households-from-db`, getHttpOptions(queryParameters))
+      .pipe(tap((response: any) => this._households.next(response)));
   }
 
-  delete(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/delete/${id}`);
+  /**
+   * Inserta un hogar
+   * @param data Los datos del hogar
+   * @returns El hogar
+   */
+  insertHousehold(household: HouseholdRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/insert-household`, household, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Actualiza un hogar
+   * @param data Los datos del hogar
+   * @returns El hogar
+   */
+  updateHousehold(household: HouseholdRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-household`, household, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Elimina un hogar
+   * @param id El ID del hogar
+   * @returns El hogar
+   */
+  deleteHousehold(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.delete(`${this.apiUrl}/delete-household`, getHttpOptions(queryParameters));
   }
 }

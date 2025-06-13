@@ -73,7 +73,7 @@ export class SchoolService {
    * @param queryParameters Los parámetros de consulta
    * @returns La escuela actualizada
    */
-  updateSchool(school: School, queryParameters: QueryParameters): Observable<any> {
+  updateSchool(school: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-school`, school, getHttpOptions(queryParameters));
   }
 

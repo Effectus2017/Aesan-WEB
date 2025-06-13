@@ -23,7 +23,7 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, isNullOrUndefinedEmptyStringNullArray, showErrorDialog, showSuccessDialog } from 'app/shared/utils';
+import { compareByProperty, compareItems, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -36,6 +36,10 @@ import { NgClass } from '@angular/common';
 import { FuseConfigService } from '@fuse/services/config';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
+import { Region } from 'app/shared/models/Region';
+import { Program } from 'app/shared/models/Program';
+import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
     selector: 'app-monitor-preoperational-visit-edit',
@@ -77,15 +81,15 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
-  private _snackBar = inject(MatSnackBar);
+  private _notificationService = inject(NotificationService);
   private _dialog = inject(MatDialog);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfigService = inject(FuseConfigService);
 
-  listAgencyStatus = [];
-  listPrograms = [];
-  listCities = [];
-  listRegions = [];
+  listAgencyStatus: AgencyStatus[] = [];
+  listPrograms: Program[] = [];
+  listCities: City[] = [];
+  listRegions: Region[] = [];
 
   listAppointmentCoordinated = [
     { id: 1, name: 'Si', value: true },
@@ -93,6 +97,8 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   ];
 
   param: Agency;
+
+  compareItems = compareItems
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -201,13 +207,10 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   }
 
   onSetForm(param: Agency) {
-    console.log(param);
     this.param = param;
 
     if (isNullOrUndefinedEmptyStringNullArray(param.programs)) {
-      this._snackBar.open('Esta agencia no tiene programas asignados que coincidan con el usuario.', 'Cerrar', {
-        duration: 10000,
-      });
+      this._notificationService.showError('Esta agencia no tiene programas asignados que coincidan con el usuario.');
       this._customRouterService.navigate(['pre-operational']); // Cambia 'pre-operational' por la ruta correcta si es necesario
       return;
     }
@@ -245,10 +248,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
    */
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
-      this._snackBar.open('El formulario es inválido. Por favor, complete todos los campos requeridos.', 'Cerrar', {
-        duration: 5000,
-      });
-
+      this._notificationService.showError('El formulario es inválido. Por favor, complete todos los campos requeridos.');
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -256,44 +256,37 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
     // Obtener los valores del formulario incluyendo los campos deshabilitados
     const formValues = this.headerConfig.formGroup.getRawValue();
-
-    // Obtener el ID del usuario autenticado
-    const userId = this._authService.getUserId();
+    const statusId = formValues.status?.id;
+    const appointmentCoordinated = formValues.appointmentCoordinated;
+    const appointmentDate = formValues.appointmentDate;
+    const rejectionJustification = formValues.rejectionJustification;
 
     // Construir el objeto de actualización
     const agencyRequest: UpdateAgencyInscriptionRequest = {
       agencyId: this.param.id,
-      statusId: formValues.status?.id,
-      appointmentCoordinated: formValues.appointmentCoordinated,
-      appointmentDate: formValues.appointmentDate,
-      rejectionJustification: formValues.rejectionJustification,
+      statusId: statusId,
+      appointmentCoordinated: appointmentCoordinated,
+      appointmentDate: appointmentDate,
+      rejectionJustification: rejectionJustification,
     };
 
     // Llamar al servicio para actualizar
     this._agencyService.updateAgencyInscription(agencyRequest, null).subscribe({
       next: (response) => {
-
         switch (response.body) {
           case true:
-            showSuccessDialog();
+            this._notificationService.showSuccessDialog();
             break;
           default:
-            this.showErrorDialog();
+            this._notificationService.showErrorDialog();
             break;
         }
-
       },
       error: (error) => {
-        this.showErrorDialog();
+        this._notificationService.showErrorDialog();
       },
       complete: () => {
-        console.log('Actualización completada');
-
-        const queryParams: QueryParameters = {
-          agencyId: this.param.id,
-        };
-
-        this._agencyService.getAgencyById(queryParams).subscribe();
+        this._customRouterService.navigate([`pre-operational/list`]);
       },
     });
   }
@@ -310,51 +303,13 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
     this._agencyService.updateAgencyStatus(queryParams).subscribe({
       next: (response) => {
         if (response.body) {
-          this._fuseConfirmationService.open({
-            title: this._translocoService.translate('dialog.success.title'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:check-circle',
-              color: 'success',
-            },
-            message: this._translocoService.translate('dialog.success.message'),
-            actions: {
-              confirm: {
-                label: this._translocoService.translate('dialog.success.confirm'),
-              },
-              cancel: {
-                show: false,
-              },
-            },
-          });
+          this._notificationService.showSuccessDialog();
         }
       },
       error: (error) => {
-        this._fuseConfirmationService.open({
-          title: this._translocoService.translate('dialog.error.title'),
-          icon: {
-            show: true,
-            name: 'heroicons_outline:exclamation-circle',
-            color: 'error',
-          },
-          message: this._translocoService.translate('dialog.error.message'),
-          actions: {
-            confirm: {
-              label: this._translocoService.translate('dialog.error.confirm'),
-            },
-            cancel: {
-              show: false,
-            },
-          },
-        });
+        this._notificationService.showErrorDialog();
       },
       complete: () => {
-        // const queryParams: QueryParameters = {
-        //   agencyId: this.param.id,
-        // };
-
-        // this._agencyService.getAgencyById(queryParams).subscribe();
-
         this._customRouterService.navigate([`pre-operational/list`]);
       },
     });
@@ -385,32 +340,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
     });
   }
 
-  // Función única para comparar diferentes tipos de elementos
-  compareItems<T>(item1: T, item2: T): boolean {
-    return compareByProperty(item1, item2, 'id' as keyof T);
-  }
-
   compareItemPrograms<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);
-  }
-
-  showErrorDialog() {
-    this._fuseConfirmationService.open({
-      title: this._translocoService.translate('monitor-preoperational-visit.dialog.error.title'),
-      icon: {
-        show: true,
-        name: 'heroicons_outline:x-circle',
-        color: 'error',
-      },
-      message: this._translocoService.translate('monitor-preoperational-visit.dialog.error.message'),
-      actions: {
-        confirm: {
-          label: this._translocoService.translate('monitor-preoperational-visit.dialog.error.confirm'),
-        },
-        cancel: {
-          show: false,
-        },
-      },
-    });
   }
 }

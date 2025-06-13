@@ -90,7 +90,7 @@ export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {
         ...this.headerConfig.formGroup.value,
         id: this.householdId
       };
-      this._householdService.update(this.householdId, updatedHousehold).subscribe(() => {
+      this._householdService.updateHousehold(updatedHousehold, {}).subscribe(() => {
         this._snackBar.open('Hogar actualizado correctamente', 'Cerrar', { duration: 3000 });
         this._customRouterService.navigate(['agency-portal/household/list']);
       });

@@ -23,6 +23,11 @@ export const SCHOOLS_COLUMNS: ColumnSchema[] = [
     label: 'schools.list.table.columns.region',
   },
   {
+    key: 'isMainSchool',
+    type: 'boolean',
+    label: 'schools.list.table.columns.isMainSchool',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'schools.list.table.columns.actions',

@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { SchoolsComponent } from './schools.component';
-import { initialDataSchoolsListResolver } from './schools.resolvers';
+import { initialDataSchoolsEditResolver, initialDataSchoolsListResolver } from './schools.resolvers';
 import { initialDataSchoolsAddResolver } from './schools.resolvers';
 export default [
   {
@@ -24,6 +24,9 @@ export default [
       {
         path: 'edit/:id',
         loadComponent: () => import('./edit/edit.component').then((c) => c.EditSchoolComponent),
+        resolve: {
+          data: initialDataSchoolsEditResolver,
+        },
       },
     ],
   },

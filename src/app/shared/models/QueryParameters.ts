@@ -4,6 +4,7 @@ export interface QueryParameters {
   name?: string;
   names?: string;
   alls?: boolean;
+  isList?: boolean;
   id?: number;
   agencyId?: number;
   programId?: number;

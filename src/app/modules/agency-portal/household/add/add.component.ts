@@ -8,7 +8,6 @@ import { HouseholdService } from 'app/shared/services/household.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -66,7 +65,7 @@ export class HouseholdAddComponent implements OnInit, OnGenericHeaderHandlers {
   onSave() {
     if (this.headerConfig.formGroup.valid) {
       const newHousehold = this.headerConfig.formGroup.value;
-      this._householdService.add(newHousehold).subscribe(() => {
+      this._householdService.insertHousehold(newHousehold, {}).subscribe(() => {
         this._snackBar.open('Hogar creado correctamente', 'Cerrar', { duration: 3000 });
         this._customRouterService.navigate(['agency-portal/household/list']);
       });

@@ -10,17 +10,24 @@ import { CenterType } from './CenterType';
 
 export interface School {
   id: number;
+  agencyId: number;
   name: string;
+
+  // Dirección
+  cityId?: number;
+  regionId?: number;
 
   // Dirección Física
   address: string;
   zipCode: number;
-  city: City;
-  region: Region;
+  city?: City;
+  region?: Region;
   latitude?: number;
   longitude?: number;
 
   // Dirección Postal
+  postalCityId?: number;
+  postalRegionId?: number;
   postalAddress?: string;
   postalZipCode?: number;
   postalCity?: City;
@@ -35,7 +42,7 @@ export interface School {
   baseYear?: number;
   renewalYear?: number;
   educationLevel?: EducationLevel;
-  operatingDays?: string;
+  operatingDays?: number;
 
   // Información Operacional
   kitchenType?: KitchenType;
@@ -67,15 +74,17 @@ export interface School {
   snackTo?: string;
 
   // Id de la escuela
-  EducationLevelId?: number;
-  OperatingPeriodId?: number;
-  OrganizationTypeId?: number;
-  KitchenTypeId?: number;
-  GroupTypeId?: number;
-  DeliveryTypeId?: number;
-  SponsorTypeId?: number;
-  ApplicantTypeId?: number;
-  ResidentialTypeId?: number;
+  centerTypeId?: number;
+  educationLevelId?: number;
+  operatingPeriodId?: number;
+  organizationTypeId?: number;
+  kitchenTypeId?: number;
+  groupTypeId?: number;
+  deliveryTypeId?: number;
+  sponsorTypeId?: number;
+  applicantTypeId?: number;
+  residentialTypeId?: number;
+  operatingPolicyId?: number;
 
   // Si la escuela es la principal
   isMainSchool?: boolean;

@@ -149,4 +149,13 @@ export const agencyNavigation: FuseNavigationItem[] = [
     roles: ['Agency-Administrator'],
     permissions: ['ReportView'],
   },
+  {
+    id: 'household',
+    title: 'navigation.household',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/household',
+    roles: ['Agency-Administrator'],
+    //permissions: ['HouseholdView'],
+  },
 ];
