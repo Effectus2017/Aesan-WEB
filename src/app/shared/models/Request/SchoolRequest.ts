@@ -1,6 +1,7 @@
 export interface SchoolRequest {
     id?: number;
     agencyId?: number;
+    mainSchoolId?: number;
     name?: string;
 
     // Dirección Física

@@ -252,6 +252,11 @@
             "title": "Editar Sitio",
             "information": "Información",
             "information-description": "Información del sitio",
+            "main-school": {
+                "label": "Escuela Principal",
+                "description": "Seleccione cual es la escuela principal",
+                "clear": "Limpiar selección"
+            },
             "name": {
                 "label": "Nombre del sitio",
                 "placeholder": "Nombre del sitio",

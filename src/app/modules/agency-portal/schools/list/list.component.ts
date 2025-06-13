@@ -24,25 +24,25 @@ import { School } from 'app/shared/models/School';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
-    selector: 'app-schools-list',
-    templateUrl: './list.component.html',
-    encapsulation: ViewEncapsulation.None,
-    animations: fuseAnimations,
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatButtonModule,
-        MatIconModule,
-        MatPaginatorModule,
-        MatTableModule,
-        MatInputModule,
-        RouterModule,
-        GenericTableComponent,
-        GenericHeaderComponent,
-        TranslocoModule,
-    ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'app-schools-list',
+  templateUrl: './list.component.html',
+  encapsulation: ViewEncapsulation.None,
+  animations: fuseAnimations,
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatInputModule,
+    RouterModule,
+    GenericTableComponent,
+    GenericHeaderComponent,
+    TranslocoModule,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
@@ -77,19 +77,18 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   constructor() {}
 
   ngOnInit() {
-
     this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result && result.body) {
-        const dataWithOrder = result.body.data.map((item: any, idx: number) => ({ ...item, displayOrderUI: idx + 1 }));
-        this.tableConfig.dataSource.data = dataWithOrder;
+      if (isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.tableConfig.dataSource.data = result.body.data;
         this.tableConfig.length = result.body.count;
-      } else {
-        this.tableConfig.dataSource.data = [];
-        this.tableConfig.length = 0;
+
+        // Lista de datos
+        this.tableConfig.dataSourceList = result.body.data;
       }
+
+      // Marcar para que se actualice la vista
       this._changeDetectorRef.markForCheck();
     });
-
   }
 
   ngOnDestroy(): void {

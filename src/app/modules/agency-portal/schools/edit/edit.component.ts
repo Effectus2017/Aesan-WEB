@@ -143,6 +143,10 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Group type
   groupTypes: OptionSelection[] = [];
 
+  // Lista de escuelas
+  // List of schools
+  listSchools: School[] = [];
+
   currentLang: string = 'es';
 
   // Parámetro de la escuela
@@ -158,6 +162,9 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Nombre de la escuela - Campo requerido para identificar la escuela
       // School name - Required field for identifying the school
       name: ['', Validators.required],
+      // Escuela principal - Campo requerido para seleccionar la escuela principal
+      // Main school - Required field for selecting the main school
+      mainSchool: [null, Validators.required],
       // Dirección física - Campo requerido para la ubicación de la escuela
       // Physical address - Required field for school location
       address: ['', Validators.required],
@@ -425,6 +432,15 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       }
     });
 
+    // Lista de escuelas
+    // List of schools
+    this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.listSchools = result.body;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     // Escuela
     // School
     this._schoolService.school$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
@@ -470,8 +486,11 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     const snackFrom: Date | null = toTimeDate(param.snackFrom);
     const snackTo: Date | null = toTimeDate(param.snackTo);
 
+    const mainSchool = param.mainSchool;
+
     this.headerConfig.formGroup.patchValue({
       name: param.name,
+      mainSchool: mainSchool,
       address: param.address || null,
       city: city,
       region: region,
@@ -563,12 +582,15 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     const lunch = formValues.lunch;
     const breakfast = formValues.breakfast;
 
+    const mainSchoolId = formValues.mainSchool?.id;
+
 
     // Construir el objeto de actualización
     // Build the update object
     const schoolRequest: SchoolRequest = {
       id: this.param.id,
       agencyId: this.agencyId,
+      mainSchoolId: mainSchoolId,
       name: formValues.name,
       address: formValues.address,
       cityId: cityId,
@@ -728,5 +750,13 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
         postalZipCode: '',
       });
     }
+  }
+
+  /**
+   * Limpia el campo de la escuela principal
+   * Clears the main school field
+   */
+  onClearMainSchool() {
+    this.headerConfig.formGroup.get('mainSchool').setValue(null);
   }
 }

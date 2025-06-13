@@ -10,14 +10,34 @@
           <p class="text-lg font-medium">{{ "schools.edit.information" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.information-description" | transloco }}</p>
         </div>
-        <!-- Información general -->
+
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <!-- name -->
           <mat-form-field class="w-full" data-cy="name-field">
-            <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label>
+            <!-- <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label> -->
             <input matInput formControlName="name" required placeholder="{{ 'schools.edit.name.placeholder' | transloco }}" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.edit.name.required" | transloco }}</mat-error>
           </mat-form-field>
+        </div>
+
+        <!-- Seleccionar escuela principal -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "schools.edit.main-school.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.edit.main-school.description" | transloco }}</p>
+        </div>
+
+        <!-- Mostramos la lista de escuelas Para seleccionar la escuela principal -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <div class="flex items-center justify-center gap-2">
+            <mat-form-field class="w-full" data-cy="main-school-field" [subscriptSizing]="'dynamic'">
+              <mat-select [formControlName]="'mainSchool'" data-cy="main-school-select" [compareWith]="compareItems">
+                <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="main-school-option">{{ school.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button mat-icon-button type="button" (click)="onClearMainSchool()" matTooltip="{{ 'schools.edit.main-school.clear' | transloco }}" data-cy="clear-main-school-button">
+              <mat-icon class="icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
+            </button>
+          </div>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
@@ -373,7 +393,13 @@
           <!-- Horario desde para el desayuno -->
           <mat-form-field data-cy="breakfast-schedule-field">
             <mat-label>{{ "schools.edit.breakfast-from.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.breakfast-from.placeholder' | transloco }}" formControlName="breakfastFrom" [matTimepicker]="pickerBreakfastFrom" data-cy="breakfast-from-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.breakfast-from.placeholder' | transloco }}"
+              formControlName="breakfastFrom"
+              [matTimepicker]="pickerBreakfastFrom"
+              data-cy="breakfast-from-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastFrom" />
             <mat-timepicker #pickerBreakfastFrom />
           </mat-form-field>
@@ -381,7 +407,13 @@
           <!-- Horario hasta para el desayuno -->
           <mat-form-field data-cy="breakfast-schedule-field">
             <mat-label>{{ "schools.edit.breakfast-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.breakfast-to.placeholder' | transloco }}" formControlName="breakfastTo" [matTimepicker]="pickerBreakfastTo" data-cy="breakfast-to-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.breakfast-to.placeholder' | transloco }}"
+              formControlName="breakfastTo"
+              [matTimepicker]="pickerBreakfastTo"
+              data-cy="breakfast-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastTo" />
             <mat-timepicker #pickerBreakfastTo />
           </mat-form-field>
@@ -404,7 +436,13 @@
           <!-- Horario desde para el almuerzo -->
           <mat-form-field data-cy="lunch-schedule-field">
             <mat-label>{{ "schools.edit.lunch-from.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.lunch-from.placeholder' | transloco }}" formControlName="lunchFrom" [matTimepicker]="pickerLunchFrom" data-cy="lunch-from-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.lunch-from.placeholder' | transloco }}"
+              formControlName="lunchFrom"
+              [matTimepicker]="pickerLunchFrom"
+              data-cy="lunch-from-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
             <mat-timepicker #pickerLunchFrom />
           </mat-form-field>
@@ -412,7 +450,13 @@
           <!-- Horario hasta para el almuerzo -->
           <mat-form-field data-cy="lunch-schedule-field">
             <mat-label>{{ "schools.edit.lunch-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.lunch-to.placeholder' | transloco }}" formControlName="lunchTo" [matTimepicker]="pickerLunchTo" data-cy="lunch-to-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.lunch-to.placeholder' | transloco }}"
+              formControlName="lunchTo"
+              [matTimepicker]="pickerLunchTo"
+              data-cy="lunch-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
             <mat-timepicker #pickerLunchTo />
           </mat-form-field>
@@ -435,7 +479,13 @@
           <!-- Horario desde para la merienda -->
           <mat-form-field data-cy="snack-from-field">
             <mat-label>{{ "schools.edit.snack-from.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.snack-from.placeholder' | transloco }}" formControlName="snackFrom" [matTimepicker]="pickerSnackFrom" data-cy="snack-from-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.snack-from.placeholder' | transloco }}"
+              formControlName="snackFrom"
+              [matTimepicker]="pickerSnackFrom"
+              data-cy="snack-from-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackFrom" />
             <mat-timepicker #pickerSnackFrom />
           </mat-form-field>
@@ -443,7 +493,13 @@
           <!-- Horario hasta para la merienda -->
           <mat-form-field data-cy="snack-to-field">
             <mat-label>{{ "schools.edit.snack-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.snack-to.placeholder' | transloco }}" formControlName="snackTo" [matTimepicker]="pickerSnackTo" data-cy="snack-to-input"/>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.snack-to.placeholder' | transloco }}"
+              formControlName="snackTo"
+              [matTimepicker]="pickerSnackTo"
+              data-cy="snack-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackTo" />
             <mat-timepicker #pickerSnackTo />
           </mat-form-field>

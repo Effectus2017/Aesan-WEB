@@ -88,4 +88,6 @@ export interface School {
 
   // Si la escuela es la principal
   isMainSchool?: boolean;
+  mainSchoolId?: number;
+  mainSchool?: School;
 }
