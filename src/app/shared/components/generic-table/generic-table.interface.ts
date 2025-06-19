@@ -89,6 +89,7 @@ export interface OnGenericTableHandler {
   // Funciones
   onTableAdd?: (event: Event, element: any) => void;
   onTableEdit?: (event: Event, id: any) => void;
+  onTableEditElement?: (event: Event, element: any) => void;
   onTableDelete?: (event: Event, id: any) => void;
   onTableDownload?: (event: Event, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;

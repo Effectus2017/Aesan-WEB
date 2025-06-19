@@ -13,7 +13,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { SCHOOLS_COLUMNS } from './columns-schema';
+import { SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -65,8 +65,8 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<School>(),
-    columnsSchema: SCHOOLS_COLUMNS,
-    displayedColumns: SCHOOLS_COLUMNS.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
@@ -78,7 +78,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
   ngOnInit() {
     this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.tableConfig.dataSource.data = result.body.data;
         this.tableConfig.length = result.body.count;
 

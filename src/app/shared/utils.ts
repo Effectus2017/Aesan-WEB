@@ -21,6 +21,19 @@ export function compare(o1: any, o2: any): boolean {
 }
 
 /**
+ * Compara dos elementos por su propiedad id
+ * @param o1 Elemento 1
+ * @param o2 Elemento 2
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
+export function compareById(o1: any, o2: any): boolean {
+    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+      return o1.id === o2.id;
+    }
+    return false;
+  }
+
+/**
  * Compara dos elementos por una propiedad específica
  * @param o1 Elemento 1
  * @param o2 Elemento 2
@@ -40,22 +53,22 @@ export function compareString(o1: any, o2: any): boolean {
  * @returns true si los elementos son iguales, false en caso contrario
  */
 export function comparePostal(o1: any, o2: any): boolean {
-    if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
-      return o1.Id === o2.Id;
-    }
-    return false;
+  if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+    return o1.Id === o2.Id;
   }
+  return false;
+}
 
-  /**
-   * Compara dos elementos por una propiedad específica
-   * @param item1 Elemento 1
-   * @param item2 Elemento 2
-   * @param property Propiedad a comparar
-   * @returns true si los elementos son iguales, false en caso contrario
-   */
-  export function compareItems<T>(item1: T, item2: T): boolean {
-    return compareByProperty(item1, item2, 'id' as keyof T);
-  }
+/**
+ * Compara dos elementos por una propiedad específica
+ * @param item1 Elemento 1
+ * @param item2 Elemento 2
+ * @param property Propiedad a comparar
+ * @returns true si los elementos son iguales, false en caso contrario
+ */
+export function compareItems<T>(item1: T, item2: T): boolean {
+  return compareByProperty(item1, item2, 'id' as keyof T);
+}
 
 /**
  * Compara dos elementos por una propiedad específica
@@ -65,8 +78,8 @@ export function comparePostal(o1: any, o2: any): boolean {
  * @returns true si los elementos son iguales, false en caso contrario
  */
 export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
-    return item1[property] === item2[property];
-  }
+  return item1[property] === item2[property];
+}
 
 /**
  * Verifica si un valor es un array
@@ -263,8 +276,6 @@ export function mapYesNoOptionIdToBoolean(id: number, options: { id: number; nam
   if (id === noOption.id) return false;
   return undefined;
 }
-
-
 
 /**
  * Convierte una fecha a un string de formato HH:mm:ss

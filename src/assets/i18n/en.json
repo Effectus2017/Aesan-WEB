@@ -157,14 +157,14 @@
             },
             "submit": "Submit Aplication",
             "pacna-not-eligible": {
-                "message": "You are not eligible to participate in the PACNA program.",
+                "message": "You are not eligible to participate in the CACFP program.",
                 "close": "Close"
             },
             "pdam-psav-not-eligible": {
-                "message": "You are not eligible to participate in the PDAM or PSAV programs"
+                "message": "You are not eligible to participate in the NSLBP or SFSP programs"
             },
             "basic-education-not-eligible": {
-                "message": "To participate in PDAM or PSAV programs, you must have the Basic Education Registry granted or in progress"
+                "message": "To participate in NSLBP or SFSP programs, you must have the Basic Education Registry granted."
             },
             "processing-request": {
                 "message": "An error occurred while processing your request. Please try again later."

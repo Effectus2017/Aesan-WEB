@@ -96,6 +96,10 @@ export class GenericTableComponent implements OnInit {
     this.handler.onTableEdit(event, id);
   }
 
+  onEditElement(event: Event, element: any): void {
+    this.handler.onTableEditElement(event, element);
+  }
+
   /**
    * Método para manejar la eliminación de un elemento de la tabla.
    * Llama a la función onTableDelete del handler proporcionado.

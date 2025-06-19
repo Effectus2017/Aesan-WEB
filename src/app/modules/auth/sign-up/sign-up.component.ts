@@ -660,6 +660,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
+  // Si el programa es PACNA y el campo Organized Athletic Programs es true, deshabilitar el formulario
+  // Si el programa no es PACNA o el campo Organized Athletic Programs es false, habilitar el formulario
   checkOrganizedAthleticPrograms(): void {
     const selectedProgram = this.signUpForm.value.program?.name;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
@@ -676,8 +678,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
     atRiskServiceControl.updateValueAndValidity();
 
-    // Verificar elegibilidad para PACNA
-    if (organizedAthleticPrograms && selectedProgram === 'PACNA') {
+    // Verificar elegibilidad para PACNA solo si también quiere participar en merienda y cena en riesgo
+    const atRiskService = this.signUpForm.value.atRiskService === true;
+    if (organizedAthleticPrograms && atRiskService && selectedProgram === 'PACNA') {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({
@@ -701,9 +704,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   checkAtRiskService(): void {
     const selectedProgram = this.signUpForm.value.program?.name;
     const atRiskService = this.signUpForm.value.atRiskService === true;
+    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
 
-    // Verificar elegibilidad para PACNA
-    if (atRiskService && selectedProgram === 'PACNA') {
+    // Verificar elegibilidad para PACNA solo si también ofrece programas atléticos
+    if (atRiskService && organizedAthleticPrograms && selectedProgram === 'PACNA') {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({

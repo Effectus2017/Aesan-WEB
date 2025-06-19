@@ -157,28 +157,28 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
 
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
     if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body.data;
+        this.listCities = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
         if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body.data;
+        this.listRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (result.body.data) {
-          this.listPrograms = result.body.data;
+        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+          this.listPrograms = result.body;
           this._changeDetectorRef.detectChanges();
         }
       });
 
     this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listAgencyStatus = result.body.data;
+        this.listAgencyStatus = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -325,11 +325,12 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
     const queryParams: QueryParameters = {
       cityId: city.id,
       alls: true,
+      isList: true,
     };
 
     this._geoService.getRegionsByCityId(queryParams).subscribe({
       next: (response: HttpResponse<any>) => {
-        this.listRegions = response.body.data;
+        this.listRegions = response.body;
       },
       error: (error) => {
         console.error('Error al cargar las regiones', error);

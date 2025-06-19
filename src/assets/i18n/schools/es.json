@@ -10,8 +10,12 @@
                     "address": "Dirección",
                     "city": "Ciudad",
                     "region": "Región",
-                    "isMainSchool": "Escuela Principal",
-                    "actions": "Acciones"
+                    "isMainSchool": "Es sitio principal?",
+                    "mainSchool": "Sitio Principal",
+                    "actions": "Acciones",
+                    "satelliteSchoolName": "Nombre del Sitio Satélite",
+                    "assignmentDate": "Fecha de Asignación",
+                    "comment": "Comentario"
                 }
             }
         },
@@ -242,6 +246,27 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "satellites": {
+                "label": "Sitios Satélites",
+                "description": "Lista de sitios satélites asociados a este sitio principal"
+            },
+            "activate-deactivate": {
+                "label": "Activar/Desactivar",
+                "description": "Configuración del estado activo del sitio"
+            },
+            "is-active": {
+                "label": "Estado",
+                "placeholder": "Seleccione el estado del sitio"
+            },
+            "inactive-justification": {
+                "label": "Justificación de Inactivación",
+                "placeholder": "Ingrese la justificación para inactivar el sitio",
+                "required": "La justificación de inactivación es requerida"
+            },
+            "inactive-date": {
+                "label": "Fecha de Inactivación",
+                "placeholder": "Seleccione la fecha de inactivación"
+            },
             "buttons": {
                 "save": "Guardar",
                 "cancel": "Cancelar",
@@ -253,9 +278,11 @@
             "information": "Información",
             "information-description": "Información del sitio",
             "main-school": {
-                "label": "Escuela Principal",
-                "description": "Seleccione cual es la escuela principal",
-                "clear": "Limpiar selección"
+                "label": "Sitio Principal",
+                "description": "Seleccione la escuela principal a la que pertenece este sitio. Deje en blanco si este es un sitio independiente.",
+                "clear": "Limpiar selección",
+                "is-main-school": "Este sitio está configurado como sitio principal",
+                "required": "El sitio principal es requerido"
             },
             "name": {
                 "label": "Nombre del sitio",
@@ -479,6 +506,27 @@
             "snack-to": {
                 "label": "Hasta",
                 "placeholder": "Hasta"
+            },
+            "satellites": {
+                "label": "Sitios Satélites",
+                "description": "Lista de sitios satélites asociados a este sitio principal"
+            },
+            "activate-deactivate": {
+                "label": "Activar/Desactivar",
+                "description": "Configuración del estado activo del sitio"
+            },
+            "is-active": {
+                "label": "Estado",
+                "placeholder": "Seleccione el estado del sitio"
+            },
+            "inactive-justification": {
+                "label": "Justificación de Inactivación",
+                "placeholder": "Ingrese la justificación para inactivar el sitio",
+                "required": "La justificación de inactivación es requerida"
+            },
+            "inactive-date": {
+                "label": "Fecha de Inactivación",
+                "placeholder": "Seleccione la fecha de inactivación"
             },
             "buttons": {
                 "save": "Guardar",

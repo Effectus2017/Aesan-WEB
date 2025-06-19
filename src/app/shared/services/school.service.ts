@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
@@ -13,6 +13,7 @@ import { SchoolRequest } from '../models/Request/SchoolRequest';
 export class SchoolService {
   private _schools: BehaviorSubject<School[] | null> = new BehaviorSubject(null);
   private _school: BehaviorSubject<School | null> = new BehaviorSubject(null);
+  private _hasMainSchool: BehaviorSubject<boolean | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/school`;
   private _httpClient = inject(HttpClient);
@@ -33,6 +34,14 @@ export class SchoolService {
    */
   get school$(): Observable<School | null> {
     return this._school.asObservable();
+  }
+
+  /**
+   * Obtiene el estado de la escuela principal
+   * @returns Observable<boolean> True si existe una escuela principal, false en caso contrario
+   */
+  get hasMainSchool$(): Observable<boolean | null> {
+    return this._hasMainSchool.asObservable();
   }
 
   /**
@@ -85,4 +94,27 @@ export class SchoolService {
   deleteSchool(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-school`, getHttpOptions(queryParameters));
   }
+
+  /**
+   * Verifica si existe una escuela principal en la base de datos
+   * @returns Observable<boolean> True si existe una escuela principal, false en caso contrario
+   */
+  hasMainSchool(): Observable<boolean> {
+    return this._httpClient.get<boolean>(`${this.apiUrl}/has-main-school`)
+      .pipe(
+        tap((response: any) => {
+          this._hasMainSchool.next(response.body);
+        })
+      );
+  }
+
+  /**
+   * Actualiza el estado activo/inactivo de una escuela
+   * @param queryParameters Los parámetros de consulta
+   * @returns True si se actualizó correctamente
+   */
+  updateSchoolActiveStatus(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-active-status`, queryParameters, getHttpOptions(queryParameters));
+  }
 }
+

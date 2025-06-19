@@ -46,5 +46,10 @@ export interface QueryParameters {
    */
   optionKey?: string;
   optionNamesExclude?: string;
+
+  // Campos para actualización del estado activo de escuela
+  schoolId?: number;
+  isActive?: boolean;
+  inactiveJustification?: string;
 }
 

@@ -10,8 +10,12 @@
                     "address": "Address",
                     "city": "City",
                     "region": "Region",
-                    "isMainSchool": "Main School",
-                    "actions": "Actions"
+                    "isMainSchool": "Is main site?",
+                    "mainSchool": "Main Site",
+                    "actions": "Actions",
+                    "satelliteSchoolName": "Satellite Site Name",
+                    "assignmentDate": "Assignment Date",
+                    "comment": "Comment"
                 }
             }
         },
@@ -223,7 +227,6 @@
                 "label": "Lunch To",
                 "placeholder": "Lunch to"
             },
-
             "snack": {
                 "label": "Snack",
                 "placeholder": "Snack"
@@ -236,16 +239,22 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
-
             "buttons": {
                 "save": "Save",
                 "cancel": "Cancel"
             }
         },
         "edit": {
-            "title": "Add Site",
+            "title": "Edit Site",
             "information": "Information",
             "information-description": "Site information",
+            "main-school": {
+                "label": "Main Site",
+                "description": "Select the main site to which this site belongs. Leave blank if this is an independent site.",
+                "clear": "Clear selection",
+                "is-main-school": "This site is configured as a main site",
+                "required": "Main site is required"
+            },
             "name": {
                 "label": "Name",
                 "placeholder": "Site name",
@@ -450,7 +459,6 @@
                 "label": "Lunch To",
                 "placeholder": "Lunch to"
             },
-
             "snack": {
                 "label": "Snack",
                 "placeholder": "Snack"
@@ -463,11 +471,31 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
-
+            "satellites": {
+                "label": "Satellite Sites",
+                "description": "List of satellite sites associated with this main site"
+            },
+            "activate-deactivate": {
+                "label": "Activate/Deactivate",
+                "description": "Site active status configuration"
+            },
+            "is-active": {
+                "label": "Status",
+                "placeholder": "Select site status"
+            },
+            "inactive-justification": {
+                "label": "Inactivation Justification",
+                "placeholder": "Enter justification for deactivating the site",
+                "required": "Inactivation justification is required"
+            },
+            "inactive-date": {
+                "label": "Inactivation Date",
+                "placeholder": "Select inactivation date"
+            },
             "buttons": {
                 "save": "Save",
                 "cancel": "Cancel"
             }
-        },
+        }
     }
 }

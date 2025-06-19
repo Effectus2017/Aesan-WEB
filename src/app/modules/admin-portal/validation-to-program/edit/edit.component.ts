@@ -145,47 +145,47 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
   ngOnInit() {
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
-        this.listCities = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listCities = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
-        this.listRegions = result.body.data;
-        this.listPostalRegions = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listRegions = result.body;
+        this.listPostalRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
-        this.listPrograms = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listPrograms = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body.data) {
-        this.listAgencyStatus = result.body.data;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body) {
-        this.onSetForm(result.body);
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listAgencyStatus = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     this._usersService.users$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result.body) {
-        this.listUsers = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listUsers = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
+
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+          this.onSetForm(result.body);
+          this._changeDetectorRef.detectChanges();
+        }
+      });
   }
 
   ngOnDestroy(): void {

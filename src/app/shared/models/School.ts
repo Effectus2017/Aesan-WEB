@@ -90,4 +90,29 @@ export interface School {
   isMainSchool?: boolean;
   mainSchoolId?: number;
   mainSchool?: School;
+
+  // Estado de actividad
+  isActive?: boolean;
+  inactiveJustification?: string;
+  inactiveDate?: string;
+
+  // Satélites
+  satellites?: SchoolSatellite[];
+}
+
+export interface SchoolList {
+  id: number;
+  name: string;
+}
+
+export interface SchoolSatellite {
+  id: number;
+  mainSchoolId: number;
+  satelliteSchoolId: number;
+  satelliteSchoolName: string;
+  assignmentDate: string;
+  comment: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

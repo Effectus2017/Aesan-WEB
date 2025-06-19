@@ -1,7 +1,7 @@
 <!-- Start of Selection -->
 <div class="flex flex-row justify-end mb-2" *ngIf="config.addButtonShow">
   <button
-    class="mb-4 mr-2 dark:bg-amber-600 dark:hover:bg-amber-600"
+    class="mr-2 mb-4 dark:bg-amber-600 dark:hover:bg-amber-600"
     mat-mini-fab
     color="primary"
     (click)="onAddButtonClick($event)"
@@ -42,7 +42,7 @@
       } @case ('text') {
       {{ getNestedValue(element, col.key) }}
       } @case ('file-type') {
-      <div class="flex items-center justify-center">
+      <div class="flex justify-center items-center">
         <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
       </div>
       } @case ('file-size') {
@@ -54,7 +54,7 @@
       } @case ('boolean') {
       {{ getNestedValue(element, col.key) ? "Si" : "No" }}
       } @case ('button') {
-      <div class="flex flex-row justify-center gap-2">
+      <div class="flex flex-row gap-2 justify-center">
         @for (button of col?.buttons; track button) {
 
         @if (button.key === 'edit') {
@@ -66,6 +66,19 @@
           [attr.aria-label]="'users.list.actions.' + button.key | transloco"
         >
           <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+          <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
+        </button>
+        }
+
+        @if (button.key === 'element') {
+        <button
+          [title]="'users.list.actions.edit' | transloco"
+          type="button"
+          mat-icon-button
+          (click)="onEditElement($event, element)"
+          [attr.aria-label]="'users.list.actions.edit' | transloco"
+        >
+          <span class="sr-only">{{ "users.list.actions.edit" | transloco }}</span>
           <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
         </button>
         }
@@ -110,9 +123,9 @@
 <!-- Lista para móviles -->
 <div class="w-full sm:hidden">
   @for (element of config.dataSource.connect() | async; track element) {
-  <div class="p-2 m-2 border rounded-lg bg-card">
+  <div class="p-2 m-2 rounded-lg border bg-card">
     @for (col of config.columnsSchema; track col) {
-    <div class="flex w-full py-2" [class.justify-between]="col.key !== 'actions'" [class.justify-center]="col.key === 'actions'">
+    <div class="flex py-2 w-full" [class.justify-between]="col.key !== 'actions'" [class.justify-center]="col.key === 'actions'">
       @if (col.key !== 'actions') {
       <span class="font-medium">{{ col.label | transloco }}:</span>
       }
@@ -139,7 +152,7 @@
         } @case ('text') {
         {{ getNestedValue(element, col.key) }}
         } @case ('file-type') {
-        <div class="flex items-center justify-center">
+        <div class="flex justify-center items-center">
           <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
         </div>
         } @case ('file-size') {
@@ -166,6 +179,20 @@
                 Editar
             </button>
             }
+
+            @if (button.key === 'element') {
+            <button
+                [title]="'users.list.actions.edit' | transloco"
+                type="button"
+                mat-flat-button
+                color="primary"
+                (click)="onEditElement($event, element)"
+                [attr.aria-label]="'users.list.actions.edit' | transloco"
+            >
+                Editar
+            </button>
+            }
+
             @if (button.key === 'delete') {
             <button
                 [title]="'users.list.actions.delete' | transloco"

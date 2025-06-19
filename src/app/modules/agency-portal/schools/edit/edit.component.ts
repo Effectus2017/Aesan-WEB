@@ -37,12 +37,16 @@ import { EducationLevel } from 'app/shared/models/EducationLevel';
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
-import { compare, compareItems, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString } from 'app/shared/utils';
-import { School } from 'app/shared/models/School';
+import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString } from 'app/shared/utils';
+import { School, SchoolList } from 'app/shared/models/School';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { MatTableDataSource } from '@angular/material/table';
+import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 
 @Component({
   selector: 'app-schools-edit',
@@ -64,6 +68,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
     MatIconModule,
     MatCheckboxModule,
     MatTimepickerModule,
+    GenericTableComponent,
   ],
 })
 export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
@@ -92,6 +97,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _notificationService = inject(NotificationService);
+  private _customRouterService = inject(CustomRouterService);
 
   // Catálogos
   // Catalogs
@@ -145,7 +151,11 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   // Lista de escuelas
   // List of schools
-  listSchools: School[] = [];
+  listSchools: SchoolList[] = [];
+
+  // Si la escuela actual es la principal
+  // If the current school is the main school
+  isMainSchool: boolean = false;
 
   currentLang: string = 'es';
 
@@ -162,9 +172,9 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Nombre de la escuela - Campo requerido para identificar la escuela
       // School name - Required field for identifying the school
       name: ['', Validators.required],
-      // Escuela principal - Campo requerido para seleccionar la escuela principal
-      // Main school - Required field for selecting the main school
-      mainSchool: [null, Validators.required],
+      // Escuela principal - Campo requerido para seleccionar la escuela principal (solo si no es escuela principal)
+      // Main school - Required field for selecting the main school (only if not main school)
+      mainSchool: [null],
       // Dirección física - Campo requerido para la ubicación de la escuela
       // Physical address - Required field for school location
       address: ['', Validators.required],
@@ -291,6 +301,15 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Merienda hasta - Campo requerido para indicar la hora de fin de la merienda
       // Snack to - Required field indicating the end time of snack
       snackTo: [null],
+      // Estado activo/inactivo de la escuela
+      // Active/inactive status of the school
+      isActive: [true],
+      // Justificación de inactivación - Requerida cuando isActive es false
+      // Inactivation justification - Required when isActive is false
+      inactiveJustification: [''],
+      // Fecha de inactivación - Fecha cuando se inactivó la escuela
+      // Inactivation date - Date when the school was inactivated
+      inactiveDate: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -300,12 +319,24 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     submitButtonText: 'schools.edit.buttons.save',
   };
 
+  satellitesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    dataSourceList: [],
+    columnsSchema: SATELLITE_SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: SATELLITE_SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
+    length: 0,
+
+  };
+
   // Agregar esta propiedad
   protected readonly window = window;
 
   // Compare methods
-  compare = compare;
-  compareItems = compareItems;
+  compareById = compareById;
 
   // Estado de carga y variables de contexto
   // Loading state and context variables
@@ -327,15 +358,41 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // Suscribirse a cambios en el control isActive para manejar campos de inactivación
+    this.headerConfig.formGroup.get('isActive').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((isActive: boolean) => {
+      const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+
+      if (isActive === false) {
+        // Si la escuela está inactiva, requerir justificación
+        inactiveJustificationControl.setValidators([Validators.required]);
+      } else {
+        // Si la escuela está activa, limpiar validadores y valores
+        inactiveJustificationControl.clearValidators();
+        inactiveJustificationControl.setValue('');
+        this.headerConfig.formGroup.get('inactiveDate').setValue(null);
+      }
+
+      inactiveJustificationControl.updateValueAndValidity();
+    });
+
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
     });
 
+    // Verificar si existe una escuela principal
+    // Check if there is a main school
+    this._schoolService.hasMainSchool$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.isMainSchool = result.body;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     // Cargar catálogos
     // Load catalogs
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         // Yes No
         this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
         // Tipo de residencial
@@ -347,33 +404,33 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
     // Tipo de centro
     this._centerTypeService.centerTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.centerTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.centerTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Tipo de organización
     this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.organizationTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.organizationTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Ciudad
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.listCities = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.listCities = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Región
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.listRegions = result.body.data;
-        this.listPostalRegions = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.listRegions = result.body;
+        this.listPostalRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -381,8 +438,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de cocina
     // Kitchen type
     this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.kitchenTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.kitchenTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -390,8 +447,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de grupo
     // Group type
     this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.groupTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.groupTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -399,8 +456,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de auspiciador
     // Sponsor type
     this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.sponsorType = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.sponsorType = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -408,8 +465,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Política de operación
     // Operating policy
     this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.operatingPolicies = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.operatingPolicies = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -417,8 +474,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de entrega
     // Delivery type
     this._deliveryTypeService.deliveryTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.deliveryTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.deliveryTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -426,8 +483,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Nivel educativo
     // Education level
     this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result?.body?.data) {
-        this.educationLevels = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.educationLevels = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -444,7 +501,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Escuela
     // School
     this._schoolService.school$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.onSetForm(result.body);
         this._changeDetectorRef.detectChanges();
       }
@@ -460,6 +517,21 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   onSetForm(param: School): void {
     this.param = param;
+    this.isMainSchool = param.isMainSchool || false;
+
+    const mainSchoolControl = this.headerConfig.formGroup.get('mainSchool');
+
+    // Si esta escuela es la principal, no debería poder seleccionar una escuela principal
+    if (this.isMainSchool) {
+      mainSchoolControl.disable();
+      mainSchoolControl.clearValidators();
+      mainSchoolControl.setValue(null);
+    } else {
+      mainSchoolControl.enable();
+      mainSchoolControl.setValidators([Validators.required]);
+    }
+
+    mainSchoolControl.updateValueAndValidity();
 
     // Obtener las ciudades y regiones
     // Get cities and regions
@@ -533,7 +605,15 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       snackTo: snackTo,
       hasWarehouse: param.hasWarehouse,
       hasDiningRoom: param.hasDiningRoom,
+      isActive: param.isActive,
+      inactiveJustification: param.inactiveJustification || null,
+      inactiveDate: param.inactiveDate,
     });
+
+    // Satélites
+    this.satellitesTableConfig.dataSource.data = param.satellites || [];
+    this.satellitesTableConfig.length = param.satellites?.length || 0;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -584,7 +664,6 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
     const mainSchoolId = formValues.mainSchool?.id;
 
-
     // Construir el objeto de actualización
     // Build the update object
     const schoolRequest: SchoolRequest = {
@@ -633,9 +712,15 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       snack: snack ?? null,
       snackFrom: snackFrom ?? null,
       snackTo: snackTo ?? null,
+      isMainSchool: this.isMainSchool ?? false,
+      isActive: formValues.isActive ?? true,
+      inactiveJustification: formValues.inactiveJustification ?? null,
+      inactiveDate: formValues.inactiveDate ?? null,
     };
+
     this.isLoading = true;
     this.headerConfig.formGroup.disable();
+
     this._schoolService.updateSchool(schoolRequest, {}).subscribe({
       next: (result: any) => {
         switch (result.body) {
@@ -689,13 +774,14 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
     const queryParameters: QueryParameters = {
       cityId: city.id,
+      isList: true,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
       next: (response) => {
-        if (response?.body?.data) {
+        if (!isNullOrUndefinedEmptyStringNullArray(response)) {
           if (target === 'region') {
-            this.listRegions = response.body.data;
+            this.listRegions = response.body;
             const regionControl = this.headerConfig.formGroup.get('region');
             if (regionControl) {
               if (this.listRegions.length === 1) {
@@ -705,7 +791,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
               }
             }
           } else if (target === 'postalRegion') {
-            this.listPostalRegions = response.body.data;
+            this.listPostalRegions = response.body;
             const regionControl = this.headerConfig.formGroup.get('postalRegion');
             if (regionControl) {
               if (this.listPostalRegions.length === 1) {
@@ -758,5 +844,13 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
    */
   onClearMainSchool() {
     this.headerConfig.formGroup.get('mainSchool').setValue(null);
+  }
+
+  onTableEditElement(event: Event, element: any) {
+    console.log('onTableEditElement', event, element);
+
+    event.stopPropagation();
+    event.preventDefault();
+    this._customRouterService.navigate([`schools/edit/${element.satelliteSchoolId}`]);
   }
 }

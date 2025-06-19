@@ -60,4 +60,9 @@ export interface SchoolRequest {
     // Si la escuela es la principal
     isMainSchool?: boolean;
 
+    // Estado de actividad
+    isActive?: boolean;
+    inactiveJustification?: string;
+    inactiveDate?: string;
+
 }

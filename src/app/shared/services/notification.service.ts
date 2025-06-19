@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
@@ -10,18 +11,19 @@ export class NotificationService {
   private toastr = inject(ToastrService);
   private fuseConfirmationService = inject(FuseConfirmationService);
   private translocoService = inject(TranslocoService);
+  private snackBar = inject(MatSnackBar);
 
-  showSuccess = (mensaje: string, titulo?: string) => this.toastr.success(mensaje, titulo);
+  showSuccess = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
-  showError = (mensaje: string = 'Ocurrió un error', titulo?: string) => this.toastr.error(mensaje, titulo);
+  showError = (mensaje: string = 'Ocurrió un error', titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
-  showWarning = (mensaje: string, titulo?: string) => this.toastr.warning(mensaje, titulo);
+  showWarning = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
-  showInfo = (mensaje: string, titulo?: string) => this.toastr.info(mensaje, titulo);
+  showInfo = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
   noImplementado = () => this.showInfo('Acción no implementada');
 
-  clear = () => this.toastr.clear();
+  clear = () => this.snackBar.dismiss();
 
   /**
    * Muestra un diálogo de éxito usando FuseConfirmationService

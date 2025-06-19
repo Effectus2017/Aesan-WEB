@@ -1,0 +1,9 @@
+{
+  "main-school": {
+    "label": "Main School",
+    "description": "Select the main school to which this school belongs. Leave blank if this is an independent school.",
+    "clear": "Clear selection",
+    "is-main-school": "This school is configured as a main school",
+    "required": "Main school is required"
+  }
+}

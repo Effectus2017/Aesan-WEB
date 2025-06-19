@@ -1,9 +1,19 @@
-<div class="absolute inset-0 flex flex-col min-w-0">
+<div class="flex absolute inset-0 flex-col min-w-0">
   <!-- Header con título y botones -->
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup" #schoolsEditForm="ngForm" data-cy="schools-edit-form">
+      <!-- Si la escuela actual es la principal, mostrar un mensaje de que es la principal -->
+      <div *ngIf="isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 mb-2 sm:grid-cols-1 sm:col-span-8">
+        <div class="mb-2">
+          <div class="flex items-center p-3 text-green-800 bg-green-50 rounded-md">
+            <mat-icon class="mr-2 text-green-500">check_circle</mat-icon>
+            <span>{{ "schools.edit.main-school.is-main-school" | transloco }}</span>
+          </div>
+        </div>
+      </div>
+
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- Sponsor Information Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
@@ -21,20 +31,28 @@
         </div>
 
         <!-- Seleccionar escuela principal -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "schools.edit.main-school.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.main-school.description" | transloco }}</p>
         </div>
 
         <!-- Mostramos la lista de escuelas Para seleccionar la escuela principal -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
-          <div class="flex items-center justify-center gap-2">
+        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <div class="flex gap-2 justify-center items-center">
             <mat-form-field class="w-full" data-cy="main-school-field" [subscriptSizing]="'dynamic'">
-              <mat-select [formControlName]="'mainSchool'" data-cy="main-school-select" [compareWith]="compareItems">
+              <mat-select [formControlName]="'mainSchool'" data-cy="main-school-select" [compareWith]="compareById">
                 <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="main-school-option">{{ school.name }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('mainSchool').hasError('required')">{{ "schools.edit.main-school.required" | transloco }}</mat-error>
             </mat-form-field>
-            <button mat-icon-button type="button" (click)="onClearMainSchool()" matTooltip="{{ 'schools.edit.main-school.clear' | transloco }}" data-cy="clear-main-school-button">
+            <button
+              mat-icon-button
+              type="button"
+              (click)="onClearMainSchool()"
+              matTooltip="{{ 'schools.edit.main-school.clear' | transloco }}"
+              data-cy="clear-main-school-button"
+              aria-label="Limpiar selección de escuela principal"
+            >
               <mat-icon class="icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
             </button>
           </div>
@@ -56,7 +74,7 @@
           <!-- City para Dirección Física *  -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "schools.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select" [compareWith]="compareById">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
                 {{ city.name }}
               </mat-option>
@@ -67,7 +85,7 @@
           <!-- Region *  -->
           <mat-form-field data-cy="region-field">
             <mat-label>{{ "schools.edit.region.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compareById">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('region').hasError('required')">{{ "schools.edit.region.required" | transloco }}</mat-error>
@@ -88,7 +106,7 @@
             <mat-error *ngIf="headerConfig.formGroup.get('latitude').hasError('required')">{{ "schools.edit.latitude.required" | transloco }}</mat-error>
           </mat-form-field>
           <!-- Longitude *  -->
-          <div class="flex items-center gap-2">
+          <div class="flex gap-2 items-center">
             <mat-form-field data-cy="longitude-field" class="flex-grow">
               <mat-label>{{ "schools.edit.longitude.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'longitude'" placeholder="{{ 'schools.edit.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
@@ -128,7 +146,7 @@
           <!-- City para Dirección Postal *  -->
           <mat-form-field data-cy="postal-city-field">
             <mat-label>{{ "schools.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [compareWith]="compareItems">
+            <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [compareWith]="compareById">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('postalCity').hasError('required')">{{ "schools.edit.city.required" | transloco }}</mat-error>
@@ -136,7 +154,7 @@
           <!-- Region para Dirección Postal *  -->
           <mat-form-field data-cy="postal-region-field">
             <mat-label>{{ "schools.edit.region.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compareById">
               <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('postalRegion').hasError('required')">{{ "schools.edit.region.required" | transloco }}</mat-error>
@@ -159,7 +177,7 @@
           <!-- ¿Es una organización sin fines de lucro? -->
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "schools.edit.non-profit.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'nonProfit'" data-cy="non-profit-select" [compareWith]="compare">
+            <mat-select [formControlName]="'nonProfit'" data-cy="non-profit-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -200,7 +218,7 @@
           <!-- Tipo de organización -->
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.edit.organization-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">{{ option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "schools.edit.organization-type.required" | transloco }}</mat-error>
@@ -209,7 +227,7 @@
           <!-- Centro -->
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.edit.center.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.edit.center.required" | transloco }}</mat-error>
@@ -218,7 +236,7 @@
           <!-- Nivel educativo -->
           <mat-form-field data-cy="education-level-field">
             <mat-label>{{ "schools.edit.education-level.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'educationLevel'" data-cy="education-level-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'educationLevel'" data-cy="education-level-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('educationLevel').hasError('required')">{{ "schools.edit.education-level.required" | transloco }}</mat-error>
@@ -248,7 +266,7 @@
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field">
             <mat-label>{{ "schools.edit.kitchen-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -256,7 +274,7 @@
           <!-- Tipo de grupo=Requerido -->
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "schools.edit.group-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -264,7 +282,7 @@
           <!-- Tipo de entrega -->
           <mat-form-field data-cy="delivery-type-field">
             <mat-label>{{ "schools.edit.delivery-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -277,7 +295,7 @@
           <!-- Tipo de auspiciador -->
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.edit.sponsor-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of sponsorType" [value]="option" data-cy="sponsor-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -285,7 +303,7 @@
           <!-- Tipo de solicitante -->
           <mat-form-field data-cy="applicant-type-field">
             <mat-label>{{ "schools.edit.applicant-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -293,7 +311,7 @@
           <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.edit.residential-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -303,7 +321,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="operating-policy-field">
             <mat-label>{{ "schools.edit.operating-policy.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of operatingPolicies" [value]="option" data-cy="operating-policy-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -315,7 +333,7 @@
           <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
           <mat-form-field data-cy="has-warehouse-field">
             <mat-label>{{ "schools.edit.has-warehouse.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-warehouse-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -324,7 +342,7 @@
           <!-- ¿Cuenta con un Salón Comedor?= Es una respuesta de si o no. -->
           <mat-form-field data-cy="has-dining-room-field">
             <mat-label>{{ "schools.edit.has-dining-room.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'hasDiningRoom'" data-cy="has-dining-room-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'hasDiningRoom'" data-cy="has-dining-room-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-dining-room-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -383,7 +401,7 @@
           <!-- Desayuno (si, no) -->
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "schools.edit.breakfast.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select" [compareWith]="compare">
+            <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="breakfast-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -426,7 +444,7 @@
           <!-- Almuerzo (si, no) -->
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "schools.edit.lunch.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -469,7 +487,7 @@
           <!-- Merienda (si, no) -->
           <mat-form-field data-cy="snack-field">
             <mat-label>{{ "schools.edit.snack.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snack'" data-cy="snack-select" [compareWith]="compareItems">
+            <mat-select [formControlName]="'snack'" data-cy="snack-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -503,6 +521,59 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackTo" />
             <mat-timepicker #pickerSnackTo />
           </mat-form-field>
+        </div>
+
+        <!-- Satélites -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="satellitesTableConfig.dataSource.data.length > 0">
+          <p class="text-lg font-medium">{{ "schools.edit.satellites.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.edit.satellites.description" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 sm:grid-cols-1 sm:col-span-8" *ngIf="satellitesTableConfig.dataSource.data.length > 0">
+          <app-generic-table [config]="satellitesTableConfig" [handler]="this" #satellitesTable></app-generic-table>
+        </div>
+
+        <!-- Desactivar/Activar -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "schools.edit.activate-deactivate.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.edit.activate-deactivate.description" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <mat-form-field data-cy="is-active-field">
+            <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'isActive'" data-cy="is-active-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field data-cy="inactive-justification-field" *ngIf="headerConfig.formGroup.get('isActive')?.value === false">
+            <mat-label>{{ "schools.edit.inactive-justification.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'inactiveJustification'"
+              placeholder="{{ 'schools.edit.inactive-justification.placeholder' | transloco }}"
+              data-cy="inactive-justification-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('inactiveJustification').hasError('required')">{{ "schools.edit.inactive-justification.required" | transloco }}</mat-error>
+          </mat-form-field>
+
+          <!--fecha de inactivacion -->
+          <mat-form-field data-cy="inactive-date-field" *ngIf="headerConfig.formGroup.get('isActive')?.value === false">
+            <mat-label>{{ "schools.edit.inactive-date.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'inactiveDate'"
+              placeholder="{{ 'schools.edit.inactive-date.placeholder' | transloco }}"
+              [matDatepicker]="pickerInactiveDate"
+              data-cy="inactive-date-input"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate" />
+            <mat-datepicker #pickerInactiveDate />
+          </mat-form-field>
+
         </div>
       </div>
     </form>

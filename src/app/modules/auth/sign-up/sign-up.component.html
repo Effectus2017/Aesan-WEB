@@ -1,11 +1,11 @@
-<div class="flex flex-col items-center flex-auto min-w-0 sm:justify-center">
+<div class="flex flex-col flex-auto items-center min-w-0 sm:justify-center">
   <!-- Theme Toggle and Languages -->
-  <div class="fixed z-50 flex items-center gap-2 top-4 right-4">
+  <div class="flex fixed top-4 right-4 z-50 gap-2 items-center">
     <languages></languages>
   </div>
-  <div class="flex-auto w-full p-6 max-w-360 sm:p-10">
-    <div class="w-full px-4 py-8 sm:w-auto sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
-      <div class="mt-2 text-4xl font-extrabold leading-tight tracking-tight text-center">{{ "auth.sign-up.title" | transloco }}</div>
+  <div class="flex-auto p-6 w-full max-w-360 sm:p-10">
+    <div class="px-4 py-8 w-full sm:w-auto sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
+      <div class="mt-2 text-4xl font-extrabold tracking-tight leading-tight text-center">{{ "auth.sign-up.title" | transloco }}</div>
       <form class="mt-10" [formGroup]="signUpForm" #signUpNgForm="ngForm" data-cy="sign-up-form">
         <!-- Sponsor Information -->
         <div class="grid grid-cols-12 gap-2 pb-2">
@@ -24,7 +24,7 @@
               <mat-label>{{ "auth.sign-up.program.label" | transloco }}</mat-label>
               <mat-select id="program-select" [formControlName]="'program'" data-cy="program-select">
                 <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">
-                  {{ program.name }}
+                  {{ currentLang === "en" ? program.nameEN : program.name }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -285,7 +285,7 @@
               <input matInput [formControlName]="'latitude'" placeholder="{{ 'auth.sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
             </mat-form-field>
             <!-- Longitude *  -->
-            <div class="flex items-center gap-2">
+            <div class="flex gap-2 items-center">
               <mat-form-field data-cy="longitude-field" class="flex-grow">
                 <mat-label>{{ "auth.sign-up.longitude.label" | transloco }}</mat-label>
                 <input matInput [formControlName]="'longitude'" placeholder="{{ 'auth.sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />

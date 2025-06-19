@@ -20,7 +20,6 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
@@ -43,6 +42,7 @@ import { SponsorType } from 'app/shared/models/SponsorType';
 import { EducationLevel } from 'app/shared/models/EducationLevel';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from '../edit/columns-schema';
 
 @Component({
     selector: 'app-schools-add',
@@ -294,20 +294,6 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
   };
 
-  satelliteSchoolsConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<any>(),
-    columnsSchema: SATELLITE_SCHOOLS_COLUMNS_SCHEMA,
-    displayedColumns: SATELLITE_SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
-    handler: this,
-    addButtonShow: true,
-    addButtonLabel: 'schools.add.buttons.addSatelliteSchool',
-    addButtonTooltip: 'schools.add.buttons.addSatelliteSchoolTooltip',
-    addButtonTooltipPosition: 'above',
-    addButtonIcon: 'add',
-    tableId: 'satelliteSchoolsTable',
-    onAddButtonClick: (event: Event) => this.onTableAddSatelliteSchool(event, null),
-  };
-
   // Agregar esta propiedad
   protected readonly window = window;
 
@@ -320,6 +306,9 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Agencia Id
   agencyId: number = 0;
 
+  // Si la escuela es la principal
+  isMainSchool: boolean = true;
+
   constructor() {}
 
   ngOnInit(): void {
@@ -331,6 +320,22 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
+    });
+
+    // Verificar si existe una escuela principal
+    this._schoolService.hasMainSchool$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
+      next: (hasMainSchool) => {
+        console.log('hasMainSchool', hasMainSchool);
+        // Si no existe una escuela principal, esta será la principal
+        this.isMainSchool = !hasMainSchool;
+        this._changeDetectorRef.detectChanges();
+      },
+      error: () => {
+        console.log('error');
+        // En caso de error, asumimos que no hay escuela principal
+        this.isMainSchool = true;
+        this._changeDetectorRef.detectChanges();
+      }
     });
 
     // Cargar opciones
@@ -372,7 +377,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Regions
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body.data;
+        this.listRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -381,7 +386,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de cocina
     this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.kitchenTypes = result.body.data;
+        this.kitchenTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -390,7 +395,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de grupo
     this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.groupTypes = result.body.data;
+        this.groupTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -399,7 +404,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Tipo de auspiciador
     this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.sponsorType = result.body.data;
+        this.sponsorType = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -407,7 +412,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Operating policies
     this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.operatingPolicies = result.body.data;
+        this.operatingPolicies = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -416,7 +421,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Types of delivery
     this._deliveryTypeService.deliveryTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.deliveryTypes = result.body.data;
+        this.deliveryTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -426,7 +431,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Kinder (1), Elementary (2), Intermediate (3), Superior (4)
     this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.educationLevels = result.body.data;
+        this.educationLevels = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -632,7 +637,7 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
 
       // Si la escuela es la principal
       // If the school is the main school
-      isMainSchool: true,
+      isMainSchool: this.isMainSchool,
     };
 
     this.isLoading = true;

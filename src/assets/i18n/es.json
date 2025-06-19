@@ -687,8 +687,6 @@
             "placeholder": "Buscar..."
         }
     },
-
-
     "roles": {
         "list": {
             "title": "Lista de Roles"
@@ -1023,7 +1021,6 @@
                 "label": "Fecha",
                 "placeholder": "Ingrese la fecha"
             },
-
             "explanation": {
                 "label": "Explique"
             }

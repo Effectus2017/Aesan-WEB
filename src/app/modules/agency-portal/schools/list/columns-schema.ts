@@ -1,7 +1,7 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
 // Esquema de columnas para el listado de escuelas
-export const SCHOOLS_COLUMNS: ColumnSchema[] = [
+export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
@@ -28,6 +28,11 @@ export const SCHOOLS_COLUMNS: ColumnSchema[] = [
     label: 'schools.list.table.columns.isMainSchool',
   },
   {
+    key: 'mainSchool.name',
+    type: 'text',
+    label: 'schools.list.table.columns.mainSchool',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'schools.list.table.columns.actions',
@@ -39,3 +44,4 @@ export const SCHOOLS_COLUMNS: ColumnSchema[] = [
     ],
   },
 ];
+

@@ -82,6 +82,9 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
   };
 
   return forkJoin([
+    // Verificar si existe una escuela principal
+    // Servicio para verificar si existe una escuela principal
+    schoolService.hasMainSchool(),
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
@@ -188,7 +191,6 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     schoolService.getSchoolById({ id: id }),
     // Obtenemos todas las escuelas para el select de la escuela principal
     schoolService.getAllSchoolsFromDb(requestParameters),
-
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
