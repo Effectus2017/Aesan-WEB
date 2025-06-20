@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -71,7 +71,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
     GenericTableComponent,
   ],
 })
-export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
+export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   // Subject para suscribirse a todos los observables al destruir el componente
   // Subject to unsubscribe from all observables on component destroy
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -132,6 +132,10 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
   // Tipo de solicitante
   // Type of applicant
   typeOfApplicant: OptionSelection[] = [];
+
+  // Estatus
+  // Status
+  isActive: OptionSelection[] = [];
 
   // Tipo de residencial
   // Type of residential
@@ -228,9 +232,9 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       // Centro - Campo requerido para la clasificación de la escuela
       // Center - Required field for school classification
       centerType: [null, Validators.required],
-      // Nivel educativo - Campo requerido para el tipo de escuela
-      // Education level - Required field for school type
-      educationLevel: [null, Validators.required],
+      // Niveles educativos - Campo requerido para el tipo de escuela (múltiple selección)
+      // Education levels - Required field for school type (multiple selection)
+      educationLevels: [[], Validators.required],
       // Días de operación - Días cuando la escuela opera
       // Operating days - Days when the school operates
       operatingDays: [''],
@@ -306,10 +310,10 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       isActive: [true],
       // Justificación de inactivación - Requerida cuando isActive es false
       // Inactivation justification - Required when isActive is false
-      inactiveJustification: [''],
+      inactiveJustification: [{ value: '', disabled: true }],
       // Fecha de inactivación - Fecha cuando se inactivó la escuela
       // Inactivation date - Date when the school was inactivated
-      inactiveDate: [null],
+      inactiveDate: [{ value: null, disabled: true }],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -399,6 +403,8 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
         this.typeOfResidential = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
         // Tipo de solicitante
         this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+        // Estatus
+        this.isActive = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
       }
     });
 
@@ -492,7 +498,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Lista de escuelas
     // List of schools
     this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listSchools = result.body;
         this._changeDetectorRef.detectChanges();
       }
@@ -501,7 +507,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     // Escuela
     // School
     this._schoolService.school$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.onSetForm(result.body);
         this._changeDetectorRef.detectChanges();
       }
@@ -510,7 +516,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     this.isLoading = false;
   }
 
-  onDestroy(): void {
+  ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
@@ -528,7 +534,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       mainSchoolControl.setValue(null);
     } else {
       mainSchoolControl.enable();
-      mainSchoolControl.setValidators([Validators.required]);
+      //mainSchoolControl.setValidators([Validators.required]);
     }
 
     mainSchoolControl.updateValueAndValidity();
@@ -547,7 +553,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     const applicantType = param.applicantType;
     const residentialType = param.residentialType;
     const operatingPolicy = param.operatingPolicy;
-    const educationLevel = param.educationLevel;
+    const educationLevels = param.educationLevels || [];
     const organizationType = param.organizationType;
     const centerType = param.centerType;
 
@@ -574,7 +580,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       postalZipCode: param.postalZipCode,
       latitude: param.latitude,
       longitude: param.longitude,
-      educationLevel: educationLevel,
+      educationLevels: educationLevels,
       organizationType: organizationType,
       centerType: centerType,
       operatingDays: param.operatingDays,
@@ -639,7 +645,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     const regionId: number = formValues.region?.id;
     const postalCityId: number = formValues.postalCity?.id;
     const postalRegionId: number = formValues.postalRegion?.id;
-    const educationLevelId: number = formValues.educationLevel?.id;
+    const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     const organizationTypeId: number = formValues.organizationType?.id;
     const operatingDays: number = Number(formValues.operatingDays);
     const kitchenTypeId: number = formValues.kitchenType?.id;
@@ -682,7 +688,7 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
       postalZipCode: formValues.postalZipCode || null,
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
-      educationLevelId: educationLevelId,
+      educationLevelIds: educationLevelIds,
       organizationTypeId: organizationTypeId,
       centerTypeId: centerTypeId,
       operatingDays: operatingDays,
@@ -846,11 +852,63 @@ export class EditSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     this.headerConfig.formGroup.get('mainSchool').setValue(null);
   }
 
+  /**
+   * Edita un elemento de la tabla
+   * Edits an element of the table
+   */
   onTableEditElement(event: Event, element: any) {
-    console.log('onTableEditElement', event, element);
-
     event.stopPropagation();
     event.preventDefault();
     this._customRouterService.navigate([`schools/edit/${element.satelliteSchoolId}`]);
+  }
+
+  /**
+   * Maneja el cambio en el campo de estado activo/inactivo
+   * Handles the change in the active/inactive status field
+   */
+  onIsActiveChange(event: any): void {
+
+    const isActive = event;
+    const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+    const inactiveDateControl = this.headerConfig.formGroup.get('inactiveDate');
+
+    if (isActive === false) {
+
+      // Limpiar validadores primero
+      inactiveJustificationControl.clearValidators();
+      inactiveDateControl.clearValidators();
+
+      // Habilitar controles
+      inactiveJustificationControl.enable({ emitEvent: false });
+      inactiveDateControl.enable({ emitEvent: false });
+
+      // Establecer valores
+      inactiveJustificationControl.setValue('');
+      inactiveDateControl.setValue(new Date());
+
+      // Establecer validadores
+      inactiveJustificationControl.setValidators([Validators.required]);
+      inactiveDateControl.setValidators([Validators.required]);
+
+    } else {
+      // Limpiar validadores
+      inactiveJustificationControl.clearValidators();
+      inactiveDateControl.clearValidators();
+
+      // Limpiar valores
+      inactiveJustificationControl.setValue('');
+      inactiveDateControl.setValue(null);
+
+      // Deshabilitar controles
+      inactiveJustificationControl.disable({ emitEvent: false });
+      inactiveDateControl.disable({ emitEvent: false });
+    }
+
+    // Forzar actualización de validación
+    inactiveJustificationControl.updateValueAndValidity({ emitEvent: false });
+    inactiveDateControl.updateValueAndValidity({ emitEvent: false });
+
+    // Forzar detección de cambios
+    this._changeDetectorRef.detectChanges();
   }
 }

@@ -21,12 +21,51 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.information-description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
           <!-- name -->
-          <mat-form-field class="w-full" data-cy="name-field">
-            <!-- <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label> -->
+          <mat-form-field data-cy="name-field">
+            <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label>
             <input matInput formControlName="name" required placeholder="{{ 'schools.edit.name.placeholder' | transloco }}" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.edit.name.required" | transloco }}</mat-error>
+          </mat-form-field>
+
+          <!-- Desactivar/Activar -->
+          <mat-form-field data-cy="is-active-field">
+            <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'isActive'" data-cy="is-active-select" (valueChange)="onIsActiveChange($event)" [compareWith]="compareById">
+              <mat-option *ngFor="let option of isActive" [value]="option.booleanValue">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Fecha de inactivación -->
+          <mat-form-field data-cy="inactive-date-field" >
+            <mat-label>{{ "schools.edit.inactive-date.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'inactiveDate'"
+              placeholder="{{ 'schools.edit.inactive-date.placeholder' | transloco }}"
+              [matDatepicker]="pickerInactiveDate"
+              data-cy="inactive-date-input"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate" />
+            <mat-datepicker #pickerInactiveDate />
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <!--fecha de inactivacion -->
+          <mat-form-field data-cy="inactive-justification-field">
+            <mat-label>{{ "schools.edit.inactive-justification.label" | transloco }}</mat-label>
+            <textarea
+              matInput
+              [formControlName]="'inactiveJustification'"
+              placeholder="{{ 'schools.edit.inactive-justification.placeholder' | transloco }}"
+              data-cy="inactive-justification-input"
+              rows="3"
+            ></textarea>
+            <mat-error *ngIf="headerConfig.formGroup.get('inactiveJustification').hasError('required')">{{ "schools.edit.inactive-justification.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
@@ -233,13 +272,13 @@
             <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.edit.center.required" | transloco }}</mat-error>
           </mat-form-field>
 
-          <!-- Nivel educativo -->
-          <mat-form-field data-cy="education-level-field">
-            <mat-label>{{ "schools.edit.education-level.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'educationLevel'" data-cy="education-level-select" [compareWith]="compareById">
+          <!-- Niveles educativos (selección múltiple) -->
+          <mat-form-field data-cy="education-levels-field">
+            <mat-label>{{ "schools.edit.education-levels.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
               <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('educationLevel').hasError('required')">{{ "schools.edit.education-level.required" | transloco }}</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('educationLevels').hasError('required')">{{ "schools.edit.education-levels.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <!-- Días de funcionamiento=Esto entiendo que aplica solo para PSAV, pero te valido -->
@@ -529,51 +568,11 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.satellites.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 sm:grid-cols-1 sm:col-span-8" *ngIf="satellitesTableConfig.dataSource.data.length > 0">
+        <div
+          class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 sm:grid-cols-1 sm:col-span-8"
+          *ngIf="satellitesTableConfig.dataSource.data.length > 0"
+        >
           <app-generic-table [config]="satellitesTableConfig" [handler]="this" #satellitesTable></app-generic-table>
-        </div>
-
-        <!-- Desactivar/Activar -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">{{ "schools.edit.activate-deactivate.label" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "schools.edit.activate-deactivate.description" | transloco }}</p>
-        </div>
-
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
-          <mat-form-field data-cy="is-active-field">
-            <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'isActive'" data-cy="is-active-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <mat-form-field data-cy="inactive-justification-field" *ngIf="headerConfig.formGroup.get('isActive')?.value === false">
-            <mat-label>{{ "schools.edit.inactive-justification.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'inactiveJustification'"
-              placeholder="{{ 'schools.edit.inactive-justification.placeholder' | transloco }}"
-              data-cy="inactive-justification-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('inactiveJustification').hasError('required')">{{ "schools.edit.inactive-justification.required" | transloco }}</mat-error>
-          </mat-form-field>
-
-          <!--fecha de inactivacion -->
-          <mat-form-field data-cy="inactive-date-field" *ngIf="headerConfig.formGroup.get('isActive')?.value === false">
-            <mat-label>{{ "schools.edit.inactive-date.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'inactiveDate'"
-              placeholder="{{ 'schools.edit.inactive-date.placeholder' | transloco }}"
-              [matDatepicker]="pickerInactiveDate"
-              data-cy="inactive-date-input"
-            />
-            <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate" />
-            <mat-datepicker #pickerInactiveDate />
-          </mat-form-field>
-
         </div>
       </div>
     </form>

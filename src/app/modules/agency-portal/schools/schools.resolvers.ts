@@ -88,7 +88,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -194,7 +194,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive',
     }),
     // Types of kitchen
     // Tipos de cocina

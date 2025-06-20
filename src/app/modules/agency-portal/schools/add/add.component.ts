@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -67,7 +67,7 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from '../edit/columns-schema';
         MatIconModule,
     ]
 })
-export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
+export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
@@ -437,6 +437,11 @@ export class AddSchoolComponent implements OnInit, OnGenericHeaderHandlers {
     });
 
     this.isLoading = false;
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
 
   // Método para enviar el formulario

@@ -41,7 +41,8 @@ export interface School {
   startDate?: string;
   baseYear?: number;
   renewalYear?: number;
-  educationLevel?: EducationLevel;
+  educationLevel?: EducationLevel; // DEPRECATED - usar educationLevels
+  educationLevels?: EducationLevel[]; // Nueva propiedad para múltiples niveles
   operatingDays?: number;
 
   // Información Operacional
@@ -75,7 +76,8 @@ export interface School {
 
   // Id de la escuela
   centerTypeId?: number;
-  educationLevelId?: number;
+  educationLevelId?: number; // DEPRECATED - usar educationLevelIds
+  educationLevelIds?: number[]; // Nueva propiedad para múltiples IDs
   operatingPeriodId?: number;
   organizationTypeId?: number;
   kitchenTypeId?: number;

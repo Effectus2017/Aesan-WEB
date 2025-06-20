@@ -77,8 +77,11 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   constructor() {}
 
   ngOnInit() {
+
+
+    // Obtener las escuelas
     this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.tableConfig.dataSource.data = result.body.data;
         this.tableConfig.length = result.body.count;
 
@@ -104,12 +107,16 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   }
 
   getAll(index: number, form: any) {
+    const name = form.name || null;
+    const pageSize = this.tableConfig.pageSize;
+
     const requestParameters: QueryParameters = {
-      take: this.tableConfig.pageSize,
+      take: pageSize,
       skip: index,
-      name: form.name || null,
-      userId: this._authService.getUserId(),
+      name: name,
+      alls: false,
     };
+
     this._schoolService.getAllSchoolsFromDb(requestParameters).subscribe();
   }
 

@@ -26,7 +26,8 @@ export interface SchoolRequest {
     startDate?: string;
     baseYear?: number;
     renewalYear?: number;
-    educationLevelId?: number;
+    educationLevelId?: number; // DEPRECATED - usar educationLevelIds
+    educationLevelIds?: number[]; // Nueva propiedad para múltiples IDs
     operatingDays?: number;
 
     // Información Operacional

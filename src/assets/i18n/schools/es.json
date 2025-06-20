@@ -119,10 +119,10 @@
             "organizationType": {
                 "label": "Tipo de organización"
             },
-            "education-level": {
-                "label": "Nivel educativo",
-                "placeholder": "Nivel educativo del sitio",
-                "required": "El nivel educativo es requerido"
+            "education-levels": {
+                "label": "Niveles educativos",
+                "placeholder": "Niveles educativos del sitio",
+                "required": "Los niveles educativos son requeridos"
             },
             "operating-days": {
                 "label": "Días de funcionamiento",
@@ -380,10 +380,10 @@
             "organizationType": {
                 "label": "Tipo de organización"
             },
-            "education-level": {
-                "label": "Nivel educativo",
-                "placeholder": "Nivel educativo del sitio",
-                "required": "El nivel educativo es requerido"
+            "education-levels": {
+                "label": "Niveles educativos",
+                "placeholder": "Niveles educativos del sitio",
+                "required": "Los niveles educativos son requeridos"
             },
             "operating-days": {
                 "label": "Días de funcionamiento",
@@ -516,8 +516,8 @@
                 "description": "Configuración del estado activo del sitio"
             },
             "is-active": {
-                "label": "Estado",
-                "placeholder": "Seleccione el estado del sitio"
+                "label": "Estatus",
+                "placeholder": "Seleccione el estatus del sitio"
             },
             "inactive-justification": {
                 "label": "Justificación de Inactivación",
