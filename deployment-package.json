@@ -1,0 +1,16 @@
+{
+  "name": "aesanweb-production",
+  "version": "1.0.0",
+  "description": "AESAN Web App - Production Build",
+  "main": "index.html",
+  "scripts": {
+    "start": "pm2-runtime start ecosystem.config.js --env production"
+  },
+  "dependencies": {
+    "pm2": "^5.4.2"
+  },
+  "engines": {
+    "node": ">=18.x",
+    "npm": ">=8.x"
+  }
+}
