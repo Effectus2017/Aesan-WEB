@@ -74,10 +74,6 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_83A324AD8BE14E129B00B0A05EB33A8F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EB871C66C63B41ABB3CE83ABA89E5786 }}
 
-      - name: Stop Azure Web App
-        run: |
-          az webapp stop --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv)
-
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -85,10 +81,7 @@ jobs:
           app-name: 'webaes'
           slot-name: 'Production'
           package: .
-
-      - name: Restart Azure Web App
-        run: |
-          az webapp restart --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv)
+          clean: true
 
       - name: Warm up application
         run: |
