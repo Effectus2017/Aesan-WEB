@@ -71,6 +71,7 @@ jobs:
           app-name: 'webaes'
           slot-name: 'Production'
           package: .
+          clean: true
 
       - name: logout
         run: |
