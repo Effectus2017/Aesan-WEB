@@ -43,17 +43,6 @@
                                 "glob": "_redirects",
                                 "input": "src",
                                 "output": "/"
-                            },
-                            {
-                                "glob": "ecosystem.config.js",
-                                "input": ".",
-                                "output": "/"
-                            },
-                            {
-                                "glob": "deployment-package.json",
-                                "input": ".",
-                                "output": "/",
-                                "rename": "package.json"
                             }
                         ],
                         "stylePreprocessorOptions": {

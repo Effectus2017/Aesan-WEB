@@ -36,11 +36,6 @@ jobs:
           npm install --force
           npm run prod
 
-      - name: List build output
-        run: |
-          echo "Build output contents:"
-          ls -la ./dist/aesanweb
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -62,11 +57,6 @@ jobs:
         with:
           name: node-app
 
-      - name: List downloaded files
-        run: |
-          echo "Downloaded files:"
-          ls -la .
-
       - name: Login to Azure
         uses: azure/login@v2
         with:
@@ -81,13 +71,6 @@ jobs:
           app-name: 'webaes'
           slot-name: 'Production'
           package: .
-          clean: true
-
-      - name: Warm up application
-        run: |
-          echo "Warming up application..."
-          sleep 30
-          curl -I https://webaes.azurewebsites.net/ || echo "Warmup request completed"
 
       - name: logout
         run: |

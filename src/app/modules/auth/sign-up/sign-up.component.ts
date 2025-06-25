@@ -36,7 +36,6 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { takeUntil } from 'rxjs';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'auth-sign-up',
@@ -156,7 +155,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Suscribirse a cambios de idioma
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      console.log('🌐 Language changed to:', lang, 'Environment production:', environment.production);
       this._changeDetectorRef.detectChanges();
     });
 

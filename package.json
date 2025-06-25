@@ -8,7 +8,7 @@
   "scripts": {
     "ng": "ng",
     "local": "ng serve --host nutre-dev.local --port 4202 --proxy-config proxy.conf.json",
-    "start": "pm2-runtime start ecosystem.config.js --env production",
+    "start": "ng serve --configuration local",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "prod": "ng build --configuration production",
@@ -40,8 +40,7 @@
     "quill": "^2.0.3",
     "rxjs": "7.8.1",
     "tslib": "2.6.2",
-    "zone.js": "0.15.1",
-    "pm2": "^5.4.2"
+    "zone.js": "0.15.1"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^19.2.14",
