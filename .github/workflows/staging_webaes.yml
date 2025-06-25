@@ -64,6 +64,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_83A324AD8BE14E129B00B0A05EB33A8F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EB871C66C63B41ABB3CE83ABA89E5786 }}
 
+      - name: Clear all files from Azure Web App
+        run: |
+          echo "Clearing all files from Azure Web App..."
+          az webapp deployment source delete --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv) || echo "No previous deployment to delete"
+          az webapp restart --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv)
+          echo "Azure Web App cleared and restarted"
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
