@@ -100,8 +100,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Organization type - Required field for school classification
   organizationTypes: OrganizationType[] = [];
 
-  // Nivel educativo - Campo requerido para tipo de escuela
-  // Education level - Required field for school type
+  // Nivel educativo - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
+  // Education level - Required field for school type (MULTIPLE SELECTION)
   educationLevels: EducationLevel[] = [];
 
   // Centro - Campo requerido para clasificación de la escuela
@@ -206,9 +206,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Centro - Campo requerido para clasificación de la escuela
       // Center - Required field for school classification
       centerType: [null, Validators.required],
-      // Nivel educativo - Campo requerido para tipo de escuela
-      // Education level - Required field for school type
-      educationLevel: [null, Validators.required],
+              // Nivel educativo - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
+        // Education level - Required field for school type (MULTIPLE SELECTION)
+        educationLevels: [[], Validators.required],
       // Días de operación - Días cuando la escuela opera
       // Operating days - Days when the school operates
       operatingDays: [''],
@@ -300,6 +300,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Compare methods
   compare = compare;
   comparePostal = comparePostal;
+  compareById = (a: any, b: any) => a && b && a.id === b.id;
 
   isLoading = false;
 
@@ -352,31 +353,31 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Tipo de centro
     this._centerTypeService.centerTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.centerTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.centerTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Tipo de organización de Escuelas -- Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
     this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.organizationTypes = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.organizationTypes = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Cities
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body.data;
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.listCities = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
 
     // Regions
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.listRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
@@ -473,8 +474,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const snackFrom: string = toTimeString(formValues.snackFrom);
     const snackTo: string = toTimeString(formValues.snackTo);
 
-    // Nivel educativo
-    const educationLevelId: number = formValues.educationLevel?.id;
+    // Niveles educativos (MÚLTIPLE SELECCIÓN)
+    const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     // Tipo de organización
     const organizationTypeId: number = formValues.organizationType?.id;
     // Días de operación
@@ -544,9 +545,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Longitude - Required field for location
       longitude: formValues.longitude ?? null,
       // Información Administrativa / Administrative Information
-      // Nivel educativo - Campo requerido para tipo de escuela
-      // Education level - Required field for school type
-      educationLevelId: educationLevelId,
+      // Niveles educativos - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
+      // Education levels - Required field for school type (MULTIPLE SELECTION)
+      educationLevelIds: educationLevelIds,
       // Tipo de organización - Campo requerido para clasificación de la escuela
       // Organization type - Required field for school classification
       organizationTypeId: organizationTypeId,

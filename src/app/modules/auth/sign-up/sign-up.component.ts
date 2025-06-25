@@ -35,6 +35,7 @@ import { ProgramService } from 'app/shared/services/program.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { takeUntil } from 'rxjs';
+import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 
 @Component({
   selector: 'auth-sign-up',
@@ -137,6 +138,16 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Compare methods
   compare = compare;
   comparePostal = comparePostal;
+
+  // Program helper functions for template
+  isPSAVProgram = isPSAVProgram;
+  isPDAMProgram = isPDAMProgram;
+  isPACNAProgram = isPACNAProgram;
+  isPFHFProgram = isPFHFProgram;
+  isPDFEProgram = isPDFEProgram;
+  isAESANProgram = isAESANProgram;
+  isPAFProgram = isPAFProgram;
+  isPDAMOrPSAVProgram = isPDAMOrPSAVProgram;
 
   constructor() {}
 
@@ -284,7 +295,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         // --- Lógica para nationalYouthProgram ---
         const nationalYouthProgramControl = this.signUpForm.get('nationalYouthProgram');
-        if (currentProgram?.name === 'PSAV') {
+        if (isPSAVProgram(currentProgram)) {
           nationalYouthProgramControl.setValidators([Validators.required]);
         } else {
           nationalYouthProgramControl.clearValidators();
@@ -602,11 +613,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si la agencia no es una organización sin fines de lucro, deshabilitar el formulario
   // Si la agencia es una organización sin fines de lucro, habilitar el formulario
   nonProfitChange(event: any): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+    const selectedProgram = this.signUpForm.value.program;
     const isNotNonProfit = this.signUpForm.value.nonProfit === false;
 
     // Verificar elegibilidad para PDAM y PSAV
-    if (isNotNonProfit && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+    if (isNotNonProfit && isPDAMOrPSAVProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({
@@ -663,7 +674,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si el programa es PACNA y el campo Organized Athletic Programs es true, deshabilitar el formulario
   // Si el programa no es PACNA o el campo Organized Athletic Programs es false, habilitar el formulario
   checkOrganizedAthleticPrograms(): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+    const selectedProgram = this.signUpForm.value.program;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
 
     // Habilitar/deshabilitar atRiskService basado en la selección
@@ -680,7 +691,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar elegibilidad para PACNA solo si también quiere participar en merienda y cena en riesgo
     const atRiskService = this.signUpForm.value.atRiskService === true;
-    if (organizedAthleticPrograms && atRiskService && selectedProgram === 'PACNA') {
+    if (organizedAthleticPrograms && atRiskService && isPACNAProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({
@@ -702,12 +713,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   checkAtRiskService(): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+    const selectedProgram = this.signUpForm.value.program;
     const atRiskService = this.signUpForm.value.atRiskService === true;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
 
     // Verificar elegibilidad para PACNA solo si también ofrece programas atléticos
-    if (atRiskService && organizedAthleticPrograms && selectedProgram === 'PACNA') {
+    if (atRiskService && organizedAthleticPrograms && isPACNAProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({
@@ -801,14 +812,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si el programa es PDAM o PSAV y el registro de educación básica es "No" (id: 3), deshabilitar el formulario
   // Si el programa no es PDAM o PSAV o el registro de educación básica no es "No", habilitar el formulario
   checkBasicEducationRegistry(): void {
-    const selectedProgram = this.signUpForm.value.program?.name;
+    const selectedProgram = this.signUpForm.value.program;
     const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
 
     console.log('Programa seleccionado:', selectedProgram);
     console.log('Valor de basicEducationRegistry:', basicEducationRegistry);
 
     // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
-    if (basicEducationRegistry === 3 && ['PDAM', 'PSAV'].includes(selectedProgram)) {
+    if (basicEducationRegistry === 3 && isPDAMOrPSAVProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({

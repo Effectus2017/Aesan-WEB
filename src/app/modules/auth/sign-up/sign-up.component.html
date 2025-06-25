@@ -18,6 +18,9 @@
             <p class="font-bold text-red-500">{{ "auth.sign-up.select-program-first" | transloco }}</p>
           </div>
 
+          <!-- Programa *  -->
+          <!-- ¿Es una organización sin fines de lucro? -->
+          <!-- ¿Posee Certificación de Registro de Educación Básica? -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
@@ -35,7 +38,7 @@
             <mat-form-field data-cy="non-profit-field">
               <mat-label>{{ "auth.sign-up.non-profit.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="non-profit-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
@@ -61,7 +64,7 @@
             <mat-form-field data-cy="state-funds-denied-field">
               <mat-label>{{ "auth.sign-up.state-funds-denied.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'stateFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="state-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -71,10 +74,11 @@
             <mat-form-field data-cy="federal-funds-denied-field">
               <mat-label>{{ "auth.sign-up.federal-funds-denied.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="federal-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
+
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
@@ -84,22 +88,23 @@
                 "auth.sign-up.organized-athletic-programs.label" | transloco
               }}</mat-label>
               <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
               </mat-select>
             </mat-form-field>
 
             <!-- ¿Está interesado en participar en el servicio de merienda y cena en riesgo? -->
             <!-- Is the Sponsor interested in participating in the at-risk snack and dinner service? -->
             <!-- Si (1) y No (2) -->
-            <!-- Si Organized Athletic Programs es true, entonces mostrar el campo de At Risk Service -->
             <mat-form-field *ngIf="signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
               <mat-label>{{ "auth.sign-up.at-risk-service.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
+          <!-- ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida? -->
+          <!-- How long has the organization or institution been providing services with an established enrollment? -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <!-- ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida? -->
             <!-- How long has the organization or institution been providing services with an established enrollment? -->
@@ -119,6 +124,12 @@
             </mat-form-field>
           </div>
 
+          <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
+          <!-- In what status is your Tax Exemption? -->
+          <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
+          <!-- ¿Qué tipo de Exención Contributiva tiene? -->
+          <!-- What type of Tax Exemption does it have? -->
+          <!-- Estatal (11), Federal (12) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
             <!-- In what status is your Tax Exemption? -->
@@ -145,10 +156,14 @@
             </mat-form-field>
           </div>
 
+          <!-- Tipo de Entidad -->
+          <!-- Type of Entity -->
+          <!-- Gobierno (13), Privado (14) -->
+
+          <!-- Tipo de Solicitante -->
+          <!-- Type of Applicant -->
+          <!-- Laico (15), Base de fe (16) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
-            <!-- Tipo de Entidad -->
-            <!-- Type of Entity -->
-            <!-- Gobierno (13), Privado (14) -->
             <mat-form-field data-cy="type-of-entity-field">
               <mat-label>{{ "auth.sign-up.type-of-entity.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'typeOfEntityId'" (selectionChange)="checkTypeOfEntity()" data-cy="type-of-entity-input">
@@ -157,10 +172,6 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-
-            <!-- Tipo de Solicitante -->
-            <!-- Type of Applicant -->
-            <!-- Laico (15), Base de fe (16) -->
             <mat-form-field data-cy="type-of-applicant-field">
               <mat-label>{{ "auth.sign-up.type-of-applicant.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'typeOfApplicantId'" data-cy="type-of-applicant-input">
@@ -171,10 +182,10 @@
             </mat-form-field>
           </div>
 
+          <!-- ¿De poseer un contrato Público Alianza especifique su modalidad? -->
+          <!-- If you have a Public Alliance contract, please specify the type of contract -->
+          <!-- Socio-Económico (17), Híbrido (18) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <!-- ¿De poseer un contrato Público Alianza especifique su modalidad? -->
-            <!-- If you have a Public Alliance contract, please specify the type of contract -->
-            <!-- Socio-Económico (17), Híbrido (18) -->
             <mat-form-field data-cy="public-alliance-contract-field">
               <mat-label>{{ "auth.sign-up.public-alliance-contract.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'publicAllianceContractId'" data-cy="public-alliance-contract-input">
@@ -185,18 +196,20 @@
             </mat-form-field>
           </div>
 
+          <!-- National Youth Program -->
+          <!-- ¿Su Institución es un Programa Nacional de Juventud? -->
+          <!-- Si (1) y No (2) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <!-- National Youth Program -->
-            <!-- ¿Su Institución es un Programa Nacional de Juventud? -->
-            <!-- Si (1) y No (2) -->
-            <mat-form-field data-cy="national-youth-program-field" *ngIf="signUpForm.get('program')?.value?.name === 'PSAV'">
+            <mat-form-field data-cy="national-youth-program-field" *ngIf="isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "auth.sign-up.national-youth-program.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'nationalYouthProgram'" data-cy="national-youth-program-input">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue"> {{ currentLang === "en" ? option.nameEN : option.name }} </mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="national-youth-program-option"> {{ currentLang === "en" ? option.nameEN : option.name }} </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
+          <!-- Name of the Sponsoring Agency *  -->
+          <!-- UIE Number *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- Name of the Sponsoring Agency *  -->
             <mat-form-field data-cy="agency-field">
@@ -219,6 +232,8 @@
             </mat-form-field>
           </div>
 
+          <!-- State Department Registration Number *  -->
+          <!-- EIN *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- State Department Registration Number *  -->
             <mat-form-field data-cy="sdr-field">
@@ -246,7 +261,9 @@
             <p class="mb-6 text-secondary">{{ "auth.sign-up.address.description" | transloco }}</p>
           </div>
 
-
+          <!-- Address *  -->
+          <!-- City para Dirección Física *  -->
+          <!-- Region *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Address *  -->
             <mat-form-field data-cy="address-field">
@@ -273,6 +290,9 @@
             </mat-form-field>
           </div>
 
+          <!-- Zip Code *  -->
+          <!-- Latitude *  -->
+          <!-- Longitude *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Zip Code *  -->
             <mat-form-field data-cy="zip-code-field">
@@ -315,6 +335,10 @@
             }}</mat-checkbox>
           </div>
 
+          <!-- Postal Address *  -->
+          <!-- City para Dirección Postal *  -->
+          <!-- Region para Dirección Postal *  -->
+          <!-- Postal Zip Code *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
             <!-- Postal Address *  -->
             <!-- cambiar texto a address unicamente -->
@@ -349,6 +373,10 @@
             <p class="mb-6 text-secondary">{{ "auth.sign-up.user-information-description" | transloco }}</p>
           </div>
 
+          <!-- First Name *  -->
+          <!-- Middle Name *  -->
+          <!-- Father Last Name *  -->
+          <!-- Mother Last Name *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
             <!-- First Name *  -->
             <mat-form-field data-cy="first-name-field">
@@ -372,6 +400,9 @@
             </mat-form-field>
           </div>
 
+          <!-- Email *  -->
+          <!-- Phone *  -->
+          <!-- Admin Title *  -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Email *  -->
             <mat-form-field data-cy="email-field">

@@ -33,7 +33,7 @@
           <mat-form-field data-cy="is-active-field">
             <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'isActive'" data-cy="is-active-select" (valueChange)="onIsActiveChange($event)" [compareWith]="compareById">
-              <mat-option *ngFor="let option of isActive" [value]="option.booleanValue">
+              <mat-option *ngFor="let option of isActive" [value]="option.booleanValue" data-cy="is-active-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
@@ -217,7 +217,7 @@
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "schools.edit.non-profit.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'nonProfit'" data-cy="non-profit-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="non-profit-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
@@ -484,7 +484,7 @@
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "schools.edit.lunch.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="lunch-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
@@ -527,7 +527,7 @@
           <mat-form-field data-cy="snack-field">
             <mat-label>{{ "schools.edit.snack.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snack'" data-cy="snack-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>

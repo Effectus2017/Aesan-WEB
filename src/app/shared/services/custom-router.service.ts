@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import { PROGRAM_CODES } from 'app/shared/const';
 
 /**
  * Servicio para la navegación personalizada
@@ -29,22 +30,22 @@ export class CustomRouterService {
       prefix = '/monitor-portal/';
     } else {
       switch (userPrograms) {
-        case 'PDAM':
+        case PROGRAM_CODES.PDAM:
           prefix = '/pdam-portal/';
           break;
-        case 'PSAV':
+        case PROGRAM_CODES.PSAV:
           prefix = '/psav-portal/';
           break;
-        case 'PACNA':
+        case PROGRAM_CODES.PACNA:
           prefix = '/pacna-portal/';
           break;
-        case 'PFHF':
+        case PROGRAM_CODES.PFHF:
           prefix = '/pfhf-portal/';
           break;
-        case 'PAF':
+        case PROGRAM_CODES.PAF:
           prefix = '/paf-portal/';
           break;
-        case 'PDFE':
+        case PROGRAM_CODES.PDFE:
           prefix = '/pdf-portal/';
           break;
         default:
