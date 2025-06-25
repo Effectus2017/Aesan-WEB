@@ -43,6 +43,11 @@
                                 "glob": "_redirects",
                                 "input": "src",
                                 "output": "/"
+                            },
+                            {
+                                "glob": "web.config",
+                                "input": "src",
+                                "output": "/"
                             }
                         ],
                         "stylePreprocessorOptions": {

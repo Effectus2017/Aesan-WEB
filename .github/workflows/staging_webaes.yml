@@ -28,10 +28,18 @@ jobs:
         with:
           node-version: '22.x'
 
+      - name: Clear npm cache
+        run: npm cache clean --force
+
       - name: npm install, build, and test
         run: |
           npm install --force
           npm run prod
+
+      - name: List build output
+        run: |
+          echo "Build output contents:"
+          ls -la ./dist/aesanweb
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -54,12 +62,21 @@ jobs:
         with:
           name: node-app
 
+      - name: List downloaded files
+        run: |
+          echo "Downloaded files:"
+          ls -la .
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CBA1D67AF3E446129E5BE636FC13F627 }}
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_83A324AD8BE14E129B00B0A05EB33A8F }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_EB871C66C63B41ABB3CE83ABA89E5786 }}
+
+      - name: Stop Azure Web App
+        run: |
+          az webapp stop --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv)
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -68,6 +85,16 @@ jobs:
           app-name: 'webaes'
           slot-name: 'Production'
           package: .
+
+      - name: Restart Azure Web App
+        run: |
+          az webapp restart --name webaes --resource-group $(az webapp show --name webaes --query resourceGroup -o tsv)
+
+      - name: Warm up application
+        run: |
+          echo "Warming up application..."
+          sleep 30
+          curl -I https://webaes.azurewebsites.net/ || echo "Warmup request completed"
 
       - name: logout
         run: |

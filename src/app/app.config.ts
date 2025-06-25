@@ -14,6 +14,7 @@ import { mockApiServices } from 'app/mock-api';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { isNullOrUndefinedEmptyStringNullArray } from './shared/utils';
 import { provideToastr, ToastrModule } from 'ngx-toastr';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -67,7 +68,7 @@ export const appConfig: ApplicationConfig = {
         defaultLang: 'es',
         fallbackLang: 'es',
         reRenderOnLangChange: true,
-        prodMode: false,
+        prodMode: environment.production,
       },
       loader: TranslocoHttpLoader,
     }),
