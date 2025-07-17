@@ -93,6 +93,11 @@
                 "placeholder": "Organization type",
                 "required": "Organization type is required"
             },
+            "center": {
+                "label": "Centers",
+                "placeholder": "Centers",
+                "required": "Centers are required"
+            },
             "non-profit": {
                 "label": "Is it a non-profit organization?",
                 "required": "This field is required"
@@ -115,7 +120,7 @@
             "organizationType": {
                 "label": "Organization Type"
             },
-            "education-level": {
+            "education-levels": {
                 "label": "Education Level",
                 "placeholder": "Site education level",
                 "required": "Education level is required"

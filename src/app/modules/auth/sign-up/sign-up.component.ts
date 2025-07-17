@@ -333,7 +333,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Cargar ciudades
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body.data;
+        this.listCities = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -388,7 +388,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     this._geoService.getCitiesByRegionId(queryParams).subscribe({
       next: (response: HttpResponse<any>) => {
-        this.listCities = response.body.data;
+        this.listCities = response.body;
       },
       error: (error) => {
         console.error('Error al cargar las ciudades', error);
