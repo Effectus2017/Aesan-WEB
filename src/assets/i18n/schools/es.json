@@ -17,6 +17,9 @@
                     "assignmentDate": "Fecha de Asignación",
                     "comment": "Comentario"
                 }
+            },
+            "search": {
+                "placeholder": "Buscar por nombre"
             }
         },
         "add": {
@@ -266,6 +269,10 @@
             "inactive-date": {
                 "label": "Fecha de Inactivación",
                 "placeholder": "Seleccione la fecha de inactivación"
+            },
+            "type-of-area": {
+                "label": "Tipo de Área",
+                "placeholder": "Tipo de área"
             },
             "buttons": {
                 "save": "Guardar",
@@ -527,6 +534,10 @@
             "inactive-date": {
                 "label": "Fecha de Inactivación",
                 "placeholder": "Seleccione la fecha de inactivación"
+            },
+            "type-of-area": {
+                "label": "Tipo de Área",
+                "placeholder": "Tipo de área"
             },
             "buttons": {
                 "save": "Guardar",

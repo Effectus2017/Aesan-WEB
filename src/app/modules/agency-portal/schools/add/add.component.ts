@@ -43,6 +43,8 @@ import { EducationLevel } from 'app/shared/models/EducationLevel';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from '../edit/columns-schema';
+import { AreaTypeService } from 'app/shared/services/area-type.service';
+import { AreaType } from 'app/shared/models/AreaType';
 
 @Component({
     selector: 'app-schools-add',
@@ -86,6 +88,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _organizationTypeService = inject(OrganizationTypeService);
   private _educationLevelService = inject(EducationLevelService);
   private _authService = inject(AuthService);
+  private _areaTypeService = inject(AreaTypeService);
 
   // catálogos
   listCities: City[] = [];
@@ -139,6 +142,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Lenguaje actual
   currentLang: string = 'es';
+
+  // Tipos de área (nuevo catálogo)
+  // Type of area (new catalog)
+  // Rural (1), Urbana (2)
+  areaTypes: AreaType[] = [];
 
   // Header config and reactive form
   // Configuración del header y formulario reactivo
@@ -206,9 +214,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Centro - Campo requerido para clasificación de la escuela
       // Center - Required field for school classification
       centerType: [null, Validators.required],
-              // Nivel educativo - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
-        // Education level - Required field for school type (MULTIPLE SELECTION)
-        educationLevels: [[], Validators.required],
+      // Nivel educativo - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
+      // Education level - Required field for school type (MULTIPLE SELECTION)
+      educationLevels: [[], Validators.required],
       // Días de operación - Días cuando la escuela opera
       // Operating days - Days when the school operates
       operatingDays: [''],
@@ -229,6 +237,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Type of applicant - Type of school applicant
       // Laico (15), Base de fe (16)
       typeOfApplicant: [null],
+      // Tipo de área - Campo requerido para clasificación de la escuela
+      // Type of area - Required field for school classification
+      // Rural (23), Urbana (24)
+      areaType: [null],
       // Tipo de residencial - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Residential type - Required field for RCCI classification (Residential/Non-residential)
       // Pernoctan (17), No Pernoctan (18)
@@ -437,6 +449,14 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       }
     });
 
+    // Obtener AreaTypes
+    this._areaTypeService.areaTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result?.body)) {
+        this.areaTypes = result.body;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     this.isLoading = false;
   }
 
@@ -499,6 +519,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const residentialTypeId: number = formValues.typeOfResidential?.id;
     // Política de operación
     const operatingPolicyId: number = formValues.operatingPolicy?.id;
+
+    // Tipo de área
+    const areaTypeId: number = formValues.areaType?.id;
 
     // Obtener los valores del formulario
     const schoolRequest: SchoolRequest = {
@@ -573,6 +596,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de solicitante - Campo requerido para clasificación
       // Applicant type - Required field for classification
       applicantTypeId: applicantTypeId,
+      // Tipo de área - Campo requerido para clasificación
+      // Type of area - Required field for classification
+      areaTypeId: areaTypeId,
       // Política de operación - Campo requerido para operación
       // Operating policy - Required field for operation
       operatingPolicyId: operatingPolicyId,

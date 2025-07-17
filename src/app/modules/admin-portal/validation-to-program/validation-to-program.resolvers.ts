@@ -18,6 +18,7 @@ export const initialDataValidationToProgramListResolver: ResolveFn<any> = (route
     take: 25,
     skip: 0,
     alls: true,
+    isList: false,
   };
 
   return forkJoin([agencyService.getAllAgenciesFromDb(requestParameters), geoService.getCitiesFromDb(requestParameters), programService.getAllProgramsFromDb(requestParameters)]);
@@ -37,10 +38,10 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
 
   return forkJoin([
     agencyService.getAgencyById(requestParameters),
-     agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true }),
-     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
-     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),
-     programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true }),
-     usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: true, roles: ['Monitor'] }),
+     agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+     programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+     usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: true, isList: true, roles: ['Monitor'] }),
   ]);
 };

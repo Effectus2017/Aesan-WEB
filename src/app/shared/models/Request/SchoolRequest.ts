@@ -36,6 +36,7 @@ export interface SchoolRequest {
     deliveryTypeId?: number;
     sponsorTypeId?: number;
     applicantTypeId?: number;
+    areaTypeId?: number;
     residentialTypeId?: number;
     operatingPolicyId?: number;
     hasWarehouse?: boolean;

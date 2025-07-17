@@ -1,16 +1,9 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const agencyNavigation: FuseNavigationItem[] = [
-//   {
-//     id: 'agency-home',
-//     title: 'navigation.agency.home',
-//     type: 'basic',
-//     icon: 'heroicons_outline:home',
-//     link: '/program-requests',
-//   },
   {
     id: 'program-requests',
-    title: 'navigation.agency.program-requests',
+    title: 'navigation.program-requests',
     type: 'basic',
     icon: 'heroicons_outline:document-text',
     link: '/program-requests',
@@ -18,7 +11,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
   },
   {
     id: 'legibility',
-    title: 'navigation.agency.legibility',
+    title: 'navigation.legibility',
     type: 'basic',
     icon: 'heroicons_outline:document-text',
     link: '/legibility',
@@ -148,14 +141,5 @@ export const agencyNavigation: FuseNavigationItem[] = [
     link: '/reports',
     roles: ['Agency-Administrator'],
     permissions: ['ReportView'],
-  },
-  {
-    id: 'household',
-    title: 'navigation.household',
-    type: 'basic',
-    icon: 'heroicons_solid:home',
-    link: '/household',
-    roles: ['Agency-Administrator'],
-    //permissions: ['HouseholdView'],
   },
 ];

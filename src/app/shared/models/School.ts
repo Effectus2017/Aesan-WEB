@@ -7,6 +7,7 @@ import { GroupType } from './GroupType';
 import { DeliveryType } from './DeliveryType';
 import { SponsorType } from './SponsorType';
 import { CenterType } from './CenterType';
+import { AreaType } from './AreaType';
 
 export interface School {
   id: number;
@@ -37,6 +38,7 @@ export interface School {
   // Información Administrativa
   organizationType?: OrganizationType;
   centerType?: CenterType;
+  areaType?: AreaType;
   nonProfit?: boolean;
   startDate?: string;
   baseYear?: number;
@@ -87,7 +89,7 @@ export interface School {
   applicantTypeId?: number;
   residentialTypeId?: number;
   operatingPolicyId?: number;
-
+  areaTypeId?: number;
   // Si la escuela es la principal
   isMainSchool?: boolean;
   mainSchoolId?: number;

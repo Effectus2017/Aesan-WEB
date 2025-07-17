@@ -301,7 +301,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field">
             <mat-label>{{ "schools.edit.kitchen-type.label" | transloco }}</mat-label>
@@ -323,6 +323,14 @@
             <mat-label>{{ "schools.edit.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Tipo de área -->
+          <mat-form-field data-cy="type-of-area-field">
+            <mat-label>{{ "schools.edit.type-of-area.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

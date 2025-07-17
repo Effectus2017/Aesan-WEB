@@ -17,6 +17,9 @@
                     "assignmentDate": "Assignment Date",
                     "comment": "Comment"
                 }
+            },
+            "search": {
+                "placeholder": "Search by name"
             }
         },
         "add": {
@@ -239,9 +242,35 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
+            "satellites": {
+                "label": "Satellite Sites",
+                "description": "List of satellite sites associated with this main site"
+            },
+            "activate-deactivate": {
+                "label": "Activate/Deactivate",
+                "description": "Site active status configuration"
+            },
+            "is-active": {
+                "label": "Status",
+                "placeholder": "Select site status"
+            },
+            "inactive-justification": {
+                "label": "Inactivation Justification",
+                "placeholder": "Enter justification for deactivating the site",
+                "required": "Inactivation justification is required"
+            },
+            "inactive-date": {
+                "label": "Inactive Date",
+                "placeholder": "Select inactive date"
+            },
+            "type-of-area": {
+                "label": "Type of Area",
+                "placeholder": "Type of area"
+            },
             "buttons": {
                 "save": "Save",
-                "cancel": "Cancel"
+                "cancel": "Cancel",
+                "submit": "Submit"
             }
         },
         "edit": {
@@ -492,9 +521,14 @@
                 "label": "Inactivation Date",
                 "placeholder": "Select inactivation date"
             },
+            "type-of-area": {
+                "label": "Type of Area",
+                "placeholder": "Type of area"
+            },
             "buttons": {
                 "save": "Save",
-                "cancel": "Cancel"
+                "cancel": "Cancel",
+                "submit": "Submit"
             }
         }
     }

@@ -1,9 +1,7 @@
 {
     "navigation": {
         "agency": {
-            "home": "Home",
-            "program-requests": "Program Requests",
-            "legibility": "Eligibility"
+            "home": "Home"
         },
         "users": {
             "title": "Users",
@@ -51,6 +49,10 @@
             "operating-policies": "Operating Policies",
             "center-types": "Center Types",
             "residential-types": "Residential Types"
-        }
+        },
+        "household": "Households",
+        "program-requests": "Program Requests",
+        "legibility": "Eligibility",
+        "permissions": "Permissions"
     }
 }

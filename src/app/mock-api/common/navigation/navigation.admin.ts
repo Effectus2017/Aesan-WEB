@@ -120,4 +120,11 @@ export const adminNavigation: FuseNavigationItem[] = [
       }
     ],
   },
+  {
+    id: 'permissions',
+    title: 'navigation.permissions',
+    type: 'basic',
+    icon: 'mat_solid:lock',
+    link: '/permissions',
+  }
 ];

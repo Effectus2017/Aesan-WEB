@@ -21,6 +21,7 @@ export const initialSignUpResolver = () => {
   return forkJoin([
     _geoService.getCitiesFromDb({
       alls: true,
+      isList: true,
     }),
     _programService.getAllProgramsFromDb({
         alls: false,

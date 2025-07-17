@@ -184,7 +184,7 @@
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.add.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "schools.add.organization-type.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -193,7 +193,7 @@
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.add.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.add.center.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -227,12 +227,12 @@
           <p class="mb-6 text-secondary">{{ "schools.add.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field">
             <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -240,7 +240,7 @@
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "schools.add.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -248,7 +248,15 @@
           <mat-form-field data-cy="delivery-type-field">
             <mat-label>{{ "schools.add.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Tipo de área -->
+          <mat-form-field data-cy="type-of-area-field">
+            <mat-label>{{ "schools.add.type-of-area.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -261,7 +269,7 @@
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.add.sponsor-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of sponsorType" [value]="option" data-cy="sponsor-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of sponsorType" [value]="option" data-cy="sponsor-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -269,7 +277,7 @@
           <mat-form-field data-cy="applicant-type-field">
             <mat-label>{{ "schools.add.applicant-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -277,7 +285,7 @@
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.add.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
 
           </mat-form-field>
@@ -288,7 +296,7 @@
           <mat-form-field data-cy="operating-policy-field">
             <mat-label>{{ "schools.add.operating-policy.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of operatingPolicies" [value]="option" data-cy="operating-policy-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of operatingPolicies" [value]="option" data-cy="operating-policy-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

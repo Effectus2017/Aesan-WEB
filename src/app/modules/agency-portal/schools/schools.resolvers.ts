@@ -15,6 +15,7 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
+import { AreaTypeService } from 'app/shared/services/area-type.service';
 
 // Resolver para la lista de escuelas
 export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
@@ -23,7 +24,7 @@ export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedR
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
-    alls: true,
+    alls: false,
     isList: false,
   };
 
@@ -71,6 +72,9 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
   // Center types service
   // Servicio para tipos de centro
   const centerTypeService = inject(CenterTypeService);
+  // Area types service
+  // Servicio para tipos de área
+  const areaTypeService = inject(AreaTypeService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -129,6 +133,9 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Types of center
     // Tipos de centro
     centerTypeService.getAllCenterTypesFromDb(requestParameters),
+    // Types of area
+    // Tipos de área
+    areaTypeService.getAllAreaTypesFromDb(requestParameters),
   ]);
 };
 
@@ -175,6 +182,9 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
   // Center types service
   // Servicio para tipos de centro
   const centerTypeService = inject(CenterTypeService);
+  // Area types service
+  // Servicio para tipos de área
+  const areaTypeService = inject(AreaTypeService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -235,5 +245,8 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Types of center
     // Tipos de centro
     centerTypeService.getAllCenterTypesFromDb(requestParameters),
+    // Types of area
+    // Tipos de área
+    areaTypeService.getAllAreaTypesFromDb(requestParameters),
   ]);
 };

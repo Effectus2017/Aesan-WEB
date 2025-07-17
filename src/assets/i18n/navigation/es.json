@@ -1,9 +1,7 @@
 {
     "navigation": {
         "agency": {
-            "home": "Inicio",
-            "program-requests": "Solicitudes al Programa",
-            "legibility": "Elegibilidad"
+            "home": "Inicio"
         },
         "users": {
             "title": "Usuarios",
@@ -51,6 +49,9 @@
             "operating-policies": "Políticas Operativas",
             "center-types": "Tipos de Centro"
         },
-        "household": "Hogares"
+        "household": "Hogares",
+        "program-requests": "Solicitudes al Programa",
+        "legibility": "Elegibilidad",
+        "permissions": "Permisos"
     }
 }

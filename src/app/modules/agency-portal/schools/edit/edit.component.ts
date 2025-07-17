@@ -47,6 +47,8 @@ import { GenericTableConfig } from 'app/shared/components/generic-table/generic-
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { AreaType } from 'app/shared/models/AreaType';
+import { AreaTypeService } from 'app/shared/services/area-type.service';
 
 @Component({
   selector: 'app-schools-edit',
@@ -94,6 +96,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   private _centerTypeService = inject(CenterTypeService);
   private _organizationTypeService = inject(OrganizationTypeService);
   private _educationLevelService = inject(EducationLevelService);
+  private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _notificationService = inject(NotificationService);
@@ -162,6 +165,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   isMainSchool: boolean = false;
 
   currentLang: string = 'es';
+
+  // Tipo de área
+  // Type of area
+  areaTypes: AreaType[] = [];
 
   // Parámetro de la escuela
   // School parameter
@@ -257,6 +264,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Tipo de residencial - Tipo de residencial de la escuela
       // Type of residential - Type of residential of the school
       typeOfResidential: [null],
+      // Tipo de área - Tipo de área de la escuela
+      // Type of area - Type of area of the school
+      areaType: [null],
       // Política de operación - Política de operación de la escuela
       // Operating policy - Operating policy of the school
       operatingPolicy: [null],
@@ -495,6 +505,14 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       }
     });
 
+    // Tipo de Area
+    this._areaTypeService.areaTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+        this.areaTypes = result.body;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     // Lista de escuelas
     // List of schools
     this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
@@ -556,6 +574,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const educationLevels = param.educationLevels || [];
     const organizationType = param.organizationType;
     const centerType = param.centerType;
+    const areaType = param.areaType;
 
     const breakfastFrom: Date | null = toTimeDate(param.breakfastFrom);
     const breakfastTo: Date | null = toTimeDate(param.breakfastTo);
@@ -591,6 +610,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       typeOfApplicant: applicantType,
       typeOfResidential: residentialType,
       operatingPolicy: operatingPolicy,
+      areaType: areaType,
       //
       nonProfit: param.nonProfit,
       startDate: param.startDate,
@@ -656,6 +676,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const centerTypeId: number = formValues.centerType?.id;
     const residentialTypeId: number = formValues.typeOfResidential?.id;
     const operatingPolicyId: number = formValues.operatingPolicy?.id;
+    const areaTypeId: number = formValues.areaType?.id;
 
     const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
     const breakfastTo: string = toTimeString(formValues.breakfastTo);
@@ -699,6 +720,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       applicantTypeId: applicantTypeId,
       operatingPolicyId: operatingPolicyId,
       residentialTypeId: residentialTypeId,
+      areaTypeId: areaTypeId,
       nonProfit: formValues.nonProfit ?? null,
       startDate: formValues.startDate ?? null,
       baseYear: formValues.baseYear ?? null,
