@@ -149,7 +149,112 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   isPAFProgram = isPAFProgram;
   isPDAMOrPSAVProgram = isPDAMOrPSAVProgram;
 
-  constructor() {}
+  constructor() {
+    // Inicializar el formulario en el constructor para evitar errores de undefined
+    // Create the form
+    this.signUpForm = this._formBuilder.group({
+        name: [null, Validators.required],
+        program: [null, Validators.required],
+
+        // Datos de la Agencia
+        sdrNumber: [null, [Validators.required]],
+        uieNumber: [null, [Validators.required]],
+        einNumber: [null, [Validators.required]],
+
+        // Datos de la Agencia
+
+        // ¿Es una organización sin fines de lucro?
+        // Is it a non-profit organization?
+        // Si (1) y No (2)
+        nonProfit: [null, Validators.required],
+
+        // ¿Posee Certificación de Registro de Educación Básica?
+        // Do you have Basic Education Registry Certification?
+        // En Proceso (3), Otorgado (4), Denegado (5)
+        basicEducationRegistryId: [null, Validators.required],
+
+        // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
+        // Have you been denied or disqualified from state funds in the last seven years?
+        // Si (1) y No (2)
+        stateFundsDenied: [null, Validators.required],
+
+        // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
+        // Have you been denied or disqualified from federal funds in the last seven years?
+        // Si (1) y No (2)
+        federalFundsDenied: [null, Validators.required],
+
+        // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+        // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
+        // Si (1) y No (2)
+        organizedAthleticPrograms: [null, Validators.required],
+
+        // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
+        // Is the Sponsor interested in participating in the at-risk snack and dinner service?
+        // Si (1) y No (2)
+        atRiskService: [{ value: null, disabled: true }],
+
+        // ¿En qué estatus se encuentra su Exención Contributiva?"
+        // In what status is your Tax Exemption?
+        // En Proceso (3), Otorgado (4), Denegado (5)
+        taxExemptionStatusId: [null, Validators.required],
+
+        // ¿Qué tipo de Exención Contributiva tiene?
+        // What type of Tax Exemption does it have?
+        // Estatal (11), Federal (12)
+        taxExemptionTypeId: [null, Validators.required],
+
+        // Service Time
+        serviceTime: [null, Validators.required],
+
+        // Dirección
+        address: [null, Validators.required],
+        zipCode: [null, [Validators.required]],
+        city: [null, Validators.required],
+        region: [null, Validators.required],
+        latitude: [null, Validators.required],
+        longitude: [null, Validators.required],
+
+        // Copiar Dirección Física
+        sameAsPhysicalAddress: [false],
+
+        // Dirección Postal
+        postalAddress: [null, Validators.required],
+        postalZipCode: [null, Validators.required],
+        postalCity: [null, Validators.required],
+        postalRegion: [null, Validators.required],
+
+        // Datos del Contacto
+        firstName: [null, Validators.required],
+        middleName: [null],
+        fatherLastName: [null],
+        motherLastName: [null],
+
+        // Datos del Correo Electrónico y Cargo
+        email: [null, [Validators.required, Validators.email]],
+        phone: [null, [Validators.required]],
+        administrationTitle: [null, Validators.required],
+
+        // Tipo de Entidad
+        // Type of Entity
+        // Gobierno (13), Privado (14)
+        typeOfEntityId: [null, Validators.required],
+
+        // Tipo de Solicitante
+        // Type of Applicant
+        // Laico (15), Base de fe (16)
+        typeOfApplicantId: [null, Validators.required],
+
+        // ¿De poseer un contrato Público Alianza especifique su modalidad?
+        // If you have a Public Alliance contract, please specify the type of contract
+        // Socio-Económico (17), Híbrido (18)
+        publicAllianceContractId: [null, Validators.required],
+
+        // National Youth Program
+        // ¿Su Institución es un Programa Nacional de Juventud?
+        // Si (1) y No (2)
+        nationalYouthProgram: [null],
+      });
+  }
 
   ngOnInit(): void {
     // Suscribirse a cambios de idioma
@@ -158,109 +263,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this._changeDetectorRef.detectChanges();
     });
 
-    // Create the form
-    this.signUpForm = this._formBuilder.group({
-      name: [null, Validators.required],
-      program: [null, Validators.required],
 
-      // Datos de la Agencia
-      sdrNumber: [null, [Validators.required]],
-      uieNumber: [null, [Validators.required]],
-      einNumber: [null, [Validators.required]],
-
-      // Datos de la Agencia
-
-      // ¿Es una organización sin fines de lucro?
-      // Is it a non-profit organization?
-      // Si (1) y No (2)
-      nonProfit: [null, Validators.required],
-
-      // ¿Posee Certificación de Registro de Educación Básica?
-      // Do you have Basic Education Registry Certification?
-      // En Proceso (3), Otorgado (4), Denegado (5)
-      basicEducationRegistryId: [null, Validators.required],
-
-      // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
-      // Have you been denied or disqualified from state funds in the last seven years?
-      // Si (1) y No (2)
-      stateFundsDenied: [null, Validators.required],
-
-      // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
-      // Have you been denied or disqualified from federal funds in the last seven years?
-      // Si (1) y No (2)
-      federalFundsDenied: [null, Validators.required],
-
-      // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-      // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
-      // Si (1) y No (2)
-      organizedAthleticPrograms: [null, Validators.required],
-
-      // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
-      // Is the Sponsor interested in participating in the at-risk snack and dinner service?
-      // Si (1) y No (2)
-      atRiskService: [{ value: null, disabled: true }],
-
-      // ¿En qué estatus se encuentra su Exención Contributiva?"
-      // In what status is your Tax Exemption?
-      // En Proceso (3), Otorgado (4), Denegado (5)
-      taxExemptionStatusId: [null, Validators.required],
-
-      // ¿Qué tipo de Exención Contributiva tiene?
-      // What type of Tax Exemption does it have?
-      // Estatal (11), Federal (12)
-      taxExemptionTypeId: [null, Validators.required],
-
-      // Service Time
-      serviceTime: [null, Validators.required],
-
-      // Dirección
-      address: [null, Validators.required],
-      zipCode: [null, [Validators.required]],
-      city: [null, Validators.required],
-      region: [null, Validators.required],
-      latitude: [null, Validators.required],
-      longitude: [null, Validators.required],
-
-      // Copiar Dirección Física
-      sameAsPhysicalAddress: [false],
-
-      // Dirección Postal
-      postalAddress: [null, Validators.required],
-      postalZipCode: [null, Validators.required],
-      postalCity: [null, Validators.required],
-      postalRegion: [null, Validators.required],
-
-      // Datos del Contacto
-      firstName: [null, Validators.required],
-      middleName: [null],
-      fatherLastName: [null],
-      motherLastName: [null],
-
-      // Datos del Correo Electrónico y Cargo
-      email: [null, [Validators.required, Validators.email]],
-      phone: [null, [Validators.required]],
-      administrationTitle: [null, Validators.required],
-
-      // Tipo de Entidad
-      // Type of Entity
-      // Gobierno (13), Privado (14)
-      typeOfEntityId: [null, Validators.required],
-
-      // Tipo de Solicitante
-      // Type of Applicant
-      // Laico (15), Base de fe (16)
-      typeOfApplicantId: [null, Validators.required],
-
-      // ¿De poseer un contrato Público Alianza especifique su modalidad?
-      // If you have a Public Alliance contract, please specify the type of contract
-      // Socio-Económico (17), Híbrido (18)
-      publicAllianceContractId: [null, Validators.required],
-
-      // National Youth Program
-      // ¿Su Institución es un Programa Nacional de Juventud?
-      // Si (1) y No (2)
-      nationalYouthProgram: [null],
-    });
 
     // Deshabilitar inicialmente todos los controles excepto program
     disableAllControlsExcept(this.signUpForm, 'program');

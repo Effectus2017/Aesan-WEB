@@ -13,7 +13,14 @@
     "watch": "ng build --watch --configuration development",
     "prod": "ng build --configuration production",
     "dev": "ng build --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:login": "playwright test login",
+    "test:e2e:schools": "playwright test schools"
   },
   "dependencies": {
     "@angular/animations": "19.2.14",
@@ -33,7 +40,7 @@
     "highlight.js": "11.9.0",
     "lodash-es": "4.17.21",
     "luxon": "3.4.4",
-    "ng-apexcharts": "1.9.0",
+    "ng-apexcharts": "^1.16.0",
     "ngx-quill": "25.1.1",
     "ngx-toastr": "^19.0.0",
     "perfect-scrollbar": "1.5.5",
@@ -47,6 +54,7 @@
     "@angular/cli": "19.2.14",
     "@angular/compiler-cli": "19.2.14",
     "@faker-js/faker": "^9.6.0",
+    "@playwright/test": "^1.54.1",
     "@stagewise/toolbar": "^0.2.1",
     "@tailwindcss/typography": "0.5.10",
     "@types/chroma-js": "2.4.4",

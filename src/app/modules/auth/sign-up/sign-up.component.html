@@ -14,7 +14,7 @@
             <p class="mb-6 text-secondary">{{ "auth.sign-up.sponsor-information-description" | transloco }}</p>
           </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1" *ngIf="!signUpForm.get('program')?.value">
+          <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1" *ngIf="signUpForm && !signUpForm.get('program')?.value">
             <p class="font-bold text-red-500">{{ "auth.sign-up.select-program-first" | transloco }}</p>
           </div>
 
@@ -95,7 +95,7 @@
             <!-- ¿Está interesado en participar en el servicio de merienda y cena en riesgo? -->
             <!-- Is the Sponsor interested in participating in the at-risk snack and dinner service? -->
             <!-- Si (1) y No (2) -->
-            <mat-form-field *ngIf="signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
+            <mat-form-field *ngIf="signUpForm && signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
               <mat-label>{{ "auth.sign-up.at-risk-service.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
@@ -200,7 +200,7 @@
           <!-- ¿Su Institución es un Programa Nacional de Juventud? -->
           <!-- Si (1) y No (2) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <mat-form-field data-cy="national-youth-program-field" *ngIf="isPSAVProgram(signUpForm.get('program')?.value)">
+            <mat-form-field data-cy="national-youth-program-field" *ngIf="signUpForm && isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "auth.sign-up.national-youth-program.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'nationalYouthProgram'" data-cy="national-youth-program-input">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="national-youth-program-option"> {{ currentLang === "en" ? option.nameEN : option.name }} </mat-option>

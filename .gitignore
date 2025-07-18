@@ -54,3 +54,10 @@ update-version.sh
 nutre-dev.local-key.pem
 nutre-dev.local.pem
 flujos
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
