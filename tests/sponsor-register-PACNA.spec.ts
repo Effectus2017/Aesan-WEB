@@ -1,4 +1,21 @@
 import { test, expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
+
+// Función helper para generar datos únicos para las pruebas
+const generateTestData = () => {
+  return {
+    agencyName: faker.company.name(),
+    address: faker.location.streetAddress(),
+    zipCode: faker.location.zipCode('#####'),
+    phone: faker.phone.number('###-###-####'),
+    email: faker.internet.email(),
+    contactName: faker.person.fullName(),
+    contactPhone: faker.phone.number('###-###-####'),
+    contactEmail: faker.internet.email(),
+    // Generar un nombre único para evitar conflictos
+    uniqueId: faker.string.alphanumeric(8).toLowerCase()
+  };
+};
 
 // Función helper para manejar errores de conexión y reintentar
 const navigateWithRetry = async (page: any, url: string, maxRetries = 3) => {
@@ -75,6 +92,10 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
   });
 
   test('should fill complete PACNA sponsor registration form', async ({ page }) => {
+    // Generar datos únicos para esta prueba
+    const testData = generateTestData();
+    console.log('Datos de prueba generados:', testData);
+
     // Navegar directamente a la página de registro con reintentos
     await navigateWithRetry(page, 'https://nutre-dev.local:4202/sign-up');
 
@@ -120,28 +141,31 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
       if (isDisabled) {
         console.log('El campo de agencia está deshabilitado, saltando este campo');
       } else {
-        await agencyNameField.fill('Agencia de Prueba Playwright');
-        await expect(agencyNameField).toHaveValue('Agencia de Prueba Playwright');
+        await agencyNameField.fill(testData.agencyName);
+        await expect(agencyNameField).toHaveValue(testData.agencyName);
       }
     }
 
     // 3. Llenar números de identificación
+    const uieNumber = faker.string.numeric(9);
     const uieField = page.locator('[data-cy=uie-input]');
     if (await uieField.isVisible()) {
-      await uieField.fill('123456789');
-      await expect(uieField).toHaveValue('123456789');
+      await uieField.fill(uieNumber);
+      await expect(uieField).toHaveValue(uieNumber);
     }
 
+    const sdrNumber = faker.string.numeric(9);
     const sdrField = page.locator('[data-cy=sdr-input]');
     if (await sdrField.isVisible()) {
-      await sdrField.fill('987654321');
-      await expect(sdrField).toHaveValue('987654321');
+      await sdrField.fill(sdrNumber);
+      await expect(sdrField).toHaveValue(sdrNumber);
     }
 
+    const einNumber = faker.string.numeric(9);
     const einField = page.locator('[data-cy=ein-input]');
     if (await einField.isVisible()) {
-      await einField.fill('123456789');
-      await expect(einField).toHaveValue('123456789');
+      await einField.fill(einNumber);
+      await expect(einField).toHaveValue(einNumber);
     }
 
     // 4. Llenar campos de organización
@@ -194,10 +218,11 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
     }
 
     // 7. Llenar fecha de servicio
+    const serviceDate = faker.date.past({ years: 3 }).toISOString().split('T')[0];
     const serviceTimeInput = page.locator('[data-cy=service-time-input]');
     if (await serviceTimeInput.isVisible()) {
-      await serviceTimeInput.fill('2020-01-01');
-      await expect(serviceTimeInput).toHaveValue('2020-01-01');
+      await serviceTimeInput.fill(serviceDate);
+      await expect(serviceTimeInput).toHaveValue(serviceDate);
     }
 
     // 8. Llenar campos de exención contributiva
@@ -246,8 +271,8 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
       if (isDisabled) {
         console.log('El campo de dirección está deshabilitado, saltando este campo');
       } else {
-        await addressField.fill('Calle Principal 123');
-        await expect(addressField).toHaveValue('Calle Principal 123');
+        await addressField.fill(testData.address);
+        await expect(addressField).toHaveValue(testData.address);
       }
     }
 
@@ -272,8 +297,8 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
     const zipCodeField = page.locator('[data-cy=zip-code-input]');
     if (await zipCodeField.isVisible()) {
-      await zipCodeField.fill('00901');
-      await expect(zipCodeField).toHaveValue('00901');
+      await zipCodeField.fill(testData.zipCode);
+      await expect(zipCodeField).toHaveValue(testData.zipCode);
     }
 
     const latitudeField = page.locator('[data-cy=latitude-input]');
@@ -291,8 +316,8 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
     // 12. Llenar dirección postal
     const postalAddressField = page.locator('[data-cy=postal-address-input]');
     if (await postalAddressField.isVisible()) {
-      await postalAddressField.fill('Apartado 123');
-      await expect(postalAddressField).toHaveValue('Apartado 123');
+      await postalAddressField.fill(testData.address);
+      await expect(postalAddressField).toHaveValue(testData.address);
     }
 
     const postalCitySelect = page.locator('[data-cy=postal-city-select]');
@@ -316,45 +341,48 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
     const postalZipCodeField = page.locator('[data-cy=postal-zip-code-input]');
     if (await postalZipCodeField.isVisible()) {
-      await postalZipCodeField.fill('00902');
-      await expect(postalZipCodeField).toHaveValue('00902');
+      await postalZipCodeField.fill(testData.zipCode);
+      await expect(postalZipCodeField).toHaveValue(testData.zipCode);
     }
 
     // 13. Llenar información del usuario
     const firstNameField = page.locator('[data-cy=first-name-input]');
     if (await firstNameField.isVisible()) {
-      await firstNameField.fill('Juan');
-      await expect(firstNameField).toHaveValue('Juan');
+      await firstNameField.fill(testData.contactName.split(' ')[0]);
+      await expect(firstNameField).toHaveValue(testData.contactName.split(' ')[0]);
     }
 
     const middleNameField = page.locator('[data-cy=middle-name-input]');
     if (await middleNameField.isVisible()) {
-      await middleNameField.fill('Carlos');
-      await expect(middleNameField).toHaveValue('Carlos');
+      const middleName = testData.contactName.split(' ')[1] || '';
+      await middleNameField.fill(middleName);
+      await expect(middleNameField).toHaveValue(middleName);
     }
 
     const fatherLastNameField = page.locator('[data-cy=father-last-name-input]');
     if (await fatherLastNameField.isVisible()) {
-      await fatherLastNameField.fill('García');
-      await expect(fatherLastNameField).toHaveValue('García');
+      const lastName = testData.contactName.split(' ').slice(-1)[0] || '';
+      await fatherLastNameField.fill(lastName);
+      await expect(fatherLastNameField).toHaveValue(lastName);
     }
 
     const motherLastNameField = page.locator('[data-cy=mother-last-name-input]');
     if (await motherLastNameField.isVisible()) {
-      await motherLastNameField.fill('López');
-      await expect(motherLastNameField).toHaveValue('López');
+      const motherLastName = faker.person.lastName();
+      await motherLastNameField.fill(motherLastName);
+      await expect(motherLastNameField).toHaveValue(motherLastName);
     }
 
     const emailField = page.locator('[data-cy=email-input]');
     if (await emailField.isVisible()) {
-      await emailField.fill('prueba@playwright.com');
-      await expect(emailField).toHaveValue('prueba@playwright.com');
+      await emailField.fill(testData.contactEmail);
+      await expect(emailField).toHaveValue(testData.contactEmail);
     }
 
     const phoneField = page.locator('[data-cy=phone-input]');
     if (await phoneField.isVisible()) {
-      await phoneField.fill('787-555-0123');
-      await expect(phoneField).toHaveValue('787-555-0123');
+      await phoneField.fill(testData.contactPhone);
+      await expect(phoneField).toHaveValue(testData.contactPhone);
     }
 
     const adminTitleField = page.locator('[data-cy=admin-title-input]');
