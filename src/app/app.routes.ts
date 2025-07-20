@@ -145,6 +145,8 @@ export const appRoutes: Route[] = [
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)
       { path: 'household-member', loadChildren: () => import('app/modules/agency-portal/household-member/household-member.routes') },
+      // Employees, listado de empleados (Role: Agency)
+      { path: 'employees', loadChildren: () => import('app/modules/agency-portal/employees/employees.routes') },
       // Legibility module, listado de módulos de elegibilidad (Role: Agency)
       { path: 'legibility', loadChildren: () => import('app/modules/agency-portal/legibility/legibility.routes') },
     ],

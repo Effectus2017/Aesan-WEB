@@ -50,6 +50,7 @@
             "center-types": "Tipos de Centro"
         },
         "household": "Hogares",
+        "employees": "Empleados",
         "program-requests": "Solicitudes al Programa",
         "legibility": "Elegibilidad",
         "permissions": "Permisos"

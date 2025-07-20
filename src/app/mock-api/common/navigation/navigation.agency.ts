@@ -134,6 +134,15 @@ export const agencyNavigation: FuseNavigationItem[] = [
     permissions: ['ReportView'],
   },
   {
+    id: 'employees',
+    title: 'navigation.employees',
+    type: 'basic',
+    icon: 'heroicons_solid:users',
+    link: '/employees',
+    roles: ['Agency-Administrator'],
+    permissions: ['EmployeeView'],
+  },
+  {
     id: 'reports.agency',
     title: 'navigation.reports',
     type: 'basic',

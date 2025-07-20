@@ -397,7 +397,8 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
     // 14. Intentar enviar el formulario
     console.log('Intentando enviar el formulario...');
-    const submitButton = page.locator('[data-cy=submit-button]');
+    // se usa data-cy="generic-header-submit-button" porque esta vista use Generic Header
+    const submitButton = page.locator('data-cy="generic-header-submit-button"]');
 
     if (await submitButton.isVisible()) {
       // Verificar el estado del botón antes de intentar hacer clic

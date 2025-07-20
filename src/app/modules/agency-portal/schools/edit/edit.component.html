@@ -25,7 +25,7 @@
           <!-- name -->
           <mat-form-field data-cy="name-field">
             <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label>
-            <input matInput formControlName="name" required placeholder="{{ 'schools.edit.name.placeholder' | transloco }}" />
+            <input matInput formControlName="name" required placeholder="{{ 'schools.edit.name.placeholder' | transloco }}" data-cy="name-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.edit.name.required" | transloco }}</mat-error>
           </mat-form-field>
 
@@ -456,7 +456,7 @@
           </mat-form-field>
 
           <!-- Horario desde para el desayuno -->
-          <mat-form-field data-cy="breakfast-schedule-field">
+          <mat-form-field data-cy="breakfast-from-field">
             <mat-label>{{ "schools.edit.breakfast-from.label" | transloco }}</mat-label>
             <input
               matInput
@@ -470,7 +470,7 @@
           </mat-form-field>
 
           <!-- Horario hasta para el desayuno -->
-          <mat-form-field data-cy="breakfast-schedule-field">
+          <mat-form-field data-cy="breakfast-to-field">
             <mat-label>{{ "schools.edit.breakfast-to.label" | transloco }}</mat-label>
             <input
               matInput
@@ -499,7 +499,7 @@
           </mat-form-field>
 
           <!-- Horario desde para el almuerzo -->
-          <mat-form-field data-cy="lunch-schedule-field">
+          <mat-form-field data-cy="lunch-from-field">
             <mat-label>{{ "schools.edit.lunch-from.label" | transloco }}</mat-label>
             <input
               matInput
@@ -513,7 +513,7 @@
           </mat-form-field>
 
           <!-- Horario hasta para el almuerzo -->
-          <mat-form-field data-cy="lunch-schedule-field">
+          <mat-form-field data-cy="lunch-to-field">
             <mat-label>{{ "schools.edit.lunch-to.label" | transloco }}</mat-label>
             <input
               matInput

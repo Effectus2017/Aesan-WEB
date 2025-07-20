@@ -1,0 +1,128 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Header -->
+    <app-generic-header
+        [config]="headerConfig"
+        [handler]="this">
+    </app-generic-header>
+
+    <!-- Form Content -->
+    <div class="flex flex-col flex-auto min-w-0 p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- First Name -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.firstName' | transloco }}</mat-label>
+                <input matInput formControlName="firstName" data-cy="firstName-input">
+                <mat-error *ngIf="headerConfig.formGroup.get('firstName')?.hasError('required')">
+                    {{ 'employees.form.firstNameRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Middle Name -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.middleName' | transloco }}</mat-label>
+                <input matInput formControlName="middleName" data-cy="middleName-input">
+            </mat-form-field>
+
+            <!-- Father Last Name -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.fatherLastName' | transloco }}</mat-label>
+                <input matInput formControlName="fatherLastName" data-cy="fatherLastName-input">
+                <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName')?.hasError('required')">
+                    {{ 'employees.form.fatherLastNameRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Mother Last Name -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.motherLastName' | transloco }}</mat-label>
+                <input matInput formControlName="motherLastName" data-cy="motherLastName-input">
+            </mat-form-field>
+
+            <!-- Status -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.status' | transloco }}</mat-label>
+                <mat-select formControlName="statusId" data-cy="status-select">
+                    <mat-option value="1">{{ 'employees.form.statusActive' | transloco }}</mat-option>
+                    <mat-option value="2">{{ 'employees.form.statusInactive' | transloco }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="headerConfig.formGroup.get('statusId')?.hasError('required')">
+                    {{ 'employees.form.statusRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Title -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.title' | transloco }}</mat-label>
+                <mat-select formControlName="titleId" data-cy="title-select">
+                    <!-- Options will be loaded dynamically -->
+                </mat-select>
+                <mat-error *ngIf="headerConfig.formGroup.get('titleId')?.hasError('required')">
+                    {{ 'employees.form.titleRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Birth Date -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.birthDate' | transloco }}</mat-label>
+                <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" data-cy="birthDate-input">
+                <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #birthDatePicker></mat-datepicker>
+                <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('required')">
+                    {{ 'employees.form.birthDateRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Email -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.email' | transloco }}</mat-label>
+                <input matInput formControlName="email" type="email" data-cy="email-input">
+                <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
+                    {{ 'employees.form.emailRequired' | transloco }}
+                </mat-error>
+                <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('email')">
+                    {{ 'employees.form.emailInvalid' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Postal Address -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.postalAddress' | transloco }}</mat-label>
+                <textarea matInput formControlName="postalAddress" rows="3" data-cy="postalAddress-input"></textarea>
+            </mat-form-field>
+
+            <!-- City -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.city' | transloco }}</mat-label>
+                <mat-select formControlName="cityId" data-cy="city-select">
+                    <!-- Options will be loaded dynamically -->
+                </mat-select>
+                <mat-error *ngIf="headerConfig.formGroup.get('cityId')?.hasError('required')">
+                    {{ 'employees.form.cityRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Region -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.region' | transloco }}</mat-label>
+                <mat-select formControlName="regionId" data-cy="region-select">
+                    <!-- Options will be loaded dynamically -->
+                </mat-select>
+                <mat-error *ngIf="headerConfig.formGroup.get('regionId')?.hasError('required')">
+                    {{ 'employees.form.regionRequired' | transloco }}
+                </mat-error>
+            </mat-form-field>
+
+            <!-- Area Code -->
+            <mat-form-field appearance="outline">
+                <mat-label>{{ 'employees.form.areaCode' | transloco }}</mat-label>
+                <input matInput formControlName="areaCode" data-cy="areaCode-input">
+            </mat-form-field>
+
+            <!-- Comments -->
+            <mat-form-field appearance="outline" class="md:col-span-2">
+                <mat-label>{{ 'employees.form.comments' | transloco }}</mat-label>
+                <textarea matInput formControlName="comments" rows="4" data-cy="comments-input"></textarea>
+            </mat-form-field>
+        </div>
+    </div>
+</div>
