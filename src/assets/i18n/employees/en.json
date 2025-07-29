@@ -1,0 +1,210 @@
+{
+  "employees": {
+    "title": "Employees",
+    "list": {
+      "title": "Employee List",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "firstName": "First Name",
+          "middleName": "Middle Name",
+          "fatherLastName": "Father's Last Name",
+          "motherLastName": "Mother's Last Name",
+          "fullName": "Full Name",
+          "status": "Status",
+          "position": "Position",
+          "birthDate": "Birth Date",
+          "email": "Email",
+          "city": "City",
+          "region": "Region",
+          "actions": "Actions"
+        }
+      },
+      "search": {
+        "placeholder": "Search by name"
+      }
+    },
+    "add": {
+      "title": "Add Employee",
+      "information": "Information",
+      "information-description": "General employee information",
+      "personal-information": "Personal Information",
+      "personal-information-description": "Employee personal data",
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter first name",
+        "required": "First name is required"
+      },
+      "middleName": {
+        "label": "Middle Name",
+        "placeholder": "Enter middle name (optional)"
+      },
+      "fatherLastName": {
+        "label": "Last Name",
+        "placeholder": "Enter last name",
+        "required": "Last name is required"
+      },
+      "motherLastName": {
+        "label": "Second Last Name",
+        "placeholder": "Enter second last name (optional)"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status",
+        "required": "Status is required",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select position",
+        "required": "Position is required"
+      },
+      "birthDate": {
+        "label": "Birth Date",
+        "placeholder": "Select birth date",
+        "required": "Birth date is required"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email address",
+        "required": "Email is required",
+        "invalid": "Email format is not valid"
+      },
+      "address": {
+        "label": "Address",
+        "description": "Employee address information"
+      },
+      "postalAddress": {
+        "label": "Postal Address",
+        "placeholder": "Enter complete postal address",
+        "required": "Postal address is required"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Select city",
+        "required": "City is required"
+      },
+      "region": {
+        "label": "Region",
+        "placeholder": "Select region",
+        "required": "Region is required"
+      },
+      "areaCode": {
+        "label": "Area Code",
+        "placeholder": "Enter area code"
+      },
+      "additional-information": "Additional Information",
+      "additional-information-description": "Additional employee information",
+      "comments": {
+        "label": "Comments",
+        "placeholder": "Enter additional comments about the employee"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      }
+    },
+    "edit": {
+      "title": "Edit Employee",
+      "information": "Information",
+      "information-description": "General employee information",
+      "personal-information": "Personal Information",
+      "personal-information-description": "Employee personal data",
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter first name",
+        "required": "First name is required"
+      },
+      "middleName": {
+        "label": "Middle Name",
+        "placeholder": "Enter middle name (optional)"
+      },
+      "fatherLastName": {
+        "label": "Father's Last Name",
+        "placeholder": "Enter father's last name",
+        "required": "Father's last name is required"
+      },
+      "motherLastName": {
+        "label": "Mother's Last Name",
+        "placeholder": "Enter mother's last name (optional)"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status",
+        "required": "Status is required",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select position",
+        "required": "Position is required"
+      },
+      "birthDate": {
+        "label": "Birth Date",
+        "placeholder": "Select birth date",
+        "required": "Birth date is required"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email address",
+        "required": "Email is required",
+        "invalid": "Email format is not valid"
+      },
+      "address": {
+        "label": "Address",
+        "description": "Employee address information"
+      },
+      "postalAddress": {
+        "label": "Postal Address",
+        "placeholder": "Enter complete postal address",
+        "required": "Postal address is required"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Select city",
+        "required": "City is required"
+      },
+      "region": {
+        "label": "Region",
+        "placeholder": "Select region",
+        "required": "Region is required"
+      },
+      "areaCode": {
+        "label": "Area Code",
+        "placeholder": "Enter area code"
+      },
+      "additional-information": "Additional Information",
+      "additional-information-description": "Additional employee information",
+      "comments": {
+        "label": "Comments",
+        "placeholder": "Enter additional comments about the employee"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "submit": "Submit"
+      }
+    },
+    "messages": {
+      "create": {
+        "success": "Employee created successfully",
+        "error": "Error creating employee"
+      },
+      "update": {
+        "success": "Employee updated successfully",
+        "error": "Error updating employee"
+      },
+      "delete": {
+        "success": "Employee deleted successfully",
+        "error": "Error deleting employee"
+      },
+      "convert": {
+        "success": "Employee converted to user successfully",
+        "error": "Error converting employee to user"
+      }
+    }
+  }
+}

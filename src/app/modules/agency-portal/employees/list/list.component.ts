@@ -60,7 +60,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     }),
     searchFieldShow: true,
     goToAddButtonShow: true,
-    searchInputPlaceholder: 'employees.list.searchPlaceholder'
+    searchInputPlaceholder: 'employees.list.search.placeholder'
   };
 
   tableConfig: GenericTableConfig = {
@@ -75,12 +75,14 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   };
 
   ngOnInit(): void {
+
     this._employeeService.employees$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.tableConfig.dataSource.data = result.body.data;
         this.tableConfig.length = result.body.count;
       }
     });
+
   }
 
   ngOnDestroy(): void {
@@ -99,10 +101,10 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       name: form.name || undefined
     };
 
-    this._employeeService.getAll(queryParams).subscribe({
+    this._employeeService.getAllEmployeesFromDb(queryParams).subscribe({
       next: (response) => {
-        this.tableConfig.dataSource = response.body;
-        this.tableConfig.length = response.total;
+        this.tableConfig.dataSource.data = response.body.data;
+        this.tableConfig.length = response.body.count;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
@@ -121,8 +123,12 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
   onTableDelete(event: Event, id: number): void {
     // Implementar lógica de eliminación
+    const queryParams: QueryParameters = {
+      employeeId: id
+    };
+
     if (confirm('¿Está seguro de que desea eliminar este empleado?')) {
-      this._employeeService.delete({ id }).subscribe({
+      this._employeeService.deleteEmployee(queryParams).subscribe({
         next: () => {
           this.getAll(0, this.headerConfig.formGroup.value);
         },
@@ -135,8 +141,13 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
   onTableConvertToUser(event: Event, id: number): void {
     // Implementar lógica de conversión a usuario
+    const queryParams: QueryParameters = {
+      employeeId: id,
+      userId: ''
+    };
+
     if (confirm('¿Está seguro de que desea convertir este empleado en usuario?')) {
-      this._employeeService.convertToUser(id, '').subscribe({
+      this._employeeService.convertEmployeeToUser(queryParams).subscribe({
         next: () => {
           this.getAll(0, this.headerConfig.formGroup.value);
         },

@@ -2,6 +2,9 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { EmployeeService } from 'app/shared/services/employee.service';
+import { GeoService } from 'app/shared/services/geo.service';
+import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+
 import { forkJoin } from 'rxjs';
 
 // Resolver para la lista de empleados
@@ -27,6 +30,12 @@ export const initialDataEmployeesAddResolver: ResolveFn<any> = (route: Activated
   // Employee operations service
   // Servicio para operaciones de empleados
   const employeeService = inject(EmployeeService);
+  // Geographic service
+  // Servicio para operaciones geográficas
+  const geoService = inject(GeoService);
+  // Options selection service
+  // Servicio para opciones de selección
+  const optionSelectionService = inject(OptionSelectionService);
 
   const requestParameters: QueryParameters = {
     take: 25,
@@ -36,12 +45,20 @@ export const initialDataEmployeesAddResolver: ResolveFn<any> = (route: Activated
   };
 
   return forkJoin([
-    // Verificar si existe un empleado principal
-    // Check if main employee exists
-    employeeService.hasMainEmployee(),
-    // Lista de empleados para dropdowns
-    // Employees list for dropdowns
-    employeeService.getAllEmployeesFromDb(requestParameters),
+    // Geographic service
+    // Servicio para operaciones geográficas
+    geoService.getCitiesFromDb(requestParameters),
+    // Regions service
+    // Servicio para regiones
+    geoService.getRegionsFromDb(requestParameters),
+    // Employee titles service
+    // Servicio para cargos de empleados
+    // options selection service
+    // Servicio para opciones de selección
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'employeePosition,isActive',
+      names: null,
+    }),
   ]);
 };
 

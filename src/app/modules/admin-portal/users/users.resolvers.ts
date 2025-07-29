@@ -57,7 +57,7 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
 
-  return forkJoin([agencyService.getAllAgenciesList({ name: 'NUTRE', alls: false }), usersService.getAllRolesFromDb({ take: 25, skip: 0 })]);
+  return forkJoin([agencyService.getAllAgenciesFromDb({ alls: true, isList: true }), usersService.getAllRolesFromDb({ take: 25, skip: 0 })]);
 };
 
 export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {

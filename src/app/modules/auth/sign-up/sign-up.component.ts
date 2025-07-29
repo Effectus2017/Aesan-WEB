@@ -226,7 +226,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Datos del Contacto
         firstName: [null, Validators.required],
         middleName: [null],
-        fatherLastName: [null],
+        fatherLastName: [null, Validators.required],
         motherLastName: [null],
 
         // Datos del Correo Electrónico y Cargo

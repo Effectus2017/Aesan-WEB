@@ -1,11 +1,12 @@
 export interface EmployeeRequest {
   id?: number;
+  agencyId: number;
   firstName: string;
   middleName?: string;
   fatherLastName: string;
   motherLastName: string;
   statusId: number;
-  titleId: number;
+  positionId: number;
   birthDate: string;
   email: string;
   postalAddress: string;

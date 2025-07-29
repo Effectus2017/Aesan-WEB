@@ -1,0 +1,210 @@
+{
+  "employees": {
+    "title": "Empleados",
+    "list": {
+      "title": "Lista de Empleados",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "firstName": "Nombre",
+          "middleName": "Segundo Nombre",
+          "fatherLastName": "Apellido Paterno",
+          "motherLastName": "Apellido Materno",
+          "fullName": "Nombre Completo",
+          "status": "Estado",
+          "position": "Cargo",
+          "birthDate": "Fecha de Nacimiento",
+          "email": "Correo Electrónico",
+          "city": "Ciudad",
+          "region": "Región",
+          "actions": "Acciones"
+        }
+      },
+      "search": {
+        "placeholder": "Buscar por nombre"
+      }
+    },
+    "add": {
+      "title": "Agregar Empleado",
+      "information": "Información",
+      "information-description": "Información general del empleado",
+      "personal-information": "Información Personal",
+      "personal-information-description": "Datos personales del empleado",
+      "firstName": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
+      },
+      "middleName": {
+        "label": "Segundo Nombre",
+        "placeholder": "Ingrese el segundo nombre (opcional)"
+      },
+      "fatherLastName": {
+        "label": "Apellido Paterno",
+        "placeholder": "Ingrese el apellido paterno",
+        "required": "El apellido paterno es requerido"
+      },
+      "motherLastName": {
+        "label": "Apellido Materno",
+        "placeholder": "Ingrese el apellido materno (opcional)"
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado",
+        "required": "El estado es requerido",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "position": {
+        "label": "Cargo",
+        "placeholder": "Seleccione el cargo",
+        "required": "El cargo es requerido"
+      },
+      "birthDate": {
+        "label": "Fecha de Nacimiento",
+        "placeholder": "Seleccione la fecha de nacimiento",
+        "required": "La fecha de nacimiento es requerida"
+      },
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingrese el correo electrónico",
+        "required": "El correo electrónico es requerido",
+        "invalid": "El formato del correo electrónico no es válido"
+      },
+      "address": {
+        "label": "Dirección",
+        "description": "Información de dirección del empleado"
+      },
+      "postalAddress": {
+        "label": "Dirección Postal",
+        "placeholder": "Ingrese la dirección postal completa",
+        "required": "La dirección postal es requerida"
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Seleccione la ciudad",
+        "required": "La ciudad es requerida"
+      },
+      "region": {
+        "label": "Región",
+        "placeholder": "Seleccione la región",
+        "required": "La región es requerida"
+      },
+      "areaCode": {
+        "label": "Código de Área",
+        "placeholder": "Ingrese el código de área"
+      },
+      "additional-information": "Información Adicional",
+      "additional-information-description": "Información adicional del empleado",
+      "comments": {
+        "label": "Comentarios",
+        "placeholder": "Ingrese comentarios adicionales sobre el empleado"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "submit": "Enviar"
+      }
+    },
+    "edit": {
+      "title": "Editar Empleado",
+      "information": "Información",
+      "information-description": "Información general del empleado",
+      "personal-information": "Información Personal",
+      "personal-information-description": "Datos personales del empleado",
+      "firstName": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
+      },
+      "middleName": {
+        "label": "Segundo Nombre",
+        "placeholder": "Ingrese el segundo nombre (opcional)"
+      },
+      "fatherLastName": {
+        "label": "Apellido del Padre",
+        "placeholder": "Ingrese el apellido del padre",
+        "required": "El apellido del padre es requerido"
+      },
+      "motherLastName": {
+        "label": "Apellido de la Madre",
+        "placeholder": "Ingrese el apellido de la madre (opcional)"
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado",
+        "required": "El estado es requerido",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "position": {
+        "label": "Cargo",
+        "placeholder": "Seleccione el cargo",
+        "required": "El cargo es requerido"
+      },
+      "birthDate": {
+        "label": "Fecha de Nacimiento",
+        "placeholder": "Seleccione la fecha de nacimiento",
+        "required": "La fecha de nacimiento es requerida"
+      },
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingrese el correo electrónico",
+        "required": "El correo electrónico es requerido",
+        "invalid": "El formato del correo electrónico no es válido"
+      },
+      "address": {
+        "label": "Dirección",
+        "description": "Información de dirección del empleado"
+      },
+      "postalAddress": {
+        "label": "Dirección Postal",
+        "placeholder": "Ingrese la dirección postal completa",
+        "required": "La dirección postal es requerida"
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Seleccione la ciudad",
+        "required": "La ciudad es requerida"
+      },
+      "region": {
+        "label": "Región",
+        "placeholder": "Seleccione la región",
+        "required": "La región es requerida"
+      },
+      "areaCode": {
+        "label": "Código de Área",
+        "placeholder": "Ingrese el código de área"
+      },
+      "additional-information": "Información Adicional",
+      "additional-information-description": "Información adicional del empleado",
+      "comments": {
+        "label": "Comentarios",
+        "placeholder": "Ingrese comentarios adicionales sobre el empleado"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "submit": "Enviar"
+      }
+    },
+    "messages": {
+      "create": {
+        "success": "Empleado creado exitosamente",
+        "error": "Error al crear el empleado"
+      },
+      "update": {
+        "success": "Empleado actualizado exitosamente",
+        "error": "Error al actualizar el empleado"
+      },
+      "delete": {
+        "success": "Empleado eliminado exitosamente",
+        "error": "Error al eliminar el empleado"
+      },
+      "convert": {
+        "success": "Empleado convertido a usuario exitosamente",
+        "error": "Error al convertir empleado a usuario"
+      }
+    }
+  }
+}

@@ -41,5 +41,8 @@
   "./assets/i18n/organization-type/en.json",
 
   "./assets/i18n/center-types/es.json",
-  "./assets/i18n/center-types/en.json"
+  "./assets/i18n/center-types/en.json",
+
+  "./assets/i18n/employees/es.json",
+  "./assets/i18n/employees/en.json"
 ]

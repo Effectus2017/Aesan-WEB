@@ -140,7 +140,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_solid:users',
     link: '/employees',
     roles: ['Agency-Administrator'],
-    permissions: ['EmployeeView'],
+    // permissions: ['EmployeeView'],
   },
   {
     id: 'reports.agency',

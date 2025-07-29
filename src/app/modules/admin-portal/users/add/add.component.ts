@@ -124,7 +124,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     });
 
     // Get the agencies list
-    this._agencyService.agenciesList$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       this.listAgencies = result.body;
       // Mark for check
       this._changeDetectorRef.markForCheck();

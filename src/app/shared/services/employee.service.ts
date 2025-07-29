@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/QueryParameters';
-import { Employee, EmployeeList } from '../models/Employee';
+import { Employee } from '../models/Employee';
 import { EmployeeRequest } from '../models/Request/EmployeeRequest';
+import { getHttpOptions } from '../utils';
 
 @Injectable({
   providedIn: 'root'
@@ -27,47 +28,35 @@ export class EmployeeService {
     return this._employee.asObservable();
   }
 
+   /**
+   * Obtiene un empleado específico por ID
+   * @param queryParams Parámetros de consulta que incluyen el ID del empleado
+   * @returns Observable con los datos del empleado
+   */
+   getEmployeeById(queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-employee-by-id`, getHttpOptions(queryParams))
+    .pipe(tap((response: any) => this._employee.next(response)));
+  }
+
   /**
    * Obtiene todos los empleados desde la base de datos
    * @param queryParams Parámetros de consulta (paginación, filtros, etc.)
    * @returns Observable con la lista de empleados y el conteo total
    */
   getAllEmployeesFromDb(queryParams: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/employee`, { params: queryParams as any })
-      .pipe(
-        tap((response: any) => {
-          this._employees.next(response.data);
-        })
-      );
+    return this._httpClient.get(`${this.apiUrl}/get-all-employees-from-db`, getHttpOptions(queryParams))
+    .pipe(tap((response: any) => this._employees.next(response)));
   }
 
-  /**
-   * Obtiene un empleado específico por ID
-   * @param queryParams Parámetros de consulta que incluyen el ID del empleado
-   * @returns Observable con los datos del empleado
-   */
-  getEmployeeById(queryParams: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/employee/by-id`, { params: queryParams as any })
-      .pipe(
-        tap((response: any) => {
-          this._employee.next(response.data);
-        })
-      );
-  }
+
 
   /**
    * Crea un nuevo empleado
    * @param employee Datos del empleado a crear
    * @returns Observable con la respuesta del servidor
    */
-  insertEmployee(employee: EmployeeRequest): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/employee`, employee)
-      .pipe(
-        tap(() => {
-          // Invalidar caché después de crear
-          this._employees.next(null);
-        })
-      );
+  insertEmployee(employee: EmployeeRequest, queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/insert-employee`, employee, getHttpOptions(queryParams))
   }
 
   /**
@@ -75,15 +64,8 @@ export class EmployeeService {
    * @param employee Datos del empleado a actualizar
    * @returns Observable con la respuesta del servidor
    */
-  updateEmployee(employee: EmployeeRequest): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/employee`, employee)
-      .pipe(
-        tap(() => {
-          // Invalidar caché después de actualizar
-          this._employees.next(null);
-          this._employee.next(null);
-        })
-      );
+  updateEmployee(employee: EmployeeRequest, queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-employee`, employee, getHttpOptions(queryParams));
   }
 
   /**
@@ -92,14 +74,7 @@ export class EmployeeService {
    * @returns Observable con la respuesta del servidor
    */
   deleteEmployee(queryParams: QueryParameters): Observable<any> {
-    return this._httpClient.delete(`${this.apiUrl}/employee`, { params: queryParams as any })
-      .pipe(
-        tap(() => {
-          // Invalidar caché después de eliminar
-          this._employees.next(null);
-          this._employee.next(null);
-        })
-      );
+    return this._httpClient.delete(`${this.apiUrl}/delete-employee`, { params: queryParams as any });
   }
 
   /**
@@ -108,17 +83,8 @@ export class EmployeeService {
    * @param userId ID del usuario a asignar
    * @returns Observable con la respuesta del servidor
    */
-  convertEmployeeToUser(employeeId: number, userId: string): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/employee/convert-to-user`, null, {
-      params: { employeeId: employeeId.toString(), userId }
-    })
-    .pipe(
-      tap(() => {
-        // Invalidar caché después de la conversión
-        this._employees.next(null);
-        this._employee.next(null);
-      })
-    );
+  convertEmployeeToUser(queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/convert-employee-to-user`, null, getHttpOptions(queryParams))
   }
 
   /**
@@ -127,17 +93,8 @@ export class EmployeeService {
    * @param isActive Nuevo estado activo
    * @returns Observable con la respuesta del servidor
    */
-  updateEmployeeActiveStatus(employeeId: number, isActive: boolean): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/employee/active-status`, null, {
-      params: { employeeId: employeeId.toString(), isActive: isActive.toString() }
-    })
-    .pipe(
-      tap(() => {
-        // Invalidar caché después de actualizar el estado
-        this._employees.next(null);
-        this._employee.next(null);
-      })
-    );
+  updateEmployeeActiveStatus(queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-employee-active-status`, null, getHttpOptions(queryParams));
   }
 
   /**
@@ -145,31 +102,6 @@ export class EmployeeService {
    * @returns Observable con la respuesta del servidor
    */
   hasMainEmployee(): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/employee/has-main`);
-  }
-
-  // Métodos de compatibilidad (mantener para no romper código existente)
-  getAll(queryParams: QueryParameters): Observable<any> {
-    return this.getAllEmployeesFromDb(queryParams);
-  }
-
-  getById(queryParams: QueryParameters): Observable<any> {
-    return this.getEmployeeById(queryParams);
-  }
-
-  create(employee: EmployeeRequest): Observable<any> {
-    return this.insertEmployee(employee);
-  }
-
-  update(employee: EmployeeRequest): Observable<any> {
-    return this.updateEmployee(employee);
-  }
-
-  delete(queryParams: QueryParameters): Observable<any> {
-    return this.deleteEmployee(queryParams);
-  }
-
-  convertToUser(employeeId: number, userId: string): Observable<any> {
-    return this.convertEmployeeToUser(employeeId, userId);
+    return this._httpClient.get(`${this.apiUrl}/has-main-employee`);
   }
 }

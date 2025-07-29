@@ -6,8 +6,8 @@ export interface Employee {
   motherLastName: string;
   statusId: number;
   statusName: string;
-  titleId: number;
-  titleName: string;
+  positionId: number;
+  positionName: string;
   birthDate: string;
   email: string;
   postalAddress: string;
@@ -31,7 +31,7 @@ export interface EmployeeList {
   fatherLastName: string;
   motherLastName: string;
   statusName: string;
-  titleName: string;
+  positionName: string;
   email: string;
   cityName: string;
   regionName: string;

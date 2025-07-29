@@ -11,6 +11,7 @@ export interface QueryParameters {
   regionId?: number;
   cityId?: number;
   statusId?: number;
+  employeeId?: number;
   userId?: string;
   monitorId?: string;
   imageUrl?: string;

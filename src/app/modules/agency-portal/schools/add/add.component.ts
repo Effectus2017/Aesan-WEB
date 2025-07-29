@@ -18,8 +18,6 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
-import { MatTableDataSource } from '@angular/material/table';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
@@ -42,7 +40,6 @@ import { SponsorType } from 'app/shared/models/SponsorType';
 import { EducationLevel } from 'app/shared/models/EducationLevel';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from '../edit/columns-schema';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 
@@ -296,8 +293,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Snack schedule to
       snackTo: [null],
     }),
-    saveButtonShow: true,
-    saveButtonText: 'schools.add.buttons.save',
+    // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'schools.add.buttons.cancel',
     // Submit button
