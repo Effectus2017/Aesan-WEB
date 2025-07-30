@@ -6,4 +6,7 @@ export interface City {
     updatedAt?: Date;
 }
 
-
+export interface CityListView {
+    data: City[];
+    total: number;
+}

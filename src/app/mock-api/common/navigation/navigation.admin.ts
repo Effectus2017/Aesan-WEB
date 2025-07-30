@@ -75,6 +75,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/sponsor-type',
       },
       {
+        id: 'administration.staff-types',
+        title: 'navigation.administration.staff-types',
+        type: 'basic',
+        icon: 'heroicons_solid:user-group',
+        link: '/staff-type',
+      },
+      {
         id: 'administration.operating-policies',
         title: 'navigation.administration.operating-policies',
         type: 'basic',

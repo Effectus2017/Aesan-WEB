@@ -47,10 +47,12 @@
             "permissions": "Permisos",
             "sponsor-types": "Tipos de Auspiciador",
             "operating-policies": "Políticas Operativas",
-            "center-types": "Tipos de Centro"
+            "center-types": "Tipos de Centro",
+            "staff-types": "Tipos de Personal"
         },
         "household": "Hogares",
         "employees": "Empleados",
+        "staff": "Personal",
         "program-requests": "Solicitudes al Programa",
         "legibility": "Elegibilidad",
         "permissions": "Permisos"

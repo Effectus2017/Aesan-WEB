@@ -44,5 +44,11 @@
   "./assets/i18n/center-types/en.json",
 
   "./assets/i18n/employees/es.json",
-  "./assets/i18n/employees/en.json"
+  "./assets/i18n/employees/en.json",
+
+  "./assets/i18n/staff/es.json",
+  "./assets/i18n/staff/en.json",
+
+  "./assets/i18n/staff-type/es.json",
+  "./assets/i18n/staff-type/en.json"
 ]

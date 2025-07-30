@@ -52,5 +52,8 @@ export interface QueryParameters {
   schoolId?: number;
   isActive?: boolean;
   inactiveJustification?: string;
+
+  // Campos para Staff
+  staffId?: number;
 }
 

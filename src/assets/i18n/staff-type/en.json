@@ -1,0 +1,86 @@
+{
+  "staffType": {
+    "title": "Staff Types",
+    "list": {
+      "title": "Staff Types List",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "name": "Name",
+          "nameEn": "English Name",
+          "optionKey": "Option Key",
+          "sortOrder": "Sort Order",
+          "isActive": "Active",
+          "actions": "Actions"
+        }
+      },
+      "search": {
+        "placeholder": "Search by name"
+      }
+    },
+    "add": {
+      "title": "Add Staff Type",
+      "information": "Information",
+      "information-description": "General staff type information",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter name",
+        "required": "Name is required"
+      },
+      "nameEn": {
+        "label": "English Name",
+        "placeholder": "Enter English name",
+        "required": "English name is required"
+      },
+      "optionKey": {
+        "label": "Option Key",
+        "placeholder": "Enter option key",
+        "required": "Option key is required"
+      },
+      "sortOrder": {
+        "label": "Sort Order",
+        "placeholder": "Enter sort order",
+        "required": "Sort order is required"
+      },
+      "isActive": {
+        "label": "Active",
+        "description": "Indicates if the staff type is active"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Staff Type",
+      "information": "Information",
+      "information-description": "General staff type information",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter name",
+        "required": "Name is required"
+      },
+      "nameEn": {
+        "label": "English Name",
+        "placeholder": "Enter English name",
+        "required": "English name is required"
+      },
+      "optionKey": {
+        "label": "Option Key",
+        "placeholder": "Enter option key",
+        "required": "Option key is required"
+      },
+      "sortOrder": {
+        "label": "Sort Order",
+        "placeholder": "Enter sort order",
+        "required": "Sort order is required"
+      },
+      "isActive": {
+        "label": "Active",
+        "description": "Indicates if the staff type is active"
+      },
+      "submitButton": "Update",
+      "cancelButton": "Cancel"
+    }
+  }
+}

@@ -1,0 +1,9 @@
+<div class="flex absolute inset-0 flex-col min-w-0">
+  <!-- Header con título y botones -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <!-- Tabla de tipos de staff -->
+    <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+  </div>
+</div>

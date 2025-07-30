@@ -1,0 +1,200 @@
+{
+  "staff": {
+    "title": "Personal",
+    "list": {
+      "title": "Lista de Personal",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "firstName": "Nombre",
+          "middleName": "Segundo Nombre",
+          "fatherLastName": "Apellido Paterno",
+          "motherLastName": "Apellido Materno",
+          "fullName": "Nombre Completo",
+          "status": "Estado",
+          "position": "Cargo",
+          "staffType": "Tipo de Personal",
+          "birthDate": "Fecha de Nacimiento",
+          "email": "Correo Electrónico",
+          "city": "Ciudad",
+          "region": "Región",
+          "userName": "Usuario",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        }
+      },
+      "search": {
+        "placeholder": "Buscar personal..."
+      },
+      "actions": {
+        "edit": "Editar Personal",
+        "delete": "Eliminar Personal",
+        "view": "Ver Personal"
+      }
+    },
+    "add": {
+      "title": "Agregar Personal",
+      "information": "Información General",
+      "information-description": "Complete la información general del personal",
+      "personal-information": "Información Personal",
+      "personal-information-description": "Complete la información personal del personal",
+      "firstName": {
+        "label": "Primer Nombre",
+        "placeholder": "Ingrese el primer nombre",
+        "required": "El primer nombre es requerido"
+      },
+      "middleName": {
+        "label": "Segundo Nombre",
+        "placeholder": "Ingrese el segundo nombre (opcional)"
+      },
+      "fatherLastName": {
+        "label": "Apellido Paterno",
+        "placeholder": "Ingrese el apellido paterno",
+        "required": "El apellido paterno es requerido"
+      },
+      "motherLastName": {
+        "label": "Apellido Materno",
+        "placeholder": "Ingrese el apellido materno (opcional)"
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado",
+        "required": "El estado es requerido",
+        "active": "Activo",
+        "inactive": "Inactivo"
+      },
+      "position": {
+        "label": "Cargo",
+        "placeholder": "Seleccione el cargo",
+        "required": "El cargo es requerido"
+      },
+      "staffType": {
+        "label": "Tipo de Personal",
+        "placeholder": "Seleccione el tipo de personal",
+        "required": "El tipo de personal es requerido"
+      },
+      "birthDate": {
+        "label": "Fecha de Nacimiento",
+        "placeholder": "Seleccione la fecha de nacimiento",
+        "required": "La fecha de nacimiento es requerida",
+        "minimumAge": "Debe tener al menos 18 años"
+      },
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingrese el correo electrónico",
+        "required": "El correo electrónico es requerido",
+        "invalid": "El correo electrónico no es válido"
+      },
+      "postalAddress": {
+        "label": "Dirección Postal",
+        "placeholder": "Ingrese la dirección postal",
+        "required": "La dirección postal es requerida"
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Seleccione la ciudad",
+        "required": "La ciudad es requerida"
+      },
+      "region": {
+        "label": "Región",
+        "placeholder": "Seleccione la región",
+        "required": "La región es requerida"
+      },
+      "areaCode": {
+        "label": "Código de Área",
+        "placeholder": "Ingrese el código de área",
+        "required": "El código de área es requerido"
+      },
+      "additional-information": "Información Adicional",
+      "additional-information-description": "Información adicional del personal",
+      "comments": {
+        "label": "Comentarios",
+        "placeholder": "Ingrese comentarios adicionales (opcional)"
+      },
+      "buttons": {
+        "save": "Guardar Personal",
+        "cancel": "Cancelar"
+      }
+    },
+    "edit": {
+      "title": "Editar Personal",
+      "information": "Información General",
+      "information-description": "Complete la información general del personal",
+      "personal-information": "Información Personal",
+      "personal-information-description": "Complete la información personal del personal",
+      "additional-information": "Información Adicional",
+      "additional-information-description": "Información adicional y comentarios sobre el personal",
+      "firstName": {
+        "label": "Primer Nombre",
+        "placeholder": "Ingrese el primer nombre",
+        "required": "El primer nombre es requerido"
+      },
+      "middleName": {
+        "label": "Segundo Nombre",
+        "placeholder": "Ingrese el segundo nombre (opcional)"
+      },
+      "fatherLastName": {
+        "label": "Apellido Paterno",
+        "placeholder": "Ingrese el apellido paterno",
+        "required": "El apellido paterno es requerido"
+      },
+      "motherLastName": {
+        "label": "Apellido Materno",
+        "placeholder": "Ingrese el apellido materno (opcional)"
+      },
+      "status": {
+        "label": "Estado",
+        "placeholder": "Seleccione el estado",
+        "required": "El estado es requerido"
+      },
+      "position": {
+        "label": "Cargo",
+        "placeholder": "Seleccione el cargo",
+        "required": "El cargo es requerido"
+      },
+      "staffType": {
+        "label": "Tipo de Personal",
+        "placeholder": "Seleccione el tipo de personal",
+        "required": "El tipo de personal es requerido"
+      },
+      "birthDate": {
+        "label": "Fecha de Nacimiento",
+        "placeholder": "Seleccione la fecha de nacimiento",
+        "required": "La fecha de nacimiento es requerida",
+        "minimumAge": "Debe tener al menos 18 años"
+      },
+      "email": {
+        "label": "Correo Electrónico",
+        "placeholder": "Ingrese el correo electrónico",
+        "required": "El correo electrónico es requerido",
+        "invalid": "El correo electrónico no es válido"
+      },
+      "city": {
+        "label": "Ciudad",
+        "placeholder": "Seleccione la ciudad",
+        "required": "La ciudad es requerida"
+      },
+      "region": {
+        "label": "Región",
+        "placeholder": "Seleccione la región",
+        "required": "La región es requerida"
+      },
+      "areaCode": {
+        "label": "Código de Área",
+        "placeholder": "Ingrese el código de área",
+        "required": "El código de área es requerido"
+      },
+      "postalAddress": {
+        "label": "Dirección Postal",
+        "placeholder": "Ingrese la dirección postal",
+        "required": "La dirección postal es requerida"
+      },
+      "comments": {
+        "label": "Comentarios",
+        "placeholder": "Ingrese comentarios adicionales (opcional)"
+      },
+      "submitButton": "Guardar Cambios",
+      "cancelButton": "Cancelar"
+    }
+  }
+}

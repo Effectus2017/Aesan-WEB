@@ -1,0 +1,77 @@
+<div class="flex absolute inset-0 flex-col min-w-0">
+  <!-- Header con título y botones -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <form [formGroup]="headerConfig.formGroup" #staffTypeAddForm="ngForm" data-cy="staff-type-add-form">
+      <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <!-- Información General -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">
+            {{ "staffType.add.information" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staffType.add.information-description" | transloco }}
+          </p>
+        </div>
+
+        <!-- Campos de Nombre -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <!-- Name -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "staffType.add.name.label" | transloco }}</mat-label>
+              <input matInput formControlName="name" [placeholder]="'staffType.add.name.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('name')?.hasError('required')">
+                {{ "staffType.add.name.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Name En -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "staffType.add.nameEn.label" | transloco }}</mat-label>
+              <input matInput formControlName="nameEn" [placeholder]="'staffType.add.nameEn.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('nameEn')?.hasError('required')">
+                {{ "staffType.add.nameEn.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Campos de Configuración -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Option Key -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "staffType.add.optionKey.label" | transloco }}</mat-label>
+              <input matInput formControlName="optionKey" [placeholder]="'staffType.add.optionKey.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('optionKey')?.hasError('required')">
+                {{ "staffType.add.optionKey.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Sort Order -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "staffType.add.sortOrder.label" | transloco }}</mat-label>
+              <input matInput type="number" formControlName="sortOrder" [placeholder]="'staffType.add.sortOrder.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('sortOrder')?.hasError('required')">
+                {{ "staffType.add.sortOrder.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Is Active -->
+          <div class="col-span-1 flex items-center">
+            <mat-checkbox formControlName="isActive" class="mt-4">
+              {{ "staffType.add.isActive.label" | transloco }}
+            </mat-checkbox>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -51,8 +51,22 @@
             "residential-types": "Residential Types"
         },
         "household": "Households",
+        "employees": "Employees",
+        "staff": "Staff",
         "program-requests": "Program Requests",
         "legibility": "Eligibility",
-        "permissions": "Permissions"
+        "permissions": "Permissions",
+        "administration": {
+            "title": "Administration",
+            "agency-status": "Agency Status",
+            "kitchen-types": "Kitchen Types",
+            "organization-types": "Organization Types",
+            "group-types": "Group Types",
+            "sponsor-types": "Sponsor Types",
+            "staff-types": "Staff Types",
+            "operating-policies": "Operating Policies",
+            "center-types": "Center Types",
+            "residential-types": "Residential Types"
+        }
     }
 }

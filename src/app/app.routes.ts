@@ -87,6 +87,8 @@ export const appRoutes: Route[] = [
       { path: 'group-type', loadChildren: () => import('app/modules/admin-portal/group-type/group-type.routes') },
       // Sponsor types (Role: Admin)
       { path: 'sponsor-type', loadChildren: () => import('app/modules/admin-portal/sponsor-type/sponsor-type.routes') },
+      // Staff types (Role: Admin)
+      { path: 'staff-type', loadChildren: () => import('app/modules/admin-portal/staff-type/staff-type.routes') },
       // Operating policies (Role: Admin)
       { path: 'operating-policy', loadChildren: () => import('app/modules/admin-portal/operating-policy/operating-policy.routes') },
       // Permissions (Role: Admin)
@@ -147,6 +149,8 @@ export const appRoutes: Route[] = [
       { path: 'household-member', loadChildren: () => import('app/modules/agency-portal/household-member/household-member.routes') },
       // Employees, listado de empleados (Role: Agency)
       { path: 'employees', loadChildren: () => import('app/modules/agency-portal/employees/employees.routes') },
+      // Staff, listado de staff (Role: Agency)
+      { path: 'staff', loadChildren: () => import('app/modules/agency-portal/staff/staff.routes') },
       // Legibility module, listado de módulos de elegibilidad (Role: Agency)
       { path: 'legibility', loadChildren: () => import('app/modules/agency-portal/legibility/legibility.routes') },
     ],

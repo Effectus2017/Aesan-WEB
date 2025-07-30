@@ -1,0 +1,86 @@
+{
+  "staffType": {
+    "title": "Tipos de Personal",
+    "list": {
+      "title": "Lista de Tipos de Personal",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "name": "Nombre",
+          "nameEn": "Nombre en Inglés",
+          "optionKey": "Clave de Opción",
+          "sortOrder": "Orden",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        }
+      },
+      "search": {
+        "placeholder": "Buscar por nombre"
+      }
+    },
+    "add": {
+      "title": "Agregar Tipo de Personal",
+      "information": "Información",
+      "information-description": "Información general del tipo de personal",
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
+      },
+      "nameEn": {
+        "label": "Nombre en Inglés",
+        "placeholder": "Ingrese el nombre en inglés",
+        "required": "El nombre en inglés es requerido"
+      },
+      "optionKey": {
+        "label": "Clave de Opción",
+        "placeholder": "Ingrese la clave de opción",
+        "required": "La clave de opción es requerida"
+      },
+      "sortOrder": {
+        "label": "Orden",
+        "placeholder": "Ingrese el orden",
+        "required": "El orden es requerido"
+      },
+      "isActive": {
+        "label": "Activo",
+        "description": "Indica si el tipo de personal está activo"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    },
+    "edit": {
+      "title": "Editar Tipo de Personal",
+      "information": "Información",
+      "information-description": "Información general del tipo de personal",
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
+      },
+      "nameEn": {
+        "label": "Nombre en Inglés",
+        "placeholder": "Ingrese el nombre en inglés",
+        "required": "El nombre en inglés es requerido"
+      },
+      "optionKey": {
+        "label": "Clave de Opción",
+        "placeholder": "Ingrese la clave de opción",
+        "required": "La clave de opción es requerida"
+      },
+      "sortOrder": {
+        "label": "Orden",
+        "placeholder": "Ingrese el orden",
+        "required": "El orden es requerido"
+      },
+      "isActive": {
+        "label": "Activo",
+        "description": "Indica si el tipo de personal está activo"
+      },
+      "submitButton": "Actualizar",
+      "cancelButton": "Cancelar"
+    }
+  }
+}

@@ -11,3 +11,8 @@ export interface CityRegion {
     createdAt: Date;
     updatedAt?: Date;
 }
+
+export interface CityRegionResponse {
+    data: CityRegion[]
+    total: number
+}

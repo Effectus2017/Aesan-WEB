@@ -5,3 +5,8 @@ export interface Region {
     createdAt: Date;
     updatedAt?: Date;
 }
+
+export interface RegionListView {
+    data: Region[]
+    total: number
+}

@@ -3,9 +3,6 @@ import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
-import { inject } from '@angular/core';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { TranslocoService } from '@ngneat/transloco';
 
 /**
  * Compara dos elementos

@@ -1,0 +1,194 @@
+{
+  "staff": {
+    "title": "Staff",
+    "list": {
+      "title": "Staff List",
+      "table": {
+        "columns": {
+          "id": "Id",
+          "firstName": "First Name",
+          "middleName": "Middle Name",
+          "fatherLastName": "Father's Last Name",
+          "motherLastName": "Mother's Last Name",
+          "fullName": "Full Name",
+          "status": "Status",
+          "position": "Position",
+          "staffType": "Staff Type",
+          "birthDate": "Birth Date",
+          "email": "Email",
+          "city": "City",
+          "region": "Region",
+          "userName": "User",
+          "isActive": "Active",
+          "actions": "Actions"
+        }
+      },
+      "search": {
+        "placeholder": "Search by name"
+      }
+    },
+    "add": {
+      "title": "Add Staff",
+      "information": "Information",
+      "information-description": "General staff information",
+      "personal-information": "Personal Information",
+      "personal-information-description": "Staff personal data",
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter first name",
+        "required": "First name is required"
+      },
+      "middleName": {
+        "label": "Middle Name",
+        "placeholder": "Enter middle name (optional)"
+      },
+      "fatherLastName": {
+        "label": "Father's Last Name",
+        "placeholder": "Enter father's last name",
+        "required": "Father's last name is required"
+      },
+      "motherLastName": {
+        "label": "Mother's Last Name",
+        "placeholder": "Enter mother's last name (optional)"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select status",
+        "required": "Status is required",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select position",
+        "required": "Position is required"
+      },
+      "staffType": {
+        "label": "Staff Type",
+        "placeholder": "Select staff type",
+        "required": "Staff type is required"
+      },
+      "birthDate": {
+        "label": "Birth Date",
+        "placeholder": "Select birth date",
+        "required": "Birth date is required"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter email address",
+        "required": "Email is required",
+        "invalid": "Email format is not valid"
+      },
+      "postalAddress": {
+        "label": "Postal Address",
+        "placeholder": "Enter postal address",
+        "required": "Postal address is required"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Select city",
+        "required": "City is required"
+      },
+      "region": {
+        "label": "Region",
+        "placeholder": "Select region",
+        "required": "Region is required"
+      },
+      "areaCode": {
+        "label": "Area Code",
+        "placeholder": "Enter the area code",
+        "required": "Area code is required"
+      },
+      "additional-information": "Additional Information",
+      "additional-information-description": "Additional staff information",
+      "comments": {
+        "label": "Comments",
+        "placeholder": "Enter additional comments (optional)"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Staff",
+      "information": "General Information",
+      "information-description": "Complete the general information of the staff",
+      "personal-information": "Personal Information",
+      "personal-information-description": "Complete the personal information of the staff",
+      "additional-information": "Additional Information",
+      "additional-information-description": "Additional information and comments about the staff",
+      "firstName": {
+        "label": "First Name",
+        "placeholder": "Enter the first name",
+        "required": "First name is required"
+      },
+      "middleName": {
+        "label": "Middle Name",
+        "placeholder": "Enter the middle name (optional)"
+      },
+      "fatherLastName": {
+        "label": "Father's Last Name",
+        "placeholder": "Enter the father's last name",
+        "required": "Father's last name is required"
+      },
+      "motherLastName": {
+        "label": "Mother's Last Name",
+        "placeholder": "Enter the mother's last name (optional)"
+      },
+      "status": {
+        "label": "Status",
+        "placeholder": "Select the status",
+        "required": "Status is required"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select the position",
+        "required": "Position is required"
+      },
+      "staffType": {
+        "label": "Staff Type",
+        "placeholder": "Select the staff type",
+        "required": "Staff type is required"
+      },
+      "birthDate": {
+        "label": "Birth Date",
+        "placeholder": "Select the birth date",
+        "required": "Birth date is required",
+        "minimumAge": "Must be at least 18 years old"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter the email",
+        "required": "Email is required",
+        "invalid": "Email is not valid"
+      },
+      "city": {
+        "label": "City",
+        "placeholder": "Select the city",
+        "required": "City is required"
+      },
+      "region": {
+        "label": "Region",
+        "placeholder": "Select the region",
+        "required": "Region is required"
+      },
+      "areaCode": {
+        "label": "Area Code",
+        "placeholder": "Enter the area code",
+        "required": "Area code is required"
+      },
+      "postalAddress": {
+        "label": "Postal Address",
+        "placeholder": "Enter the postal address",
+        "required": "Postal address is required"
+      },
+      "comments": {
+        "label": "Comments",
+        "placeholder": "Enter additional comments (optional)"
+      },
+      "submitButton": "Save Changes",
+      "cancelButton": "Cancel"
+    }
+  }
+}
