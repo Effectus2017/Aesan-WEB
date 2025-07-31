@@ -52,7 +52,11 @@
         },
         "household": "Households",
         "employees": "Employees",
-        "staff": "Staff",
+        "staff": {
+          "title": "Staff",
+          "employees": "Administrative and Operational Employees",
+          "board-members": "Board of Directors Members"
+        },
         "program-requests": "Program Requests",
         "legibility": "Eligibility",
         "permissions": "Permissions",

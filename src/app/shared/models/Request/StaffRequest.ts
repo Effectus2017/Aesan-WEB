@@ -7,7 +7,8 @@ export interface StaffRequest {
   statusId: number;
   positionId: number;
   staffTypeId: number;
-  birthDate: string;
+  staffClassificationId?: number;
+  birthDate?: string;
   email: string;
   postalAddress: string;
   cityId: number;

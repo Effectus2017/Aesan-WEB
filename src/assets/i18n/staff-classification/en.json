@@ -1,0 +1,80 @@
+{
+  "staffClassification": {
+    "list": {
+      "title": "Staff Classifications",
+      "search": {
+        "placeholder": "Search classification..."
+      },
+      "buttons": {
+        "save": "Save",
+        "add": "Add Classification",
+        "edit": "Edit",
+        "delete": "Delete"
+      }
+    },
+    "add": {
+      "title": "Add Staff Classification",
+      "form": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Enter classification name"
+        },
+        "nameEn": {
+          "label": "Name in English",
+          "placeholder": "Enter classification name"
+        },
+        "sortOrder": {
+          "label": "Sort Order",
+          "placeholder": "Enter sort order"
+        },
+        "isActive": {
+          "label": "Active"
+        }
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Staff Classification",
+      "form": {
+        "name": {
+          "label": "Name",
+          "placeholder": "Enter classification name"
+        },
+        "nameEn": {
+          "label": "Name in English",
+          "placeholder": "Enter classification name"
+        },
+        "sortOrder": {
+          "label": "Sort Order",
+          "placeholder": "Enter sort order"
+        },
+        "isActive": {
+          "label": "Active"
+        }
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "messages": {
+      "created": "Classification created successfully",
+      "updated": "Classification updated successfully",
+      "deleted": "Classification deleted successfully",
+      "error": "Error processing classification",
+      "confirmDelete": "Are you sure you want to delete this classification?"
+    },
+    "columns": {
+      "id": "ID",
+      "name": "Name",
+      "nameEn": "Name in English",
+      "sortOrder": "Sort Order",
+      "isActive": "Active",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    }
+  }
+}

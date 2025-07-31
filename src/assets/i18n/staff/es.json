@@ -32,6 +32,57 @@
         "view": "Ver Personal"
       }
     },
+    "employees": {
+      "list": {
+        "title": "Empleados Administrativos y Operacionales",
+        "search": {
+          "placeholder": "Buscar empleados..."
+        },
+        "table": {
+          "columns": {
+            "employeeName": "Nombre del Empleado(a)",
+            "classification": "Clasificación",
+            "position": "Puesto",
+            "status": "Estatus",
+            "description": "Descripción breve de las funciones y tareas principales de cada Empleado Administrativo y Operacional",
+            "actions": "Acciones"
+          }
+        },
+        "buttons": {
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver"
+        }
+      }
+    },
+    "boardMembers": {
+      "list": {
+        "title": "Miembros de la Junta Directiva",
+        "search": {
+          "placeholder": "Buscar miembros de junta..."
+        },
+        "table": {
+          "columns": {
+            "fullName": "Nombre Completo",
+            "status": "Estatus",
+            "title": "Título",
+            "birthDate": "Fecha de Nacimiento",
+            "email": "Correo Electrónico",
+            "postalAddress": "Dirección Postal",
+            "municipality": "Municipio",
+            "areaCode": "Código de área",
+            "updateDate": "Fecha de Actualización",
+            "comments": "Comentarios",
+            "actions": "Acciones"
+          }
+        },
+        "buttons": {
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver"
+        }
+      }
+    },
     "add": {
       "title": "Agregar Personal",
       "information": "Información General",
@@ -49,12 +100,12 @@
       },
       "fatherLastName": {
         "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno",
-        "required": "El apellido paterno es requerido"
+        "placeholder": "Ingrese el apellido paterno (opcional)"
       },
       "motherLastName": {
         "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno (opcional)"
+        "placeholder": "Ingrese el apellido materno",
+        "required": "El apellido materno es requerido"
       },
       "status": {
         "label": "Estado",
@@ -72,6 +123,11 @@
         "label": "Tipo de Personal",
         "placeholder": "Seleccione el tipo de personal",
         "required": "El tipo de personal es requerido"
+      },
+      "staffClassification": {
+        "label": "Clasificación",
+        "placeholder": "Seleccione la clasificación",
+        "required": "La clasificación es requerida"
       },
       "birthDate": {
         "label": "Fecha de Nacimiento",
@@ -109,7 +165,15 @@
       "additional-information-description": "Información adicional del personal",
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional)"
+        "placeholder": "Ingrese comentarios adicionales (opcional)",
+        "employee": {
+          "label": "Descripción breve de las funciones y tareas principales de cada Empleado Administrativo y Operacional *",
+          "placeholder": "Descripción breve de las funciones y tareas principales del empleado"
+        },
+        "boardMember": {
+          "label": "Comentarios",
+          "placeholder": "Comentarios adicionales sobre el miembro de la junta directiva"
+        }
       },
       "buttons": {
         "save": "Guardar Personal",

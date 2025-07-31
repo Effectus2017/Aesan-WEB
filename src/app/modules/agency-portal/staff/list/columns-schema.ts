@@ -1,86 +1,79 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
-import { StaffList } from 'app/shared/models/Staff';
 
-export const STAFF_COLUMNS_SCHEMA: ColumnSchema[] = [
+export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: ['firstName', 'middleName', 'fatherLastName', 'motherLastName'],
-    label: 'staff.list.table.columns.firstName',
+    label: 'staff.boardMembers.list.table.columns.fullName',
     type: 'combined-text',
     sortable: true
   },
   {
-    key: 'fatherLastName',
-    label: 'staff.list.table.columns.fatherLastName',
+    key: 'statusName',
+    label: 'staff.boardMembers.list.table.columns.status',
     type: 'text',
     sortable: true
   },
   {
-    key: 'motherLastName',
-    label: 'staff.list.table.columns.motherLastName',
-    type: 'text',
-    sortable: true
-  },
-  {
-    key: 'email',
-    label: 'staff.list.table.columns.email',
+    key: 'positionName',
+    label: 'staff.boardMembers.list.table.columns.title',
     type: 'text',
     sortable: true
   },
   {
     key: 'birthDate',
-    label: 'staff.list.table.columns.birthDate',
+    label: 'staff.boardMembers.list.table.columns.birthDate',
     type: 'date',
     sortable: true
   },
   {
-    key: 'positionName',
-    label: 'staff.list.table.columns.position',
+    key: 'email',
+    label: 'staff.boardMembers.list.table.columns.email',
     type: 'text',
     sortable: true
   },
   {
-    key: 'statusName',
-    label: 'staff.list.table.columns.status',
-    type: 'text',
-    sortable: true
-  },
-  {
-    key: 'staffTypeName',
-    label: 'staff.list.table.columns.staffType',
+    key: 'postalAddress',
+    label: 'staff.boardMembers.list.table.columns.postalAddress',
     type: 'text',
     sortable: true
   },
   {
     key: 'cityName',
-    label: 'staff.list.table.columns.city',
+    label: 'staff.boardMembers.list.table.columns.municipality',
     type: 'text',
     sortable: true
   },
   {
-    key: 'regionName',
-    label: 'staff.list.table.columns.region',
+    key: 'areaCode',
+    label: 'staff.boardMembers.list.table.columns.areaCode',
     type: 'text',
     sortable: true
   },
   {
-    key: 'isActive',
-    label: 'staff.list.table.columns.isActive',
-    type: 'boolean',
+    key: 'updatedAt',
+    label: 'staff.boardMembers.list.table.columns.updateDate',
+    type: 'date',
+    sortable: true
+  },
+  {
+    key: 'comments',
+    label: 'staff.boardMembers.list.table.columns.comments',
+    type: 'text',
     sortable: true
   },
   {
     key: 'buttons',
-    label: 'staff.list.table.columns.actions',
+    label: 'staff.boardMembers.list.table.columns.actions',
     type: 'button',
     sortable: false,
     buttons: [
       {
         key: 'edit',
-        label: 'staff.list.buttons.edit',
+        label: 'staff.boardMembers.list.buttons.edit',
       },
       {
         key: 'delete',
-        label: 'staff.list.buttons.delete',
+        label: 'staff.boardMembers.list.buttons.delete',
       },
     ],
   }

@@ -37,6 +37,9 @@ export interface GenericHeaderConfig {
   customButtonColor?: string;
   customButtonClass?: string;
   customButtonDisabled?: boolean;
+  customButtonIcon?: string;
+  customButtonIconEnabled?: boolean;
+
   // Clear Button config
   clearVisible?: boolean;
 

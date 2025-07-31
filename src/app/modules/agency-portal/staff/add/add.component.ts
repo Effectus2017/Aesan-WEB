@@ -31,6 +31,8 @@ import { Region } from 'app/shared/models/Region';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
+import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
+import { StaffClassification } from 'app/shared/models/StaffClassification';
 
 function minimumAgeValidator(minAge: number): (control: AbstractControl) => ValidationErrors | null {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -88,6 +90,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _staffTypeService = inject(StaffTypeService);
+  private _staffClassificationService = inject(StaffClassificationService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -95,10 +98,25 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   listPositions: OptionSelection[] = [];
   // Lista de Tipos de Staff
   listStaffTypes: StaffType[] = [];
+  // Lista de Clasificaciones de Staff
+  listStaffClassifications: StaffClassification[] = [];
   // Lista de Ciudades
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
+
+  // Listas separadas para cada tipo de posición
+  listAdministrativePositions: OptionSelection[] = [];
+  listOperationalPositions: OptionSelection[] = [];
+  listBoardMemberTitles: OptionSelection[] = [];
+
+  // Propiedades para controlar la visibilidad de campos
+  isEmployee: boolean = false;
+  isBoardMember: boolean = false;
+  selectedClassification: StaffClassification | null = null;
+
+  // Lista completa de opciones de selección
+  allOptionSelections: OptionSelection[] = [];
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.add.title',
@@ -108,15 +126,17 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Middle name
       middleName: new FormControl(''),
       // Apellido Paterno
-      fatherLastName: new FormControl('', [Validators.required]),
+      fatherLastName: new FormControl(''),
       // Apellido Materno
-      motherLastName: new FormControl(''),
+      motherLastName: new FormControl('', [Validators.required]),
       // Status
       status: new FormControl('', [Validators.required]),
       // Cargo
       position: new FormControl('', [Validators.required]),
       // Tipo de Staff
       staffType: new FormControl('', [Validators.required]),
+      // Clasificación de Staff (solo para empleados)
+      staffClassification: new FormControl(''),
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
@@ -154,6 +174,19 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Lenguaje actual
   currentLang: string = 'es';
 
+  /**
+   * Obtiene el label correcto para el campo de comentarios según el tipo de staff
+   */
+  get commentsLabel(): string {
+    if (this.isEmployee) {
+      return this._translocoService.translate('staff.add.comments.employee.label');
+    } else if (this.isBoardMember) {
+      return this._translocoService.translate('staff.add.comments.boardMember.label');
+    } else {
+      return this._translocoService.translate('staff.add.comments.label');
+    }
+  }
+
   ngOnInit(): void {
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
@@ -163,14 +196,17 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.currentLang = lang;
     });
 
-    // Cargar opciones
+    // Cargar opciones SOLO UNA VEZ desde el resolver
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        // Guardar todas las opciones para filtrar en memoria
+        this.allOptionSelections = result.body.data;
         // Status
-        this.listStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Positions
-        this.listPositions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'staffPosition');
-
+        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+        // Poblar listas separadas
+        this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+        this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+        this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -178,7 +214,15 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Cargar tipos de staff
     this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffTypes = result.body.data;
+        this.listStaffTypes = result.body;
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
+    // Cargar clasificaciones de staff
+    this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.listStaffClassifications = result.body;
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -197,6 +241,16 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.listRegions = result.body;
         this._changeDetectorRef.detectChanges();
       }
+    });
+
+    // Suscribirse a cambios en el tipo de staff
+    this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: StaffType) => {
+      this.onStaffTypeChange(staffType);
+    });
+
+    // Suscribirse a cambios en la clasificación
+    this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
+      this.onClassificationChange(classification);
     });
   }
 
@@ -225,8 +279,10 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const positionId: number = formValues.position.id;
     // Tipo de Staff
     const staffTypeId: number = formValues.staffType.id;
-    // Fecha de nacimiento
-    const birthDate: string = formValues.birthDate;
+    // Clasificación de Staff (solo para empleados)
+    const staffClassificationId: number = this.isEmployee ? formValues.staffClassification?.id : null;
+    // Fecha de nacimiento (solo para miembros de junta)
+    const birthDate: string = this.isBoardMember ? formValues.birthDate : null;
     // Email
     const email: string = formValues.email;
     // Dirección postal
@@ -256,6 +312,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       statusId: statusId,
       positionId: positionId,
       staffTypeId: staffTypeId,
+      staffClassificationId: staffClassificationId,
       birthDate: birthDate,
       email: email,
       postalAddress: postalAddress,
@@ -329,5 +386,125 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         console.error('Error al cargar las regiones:', error);
       },
     });
+  }
+
+  /**
+   * Maneja el cambio en el tipo de staff seleccionado
+   */
+  onStaffTypeChange(staffType: StaffType): void {
+    if (!staffType) {
+      this.resetStaffTypeFields();
+      return;
+    }
+
+    // Determinar si es empleado o miembro de junta
+    this.isEmployee = staffType.name === 'Empleado' || staffType.nameEn === 'Employee';
+    this.isBoardMember = staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member';
+
+    // Resetear campos relacionados
+    this.headerConfig.formGroup.patchValue({
+      staffClassification: null,
+      position: null
+    });
+
+    // Actualizar validaciones
+    this.updateValidations();
+
+    // Cargar posiciones según el tipo
+    this.loadPositionsByType();
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Maneja el cambio en la clasificación de staff
+   */
+  onClassificationChange(classification: StaffClassification): void {
+    this.selectedClassification = classification;
+
+    // Resetear posición
+    this.headerConfig.formGroup.patchValue({
+      position: null
+    });
+
+    // Cargar posiciones según la clasificación
+    this.loadPositionsByClassification();
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Resetea los campos relacionados con el tipo de staff
+   */
+  resetStaffTypeFields(): void {
+    this.isEmployee = false;
+    this.isBoardMember = false;
+    this.selectedClassification = null;
+
+    this.headerConfig.formGroup.patchValue({
+      staffClassification: null,
+      position: null
+    });
+
+    this.updateValidations();
+  }
+
+  /**
+   * Actualiza las validaciones según el tipo de staff
+   */
+  updateValidations(): void {
+    const staffClassificationControl = this.headerConfig.formGroup.get('staffClassification');
+    const birthDateControl = this.headerConfig.formGroup.get('birthDate');
+
+    if (this.isEmployee) {
+      // Para empleados: clasificación requerida, fecha de nacimiento no requerida
+      staffClassificationControl?.setValidators([Validators.required]);
+      birthDateControl?.clearValidators();
+    } else if (this.isBoardMember) {
+      // Para miembros de junta: clasificación no requerida, fecha de nacimiento requerida
+      staffClassificationControl?.clearValidators();
+      birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
+    } else {
+      // Para otros casos: ambos requeridos
+      staffClassificationControl?.setValidators([Validators.required]);
+      birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
+    }
+
+    staffClassificationControl?.updateValueAndValidity();
+    birthDateControl?.updateValueAndValidity();
+  }
+
+  /**
+   * Carga las posiciones según el tipo de staff
+   */
+  loadPositionsByType(): void {
+    if (this.isEmployee) {
+      // Para empleados, las posiciones se cargarán según la clasificación
+      this.listPositions = [];
+    } else if (this.isBoardMember) {
+      // Para miembros de junta, usar la lista específica
+      this.listPositions = this.listBoardMemberTitles;
+      this._changeDetectorRef.detectChanges();
+    }
+  }
+
+  /**
+   * Carga las posiciones según la clasificación de staff
+   */
+  loadPositionsByClassification(): void {
+    if (!this.selectedClassification) {
+      this.listPositions = [];
+      return;
+    }
+
+    let optionKey = '';
+    if (this.selectedClassification?.name === 'Administrativo' || this.selectedClassification?.nameEn === 'Administrative') {
+      this.listPositions = this.listAdministrativePositions;
+    } else if (this.selectedClassification?.name === 'Operacional' || this.selectedClassification?.nameEn === 'Operational') {
+      this.listPositions = this.listOperationalPositions;
+    } else {
+      this.listPositions = [];
+    }
+    this._changeDetectorRef.detectChanges();
   }
 }

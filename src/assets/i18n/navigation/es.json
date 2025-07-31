@@ -52,7 +52,11 @@
         },
         "household": "Hogares",
         "employees": "Empleados",
-        "staff": "Personal",
+        "staff": {
+          "title": "Personal",
+          "employees": "Empleados Administrativos y Operacionales",
+          "board-members": "Miembros de la Junta Directiva"
+        },
         "program-requests": "Solicitudes al Programa",
         "legibility": "Elegibilidad",
         "permissions": "Permisos"

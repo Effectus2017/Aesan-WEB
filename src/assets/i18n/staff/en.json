@@ -27,6 +27,57 @@
         "placeholder": "Search by name"
       }
     },
+    "employees": {
+      "list": {
+        "title": "Administrative and Operational Employees",
+        "search": {
+          "placeholder": "Search employees..."
+        },
+        "table": {
+          "columns": {
+            "employeeName": "Employee Name",
+            "classification": "Classification",
+            "position": "Position",
+            "status": "Status",
+            "description": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee",
+            "actions": "Actions"
+          }
+        },
+        "buttons": {
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View"
+        }
+      }
+    },
+    "boardMembers": {
+      "list": {
+        "title": "Board of Directors Members",
+        "search": {
+          "placeholder": "Search board members..."
+        },
+        "table": {
+          "columns": {
+            "fullName": "Full Name",
+            "status": "Status",
+            "title": "Title",
+            "birthDate": "Birth Date",
+            "email": "Email",
+            "postalAddress": "Postal Address",
+            "municipality": "Municipality",
+            "areaCode": "Area Code",
+            "updateDate": "Update Date",
+            "comments": "Comments",
+            "actions": "Actions"
+          }
+        },
+        "buttons": {
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View"
+        }
+      }
+    },
     "add": {
       "title": "Add Staff",
       "information": "Information",
@@ -103,7 +154,15 @@
       "additional-information-description": "Additional staff information",
       "comments": {
         "label": "Comments",
-        "placeholder": "Enter additional comments (optional)"
+        "placeholder": "Enter additional comments (optional)",
+        "employee": {
+          "label": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee *",
+          "placeholder": "Brief description of the main functions and tasks of the employee"
+        },
+        "boardMember": {
+          "label": "Comments",
+          "placeholder": "Additional comments about the board member"
+        }
       },
       "buttons": {
         "save": "Save",
@@ -129,12 +188,12 @@
       },
       "fatherLastName": {
         "label": "Father's Last Name",
-        "placeholder": "Enter the father's last name",
-        "required": "Father's last name is required"
+        "placeholder": "Enter the father's last name (optional)"
       },
       "motherLastName": {
         "label": "Mother's Last Name",
-        "placeholder": "Enter the mother's last name (optional)"
+        "placeholder": "Enter the mother's last name",
+        "required": "Mother's last name is required"
       },
       "status": {
         "label": "Status",

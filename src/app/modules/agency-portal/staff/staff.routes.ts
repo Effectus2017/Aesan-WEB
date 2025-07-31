@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { initialDataStaffListResolver, initialDataStaffAddResolver, initialDataStaffEditResolver } from './staff.resolvers';
+import { initialDataStaffAddResolver, initialDataStaffEditResolver, initialDataStaffEmployeesListResolver, initialDataStaffBoardMembersListResolver } from './staff.resolvers';
 
 export default [
   {
@@ -7,9 +7,21 @@ export default [
     children: [
       {
         path: '',
+        redirectTo: 'employees',
+        pathMatch: 'full'
+      },
+      {
+        path: 'employees',
+        loadComponent: () => import('./list-employees/employees-list.component').then(c => c.EmployeesListComponent),
+        resolve: {
+          data: initialDataStaffEmployeesListResolver
+        }
+      },
+      {
+        path: 'board-members',
         loadComponent: () => import('./list/list.component').then(c => c.ListComponent),
         resolve: {
-          data: initialDataStaffListResolver
+          data: initialDataStaffBoardMembersListResolver
         }
       },
       {
