@@ -17,4 +17,8 @@ export interface StaffRequest {
   comments?: string;
   userId?: string;
   isActive: boolean;
+  // Campos de revisión (solo para empleados)
+  reviewResultId?: number;
+  reviewDate?: string;
+  reviewJustification?: string;
 }

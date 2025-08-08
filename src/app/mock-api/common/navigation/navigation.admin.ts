@@ -128,6 +128,35 @@ export const adminNavigation: FuseNavigationItem[] = [
     ],
   },
   {
+    id: 'staff',
+    title: 'navigation.staff.title',
+    type: 'group',
+    icon: 'heroicons_solid:user-group',
+    children: [
+      {
+        id: 'staff.add',
+        title: 'navigation.staff.add',
+        type: 'basic',
+        icon: 'mat_solid:add',
+        link: '/staff/add',
+      },
+      {
+        id: 'staff.employees',
+        title: 'navigation.staff.employees',
+        type: 'basic',
+        icon: 'heroicons_solid:users',
+        link: '/staff/employees',
+      },
+      {
+        id: 'staff.board-members',
+        title: 'navigation.staff.board-members',
+        type: 'basic',
+        icon: 'heroicons_solid:user-group',
+        link: '/staff/board-members',
+      },
+    ],
+  },
+  {
     id: 'permissions',
     title: 'navigation.permissions',
     type: 'basic',

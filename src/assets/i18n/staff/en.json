@@ -112,7 +112,8 @@
       "position": {
         "label": "Position",
         "placeholder": "Select position",
-        "required": "Position is required"
+        "required": "Position is required",
+        "selectClassificationFirst": "First select a classification to see available positions"
       },
       "staffType": {
         "label": "Staff Type",
@@ -188,7 +189,8 @@
       },
       "fatherLastName": {
         "label": "Father's Last Name",
-        "placeholder": "Enter the father's last name (optional)"
+        "placeholder": "Enter the father's last name (optional)",
+        "required": "Father's last name is required"
       },
       "motherLastName": {
         "label": "Mother's Last Name",
@@ -245,6 +247,22 @@
       "comments": {
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
+      },
+      "review": {
+        "label": "Review",
+        "description": "Information about the employee review"
+      },
+      "review-result": {
+        "label": "Review Result",
+        "placeholder": "Select review result"
+      },
+      "review-date": {
+        "label": "Review Date",
+        "placeholder": "Select review date"
+      },
+      "review-justification": {
+        "label": "Review Justification",
+        "placeholder": "Enter the justification for the review conducted"
       },
       "submitButton": "Save Changes",
       "cancelButton": "Cancel"

@@ -196,6 +196,56 @@
             <textarea matInput formControlName="comments" [placeholder]="'staff.edit.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
           </mat-form-field>
         </div>
+
+        <!-- Campos de Revisión (solo para empleados) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isEmployee">
+          <p class="text-lg font-medium">
+            {{ "staff.edit.review.label" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staff.edit.review.description" | transloco }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="isEmployee">
+          <!-- Resultado de revisión -->
+          <mat-form-field data-cy="review-result-field">
+            <mat-label>{{ "staff.edit.review-result.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'reviewResult'" data-cy="review-result-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Fecha de revisión -->
+          <mat-form-field data-cy="review-date-field">
+            <mat-label>{{ "staff.edit.review-date.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'reviewDate'"
+              placeholder="{{ 'staff.edit.review-date.placeholder' | transloco }}"
+              [matDatepicker]="pickerReviewDate"
+              data-cy="review-date-input"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerReviewDate" />
+            <mat-datepicker #pickerReviewDate />
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
+          <!-- Justificación de revisión -->
+          <mat-form-field data-cy="review-justification-field">
+            <mat-label>{{ "staff.edit.review-justification.label" | transloco }}</mat-label>
+            <textarea
+              matInput
+              [formControlName]="'reviewJustification'"
+              placeholder="{{ 'staff.edit.review-justification.placeholder' | transloco }}"
+              data-cy="review-justification-input"
+              rows="3"
+            ></textarea>
+          </mat-form-field>
+        </div>
       </div>
     </form>
   </div>

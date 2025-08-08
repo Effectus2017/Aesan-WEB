@@ -46,11 +46,11 @@
           </div>
 
         <!-- Campos de Nombre -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="!isEmployee">
           <!-- First Name -->
           <mat-form-field class="w-full" data-cy="firstName-field">
             <mat-label>{{ "staff.add.firstName.label" | transloco }}</mat-label>
-            <input matInput formControlName="firstName" required [placeholder]="'staff.add.firstName.placeholder' | transloco" data-cy="firstName-input" />
+            <input matInput formControlName="firstName" [placeholder]="'staff.add.firstName.placeholder' | transloco" data-cy="firstName-input" [required]="isBoardMember" />
             <mat-error *ngIf="headerConfig.formGroup.get('firstName')?.hasError('required')">
               {{ "staff.add.firstName.required" | transloco }}
             </mat-error>
@@ -65,16 +65,16 @@
           <!-- Father's Last Name -->
           <mat-form-field class="w-full" data-cy="fatherLastName-field">
             <mat-label>{{ "staff.add.fatherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="fatherLastName" [placeholder]="'staff.add.fatherLastName.placeholder' | transloco" data-cy="fatherLastName-input" />
+            <input matInput formControlName="fatherLastName" [placeholder]="'staff.add.fatherLastName.placeholder' | transloco" data-cy="fatherLastName-input" [required]="isBoardMember" />
+            <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName')?.hasError('required')">
+              {{ "staff.add.fatherLastName.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <!-- Mother's Last Name -->
           <mat-form-field class="w-full" data-cy="motherLastName-field">
             <mat-label>{{ "staff.add.motherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="motherLastName" required [placeholder]="'staff.add.motherLastName.placeholder' | transloco" data-cy="motherLastName-input" />
-            <mat-error *ngIf="headerConfig.formGroup.get('motherLastName')?.hasError('required')">
-              {{ "staff.add.motherLastName.required" | transloco }}
-            </mat-error>
+            <input matInput formControlName="motherLastName" [placeholder]="'staff.add.motherLastName.placeholder' | transloco" data-cy="motherLastName-input" />
           </mat-form-field>
         </div>
 
@@ -104,6 +104,9 @@
             <mat-error *ngIf="headerConfig.formGroup.get('position')?.hasError('required')">
               {{ "staff.add.position.required" | transloco }}
             </mat-error>
+            <mat-hint *ngIf="isEmployee && listPositions.length === 0">
+              {{ "staff.add.position.selectClassificationFirst" | transloco }}
+            </mat-hint>
           </mat-form-field>
         </div>
 
@@ -126,7 +129,7 @@
           </mat-form-field>
 
           <!-- Email -->
-          <mat-form-field data-cy="email-field" [class.sm:col-span-2]="!isBoardMember">
+          <mat-form-field data-cy="email-field" [class.sm:col-span-2]="!isBoardMember" *ngIf="!isEmployee">
             <mat-label>{{ "staff.add.email.label" | transloco }}</mat-label>
             <input matInput formControlName="email" type="email" [placeholder]="'staff.add.email.placeholder' | transloco" data-cy="email-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
@@ -139,8 +142,17 @@
         </div>
 
         <!-- Ciudad y Región -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- City -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isEmployee">
+           <!-- Postal Address -->
+           <mat-form-field data-cy="postal-address-field">
+            <mat-label>{{ "staff.add.postalAddress.label" | transloco }}</mat-label>
+            <input matInput formControlName="postalAddress" [placeholder]="'staff.add.postalAddress.placeholder' | transloco" data-cy="postalAddress-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
+              {{ "staff.add.postalAddress.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+            <!-- City -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "staff.add.city.label" | transloco }}</mat-label>
             <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [placeholder]="'staff.add.city.placeholder' | transloco" [compareWith]="compareById" data-cy="city-select">
@@ -165,25 +177,13 @@
               {{ "staff.add.region.required" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
 
-        <!-- Area Code and Postal Address -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- Area Code -->
-          <mat-form-field data-cy="area-code-field">
+           <!-- Area Code -->
+           <mat-form-field data-cy="area-code-field">
             <mat-label>{{ "staff.add.areaCode.label" | transloco }}</mat-label>
             <input matInput formControlName="areaCode" [placeholder]="'staff.add.areaCode.placeholder' | transloco" data-cy="areaCode-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
               {{ "staff.add.areaCode.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-
-          <!-- Postal Address -->
-          <mat-form-field data-cy="postal-address-field">
-            <mat-label>{{ "staff.add.postalAddress.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" [placeholder]="'staff.add.postalAddress.placeholder' | transloco" data-cy="postalAddress-input" />
-            <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
-              {{ "staff.add.postalAddress.required" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>

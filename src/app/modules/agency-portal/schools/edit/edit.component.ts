@@ -49,6 +49,8 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-schools-edit',
@@ -101,6 +103,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   private _route = inject(ActivatedRoute);
   private _notificationService = inject(NotificationService);
   private _customRouterService = inject(CustomRouterService);
+  private _agencyService = inject(AgencyService);
 
   // Catálogos
   // Catalogs
@@ -140,21 +143,45 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Status
   isActive: OptionSelection[] = [];
 
-  // Tipo de residencial
-  // Type of residential
+  // Tipo de residencial - Tipo de residencial de la escuela
+  // Type of residential - Type of residential of the school
   typeOfResidential: OptionSelection[] = [];
 
-  // Política de operación
-  // Operating policy
+  // Política de funcionamiento
+  // Operating policies
   operatingPolicies: OptionSelection[] = [];
 
   // Tipo de cocina
-  // Kitchen type
+  // Type of kitchen
   kitchenTypes: OptionSelection[] = [];
 
   // Tipo de grupo
-  // Group type
+  // Type of group
   groupTypes: OptionSelection[] = [];
+
+  // Comunidad
+  // Community
+  community: OptionSelection[] = [];
+
+  // Caminantes / Walkers
+  // Walkers
+  walkers: OptionSelection[] = [];
+
+  // Tipo de distribución / Distribution type
+  // Distribution type
+  distributionType: OptionSelection[] = [];
+
+  // Tipo de sitio / Site type
+  // Site type
+  siteType: OptionSelection[] = [];
+
+  // Experiencia / Experience
+  // Experience
+  experience: OptionSelection[] = [];
+
+  // Resultado de revisión / Review result
+  // Review result
+  reviewResult: OptionSelection[] = [];
 
   // Lista de escuelas
   // List of schools
@@ -163,6 +190,14 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Si la escuela actual es la principal
   // If the current school is the main school
   isMainSchool: boolean = false;
+
+  // Propiedades para controlar visibilidad según programa
+  isPDAM: boolean = false;
+  isPSAV: boolean = false;
+  isPACNA: boolean = false;
+  isPFHF: boolean = false;
+  isPDFE: boolean = false;
+  isAESAN: boolean = false;
 
   currentLang: string = 'es';
 
@@ -242,9 +277,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Niveles educativos - Campo requerido para el tipo de escuela (múltiple selección)
       // Education levels - Required field for school type (multiple selection)
       educationLevels: [[], Validators.required],
-      // Días de operación - Días cuando la escuela opera
-      // Operating days - Days when the school operates
-      operatingDays: [''],
+      // Fechas de funcionamiento - Fechas desde y hasta cuando opera la escuela
+      // Operating dates - Dates from and to when the school operates
+      operatingFromDate: [null],
+      operatingToDate: [null],
+      operatingDaysCalculated: [{value: null, disabled: true}],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
@@ -315,6 +352,36 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Merienda hasta - Campo requerido para indicar la hora de fin de la merienda
       // Snack to - Required field indicating the end time of snack
       snackTo: [null],
+      // Cena - Campo requerido para indicar si la escuela tiene cena
+      // Dinner - Required field indicating if the school has dinner
+      dinner: [false],
+      // Cena desde - Campo requerido para indicar la hora de inicio de la cena
+      // Dinner from - Required field indicating the start time of dinner
+      dinnerFrom: [null],
+      // Cena hasta - Campo requerido para indicar la hora de fin de la cena
+      // Dinner to - Required field indicating the end time of dinner
+      dinnerTo: [null],
+      // Merienda nocturna - Campo requerido para indicar si la escuela tiene merienda nocturna
+      // Snack night - Required field indicating if the school has snack night
+      snackNight: [false],
+      // Merienda nocturna desde - Campo requerido para indicar la hora de inicio de la merienda nocturna
+      // Snack night from - Required field indicating the start time of snack night
+      snackNightFrom: [null],
+      // Merienda nocturna hasta - Campo requerido para indicar la hora de fin de la merienda nocturna
+      // Snack night to - Required field indicating the end time of snack night
+      snackNightTo: [null],
+      // Comunidad - Campo requerido para indicar la comunidad de la escuela
+      // Community - Required field indicating the community of the school
+      community: [null],
+      // Caminantes - Campo requerido para indicar los caminantes de la escuela
+      // Walkers - Required field indicating the walkers of the school
+      walkers: [null],
+      // Tipo de sitio - Campo requerido para indicar el tipo de sitio de la escuela
+      // Site type - Required field indicating the site type of the school
+      siteType: [null],
+      // Experiencia - Campo requerido para indicar la experiencia de la escuela
+      // Experience - Required field indicating the experience of the school
+      experience: [null],
       // Estado activo/inactivo de la escuela
       // Active/inactive status of the school
       isActive: [true],
@@ -324,6 +391,15 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Fecha de inactivación - Fecha cuando se inactivó la escuela
       // Inactivation date - Date when the school was inactivated
       inactiveDate: [{ value: null, disabled: true }],
+      // Resultado de revisión - Resultado de la revisión de la escuela
+      // Review result - Result of the school review
+      reviewResult: [null],
+      // Fecha de revisión - Fecha cuando se realizó la revisión
+      // Review date - Date when the review was conducted
+      reviewDate: [null],
+      // Justificación de revisión - Justificación de la revisión
+      // Review justification - Justification of the review
+      reviewJustification: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -367,6 +443,43 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   constructor() {}
 
   ngOnInit(): void {
+    this.currentLang = this._translocoService.getActiveLang();
+    this.loadData();
+    this.setupFormListeners();
+  }
+
+  private setupFormListeners(): void {
+    // Escuchar cambios en las fechas para calcular automáticamente los días
+    this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
+      this.calculateOperatingDays();
+    });
+
+    this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
+      this.calculateOperatingDays();
+    });
+  }
+
+  private calculateOperatingDays(): void {
+    const fromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
+    const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
+
+    if (fromDate && toDate) {
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+      const diffTime = Math.abs(to.getTime() - from.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 para incluir ambos días
+
+      this.headerConfig.formGroup.patchValue({
+        operatingDaysCalculated: diffDays
+      });
+    } else {
+      this.headerConfig.formGroup.patchValue({
+        operatingDaysCalculated: null
+      });
+    }
+  }
+
+  private loadData(): void {
     this.isLoading = true;
 
     // Obtener Agencia desde local storage desde AuthService
@@ -403,6 +516,17 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       }
     });
 
+    // Obtener datos de la agencia para determinar campos visibles
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        const agency = result.body;
+        const programs = agency.programs || [];
+
+        // Determinar qué campos mostrar según los programas
+        this.determineVisibleFields(programs);
+      }
+    });
+
     // Cargar catálogos
     // Load catalogs
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
@@ -415,6 +539,24 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
         this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
         // Estatus
         this.isActive = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+        // Política de operación
+        this.operatingPolicies = result.body.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
+        // Tipo de cocina
+        this.kitchenTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
+        // Tipo de grupo
+        this.groupTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
+        // Comunidad
+        this.community = result.body.data.filter((option: OptionSelection) => option.optionKey === 'community');
+        // Caminantes / Walkers
+        this.walkers = result.body.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
+        // Tipo de distribución / Distribution type
+        this.distributionType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+        // Tipo de sitio / Site type
+        this.siteType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+        // Experiencia / Experience
+        this.experience = result.body.data.filter((option: OptionSelection) => option.optionKey === 'experience');
+        // Resultado de revisión / Review result
+        this.reviewResult = result.body.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
       }
     });
 
@@ -539,6 +681,23 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     this._unsubscribeAll.complete();
   }
 
+  private determineVisibleFields(programs: any[]): void {
+    this.isPDAM = programs.some(p => p.id === PROGRAM_IDS.PDAM);
+    this.isPSAV = programs.some(p => p.id === PROGRAM_IDS.PSAV);
+    this.isPACNA = programs.some(p => p.id === PROGRAM_IDS.PACNA);
+    this.isPFHF = programs.some(p => p.id === PROGRAM_IDS.PFHF);
+    this.isPDFE = programs.some(p => p.id === PROGRAM_IDS.PDFE);
+    this.isAESAN = programs.some(p => p.id === PROGRAM_IDS.AESAN);
+
+    this.updateValidations();
+    this._changeDetectorRef.detectChanges();
+  }
+
+  private updateValidations(): void {
+    // Actualizar validaciones según los campos visibles
+    // Similar a como se hace en Staff
+  }
+
   onSetForm(param: School): void {
     this.param = param;
     this.isMainSchool = param.isMainSchool || false;
@@ -585,6 +744,19 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
     const mainSchool = param.mainSchool;
 
+    // Campos adicionales
+    const dinnerFrom: Date | null = toTimeDate(param.dinnerFrom);
+    const dinnerTo: Date | null = toTimeDate(param.dinnerTo);
+    const snackNightFrom: Date | null = toTimeDate(param.snackNightFrom);
+    const snackNightTo: Date | null = toTimeDate(param.snackNightTo);
+    const communityId = param.communityId;
+    const walkersId = param.walkersId;
+    const siteTypeId = param.siteTypeId;
+    const experienceId = param.experienceId;
+    const reviewResultId = param.reviewResultId;
+    const reviewDate = param.reviewDate;
+    const reviewJustification = param.reviewJustification;
+
     this.headerConfig.formGroup.patchValue({
       name: param.name,
       mainSchool: mainSchool,
@@ -602,15 +774,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       educationLevels: educationLevels,
       organizationType: organizationType,
       centerType: centerType,
-      operatingDays: param.operatingDays,
-      kitchenType: kitchenType,
-      groupType: groupType,
-      deliveryType: deliveryType,
-      sponsorType: sponsorType,
-      typeOfApplicant: applicantType,
-      typeOfResidential: residentialType,
-      operatingPolicy: operatingPolicy,
-      areaType: areaType,
+      operatingFromDate: param.operatingFromDate,
+      operatingToDate: param.operatingToDate,
+      operatingDaysCalculated: param.operatingDaysCalculated,
       //
       nonProfit: param.nonProfit,
       startDate: param.startDate,
@@ -629,11 +795,31 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       snack: param.snack,
       snackFrom: snackFrom,
       snackTo: snackTo,
-      hasWarehouse: param.hasWarehouse,
-      hasDiningRoom: param.hasDiningRoom,
+      dinner: param.dinner,
+      dinnerFrom: dinnerFrom,
+      dinnerTo: dinnerTo,
+      snackNight: param.snackNight,
+      snackNightFrom: snackNightFrom,
+      snackNightTo: snackNightTo,
+      community: this.community.find(o => o.id === communityId),
+      walkers: this.walkers.find(o => o.id === walkersId),
+      siteType: this.siteType.find(o => o.id === siteTypeId),
+      experience: this.experience.find(o => o.id === experienceId),
+      reviewResult: this.reviewResult.find(o => o.id === reviewResultId),
+      reviewDate: reviewDate,
+      reviewJustification: reviewJustification,
       isActive: param.isActive,
       inactiveJustification: param.inactiveJustification || null,
       inactiveDate: param.inactiveDate,
+      //
+      kitchenType: kitchenType,
+      groupType: groupType,
+      deliveryType: deliveryType,
+      sponsorType: sponsorType,
+      applicantType: applicantType,
+      residentialType: residentialType,
+      operatingPolicy: operatingPolicy,
+      areaType: areaType,
     });
 
     // Satélites
@@ -689,6 +875,21 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const lunch = formValues.lunch;
     const breakfast = formValues.breakfast;
 
+    // Campos adicionales
+    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
+    const dinnerTo: string = toTimeString(formValues.dinnerTo);
+    const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
+    const snackNightTo: string = toTimeString(formValues.snackNightTo);
+    const dinner = formValues.dinner;
+    const snackNight = formValues.snackNight;
+    const communityId = formValues.community?.id;
+    const walkersId = formValues.walkers?.id;
+    const siteTypeId = formValues.siteType?.id;
+    const experienceId = formValues.experience?.id;
+    const reviewResultId = formValues.reviewResult?.id;
+    const reviewDate = formValues.reviewDate;
+    const reviewJustification = formValues.reviewJustification;
+
     const mainSchoolId = formValues.mainSchool?.id;
 
     // Construir el objeto de actualización
@@ -712,7 +913,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       educationLevelIds: educationLevelIds,
       organizationTypeId: organizationTypeId,
       centerTypeId: centerTypeId,
-      operatingDays: operatingDays,
+      operatingFromDate: formValues.operatingFromDate ?? null,
+      operatingToDate: formValues.operatingToDate ?? null,
+      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
       kitchenTypeId: kitchenTypeId,
       groupTypeId: groupTypeId,
       deliveryTypeId: deliveryTypeId,
@@ -740,6 +943,19 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       snack: snack ?? null,
       snackFrom: snackFrom ?? null,
       snackTo: snackTo ?? null,
+      dinner: dinner ?? null,
+      dinnerFrom: dinnerFrom ?? null,
+      dinnerTo: dinnerTo ?? null,
+      snackNight: snackNight ?? null,
+      snackNightFrom: snackNightFrom ?? null,
+      snackNightTo: snackNightTo ?? null,
+      communityId: communityId ?? null,
+      walkersId: walkersId ?? null,
+      siteTypeId: siteTypeId ?? null,
+      experienceId: experienceId ?? null,
+      reviewResultId: reviewResultId ?? null,
+      reviewDate: reviewDate ?? null,
+      reviewJustification: reviewJustification ?? null,
       isMainSchool: this.isMainSchool ?? false,
       isActive: formValues.isActive ?? true,
       inactiveJustification: formValues.inactiveJustification ?? null,

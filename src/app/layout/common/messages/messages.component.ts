@@ -6,8 +6,8 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
-import { MessagesService } from 'app/layout/common/messages/messages.service';
-import { Message } from 'app/layout/common/messages/messages.types';
+import { MessagesService } from 'app/shared/services/messages.service';
+import { Message } from 'app/shared/models/Message';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -64,6 +64,9 @@ export class MessagesComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        // Load initial messages
+        this._loadMessages();
     }
 
     /**
@@ -121,7 +124,7 @@ export class MessagesComponent implements OnInit, OnDestroy
     markAllAsRead(): void
     {
         // Mark all as read
-        this._messagesService.markAllAsRead().subscribe();
+        this._messagesService.markAllMessagesAsRead({}).subscribe();
     }
 
     /**
@@ -133,7 +136,7 @@ export class MessagesComponent implements OnInit, OnDestroy
         message.read = !message.read;
 
         // Update the message
-        this._messagesService.update(message.id, message).subscribe();
+        this._messagesService.updateMessage(message, { id: message.id }).subscribe();
     }
 
     /**
@@ -142,7 +145,7 @@ export class MessagesComponent implements OnInit, OnDestroy
     delete(message: Message): void
     {
         // Delete the message
-        this._messagesService.delete(message.id).subscribe();
+        this._messagesService.deleteMessage({ id: message.id }).subscribe();
     }
 
     /**
@@ -207,6 +210,16 @@ export class MessagesComponent implements OnInit, OnDestroy
         {
             this._overlayRef.detach();
         });
+    }
+
+    /**
+     * Load messages from the service
+     *
+     * @private
+     */
+    private _loadMessages(): void
+    {
+        this._messagesService.getAllMessagesFromDb({}).subscribe();
     }
 
     /**

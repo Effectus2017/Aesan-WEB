@@ -2,11 +2,6 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 
 export const COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: 'id',
-    type: 'text',
-    label: 'agency-status.list.table.columns.id',
-  },
-  {
     key: 'name',
     type: 'text',
     label: 'agency-status.list.table.columns.name',

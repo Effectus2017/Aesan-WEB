@@ -1,6 +1,6 @@
 {
     "list": {
-        "title": "Validación de Aplicación al Programa",
+        "title": "Evaluación de Auspiciadores",
         "search": {
             "placeholder": "Buscar usuario",
             "button": "Buscar"
@@ -15,7 +15,7 @@
                 "region": "Región:",
                 "zipCpde": "Código Postal:",
                 "firstName": "Nombre:",
-                "fatherLastName": "Apellido Paterno",
+                "fatherLastName": "Primer Apellido",
                 "adminTitle": "Título Admin.",
                 "nonProfit": "Sin Fines de Lucro",
                 "uieNumber": "# UIE",
@@ -26,7 +26,7 @@
                 "phone": "Teléfono",
                 "email": "Correo",
                 "middleName": "Segundo Nombre",
-                "motherLastName": "Apellido Materno",
+                "motherLastName": "Segundo Apellido",
                 "createdBy": "Creado por",
                 "assignedTo": "Asignado a",
                 "createdAt": "Fecha de Creación",
@@ -45,7 +45,7 @@
         }
     },
     "edit": {
-        "title": "Editar Validación de Aplicación al Programa",
+        "title": "Editar Evaluación de Auspiciadores",
         "monitor": {
             "label": "Asignado a:"
         },
@@ -106,12 +106,12 @@
             "placeholder": "Ingrese el segundo nombre"
         },
         "father-last-name": {
-            "label": "Apellido Paterno:",
-            "placeholder": "Ingrese el apellido paterno"
+            "label": "Primer Apellido:",
+            "placeholder": "Ingrese el primer apellido"
         },
         "mother-last-name": {
-            "label": "Apellido Materno:",
-            "placeholder": "Ingrese el apellido materno"
+            "label": "Segundo Apellido:",
+            "placeholder": "Ingrese el segundo apellido"
         },
         "email": {
             "label": "Correo:",
@@ -122,7 +122,7 @@
             "placeholder": "Ingrese el título del administrador"
         },
         "save": "Guardar",
-        "submit": "Aprobar Aplicación",
+        "submit": "Aprobar",
         "reject": "Rechazar"
     }
 }

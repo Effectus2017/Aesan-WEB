@@ -21,10 +21,10 @@
     </th>
     <td mat-cell *matCellDef="let element" data-cy="generic-table-cells">
       @switch (col.type) { @case ('check') {
-      <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"> </mat-checkbox>
+      <mat-checkbox [checked]="col.key ? getNestedValue(element, col.key) : false" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"> </mat-checkbox>
       } @case ('image') {
       <img
-        [src]="getNestedValue(element, col.key) || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
+        [src]="(col.key ? getNestedValue(element, col.key) : '') || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
         [style.width]="col.imageConfig?.width || '40px'"
         [style.height]="col.imageConfig?.height || '40px'"
         [class]="col.imageConfig?.class || 'rounded-full object-cover'"
@@ -36,23 +36,23 @@
         (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
       />
       } @case ('date') {
-      {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
+      {{ col.key ? (getNestedValue(element, col.key) | date : "yyyy-MM-dd") : '' }}
       } @case ('date-time') {
-      {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
+      {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
       } @case ('text') {
-      {{ getNestedValue(element, col.key) }}
+      {{ col.key ? getNestedValue(element, col.key) : '' }}
       } @case ('file-type') {
       <div class="flex justify-center items-center">
         <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
       </div>
       } @case ('file-size') {
-      {{ formatFileSize(getNestedValue(element, col.key), col.fileSizeConfig?.decimals, col.fileSizeConfig?.unit) }}
+      {{ col.key ? formatFileSize(getNestedValue(element, col.key), col.fileSizeConfig?.decimals, col.fileSizeConfig?.unit) : '' }}
       } @case ('content-type-text') {
       {{ getFileTypeDisplayText(element, col) }}
       } @case ('combined-text') {
-      {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
+      {{ col.key && col.key[0] ? getNestedValue(element, col.key[0]) : '' }} {{ col.key && col.key[1] ? getNestedValue(element, col.key[1]) : '' }} {{ col.key && col.key[2] ? getNestedValue(element, col.key[2]) : '' }} {{ col.key && col.key[3] ? getNestedValue(element, col.key[3]) : '' }}
       } @case ('boolean') {
-      {{ getNestedValue(element, col.key) ? "Si" : "No" }}
+      {{ col.key ? (getNestedValue(element, col.key) ? "Si" : "No") : '' }}
       } @case ('button') {
       <div class="flex flex-row gap-2 justify-center">
         @for (button of col?.buttons; track button) {
@@ -131,10 +131,10 @@
       }
       <span>
         @switch (col.type) { @case ('check') {
-        <mat-checkbox [checked]="getNestedValue(element, col.key)" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"></mat-checkbox>
+        <mat-checkbox [checked]="col.key ? getNestedValue(element, col.key) : false" (change)="onCheckboxChange($event, element, col.key)" [attr.aria-label]="col.label | transloco"></mat-checkbox>
         } @case ('image') {
         <img
-          [src]="getNestedValue(element, col.key) || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
+          [src]="(col.key ? getNestedValue(element, col.key) : '') || col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png'"
           [style.width]="col.imageConfig?.width || '40px'"
           [style.height]="col.imageConfig?.height || '40px'"
           [class]="col.imageConfig?.class || 'rounded-full object-cover'"
@@ -146,23 +146,23 @@
           (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
         />
         } @case ('date') {
-        {{ getNestedValue(element, col.key) | date : "yyyy-MM-dd" }}
+        {{ col.key ? (getNestedValue(element, col.key) | date : "yyyy-MM-dd") : '' }}
         } @case ('date-time') {
-        {{ getNestedValue(element, col.key) | date : "MMMM dd, yyyy" }}
+        {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
         } @case ('text') {
-        {{ getNestedValue(element, col.key) }}
+        {{ col.key ? getNestedValue(element, col.key) : '' }}
         } @case ('file-type') {
         <div class="flex justify-center items-center">
           <mat-icon [attr.aria-hidden]="true" [style.color]="getFileTypeIconColor(element, col)">{{ getFileTypeIcon(element, col) }}</mat-icon>
         </div>
         } @case ('file-size') {
-        {{ formatFileSize(getNestedValue(element, col.key), col.fileSizeConfig?.decimals, col.fileSizeConfig?.unit) }}
+        {{ col.key ? formatFileSize(getNestedValue(element, col.key), col.fileSizeConfig?.decimals, col.fileSizeConfig?.unit) : '' }}
         } @case ('content-type-text') {
         {{ getFileTypeDisplayText(element, col) }}
         } @case ('combined-text') {
-        {{ getNestedValue(element, col.keys[0]) }} {{ getNestedValue(element, col.keys[1]) }}
+        {{ col.key && col.key[0] ? getNestedValue(element, col.key[0]) : '' }} {{ col.key && col.key[1] ? getNestedValue(element, col.key[1]) : '' }} {{ col.key && col.key[2] ? getNestedValue(element, col.key[2]) : '' }} {{ col.key && col.key[3] ? getNestedValue(element, col.key[3]) : '' }}
         } @case ('boolean') {
-        {{ getNestedValue(element, col.key) ? "Si" : "No" }}
+        {{ col.key ? (getNestedValue(element, col.key) ? "Si" : "No") : '' }}
         } @case ('button') {
         <div class="flex flex-row gap-2">
         @for (button of col?.buttons; track button) {
@@ -221,7 +221,7 @@
         }
         </div>
         } @default {
-        {{ getNestedValue(element, col.key) }}
+        {{ col.key ? getNestedValue(element, col.key) : '' }}
         } }
       </span>
     </div>

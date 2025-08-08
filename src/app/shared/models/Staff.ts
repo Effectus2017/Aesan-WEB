@@ -25,6 +25,10 @@ export interface Staff {
   createdAt: string;
   updatedAt?: string;
   isActive: boolean;
+  // Campos de revisión (solo para empleados)
+  reviewResultId?: number;
+  reviewDate?: string;
+  reviewJustification?: string;
 }
 
 export interface StaffList {

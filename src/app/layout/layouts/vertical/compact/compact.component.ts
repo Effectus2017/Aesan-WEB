@@ -13,6 +13,7 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
+import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadline-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -28,7 +29,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
         NgIf,
         RouterOutlet,
         FuseVerticalNavigationComponent,
-        ThemeToggleComponent
+        ThemeToggleComponent,
+        DeadlineBannerComponent
     ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {

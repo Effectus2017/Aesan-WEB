@@ -101,6 +101,13 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Lista de Regiones
   listRegions: Region[] = [];
 
+  // Resultado de revisión / Review result
+  // Review result
+  reviewResult: OptionSelection[] = [];
+
+  // Propiedad para controlar si mostrar campos de revisión (solo para empleados)
+  isEmployee: boolean = false;
+
   headerConfig: GenericHeaderConfig = {
     title: 'staff.edit.title',
     formGroup: this._formBuilder.group({
@@ -119,6 +126,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       region: new FormControl('', [Validators.required]),
       areaCode: new FormControl('', [Validators.required]),
       comments: new FormControl(''),
+      reviewResult: new FormControl(''),
+      reviewDate: new FormControl(''),
+      reviewJustification: new FormControl(''),
     }),
     submitButtonShow: true,
     submitButtonText: 'staff.edit.submitButton',
@@ -149,6 +159,17 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.currentLang = lang;
     });
 
+    // Escuchar cambios en el tipo de staff para mostrar/ocultar campos de revisión
+    this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: any) => {
+      if (staffType) {
+        // Verificar si es empleado (asumiendo que el ID del tipo "Empleado" es 1 o el nombre contiene "Empleado")
+        this.isEmployee = staffType.name?.toLowerCase().includes('empleado') ||
+                         staffType.nameEn?.toLowerCase().includes('employee') ||
+                         staffType.id === 1; // Ajustar según el ID real del tipo "Empleado"
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+
     // Cargar opciones
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
@@ -156,6 +177,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.listStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
         // Positions
         this.listPositions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'employeePosition');
+        // Resultado de revisión / Review result
+        this.reviewResult = result.body.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
 
         this._changeDetectorRef.detectChanges();
       }
@@ -220,7 +243,18 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       region: staff.regionId,
       areaCode: staff.areaCode,
       comments: staff.comments,
+      reviewResult: this.reviewResult.find(o => o.id === staff.reviewResultId),
+      reviewDate: staff.reviewDate,
+      reviewJustification: staff.reviewJustification,
     });
+
+    // Establecer el estado inicial de isEmployee
+    const staffType = this.listStaffTypes.find(st => st.id === staff.staffTypeId);
+    if (staffType) {
+      this.isEmployee = staffType.name?.toLowerCase().includes('empleado') ||
+                       staffType.nameEn?.toLowerCase().includes('employee') ||
+                       staffType.id === 1;
+    }
   }
 
   onSubmit(): void {
@@ -254,6 +288,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const areaCode: string = formValues.areaCode;
     // Comentarios
     const comments: string = formValues.comments;
+    // Campos de revisión
+    const reviewResultId: number = formValues.reviewResult?.id;
+    const reviewDate: string = formValues.reviewDate;
+    const reviewJustification: string = formValues.reviewJustification;
     // Nombre
     const firstName: string = formValues.firstName;
     // Middle name
@@ -283,6 +321,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       areaCode: areaCode,
       comments: comments,
       isActive: true,
+      reviewResultId: reviewResultId,
+      reviewDate: reviewDate,
+      reviewJustification: reviewJustification,
     };
 
     // Disable the form

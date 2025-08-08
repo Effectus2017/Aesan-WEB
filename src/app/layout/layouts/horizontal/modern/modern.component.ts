@@ -10,6 +10,7 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { UserComponent } from 'app/layout/common/user/user.component';
+import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadline-banner.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 
@@ -26,6 +27,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
         MatIconModule,
         LanguagesComponent,
         UserComponent,
+        DeadlineBannerComponent,
         RouterOutlet
     ]
 })

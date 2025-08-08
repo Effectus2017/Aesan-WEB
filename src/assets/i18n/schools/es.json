@@ -127,9 +127,26 @@
                 "placeholder": "Niveles educativos del sitio",
                 "required": "Los niveles educativos son requeridos"
             },
-            "operating-days": {
+            "operating-from-date": {
+                "label": "Fecha Desde",
+                "placeholder": "Fecha desde cuando funciona",
+                "required": "La fecha desde es requerida",
+                "description": "Fecha desde cuando inicia el funcionamiento del sitio"
+            },
+            "operating-to-date": {
+                "label": "Fecha Hasta",
+                "placeholder": "Fecha hasta cuando funciona",
+                "required": "La fecha hasta es requerida",
+                "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
+            },
+            "operating-days-calculated": {
+                "label": "Días",
+                "placeholder": "Días calculados de funcionamiento",
+                "description": "Días calculados automáticamente"
+            },
+            "operating-dates": {
                 "label": "Días de funcionamiento",
-                "placeholder": "Días de funcionamiento del sitio"
+                "description": "Días en el que el sitio estará funcionando"
             },
             "operational-information": {
                 "label": "Datos Operacionales",
@@ -249,6 +266,30 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "dinner": {
+                "label": "Cena",
+                "placeholder": "Cena"
+            },
+            "dinner-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-night": {
+                "label": "Merienda nocturna",
+                "placeholder": "Merienda nocturna"
+            },
+            "snack-night-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-night-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -273,6 +314,34 @@
             "type-of-area": {
                 "label": "Tipo de Área",
                 "placeholder": "Tipo de área"
+            },
+            "new-fields": {
+                "label": "Información Adicional",
+                "description": "Información adicional del sitio"
+            },
+            "community": {
+                "label": "Comunidad",
+                "placeholder": "Seleccione el tipo de comunidad"
+            },
+            "walkers": {
+                "label": "Caminantes",
+                "placeholder": "Seleccione el tipo de caminantes"
+            },
+            "services": {
+                "label": "Servicios",
+                "placeholder": "Seleccione los servicios"
+            },
+            "distribution-type": {
+                "label": "Tipo de Distribución",
+                "placeholder": "Seleccione el tipo de distribución"
+            },
+            "site-type": {
+                "label": "Tipo de Sitio",
+                "placeholder": "Seleccione el tipo de sitio"
+            },
+            "experience": {
+                "label": "Experiencia",
+                "placeholder": "Seleccione la experiencia"
             },
             "buttons": {
                 "save": "Guardar",
@@ -392,9 +461,26 @@
                 "placeholder": "Niveles educativos del sitio",
                 "required": "Los niveles educativos son requeridos"
             },
-            "operating-days": {
-                "label": "Días de funcionamiento",
-                "placeholder": "Días de funcionamiento del sitio"
+            "operating-from-date": {
+                "label": "Fecha Desde",
+                "placeholder": "Fecha desde cuando funciona",
+                "required": "La fecha desde es requerida",
+                "description": "Fecha desde cuando inicia el funcionamiento del sitio"
+            },
+            "operating-to-date": {
+                "label": "Fecha Hasta",
+                "placeholder": "Fecha hasta cuando funciona",
+                "required": "La fecha hasta es requerida",
+                "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
+            },
+            "operating-days-calculated": {
+                "label": "Días",
+                "placeholder": "Días calculados de funcionamiento",
+                "description": "Días calculados automáticamente"
+            },
+            "operating-dates": {
+                "label": "Fechas de Funcionamiento",
+                "description": "Período de funcionamiento del sitio"
             },
             "operational-information": {
                 "label": "Datos Operacionales",
@@ -514,6 +600,30 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "dinner": {
+                "label": "Cena",
+                "placeholder": "Cena"
+            },
+            "dinner-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-night": {
+                "label": "Merienda nocturna",
+                "placeholder": "Merienda nocturna"
+            },
+            "snack-night-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-night-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -538,6 +648,38 @@
             "type-of-area": {
                 "label": "Tipo de Área",
                 "placeholder": "Tipo de área"
+            },
+            "community": {
+                "label": "Comunidad",
+                "placeholder": "Seleccione el tipo de comunidad"
+            },
+            "walkers": {
+                "label": "Caminantes",
+                "placeholder": "Seleccione el tipo de caminantes"
+            },
+            "site-type": {
+                "label": "Tipo de Sitio",
+                "placeholder": "Seleccione el tipo de sitio"
+            },
+            "experience": {
+                "label": "Experiencia",
+                "placeholder": "Seleccione la experiencia"
+            },
+            "review": {
+                "label": "Revisión",
+                "description": "Información sobre la revisión del sitio"
+            },
+            "review-result": {
+                "label": "Resultado de Revisión",
+                "placeholder": "Seleccione el resultado de la revisión"
+            },
+            "review-date": {
+                "label": "Fecha de Revisión",
+                "placeholder": "Seleccione la fecha de revisión"
+            },
+            "review-justification": {
+                "label": "Justificación de Revisión",
+                "placeholder": "Ingrese la justificación de la revisión realizada"
             },
             "buttons": {
                 "save": "Guardar",

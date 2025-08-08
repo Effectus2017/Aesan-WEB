@@ -50,6 +50,8 @@ export interface Agency {
     appointmentDate?: string;
     // Justificación de Rechazo
     rejectionJustification?: string;
+    // Deadline to complete the registration of the Sites
+    deadlineToCompleteRegistration?: string;
 }
 
 export interface User {

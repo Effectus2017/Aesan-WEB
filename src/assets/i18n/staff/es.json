@@ -8,8 +8,8 @@
           "id": "Id",
           "firstName": "Nombre",
           "middleName": "Segundo Nombre",
-          "fatherLastName": "Apellido Paterno",
-          "motherLastName": "Apellido Materno",
+          "fatherLastName": "Primer Apellido",
+          "motherLastName": "Segundo Apellido",
           "fullName": "Nombre Completo",
           "status": "Estado",
           "position": "Cargo",
@@ -90,22 +90,22 @@
       "personal-information": "Información Personal",
       "personal-information-description": "Complete la información personal del personal",
       "firstName": {
-        "label": "Primer Nombre",
-        "placeholder": "Ingrese el primer nombre",
-        "required": "El primer nombre es requerido"
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
       },
       "middleName": {
         "label": "Segundo Nombre",
         "placeholder": "Ingrese el segundo nombre (opcional)"
       },
       "fatherLastName": {
-        "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno (opcional)"
+        "label": "Primer Apellido",
+        "placeholder": "Ingrese el primer apellido",
+        "required": "El primer apellido es requerido"
       },
       "motherLastName": {
-        "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno",
-        "required": "El apellido materno es requerido"
+        "label": "Segundo Apellido",
+        "placeholder": "Ingrese el segundo apellido"
       },
       "status": {
         "label": "Estado",
@@ -117,7 +117,8 @@
       "position": {
         "label": "Cargo",
         "placeholder": "Seleccione el cargo",
-        "required": "El cargo es requerido"
+        "required": "El cargo es requerido",
+        "selectClassificationFirst": "Primero seleccione una clasificación para ver los cargos disponibles"
       },
       "staffType": {
         "label": "Tipo de Personal",
@@ -176,7 +177,7 @@
         }
       },
       "buttons": {
-        "save": "Guardar Personal",
+        "save": "Guardar",
         "cancel": "Cancelar"
       }
     },
@@ -189,22 +190,22 @@
       "additional-information": "Información Adicional",
       "additional-information-description": "Información adicional y comentarios sobre el personal",
       "firstName": {
-        "label": "Primer Nombre",
-        "placeholder": "Ingrese el primer nombre",
-        "required": "El primer nombre es requerido"
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
       },
       "middleName": {
         "label": "Segundo Nombre",
         "placeholder": "Ingrese el segundo nombre (opcional)"
       },
       "fatherLastName": {
-        "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno",
-        "required": "El apellido paterno es requerido"
+        "label": "Primer Apellido",
+        "placeholder": "Ingrese el primer apellido",
+        "required": "El primer apellido es requerido"
       },
       "motherLastName": {
-        "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno (opcional)"
+        "label": "Segundo Apellido",
+        "placeholder": "Ingrese el segundo apellido (opcional)"
       },
       "status": {
         "label": "Estado",
@@ -256,6 +257,22 @@
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional)"
+      },
+      "review": {
+        "label": "Revisión",
+        "description": "Información sobre la revisión del empleado"
+      },
+      "review-result": {
+        "label": "Resultado de Revisión",
+        "placeholder": "Seleccione el resultado de la revisión"
+      },
+      "review-date": {
+        "label": "Fecha de Revisión",
+        "placeholder": "Seleccione la fecha de revisión"
+      },
+      "review-justification": {
+        "label": "Justificación de Revisión",
+        "placeholder": "Ingrese la justificación de la revisión realizada"
       },
       "submitButton": "Guardar Cambios",
       "cancelButton": "Cancelar"

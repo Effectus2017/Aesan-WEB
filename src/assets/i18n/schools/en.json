@@ -125,9 +125,26 @@
                 "placeholder": "Site education level",
                 "required": "Education level is required"
             },
-            "operating-days": {
+            "operating-from-date": {
+                "label": "From Date",
+                "placeholder": "Date from when operating",
+                "required": "From date is required",
+                "description": "Date from when site operation begins"
+            },
+            "operating-to-date": {
+                "label": "To Date",
+                "placeholder": "Date to when operating",
+                "required": "To date is required",
+                "description": "Date to when site operation ends"
+            },
+            "operating-days-calculated": {
+                "label": "Days",
+                "placeholder": "Calculated operating days",
+                "description": "Days calculated automatically"
+            },
+            "operating-dates": {
                 "label": "Operating Days",
-                "placeholder": "Site operating days"
+                "description": "Days when the site will be operating"
             },
             "operational-information": {
                 "label": "Operational Data",
@@ -247,6 +264,30 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
+            "dinner": {
+                "label": "Dinner",
+                "placeholder": "Dinner"
+            },
+            "dinner-from": {
+                "label": "Dinner From",
+                "placeholder": "Dinner from"
+            },
+            "dinner-to": {
+                "label": "Dinner To",
+                "placeholder": "Dinner to"
+            },
+            "snack-night": {
+                "label": "Night Snack",
+                "placeholder": "Night snack"
+            },
+            "snack-night-from": {
+                "label": "Night Snack From",
+                "placeholder": "Night snack from"
+            },
+            "snack-night-to": {
+                "label": "Night Snack To",
+                "placeholder": "Night snack to"
+            },
             "satellites": {
                 "label": "Satellite Sites",
                 "description": "List of satellite sites associated with this main site"
@@ -271,6 +312,50 @@
             "type-of-area": {
                 "label": "Type of Area",
                 "placeholder": "Type of area"
+            },
+            "new-fields": {
+                "label": "Additional Information",
+                "description": "Additional site information"
+            },
+            "community": {
+                "label": "Community",
+                "placeholder": "Select community type"
+            },
+            "walkers": {
+                "label": "Walkers",
+                "placeholder": "Select walker type"
+            },
+            "services": {
+                "label": "Services",
+                "placeholder": "Select services"
+            },
+            "distribution-type": {
+                "label": "Distribution Type",
+                "placeholder": "Select distribution type"
+            },
+            "site-type": {
+                "label": "Site Type",
+                "placeholder": "Select site type"
+            },
+            "experience": {
+                "label": "Experience",
+                "placeholder": "Select experience"
+            },
+            "review": {
+                "label": "Review",
+                "description": "Information about the site review"
+            },
+            "review-result": {
+                "label": "Review Result",
+                "placeholder": "Select review result"
+            },
+            "review-date": {
+                "label": "Review Date",
+                "placeholder": "Select review date"
+            },
+            "review-justification": {
+                "label": "Review Justification",
+                "placeholder": "Enter the justification for the review conducted"
             },
             "buttons": {
                 "save": "Save",
@@ -383,9 +468,26 @@
                 "placeholder": "Site education level",
                 "required": "Education level is required"
             },
-            "operating-days": {
-                "label": "Operating Days",
-                "placeholder": "Site operating days"
+            "operating-from-date": {
+                "label": "From Date",
+                "placeholder": "Date from when operating",
+                "required": "From date is required",
+                "description": "Date from when site operation begins"
+            },
+            "operating-to-date": {
+                "label": "To Date",
+                "placeholder": "Date to when operating",
+                "required": "To date is required",
+                "description": "Date to when site operation ends"
+            },
+            "operating-days-calculated": {
+                "label": "Days",
+                "placeholder": "Calculated operating days",
+                "description": "Days calculated automatically"
+            },
+            "operating-dates": {
+                "label": "Operating Dates",
+                "description": "Site operating period"
             },
             "operational-information": {
                 "label": "Operational Data",
@@ -505,6 +607,30 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
+            "dinner": {
+                "label": "Dinner",
+                "placeholder": "Dinner"
+            },
+            "dinner-from": {
+                "label": "Dinner From",
+                "placeholder": "Dinner from"
+            },
+            "dinner-to": {
+                "label": "Dinner To",
+                "placeholder": "Dinner to"
+            },
+            "snack-night": {
+                "label": "Night Snack",
+                "placeholder": "Night snack"
+            },
+            "snack-night-from": {
+                "label": "Night Snack From",
+                "placeholder": "Night snack from"
+            },
+            "snack-night-to": {
+                "label": "Night Snack To",
+                "placeholder": "Night snack to"
+            },
             "satellites": {
                 "label": "Satellite Sites",
                 "description": "List of satellite sites associated with this main site"
@@ -529,6 +655,38 @@
             "type-of-area": {
                 "label": "Type of Area",
                 "placeholder": "Type of area"
+            },
+            "community": {
+                "label": "Community",
+                "placeholder": "Select community type"
+            },
+            "walkers": {
+                "label": "Walkers",
+                "placeholder": "Select walkers type"
+            },
+            "site-type": {
+                "label": "Site Type",
+                "placeholder": "Select site type"
+            },
+            "experience": {
+                "label": "Experience",
+                "placeholder": "Select experience"
+            },
+            "review": {
+                "label": "Review",
+                "description": "Information about the site review"
+            },
+            "review-result": {
+                "label": "Review Result",
+                "placeholder": "Select review result"
+            },
+            "review-date": {
+                "label": "Review Date",
+                "placeholder": "Select review date"
+            },
+            "review-justification": {
+                "label": "Review Justification",
+                "placeholder": "Enter the justification for the review conducted"
             },
             "buttons": {
                 "save": "Save",
