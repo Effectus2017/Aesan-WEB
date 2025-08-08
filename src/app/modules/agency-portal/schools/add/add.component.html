@@ -350,9 +350,9 @@
         <!-- Caminantes / Walkers -->
         <!-- Tipo de sitio -->
         <!-- Experiencia -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="isPSAV">
             <!-- Comunidad -->
-            <mat-form-field data-cy="community-field">
+            <mat-form-field data-cy="community-field" *ngIf="isPSAV">
               <mat-label>{{ "schools.add.community.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
                 <mat-option *ngFor="let option of community" [value]="option" data-cy="community-option">
@@ -361,7 +361,7 @@
               </mat-select>
             </mat-form-field>
             <!-- Caminantes / Walkers -->
-            <mat-form-field data-cy="walkers-field">
+            <mat-form-field data-cy="walkers-field" *ngIf="isPSAV">
               <mat-label>{{ "schools.add.walkers.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
                 <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
@@ -369,14 +369,14 @@
             </mat-form-field>
 
             <!-- Tipo de sitio -->
-            <mat-form-field data-cy="site-type-field">
+            <mat-form-field data-cy="site-type-field" *ngIf="isPSAV">
               <mat-label>{{ "schools.add.site-type.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
                 <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
               </mat-select>
             </mat-form-field>
             <!-- Experiencia -->
-            <mat-form-field data-cy="experience-field">
+            <mat-form-field data-cy="experience-field" *ngIf="isPSAV">
               <mat-label>{{ "schools.add.experience.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
                 <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
@@ -583,9 +583,9 @@
         <!-- Cena (si, no) -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV">
           <!-- Cena (si, no) -->
-          <mat-form-field data-cy="dinner-field">
+          <mat-form-field data-cy="dinner-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.dinner.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-option">
@@ -594,7 +594,7 @@
             </mat-select>
           </mat-form-field>
           <!-- Horario desde para la cena -->
-          <mat-form-field data-cy="dinner-from-field">
+          <mat-form-field data-cy="dinner-from-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.dinner-from.label" | transloco }}</mat-label>
             <input
               matInput
@@ -608,7 +608,7 @@
           </mat-form-field>
 
           <!-- Horario hasta para la cena -->
-          <mat-form-field data-cy="dinner-to-field">
+          <mat-form-field data-cy="dinner-to-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.dinner-to.label" | transloco }}</mat-label>
             <input
               matInput
@@ -625,9 +625,9 @@
         <!-- Merienda nocturna (si, no) -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV" >
           <!-- Merienda nocturna (si, no) -->
-          <mat-form-field data-cy="snack-night-field">
+          <mat-form-field data-cy="snack-night-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
@@ -636,7 +636,7 @@
             </mat-select>
           </mat-form-field>
           <!-- Horario desde para la merienda nocturna -->
-          <mat-form-field data-cy="snack-night-from-field">
+          <mat-form-field data-cy="snack-night-from-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.snack-night-from.label" | transloco }}</mat-label>
             <input
               matInput
@@ -650,7 +650,7 @@
           </mat-form-field>
 
           <!-- Horario hasta para la merienda nocturna -->
-          <mat-form-field data-cy="snack-night-to-field">
+          <mat-form-field data-cy="snack-night-to-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.snack-night-to.label" | transloco }}</mat-label>
             <input
               matInput

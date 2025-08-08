@@ -11,6 +11,7 @@ import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadline-banner.component';
+import { CurrentProgramBannerComponent } from 'app/layout/common/current-program-banner/current-program-banner.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 
@@ -28,6 +29,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
         LanguagesComponent,
         UserComponent,
         DeadlineBannerComponent,
+        CurrentProgramBannerComponent,
         RouterOutlet
     ]
 })

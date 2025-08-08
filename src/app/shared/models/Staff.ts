@@ -11,6 +11,11 @@ export interface Staff {
   staffTypeId: number;
   staffTypeName: string;
   staffTypeNameEn: string;
+  staffClassificationId?: number;
+  staffClassificationName?: string;
+  staffClassificationNameEn?: string;
+  contractStartDate?: string; // Fecha de inicio de contrato
+  contractEndDate?: string; // Fecha de finalización de contrato
   birthDate: string;
   email: string;
   postalAddress: string;
@@ -41,6 +46,8 @@ export interface StaffList {
   positionName: string;
   staffTypeName: string;
   staffTypeNameEn: string;
+  staffClassificationName?: string;
+  staffClassificationNameEn?: string;
   email: string;
   cityName: string;
   regionName: string;

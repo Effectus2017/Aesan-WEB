@@ -112,6 +112,8 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       status: new FormControl('', [Validators.required]),
       position: new FormControl('', [Validators.required]),
       staffType: new FormControl('', [Validators.required]),
+      contractStartDate: new FormControl(''),
+      contractEndDate: new FormControl(''),
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       email: new FormControl('', [Validators.required, Validators.email]),
       postalAddress: new FormControl('', [Validators.required]),
@@ -213,6 +215,8 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       status: staff.statusId,
       position: staff.positionId,
       staffType: staff.staffTypeId,
+      contractStartDate: staff.contractStartDate,
+      contractEndDate: staff.contractEndDate,
       birthDate: staff.birthDate,
       email: staff.email,
       postalAddress: staff.postalAddress,
@@ -244,6 +248,10 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     const positionId: number = formValues.position.id;
     // Tipo de Staff
     const staffTypeId: number = formValues.staffType.id;
+    // Fecha de inicio de contrato
+    const contractStartDate: string = formValues.contractStartDate;
+    // Fecha de finalización de contrato
+    const contractEndDate: string = formValues.contractEndDate;
     // Fecha de nacimiento
     const birthDate: string = formValues.birthDate;
     // Email
@@ -275,6 +283,8 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       statusId: statusId,
       positionId: positionId,
       staffTypeId: staffTypeId,
+      contractStartDate: contractStartDate,
+      contractEndDate: contractEndDate,
       birthDate: birthDate,
       email: email,
       postalAddress: postalAddress,

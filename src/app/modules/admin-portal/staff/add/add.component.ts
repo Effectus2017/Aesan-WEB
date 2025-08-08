@@ -137,6 +137,10 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       staffType: new FormControl('', [Validators.required]),
       // Clasificación de Staff (solo para empleados)
       staffClassification: new FormControl(''),
+      // Fecha de inicio de contrato
+      contractStartDate: new FormControl(''),
+      // Fecha de finalización de contrato
+      contractEndDate: new FormControl(''),
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
@@ -280,6 +284,10 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     const cityId: number = this.isEmployee ? 0 : formValues.city.id;
     // Región (solo para no empleados)
     const regionId: number = this.isEmployee ? 0 : formValues.region.id;
+    // Fecha de inicio de contrato
+    const contractStartDate: string = formValues.contractStartDate;
+    // Fecha de finalización de contrato
+    const contractEndDate: string = formValues.contractEndDate;
 
     // Status
     const statusId: number = formValues.status.id;
@@ -313,6 +321,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       positionId: positionId,
       staffTypeId: staffTypeId,
       staffClassificationId: staffClassificationId,
+      contractStartDate: contractStartDate,
+      contractEndDate: contractEndDate,
       birthDate: birthDate,
       email: email,
       postalAddress: postalAddress,

@@ -136,6 +136,14 @@
         "required": "La fecha de nacimiento es requerida",
         "minimumAge": "Debe tener al menos 18 años"
       },
+      "contractStartDate": {
+        "label": "Fecha de Inicio de Contrato",
+        "placeholder": "Seleccione la fecha de inicio de contrato"
+      },
+      "contractEndDate": {
+        "label": "Fecha de Finalización de Contrato",
+        "placeholder": "Seleccione la fecha de finalización de contrato"
+      },
       "email": {
         "label": "Correo Electrónico",
         "placeholder": "Ingrese el correo electrónico",
@@ -227,6 +235,14 @@
         "placeholder": "Seleccione la fecha de nacimiento",
         "required": "La fecha de nacimiento es requerida",
         "minimumAge": "Debe tener al menos 18 años"
+      },
+      "contractStartDate": {
+        "label": "Fecha de Inicio de Contrato",
+        "placeholder": "Seleccione la fecha de inicio de contrato"
+      },
+      "contractEndDate": {
+        "label": "Fecha de Finalización de Contrato",
+        "placeholder": "Seleccione la fecha de finalización de contrato"
       },
       "email": {
         "label": "Correo Electrónico",

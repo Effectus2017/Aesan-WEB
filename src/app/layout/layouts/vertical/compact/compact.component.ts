@@ -14,6 +14,7 @@ import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadline-banner.component';
+import { CurrentProgramBannerComponent } from 'app/layout/common/current-program-banner/current-program-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -30,7 +31,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
         RouterOutlet,
         FuseVerticalNavigationComponent,
         ThemeToggleComponent,
-        DeadlineBannerComponent
+        DeadlineBannerComponent,
+        CurrentProgramBannerComponent
     ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {

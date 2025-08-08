@@ -141,6 +141,25 @@
           </mat-form-field>
         </div>
 
+        <!-- Campos de Fechas de Contrato -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <!-- Contract Start Date -->
+          <mat-form-field data-cy="contract-start-date-field">
+            <mat-label>{{ "staff.add.contractStartDate.label" | transloco }}</mat-label>
+            <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate" [placeholder]="'staff.add.contractStartDate.placeholder' | transloco" data-cy="contractStartDate-input" />
+            <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #contractStartDatePicker></mat-datepicker>
+          </mat-form-field>
+
+          <!-- Contract End Date -->
+          <mat-form-field data-cy="contract-end-date-field">
+            <mat-label>{{ "staff.add.contractEndDate.label" | transloco }}</mat-label>
+            <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate" [placeholder]="'staff.add.contractEndDate.placeholder' | transloco" data-cy="contractEndDate-input" />
+            <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #contractEndDatePicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
         <!-- Ciudad y Región -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isEmployee">
            <!-- Postal Address -->

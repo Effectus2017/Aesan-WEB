@@ -71,6 +71,10 @@
                 "cancel": "Cancelar",
                 "confirm": "Aceptar"
             }
+        },
+        "currentProgram": {
+            "program": "Programa Actual: {{program}}",
+            "tooltip": "Programa actual en el cual se encuentra el usuario"
         }
     }
 }

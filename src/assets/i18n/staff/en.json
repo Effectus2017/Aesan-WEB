@@ -125,6 +125,14 @@
         "placeholder": "Select birth date",
         "required": "Birth date is required"
       },
+      "contractStartDate": {
+        "label": "Contract Start Date",
+        "placeholder": "Select contract start date"
+      },
+      "contractEndDate": {
+        "label": "Contract End Date",
+        "placeholder": "Select contract end date"
+      },
       "email": {
         "label": "Email",
         "placeholder": "Enter email address",
@@ -217,6 +225,14 @@
         "placeholder": "Select the birth date",
         "required": "Birth date is required",
         "minimumAge": "Must be at least 18 years old"
+      },
+      "contractStartDate": {
+        "label": "Contract Start Date",
+        "placeholder": "Select contract start date"
+      },
+      "contractEndDate": {
+        "label": "Contract End Date",
+        "placeholder": "Select contract end date"
       },
       "email": {
         "label": "Email",

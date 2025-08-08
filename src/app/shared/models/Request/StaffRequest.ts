@@ -8,6 +8,8 @@ export interface StaffRequest {
   positionId: number;
   staffTypeId: number;
   staffClassificationId?: number;
+  contractStartDate?: string; // Fecha de inicio de contrato
+  contractEndDate?: string; // Fecha de finalización de contrato
   birthDate?: string;
   email: string;
   postalAddress: string;

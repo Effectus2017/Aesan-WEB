@@ -71,6 +71,10 @@
                 "confirm": "Accept"
             }
         },
+        "currentProgram": {
+            "program": "Current Program: {{program}}",
+            "tooltip": "Current program in which the user is located"
+        },
         "administration": {
             "title": "Administration",
             "agency-status": "Agency Status",
