@@ -1,3 +1,9 @@
+import { City } from "./City";
+import { OptionSelection } from "./OptionSelection";
+import { Region } from "./Region";
+import { StaffClassification } from "./StaffClassification";
+import { StaffType } from "./StaffType";
+
 export interface Staff {
   id: number;
   firstName: string;
@@ -34,6 +40,18 @@ export interface Staff {
   reviewResultId?: number;
   reviewDate?: string;
   reviewJustification?: string;
+  //
+  city?: City;
+  // Region
+  region?: Region;
+  // Status
+  status?: OptionSelection;
+  // Position
+  position?: OptionSelection;
+  // Staff type
+  staffType?: StaffType;
+  // Staff classification
+  staffClassification?: StaffClassification;
 }
 
 export interface StaffList {

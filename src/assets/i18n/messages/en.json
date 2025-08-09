@@ -1,0 +1,15 @@
+{
+  "messages": {
+    "title": "Messages",
+    "markAllAsRead": "Mark all as read",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "remove": "Remove",
+    "empty": {
+      "title": "No messages",
+      "subtitle": "When you have messages, they will appear here."
+    }
+  }
+}
+
+

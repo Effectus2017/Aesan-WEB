@@ -98,6 +98,18 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   // Staff operations service
   // Servicio para operaciones de staff
   const staffService = inject(StaffService);
+  // Geographic service
+  // Servicio para operaciones geográficas
+  const geoService = inject(GeoService);
+  // Options selection service
+  // Servicio para opciones de selección
+  const optionSelectionService = inject(OptionSelectionService);
+  // Staff type service
+  // Servicio para tipos de staff
+  const staffTypeService = inject(StaffTypeService);
+  // Staff classification service
+  // Servicio para clasificaciones de staff
+  const staffClassificationService = inject(StaffClassificationService);
 
   const requestParameters: QueryParameters = {
     take: 25,
@@ -112,6 +124,26 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
     staffService.getStaffById({ id: id }),
     // Lista completa para dropdowns
     // Complete list for dropdowns
-    staffService.getAllStaffFromDb(requestParameters),
+    //staffService.getAllStaffFromDb(requestParameters),
+     // Geographic service
+    // Servicio para operaciones geográficas
+    geoService.getCitiesFromDb(requestParameters),
+    // Regions service
+    // Servicio para regiones
+    geoService.getRegionsFromDb(requestParameters),
+    // Staff positions service
+    // Servicio para cargos de staff
+    // options selection service
+    // Servicio para opciones de selección
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+      names: null,
+    }),
+    // Staff types service
+    // Servicio para tipos de staff
+    staffTypeService.getAllStaffTypesFromDb(requestParameters),
+    // Staff classification service
+    // Servicio para clasificaciones de staff
+    staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
   ]);
 };

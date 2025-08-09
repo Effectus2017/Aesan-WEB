@@ -53,7 +53,20 @@ export class MessagesService {
   getAllMessagesFromDb(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient
       .get(`${this.apiUrl}/get-all-messages`, getHttpOptions(queryParameters))
-      .pipe(tap((response: any) => this._messages.next(response)));
+      .pipe(
+        tap((response: any) => {
+          const list = Array.isArray(response)
+            ? response
+            : Array.isArray(response?.body?.data)
+            ? response.body.data
+            : Array.isArray(response?.body)
+            ? response.body
+            : Array.isArray(response?.data)
+            ? response.data
+            : [];
+          this._messages.next(list);
+        })
+      );
   }
 
   /**

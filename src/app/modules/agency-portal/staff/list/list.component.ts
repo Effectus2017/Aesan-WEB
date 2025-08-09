@@ -166,7 +166,9 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers
     this._customRouterService.navigate(['staff/add']);
   }
 
-  onEdit(id: number): void {
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
     this._customRouterService.navigate(['staff/edit', id]);
   }
 

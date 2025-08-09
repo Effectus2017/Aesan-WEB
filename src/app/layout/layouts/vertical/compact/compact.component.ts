@@ -12,6 +12,7 @@ import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { UserComponent } from 'app/layout/common/user/user.component';
+import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadline-banner.component';
 import { CurrentProgramBannerComponent } from 'app/layout/common/current-program-banner/current-program-banner.component';
@@ -32,7 +33,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
         FuseVerticalNavigationComponent,
         ThemeToggleComponent,
         DeadlineBannerComponent,
-        CurrentProgramBannerComponent
+        CurrentProgramBannerComponent,
+        MessagesComponent
     ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {

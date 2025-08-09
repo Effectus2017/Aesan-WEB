@@ -50,5 +50,8 @@
   "./assets/i18n/staff/en.json",
 
   "./assets/i18n/staff-type/es.json",
-  "./assets/i18n/staff-type/en.json"
+  "./assets/i18n/staff-type/en.json",
+
+  "./assets/i18n/messages/es.json",
+  "./assets/i18n/messages/en.json"
 ]

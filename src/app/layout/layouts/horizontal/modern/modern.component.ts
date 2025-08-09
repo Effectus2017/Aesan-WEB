@@ -14,6 +14,7 @@ import { DeadlineBannerComponent } from 'app/layout/common/deadline-banner/deadl
 import { CurrentProgramBannerComponent } from 'app/layout/common/current-program-banner/current-program-banner.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { filter, Subject, takeUntil } from 'rxjs';
+import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 
 @Component({
     selector: 'modern-layout',
@@ -30,6 +31,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
         UserComponent,
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
+        MessagesComponent,
         RouterOutlet
     ]
 })

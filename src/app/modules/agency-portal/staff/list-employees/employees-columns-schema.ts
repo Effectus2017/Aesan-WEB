@@ -3,12 +3,6 @@ import { StaffList } from 'app/shared/models/Staff';
 
 export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: ['firstName', 'middleName', 'fatherLastName', 'motherLastName'],
-    label: 'staff.employees.list.table.columns.employeeName',
-    type: 'combined-text',
-    sortable: true
-  },
-  {
     key: 'staffClassificationName',
     label: 'staff.employees.list.table.columns.classification',
     type: 'text',

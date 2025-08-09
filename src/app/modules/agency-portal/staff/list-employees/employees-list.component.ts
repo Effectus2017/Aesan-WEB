@@ -127,7 +127,9 @@ export class EmployeesListComponent implements OnInit, OnDestroy, OnGenericHeade
     this._customRouterService.navigate(['staff/add']);
   }
 
-  onEdit(id: number): void {
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
     this._customRouterService.navigate(['staff/edit', id]);
   }
 
