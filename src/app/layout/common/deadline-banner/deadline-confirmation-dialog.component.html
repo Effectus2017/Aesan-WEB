@@ -1,0 +1,29 @@
+<div class="p-6">
+    <!-- Dialog Header -->
+    <div class="flex items-center mb-4">
+        <mat-icon class="text-amber-600 dark:text-amber-400 mr-3" svgIcon="heroicons_outline:exclamation-triangle"></mat-icon>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">{{ dialogTitle }}</h2>
+    </div>
+
+    <!-- Dialog Content -->
+    <div class="mb-6">
+        <p class="text-gray-700 dark:text-gray-300">{{ dialogMessage }}</p>
+    </div>
+
+    <!-- Dialog Actions -->
+    <div class="flex justify-end space-x-3">
+        <button 
+            mat-button 
+            (click)="onCancel()"
+            class="px-4 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
+            {{ cancelButtonText }}
+        </button>
+        <button 
+            mat-raised-button 
+            color="primary"
+            (click)="onConfirm()"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white">
+            {{ confirmButtonText }}
+        </button>
+    </div>
+</div> 

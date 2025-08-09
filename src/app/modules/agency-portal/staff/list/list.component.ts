@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -8,7 +9,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffList } from 'app/shared/models/Staff';
-import { STAFF_COLUMNS_SCHEMA } from './columns-schema';
+import { BOARD_MEMBERS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -51,22 +52,30 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  // Propiedad para determinar el tipo de lista
+  isEmployeesList: boolean = false;
+  isBoardMembersList: boolean = false;
+
   headerConfig: GenericHeaderConfig = {
-    title: 'staff.list.title',
+    title: 'staff.boardMembers.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl('')
     }),
     searchFieldShow: true,
-    goToAddButtonShow: true,
-    searchInputPlaceholder: 'staff.list.search.placeholder'
+    customButtonShow: true,
+    customButtonClass: 'text-white bg-[#F1A621]',
+    customButtonIcon: 'mat_outline:add',
+    customButtonIconEnabled: true,
+    searchInputPlaceholder: 'staff.boardMembers.list.search.placeholder'
   };
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<StaffList>(),
-    columnsSchema: STAFF_COLUMNS_SCHEMA,
-    displayedColumns: STAFF_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: BOARD_MEMBERS_COLUMNS_SCHEMA,
+    displayedColumns: BOARD_MEMBERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
@@ -75,10 +84,39 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers
   };
 
   ngOnInit(): void {
+    // Determinar el tipo de lista basándose en la URL
+    this._route.url.pipe(takeUntil(this._unsubscribeAll)).subscribe(segments => {
+      const path = segments.map(segment => segment.path).join('/');
+      this.isEmployeesList = path.includes('employees');
+      this.isBoardMembersList = path.includes('board-members');
+
+      // Actualizar el título según el tipo de lista
+      if (this.isEmployeesList) {
+        this.headerConfig.title = 'staff.employees.list.title';
+        this.headerConfig.searchInputPlaceholder = 'staff.employees.list.search.placeholder';
+      } else if (this.isBoardMembersList) {
+        this.headerConfig.title = 'staff.boardMembers.list.title';
+        this.headerConfig.searchInputPlaceholder = 'staff.boardMembers.list.search.placeholder';
+      }
+    });
+
     this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.tableConfig.dataSource.data = result.body.data;
-        this.tableConfig.length = result.body.count;
+        if (this.isEmployeesList) {
+          // Filtrar solo empleados
+          const employees = result.body.data.filter((staff: StaffList) =>
+            staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
+          );
+          this.tableConfig.dataSource.data = employees;
+          this.tableConfig.length = employees.length;
+        } else if (this.isBoardMembersList) {
+          // Filtrar solo miembros de junta
+          const boardMembers = result.body.data.filter((staff: StaffList) =>
+            staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
+          );
+          this.tableConfig.dataSource.data = boardMembers;
+          this.tableConfig.length = boardMembers.length;
+        }
       }
     });
   }
@@ -101,8 +139,21 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
-        this.tableConfig.dataSource.data = response.body.data;
-        this.tableConfig.length = response.body.count;
+        if (this.isEmployeesList) {
+          // Filtrar solo empleados en el resultado
+          const employees = response.body.data.filter((staff: StaffList) =>
+            staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
+          );
+          this.tableConfig.dataSource.data = employees;
+          this.tableConfig.length = employees.length;
+        } else if (this.isBoardMembersList) {
+          // Filtrar solo miembros de junta en el resultado
+          const boardMembers = response.body.data.filter((staff: StaffList) =>
+            staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
+          );
+          this.tableConfig.dataSource.data = boardMembers;
+          this.tableConfig.length = boardMembers.length;
+        }
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
@@ -115,7 +166,9 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers
     this._customRouterService.navigate(['staff/add']);
   }
 
-  onEdit(id: number): void {
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
     this._customRouterService.navigate(['staff/edit', id]);
   }
 

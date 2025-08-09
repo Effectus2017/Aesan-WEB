@@ -55,5 +55,6 @@ export interface QueryParameters {
 
   // Campos para Staff
   staffId?: number;
+  staffTypeId?: number;
 }
 

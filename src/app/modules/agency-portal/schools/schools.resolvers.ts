@@ -6,7 +6,6 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
-import { FacilityService } from 'app/shared/services/facility.service';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
 import { forkJoin } from 'rxjs';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
@@ -16,16 +15,20 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 // Resolver para la lista de escuelas
 export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const schoolService = inject(SchoolService);
+  const authService = inject(AuthService);
+  const agencyId = authService.getAgencyId();
 
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: false,
     isList: false,
+    agencyId: agencyId,
   };
 
   return forkJoin([schoolService.getAllSchoolsFromDb(requestParameters)]);
@@ -92,7 +95,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -204,7 +207,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult',
     }),
     // Types of kitchen
     // Tipos de cocina

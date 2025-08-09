@@ -93,6 +93,8 @@ export const appRoutes: Route[] = [
       { path: 'operating-policy', loadChildren: () => import('app/modules/admin-portal/operating-policy/operating-policy.routes') },
       // Permissions (Role: Admin)
       { path: 'permissions', loadChildren: () => import('app/modules/admin-portal/permissions/permissions.routes') },
+      // Staff (Role: Admin)
+      { path: 'staff', loadChildren: () => import('app/modules/admin-portal/staff/staff.routes') },
       // Option selection (Role: Admin)
       { path: 'option-selection', loadChildren: () => import('app/modules/admin-portal/option-selection/option-selection.routes') },
       // Organization types (Role: Admin)

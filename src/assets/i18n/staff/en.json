@@ -27,6 +27,57 @@
         "placeholder": "Search by name"
       }
     },
+    "employees": {
+      "list": {
+        "title": "Administrative and Operational Employees",
+        "search": {
+          "placeholder": "Search employees..."
+        },
+        "table": {
+          "columns": {
+            "employeeName": "Employee Name",
+            "classification": "Classification",
+            "position": "Position",
+            "status": "Status",
+            "description": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee",
+            "actions": "Actions"
+          }
+        },
+        "buttons": {
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View"
+        }
+      }
+    },
+    "boardMembers": {
+      "list": {
+        "title": "Board of Directors Members",
+        "search": {
+          "placeholder": "Search board members..."
+        },
+        "table": {
+          "columns": {
+            "fullName": "Full Name",
+            "status": "Status",
+            "title": "Title",
+            "birthDate": "Birth Date",
+            "email": "Email",
+            "postalAddress": "Postal Address",
+            "municipality": "Municipality",
+            "areaCode": "Area Code",
+            "updateDate": "Update Date",
+            "comments": "Comments",
+            "actions": "Actions"
+          }
+        },
+        "buttons": {
+          "edit": "Edit",
+          "delete": "Delete",
+          "view": "View"
+        }
+      }
+    },
     "add": {
       "title": "Add Staff",
       "information": "Information",
@@ -61,7 +112,8 @@
       "position": {
         "label": "Position",
         "placeholder": "Select position",
-        "required": "Position is required"
+        "required": "Position is required",
+        "selectClassificationFirst": "First select a classification to see available positions"
       },
       "staffType": {
         "label": "Staff Type",
@@ -72,6 +124,14 @@
         "label": "Birth Date",
         "placeholder": "Select birth date",
         "required": "Birth date is required"
+      },
+      "contractStartDate": {
+        "label": "Contract Start Date",
+        "placeholder": "Select contract start date"
+      },
+      "contractEndDate": {
+        "label": "Contract End Date",
+        "placeholder": "Select contract end date"
       },
       "email": {
         "label": "Email",
@@ -103,7 +163,15 @@
       "additional-information-description": "Additional staff information",
       "comments": {
         "label": "Comments",
-        "placeholder": "Enter additional comments (optional)"
+        "placeholder": "Enter additional comments (optional)",
+        "employee": {
+          "label": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee *",
+          "placeholder": "Brief description of the main functions and tasks of the employee"
+        },
+        "boardMember": {
+          "label": "Comments",
+          "placeholder": "Additional comments about the board member"
+        }
       },
       "buttons": {
         "save": "Save",
@@ -129,12 +197,13 @@
       },
       "fatherLastName": {
         "label": "Father's Last Name",
-        "placeholder": "Enter the father's last name",
+        "placeholder": "Enter the father's last name (optional)",
         "required": "Father's last name is required"
       },
       "motherLastName": {
         "label": "Mother's Last Name",
-        "placeholder": "Enter the mother's last name (optional)"
+        "placeholder": "Enter the mother's last name",
+        "required": "Mother's last name is required"
       },
       "status": {
         "label": "Status",
@@ -156,6 +225,14 @@
         "placeholder": "Select the birth date",
         "required": "Birth date is required",
         "minimumAge": "Must be at least 18 years old"
+      },
+      "contractStartDate": {
+        "label": "Contract Start Date",
+        "placeholder": "Select contract start date"
+      },
+      "contractEndDate": {
+        "label": "Contract End Date",
+        "placeholder": "Select contract end date"
       },
       "email": {
         "label": "Email",
@@ -186,6 +263,22 @@
       "comments": {
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
+      },
+      "review": {
+        "label": "Review",
+        "description": "Information about the employee review"
+      },
+      "review-result": {
+        "label": "Review Result",
+        "placeholder": "Select review result"
+      },
+      "review-date": {
+        "label": "Review Date",
+        "placeholder": "Select review date"
+      },
+      "review-justification": {
+        "label": "Review Justification",
+        "placeholder": "Enter the justification for the review conducted"
       },
       "submitButton": "Save Changes",
       "cancelButton": "Cancel"

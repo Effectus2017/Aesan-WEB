@@ -141,9 +141,20 @@ export class GenericTableComponent implements OnInit {
    * @param key La clave del valor a cambiar en el elemento.
    */
   getNestedValue(element: any, path: string | string[]): any {
+    // Handle null/undefined path
+    if (!path) {
+      return undefined;
+    }
+
     if (Array.isArray(path)) {
       return path.map(p => this.getNestedValue(element, p)).join(' ');
     }
+
+    // Ensure path is a string before calling split
+    if (typeof path !== 'string') {
+      return undefined;
+    }
+
     return path.split('.').reduce((obj, key) =>
       (obj && obj[key] !== undefined) ? obj[key] : undefined, element);
   }

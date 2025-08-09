@@ -4,8 +4,8 @@
     (click)="openPanel()"
     #messagesOrigin>
     <ng-container *ngIf="unreadCount > 0">
-        <span class="absolute top-0 right-0 left-0 flex items-center justify-center h-3">
-            <span class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-indigo-600 text-indigo-50 text-xs font-medium">
+        <span class="flex absolute top-0 right-0 left-0 justify-center items-center h-3">
+            <span class="flex justify-center items-center px-1 mt-2.5 ml-4 h-4 text-xs font-medium text-indigo-50 bg-indigo-600 rounded-full shrink-0 min-w-4">
                 {{unreadCount}}
             </span>
         </span>
@@ -16,36 +16,36 @@
 <!-- Messages panel -->
 <ng-template #messagesPanel>
 
-    <div class="fixed inset-0 sm:static sm:inset-auto flex flex-col sm:min-w-90 sm:w-90 sm:rounded-2xl overflow-hidden shadow-lg">
+    <div class="flex overflow-hidden fixed inset-0 flex-col shadow-lg sm:static sm:inset-auto sm:min-w-90 sm:w-90 sm:rounded-2xl">
 
         <!-- Header -->
-        <div class="flex shrink-0 items-center py-4 pr-4 pl-6 bg-primary text-on-primary">
-            <div class="sm:hidden -ml-1 mr-3">
+        <div class="flex items-center py-4 pr-4 pl-6 shrink-0 bg-primary text-on-primary">
+            <div class="mr-3 -ml-1 sm:hidden">
                 <button
                     mat-icon-button
                     (click)="closePanel()">
                     <mat-icon
-                        class="icon-size-5 text-current"
+                        class="text-current icon-size-5"
                         [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
                 </button>
             </div>
-            <div class="text-lg font-medium leading-10">Messages</div>
+            <div class="text-lg font-medium leading-10">{{ 'messages.title' | transloco }}</div>
             <div class="ml-auto">
                 <button
                     class="dark:text-white"
                     mat-icon-button
                     [disabled]="unreadCount === 0"
-                    [matTooltip]="'Mark all as read'"
+                    [matTooltip]="'messages.markAllAsRead' | transloco"
                     (click)="markAllAsRead()">
                     <mat-icon
-                        class="icon-size-5 text-current"
+                        class="text-current icon-size-5"
                         [svgIcon]="'heroicons_solid:envelope-open'"></mat-icon>
                 </button>
             </div>
         </div>
 
         <!-- Content -->
-        <div class="relative flex flex-col flex-auto sm:max-h-120 divide-y overflow-y-auto bg-card">
+        <div class="flex overflow-y-auto relative flex-col flex-auto divide-y sm:max-h-120 bg-card">
             <!-- Messages -->
             <ng-container *ngFor="let message of messages; trackBy: trackByFn">
                 <div
@@ -80,13 +80,13 @@
                     </ng-container>
 
                     <!-- Actions -->
-                    <div class="relative flex flex-col my-5 mr-6 ml-2">
+                    <div class="flex relative flex-col my-5 mr-6 ml-2">
                         <!-- Indicator -->
                         <button
                             class="w-6 h-6 min-h-6"
                             mat-icon-button
                             (click)="toggleRead(message)"
-                            [matTooltip]="message.read ? 'Mark as unread' : 'Mark as read'">
+                            [matTooltip]="message.read ? ('messages.markAsUnread' | transloco) : ('messages.markAsRead' | transloco)">
                             <span
                                 class="w-2 h-2 rounded-full"
                                 [ngClass]="{'bg-gray-400 dark:bg-gray-500 sm:opacity-0 sm:group-hover:opacity-100': message.read,
@@ -97,7 +97,7 @@
                             class="w-6 h-6 min-h-6 sm:opacity-0 sm:group-hover:opacity-100"
                             mat-icon-button
                             (click)="delete(message)"
-                            [matTooltip]="'Remove'">
+                            [matTooltip]="'messages.remove' | transloco">
                             <mat-icon
                                 class="icon-size-4"
                                 [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
@@ -109,7 +109,7 @@
                 <ng-template #messageContent>
                     <!-- Icon -->
                     <ng-container *ngIf="message.icon && !message.image">
-                        <div class="flex shrink-0 items-center justify-center w-8 h-8 mr-4 rounded-full bg-gray-100 dark:bg-gray-700">
+                        <div class="flex justify-center items-center mr-4 w-8 h-8 bg-gray-100 rounded-full shrink-0 dark:bg-gray-700">
                             <mat-icon
                                 class="icon-size-5"
                                 [svgIcon]="message.icon">
@@ -119,7 +119,7 @@
                     <!-- Image -->
                     <ng-container *ngIf="message.image">
                         <img
-                            class="shrink-0 w-8 h-8 mr-4 rounded-full overflow-hidden object-cover object-center"
+                            class="object-cover object-center overflow-hidden mr-4 w-8 h-8 rounded-full shrink-0"
                             [src]="message.image"
                             [alt]="'Message image'">
                     </ng-container>
@@ -144,14 +144,14 @@
 
             <!-- No messages -->
             <ng-container *ngIf="!messages || !messages.length">
-                <div class="flex flex-col flex-auto items-center justify-center sm:justify-start py-12 px-8">
-                    <div class="flex flex-0 items-center justify-center w-14 h-14 rounded-full bg-primary-100 dark:bg-primary-600">
+                <div class="flex flex-col flex-auto justify-center items-center px-8 py-12 sm:justify-start">
+                    <div class="flex justify-center items-center w-14 h-14 rounded-full flex-0 bg-primary-100 dark:bg-primary-600">
                         <mat-icon
                             class="text-primary-700 dark:text-primary-50"
                             [svgIcon]="'heroicons_outline:inbox'"></mat-icon>
                     </div>
-                    <div class="mt-5 text-2xl font-semibold tracking-tight">No messages</div>
-                    <div class="w-full max-w-60 mt-1 text-md text-center text-secondary">When you have messages, they will appear here.</div>
+                    <div class="mt-5 text-2xl font-semibold tracking-tight">{{ 'messages.empty.title' | transloco }}</div>
+                    <div class="mt-1 w-full text-center max-w-60 text-md text-secondary">{{ 'messages.empty.subtitle' | transloco }}</div>
                 </div>
             </ng-container>
         </div>

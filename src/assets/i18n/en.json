@@ -4,6 +4,7 @@
         "Project": "Program Application",
         "Analytics": "Analytics"
     },
+
     "common": {
         "welcome-back": "Welcome back",
         "Project": "Project",
@@ -251,7 +252,7 @@
     },
     "validation-to-program": {
         "list": {
-            "title": "Program Application Validation",
+            "title": "Sponsor Evaluation",
             "search": {
                 "placeholder": "Search user",
                 "button": "Search"
@@ -296,7 +297,7 @@
             }
         },
         "edit": {
-            "title": "Edit Program Application Validation",
+            "title": "Edit Sponsor Evaluation",
             "monitor": {
                 "label": "Assigned to:"
             },

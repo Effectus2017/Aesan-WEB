@@ -28,7 +28,9 @@ export interface SchoolRequest {
     renewalYear?: number;
     educationLevelId?: number; // DEPRECATED - usar educationLevelIds
     educationLevelIds?: number[]; // Nueva propiedad para múltiples IDs
-    operatingDays?: number;
+    operatingFromDate?: string;
+    operatingToDate?: string;
+    operatingDaysCalculated?: number;
 
     // Información Operacional
     kitchenTypeId?: number;
@@ -58,6 +60,21 @@ export interface SchoolRequest {
     snack?: boolean;
     snackFrom?: string;
     snackTo?: string;
+    dinner?: boolean;
+    dinnerFrom?: string;
+    dinnerTo?: string;
+    snackNight?: boolean;
+    snackNightFrom?: string;
+    snackNightTo?: string;
+
+    // Campos adicionales
+    communityId?: number;
+    walkersId?: number;
+    siteTypeId?: number;
+    experienceId?: number;
+    reviewResultId?: number;
+    reviewDate?: string;
+    reviewJustification?: string;
 
     // Si la escuela es la principal
     isMainSchool?: boolean;
@@ -66,5 +83,4 @@ export interface SchoolRequest {
     isActive?: boolean;
     inactiveJustification?: string;
     inactiveDate?: string;
-
 }

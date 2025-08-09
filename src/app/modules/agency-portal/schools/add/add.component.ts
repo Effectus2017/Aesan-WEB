@@ -42,6 +42,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
     selector: 'app-schools-add',
@@ -86,6 +88,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _educationLevelService = inject(EducationLevelService);
   private _authService = inject(AuthService);
   private _areaTypeService = inject(AreaTypeService);
+  private _agencyService = inject(AgencyService);
 
   // catálogos
   listCities: City[] = [];
@@ -136,6 +139,26 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Tipo de grupo
   // Type of group
   groupTypes: OptionSelection[] = [];
+
+  // Comunidad
+  // Community
+  community: OptionSelection[] = [];
+
+  // Caminantes / Walkers
+  // Walkers
+  walkers: OptionSelection[] = [];
+
+  // Tipo de distribución / Distribution type
+  // Distribution type
+  distributionType: OptionSelection[] = [];
+
+  // Tipo de sitio / Site type
+  // Site type
+  siteType: OptionSelection[] = [];
+
+  // Experiencia / Experience
+  // Experience
+  experience: OptionSelection[] = [];
 
   // Lenguaje actual
   currentLang: string = 'es';
@@ -214,9 +237,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Nivel educativo - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
       // Education level - Required field for school type (MULTIPLE SELECTION)
       educationLevels: [[], Validators.required],
-      // Días de operación - Días cuando la escuela opera
-      // Operating days - Days when the school operates
-      operatingDays: [''],
+      // Fechas de funcionamiento - Fechas desde y hasta cuando opera la escuela
+      // Operating dates - Dates from and to when the school operates
+      operatingFromDate: [null],
+      operatingToDate: [null],
+      operatingDaysCalculated: [{value: null, disabled: true}],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
@@ -292,6 +317,39 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Horario hasta para la merienda
       // Snack schedule to
       snackTo: [null],
+      // Comunidad
+      // Community
+      community: [null],
+      // Caminantes / Walkers
+      // Walkers
+      walkers: [null],
+      // Tipo de distribución / Distribution type
+      // Distribution type
+      distributionType: [null],
+      // Tipo de sitio / Site type
+      // Site type
+      siteType: [null],
+      // Experiencia / Experience
+      // Experience
+      experience: [null],
+      // Cena (si, no)
+      // Dinner (yes, no)
+      dinner: [false],
+      // Horario desde para la cena
+      // Dinner schedule from
+      dinnerFrom: [null],
+      // Horario hasta para la cena
+      // Dinner schedule to
+      dinnerTo: [null],
+      // Merienda nocturna (si, no)
+      // Snack night (yes, no)
+      snackNight: [false],
+      // Horario desde para la merienda nocturna
+      // Snack night schedule from
+      snackNightFrom: [null],
+      // Horario hasta para la merienda nocturna
+      // Snack night schedule to
+      snackNightTo: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -318,9 +376,54 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Si la escuela es la principal
   isMainSchool: boolean = true;
 
+  // Propiedades para controlar visibilidad según programa
+  isPDAM: boolean = false;
+  isPSAV: boolean = false;
+  isPACNA: boolean = false;
+  isPFHF: boolean = false;
+  isPDFE: boolean = false;
+  isAESAN: boolean = false;
+
   constructor() {}
 
   ngOnInit(): void {
+    this.currentLang = this._translocoService.getActiveLang();
+    this.loadData();
+    this.setupFormListeners();
+  }
+
+  private setupFormListeners(): void {
+    // Escuchar cambios en las fechas para calcular automáticamente los días
+    this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
+      this.calculateOperatingDays();
+    });
+
+    this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
+      this.calculateOperatingDays();
+    });
+  }
+
+  private calculateOperatingDays(): void {
+    const fromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
+    const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
+
+    if (fromDate && toDate) {
+      const from = new Date(fromDate);
+      const to = new Date(toDate);
+      const diffTime = Math.abs(to.getTime() - from.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 para incluir ambos días
+
+      this.headerConfig.formGroup.patchValue({
+        operatingDaysCalculated: diffDays
+      });
+    } else {
+      this.headerConfig.formGroup.patchValue({
+        operatingDaysCalculated: null
+      });
+    }
+  }
+
+  private loadData(): void {
     this.isLoading = true;
 
     // Obtener Agencia desde local storage desde AuthService
@@ -347,6 +450,17 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       }
     });
 
+    // Obtener datos de la agencia para determinar campos visibles
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        const agency = result.body;
+        const programs = agency.programs || [];
+
+        // Determinar qué campos mostrar según los programas
+        this.determineVisibleFields(programs);
+      }
+    });
+
     // Cargar opciones
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
@@ -356,6 +470,16 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.typeOfResidential = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
         // Tipo de solicitante
         this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+        // Comunidad
+        this.community = result.body.data.filter((option: OptionSelection) => option.optionKey === 'community');
+        // Caminantes / Walkers
+        this.walkers = result.body.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
+        // Tipo de distribución / Distribution type
+        this.distributionType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+        // Tipo de sitio / Site type
+        this.siteType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+        // Experiencia / Experience
+        this.experience = result.body.data.filter((option: OptionSelection) => option.optionKey === 'experience');
       }
     });
 
@@ -461,6 +585,23 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._unsubscribeAll.complete();
   }
 
+  private determineVisibleFields(programs: any[]): void {
+    this.isPDAM = programs.some(p => p.id === PROGRAM_IDS.PDAM);
+    this.isPSAV = programs.some(p => p.id === PROGRAM_IDS.PSAV);
+    this.isPACNA = programs.some(p => p.id === PROGRAM_IDS.PACNA);
+    this.isPFHF = programs.some(p => p.id === PROGRAM_IDS.PFHF);
+    this.isPDFE = programs.some(p => p.id === PROGRAM_IDS.PDFE);
+    this.isAESAN = programs.some(p => p.id === PROGRAM_IDS.AESAN);
+
+    this.updateValidations();
+    this._changeDetectorRef.detectChanges();
+  }
+
+  private updateValidations(): void {
+    // Actualizar validaciones según los campos visibles
+    // Similar a como se hace en Staff
+  }
+
   // Método para enviar el formulario
   onSubmit() {
     // Validar formulario
@@ -489,6 +630,13 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Horario de merienda
     const snackFrom: string = toTimeString(formValues.snackFrom);
     const snackTo: string = toTimeString(formValues.snackTo);
+
+    // Horario de cena
+    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
+    const dinnerTo: string = toTimeString(formValues.dinnerTo);
+    // Horario de merienda nocturna
+    const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
+    const snackNightTo: string = toTimeString(formValues.snackNightTo);
 
     // Niveles educativos (MÚLTIPLE SELECCIÓN)
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
@@ -573,9 +721,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de centro - Campo requerido para clasificación de la escuela (Orfanato/Centro de tratamiento residencial para salud mental/Centro Correccional Juvenil)
       // Center type - Required field for school classification
       centerTypeId: centerTypeId,
-      // Días de operación - Campo requerido para horario de la escuela
-      // Operating days - Required field for school schedule
-      operatingDays: Number(operatingDays),
+      // Fechas de funcionamiento - Fechas desde y hasta cuando opera la escuela
+      // Operating dates - Dates from and to when the school operates
+      operatingFromDate: formValues.operatingFromDate ?? null,
+      operatingToDate: formValues.operatingToDate ?? null,
+      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
       // Información Operacional / Operational Information
       // Tipo de cocina - Campo requerido para servicio de alimentos
       // Kitchen type - Required field for food service
@@ -662,6 +812,47 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Horario hasta para la merienda
       // Snack schedule to
       snackTo: snackTo ?? null,
+
+      // Cena - Indicador de servicio
+      // Dinner - Service indicator
+      dinner: formValues.dinner ?? null,
+      // Horario desde para la cena
+      // Dinner schedule from
+      dinnerFrom: dinnerFrom ?? null,
+      // Horario hasta para la cena
+      // Dinner schedule to
+      dinnerTo: dinnerTo ?? null,
+      // Merienda nocturna - Indicador de servicio
+      // Snack night - Service indicator
+      snackNight: formValues.snackNight ?? null,
+      // Horario desde para la merienda nocturna
+      // Snack night schedule from
+      snackNightFrom: snackNightFrom ?? null,
+      // Horario hasta para la merienda nocturna
+      // Snack night schedule to
+      snackNightTo: snackNightTo ?? null,
+
+          // Comunidad
+    // Community
+    communityId: formValues.communityId ?? null,
+    // Caminantes
+    // Walkers
+    walkersId: formValues.walkersId ?? null,
+    // Tipo de sitio
+    // Site type
+    siteTypeId: formValues.siteTypeId ?? null,
+    // Experiencia
+    // Experience
+    experienceId: formValues.experienceId ?? null,
+    // Resultado de revisión
+    // Review result
+    reviewResultId: formValues.reviewResultId ?? null,
+    // Fecha de revisión
+    // Review date
+    reviewDate: formValues.reviewDate ?? null,
+    // Justificación de revisión
+    // Review justification
+    reviewJustification: formValues.reviewJustification ?? null,
 
       // Si la escuela es la principal
       // If the school is the main school

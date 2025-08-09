@@ -105,8 +105,8 @@
                 "placeholder": "Ingresa el nombre"
             },
             "father-last-name": {
-                "label": "Apellido del Padre",
-                "placeholder": "Ingresa el apellido del padre"
+                "label": "Primer Apellido",
+                "placeholder": "Ingresa el primer apellido"
             },
             "admin-title": {
                 "label": "Título del Administrador",
@@ -141,8 +141,8 @@
                 "placeholder": "Ingresa el segundo nombre"
             },
             "mother-last-name": {
-                "label": "Apellido de la Madre",
-                "placeholder": "Ingresa el apellido de la madre"
+                "label": "Segundo Apellido",
+                "placeholder": "Ingresa el segundo apellido"
             },
             "submit": "Aplicar al Programa",
             "select-program-first": "Por favor, seleccione al menos un programa para continuar con el registro",
@@ -243,7 +243,7 @@
     },
     "validation-to-program": {
         "list": {
-            "title": "Validación de Aplicación al Programa",
+            "title": "Evaluación de Auspiciadores",
             "search": {
                 "placeholder": "Buscar usuario",
                 "button": "Buscar"
@@ -258,7 +258,7 @@
                     "region": "Región:",
                     "zipCpde": "Código Postal:",
                     "firstName": "Nombre:",
-                    "fatherLastName": "Apellido Paterno",
+                    "fatherLastName": "Primer Apellido",
                     "adminTitle": "Título Admin.",
                     "nonProfit": "Sin Fines de Lucro",
                     "uieNumber": "# UIE",
@@ -269,7 +269,7 @@
                     "phone": "Teléfono",
                     "email": "Correo",
                     "middleName": "Segundo Nombre",
-                    "motherLastName": "Apellido Materno",
+                    "motherLastName": "Segundo Apellido",
                     "createdBy": "Creado por",
                     "assignedTo": "Asignado a",
                     "createdAt": "Fecha de Creación",
@@ -288,7 +288,7 @@
             }
         },
         "edit": {
-            "title": "Editar Validación de Aplicación al Programa",
+            "title": "Editar Evaluación de Auspiciadores",
             "monitor": {
                 "label": "Asignado a:"
             },
@@ -349,12 +349,12 @@
                 "placeholder": "Ingrese el segundo nombre"
             },
             "father-last-name": {
-                "label": "Apellido Paterno:",
-                "placeholder": "Ingrese el apellido paterno"
+                "label": "Primer Apellido:",
+                "placeholder": "Ingrese el primer apellido"
             },
             "mother-last-name": {
-                "label": "Apellido Materno:",
-                "placeholder": "Ingrese el apellido materno"
+                "label": "Segundo Apellido:",
+                "placeholder": "Ingrese el segundo apellido"
             },
             "email": {
                 "label": "Correo:",
@@ -365,7 +365,7 @@
                 "placeholder": "Ingrese el título del administrador"
             },
             "save": "Guardar",
-            "submit": "Aprobar Aplicación",
+            "submit": "Aprobar",
             "reject": "Rechazar"
         }
     },
@@ -524,12 +524,12 @@
                 "placeholder": "Ingrese el segundo nombre"
             },
             "father-last-name": {
-                "label": "Apellido Paterno",
-                "placeholder": "Ingrese el apellido paterno"
+                "label": "Primer Apellido",
+                "placeholder": "Ingrese el primer apellido"
             },
             "mother-last-name": {
-                "label": "Apellido Materno",
-                "placeholder": "Ingrese el apellido materno"
+                "label": "Segundo Apellido",
+                "placeholder": "Ingrese el segundo apellido"
             },
             "email": {
                 "label": "Correo Electrónico",
@@ -1049,6 +1049,7 @@
             }
         }
     },
+
     "agency-status": {
         "title": "Estados de Agencia",
         "list": {

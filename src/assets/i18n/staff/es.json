@@ -8,8 +8,8 @@
           "id": "Id",
           "firstName": "Nombre",
           "middleName": "Segundo Nombre",
-          "fatherLastName": "Apellido Paterno",
-          "motherLastName": "Apellido Materno",
+          "fatherLastName": "Primer Apellido",
+          "motherLastName": "Segundo Apellido",
           "fullName": "Nombre Completo",
           "status": "Estado",
           "position": "Cargo",
@@ -32,6 +32,57 @@
         "view": "Ver Personal"
       }
     },
+    "employees": {
+      "list": {
+        "title": "Empleados Administrativos y Operacionales",
+        "search": {
+          "placeholder": "Buscar empleados..."
+        },
+        "table": {
+          "columns": {
+            "employeeName": "Nombre del Empleado(a)",
+            "classification": "Clasificación",
+            "position": "Puesto",
+            "status": "Estatus",
+            "description": "Descripción breve de las funciones y tareas principales de cada Empleado Administrativo y Operacional",
+            "actions": "Acciones"
+          }
+        },
+        "buttons": {
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver"
+        }
+      }
+    },
+    "boardMembers": {
+      "list": {
+        "title": "Miembros de la Junta Directiva",
+        "search": {
+          "placeholder": "Buscar miembros de junta..."
+        },
+        "table": {
+          "columns": {
+            "fullName": "Nombre Completo",
+            "status": "Estatus",
+            "title": "Título",
+            "birthDate": "Fecha de Nacimiento",
+            "email": "Correo Electrónico",
+            "postalAddress": "Dirección Postal",
+            "municipality": "Municipio",
+            "areaCode": "Código de área",
+            "updateDate": "Fecha de Actualización",
+            "comments": "Comentarios",
+            "actions": "Acciones"
+          }
+        },
+        "buttons": {
+          "edit": "Editar",
+          "delete": "Eliminar",
+          "view": "Ver"
+        }
+      }
+    },
     "add": {
       "title": "Agregar Personal",
       "information": "Información General",
@@ -39,22 +90,22 @@
       "personal-information": "Información Personal",
       "personal-information-description": "Complete la información personal del personal",
       "firstName": {
-        "label": "Primer Nombre",
-        "placeholder": "Ingrese el primer nombre",
-        "required": "El primer nombre es requerido"
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
       },
       "middleName": {
         "label": "Segundo Nombre",
         "placeholder": "Ingrese el segundo nombre (opcional)"
       },
       "fatherLastName": {
-        "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno",
-        "required": "El apellido paterno es requerido"
+        "label": "Primer Apellido",
+        "placeholder": "Ingrese el primer apellido",
+        "required": "El primer apellido es requerido"
       },
       "motherLastName": {
-        "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno (opcional)"
+        "label": "Segundo Apellido",
+        "placeholder": "Ingrese el segundo apellido"
       },
       "status": {
         "label": "Estado",
@@ -66,18 +117,32 @@
       "position": {
         "label": "Cargo",
         "placeholder": "Seleccione el cargo",
-        "required": "El cargo es requerido"
+        "required": "El cargo es requerido",
+        "selectClassificationFirst": "Primero seleccione una clasificación para ver los cargos disponibles"
       },
       "staffType": {
         "label": "Tipo de Personal",
         "placeholder": "Seleccione el tipo de personal",
         "required": "El tipo de personal es requerido"
       },
+      "staffClassification": {
+        "label": "Clasificación",
+        "placeholder": "Seleccione la clasificación",
+        "required": "La clasificación es requerida"
+      },
       "birthDate": {
         "label": "Fecha de Nacimiento",
         "placeholder": "Seleccione la fecha de nacimiento",
         "required": "La fecha de nacimiento es requerida",
         "minimumAge": "Debe tener al menos 18 años"
+      },
+      "contractStartDate": {
+        "label": "Fecha de Inicio de Contrato",
+        "placeholder": "Seleccione la fecha de inicio de contrato"
+      },
+      "contractEndDate": {
+        "label": "Fecha de Finalización de Contrato",
+        "placeholder": "Seleccione la fecha de finalización de contrato"
       },
       "email": {
         "label": "Correo Electrónico",
@@ -109,10 +174,18 @@
       "additional-information-description": "Información adicional del personal",
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional)"
+        "placeholder": "Ingrese comentarios adicionales (opcional)",
+        "employee": {
+          "label": "Descripción breve de las funciones y tareas principales de cada Empleado Administrativo y Operacional *",
+          "placeholder": "Descripción breve de las funciones y tareas principales del empleado"
+        },
+        "boardMember": {
+          "label": "Comentarios",
+          "placeholder": "Comentarios adicionales sobre el miembro de la junta directiva"
+        }
       },
       "buttons": {
-        "save": "Guardar Personal",
+        "save": "Guardar",
         "cancel": "Cancelar"
       }
     },
@@ -125,22 +198,22 @@
       "additional-information": "Información Adicional",
       "additional-information-description": "Información adicional y comentarios sobre el personal",
       "firstName": {
-        "label": "Primer Nombre",
-        "placeholder": "Ingrese el primer nombre",
-        "required": "El primer nombre es requerido"
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre",
+        "required": "El nombre es requerido"
       },
       "middleName": {
         "label": "Segundo Nombre",
         "placeholder": "Ingrese el segundo nombre (opcional)"
       },
       "fatherLastName": {
-        "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno",
-        "required": "El apellido paterno es requerido"
+        "label": "Primer Apellido",
+        "placeholder": "Ingrese el primer apellido",
+        "required": "El primer apellido es requerido"
       },
       "motherLastName": {
-        "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno (opcional)"
+        "label": "Segundo Apellido",
+        "placeholder": "Ingrese el segundo apellido (opcional)"
       },
       "status": {
         "label": "Estado",
@@ -162,6 +235,14 @@
         "placeholder": "Seleccione la fecha de nacimiento",
         "required": "La fecha de nacimiento es requerida",
         "minimumAge": "Debe tener al menos 18 años"
+      },
+      "contractStartDate": {
+        "label": "Fecha de Inicio de Contrato",
+        "placeholder": "Seleccione la fecha de inicio de contrato"
+      },
+      "contractEndDate": {
+        "label": "Fecha de Finalización de Contrato",
+        "placeholder": "Seleccione la fecha de finalización de contrato"
       },
       "email": {
         "label": "Correo Electrónico",
@@ -192,6 +273,22 @@
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional)"
+      },
+      "review": {
+        "label": "Revisión",
+        "description": "Información sobre la revisión del empleado"
+      },
+      "review-result": {
+        "label": "Resultado de Revisión",
+        "placeholder": "Seleccione el resultado de la revisión"
+      },
+      "review-date": {
+        "label": "Fecha de Revisión",
+        "placeholder": "Seleccione la fecha de revisión"
+      },
+      "review-justification": {
+        "label": "Justificación de Revisión",
+        "placeholder": "Ingrese la justificación de la revisión realizada"
       },
       "submitButton": "Guardar Cambios",
       "cancelButton": "Cancelar"

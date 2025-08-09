@@ -8,8 +8,8 @@
           "id": "Id",
           "firstName": "Nombre",
           "middleName": "Segundo Nombre",
-          "fatherLastName": "Apellido Paterno",
-          "motherLastName": "Apellido Materno",
+          "fatherLastName": "Primer Apellido",
+          "motherLastName": "Segundo Apellido",
           "fullName": "Nombre Completo",
           "status": "Estado",
           "position": "Cargo",
@@ -122,13 +122,13 @@
         "placeholder": "Ingrese el segundo nombre (opcional)"
       },
       "fatherLastName": {
-        "label": "Apellido del Padre",
-        "placeholder": "Ingrese el apellido del padre",
-        "required": "El apellido del padre es requerido"
+        "label": "Primer Apellido",
+        "placeholder": "Ingrese el primer apellido",
+        "required": "El primer apellido es requerido"
       },
       "motherLastName": {
-        "label": "Apellido de la Madre",
-        "placeholder": "Ingrese el apellido de la madre (opcional)"
+        "label": "Segundo Apellido",
+        "placeholder": "Ingrese el segundo apellido (opcional)"
       },
       "status": {
         "label": "Estado",

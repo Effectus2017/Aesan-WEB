@@ -78,13 +78,13 @@
                 "placeholder": "Ingrese el segundo nombre"
             },
             "fatherLastName": {
-                "label": "Apellido Paterno",
-                "placeholder": "Ingrese el apellido paterno",
-                "required": "El apellido paterno es requerido"
+                "label": "Primer Apellido",
+                "placeholder": "Ingrese el primer apellido",
+                "required": "El primer apellido es requerido"
             },
             "motherLastName": {
-                "label": "Apellido Materno",
-                "placeholder": "Ingrese el apellido materno"
+                "label": "Segundo Apellido",
+                "placeholder": "Ingrese el segundo apellido"
             },
             "messages": {
                 "force-password": {
@@ -186,14 +186,14 @@
                 "placeholder": "Ingrese el segundo nombre"
             },
             "fatherLastName": {
-                "label": "Apellido Paterno",
-                "placeholder": "Ingrese el apellido paterno",
-                "required": "El apellido paterno es requerido"
+                "label": "Primer Apellido",
+                "placeholder": "Ingrese el primer apellido",
+                "required": "El primer apellido es requerido"
             },
             "motherLastName": {
-                "label": "Apellido Materno",
-                "placeholder": "Ingrese el apellido materno",
-                "required": "El apellido materno es requerido"
+                "label": "Segundo Apellido",
+                "placeholder": "Ingrese el segundo apellido",
+                "required": "El segundo apellido es requerido"
             },
             "role": {
                 "label": "Rol",

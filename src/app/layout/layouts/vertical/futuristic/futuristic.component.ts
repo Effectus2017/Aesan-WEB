@@ -12,7 +12,6 @@ import { Navigation } from 'app/core/navigation/navigation.types';
 import { TokenResponse } from 'app/shared/models/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
-import { NotificationsComponent } from 'app/layout/common/notifications/notifications.component';
 import { QuickChatComponent } from 'app/layout/common/quick-chat/quick-chat.component';
 import { SearchComponent } from 'app/layout/common/search/search.component';
 import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
@@ -36,7 +35,6 @@ import { UserService } from 'app/shared/services/user.service';
     SearchComponent,
     ShortcutsComponent,
     MessagesComponent,
-    NotificationsComponent,
     NgIf,
     RouterOutlet,
     QuickChatComponent,

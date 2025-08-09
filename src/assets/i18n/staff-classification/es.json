@@ -1,0 +1,80 @@
+{
+  "staffClassification": {
+    "list": {
+      "title": "Clasificaciones de Personal",
+      "search": {
+        "placeholder": "Buscar clasificación..."
+      },
+      "buttons": {
+        "save": "Guardar",
+        "add": "Agregar Clasificación",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      }
+    },
+    "add": {
+      "title": "Agregar Clasificación de Personal",
+      "form": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Ingrese el nombre de la clasificación"
+        },
+        "nameEn": {
+          "label": "Nombre en Inglés",
+          "placeholder": "Enter classification name"
+        },
+        "sortOrder": {
+          "label": "Orden",
+          "placeholder": "Ingrese el orden"
+        },
+        "isActive": {
+          "label": "Activo"
+        }
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    },
+    "edit": {
+      "title": "Editar Clasificación de Personal",
+      "form": {
+        "name": {
+          "label": "Nombre",
+          "placeholder": "Ingrese el nombre de la clasificación"
+        },
+        "nameEn": {
+          "label": "Nombre en Inglés",
+          "placeholder": "Enter classification name"
+        },
+        "sortOrder": {
+          "label": "Orden",
+          "placeholder": "Ingrese el orden"
+        },
+        "isActive": {
+          "label": "Activo"
+        }
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    },
+    "messages": {
+      "created": "Clasificación creada exitosamente",
+      "updated": "Clasificación actualizada exitosamente",
+      "deleted": "Clasificación eliminada exitosamente",
+      "error": "Error al procesar la clasificación",
+      "confirmDelete": "¿Está seguro de que desea eliminar esta clasificación?"
+    },
+    "columns": {
+      "id": "ID",
+      "name": "Nombre",
+      "nameEn": "Nombre en Inglés",
+      "sortOrder": "Orden",
+      "isActive": "Activo",
+      "createdAt": "Fecha de Creación",
+      "actions": "Acciones"
+    }
+  }
+}

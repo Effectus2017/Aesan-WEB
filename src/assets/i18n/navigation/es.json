@@ -48,13 +48,33 @@
             "sponsor-types": "Tipos de Auspiciador",
             "operating-policies": "Políticas Operativas",
             "center-types": "Tipos de Centro",
-            "staff-types": "Tipos de Personal"
+            "staff-types": "Tipos de Personal",
+            "residential-types": "Tipos Residenciales"
         },
         "household": "Hogares",
         "employees": "Empleados",
-        "staff": "Personal",
+        "staff": {
+          "title": "Personal",
+          "employees": "Empleados Administrativos y Operacionales",
+          "board-members": "Miembros de la Junta Directiva",
+          "add": "Agregar"
+        },
         "program-requests": "Solicitudes al Programa",
         "legibility": "Elegibilidad",
-        "permissions": "Permisos"
+        "permissions": "Permisos",
+        "deadline": {
+            "daysRemaining": "{{days}} días para completar el registro",
+            "tooltip": "Le quedan {{days}} días para completar el registro de Sitios y Personal, al completar haga click aquí",
+            "confirmation": {
+                "title": "Confirmar",
+                "message": "¿Está seguro que ya completó el registro?",
+                "cancel": "Cancelar",
+                "confirm": "Aceptar"
+            }
+        },
+        "currentProgram": {
+            "program": "Programa Actual: {{program}}",
+            "tooltip": "Programa actual en el cual se encuentra el usuario"
+        }
     }
 }

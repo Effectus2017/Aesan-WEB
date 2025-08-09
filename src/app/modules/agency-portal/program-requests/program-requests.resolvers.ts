@@ -14,11 +14,13 @@ export const initialAgencyProgramRequestsResolver = () => {
   const _authService: AuthService = inject(AuthService);
   const _programService: ProgramService = inject(ProgramService);
   const userId = _authService.getUserId();
+  const agencyId = _authService.getAgencyId();
 
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
-    agencyId: 1,
+    agencyId: agencyId,
+    alls: true,
   };
 
   return forkJoin([

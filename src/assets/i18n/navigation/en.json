@@ -52,10 +52,29 @@
         },
         "household": "Households",
         "employees": "Employees",
-        "staff": "Staff",
+        "staff": {
+          "title": "Staff",
+          "employees": "Administrative and Operational Employees",
+          "board-members": "Board of Directors Members",
+          "add": "Add"
+        },
         "program-requests": "Program Requests",
         "legibility": "Eligibility",
         "permissions": "Permissions",
+        "deadline": {
+            "daysRemaining": "{{days}} days to complete registration",
+            "tooltip": "You have {{days}} days left to complete the registration of Sites and Personnel, click here when completed",
+            "confirmation": {
+                "title": "Confirm",
+                "message": "Are you sure you have completed the registration?",
+                "cancel": "Cancel",
+                "confirm": "Accept"
+            }
+        },
+        "currentProgram": {
+            "program": "Current Program: {{program}}",
+            "tooltip": "Current program in which the user is located"
+        },
         "administration": {
             "title": "Administration",
             "agency-status": "Agency Status",

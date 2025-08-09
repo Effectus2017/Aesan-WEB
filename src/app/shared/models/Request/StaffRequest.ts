@@ -7,7 +7,10 @@ export interface StaffRequest {
   statusId: number;
   positionId: number;
   staffTypeId: number;
-  birthDate: string;
+  staffClassificationId?: number;
+  contractStartDate?: string; // Fecha de inicio de contrato
+  contractEndDate?: string; // Fecha de finalización de contrato
+  birthDate?: string;
   email: string;
   postalAddress: string;
   cityId: number;
@@ -16,4 +19,8 @@ export interface StaffRequest {
   comments?: string;
   userId?: string;
   isActive: boolean;
+  // Campos de revisión (solo para empleados)
+  reviewResultId?: number;
+  reviewDate?: string;
+  reviewJustification?: string;
 }
