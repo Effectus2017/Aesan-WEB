@@ -1,0 +1,29 @@
+{
+  "staff": {
+    "edit": {
+      "relationships": {
+        "label": "Relaciones de Parentesco",
+        "description": "Gestiona las relaciones familiares con otros empleados de la agencia",
+        "add": "Agregar Relación",
+        "no-relationships": {
+          "title": "No hay relaciones registradas",
+          "description": "Este empleado no tiene relaciones de parentesco registradas. Haz clic en 'Agregar Relación' para comenzar."
+        },
+        "table": {
+          "columns": {
+            "relatedStaffFullName": "Nombre Completo",
+            "relationshipType": "Tipo de Parentesco",
+            "relatedStaffPosition": "Cargo",
+            "relatedStaffType": "Tipo de Empleado",
+            "relatedStaffEmail": "Email",
+            "actions": "Acciones"
+          },
+          "buttons": {
+            "edit": "Editar",
+            "delete": "Eliminar"
+          }
+        }
+      }
+    }
+  }
+}

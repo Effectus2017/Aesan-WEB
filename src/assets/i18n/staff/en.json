@@ -35,11 +35,11 @@
         },
         "table": {
           "columns": {
-            "employeeName": "Employee Name",
+            "fullName": "Full Name",
             "classification": "Classification",
             "position": "Position",
             "status": "Status",
-            "description": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee",
+            "description": "Employee description",
             "actions": "Actions"
           }
         },
@@ -80,10 +80,8 @@
     },
     "add": {
       "title": "Add Staff",
-      "information": "Information",
-      "information-description": "General staff information",
-      "personal-information": "Personal Information",
-      "personal-information-description": "Staff personal data",
+      "information": "General Information",
+      "information-description": "Complete the general information of the staff",
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",
@@ -94,13 +92,13 @@
         "placeholder": "Enter middle name (optional)"
       },
       "fatherLastName": {
-        "label": "Father's Last Name",
-        "placeholder": "Enter father's last name",
-        "required": "Father's last name is required"
+        "label": "First Last Name",
+        "placeholder": "Enter first last name",
+        "required": "First last name is required"
       },
       "motherLastName": {
-        "label": "Mother's Last Name",
-        "placeholder": "Enter mother's last name (optional)"
+        "label": "Second Last Name",
+        "placeholder": "Enter second last name (optional)"
       },
       "status": {
         "label": "Status",
@@ -165,8 +163,8 @@
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)",
         "employee": {
-          "label": "Brief description of the main functions and principal tasks of each Administrative and Operational Employee *",
-          "placeholder": "Brief description of the main functions and tasks of the employee"
+          "label": "Employee description *",
+          "placeholder": "Describe the employee"
         },
         "boardMember": {
           "label": "Comments",
@@ -176,34 +174,46 @@
       "buttons": {
         "save": "Save",
         "cancel": "Cancel"
+      },
+      "success": {
+        "employee": "The employee has been added successfully",
+        "boardMember": "The board member has been added successfully"
+      },
+      "error": {
+        "general": "Error adding staff"
       }
     },
     "edit": {
       "title": "Edit Staff",
       "information": "General Information",
       "information-description": "Complete the general information of the staff",
-      "personal-information": "Personal Information",
-      "personal-information-description": "Complete the personal information of the staff",
-      "additional-information": "Additional Information",
-      "additional-information-description": "Additional information and comments about the staff",
+      "staffType": {
+        "label": "Staff Type",
+        "placeholder": "Select the staff type",
+        "required": "Staff type is required"
+      },
+      "staffClassification": {
+        "label": "Staff Classification",
+        "placeholder": "Select the staff classification",
+        "required": "Staff classification is required"
+      },
       "firstName": {
         "label": "First Name",
-        "placeholder": "Enter the first name",
+        "placeholder": "Enter first name",
         "required": "First name is required"
       },
       "middleName": {
         "label": "Middle Name",
-        "placeholder": "Enter the middle name (optional)"
+        "placeholder": "Enter middle name (optional)"
       },
       "fatherLastName": {
-        "label": "Father's Last Name",
-        "placeholder": "Enter the father's last name (optional)",
-        "required": "Father's last name is required"
+        "label": "First Last Name",
+        "placeholder": "Enter first last name",
+        "required": "First last name is required"
       },
       "motherLastName": {
-        "label": "Mother's Last Name",
-        "placeholder": "Enter the mother's last name",
-        "required": "Mother's last name is required"
+        "label": "Second Last Name",
+        "placeholder": "Enter second last name (optional)"
       },
       "status": {
         "label": "Status",
@@ -215,16 +225,17 @@
         "placeholder": "Select the position",
         "required": "Position is required"
       },
-      "staffType": {
-        "label": "Staff Type",
-        "placeholder": "Select the staff type",
-        "required": "Staff type is required"
-      },
       "birthDate": {
         "label": "Birth Date",
         "placeholder": "Select the birth date",
         "required": "Birth date is required",
         "minimumAge": "Must be at least 18 years old"
+      },
+      "email": {
+        "label": "Email",
+        "placeholder": "Enter the email",
+        "required": "Email is required",
+        "invalid": "Email is not valid"
       },
       "contractStartDate": {
         "label": "Contract Start Date",
@@ -233,12 +244,6 @@
       "contractEndDate": {
         "label": "Contract End Date",
         "placeholder": "Select contract end date"
-      },
-      "email": {
-        "label": "Email",
-        "placeholder": "Enter the email",
-        "required": "Email is required",
-        "invalid": "Email is not valid"
       },
       "city": {
         "label": "City",
@@ -260,9 +265,51 @@
         "placeholder": "Enter the postal address",
         "required": "Postal address is required"
       },
+      "additional-information": "Additional Information",
+      "additional-information-description": "Complete additional information about the staff member",
       "comments": {
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
+      },
+      "relationships": {
+        "label": "Staff Relationships",
+        "description": "Manage relationships between staff members",
+        "add": "Add Relationship",
+        "no-relationships": {
+          "title": "No relationships configured",
+          "description": "Configure relationships between staff members to improve organization and communication"
+        },
+        "table": {
+          "columns": {
+            "relatedStaffFullName": "Related Staff Full Name",
+            "relationshipType": "Relationship Type",
+            "relatedStaffPosition": "Related Staff Position",
+            "relatedStaffType": "Related Staff Type",
+            "relatedStaffEmail": "Related Staff Email",
+            "actions": "Actions"
+          },
+          "buttons": {
+            "edit": "Edit",
+            "delete": "Delete"
+          }
+        },
+        "modal": {
+          "relatedStaff": {
+            "label": "Related Staff",
+            "placeholder": "Select related staff member",
+            "required": "Must select a related staff member"
+          },
+          "relationshipType": {
+            "label": "Relationship Type",
+            "placeholder": "Select relationship type",
+            "required": "Must select a relationship type"
+          },
+          "buttons": {
+            "save": "Save",
+            "cancel": "Cancel",
+            "saving": "Saving..."
+          }
+        }
       },
       "review": {
         "label": "Review",
@@ -280,7 +327,7 @@
         "label": "Review Justification",
         "placeholder": "Enter the justification for the review conducted"
       },
-      "submitButton": "Save Changes",
+      "submitButton": "Save",
       "cancelButton": "Cancel"
     }
   }

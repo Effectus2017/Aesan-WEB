@@ -1292,8 +1292,8 @@
             }
         },
         "edit": {
-            "submit": "Submit Application",
-            "save": "Save Changes"
+            "submit": "Submit Request",
+            "save": "Save"
         }
     }
 }

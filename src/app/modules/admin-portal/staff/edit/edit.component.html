@@ -15,16 +15,6 @@
           </p>
         </div>
 
-        <!-- Información Personal -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">
-            {{ "staff.edit.personal-information" | transloco }}
-          </p>
-          <p class="mb-6 text-secondary">
-            {{ "staff.edit.personal-information-description" | transloco }}
-          </p>
-        </div>
-
         <!-- Campos de Nombre -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <!-- First Name -->
@@ -130,7 +120,7 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>

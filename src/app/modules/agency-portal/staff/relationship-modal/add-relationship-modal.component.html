@@ -1,0 +1,58 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ "staff.edit.relationships.add" | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-6">
+      <!-- Dropdown 1: Staff Relacionado -->
+      <mat-form-field data-cy="related-staff-field">
+        <mat-label>{{ "staff.edit.relationships.modal.relatedStaff.label" | transloco }}</mat-label>
+        <mat-select formControlName="relatedStaffId"
+          [placeholder]="'staff.edit.relationships.modal.relatedStaff.placeholder' | transloco"
+          [compareWith]="compareById"
+          data-cy="related-staff-select"
+        >
+          <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option"> {{ staff.firstName }} {{ staff.fatherLastName }} </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('relatedStaffId')?.hasError('required')">
+          {{ "staff.edit.relationships.modal.relatedStaff.required" | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Dropdown 2: Tipo de Relación -->
+      <mat-form-field data-cy="relationship-type-field">
+        <mat-label>{{ "staff.edit.relationships.modal.relationshipType.label" | transloco }}</mat-label>
+        <mat-select
+          formControlName="relationshipTypeId"
+          [placeholder]="'staff.edit.relationships.modal.relationshipType.placeholder' | transloco"
+          [compareWith]="compareById"
+          data-cy="relationship-type-select"
+        >
+          <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">
+            {{ type.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('relationshipTypeId')?.hasError('required')">
+          {{ "staff.edit.relationships.modal.relationshipType.required" | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading" data-cy="cancel-button">
+          {{ "staff.edit.relationships.modal.buttons.cancel" | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" data-cy="save-button">
+          <mat-icon *ngIf="isLoading" class="mr-2 animate-spin">hourglass_empty</mat-icon>
+          {{ isLoading ? ("staff.edit.relationships.modal.buttons.saving" | transloco) : ("staff.edit.relationships.modal.buttons.save" | transloco) }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

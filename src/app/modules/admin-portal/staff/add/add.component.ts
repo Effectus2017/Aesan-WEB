@@ -23,7 +23,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
@@ -34,24 +34,7 @@ import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 
-function minimumAgeValidator(minAge: number): (control: AbstractControl) => ValidationErrors | null {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null;
-    }
 
-    const birthDate = new Date(control.value);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age >= minAge ? null : { minimumAge: { requiredAge: minAge, actualAge: age } };
-  };
-}
 
 @Component({
   selector: 'app-admin-staff-add',
@@ -417,6 +400,14 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       position: null
     });
 
+    // Si es miembro de junta, limpiar los campos de fecha de contrato
+    if (this.isBoardMember) {
+      this.headerConfig.formGroup.patchValue({
+        contractStartDate: null,
+        contractEndDate: null
+      });
+    }
+
     // Si es empleado, limpiar los campos de nombre
     if (this.isEmployee) {
       this.headerConfig.formGroup.patchValue({
@@ -468,7 +459,9 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
 
     this.headerConfig.formGroup.patchValue({
       staffClassification: null,
-      position: null
+      position: null,
+      contractStartDate: null,
+      contractEndDate: null
     });
 
     // Restaurar validaciones de campos de nombre

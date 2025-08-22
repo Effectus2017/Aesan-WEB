@@ -45,7 +45,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EmployeesListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _formBuilder = inject(UntypedFormBuilder);
   private _staffService = inject(StaffService);
   private _customRouterService = inject(CustomRouterService);
@@ -78,7 +78,8 @@ export class EmployeesListComponent implements OnInit, OnDestroy, OnGenericHeade
   };
 
   ngOnInit(): void {
-    this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+
+    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         // Filtrar solo empleados
         const employees = result.body.data.filter((staff: StaffList) =>
@@ -124,7 +125,7 @@ export class EmployeesListComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onCustom(): void {
-    this._customRouterService.navigate(['staff/add']);
+    this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'employee' } });
   }
 
   onTableEdit(event: Event, id: number): void {

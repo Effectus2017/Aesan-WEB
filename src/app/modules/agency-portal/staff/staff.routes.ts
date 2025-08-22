@@ -12,14 +12,14 @@ export default [
       },
       {
         path: 'employees',
-        loadComponent: () => import('./list-employees/employees-list.component').then(c => c.EmployeesListComponent),
+        loadComponent: () => import('./list-employees/employees-list.component').then(c => c.ListEmployeesComponent),
         resolve: {
           data: initialDataStaffEmployeesListResolver
         }
       },
       {
         path: 'board-members',
-        loadComponent: () => import('./list/list.component').then(c => c.ListComponent),
+        loadComponent: () => import('./list/list.component').then(c => c.ListBoardMembersComponent),
         resolve: {
           data: initialDataStaffBoardMembersListResolver
         }

@@ -28,8 +28,6 @@
       "title": "Add Employee",
       "information": "Information",
       "information-description": "General employee information",
-      "personal-information": "Personal Information",
-      "personal-information-description": "Employee personal data",
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",
@@ -110,8 +108,6 @@
       "title": "Edit Employee",
       "information": "Information",
       "information-description": "General employee information",
-      "personal-information": "Personal Information",
-      "personal-information-description": "Employee personal data",
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",

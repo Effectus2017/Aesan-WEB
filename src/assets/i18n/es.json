@@ -1030,7 +1030,7 @@
         },
         "edit": {
             "submit": "Enviar Solicitud",
-            "save": "Guardar Cambios"
+            "save": "Guardar"
         },
         "table": {
             "columns": {

@@ -24,7 +24,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, compareItems, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -32,25 +32,12 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
+import { Staff } from 'app/shared/models/Staff';
+import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
+import { StaffClassification } from 'app/shared/models/StaffClassification';
+import { PermissionService } from 'app/shared/services/permission.service';
 
-function minimumAgeValidator(minAge: number): (control: AbstractControl) => ValidationErrors | null {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null;
-    }
 
-    const birthDate = new Date(control.value);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age >= minAge ? null : { minimumAge: { requiredAge: minAge, actualAge: age } };
-  };
-}
 
 @Component({
   selector: 'app-admin-staff-edit',
@@ -89,6 +76,8 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _staffTypeService = inject(StaffTypeService);
+  private _staffClassificationService = inject(StaffClassificationService);
+  private _permissionService = inject(PermissionService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -100,6 +89,17 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
+
+  // Propiedad para controlar si mostrar campos de revisión (solo para empleados)
+  isEmployee: boolean = false;
+  isBoardMember: boolean = false;
+  selectedClassification: StaffClassification | null = null;
+
+  // Propiedad para controlar si mostrar campos de revisión (solo para administradores)
+  canViewReviewFields: boolean = false;
+
+  // Lista completa de opciones de selección
+  allOptionSelections: OptionSelection[] = [];
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.edit.title',
@@ -145,6 +145,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   ngOnInit(): void {
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
+
+    // Verificar permisos de administrador
+    this.checkAdminPermissions();
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -198,6 +201,11 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     if (data) {
       this.onSetForm(data);
     }
+
+    // Suscribirse a cambios en el tipo de staff
+    this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: StaffType) => {
+      this.onStaffTypeChange(staffType);
+    });
   }
 
   ngOnDestroy(): void {
@@ -225,6 +233,12 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       areaCode: staff.areaCode,
       comments: staff.comments,
     });
+
+    // Configurar las propiedades de tipo de staff
+    if (staff.staffTypeName) {
+      this.isEmployee = staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee';
+      this.isBoardMember = staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member';
+    }
   }
 
   onSubmit(): void {
@@ -356,5 +370,48 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
         console.error('Error al cargar las regiones:', error);
       },
     });
+  }
+
+  /**
+   * Maneja el cambio en el tipo de staff seleccionado
+   */
+  onStaffTypeChange(staffType: StaffType): void {
+    if (!staffType) {
+      this.resetStaffTypeFields();
+      return;
+    }
+
+    // Determinar si es empleado o miembro de junta
+    this.isEmployee = staffType.name === 'Empleado' || staffType.nameEn === 'Employee';
+    this.isBoardMember = staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member';
+
+    // Si es miembro de junta, limpiar los campos de fecha de contrato
+    if (this.isBoardMember) {
+      this.headerConfig.formGroup.patchValue({
+        contractStartDate: null,
+        contractEndDate: null
+      });
+    }
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Resetea los campos relacionados con el tipo de staff
+   */
+  resetStaffTypeFields(): void {
+    this.isEmployee = false;
+    this.isBoardMember = false;
+
+    this.headerConfig.formGroup.patchValue({
+      contractStartDate: null,
+      contractEndDate: null
+    });
+  }
+
+  private checkAdminPermissions(): void {
+    const userRole = this._authService.getUserRole();
+    // En el portal admin, siempre mostrar campos de revisión
+    this.canViewReviewFields = true;
   }
 }

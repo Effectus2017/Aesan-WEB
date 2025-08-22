@@ -3,6 +3,7 @@ import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
 import { UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 /**
  * Compara dos elementos
@@ -297,4 +298,28 @@ export function toTimeDate(timeString: string | null): Date | null {
   if (!timeString) return null;
   const [hours, minutes, seconds] = timeString.split(':').map(Number);
   return new Date(2000, 1, 1, hours, minutes, seconds);
+}
+
+/**
+ * Custom validator to check minimum age
+ * @param minAge Minimum age required
+ * @returns Validator function that returns ValidationErrors or null
+ */
+export function minimumAgeValidator(minAge: number): (control: AbstractControl) => ValidationErrors | null {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) {
+      return null;
+    }
+
+    const birthDate = new Date(control.value);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    return age >= minAge ? null : { minimumAge: { requiredAge: minAge, actualAge: age } };
+  };
 }

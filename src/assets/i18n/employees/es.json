@@ -28,8 +28,6 @@
       "title": "Agregar Empleado",
       "information": "Información",
       "information-description": "Información general del empleado",
-      "personal-information": "Información Personal",
-      "personal-information-description": "Datos personales del empleado",
       "firstName": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre",
@@ -110,8 +108,6 @@
       "title": "Editar Empleado",
       "information": "Información",
       "information-description": "Información general del empleado",
-      "personal-information": "Información Personal",
-      "personal-information-description": "Datos personales del empleado",
       "firstName": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre",

@@ -6,13 +6,13 @@
     <form [formGroup]="headerConfig.formGroup" #staffAddForm="ngForm" data-cy="staff-add-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
 
-        <!-- Información Personal -->
+        <!-- Información General -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
-            {{ "staff.add.personal-information" | transloco }}
+            {{ "staff.add.information" | transloco }}
           </p>
           <p class="mb-6 text-secondary">
-            {{ "staff.add.personal-information-description" | transloco }}
+            {{ "staff.add.information-description" | transloco }}
           </p>
         </div>
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
@@ -142,7 +142,7 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.add.contractStartDate.label" | transloco }}</mat-label>

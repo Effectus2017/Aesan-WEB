@@ -11,19 +11,19 @@ import { getHttpOptions } from '../utils';
   providedIn: 'root'
 })
 export class StaffService {
-  private _staff: BehaviorSubject<Staff[] | null> = new BehaviorSubject(null);
-  private _staffMember: BehaviorSubject<Staff | null> = new BehaviorSubject(null);
+  private _staff: BehaviorSubject<Staff | null> = new BehaviorSubject(null);
+  private _staffs: BehaviorSubject<Staff[] | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/staff`;
   private _httpClient = inject(HttpClient);
 
   // Getters para observables
-  get staff$(): Observable<Staff[] | null> {
-    return this._staff.asObservable();
+  get staffs$(): Observable<Staff[] | null> {
+    return this._staffs.asObservable();
   }
 
-  get staffMember$(): Observable<Staff | null> {
-    return this._staffMember.asObservable();
+  get staff$(): Observable<Staff | null> {
+    return this._staff.asObservable();
   }
 
   /**
@@ -33,7 +33,7 @@ export class StaffService {
    */
   getStaffById(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-staff-by-id`, getHttpOptions(queryParams))
-      .pipe(tap((response: any) => this._staffMember.next(response)));
+      .pipe(tap((response: any) => this._staff.next(response)));
   }
 
   /**
@@ -43,7 +43,7 @@ export class StaffService {
    */
   getAllStaffFromDb(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-all-staff-from-db`, getHttpOptions(queryParams))
-      .pipe(tap((response: any) => this._staff.next(response)));
+      .pipe(tap((response: any) => this._staffs.next(response)));
   }
 
   /**
@@ -81,11 +81,7 @@ export class StaffService {
    * @param userId ID del usuario
    * @returns Observable con el resultado de la conversión
    */
-  convertStaffToUser(staffId: number, userId: string): Observable<any> {
-    const queryParams: QueryParameters = {
-      staffId: staffId,
-      userId: userId
-    };
+  convertStaffToUser(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/convert-staff-to-user`, {}, getHttpOptions(queryParams));
   }
 
@@ -103,11 +99,7 @@ export class StaffService {
    * @param isActive Nuevo estado activo
    * @returns Observable con el resultado de la actualización
    */
-  updateStaffActiveStatus(staffId: number, isActive: boolean): Observable<any> {
-    const queryParams: QueryParameters = {
-      staffId: staffId,
-      isActive: isActive
-    };
+  updateStaffActiveStatus(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-staff-active-status`, {}, getHttpOptions(queryParams));
   }
 }

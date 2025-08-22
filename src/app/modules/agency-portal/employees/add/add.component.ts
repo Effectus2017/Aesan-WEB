@@ -23,32 +23,14 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 
-// Custom validator for minimum age
-function minimumAgeValidator(minAge: number): (control: AbstractControl) => ValidationErrors | null {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.value) {
-      return null;
-    }
 
-    const birthDate = new Date(control.value);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age >= minAge ? null : { minimumAge: { requiredAge: minAge, actualAge: age } };
-  };
-}
 
 @Component({
   selector: 'app-employee-add',

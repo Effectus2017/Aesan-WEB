@@ -64,7 +64,12 @@
         "permissions": "Permisos",
         "deadline": {
             "daysRemaining": "{{days}} días para completar el registro",
+            "expired": "Tiempo de registro expirado",
             "tooltip": "Le quedan {{days}} días para completar el registro de Sitios y Personal, al completar haga click aquí",
+            "tooltipExpired": "El tiempo para completar el registro ha expirado",
+            "confirm": "Aceptar",
+            "cancel": "Cancelar",
+            "understood": "Entendido",
             "confirmation": {
                 "title": "Confirmar",
                 "message": "¿Está seguro que ya completó el registro?",

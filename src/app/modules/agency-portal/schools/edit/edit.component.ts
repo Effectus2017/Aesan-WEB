@@ -207,7 +207,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
   // Parámetro de la escuela
   // School parameter
-  param: School;
+  param: School | null;
 
   // Configuración del header y formulario reactivo
   // Header config and reactive form

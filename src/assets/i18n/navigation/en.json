@@ -63,7 +63,12 @@
         "permissions": "Permissions",
         "deadline": {
             "daysRemaining": "{{days}} days to complete registration",
+            "expired": "Registration time expired",
             "tooltip": "You have {{days}} days left to complete the registration of Sites and Personnel, click here when completed",
+            "tooltipExpired": "The time to complete registration has expired",
+            "confirm": "Accept",
+            "cancel": "Cancel",
+            "understood": "Understood",
             "confirmation": {
                 "title": "Confirm",
                 "message": "Are you sure you have completed the registration?",

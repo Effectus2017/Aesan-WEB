@@ -15,21 +15,11 @@
           </p>
         </div>
 
-        <!-- Información Personal -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">
-            {{ "staff.edit.personal-information" | transloco }}
-          </p>
-          <p class="mb-6 text-secondary">
-            {{ "staff.edit.personal-information-description" | transloco }}
-          </p>
-        </div>
-
         <!-- Staff Type (mover arriba como en @add/) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="staffType-field">
             <mat-label>{{ "staff.edit.staffType.label" | transloco }}</mat-label>
-            <mat-select formControlName="staffType" [placeholder]="'staff.edit.staffType.placeholder' | transloco" [compareWith]="compareItems" data-cy="staffType-select">
+            <mat-select formControlName="staffType" [placeholder]="'staff.edit.staffType.placeholder' | transloco" [compareWith]="compareById" data-cy="staffType-select">
               <mat-option *ngFor="let staffType of listStaffTypes" [value]="staffType" data-cy="staffType-option">
                 {{ currentLang === 'es' ? staffType.name : staffType.nameEn }}
               </mat-option>
@@ -39,6 +29,26 @@
             </mat-error>
           </mat-form-field>
         </div>
+
+        <!-- Clasificación de Staff (solo para empleados) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
+            <mat-form-field data-cy="staff-classification-field">
+              <mat-label>{{ "staff.edit.staffClassification.label" | transloco }}</mat-label>
+              <mat-select
+                formControlName="staffClassification"
+                [placeholder]="'staff.edit.staffClassification.placeholder' | transloco"
+                [compareWith]="compareById"
+                data-cy="staff-classification-select"
+              >
+                <mat-option *ngFor="let classification of listStaffClassifications" [value]="classification" data-cy="staff-classification-option">
+                  {{ currentLang === "es" ? classification.name : classification.nameEn }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('staffClassification')?.hasError('required')">
+                {{ "staff.edit.staffClassification.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
 
         <!-- Campos de Nombre -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
@@ -80,7 +90,7 @@
             <mat-label>{{ "staff.edit.status.label" | transloco }}</mat-label>
             <mat-select formControlName="status" [placeholder]="'staff.edit.status.placeholder' | transloco" [compareWith]="compareById" data-cy="status-select">
               <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
-                {{ status.name }}
+                {{ currentLang === 'es' ? status.name : status.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('status')?.hasError('required')">
@@ -93,7 +103,7 @@
             <mat-label>{{ "staff.edit.position.label" | transloco }}</mat-label>
             <mat-select formControlName="position" [placeholder]="'staff.edit.position.placeholder' | transloco" [compareWith]="compareById" data-cy="position-select">
               <mat-option *ngFor="let position of listPositions" [value]="position" data-cy="position-option">
-                {{ position.name }}
+                {{ currentLang === 'es' ? position.name : position.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('position')?.hasError('required')">
@@ -132,7 +142,7 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>
@@ -157,7 +167,7 @@
             <mat-label>{{ "staff.edit.city.label" | transloco }}</mat-label>
             <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [placeholder]="'staff.edit.city.placeholder' | transloco" [compareWith]="compareById" data-cy="city-select">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
-                {{ city.name }}
+                {{ currentLang === 'es' ? city.name : city.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('city')?.hasError('required')">
@@ -170,7 +180,7 @@
             <mat-label>{{ "staff.edit.region.label" | transloco }}</mat-label>
             <mat-select formControlName="region" [placeholder]="'staff.edit.region.placeholder' | transloco" [compareWith]="compareById" data-cy="region-select">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">
-                {{ region.name }}
+                {{ currentLang === 'es' ? region.name : region.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('region')?.hasError('required')">
@@ -218,8 +228,23 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Revisión (solo para empleados) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isEmployee">
+        <!-- Relaciones de Parentesco -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">
+            {{ "staff.edit.relationships.label" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staff.edit.relationships.description" | transloco }}
+          </p>
+        </div>
+
+                <!-- Tabla de relaciones -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1 sm:col-span-8">
+          <app-generic-table [config]="relationshipsTableConfig" [handler]="this" #relationshipsTable></app-generic-table>
+        </div>
+
+        <!-- Campos de Revisión (solo para administradores) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="canViewReviewFields">
           <p class="text-lg font-medium">
             {{ "staff.edit.review.label" | transloco }}
           </p>
@@ -228,11 +253,11 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="isEmployee">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="canViewReviewFields">
           <!-- Resultado de revisión -->
           <mat-form-field data-cy="review-result-field">
             <mat-label>{{ "staff.edit.review-result.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'reviewResult'" data-cy="review-result-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'reviewResult'" [compareWith]="compareById" data-cy="review-result-select">
               <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -254,7 +279,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="canViewReviewFields">
           <!-- Justificación de revisión -->
           <mat-form-field data-cy="review-justification-field">
             <mat-label>{{ "staff.edit.review-justification.label" | transloco }}</mat-label>
