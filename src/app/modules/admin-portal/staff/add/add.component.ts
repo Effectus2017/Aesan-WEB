@@ -23,7 +23,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
+import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
@@ -33,11 +33,12 @@ import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
+import { ActivatedRoute } from '@angular/router';
 
 
 
 @Component({
-  selector: 'app-admin-staff-add',
+  selector: 'app-admin-add-staff',
   templateUrl: './add.component.html',
   providers: [provideNativeDateAdapter()],
   encapsulation: ViewEncapsulation.None,
@@ -74,6 +75,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
+  private _activatedRoute = inject(ActivatedRoute);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -150,7 +152,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   // Compare methods
   compare = compare;
   comparePostal = comparePostal;
-  compareById = (a: any, b: any) => a && b && a.id === b.id;
+  compareById = compareById
 
   // Agencia Id
   agencyId: number = 0;
@@ -160,6 +162,9 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
 
   // Lenguaje actual
   currentLang: string = 'es';
+
+  // Variable para pre-seleccionar el tipo de staff
+  preSelectStaffType: string | null = null;
 
   /**
    * Obtiene el label correcto para el campo de comentarios según el tipo de staff
@@ -178,6 +183,15 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // Leer query parameters para pre-seleccionar el tipo de staff
+    this._activatedRoute.queryParams.pipe(takeUntil(this._unsubscribeAll)).subscribe(params => {
+      const staffTypeParam = params['staffType'];
+      if (staffTypeParam) {
+        // Guardar el parámetro para usarlo cuando se carguen los tipos de staff
+        this.preSelectStaffType = staffTypeParam;
+      }
+    });
+
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
@@ -190,6 +204,17 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         this.allOptionSelections = result.body.data;
         // Status
         this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+
+        // Preseleccionar estado "Activo" por defecto
+        const activeStatus = this.listStatus.find(status =>
+          status.name === 'Activo' || status.nameEN === 'Active'
+        );
+
+        if (activeStatus) {
+          this.headerConfig.formGroup.patchValue({
+            status: activeStatus
+          });
+        }
         // Poblar listas separadas
         this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
@@ -202,6 +227,70 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listStaffTypes = result.body;
+
+        // Pre-seleccionar tipo de staff según query parameter o por defecto
+        if (this.preSelectStaffType === 'employee') {
+          // Pre-seleccionar "Empleado"
+          const employeeType = this.listStaffTypes.find(staffType =>
+            staffType.name === 'Empleado' || staffType.nameEn === 'Employee'
+          );
+
+          if (employeeType) {
+            this.headerConfig.formGroup.patchValue({
+              staffType: employeeType
+            });
+
+            // Configurar las variables de estado
+            this.isEmployee = true;
+            this.isBoardMember = false;
+
+            // Actualizar validaciones
+            this.updateValidations();
+          }
+        } else if (this.preSelectStaffType === 'board-member') {
+          // Pre-seleccionar "Miembro de la Junta"
+          const boardMemberType = this.listStaffTypes.find(staffType =>
+            staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
+          );
+
+          if (boardMemberType) {
+            this.headerConfig.formGroup.patchValue({
+              staffType: boardMemberType
+            });
+
+            // Configurar las variables de estado
+            this.isEmployee = false;
+            this.isBoardMember = true;
+
+            // Actualizar validaciones
+            this.updateValidations();
+
+            // Cargar posiciones para miembros de junta
+            this.loadPositionsByType();
+          }
+        } else {
+          // Pre-seleccionar "Miembro de la Junta" por defecto (comportamiento original)
+          const boardMemberType = this.listStaffTypes.find(staffType =>
+            staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
+          );
+
+          if (boardMemberType) {
+            this.headerConfig.formGroup.patchValue({
+              staffType: boardMemberType
+            });
+
+            // Configurar las variables de estado
+            this.isEmployee = false;
+            this.isBoardMember = true;
+
+            // Actualizar validaciones
+            this.updateValidations();
+
+            // Cargar posiciones para miembros de junta
+            this.loadPositionsByType();
+          }
+        }
+
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -210,6 +299,12 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listStaffClassifications = result.body;
+
+        // Si ya está preseleccionado como empleado, actualizar validaciones después de cargar las clasificaciones
+        if (this.isEmployee) {
+          this.updateValidations();
+        }
+
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -239,6 +334,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
       this.onClassificationChange(classification);
     });
+
+
   }
 
   ngOnDestroy(): void {
@@ -249,90 +346,143 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   onSubmit(): void {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('staff.add.error.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
 
     const formValues = this.headerConfig.formGroup.value;
+
     // Fecha de nacimiento (solo para miembros de junta)
     const birthDate: string = this.isBoardMember ? formValues.birthDate : null;
+
     // Email (solo para no empleados)
-    const email: string = this.isEmployee ? '' : formValues.email;
+    const email: string = this.isEmployee ? '' : (formValues.email || '');
+
     // Dirección postal (solo para no empleados)
-    const postalAddress: string = this.isEmployee ? '' : formValues.postalAddress;
+    const postalAddress: string = this.isEmployee ? '' : (formValues.postalAddress || '');
+
     // Código de área (solo para no empleados)
-    const areaCode: string = this.isEmployee ? '' : formValues.areaCode;
+    const areaCode: string = this.isEmployee ? '' : (formValues.areaCode || '');
+
     // Ciudad (solo para no empleados)
-    const cityId: number = this.isEmployee ? 0 : formValues.city.id;
+    const cityId: number = this.isEmployee ? 0 : (formValues.city?.id || 0);
+
     // Región (solo para no empleados)
-    const regionId: number = this.isEmployee ? 0 : formValues.region.id;
-    // Fecha de inicio de contrato
-    const contractStartDate: string = formValues.contractStartDate;
-    // Fecha de finalización de contrato
-    const contractEndDate: string = formValues.contractEndDate;
+    const regionId: number = this.isEmployee ? 0 : (formValues.region?.id || 0);
+
+    // Fecha de inicio de contrato (solo para empleados)
+    const contractStartDate: string | null = this.isEmployee ? formValues.contractStartDate || null : null;
+
+    // Fecha de finalización de contrato (solo para empleados)
+    const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
     // Status
-    const statusId: number = formValues.status.id;
+    const statusId: number = formValues.status?.id || 0;
+
     // Cargo
-    const positionId: number = formValues.position.id;
+    const positionId: number = formValues.position?.id || 0;
+
     // Tipo de Staff
-    const staffTypeId: number = formValues.staffType.id;
+    const staffTypeId: number = formValues.staffType?.id || 0;
+
     // Clasificación de Staff (solo para empleados)
-    const staffClassificationId: number = this.isEmployee ? formValues.staffClassification?.id : null;
+    const staffClassificationId: number = this.isEmployee ? (formValues.staffClassification?.id || 0) : 0;
+
     // Comentarios
-    const comments: string = formValues.comments;
-    // Nombre (solo para no empleados)
-    const firstName: string = this.isEmployee ? '' : formValues.firstName;
-    // Middle name (solo para no empleados)
-    const middleName: string = this.isEmployee ? '' : formValues.middleName;
-    // Apellido Paterno (solo para no empleados)
-    const fatherLastName: string = this.isEmployee ? '' : formValues.fatherLastName;
-    // Apellido Materno (solo para no empleados)
-    const motherLastName: string = this.isEmployee ? '' : formValues.motherLastName;
+    const comments: string = formValues.comments || '';
+
+    // Nombre (para todos los tipos de staff)
+    const firstName: string = formValues.firstName || '';
+
+    // Middle name (para todos los tipos de staff)
+    const middleName: string = formValues.middleName || '';
+
+    // Apellido Paterno (para todos los tipos de staff)
+    const fatherLastName: string = formValues.fatherLastName || '';
+
+    // Apellido Materno (para todos los tipos de staff)
+    const motherLastName: string = formValues.motherLastName || '';
 
     // Loading
     this.isLoading = true;
 
-    // Crear staff
-    const staffRequest: StaffRequest = {
+    // Validaciones específicas según el tipo de staff
+    if (this.isEmployee) {
+      // Para empleados: clasificación es requerida
+      if (!staffClassificationId) {
+        this._notificationService.showError(this._translocoService.translate('staff.add.error.classificationRequired'));
+        this.isLoading = false;
+        return;
+      }
+    } else if (this.isBoardMember) {
+      // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
+      if (!email || !postalAddress || !cityId || !regionId || !areaCode) {
+        this._notificationService.showError(this._translocoService.translate('staff.add.error.contactLocationRequired'));
+        this.isLoading = false;
+        return;
+      }
+    }
+
+    // Crear staff con campos condicionales según el tipo
+    const staffRequest: any = {
+      statusId: statusId,
+      positionId: positionId,
+      staffTypeId: staffTypeId,
+      comments: comments,
+      isActive: true,
+      // Campos de nombres (para todos los tipos de staff)
       firstName: firstName,
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      statusId: statusId,
-      positionId: positionId,
-      staffTypeId: staffTypeId,
-      staffClassificationId: staffClassificationId,
-      contractStartDate: contractStartDate,
-      contractEndDate: contractEndDate,
-      birthDate: birthDate,
-      email: email,
-      postalAddress: postalAddress,
-      cityId: cityId,
-      regionId: regionId,
-      areaCode: areaCode,
-      comments: comments,
-      isActive: true,
     };
+
+    // Agregar campos de contacto y ubicación solo si no es empleado
+    if (!this.isEmployee) {
+      staffRequest.email = email;
+      staffRequest.postalAddress = postalAddress;
+      staffRequest.cityId = cityId;
+      staffRequest.regionId = regionId;
+      staffRequest.areaCode = areaCode;
+    }
+
+    // Agregar clasificación solo si es empleado
+    if (this.isEmployee) {
+      staffRequest.staffClassificationId = staffClassificationId;
+    }
+
+    // Agregar fechas de contrato solo si es empleado
+    if (this.isEmployee) {
+      staffRequest.contractStartDate = contractStartDate;
+      staffRequest.contractEndDate = contractEndDate;
+    }
+
+    // Agregar fecha de nacimiento solo si es miembro de junta
+    if (this.isBoardMember) {
+      staffRequest.birthDate = birthDate;
+    }
 
     // Disable the form
     this.headerConfig.formGroup.disable();
 
     // Crear staff
     this._staffService.insertStaff(staffRequest, {}).subscribe({
-      next: (response) => {
+            next: (response) => {
         switch (response.body) {
           case true:
-            this._notificationService.showSuccessDialog();
+            // Mensaje específico para staff usando traducciones
+            const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
+
+            this._notificationService.showSuccessDialog(staffTypeKey);
             break;
           default:
-            this._notificationService.showErrorDialog();
+            this._notificationService.showErrorDialog('staff.add.error.general');
             break;
         }
       },
       error: (err) => {
-        this._notificationService.showErrorDialog();
+        this._notificationService.showError(this._translocoService.translate('staff.add.error.general'));
         this.headerConfig.formGroup.enable();
       },
       complete: () => {
@@ -382,174 +532,176 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   /**
-   * Maneja el cambio en el tipo de staff seleccionado
-   */
-  onStaffTypeChange(staffType: StaffType): void {
-    if (!staffType) {
-      this.resetStaffTypeFields();
-      return;
-    }
-
-    // Determinar si es empleado o miembro de junta
-    this.isEmployee = staffType.name === 'Empleado' || staffType.nameEn === 'Employee';
-    this.isBoardMember = staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member';
-
-    // Resetear campos relacionados
-    this.headerConfig.formGroup.patchValue({
-      staffClassification: null,
-      position: null
-    });
-
-    // Si es miembro de junta, limpiar los campos de fecha de contrato
-    if (this.isBoardMember) {
-      this.headerConfig.formGroup.patchValue({
-        contractStartDate: null,
-        contractEndDate: null
-      });
-    }
-
-    // Si es empleado, limpiar los campos de nombre
-    if (this.isEmployee) {
-      this.headerConfig.formGroup.patchValue({
-        firstName: '',
-        middleName: '',
-        fatherLastName: '',
-        motherLastName: '',
-        email: '',
-        city: null,
-        region: null,
-        areaCode: '',
-        postalAddress: ''
-      });
-    }
-
-    // Actualizar validaciones
-    this.updateValidations();
-
-    // Cargar posiciones según el tipo
-    this.loadPositionsByType();
-
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
-   * Maneja el cambio en la clasificación de staff
-   */
-  onClassificationChange(classification: StaffClassification): void {
-    this.selectedClassification = classification;
-
-    // Resetear posición
-    this.headerConfig.formGroup.patchValue({
-      position: null
-    });
-
-    // Cargar posiciones según la clasificación
-    this.loadPositionsByClassification();
-
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
-   * Resetea los campos relacionados con el tipo de staff
-   */
-  resetStaffTypeFields(): void {
-    this.isEmployee = false;
-    this.isBoardMember = false;
-    this.selectedClassification = null;
-
-    this.headerConfig.formGroup.patchValue({
-      staffClassification: null,
-      position: null,
-      contractStartDate: null,
-      contractEndDate: null
-    });
-
-    // Restaurar validaciones de campos de nombre
-    const firstNameControl = this.headerConfig.formGroup.get('firstName');
-    const motherLastNameControl = this.headerConfig.formGroup.get('motherLastName');
-    firstNameControl?.setValidators([Validators.required]);
-    motherLastNameControl?.setValidators([Validators.required]);
-    firstNameControl?.updateValueAndValidity();
-    motherLastNameControl?.updateValueAndValidity();
-
-    // Restaurar validaciones de campos de contacto y ubicación
-    const emailControl = this.headerConfig.formGroup.get('email');
-    const cityControl = this.headerConfig.formGroup.get('city');
-    const regionControl = this.headerConfig.formGroup.get('region');
-    const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
-    const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
-    emailControl?.setValidators([Validators.required, Validators.email]);
-    cityControl?.setValidators([Validators.required]);
-    regionControl?.setValidators([Validators.required]);
-    areaCodeControl?.setValidators([Validators.required]);
-    postalAddressControl?.setValidators([Validators.required]);
-    emailControl?.updateValueAndValidity();
-    cityControl?.updateValueAndValidity();
-    regionControl?.updateValueAndValidity();
-    areaCodeControl?.updateValueAndValidity();
-    postalAddressControl?.updateValueAndValidity();
-
-    this.updateValidations();
-  }
-
-  /**
    * Actualiza las validaciones según el tipo de staff
    */
   updateValidations(): void {
     const staffClassificationControl = this.headerConfig.formGroup.get('staffClassification');
     const birthDateControl = this.headerConfig.formGroup.get('birthDate');
     const firstNameControl = this.headerConfig.formGroup.get('firstName');
+    const middleNameControl = this.headerConfig.formGroup.get('middleName');
+    const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
     const motherLastNameControl = this.headerConfig.formGroup.get('motherLastName');
     const emailControl = this.headerConfig.formGroup.get('email');
     const cityControl = this.headerConfig.formGroup.get('city');
     const regionControl = this.headerConfig.formGroup.get('region');
     const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
     const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
+    const positionControl = this.headerConfig.formGroup.get('position');
+    const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
+    const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    const commentsControl = this.headerConfig.formGroup.get('comments');
 
     if (this.isEmployee) {
       // Para empleados: clasificación requerida, fecha de nacimiento no requerida
       staffClassificationControl?.setValidators([Validators.required]);
       birthDateControl?.clearValidators();
-      // Los campos de nombre no son requeridos para empleados
-      firstNameControl?.clearValidators();
+      // Los campos de nombre SÍ son requeridos para empleados también
+      firstNameControl?.setValidators([Validators.required]);
+      fatherLastNameControl?.setValidators([Validators.required]);
+      // El segundo apellido no es requerido para ningún tipo de staff
       motherLastNameControl?.clearValidators();
-      // Los campos de contacto y ubicación no son requeridos para empleados
+      // Los campos de contacto y ubicación NO son requeridos para empleados
       emailControl?.clearValidators();
       cityControl?.clearValidators();
       regionControl?.clearValidators();
       areaCodeControl?.clearValidators();
       postalAddressControl?.clearValidators();
+
+      // Forzar actualización inmediata del estado de validez después de limpiar
+      firstNameControl?.updateValueAndValidity({ emitEvent: false });
+      fatherLastNameControl?.updateValueAndValidity({ emitEvent: false });
+      motherLastNameControl?.updateValueAndValidity({ emitEvent: false });
+      birthDateControl?.updateValueAndValidity({ emitEvent: false });
+      emailControl?.updateValueAndValidity({ emitEvent: false });
+      cityControl?.updateValueAndValidity({ emitEvent: false });
+      regionControl?.updateValueAndValidity({ emitEvent: false });
+      areaCodeControl?.updateValueAndValidity({ emitEvent: false });
+      postalAddressControl?.updateValueAndValidity({ emitEvent: false });
+
+      // Resetear completamente el estado de los campos después de limpiar validadores
+      firstNameControl?.markAsUntouched();
+      firstNameControl?.markAsPristine();
+      fatherLastNameControl?.markAsUntouched();
+      fatherLastNameControl?.markAsPristine();
+      motherLastNameControl?.markAsUntouched();
+      motherLastNameControl?.markAsPristine();
+      birthDateControl?.markAsUntouched();
+      birthDateControl?.markAsPristine();
+      emailControl?.markAsUntouched();
+      emailControl?.markAsPristine();
+      cityControl?.markAsUntouched();
+      cityControl?.markAsPristine();
+      regionControl?.markAsUntouched();
+      regionControl?.markAsPristine();
+      areaCodeControl?.markAsUntouched();
+      areaCodeControl?.markAsPristine();
+      postalAddressControl?.markAsUntouched();
+      postalAddressControl?.markAsPristine();
+
+      // El campo de clasificación SIEMPRE debe estar habilitado para empleados
+      staffClassificationControl?.enable({ emitEvent: false });
+
+      // Si no hay clasificación seleccionada, deshabilitar solo los campos que dependen de la clasificación
+      if (!this.selectedClassification) {
+        // Deshabilitar campo estado también
+        const statusControl = this.headerConfig.formGroup.get('status');
+        statusControl?.disable({ emitEvent: false });
+
+        // Deshabilitar campos de nombres y apellidos
+        firstNameControl?.disable({ emitEvent: false });
+        middleNameControl?.disable({ emitEvent: false });
+        fatherLastNameControl?.disable({ emitEvent: false });
+        motherLastNameControl?.disable({ emitEvent: false });
+        positionControl?.disable({ emitEvent: false });
+        contractStartDateControl?.disable({ emitEvent: false });
+        contractEndDateControl?.disable({ emitEvent: false });
+        commentsControl?.disable({ emitEvent: false });
+
+        // También deshabilitar estos campos que estaban activos
+        birthDateControl?.disable({ emitEvent: false });
+        emailControl?.disable({ emitEvent: false });
+        cityControl?.disable({ emitEvent: false });
+        regionControl?.disable({ emitEvent: false });
+        areaCodeControl?.disable({ emitEvent: false });
+        postalAddressControl?.disable({ emitEvent: false });
+      } else {
+        // Si hay clasificación seleccionada, habilitar todos los campos
+        // Habilitar campo estado también
+        const statusControl = this.headerConfig.formGroup.get('status');
+        statusControl?.enable({ emitEvent: false });
+
+        firstNameControl?.enable({ emitEvent: false });
+        middleNameControl?.enable({ emitEvent: false });
+        fatherLastNameControl?.enable({ emitEvent: false });
+        motherLastNameControl?.enable({ emitEvent: false });
+        positionControl?.enable({ emitEvent: false });
+        contractStartDateControl?.enable({ emitEvent: false });
+        contractEndDateControl?.enable({ emitEvent: false });
+        commentsControl?.enable({ emitEvent: false });
+
+        // También habilitar estos campos
+        birthDateControl?.enable({ emitEvent: false });
+        emailControl?.enable({ emitEvent: false });
+        cityControl?.enable({ emitEvent: false });
+        regionControl?.enable({ emitEvent: false });
+        areaCodeControl?.enable({ emitEvent: false });
+        postalAddressControl?.enable({ emitEvent: false });
+      }
     } else if (this.isBoardMember) {
       // Para miembros de junta: clasificación no requerida, fecha de nacimiento requerida
       staffClassificationControl?.clearValidators();
       birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
       // Los campos de nombre son requeridos para miembros de junta
       firstNameControl?.setValidators([Validators.required]);
-      motherLastNameControl?.setValidators([Validators.required]);
+      // Para miembros de junta, el primer apellido es requerido
+      fatherLastNameControl?.setValidators([Validators.required]);
+      // El segundo apellido no es requerido para ningún tipo de staff
+      motherLastNameControl?.clearValidators();
       // Los campos de contacto y ubicación son requeridos para miembros de junta
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
       areaCodeControl?.setValidators([Validators.required]);
       postalAddressControl?.setValidators([Validators.required]);
+
+      // Habilitar todos los campos para miembros de junta
+      firstNameControl?.enable({ emitEvent: false });
+      fatherLastNameControl?.enable({ emitEvent: false });
+      motherLastNameControl?.enable({ emitEvent: false });
+      positionControl?.enable({ emitEvent: false });
+      contractStartDateControl?.enable({ emitEvent: false });
+      contractEndDateControl?.enable({ emitEvent: false });
+      commentsControl?.enable({ emitEvent: false });
     } else {
       // Para otros casos: ambos requeridos
       staffClassificationControl?.setValidators([Validators.required]);
       birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
       // Los campos de nombre son requeridos para otros tipos
       firstNameControl?.setValidators([Validators.required]);
-      motherLastNameControl?.setValidators([Validators.required]);
+      // Los apellidos no son requeridos para ningún tipo de staff
+      fatherLastNameControl?.clearValidators();
+      motherLastNameControl?.clearValidators();
       // Los campos de contacto y ubicación son requeridos para otros tipos
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
       areaCodeControl?.setValidators([Validators.required]);
       postalAddressControl?.setValidators([Validators.required]);
+
+      // Habilitar todos los campos para otros tipos
+      firstNameControl?.enable({ emitEvent: false });
+      fatherLastNameControl?.enable({ emitEvent: false });
+      motherLastNameControl?.enable({ emitEvent: false });
+      positionControl?.enable({ emitEvent: false });
+      contractStartDateControl?.enable({ emitEvent: false });
+      contractEndDateControl?.enable({ emitEvent: false });
+      commentsControl?.enable({ emitEvent: false });
     }
 
     staffClassificationControl?.updateValueAndValidity();
     birthDateControl?.updateValueAndValidity();
     firstNameControl?.updateValueAndValidity();
+    fatherLastNameControl?.updateValueAndValidity();
     motherLastNameControl?.updateValueAndValidity();
     emailControl?.updateValueAndValidity();
     cityControl?.updateValueAndValidity();
@@ -593,6 +745,105 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     } else {
       this.listPositions = [];
     }
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Maneja el cambio en el tipo de staff seleccionado
+   */
+  onStaffTypeChange(staffType: StaffType): void {
+    if (!staffType) {
+      this.resetStaffTypeFields();
+      return;
+    }
+
+    // Determinar si es empleado o miembro de junta
+    this.isEmployee = staffType.name === 'Empleado' || staffType.nameEn === 'Employee';
+    this.isBoardMember = staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member';
+
+    // Resetear campos relacionados
+    this.headerConfig.formGroup.patchValue({
+      staffClassification: null,
+      position: null
+    });
+
+    // Si es miembro de junta, limpiar los campos de fecha de contrato
+    if (this.isBoardMember) {
+      this.headerConfig.formGroup.patchValue({
+        contractStartDate: null,
+        contractEndDate: null
+      });
+    }
+
+    // Si es empleado, limpiar campos que no son requeridos para empleados
+    if (this.isEmployee) {
+      this.headerConfig.formGroup.patchValue({
+        birthDate: null,
+        email: '',
+        city: null,
+        region: null,
+        areaCode: '',
+        postalAddress: ''
+      });
+
+      // Limpiar el estado de validación de estos campos
+      const fieldsToClear = ['birthDate', 'email', 'city', 'region', 'areaCode', 'postalAddress'];
+      fieldsToClear.forEach(fieldName => {
+        const control = this.headerConfig.formGroup.get(fieldName);
+        if (control) {
+          control.markAsUntouched();
+          control.markAsPristine();
+          control.setErrors(null);
+        }
+      });
+    }
+
+    // Actualizar validaciones
+    this.updateValidations();
+
+    // Cargar posiciones según el tipo
+    this.loadPositionsByType();
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Maneja el cambio en la clasificación de staff
+   */
+  onClassificationChange(classification: StaffClassification): void {
+    this.selectedClassification = classification;
+
+    // Cargar posiciones según la clasificación
+    this.loadPositionsByClassification();
+
+    // Actualizar validaciones
+    this.updateValidations();
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Resetea los campos relacionados con el tipo de staff
+   */
+  private resetStaffTypeFields(): void {
+    this.isEmployee = false;
+    this.isBoardMember = false;
+    this.selectedClassification = null;
+
+    // Resetear campos del formulario
+    this.headerConfig.formGroup.patchValue({
+      staffClassification: null,
+      position: null,
+      contractStartDate: null,
+      contractEndDate: null
+    });
+
+    // Limpiar listas
+    this.listPositions = [];
+
+    // Actualizar validaciones
+    this.updateValidations();
+
     this._changeDetectorRef.detectChanges();
   }
 }

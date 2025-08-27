@@ -3,8 +3,8 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 // Esquema de columnas para la tabla de relaciones de parentesco
 export const STAFF_RELATIONSHIPS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: ['relatedStaff.fullName'],
-    type: 'combined-text',
+    key: 'relatedStaffFullName',
+    type: 'text',
     label: 'staff.edit.relationships.table.columns.relatedStaffFullName',
   },
   {

@@ -35,10 +35,8 @@ import { StaffClassificationService } from 'app/shared/services/staff-classifica
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
 
-
-
 @Component({
-  selector: 'app-staff-add',
+  selector: 'app-add-staff',
   templateUrl: './add.component.html',
   providers: [provideNativeDateAdapter()],
   encapsulation: ViewEncapsulation.None,
@@ -147,7 +145,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'staff.add.buttons.save',
-    submitDisabled: true, // Inicialmente deshabilitado
   };
 
   // Compare methods
@@ -178,46 +175,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     } else {
       return this._translocoService.translate('staff.add.comments.label');
     }
-  }
-
-  /**
-   * Determina si el botón de submit debe estar habilitado
-   */
-  get isSubmitButtonEnabled(): boolean {
-    const form = this.headerConfig.formGroup;
-
-    // Si el formulario no es válido, deshabilitar
-    if (!form.valid) {
-      return false;
-    }
-
-    // Validaciones específicas según el tipo de staff
-    if (this.isEmployee) {
-      // Para empleados: clasificación es requerida
-      const staffClassification = form.get('staffClassification')?.value;
-      if (!staffClassification) {
-        return false;
-      }
-
-      // Para empleados: posición es requerida
-      const position = form.get('position')?.value;
-      if (!position) {
-        return false;
-      }
-    } else if (this.isBoardMember) {
-      // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
-      const email = form.get('email')?.value;
-      const postalAddress = form.get('postalAddress')?.value;
-      const city = form.get('city')?.value;
-      const region = form.get('region')?.value;
-      const areaCode = form.get('areaCode')?.value;
-
-      if (!email || !postalAddress || !city || !region || !areaCode) {
-        return false;
-      }
-    }
-
-    return true;
   }
 
   ngOnInit(): void {
@@ -376,8 +333,17 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.onClassificationChange(classification);
     });
 
-    // Actualizar el estado inicial del botón de submit
-    this.updateSubmitButtonState();
+    // Suscribirse a cambios en la fecha de nacimiento para limpiar errores de validación
+    this.headerConfig.formGroup.get('birthDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((birthDate: any) => {
+      this.onBirthDateChange(birthDate);
+    });
+
+    // Deshabilitar campos de contrato por defecto (solo se habilitan para empleados)
+    const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
+    const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    contractStartDateControl?.disable({ emitEvent: false });
+    contractEndDateControl?.disable({ emitEvent: false });
+
   }
 
   ngOnDestroy(): void {
@@ -388,7 +354,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   onSubmit(): void {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -413,11 +379,11 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Región (solo para no empleados)
     const regionId: number = this.isEmployee ? 0 : (formValues.region?.id || 0);
 
-    // Fecha de inicio de contrato
-    const contractStartDate: string = formValues.contractStartDate || '';
+    // Fecha de inicio de contrato (solo para empleados)
+    const contractStartDate: string | null = this.isEmployee ? formValues.contractStartDate || null : null;
 
-    // Fecha de finalización de contrato
-    const contractEndDate: string = formValues.contractEndDate || '';
+    // Fecha de finalización de contrato (solo para empleados)
+    const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
     // Status
     const statusId: number = formValues.status?.id || 0;
@@ -453,14 +419,14 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     if (this.isEmployee) {
       // Para empleados: clasificación es requerida
       if (!staffClassificationId) {
-        this._notificationService.showError('La clasificación es requerida para empleados');
+        this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.classificationRequired'));
         this.isLoading = false;
         return;
       }
     } else if (this.isBoardMember) {
       // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
       if (!email || !postalAddress || !cityId || !regionId || !areaCode) {
-        this._notificationService.showError('Los campos de contacto y ubicación son requeridos para miembros de junta');
+        this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.contactLocationRequired'));
         this.isLoading = false;
         return;
       }
@@ -475,6 +441,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       contractEndDate: contractEndDate,
       comments: comments,
       isActive: true,
+      agencyId: this.agencyId,
       // Campos de nombres (para todos los tipos de staff)
       firstName: firstName,
       middleName: middleName,
@@ -496,6 +463,12 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       staffRequest.staffClassificationId = staffClassificationId;
     }
 
+    // Agregar fechas de contrato solo si es empleado
+    if (this.isEmployee) {
+      staffRequest.contractStartDate = contractStartDate;
+      staffRequest.contractEndDate = contractEndDate;
+    }
+
     // Agregar fecha de nacimiento solo si es miembro de junta
     if (this.isBoardMember) {
       staffRequest.birthDate = birthDate;
@@ -511,23 +484,21 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           case true:
             // Mensaje específico para staff usando traducciones
             const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
-            this._notificationService.showSuccess(this._translocoService.translate(staffTypeKey));
+            this._notificationService.showSuccessDialog(this._translocoService.translate(staffTypeKey));
             break;
           default:
-            this._notificationService.showError(this._translocoService.translate('staff.add.error.general'));
+            this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));
             break;
         }
       },
       error: (err) => {
-        this._notificationService.showError(this._translocoService.translate('staff.add.error.general'));
+        this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));
         this.headerConfig.formGroup.enable();
       },
       complete: () => {
         this.isLoading = false;
         // Enable the form
         this.headerConfig.formGroup.enable();
-        // Reset the form
-        this.headerConfig.formGroup.reset();
       },
     });
   }
@@ -595,11 +566,27 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       });
     }
 
-    // Si es empleado, solo limpiar la clasificación y posición
-    // Los campos de nombres se mantienen visibles pero sin validación obligatoria
+    // Si es empleado, limpiar campos que no son requeridos para empleados
     if (this.isEmployee) {
-      // No limpiar los campos de nombres, solo la clasificación y posición
-      // Los campos se mantienen para que el usuario pueda llenar la información si lo desea
+      this.headerConfig.formGroup.patchValue({
+        birthDate: null,
+        email: '',
+        city: null,
+        region: null,
+        areaCode: '',
+        postalAddress: ''
+      });
+
+      // Limpiar el estado de validación de estos campos
+      const fieldsToClear = ['birthDate', 'email', 'city', 'region', 'areaCode', 'postalAddress'];
+      fieldsToClear.forEach(fieldName => {
+        const control = this.headerConfig.formGroup.get(fieldName);
+        if (control) {
+          control.markAsUntouched();
+          control.markAsPristine();
+          control.setErrors(null);
+        }
+      });
     }
 
     // Actualizar validaciones
@@ -607,9 +594,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     // Cargar posiciones según el tipo
     this.loadPositionsByType();
-
-    // Actualizar el estado del botón de submit
-    this.updateSubmitButtonState();
 
     this._changeDetectorRef.detectChanges();
   }
@@ -664,10 +648,34 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       postalAddressControl?.enable({ emitEvent: false });
     }
 
-    // Actualizar el estado del botón de submit
-    this.updateSubmitButtonState();
-
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Maneja el cambio en la fecha de nacimiento para limpiar errores de validación
+   */
+  onBirthDateChange(birthDate: any): void {
+    if (!birthDate) {
+      return;
+    }
+
+    const birthDateControl = this.headerConfig.formGroup.get('birthDate');
+    if (!birthDateControl) {
+      return;
+    }
+
+    // Limpiar inmediatamente cualquier error de validación anterior
+    birthDateControl.markAsUntouched();
+    birthDateControl.markAsPristine();
+
+    // Forzar revalidación del campo para aplicar las nuevas validaciones
+    birthDateControl.updateValueAndValidity({ emitEvent: false });
+
+    // Si después de la revalidación no hay errores, asegurar que el estado esté limpio
+    if (!birthDateControl.errors) {
+      birthDateControl.markAsUntouched();
+      birthDateControl.markAsPristine();
+    }
   }
 
   /**
@@ -682,13 +690,121 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       staffClassification: null,
       position: null,
       contractStartDate: null,
-      contractEndDate: null
+      contractEndDate: null,
+      birthDate: null,
+      email: '',
+      city: null,
+      region: null,
+      areaCode: '',
+      postalAddress: ''
     });
 
-    // Las validaciones se manejan dinámicamente en updateValidations()
-    // No es necesario restaurar validaciones aquí
+    // Deshabilitar campos de contrato por defecto (solo se habilitan para empleados)
+    const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
+    const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    contractStartDateControl?.disable({ emitEvent: false });
+    contractEndDateControl?.disable({ emitEvent: false });
+
+    // Limpiar completamente el estado de validación
+    this.clearValidationState();
 
     this.updateValidations();
+  }
+
+  /**
+   * Limpia completamente el estado de validación de todos los campos
+   */
+  private clearValidationState(): void {
+    const controls = [
+      'staffClassification',
+      'birthDate',
+      'firstName',
+      'middleName',
+      'fatherLastName',
+      'motherLastName',
+      'email',
+      'city',
+      'region',
+      'areaCode',
+      'postalAddress',
+      'position',
+      'contractStartDate',
+      'contractEndDate',
+      'comments'
+    ];
+
+    controls.forEach(controlName => {
+      const control = this.headerConfig.formGroup.get(controlName);
+      if (control) {
+        control.markAsUntouched();
+        control.markAsPristine();
+        control.setErrors(null);
+      }
+    });
+  }
+
+  /**
+   * Resetea el formulario después de un guardado exitoso
+   */
+  private resetFormAfterSuccess(): void {
+    // Resetear el formulario
+    this.headerConfig.formGroup.reset();
+
+    // Resetear las variables de estado
+    this.isEmployee = false;
+    this.isBoardMember = false;
+    this.selectedClassification = null;
+
+    // Limpiar las listas de posiciones
+    this.listPositions = [];
+
+    // Seleccionar el tipo de staff por defecto (Miembro de la Junta)
+    if (this.listStaffTypes.length > 0) {
+      const boardMemberType = this.listStaffTypes.find(staffType =>
+        staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
+      );
+
+      if (boardMemberType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: boardMemberType
+        });
+
+        // Configurar el estado correcto
+        this.isBoardMember = true;
+        this.isEmployee = false;
+
+        // Cargar posiciones para miembros de junta
+        this.loadPositionsByType();
+
+        // Actualizar validaciones
+        this.updateValidations();
+      }
+    }
+
+    // Seleccionar estado "Activo" por defecto
+    if (this.listStatus.length > 0) {
+      const activeStatus = this.listStatus.find(status =>
+        status.name === 'Activo' || status.nameEN === 'Active'
+      );
+
+      if (activeStatus) {
+        this.headerConfig.formGroup.patchValue({
+          status: activeStatus
+        });
+      }
+    }
+
+    // Limpiar completamente el estado de validación
+    this.clearValidationState();
+
+    // Deshabilitar campos de contrato por defecto (solo se habilitan para empleados)
+    const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
+    const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    contractStartDateControl?.disable({ emitEvent: false });
+    contractEndDateControl?.disable({ emitEvent: false });
+
+    // Forzar detección de cambios
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -715,6 +831,17 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Para empleados: clasificación requerida, fecha de nacimiento no requerida
       staffClassificationControl?.setValidators([Validators.required]);
       birthDateControl?.clearValidators();
+
+            // IMPORTANTE: Resetear el valor del campo birthDate cuando no es requerido
+      if (birthDateControl?.value) {
+        birthDateControl.setValue(null, { emitEvent: false });
+      }
+
+      // Limpiar completamente el estado de validación del campo birthDate
+      birthDateControl?.markAsUntouched();
+      birthDateControl?.markAsPristine();
+      birthDateControl?.setErrors(null);
+
       // Los campos de nombre SÍ son requeridos para empleados también
       firstNameControl?.setValidators([Validators.required]);
       fatherLastNameControl?.setValidators([Validators.required]);
@@ -727,6 +854,23 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       areaCodeControl?.clearValidators();
       postalAddressControl?.clearValidators();
 
+      // Resetear valores de campos que no son requeridos para empleados
+      if (emailControl?.value) {
+        emailControl.setValue('', { emitEvent: false });
+      }
+      if (cityControl?.value) {
+        cityControl.setValue(null, { emitEvent: false });
+      }
+      if (regionControl?.value) {
+        regionControl.setValue(null, { emitEvent: false });
+      }
+      if (areaCodeControl?.value) {
+        areaCodeControl.setValue('', { emitEvent: false });
+      }
+      if (postalAddressControl?.value) {
+        postalAddressControl.setValue('', { emitEvent: false });
+      }
+
       // Forzar actualización inmediata del estado de validez después de limpiar
       firstNameControl?.updateValueAndValidity({ emitEvent: false });
       fatherLastNameControl?.updateValueAndValidity({ emitEvent: false });
@@ -738,7 +882,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       areaCodeControl?.updateValueAndValidity({ emitEvent: false });
       postalAddressControl?.updateValueAndValidity({ emitEvent: false });
 
-      // Resetear completamente el estado de los campos después de limpiar validadores
+      // Resetear completamente el estado de los campos después de limpiar validaciones
       firstNameControl?.markAsUntouched();
       firstNameControl?.markAsPristine();
       fatherLastNameControl?.markAsUntouched();
@@ -773,6 +917,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         fatherLastNameControl?.disable({ emitEvent: false });
         motherLastNameControl?.disable({ emitEvent: false });
         positionControl?.disable({ emitEvent: false });
+        // Los campos de contrato solo están disponibles para empleados
         contractStartDateControl?.disable({ emitEvent: false });
         contractEndDateControl?.disable({ emitEvent: false });
         commentsControl?.disable({ emitEvent: false });
@@ -795,6 +940,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         fatherLastNameControl?.enable({ emitEvent: false });
         motherLastNameControl?.enable({ emitEvent: false });
         positionControl?.enable({ emitEvent: false });
+        // Los campos de contrato solo están disponibles para empleados
         contractStartDateControl?.enable({ emitEvent: false });
         contractEndDateControl?.enable({ emitEvent: false });
         commentsControl?.enable({ emitEvent: false });
@@ -811,6 +957,12 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Para miembros de junta: clasificación no requerida, fecha de nacimiento requerida
       staffClassificationControl?.clearValidators();
       birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
+
+      // Limpiar el estado de validación del campo birthDate antes de aplicar nuevas validaciones
+      birthDateControl?.markAsUntouched();
+      birthDateControl?.markAsPristine();
+      birthDateControl?.setErrors(null);
+
       // Los campos de nombre son requeridos para miembros de junta
       firstNameControl?.setValidators([Validators.required]);
       // Para miembros de junta, el primer apellido es requerido
@@ -829,8 +981,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       fatherLastNameControl?.enable({ emitEvent: false });
       motherLastNameControl?.enable({ emitEvent: false });
       positionControl?.enable({ emitEvent: false });
-      contractStartDateControl?.enable({ emitEvent: false });
-      contractEndDateControl?.enable({ emitEvent: false });
+      // Los campos de contrato NO están disponibles para miembros de junta
+      contractStartDateControl?.disable({ emitEvent: false });
+      contractEndDateControl?.disable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
     } else {
       // Para otros casos: ambos requeridos
@@ -853,8 +1006,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       fatherLastNameControl?.enable({ emitEvent: false });
       motherLastNameControl?.enable({ emitEvent: false });
       positionControl?.enable({ emitEvent: false });
-      contractStartDateControl?.enable({ emitEvent: false });
-      contractEndDateControl?.enable({ emitEvent: false });
+      // Los campos de contrato NO están disponibles para otros tipos
+      contractStartDateControl?.disable({ emitEvent: false });
+      contractEndDateControl?.disable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
     }
 
@@ -869,15 +1023,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     areaCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
 
-    // Actualizar el estado del botón de submit
-    this.updateSubmitButtonState();
-  }
-
-  /**
-   * Actualiza el estado del botón de submit basándose en la validez del formulario
-   */
-  private updateSubmitButtonState(): void {
-    this.headerConfig.submitDisabled = !this.isSubmitButtonEnabled;
   }
 
   /**

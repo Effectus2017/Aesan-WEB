@@ -25,6 +25,11 @@
       },
       "search": {
         "placeholder": "Search by name"
+      },
+      "actions": {
+        "edit": "Edit Staff",
+        "delete": "Delete Staff",
+        "view": "View Staff"
       }
     },
     "employees": {
@@ -98,58 +103,64 @@
       },
       "motherLastName": {
         "label": "Second Last Name",
-        "placeholder": "Enter second last name (optional)"
+        "placeholder": "Enter second last name"
       },
       "status": {
         "label": "Status",
-        "placeholder": "Select status",
+        "placeholder": "Select the status",
         "required": "Status is required",
         "active": "Active",
         "inactive": "Inactive"
       },
       "position": {
         "label": "Position",
-        "placeholder": "Select position",
+        "placeholder": "Select the position",
         "required": "Position is required",
         "selectClassificationFirst": "First select a classification to see available positions"
       },
       "staffType": {
         "label": "Staff Type",
-        "placeholder": "Select staff type",
+        "placeholder": "Select the staff type",
         "required": "Staff type is required"
+      },
+      "staffClassification": {
+        "label": "Classification",
+        "placeholder": "Select the classification",
+        "required": "Classification is required"
       },
       "birthDate": {
         "label": "Birth Date",
-        "placeholder": "Select birth date",
-        "required": "Birth date is required"
+        "placeholder": "Select the birth date",
+        "required": "Birth date is required",
+        "minimumAge": "Must be at least 18 years old"
       },
       "contractStartDate": {
         "label": "Contract Start Date",
-        "placeholder": "Select contract start date"
+        "placeholder": "Select the contract start date"
       },
       "contractEndDate": {
         "label": "Contract End Date",
-        "placeholder": "Select contract end date"
+        "placeholder": "Select the contract end date"
       },
       "email": {
         "label": "Email",
-        "placeholder": "Enter email address",
+        "placeholder": "Enter the email",
         "required": "Email is required",
-        "invalid": "Email format is not valid"
+        "invalid": "Email is not valid"
       },
       "postalAddress": {
         "label": "Postal Address",
-        "placeholder": "Enter postal address",
+        "placeholder": "Enter the postal address",
         "required": "Postal address is required"
       },
       "city": {
         "label": "City",
-        "placeholder": "Select city",
+        "placeholder": "Select the city",
         "required": "City is required"
       },
       "region": {
         "label": "Region",
-        "placeholder": "Select region",
+        "placeholder": "Select the region",
         "required": "Region is required"
       },
       "areaCode": {
@@ -176,21 +187,27 @@
         "cancel": "Cancel"
       },
       "success": {
-        "employee": "The employee has been added successfully",
-        "boardMember": "The board member has been added successfully"
+        "employee": "Employee has been added successfully",
+        "boardMember": "Board member has been added successfully"
       },
       "error": {
-        "general": "Error adding staff"
+        "general": "Error adding staff",
+        "incompleteFields": "Please complete all required fields",
+        "classificationRequired": "Classification is required for employees",
+        "contactLocationRequired": "Contact and location fields are required for board members"
       }
     },
     "edit": {
       "title": "Edit Staff",
       "information": "General Information",
       "information-description": "Complete the general information of the staff",
+      "additional-information": "Additional Information",
+      "additional-information-description": "Additional information and comments about the staff",
       "staffType": {
         "label": "Staff Type",
         "placeholder": "Select the staff type",
-        "required": "Staff type is required"
+        "required": "Staff type is required",
+        "readonlyHint": "Staff type cannot be changed once created"
       },
       "staffClassification": {
         "label": "Staff Classification",
@@ -199,21 +216,21 @@
       },
       "firstName": {
         "label": "First Name",
-        "placeholder": "Enter first name",
+        "placeholder": "Enter the first name",
         "required": "First name is required"
       },
       "middleName": {
         "label": "Middle Name",
-        "placeholder": "Enter middle name (optional)"
+        "placeholder": "Enter the middle name (optional)"
       },
       "fatherLastName": {
-        "label": "First Last Name",
-        "placeholder": "Enter first last name",
-        "required": "First last name is required"
+        "label": "Father's Last Name",
+        "placeholder": "Enter the father's last name",
+        "required": "Father's last name is required"
       },
       "motherLastName": {
-        "label": "Second Last Name",
-        "placeholder": "Enter second last name (optional)"
+        "label": "Mother's Last Name",
+        "placeholder": "Enter the mother's last name (optional)"
       },
       "status": {
         "label": "Status",
@@ -231,19 +248,19 @@
         "required": "Birth date is required",
         "minimumAge": "Must be at least 18 years old"
       },
+      "contractStartDate": {
+        "label": "Contract Start Date",
+        "placeholder": "Select the contract start date"
+      },
+      "contractEndDate": {
+        "label": "Contract End Date",
+        "placeholder": "Select the contract end date"
+      },
       "email": {
         "label": "Email",
         "placeholder": "Enter the email",
         "required": "Email is required",
         "invalid": "Email is not valid"
-      },
-      "contractStartDate": {
-        "label": "Contract Start Date",
-        "placeholder": "Select contract start date"
-      },
-      "contractEndDate": {
-        "label": "Contract End Date",
-        "placeholder": "Select contract end date"
       },
       "city": {
         "label": "City",
@@ -265,16 +282,31 @@
         "placeholder": "Enter the postal address",
         "required": "Postal address is required"
       },
-      "additional-information": "Additional Information",
-      "additional-information-description": "Complete additional information about the staff member",
       "comments": {
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
+      },
+      "review": {
+        "label": "Review",
+        "description": "Information about employee review"
+      },
+      "review-result": {
+        "label": "Review Result",
+        "placeholder": "Select the review result"
+      },
+      "review-date": {
+        "label": "Review Date",
+        "placeholder": "Select the review date"
+      },
+      "review-justification": {
+        "label": "Review Justification",
+        "placeholder": "Enter the justification for the review performed"
       },
       "relationships": {
         "label": "Staff Relationships",
         "description": "Manage relationships between staff members",
         "add": "Add Relationship",
+        "edit": "Edit Relationship",
         "no-relationships": {
           "title": "No relationships configured",
           "description": "Configure relationships between staff members to improve organization and communication"
@@ -296,39 +328,40 @@
         "modal": {
           "relatedStaff": {
             "label": "Related Staff",
-            "placeholder": "Select related staff member",
-            "required": "Must select a related staff member"
+            "placeholder": "Select the related staff",
+            "required": "You must select a related staff"
           },
           "relationshipType": {
             "label": "Relationship Type",
-            "placeholder": "Select relationship type",
-            "required": "Must select a relationship type"
+            "placeholder": "Select the relationship type",
+            "required": "You must select a relationship type"
           },
           "buttons": {
             "save": "Save",
+            "update": "Update",
             "cancel": "Cancel",
-            "saving": "Saving..."
+            "saving": "Saving...",
+            "updating": "Updating..."
+          },
+          "success": {
+            "createRelationship": "Relationship created successfully",
+            "updateRelationship": "Relationship updated successfully",
+            "deleteRelationship": "Relationship deleted successfully"
           }
         }
       },
-      "review": {
-        "label": "Review",
-        "description": "Information about the employee review"
-      },
-      "review-result": {
-        "label": "Review Result",
-        "placeholder": "Select review result"
-      },
-      "review-date": {
-        "label": "Review Date",
-        "placeholder": "Select review date"
-      },
-      "review-justification": {
-        "label": "Review Justification",
-        "placeholder": "Enter the justification for the review conducted"
-      },
       "submitButton": "Save",
-      "cancelButton": "Cancel"
+      "cancelButton": "Cancel",
+      "success": {
+        "employee": "Employee updated successfully",
+        "boardMember": "Board member updated successfully"
+      },
+      "error": {
+        "general": "Error updating staff",
+        "incompleteFields": "Please complete all required fields",
+        "classificationRequired": "Classification is required for employees",
+        "contactLocationRequired": "Contact and location fields are required for board members"
+      }
     }
   }
 }

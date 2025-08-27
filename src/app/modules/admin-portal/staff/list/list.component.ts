@@ -25,7 +25,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({
-  selector: 'app-admin-staff-list',
+  selector: 'app-admin-list-board-members',
   templateUrl: './list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
@@ -46,7 +46,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminStaffListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _formBuilder = inject(UntypedFormBuilder);
   private _staffService = inject(StaffService);
   private _customRouterService = inject(CustomRouterService);
@@ -55,9 +55,7 @@ export class AdminStaffListComponent implements OnInit, OnDestroy, OnGenericHead
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  // Propiedad para determinar el tipo de lista
-  isEmployeesList: boolean = false;
-  isBoardMembersList: boolean = false;
+
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.boardMembers.list.title',
@@ -84,39 +82,15 @@ export class AdminStaffListComponent implements OnInit, OnDestroy, OnGenericHead
   };
 
   ngOnInit(): void {
-    // Determinar el tipo de lista basándose en la URL
-    this._route.url.pipe(takeUntil(this._unsubscribeAll)).subscribe(segments => {
-      const path = segments.map(segment => segment.path).join('/');
-      this.isEmployeesList = path.includes('employees');
-      this.isBoardMembersList = path.includes('board-members');
 
-      // Actualizar el título según el tipo de lista
-      if (this.isEmployeesList) {
-        this.headerConfig.title = 'staff.employees.list.title';
-        this.headerConfig.searchInputPlaceholder = 'staff.employees.list.search.placeholder';
-      } else if (this.isBoardMembersList) {
-        this.headerConfig.title = 'staff.boardMembers.list.title';
-        this.headerConfig.searchInputPlaceholder = 'staff.boardMembers.list.search.placeholder';
-      }
-    });
-
-    this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        if (this.isEmployeesList) {
-          // Filtrar solo empleados
-          const employees = result.body.data.filter((staff: StaffList) =>
-            staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-          );
-          this.tableConfig.dataSource.data = employees;
-          this.tableConfig.length = employees.length;
-        } else if (this.isBoardMembersList) {
-          // Filtrar solo miembros de junta
-          const boardMembers = result.body.data.filter((staff: StaffList) =>
-            staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
-          );
-          this.tableConfig.dataSource.data = boardMembers;
-          this.tableConfig.length = boardMembers.length;
-        }
+        // Filtrar solo miembros de junta
+        const boardMembers = result.body.data.filter((staff: StaffList) =>
+          staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
+        );
+        this.tableConfig.dataSource.data = boardMembers;
+        this.tableConfig.length = boardMembers.length;
       }
     });
   }
@@ -139,21 +113,12 @@ export class AdminStaffListComponent implements OnInit, OnDestroy, OnGenericHead
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
-        if (this.isEmployeesList) {
-          // Filtrar solo empleados en el resultado
-          const employees = response.body.data.filter((staff: StaffList) =>
-            staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-          );
-          this.tableConfig.dataSource.data = employees;
-          this.tableConfig.length = employees.length;
-        } else if (this.isBoardMembersList) {
-          // Filtrar solo miembros de junta en el resultado
-          const boardMembers = response.body.data.filter((staff: StaffList) =>
-            staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
-          );
-          this.tableConfig.dataSource.data = boardMembers;
-          this.tableConfig.length = boardMembers.length;
-        }
+        // Filtrar solo miembros de junta en el resultado
+        const boardMembers = response.body.data.filter((staff: StaffList) =>
+          staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
+        );
+        this.tableConfig.dataSource.data = boardMembers;
+        this.tableConfig.length = boardMembers.length;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
@@ -162,11 +127,13 @@ export class AdminStaffListComponent implements OnInit, OnDestroy, OnGenericHead
     });
   }
 
-  onAdd(): void {
-    this._customRouterService.navigate(['staff/add']);
+  onCustom(): void {
+    this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'board-member' } });
   }
 
-  onEdit(id: number): void {
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
     this._customRouterService.navigate(['staff/edit', id]);
   }
 

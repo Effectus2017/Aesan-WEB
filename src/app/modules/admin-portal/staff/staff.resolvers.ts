@@ -6,7 +6,8 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, switchMap, of } from 'rxjs';
+import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 
 // Resolver para la lista de staff
 // Resolver for staff list
@@ -98,20 +99,85 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   // Staff operations service
   // Servicio para operaciones de staff
   const staffService = inject(StaffService);
+  // Geographic service
+  // Servicio para operaciones geográficas
+  const geoService = inject(GeoService);
+  // Options selection service
+  // Servicio para opciones de selección
+  const optionSelectionService = inject(OptionSelectionService);
+  // Staff type service
+  // Servicio para tipos de staff
+  const staffTypeService = inject(StaffTypeService);
+  // Staff classification service
+  // Servicio para clasificaciones de staff
+  const staffClassificationService = inject(StaffClassificationService);
+  // Staff relationships service
+  // Servicio para relaciones de staff
+  const staffRelationshipService = inject(StaffRelationshipService);
+
+  const requestParametersId: QueryParameters = {
+    id: id,
+    isList: false,
+  };
 
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: true,
-    isList: true,
+    isList: true
   };
 
-  return forkJoin([
-    // Datos del staff específico
-    // Specific staff data
-    staffService.getStaffById({ id: id }),
-    // Lista completa para dropdowns
-    // Complete list for dropdowns
-    staffService.getAllStaffFromDb(requestParameters),
-  ]);
+  // Primero obtener los datos del staff para determinar si es empleado
+  return staffService.getStaffById({ id: id }).pipe(
+    switchMap((staffData: any) => {
+      // Determinar si es empleado basándose en el tipo de staff
+      const isEmployee = staffData?.body?.staffTypeId === 1 || 
+                        staffData?.body?.staffType?.name === 'Empleado' || 
+                        staffData?.body?.staffType?.nameEn === 'Employee';
+
+      // Si es empleado, no cargar las relaciones
+      if (isEmployee) {
+        return forkJoin([
+          // Datos del staff específico
+          of(staffData),
+          // Geographic service
+          geoService.getCitiesFromDb(requestParameters),
+          // Regions service
+          geoService.getRegionsFromDb(requestParameters),
+          // Staff positions service
+          optionSelectionService.getOptionSelectionByOptionKey({
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+            names: null,
+          }),
+          // Staff types service
+          staffTypeService.getAllStaffTypesFromDb(requestParameters),
+          // Staff classification service
+          staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
+          // NO cargar relaciones para empleados
+          of(null),
+        ]);
+      } else {
+        // Si NO es empleado, cargar todo incluyendo relaciones
+        return forkJoin([
+          // Datos del staff específico
+          of(staffData),
+          // Geographic service
+          geoService.getCitiesFromDb(requestParameters),
+          // Regions service
+          geoService.getRegionsFromDb(requestParameters),
+          // Staff positions service
+          optionSelectionService.getOptionSelectionByOptionKey({
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+            names: null,
+          }),
+          // Staff types service
+          staffTypeService.getAllStaffTypesFromDb(requestParameters),
+          // Staff classification service
+          staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
+          // Staff relationships service (solo para no empleados)
+          staffRelationshipService.getRelationshipsByStaffId(requestParametersId),
+        ]);
+      }
+    })
+  );
 };

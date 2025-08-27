@@ -2,11 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
-import { AuthService } from 'app/core/auth/auth.service';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { AgencyFile } from '../models/AgencyFile';
-import { AgencyFilesResponse } from '../models/AgencyFilesResponse';
 
 @Injectable({
   providedIn: 'root',

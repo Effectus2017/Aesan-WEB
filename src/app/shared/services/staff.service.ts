@@ -102,4 +102,14 @@ export class StaffService {
   updateStaffActiveStatus(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-staff-active-status`, {}, getHttpOptions(queryParams));
   }
+
+  /**
+   * Obtiene todos los miembros del staff de una agencia específica
+   * @param queryParams Parámetros de consulta (paginación, filtros, etc.)
+   * @returns Observable con la lista de miembros del staff de la agencia y el conteo total
+   */
+  getStaffByAgency(queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-staff-by-agency`, getHttpOptions(queryParams))
+      .pipe(tap((response: any) => this._staffs.next(response)));
+  }
 }

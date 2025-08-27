@@ -16,6 +16,7 @@ export interface StaffRequest {
   cityId: number;
   regionId: number;
   areaCode: string;
+  agencyId?: number;
   comments?: string;
   userId?: string;
   isActive: boolean;

@@ -191,7 +191,10 @@
         "boardMember": "El miembro de junta ha sido agregado con éxito"
       },
       "error": {
-        "general": "Error al agregar el staff"
+        "general": "Error al agregar el staff",
+        "incompleteFields": "Por favor, complete todos los campos requeridos",
+        "classificationRequired": "La clasificación es requerida para empleados",
+        "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta"
       }
     },
     "edit": {
@@ -200,6 +203,17 @@
       "information-description": "Complete la información general del personal",
       "additional-information": "Información Adicional",
       "additional-information-description": "Información adicional y comentarios sobre el personal",
+      "staffType": {
+        "label": "Tipo de Personal",
+        "placeholder": "Seleccione el tipo de personal",
+        "required": "El tipo de personal es requerido",
+        "readonlyHint": "El tipo de personal no se puede cambiar una vez creado"
+      },
+      "staffClassification": {
+        "label": "Clasificación de Personal",
+        "placeholder": "Seleccione la clasificación de personal",
+        "required": "La clasificación de personal es requerida"
+      },
       "firstName": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre",
@@ -228,11 +242,6 @@
         "placeholder": "Seleccione el cargo",
         "required": "El cargo es requerido"
       },
-      "staffType": {
-        "label": "Tipo de Personal",
-        "placeholder": "Seleccione el tipo de personal",
-        "required": "El tipo de personal es requerido"
-      },
       "birthDate": {
         "label": "Fecha de Nacimiento",
         "placeholder": "Seleccione la fecha de nacimiento",
@@ -276,6 +285,54 @@
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional)"
+      },
+              "relationships": {
+          "label": "Relaciones de Personal",
+          "description": "Gestione las relaciones entre miembros del personal",
+          "add": "Agregar Relación",
+          "edit": "Editar Relación",
+          "no-relationships": {
+            "title": "No hay relaciones configuradas",
+            "description": "Configure las relaciones entre miembros del personal para mejorar la organización y comunicación"
+          },
+        "table": {
+          "columns": {
+            "relatedStaffFullName": "Nombre del Personal Relacionado",
+            "relationshipType": "Tipo de Relación",
+            "relatedStaffPosition": "Cargo del Personal Relacionado",
+            "relatedStaffType": "Tipo de Personal Relacionado",
+            "relatedStaffEmail": "Email del Personal Relacionado",
+            "actions": "Acciones"
+          },
+          "buttons": {
+            "edit": "Editar",
+            "delete": "Eliminar"
+          }
+        },
+        "modal": {
+          "relatedStaff": {
+            "label": "Personal Relacionado",
+            "placeholder": "Seleccione el personal relacionado",
+            "required": "Debe seleccionar un personal relacionado"
+          },
+          "relationshipType": {
+            "label": "Tipo de Relación",
+            "placeholder": "Seleccione el tipo de relación",
+            "required": "Debe seleccionar un tipo de relación"
+          },
+          "buttons": {
+            "save": "Guardar",
+            "update": "Actualizar",
+            "cancel": "Cancelar",
+            "saving": "Guardando...",
+            "updating": "Actualizando..."
+          },
+          "success": {
+            "createRelationship": "Relación creada exitosamente",
+            "updateRelationship": "Relación actualizada exitosamente",
+            "deleteRelationship": "Relación eliminada exitosamente"
+          }
+        }
       },
       "review": {
         "label": "Revisión",
@@ -295,193 +352,16 @@
       },
       "submitButton": "Guardar",
       "cancelButton": "Cancelar",
-      "relationships": {
-        "label": "Relaciones de Personal",
-        "description": "Gestione las relaciones entre miembros del personal",
-        "add": "Agregar Relación",
-        "no-relationships": {
-          "title": "No hay relaciones configuradas",
-          "description": "Configure las relaciones entre miembros del personal para mejorar la organización y comunicación"
-        },
-        "table": {
-          "columns": {
-            "relatedStaffFullName": "Nombre del Personal Relacionado",
-            "relationshipType": "Tipo de Relación",
-            "relatedStaffPosition": "Cargo del Personal Relacionado",
-            "relatedStaffType": "Tipo de Personal Relacionado",
-            "relatedStaffEmail": "Email del Personal Relacionado",
-            "actions": "Acciones"
-          },
-          "buttons": {
-            "edit": "Editar",
-            "delete": "Eliminar"
-          }
-        },
-        "modal": {
-          "relatedStaff": {
-            "label": "Personal Relacionado",
-            "placeholder": "Seleccione el personal relacionado",
-            "required": "Debe seleccionar un personal relacionado"
-          },
-          "relationshipType": {
-            "label": "Tipo de Relación",
-            "placeholder": "Seleccione el tipo de relación",
-            "required": "Debe seleccionar un tipo de relación"
-          },
-          "buttons": {
-            "save": "Guardar",
-            "cancel": "Cancelar",
-            "saving": "Guardando..."
-          }
-        }
+      "success": {
+        "employee": "Empleado actualizado exitosamente",
+        "boardMember": "Miembro de la junta actualizado exitosamente"
+      },
+      "error": {
+        "general": "Error al actualizar el personal",
+        "incompleteFields": "Por favor, complete todos los campos requeridos",
+        "classificationRequired": "La clasificación es requerida para empleados",
+        "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta"
       }
-    },
-    "edit": {
-      "title": "Editar Personal",
-      "information": "Información General",
-      "information-description": "Complete la información general del personal",
-      "staffType": {
-        "label": "Tipo de Personal",
-        "placeholder": "Seleccione el tipo de personal",
-        "required": "El tipo de personal es requerido"
-      },
-      "staffClassification": {
-        "label": "Clasificación de Personal",
-        "placeholder": "Seleccione la clasificación de personal",
-        "required": "La clasificación de personal es requerida"
-      },
-      "firstName": {
-        "label": "Primer Nombre",
-        "placeholder": "Ingrese el primer nombre",
-        "required": "El primer nombre es requerido"
-      },
-      "middleName": {
-        "label": "Segundo Nombre",
-        "placeholder": "Ingrese el segundo nombre (opcional)"
-      },
-      "fatherLastName": {
-        "label": "Apellido Paterno",
-        "placeholder": "Ingrese el apellido paterno",
-        "required": "El apellido paterno es requerido"
-      },
-      "motherLastName": {
-        "label": "Apellido Materno",
-        "placeholder": "Ingrese el apellido materno (opcional)"
-      },
-      "status": {
-        "label": "Estado",
-        "placeholder": "Seleccione el estado",
-        "required": "El estado es requerido"
-      },
-      "position": {
-        "label": "Cargo",
-        "placeholder": "Seleccione el cargo",
-        "required": "El cargo es requerido"
-      },
-      "birthDate": {
-        "label": "Fecha de Nacimiento",
-        "placeholder": "Seleccione la fecha de nacimiento",
-        "required": "La fecha de nacimiento es requerida",
-        "minimumAge": "Debe tener al menos 18 años"
-      },
-      "email": {
-        "label": "Correo Electrónico",
-        "placeholder": "Ingrese el correo electrónico",
-        "required": "El correo electrónico es requerido",
-        "invalid": "El correo electrónico no es válido"
-      },
-      "contractStartDate": {
-        "label": "Fecha de Inicio de Contrato",
-        "placeholder": "Seleccione la fecha de inicio de contrato"
-      },
-      "contractEndDate": {
-        "label": "Fecha de Finalización de Contrato",
-        "placeholder": "Seleccione la fecha de finalización de contrato"
-      },
-      "city": {
-        "label": "Ciudad",
-        "placeholder": "Seleccione la ciudad",
-        "required": "La ciudad es requerida"
-      },
-      "region": {
-        "label": "Región",
-        "placeholder": "Seleccione la región",
-        "required": "La región es requerida"
-      },
-      "areaCode": {
-        "label": "Código de Área",
-        "placeholder": "Ingrese el código de área",
-        "required": "El código de área es requerido"
-      },
-      "postalAddress": {
-        "label": "Dirección Postal",
-        "placeholder": "Ingrese la dirección postal",
-        "required": "La dirección postal es requerida"
-      },
-      "additional-information": "Información Adicional",
-      "additional-information-description": "Complete información adicional sobre el miembro del personal",
-      "comments": {
-        "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional)"
-      },
-      "relationships": {
-        "label": "Relaciones de Personal",
-        "description": "Gestione las relaciones entre miembros del personal",
-        "add": "Agregar Relación",
-        "no-relationships": {
-          "title": "No hay relaciones configuradas",
-          "description": "Configure las relaciones entre miembros del personal para mejorar la organización y comunicación"
-        },
-        "table": {
-          "columns": {
-            "relatedStaffFullName": "Nombre del Personal Relacionado",
-            "relationshipType": "Tipo de Relación",
-            "relatedStaffPosition": "Cargo del Personal Relacionado",
-            "relatedStaffType": "Tipo de Personal Relacionado",
-            "relatedStaffEmail": "Email del Personal Relacionado",
-            "actions": "Acciones"
-          },
-          "buttons": {
-            "edit": "Editar",
-            "delete": "Eliminar"
-          }
-        },
-        "modal": {
-          "relatedStaff": {
-            "label": "Personal Relacionado",
-            "placeholder": "Seleccione el personal relacionado",
-            "required": "Debe seleccionar un personal relacionado"
-          },
-          "relationshipType": {
-            "label": "Tipo de Relación",
-            "placeholder": "Seleccione el tipo de relación",
-            "required": "Debe seleccionar un tipo de relación"
-          },
-          "buttons": {
-            "save": "Guardar",
-            "cancel": "Cancelar",
-            "saving": "Guardando..."
-          }
-        }
-      },
-      "review": {
-        "label": "Revisión",
-        "description": "Información sobre la revisión del empleado"
-      },
-      "review-result": {
-        "label": "Resultado de Revisión",
-        "placeholder": "Seleccione el resultado de la revisión"
-      },
-      "review-date": {
-        "label": "Fecha de Revisión",
-        "placeholder": "Seleccione la fecha de revisión"
-      },
-      "review-justification": {
-        "label": "Justificación de Revisión",
-        "placeholder": "Ingrese la justificación de la revisión realizada"
-      },
-      "submitButton": "Guardar",
-      "cancelButton": "Cancelar"
     }
   }
 }

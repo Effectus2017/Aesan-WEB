@@ -24,7 +24,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({
-  selector: 'app-admin-employees-list',
+  selector: 'app-admin-list-employees',
   templateUrl: './employees-list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
@@ -45,7 +45,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdminEmployeesListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _formBuilder = inject(UntypedFormBuilder);
   private _staffService = inject(StaffService);
   private _customRouterService = inject(CustomRouterService);
@@ -78,7 +78,8 @@ export class AdminEmployeesListComponent implements OnInit, OnDestroy, OnGeneric
   };
 
   ngOnInit(): void {
-    this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+
+    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         // Filtrar solo empleados
         const employees = result.body.data.filter((staff: StaffList) =>
@@ -124,10 +125,12 @@ export class AdminEmployeesListComponent implements OnInit, OnDestroy, OnGeneric
   }
 
   onCustom(): void {
-    this._customRouterService.navigate(['staff/add']);
+    this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'employee' } });
   }
 
-  onEdit(id: number): void {
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
     this._customRouterService.navigate(['staff/edit', id]);
   }
 

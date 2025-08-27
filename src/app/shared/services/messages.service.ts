@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { Message } from '../models/Message';
+import { MessagesRealtimeService } from './messages-realtime.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,8 +16,14 @@ export class MessagesService {
 
   private apiUrl = `${environment.baseHttpUrl}/messages`;
   private _httpClient = inject(HttpClient);
+  private _realtime = inject(MessagesRealtimeService);
 
   constructor() {}
+
+  // Getters para el servicio en tiempo real
+  get messages() { return this._realtime.messages; }
+  get unreadCount() { return this._realtime.unreadCount; }
+  get isConnected() { return this._realtime.isConnected; }
 
   /**
    * Obtiene todos los mensajes
@@ -123,5 +130,65 @@ export class MessagesService {
    */
   getUnreadMessageCount(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-unread-message-count`, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Inicializa el servicio con mensajes iniciales y conecta SignalR
+   * @param userId ID del usuario (opcional)
+   */
+  async init(userId?: string): Promise<void> {
+    console.log('🚀 Inicializando servicio de mensajes...', { userId });
+
+    try {
+      // Crear parámetros solo si userId está definido
+      const params = userId ? { userId } : {};
+
+      const [list, unread] = await Promise.all([
+        this._httpClient.get<Message[]>(`${this.apiUrl}/get-all-messages`, getHttpOptions(params)).toPromise(),
+        this._httpClient.get<number>(`${this.apiUrl}/get-unread-message-count`, getHttpOptions(params)).toPromise(),
+      ]);
+
+      console.log('📋 Mensajes iniciales cargados:', { count: list?.length || 0, unread: unread || 0 });
+
+      this._realtime.setInitialMessages(list ?? [], unread ?? 0);
+
+      // Intentar conectar SignalR cuando la autenticación esté lista
+      this.tryConnectSignalR();
+
+      console.log('✅ Servicio de mensajes inicializado correctamente');
+    } catch (error) {
+      console.error('❌ Error al inicializar servicio de mensajes:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Intenta conectar SignalR cuando la autenticación esté lista
+   */
+  private async tryConnectSignalR(): Promise<void> {
+    // Esperar hasta que el usuario esté autenticado
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    while (attempts < maxAttempts) {
+      if (this._realtime['_authService'].accessToken) {
+        console.log('🔐 Usuario autenticado, conectando SignalR...');
+        await this._realtime.connect();
+        return;
+      }
+
+      console.log(`⏳ Esperando autenticación... (intento ${attempts + 1}/${maxAttempts})`);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      attempts++;
+    }
+
+    console.log('⚠️ No se pudo conectar SignalR después de varios intentos');
+  }
+
+  /**
+   * Desconecta SignalR y limpia recursos
+   */
+  dispose(): void {
+    this._realtime.disconnect();
   }
 }

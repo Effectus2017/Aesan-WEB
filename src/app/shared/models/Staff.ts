@@ -30,6 +30,8 @@ export interface Staff {
   regionId: number;
   regionName: string;
   areaCode: string;
+  agencyId?: number;
+  agencyName?: string;
   comments?: string;
   userId?: string;
   userName?: string;

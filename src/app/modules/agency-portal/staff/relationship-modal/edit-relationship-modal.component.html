@@ -1,7 +1,7 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120">
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="text-lg font-medium">{{ "staff.edit.relationships.add" | transloco }}</div>
+    <div class="text-lg font-medium">{{ "staff.edit.relationships.edit" | transloco }}</div>
     <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
       <mat-icon class="text-current">close</mat-icon>
     </button>
@@ -18,7 +18,9 @@
           [compareWith]="compareById"
           data-cy="related-staff-select"
         >
-          <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option"> {{ staff.firstName }} {{ staff.fatherLastName }} </mat-option>
+          <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option">
+            {{ staff.firstName }} {{ staff.fatherLastName }}
+          </mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('relatedStaff')?.hasError('required')">
           {{ "staff.edit.relationships.modal.relatedStaff.required" | transloco }}
@@ -45,11 +47,12 @@
 
       <!-- Actions -->
       <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
-        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" data-cy="cancel-button">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading" data-cy="cancel-button">
           {{ "staff.edit.relationships.modal.buttons.cancel" | transloco }}
         </button>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid" data-cy="save-button">
-          {{ "staff.edit.relationships.modal.buttons.save" | transloco }}
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" data-cy="save-button">
+          <mat-icon *ngIf="isLoading" class="mr-2 animate-spin">hourglass_empty</mat-icon>
+          {{ isLoading ? ("staff.edit.relationships.modal.buttons.updating" | transloco) : ("staff.edit.relationships.modal.buttons.update" | transloco) }}
         </button>
       </div>
     </div>

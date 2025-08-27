@@ -2,7 +2,7 @@
   <!-- Header con título y botones -->
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable #formContainer>
     <form [formGroup]="headerConfig.formGroup" #staffEditForm="ngForm" data-cy="staff-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- Información General -->
@@ -15,27 +15,25 @@
           </p>
         </div>
 
-        <!-- Staff Type (mover arriba como en @add/) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <!-- Staff Type -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('staffType', currentStaffType)">
           <mat-form-field data-cy="staffType-field">
             <mat-label>{{ "staff.edit.staffType.label" | transloco }}</mat-label>
-            <mat-select formControlName="staffType" [placeholder]="'staff.edit.staffType.placeholder' | transloco" [compareWith]="compareById" data-cy="staffType-select">
+            <mat-select formControlName="staffType" [placeholder]="'staff.edit.staffType.placeholder' | transloco" [compareWith]="compareById" data-cy="staffType-select" matTooltip="El tipo de personal no se puede cambiar una vez creado" matTooltipPosition="above">
               <mat-option *ngFor="let staffType of listStaffTypes" [value]="staffType" data-cy="staffType-option">
                 {{ currentLang === 'es' ? staffType.name : staffType.nameEn }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('staffType')?.hasError('required')">
-              {{ "staff.edit.staffType.required" | transloco }}
-            </mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Clasificación de Staff (solo para empleados) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
+        <!-- Clasificación de Staff -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('staffClassification', currentStaffType)">
             <mat-form-field data-cy="staff-classification-field">
               <mat-label>{{ "staff.edit.staffClassification.label" | transloco }}</mat-label>
               <mat-select
                 formControlName="staffClassification"
+                [required]="fieldVisibilityService.isFieldRequired('staffClassification', currentStaffType)"
                 [placeholder]="'staff.edit.staffClassification.placeholder' | transloco"
                 [compareWith]="compareById"
                 data-cy="staff-classification-select"
@@ -51,44 +49,68 @@
           </div>
 
         <!-- Campos de Nombre -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('firstName', currentStaffType)">
           <!-- First Name -->
           <mat-form-field class="w-full" data-cy="firstName-field">
             <mat-label>{{ "staff.edit.firstName.label" | transloco }}</mat-label>
-            <input matInput formControlName="firstName" required placeholder="{{ 'staff.edit.firstName.placeholder' | transloco }}" title="{{ 'staff.edit.firstName.label' | transloco }}" [attr.aria-label]="'staff.edit.firstName.label' | transloco" data-cy="firstName-input" />
+            <input matInput formControlName="firstName"
+                   [required]="fieldVisibilityService.isFieldRequired('firstName', currentStaffType)"
+                   placeholder="{{ 'staff.edit.firstName.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.firstName.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.firstName.label' | transloco"
+                   data-cy="firstName-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('firstName')?.hasError('required')">
               {{ "staff.edit.firstName.required" | transloco }}
             </mat-error>
           </mat-form-field>
 
           <!-- Middle Name -->
-          <mat-form-field class="w-full" data-cy="middleName-field">
+          <mat-form-field class="w-full" data-cy="middleName-field" *ngIf="fieldVisibilityService.shouldShowField('middleName', currentStaffType)">
             <mat-label>{{ "staff.edit.middleName.label" | transloco }}</mat-label>
-            <input matInput formControlName="middleName" placeholder="{{ 'staff.edit.middleName.placeholder' | transloco }}" title="{{ 'staff.edit.middleName.label' | transloco }}" [attr.aria-label]="'staff.edit.middleName.label' | transloco" data-cy="middleName-input" />
+            <input matInput formControlName="middleName"
+                   [required]="fieldVisibilityService.isFieldRequired('middleName', currentStaffType)"
+                   placeholder="{{ 'staff.edit.middleName.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.middleName.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.middleName.label' | transloco"
+                   data-cy="middleName-input" />
           </mat-form-field>
 
           <!-- Father's Last Name -->
           <mat-form-field class="w-full" data-cy="fatherLastName-field">
             <mat-label>{{ "staff.edit.fatherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="fatherLastName" required placeholder="{{ 'staff.edit.fatherLastName.placeholder' | transloco }}" title="{{ 'staff.edit.fatherLastName.label' | transloco }}" [attr.aria-label]="'staff.edit.fatherLastName.label' | transloco" data-cy="fatherLastName-input" />
+            <input matInput formControlName="fatherLastName"
+                   [required]="fieldVisibilityService.isFieldRequired('fatherLastName', currentStaffType)"
+                   placeholder="{{ 'staff.edit.fatherLastName.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.fatherLastName.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.fatherLastName.label' | transloco"
+                   data-cy="fatherLastName-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName')?.hasError('required')">
               {{ "staff.edit.fatherLastName.required" | transloco }}
             </mat-error>
           </mat-form-field>
 
           <!-- Mother's Last Name -->
-          <mat-form-field class="w-full" data-cy="motherLastName-field">
+          <mat-form-field class="w-full" data-cy="motherLastName-field" *ngIf="fieldVisibilityService.shouldShowField('motherLastName', currentStaffType)">
             <mat-label>{{ "staff.edit.motherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="motherLastName" placeholder="{{ 'staff.edit.motherLastName.placeholder' | transloco }}" title="{{ 'staff.edit.motherLastName.label' | transloco }}" [attr.aria-label]="'staff.edit.motherLastName.label' | transloco" data-cy="motherLastName-input" />
+            <input matInput formControlName="motherLastName"
+                   [required]="fieldVisibilityService.isFieldRequired('motherLastName', currentStaffType)"
+                   placeholder="{{ 'staff.edit.motherLastName.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.motherLastName.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.motherLastName.label' | transloco"
+                   data-cy="motherLastName-input" />
           </mat-form-field>
         </div>
 
         <!-- Campos de Estado y Cargo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('status', currentStaffType)">
           <!-- Status -->
           <mat-form-field data-cy="status-field">
             <mat-label>{{ "staff.edit.status.label" | transloco }}</mat-label>
-            <mat-select formControlName="status" [placeholder]="'staff.edit.status.placeholder' | transloco" [compareWith]="compareById" data-cy="status-select">
+            <mat-select formControlName="status"
+                       [required]="fieldVisibilityService.isFieldRequired('status', currentStaffType)"
+                       [placeholder]="'staff.edit.status.placeholder' | transloco"
+                       [compareWith]="compareById"
+                       data-cy="status-select">
               <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
                 {{ currentLang === 'es' ? status.name : status.nameEN }}
               </mat-option>
@@ -99,9 +121,13 @@
           </mat-form-field>
 
           <!-- Position -->
-          <mat-form-field data-cy="position-field">
+          <mat-form-field data-cy="position-field" *ngIf="fieldVisibilityService.shouldShowField('position', currentStaffType)">
             <mat-label>{{ "staff.edit.position.label" | transloco }}</mat-label>
-            <mat-select formControlName="position" [placeholder]="'staff.edit.position.placeholder' | transloco" [compareWith]="compareById" data-cy="position-select">
+            <mat-select formControlName="position"
+                       [required]="fieldVisibilityService.isFieldRequired('position', currentStaffType)"
+                       [placeholder]="'staff.edit.position.placeholder' | transloco"
+                       [compareWith]="compareById"
+                       data-cy="position-select">
               <mat-option *ngFor="let position of listPositions" [value]="position" data-cy="position-option">
                 {{ currentLang === 'es' ? position.name : position.nameEN }}
               </mat-option>
@@ -115,9 +141,14 @@
         <!-- Campos de Fecha de Nacimiento y Email -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <!-- Birth Date -->
-          <mat-form-field data-cy="birth-date-field">
+          <mat-form-field data-cy="birth-date-field" *ngIf="fieldVisibilityService.shouldShowField('birthDate', currentStaffType)">
             <mat-label>{{ "staff.edit.birthDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" placeholder="{{ 'staff.edit.birthDate.placeholder' | transloco }}" title="{{ 'staff.edit.birthDate.label' | transloco }}" [attr.aria-label]="'staff.edit.birthDate.label' | transloco" data-cy="birthDate-input" />
+            <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate"
+                   [required]="fieldVisibilityService.isFieldRequired('birthDate', currentStaffType)"
+                   placeholder="{{ 'staff.edit.birthDate.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.birthDate.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.birthDate.label' | transloco"
+                   data-cy="birthDate-input" />
             <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #birthDatePicker></mat-datepicker>
             <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('required')">
@@ -129,9 +160,14 @@
           </mat-form-field>
 
           <!-- Email -->
-          <mat-form-field data-cy="email-field">
+          <mat-form-field data-cy="email-field" *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
             <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
-            <input matInput formControlName="email" type="email" placeholder="{{ 'staff.edit.email.placeholder' | transloco }}" title="{{ 'staff.edit.email.label' | transloco }}" [attr.aria-label]="'staff.edit.email.label' | transloco" data-cy="email-input" />
+            <input matInput formControlName="email" type="email"
+                   [required]="fieldVisibilityService.isFieldRequired('email', currentStaffType)"
+                   placeholder="{{ 'staff.edit.email.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.email.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.email.label' | transloco"
+                   data-cy="email-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
               {{ "staff.edit.email.required" | transloco }}
             </mat-error>
@@ -142,11 +178,16 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)">
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate" placeholder="{{ 'staff.edit.contractStartDate.placeholder' | transloco }}" title="{{ 'staff.edit.contractStartDate.label' | transloco }}" [attr.aria-label]="'staff.edit.contractStartDate.label' | transloco" data-cy="contractStartDate-input" />
+            <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate"
+                   [required]="fieldVisibilityService.isFieldRequired('contractStartDate', currentStaffType)"
+                   placeholder="{{ 'staff.edit.contractStartDate.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.contractStartDate.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.contractStartDate.label' | transloco"
+                   data-cy="contractStartDate-input" />
             <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractStartDatePicker></mat-datepicker>
           </mat-form-field>
@@ -154,18 +195,27 @@
           <!-- Contract End Date -->
           <mat-form-field data-cy="contract-end-date-field">
             <mat-label>{{ "staff.edit.contractEndDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate" placeholder="{{ 'staff.edit.contractEndDate.placeholder' | transloco }}" title="{{ 'staff.edit.contractEndDate.label' | transloco }}" [attr.aria-label]="'staff.edit.contractEndDate.label' | transloco" data-cy="contractEndDate-input" />
+            <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate"
+                   [required]="fieldVisibilityService.isFieldRequired('contractEndDate', currentStaffType)"
+                   placeholder="{{ 'staff.edit.contractEndDate.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.contractEndDate.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.contractEndDate.label' | transloco"
+                   data-cy="contractEndDate-input" />
             <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractEndDatePicker></mat-datepicker>
           </mat-form-field>
         </div>
 
         <!-- Ciudad y Región -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('city', currentStaffType)">
           <!-- City -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "staff.edit.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [placeholder]="'staff.edit.city.placeholder' | transloco" [compareWith]="compareById" data-cy="city-select">
+            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')"
+                       [required]="fieldVisibilityService.isFieldRequired('city', currentStaffType)"
+                       [placeholder]="'staff.edit.city.placeholder' | transloco"
+                       [compareWith]="compareById"
+                       data-cy="city-select">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
                 {{ currentLang === 'es' ? city.name : city.nameEN }}
               </mat-option>
@@ -178,7 +228,11 @@
           <!-- Region -->
           <mat-form-field data-cy="region-field">
             <mat-label>{{ "staff.edit.region.label" | transloco }}</mat-label>
-            <mat-select formControlName="region" [placeholder]="'staff.edit.region.placeholder' | transloco" [compareWith]="compareById" data-cy="region-select">
+            <mat-select formControlName="region"
+                       [required]="fieldVisibilityService.isFieldRequired('region', currentStaffType)"
+                       [placeholder]="'staff.edit.region.placeholder' | transloco"
+                       [compareWith]="compareById"
+                       data-cy="region-select">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">
                 {{ currentLang === 'es' ? region.name : region.nameEN }}
               </mat-option>
@@ -190,11 +244,16 @@
         </div>
 
         <!-- Area Code and Postal Address -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('areaCode', currentStaffType)">
           <!-- Area Code -->
           <mat-form-field data-cy="area-code-field">
             <mat-label>{{ "staff.edit.areaCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="areaCode" placeholder="{{ 'staff.edit.areaCode.placeholder' | transloco }}" title="{{ 'staff.edit.areaCode.label' | transloco }}" [attr.aria-label]="'staff.edit.areaCode.label' | transloco" data-cy="areaCode-input" />
+            <input matInput formControlName="areaCode"
+                   [required]="fieldVisibilityService.isFieldRequired('areaCode', currentStaffType)"
+                   placeholder="{{ 'staff.edit.areaCode.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.areaCode.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.areaCode.label' | transloco"
+                   data-cy="areaCode-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
               {{ "staff.edit.areaCode.required" | transloco }}
             </mat-error>
@@ -203,7 +262,12 @@
           <!-- Postal Address -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "staff.edit.postalAddress.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" placeholder="{{ 'staff.edit.postalAddress.placeholder' | transloco }}" title="{{ 'staff.edit.postalAddress.label' | transloco }}" [attr.aria-label]="'staff.edit.postalAddress.label' | transloco" data-cy="postalAddress-input" />
+            <input matInput formControlName="postalAddress"
+                   [required]="fieldVisibilityService.isFieldRequired('postalAddress', currentStaffType)"
+                   placeholder="{{ 'staff.edit.postalAddress.placeholder' | transloco }}"
+                   title="{{ 'staff.edit.postalAddress.label' | transloco }}"
+                   [attr.aria-label]="'staff.edit.postalAddress.label' | transloco"
+                   data-cy="postalAddress-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
               {{ "staff.edit.postalAddress.required" | transloco }}
             </mat-error>
@@ -221,15 +285,21 @@
         </div>
 
         <!-- Comentarios -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('comments', currentStaffType)">
           <mat-form-field data-cy="comments-field">
             <mat-label>{{ "staff.edit.comments.label" | transloco }}</mat-label>
-              <textarea matInput formControlName="comments" placeholder="{{ 'staff.edit.comments.placeholder' | transloco }}" title="{{ 'staff.edit.comments.label' | transloco }}" [attr.aria-label]="'staff.edit.comments.label' | transloco" rows="4" data-cy="comments-input"></textarea>
+              <textarea matInput formControlName="comments"
+                        [required]="fieldVisibilityService.isFieldRequired('comments', currentStaffType)"
+                        placeholder="{{ 'staff.edit.comments.placeholder' | transloco }}"
+                        title="{{ 'staff.edit.comments.label' | transloco }}"
+                        [attr.aria-label]="'staff.edit.comments.label' | transloco"
+                        rows="4"
+                        data-cy="comments-input"></textarea>
           </mat-form-field>
         </div>
 
-        <!-- Relaciones de Parentesco -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <!-- Relaciones de Parentesco (solo para miembros de junta) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="fieldVisibilityService.shouldShowField('relationships', currentStaffType)">
           <p class="text-lg font-medium">
             {{ "staff.edit.relationships.label" | transloco }}
           </p>
@@ -238,13 +308,13 @@
           </p>
         </div>
 
-                <!-- Tabla de relaciones -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1 sm:col-span-8">
+        <!-- Tabla de relaciones (solo para miembros de junta) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('relationships', currentStaffType)">
           <app-generic-table [config]="relationshipsTableConfig" [handler]="this" #relationshipsTable></app-generic-table>
         </div>
 
         <!-- Campos de Revisión (solo para administradores) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="canViewReviewFields">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)">
           <p class="text-lg font-medium">
             {{ "staff.edit.review.label" | transloco }}
           </p>
@@ -253,11 +323,14 @@
           </p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="canViewReviewFields">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)">
           <!-- Resultado de revisión -->
           <mat-form-field data-cy="review-result-field">
             <mat-label>{{ "staff.edit.review-result.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'reviewResult'" [compareWith]="compareById" data-cy="review-result-select">
+            <mat-select [formControlName]="'reviewResult'"
+                       [required]="fieldVisibilityService.isFieldRequired('reviewResult', currentStaffType)"
+                       [compareWith]="compareById"
+                       data-cy="review-result-select">
               <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -265,11 +338,12 @@
           </mat-form-field>
 
           <!-- Fecha de revisión -->
-          <mat-form-field data-cy="review-date-field">
+          <mat-form-field data-cy="review-date-field" *ngIf="fieldVisibilityService.shouldShowField('reviewDate', currentStaffType)">
             <mat-label>{{ "staff.edit.review-date.label" | transloco }}</mat-label>
             <input
               matInput
               [formControlName]="'reviewDate'"
+              [required]="fieldVisibilityService.isFieldRequired('reviewDate', currentStaffType)"
               placeholder="{{ 'staff.edit.review-date.placeholder' | transloco }}"
               [matDatepicker]="pickerReviewDate"
               data-cy="review-date-input"
@@ -279,13 +353,14 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="canViewReviewFields">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('reviewJustification', currentStaffType)">
           <!-- Justificación de revisión -->
           <mat-form-field data-cy="review-justification-field">
             <mat-label>{{ "staff.edit.review-justification.label" | transloco }}</mat-label>
             <textarea
               matInput
               [formControlName]="'reviewJustification'"
+              [required]="fieldVisibilityService.isFieldRequired('reviewJustification', currentStaffType)"
               placeholder="{{ 'staff.edit.review-justification.placeholder' | transloco }}"
               data-cy="review-justification-input"
               rows="3"

@@ -54,8 +54,8 @@ export class StaffRelationshipService {
    * @param queryParams Parámetros de consulta (paginación, filtros, etc.)
    * @returns Observable con la lista de todas las relaciones activas
    */
-  getAllActiveRelationships(queryParams: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-active-relationships`, getHttpOptions(queryParams))
+  getAllActiveRelationshipsFromDb(queryParams: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-active-relationships-from-db`, getHttpOptions(queryParams))
       .pipe(tap((response: any) => this._relationships.next(response)));
   }
 

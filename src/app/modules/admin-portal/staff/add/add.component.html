@@ -5,7 +5,6 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup" #staffAddForm="ngForm" data-cy="staff-add-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
-
         <!-- Información General -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
@@ -16,12 +15,12 @@
           </p>
         </div>
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
-            <!-- Staff Type -->
+          <!-- Staff Type -->
           <mat-form-field data-cy="staffType-field">
             <mat-label>{{ "staff.add.staffType.label" | transloco }}</mat-label>
             <mat-select formControlName="staffType" [placeholder]="'staff.add.staffType.placeholder' | transloco" [compareWith]="compareById" data-cy="staffType-select">
               <mat-option *ngFor="let staffType of listStaffTypes" [value]="staffType" data-cy="staffType-option">
-                {{ currentLang === 'es' ? staffType.name : staffType.nameEn }}
+                {{ currentLang === "es" ? staffType.name : staffType.nameEn }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('staffType')?.hasError('required')">
@@ -32,25 +31,30 @@
 
         <!-- Clasificación de Staff (solo para empleados) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
-            <mat-form-field data-cy="staff-classification-field">
-              <mat-label>{{ "staff.add.staffClassification.label" | transloco }}</mat-label>
-              <mat-select formControlName="staffClassification" [placeholder]="'staff.add.staffClassification.placeholder' | transloco" [compareWith]="compareById" data-cy="staff-classification-select">
-                <mat-option *ngFor="let classification of listStaffClassifications" [value]="classification" data-cy="staff-classification-option">
-                  {{ currentLang === 'es' ? classification.name : classification.nameEn }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('staffClassification')?.hasError('required')">
-                {{ "staff.add.staffClassification.required" | transloco }}
-              </mat-error>
-            </mat-form-field>
-          </div>
+          <mat-form-field data-cy="staff-classification-field">
+            <mat-label>{{ "staff.add.staffClassification.label" | transloco }}</mat-label>
+            <mat-select
+              formControlName="staffClassification"
+              [placeholder]="'staff.add.staffClassification.placeholder' | transloco"
+              [compareWith]="compareById"
+              data-cy="staff-classification-select"
+            >
+              <mat-option *ngFor="let classification of listStaffClassifications" [value]="classification" data-cy="staff-classification-option">
+                {{ currentLang === "es" ? classification.name : classification.nameEn }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('staffClassification')?.hasError('required')">
+              {{ "staff.add.staffClassification.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
 
         <!-- Campos de Nombre -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="!isEmployee">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <!-- First Name -->
           <mat-form-field class="w-full" data-cy="firstName-field">
             <mat-label>{{ "staff.add.firstName.label" | transloco }}</mat-label>
-            <input matInput formControlName="firstName" required [placeholder]="'staff.add.firstName.placeholder' | transloco" data-cy="firstName-input" />
+            <input matInput formControlName="firstName" [placeholder]="'staff.add.firstName.placeholder' | transloco" data-cy="firstName-input" required />
             <mat-error *ngIf="headerConfig.formGroup.get('firstName')?.hasError('required')">
               {{ "staff.add.firstName.required" | transloco }}
             </mat-error>
@@ -65,16 +69,22 @@
           <!-- Father's Last Name -->
           <mat-form-field class="w-full" data-cy="fatherLastName-field">
             <mat-label>{{ "staff.add.fatherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="fatherLastName" [placeholder]="'staff.add.fatherLastName.placeholder' | transloco" data-cy="fatherLastName-input" />
+            <input
+              matInput
+              formControlName="fatherLastName"
+              [placeholder]="'staff.add.fatherLastName.placeholder' | transloco"
+              data-cy="fatherLastName-input"
+              required
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName')?.hasError('required')">
+              {{ "staff.add.fatherLastName.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <!-- Mother's Last Name -->
           <mat-form-field class="w-full" data-cy="motherLastName-field">
             <mat-label>{{ "staff.add.motherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="motherLastName" required [placeholder]="'staff.add.motherLastName.placeholder' | transloco" data-cy="motherLastName-input" />
-            <mat-error *ngIf="headerConfig.formGroup.get('motherLastName')?.hasError('required')">
-              {{ "staff.add.motherLastName.required" | transloco }}
-            </mat-error>
+            <input matInput formControlName="motherLastName" [placeholder]="'staff.add.motherLastName.placeholder' | transloco" data-cy="motherLastName-input" />
           </mat-form-field>
         </div>
 
@@ -85,7 +95,7 @@
             <mat-label>{{ "staff.add.status.label" | transloco }}</mat-label>
             <mat-select formControlName="status" [placeholder]="'staff.add.status.placeholder' | transloco" [compareWith]="compareById" data-cy="status-select">
               <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
-                {{ status.name }}
+                {{ currentLang === 'es' ? status.name : status.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('status')?.hasError('required')">
@@ -98,7 +108,7 @@
             <mat-label>{{ "staff.add.position.label" | transloco }}</mat-label>
             <mat-select formControlName="position" [placeholder]="'staff.add.position.placeholder' | transloco" [compareWith]="compareById" data-cy="position-select">
               <mat-option *ngFor="let position of listPositions" [value]="position" data-cy="position-option">
-                {{ position.name }}
+                {{ currentLang === 'es' ? position.name : position.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('position')?.hasError('required')">
@@ -109,8 +119,6 @@
             </mat-hint>
           </mat-form-field>
         </div>
-
-
 
         <!-- Campos de Fecha de Nacimiento y Email -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
@@ -146,7 +154,13 @@
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.add.contractStartDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate" [placeholder]="'staff.add.contractStartDate.placeholder' | transloco" data-cy="contractStartDate-input" />
+            <input
+              matInput
+              [matDatepicker]="contractStartDatePicker"
+              formControlName="contractStartDate"
+              [placeholder]="'staff.add.contractStartDate.placeholder' | transloco"
+              data-cy="contractStartDate-input"
+            />
             <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractStartDatePicker></mat-datepicker>
           </mat-form-field>
@@ -154,7 +168,13 @@
           <!-- Contract End Date -->
           <mat-form-field data-cy="contract-end-date-field">
             <mat-label>{{ "staff.add.contractEndDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate" [placeholder]="'staff.add.contractEndDate.placeholder' | transloco" data-cy="contractEndDate-input" />
+            <input
+              matInput
+              [matDatepicker]="contractEndDatePicker"
+              formControlName="contractEndDate"
+              [placeholder]="'staff.add.contractEndDate.placeholder' | transloco"
+              data-cy="contractEndDate-input"
+            />
             <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractEndDatePicker></mat-datepicker>
           </mat-form-field>
@@ -162,8 +182,8 @@
 
         <!-- Ciudad y Región -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isEmployee">
-           <!-- Postal Address -->
-           <mat-form-field data-cy="postal-address-field">
+          <!-- Postal Address -->
+          <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "staff.add.postalAddress.label" | transloco }}</mat-label>
             <input matInput formControlName="postalAddress" [placeholder]="'staff.add.postalAddress.placeholder' | transloco" data-cy="postalAddress-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
@@ -171,12 +191,18 @@
             </mat-error>
           </mat-form-field>
 
-            <!-- City -->
+          <!-- City -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "staff.add.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [placeholder]="'staff.add.city.placeholder' | transloco" [compareWith]="compareById" data-cy="city-select">
+            <mat-select
+              formControlName="city"
+              (valueChange)="getRegionsByCityId($event, 'region')"
+              [placeholder]="'staff.add.city.placeholder' | transloco"
+              [compareWith]="compareById"
+              data-cy="city-select"
+            >
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
-                {{ city.name }}
+                {{ currentLang === 'es' ? city.name : city.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('city')?.hasError('required')">
@@ -189,7 +215,7 @@
             <mat-label>{{ "staff.add.region.label" | transloco }}</mat-label>
             <mat-select formControlName="region" [placeholder]="'staff.add.region.placeholder' | transloco" [compareWith]="compareById" data-cy="region-select">
               <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">
-                {{ region.name }}
+                {{ currentLang === 'es' ? region.name : region.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('region')?.hasError('required')">
@@ -197,8 +223,8 @@
             </mat-error>
           </mat-form-field>
 
-           <!-- Area Code -->
-           <mat-form-field data-cy="area-code-field">
+          <!-- Area Code -->
+          <mat-form-field data-cy="area-code-field">
             <mat-label>{{ "staff.add.areaCode.label" | transloco }}</mat-label>
             <input matInput formControlName="areaCode" [placeholder]="'staff.add.areaCode.placeholder' | transloco" data-cy="areaCode-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
@@ -221,9 +247,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="comments-field">
             <mat-label>{{ commentsLabel }}</mat-label>
-            <textarea matInput formControlName="comments"
-                      [placeholder]="'staff.add.comments.placeholder' | transloco"
-                      rows="4" data-cy="comments-input"></textarea>
+            <textarea matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
           </mat-form-field>
         </div>
       </div>

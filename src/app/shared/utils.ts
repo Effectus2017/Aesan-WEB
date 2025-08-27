@@ -134,8 +134,10 @@ export function isNullOrUndefinedEmptyStringNullArray<T>(obj: T | null | undefin
 export function queryParameters(model: QueryParameters) {
   const options = Object.assign({}, Constants.httpOptions);
   let _p = new HttpParams();
+
   for (const key in model) {
-    if (model[key] !== null) {
+    // Verificar que la clave y el valor no sean undefined o null
+    if (key && model[key] !== null && model[key] !== undefined) {
       const _a = key.toString();
 
       if (_a === 'orderBy') {
@@ -164,8 +166,11 @@ export function queryParameters(model: QueryParameters) {
 
         _p = _c;
       } else {
-        const _b = model[key].toString();
-        _p = _p.set(_a.replace(/"/g, "'"), _b.replace(/"/g, "'"));
+        // Verificar que el valor no sea undefined antes de llamar toString()
+        if (model[key] !== undefined) {
+          const _b = model[key].toString();
+          _p = _p.set(_a.replace(/"/g, "'"), _b.replace(/"/g, "'"));
+        }
       }
     }
   }

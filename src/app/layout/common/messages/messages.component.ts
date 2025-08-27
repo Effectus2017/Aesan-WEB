@@ -24,8 +24,11 @@ export class MessagesComponent implements OnInit, OnDestroy {
   @ViewChild('messagesOrigin') private _messagesOrigin: MatButton;
   @ViewChild('messagesPanel') private _messagesPanel: TemplateRef<any>;
 
-  messages: Message[] = [];
-  unreadCount: number = 0;
+  // Usar signals del servicio en tiempo real
+  messages: any;
+  unreadCount: any;
+  isConnected: any;
+
   private _overlayRef: OverlayRef;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -47,30 +50,22 @@ export class MessagesComponent implements OnInit, OnDestroy {
   /**
    * On init
    */
-  ngOnInit(): void {
-    // Subscribe to message changes
-    this._messagesService.messages$.pipe(takeUntil(this._unsubscribeAll)).subscribe((messages: Message[] | null) => {
-      // Normalize to array to avoid *ngFor differ errors
-      this.messages = Array.isArray(messages) ? messages : [];
-
-      // Calculate the unread count
-      this._calculateUnreadCount();
-
-      // Mark for check
-      this._changeDetectorRef.markForCheck();
-    });
-
-    // Load initial messages
-    this._loadMessages();
+  async ngOnInit(): Promise<void> {
+    // Inicializar el servicio con mensajes y conectar SignalR
+    await this._messagesService.init(/* userId si aplica */);
+    
+    // Asignar los signals del servicio
+    this.messages = this._messagesService.messages;
+    this.unreadCount = this._messagesService.unreadCount;
+    this.isConnected = this._messagesService.isConnected;
   }
 
   /**
    * On destroy
    */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
+    // Dispose del servicio en tiempo real
+    this._messagesService.dispose();
 
     // Dispose the overlay
     if (this._overlayRef) {
@@ -213,12 +208,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
    * @private
    */
   private _calculateUnreadCount(): void {
-    let count = 0;
-
-    if (this.messages && this.messages.length) {
-      count = this.messages.filter((message) => !message.read).length;
-    }
-
-    this.unreadCount = count;
+    // No necesitamos calcular manualmente ya que el servicio en tiempo real maneja esto
+    // Los signals se actualizan automáticamente
   }
 }
