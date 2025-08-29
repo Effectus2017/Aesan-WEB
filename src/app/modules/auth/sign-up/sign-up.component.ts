@@ -253,6 +253,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // ¿Su Institución es un Programa Nacional de Juventud?
         // Si (1) y No (2)
         nationalYouthProgram: [null],
+
+        // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+        // Are you a Day Care Homes? (Only for PACNA program)
+        // Si (1) y No (2)
+        isDayCareHome: [null],
       });
   }
 
@@ -305,6 +310,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           nationalYouthProgramControl.setValue(null); // Limpiar si no es PSAV
         }
         nationalYouthProgramControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // --- Lógica para isDayCareHome ---
+        const isDayCareHomeControl = this.signUpForm.get('isDayCareHome');
+        if (isPACNAProgram(currentProgram)) {
+          isDayCareHomeControl.setValidators([Validators.required]);
+        } else {
+          isDayCareHomeControl.clearValidators();
+          isDayCareHomeControl.setValue(null); // Limpiar si no es PACNA
+        }
+        isDayCareHomeControl.updateValueAndValidity();
         // --- Fin lógica ---
 
         // Verificar el registro de educación básica si ya tiene un valor
@@ -570,6 +586,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // ¿Su Institución es un Programa Nacional de Juventud?
         // Si (1) y No (2)
         nationalYouthProgram: formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram,
+        // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+        // Are you a Day Care Homes? (Only for PACNA program)
+        // Si (1) y No (2)
+        isDayCareHome: formValues.isDayCareHome == null ? false : formValues.isDayCareHome,
       },
       user: {
         // Datos del Contacto

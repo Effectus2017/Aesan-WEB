@@ -1,0 +1,26 @@
+{
+  "sign-in": {
+    "title": "Iniciar Sesión",
+    "no-account": "¿No tienes una cuenta?",
+    "sign-up": "Regístrate",
+    "email": {
+      "label": "Correo Electrónico",
+      "placeholder": "Ingresa tu correo electrónico",
+      "required": "El correo electrónico es requerido",
+      "invalid": "Por favor ingresa un correo electrónico válido"
+    },
+    "password": {
+      "label": "Contraseña",
+      "placeholder": "Ingresa tu contraseña",
+      "required": "La contraseña es requerida"
+    },
+    "forgot-password": "¿Olvidaste tu contraseña?",
+    "submit": "Iniciar Sesión",
+    "error": {
+      "connection": "No se pudo conectar con el servidor. Por favor, verifique su conexión a internet.",
+      "credentials": "Las credenciales ingresadas son incorrectas",
+      "server": "Error en el servidor. Por favor, intente nuevamente más tarde.",
+      "unknown": "Ha ocurrido un error inesperado. Por favor, intente nuevamente."
+    }
+  }
+}

@@ -302,8 +302,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.fieldVisibilityService.setCurrentUser(userRole, userPermissions);
     }
 
-
-
     // Verificar permisos de administrador
     this.checkAdminPermissions();
 
@@ -586,8 +584,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       motherLastName: motherLastName,
     };
 
-
-
     // Agregar campos de contacto y ubicación solo si no es empleado
     if (!this.isEmployee) {
       staffRequest.email = email;
@@ -618,7 +614,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Crear staff
     this._staffService.updateStaff(staffRequest, {}).subscribe({
-            next: (response) => {
+      next: (response) => {
         switch (response.body) {
           case true:
             // Mensaje específico para staff usando traducciones
@@ -995,7 +991,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     } else {
       this._changeDetectorRef.detectChanges();
     }
-
   }
 
   /**
@@ -1053,7 +1048,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        //this.loadStaffRelationships();
+        this.loadStaffRelationships();
       }
     });
   }
@@ -1072,21 +1067,31 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.onAddRelationship();
   }
 
-  /**
-   * Método requerido por GenericTable para editar elementos de la tabla
-   */
+
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
 
     // Buscar la relación por ID
-    const relationship = this.relationshipsTableConfig.dataSource.data.find(
-      (rel: any) => rel.id === id
-    );
+    const relationship = this.relationshipsTableConfig.dataSource.data.find((rel: any) => rel.id === id);
 
     if (relationship) {
-      // Abrir modal de edición en lugar de navegar
-      this.onTableEditElement(event, relationship);
+      // Abrir modal de edición
+    const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: {
+          currentStaffId: this.headerConfig.formGroup.get('id')?.value,
+          relationship: relationship,
+        },
+      });
+
+      dialogRef.afterClosed().subscribe((result) => {
+        if (result) {
+          // Recargar las relaciones si se actualizó correctamente
+          this.loadStaffRelationships();
+        }
+      });
     }
   }
 
@@ -1108,12 +1113,12 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       actions: {
         confirm: {
           label: 'Eliminar',
-          color: 'warn'
+          color: 'warn',
         },
         cancel: {
-          label: 'Cancelar'
-        }
-      }
+          label: 'Cancelar',
+        },
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -1124,51 +1129,34 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   }
 
   /**
-   * Edita una relación existente (interfaz OnGenericTableHandler)
+   * Elimina una relación
    */
-  onTableEditElement(event: Event, element: any): void {
-    event.stopPropagation();
-    event.preventDefault();
-
-    // Abrir modal de edición
-    const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
-      width: '500px',
-      maxWidth: '90vw',
-      data: {
-        currentStaffId: this.headerConfig.formGroup.get('id')?.value,
-        relationship: element
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        // Recargar las relaciones si se actualizó correctamente
-        // this.loadStaffRelationships();
-      }
-    });
-  }
-
-  /**
-   * Elimina una relación específica
-   */
-  private deleteRelationship(relationshipId: number): void {
+  deleteRelationship(relationshipId: number): void {
     const queryParams: QueryParameters = {
-      id: relationshipId
+      id: relationshipId,
     };
 
     this._staffRelationshipService.deactivateRelationship(queryParams).subscribe({
       next: (response) => {
         this._notificationService.showSuccess('Relación eliminada exitosamente');
         // Recargar la lista si es necesario
-        // this.loadStaffRelationships();
+        this.loadStaffRelationships();
       },
       error: (error) => {
         console.error('Error deleting relationship:', error);
         this._notificationService.showError('Error al eliminar la relación');
-      }
+      },
     });
   }
 
+  loadStaffRelationships(): void {
+    const requestParameters: QueryParameters = {
+      id: this.headerConfig.formGroup.get('id')?.value,
+      isList: false,
+      isActive: false,
+    };
+    this._staffRelationshipService.getRelationshipsByStaffId(requestParameters).subscribe();
+  }
 
   /**
    * Actualiza el estado del botón de submit basándose en la validez del formulario

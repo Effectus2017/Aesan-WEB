@@ -17,7 +17,7 @@ export interface AgencyRequest {
     postalCityId?: number;
     postalRegionId?: number;
     postalZipCode?: string;
-    // Imágen - Logo
+    // Imagen - Logo
     imageUrl?: string;
     email?: string;
     phone?: string;
@@ -48,7 +48,7 @@ export interface AgencyRequest {
     // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
     // Si (1) y No (2)
     federalFundsDenied?: boolean;
-    // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+    // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interestelares o a nivel comunitario?
     // Si (1) y No (2)
     organizedAthleticPrograms?: boolean;
     // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
@@ -81,6 +81,10 @@ export interface AgencyRequest {
     // ¿Su Institución es un Programa Nacional de Juventud?
     // Si (1) y No (2)
     nationalYouthProgram?: boolean;
+    // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+    // Are you a Day Care Homes? (Only for PACNA program)
+    // Si (1) y No (2)
+    isDayCareHome?: boolean;
 }
 
 export interface UpdateAgencyProgramRequest {

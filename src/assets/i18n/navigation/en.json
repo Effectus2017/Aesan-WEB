@@ -78,7 +78,11 @@
         },
         "currentProgram": {
             "program": "Current Program: {{program}}",
-            "tooltip": "Current program in which the user is located"
+            "tooltip": "Current program in which the agency is located"
+        },
+        "agencyStatus": {
+            "status": "Status: {{status}}",
+            "tooltip": "Current status of the agency"
         },
         "administration": {
             "title": "Administration",

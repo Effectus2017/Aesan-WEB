@@ -72,7 +72,7 @@ export class AuthSignInComponent implements OnInit {
       if (params['error'] === 'connection') {
         this.alert = {
           type: 'error',
-          message: 'auth.sign-in.error.connection'
+          message: 'sign-in.error.connection'
         };
         this.showAlert = true;
       }
@@ -118,7 +118,7 @@ export class AuthSignInComponent implements OnInit {
           // Error de conexión
           this.alert = {
             type: 'error',
-            message: 'auth.sign-in.error.connection',
+            message: 'sign-in.error.connection',
           };
           this.showAlert = true;
           return;
@@ -139,7 +139,7 @@ export class AuthSignInComponent implements OnInit {
           // Set the alert
           this.alert = {
             type: 'error',
-            message: response.error.message || 'auth.sign-in.error.credentials',
+            message: response.error.message || 'sign-in.error.credentials',
           };
 
           // Show the alert
@@ -148,7 +148,7 @@ export class AuthSignInComponent implements OnInit {
           // Set the alert for other errors
           this.alert = {
             type: 'error',
-            message: 'auth.sign-in.error.server',
+            message: 'sign-in.error.server',
           };
           this.showAlert = true;
         }

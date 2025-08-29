@@ -3,6 +3,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialogRef } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,183 @@ export class NotificationService {
         confirm: {
           label: this.translocoService.translate('dialog.error.confirm'),
           color: 'warn',
+        },
+      },
+    });
+  }
+
+  // ============================================================================
+  // NUEVOS MÉTODOS CON ACCESO A EVENTOS
+  // ============================================================================
+
+  /**
+   * Muestra un diálogo de éxito y retorna el MatDialogRef para manejar eventos
+   * @param message Mensaje a mostrar
+   * @returns MatDialogRef para subscribirse a eventos
+   */
+  showSuccessDialogWithEvents(message: string = 'dialog.success.message'): MatDialogRef<any> {
+    return this.fuseConfirmationService.open({
+      title: this.translocoService.translate('dialog.success.title'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:check-circle',
+        color: 'success',
+      },
+      message: this.translocoService.translate(message),
+      actions: {
+        confirm: {
+          label: this.translocoService.translate('dialog.success.confirm'),
+          color: 'primary',
+        },
+      },
+    });
+  }
+
+  /**
+   * Muestra un diálogo de error y retorna el MatDialogRef para manejar eventos
+   * @param message Mensaje a mostrar
+   * @returns MatDialogRef para subscribirse a eventos
+   */
+  showErrorDialogWithEvents(message: string = 'dialog.error.message'): MatDialogRef<any> {
+    return this.fuseConfirmationService.open({
+      title: this.translocoService.translate('dialog.error.title'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:x-circle',
+        color: 'error',
+      },
+      message: this.translocoService.translate(message),
+      actions: {
+        confirm: {
+          label: this.translocoService.translate('dialog.error.confirm'),
+          color: 'warn',
+        },
+      },
+    });
+  }
+
+  /**
+   * Muestra un diálogo de éxito con callback para manejar la respuesta del usuario
+   * @param message Mensaje a mostrar
+   * @param callback Función que se ejecuta cuando se cierra el diálogo
+   */
+  showSuccessDialogWithCallback(
+    message: string = 'dialog.success.message',
+    callback: (result: string | undefined) => void
+  ): void {
+    const dialogRef = this.showSuccessDialogWithEvents(message);
+
+    dialogRef.afterClosed().subscribe(callback);
+  }
+
+  /**
+   * Muestra un diálogo de error con callback para manejar la respuesta del usuario
+   * @param message Mensaje a mostrar
+   * @param callback Función que se ejecuta cuando se cierra el diálogo
+   */
+  showErrorDialogWithCallback(
+    message: string = 'dialog.error.message',
+    callback: (result: string | undefined) => void
+  ): void {
+    const dialogRef = this.showErrorDialogWithEvents(message);
+
+    dialogRef.afterClosed().subscribe(callback);
+  }
+
+  /**
+   * Muestra un diálogo de confirmación personalizable con callback
+   * @param config Configuración del diálogo
+   * @param callback Función que se ejecuta cuando se cierra el diálogo
+   */
+  showConfirmationDialogWithCallback(
+    config: {
+      title?: string;
+      message: string;
+      icon?: {
+        show?: boolean;
+        name?: string;
+        color?: 'primary' | 'accent' | 'warn' | 'basic' | 'info' | 'success' | 'warning' | 'error';
+      };
+      actions?: {
+        confirm?: {
+          show?: boolean;
+          label?: string;
+          color?: 'primary' | 'accent' | 'warn';
+        };
+        cancel?: {
+          show?: boolean;
+          label?: string;
+        };
+      };
+    },
+    callback: (result: string | undefined) => void
+  ): void {
+    const dialogRef = this.fuseConfirmationService.open({
+      title: config.title ? this.translocoService.translate(config.title) : this.translocoService.translate('dialog.confirm.title'),
+      message: this.translocoService.translate(config.message),
+      icon: config.icon || {
+        show: true,
+        name: 'heroicons_outline:question-mark-circle',
+        color: 'info',
+      },
+      actions: {
+        confirm: {
+          show: config.actions?.confirm?.show ?? true,
+          label: config.actions?.confirm?.label ? this.translocoService.translate(config.actions.confirm.label) : this.translocoService.translate('dialog.confirm.confirm'),
+          color: config.actions?.confirm?.color || 'primary',
+        },
+        cancel: {
+          show: config.actions?.cancel?.show ?? true,
+          label: config.actions?.cancel?.label ? this.translocoService.translate(config.actions.cancel.label) : this.translocoService.translate('dialog.confirm.cancel'),
+        },
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(callback);
+  }
+
+  /**
+   * Muestra un diálogo de confirmación personalizable y retorna el MatDialogRef
+   * @param config Configuración del diálogo
+   * @returns MatDialogRef para subscribirse a eventos
+   */
+  showConfirmationDialogWithEvents(config: {
+    title?: string;
+    message: string;
+    icon?: {
+      show?: boolean;
+      name?: string;
+      color?: 'primary' | 'accent' | 'warn' | 'basic' | 'info' | 'success' | 'warning' | 'error';
+    };
+    actions?: {
+      confirm?: {
+        show?: boolean;
+        label?: string;
+        color?: 'primary' | 'accent' | 'warn';
+      };
+      cancel?: {
+        show?: boolean;
+        label?: string;
+      };
+    };
+  }): MatDialogRef<any> {
+    return this.fuseConfirmationService.open({
+      title: config.title ? this.translocoService.translate(config.title) : this.translocoService.translate('dialog.confirm.title'),
+      message: this.translocoService.translate(config.message),
+      icon: config.icon || {
+        show: true,
+        name: 'heroicons_outline:question-mark-circle',
+        color: 'info',
+      },
+      actions: {
+        confirm: {
+          show: config.actions?.confirm?.show ?? true,
+          label: config.actions?.confirm?.label ? this.translocoService.translate(config.actions.confirm.label) : this.translocoService.translate('dialog.confirm.confirm'),
+          color: config.actions?.confirm?.color || 'primary',
+        },
+        cancel: {
+          show: config.actions?.cancel?.show ?? true,
+          label: config.actions?.cancel?.label ? this.translocoService.translate(config.actions.cancel.label) : this.translocoService.translate('dialog.confirm.cancel'),
         },
       },
     });

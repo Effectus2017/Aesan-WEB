@@ -36,11 +36,21 @@ export class LanguagesComponent implements OnInit, OnDestroy {
    * On init
    */
   ngOnInit(): void {
+    // Initialize flagCodes first to prevent template errors
+    this.flagCodes = {
+      en: 'us',
+      es: 'pr',
+    };
+
     // Get the available languages from transloco
     this.availableLangs = this._translocoService.getAvailableLangs();
 
     // Get the saved language from localStorage or use 'en' as default
     const savedLang = localStorage.getItem('language') || 'en';
+
+    // Initialize activeLang immediately to prevent undefined errors
+    this.activeLang = savedLang;
+
     this._translocoService.setActiveLang(savedLang);
 
     // Subscribe to language changes
@@ -53,13 +63,6 @@ export class LanguagesComponent implements OnInit, OnDestroy {
       // Update the navigation
       this._updateNavigation(activeLang);
     });
-
-    // Set the country iso codes for languages for flags
-    this.flagCodes = {
-      en: 'us',
-      tr: 'tr',
-      es: 'pr',
-    };
   }
 
   /**
@@ -77,6 +80,11 @@ export class LanguagesComponent implements OnInit, OnDestroy {
    * @param lang
    */
   setActiveLang(lang: string): void {
+    // Validate lang parameter
+    if (!lang || typeof lang !== 'string') {
+      lang = 'en';
+    }
+
     // Set the active lang
     this._translocoService.setActiveLang(lang);
   }
@@ -88,7 +96,12 @@ export class LanguagesComponent implements OnInit, OnDestroy {
    * @param item
    */
   trackByFn(index: number, item: any): any {
-    return item.id || index;
+    // Validate item and item.id
+    if (!item || !item.id) {
+      return index;
+    }
+
+    return item.id;
   }
 
   // -----------------------------------------------------------------------------------------------------

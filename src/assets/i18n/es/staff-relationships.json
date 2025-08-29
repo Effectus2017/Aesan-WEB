@@ -16,6 +16,7 @@
             "relatedStaffPosition": "Cargo",
             "relatedStaffType": "Tipo de Empleado",
             "relatedStaffEmail": "Email",
+            "isActive": "¿Activo?",
             "actions": "Acciones"
           },
           "buttons": {

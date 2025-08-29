@@ -713,7 +713,8 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
     // Verificar campos condicionales
     const conditionalFields = [
       { selector: '[data-cy=at-risk-service-select]', name: 'Servicio en riesgo', condition: 'Solo visible si programas atléticos = Sí' },
-      { selector: '[data-cy=national-youth-program-input]', name: 'Programa Nacional de Juventud', condition: 'Solo visible para programa PSAV' }
+      { selector: '[data-cy=national-youth-program-input]', name: 'Programa Nacional de Juventud', condition: 'Solo visible para programa PSAV' },
+      { selector: '[data-cy=is-day-care-home-input]', name: 'Agencia Auspiciadora de Hogares', condition: 'Solo visible para programa PACNA' }
     ];
 
     console.log('\nCampos condicionales:');

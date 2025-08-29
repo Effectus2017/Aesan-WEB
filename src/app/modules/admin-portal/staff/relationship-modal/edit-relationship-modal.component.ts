@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,12 +15,13 @@ import { Staff } from 'app/shared/models/Staff';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { isNullOrUndefinedEmptyStringNullArray, compareById } from 'app/shared/utils';
-import { FuseLoadingService } from '@fuse/services/loading';
+// import { FuseLoadingService } from '@fuse/services/loading'; // Eliminado para evitar ExpressionChangedAfterItHasBeenCheckedError
 import { UpdateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-admin-edit-relationship-modal',
@@ -37,10 +38,11 @@ import { filter } from 'rxjs/operators';
     MatButtonModule,
     TranslocoModule,
   ],
+  // changeDetection: ChangeDetectionStrategy.OnPush, // Comentado para evitar problemas
 })
 export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private _fuseLoadingService = inject(FuseLoadingService);
+  // private _fuseLoadingService = inject(FuseLoadingService); // Eliminado
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
@@ -48,10 +50,15 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   private _staffService = inject(StaffService);
   private _optionSelectionService = inject(OptionSelectionService);
   private _staffRelationshipService = inject(StaffRelationshipService);
+  private _ngZone = inject(NgZone);
 
   // Lists for selects
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
+  yesNoOptions: OptionSelection[] = []; // Nuevo campo para activo/inactivo
+
+  // Current language
+  currentLang: string = 'es';
 
   // Comparator for selects
   compareById = compareById;
@@ -59,6 +66,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
     relationshipType: new FormControl('', [Validators.required]),
+    isActive: new FormControl(true, [Validators.required]), // Nuevo campo para activo/inactivo
   });
 
   // Loading
@@ -75,7 +83,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // Deshabilitar el auto mode del loading service para evitar ExpressionChangedAfterItHasBeenCheckedError
-    this._fuseLoadingService.hide();
+    // this._fuseLoadingService.hide(); // Eliminado
 
     // Suscribirse a eventos de navegación para cerrar el modal
     this._router.events
@@ -104,7 +112,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
    */
   private async loadInitialData(): Promise<void> {
     try {
-      this._fuseLoadingService.show();
+      // this._fuseLoadingService.show(); // Eliminado
 
       // Cargar lista de staff (excluyendo el staff actual)
       const staffQueryParams: QueryParameters = {
@@ -112,8 +120,10 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
         skip: 0,
         name: null,
         alls: true,
-        isList: true,
+        excludeRelated: false,  // Incluir todo el staff (modal Edit)
+        isList: true,  // Mantener por compatibilidad
         staffTypeId: 2,
+        agencyId: null,
       };
       this._staffService.getAllStaffFromDb(staffQueryParams).subscribe({
         next: (response: any) => {
@@ -131,13 +141,14 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
 
       // Cargar tipos de relación
       const relationshipTypeQueryParams: QueryParameters = {
-        optionKey: 'staffRelationshipType',
+        optionKey: 'staffRelationshipType,yesNo',  // Agregar yesNo para opciones activo/inactivo
         names: null,
       };
       this._optionSelectionService.getOptionSelectionByOptionKey(relationshipTypeQueryParams).subscribe({
         next: (response: any) => {
           if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-            this.listRelationshipTypes = response.body.data;
+            this.listRelationshipTypes = response.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
+            this.yesNoOptions = response.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
             this._changeDetectorRef.detectChanges();
           }
         },
@@ -151,7 +162,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
       console.error('Error in loadInitialData:', error);
       this._notificationService.showError('Error al cargar los datos iniciales');
     } finally {
-      this._fuseLoadingService.hide();
+              // this._fuseLoadingService.hide(); // Eliminado
     }
   }
 
@@ -184,7 +195,8 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
       // Crear request de actualización
       const updateRequest: UpdateStaffRelationshipRequest = {
         id: this.data.relationship.id,
-        relationshipTypeId: formValue.relationshipType.id
+        relationshipTypeId: formValue.relationshipType.id,
+        isActive: formValue.isActive // Incluir el campo isActive en el request
       };
 
       // Llamar al servicio para actualizar

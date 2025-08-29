@@ -106,8 +106,10 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
       skip: 0,
       name: null,
       alls: true,
-      isList: true,
+      excludeRelated: true,  // Excluir staff ya relacionado (modal Add)
+      isList: true,  // Mantener por compatibilidad
       staffTypeId: 2,
+      agencyId: null,
     };
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({

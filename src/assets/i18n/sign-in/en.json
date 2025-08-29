@@ -1,0 +1,26 @@
+{
+  "sign-in": {
+    "title": "Sign In",
+    "no-account": "Don't have an account?",
+    "sign-up": "Sign Up",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Enter your email",
+      "required": "Email address is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "label": "Password",
+      "placeholder": "Enter your password",
+      "required": "Password is required"
+    },
+    "forgot-password": "Forgot Password?",
+    "submit": "Sign In",
+    "error": {
+      "connection": "Could not connect to server. Please check your internet connection.",
+      "credentials": "The credentials entered are incorrect",
+      "server": "Server error. Please try again later.",
+      "unknown": "An unexpected error has occurred. Please try again."
+    }
+  }
+}

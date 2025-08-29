@@ -8,19 +8,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { Staff } from 'app/shared/models/Staff';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { isNullOrUndefinedEmptyStringNullArray, compareById } from 'app/shared/utils';
-import { FuseLoadingService } from '@fuse/services/loading';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { CreateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
   selector: 'app-add-relationship-modal',
@@ -40,11 +40,16 @@ import { filter } from 'rxjs/operators';
 })
 export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private _fuseLoadingService = inject(FuseLoadingService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
   private _router = inject(Router);
+  private _staffService = inject(StaffService);
+  private _optionSelectionService = inject(OptionSelectionService);
+  private _staffRelationshipService = inject(StaffRelationshipService);
+  private _authService = inject(AuthService);
+  private _formBuilder = inject(FormBuilder);
+
   // Lists for selects
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
@@ -63,18 +68,11 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   constructor(
     public dialogRef: MatDialogRef<AddRelationshipModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { currentStaffId: number },
-    private _formBuilder: FormBuilder,
-    private _staffService: StaffService,
-    private _optionSelectionService: OptionSelectionService,
-    private _staffRelationshipService: StaffRelationshipService
   ) {}
 
   ngOnInit(): void {
-    // Deshabilitar el auto mode del loading service para evitar ExpressionChangedAfterItHasBeenCheckedError
-    this._fuseLoadingService.setAutoMode(false);
 
-    this.loadStaffList();
-    this.loadRelationshipTypes();
+    this.onLoadInitialData();
 
     // Suscribirse a cambios de navegación para cerrar el modal automáticamente
     this._router.events
@@ -88,57 +86,53 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Restaurar el auto mode del loading service
-    this._fuseLoadingService.setAutoMode(true);
-
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  /**
-   * Carga la lista de staff disponible
-   */
-  private loadStaffList(): void {
+  onLoadInitialData(): void {
 
-    const queryParams: QueryParameters = {
+    const agencyId = this._authService.getAgencyId();
+
+    const staffQueryParams: QueryParameters = {
       take: 25,
       skip: 0,
       name: null,
-      alls: true,
-      isList: true,
+      alls: false,
+      excludeRelated: true,
+      isList: false,
       staffTypeId: 2,
+      agencyId: agencyId,
     };
 
-    this._staffService.getAllStaffFromDb(queryParams).subscribe({
-      next: (response) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-          // Filtrar el usuario actual para evitar auto-relaciones
-          this.listStaff = response.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
-        }
-      },
-      error: (error) => {
-        this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.loadingStaffList'));
-      },
-      complete: () => {
-
-      }
-    });
-  }
-
-  /**
-   * Carga los tipos de relación disponibles
-   */
-  private loadRelationshipTypes(): void {
-
-    const queryParams: QueryParameters = {
+    const relationshipQueryParams: QueryParameters = {
       optionKey: 'staffRelationshipType',
       names: null,
     };
 
-    this._optionSelectionService.getOptionSelectionByOptionKey(queryParams).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRelationshipTypes = result.body.data;
+    // Ejecutar ambas requests en paralelo usando forkJoin
+    forkJoin({
+      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
+      relationshipTypes: this._optionSelectionService.getOptionSelectionByOptionKey(relationshipQueryParams)
+    }).subscribe({
+      next: (response) => {
+        // Procesar respuesta de staff
+        if (!isNullOrUndefinedEmptyStringNullArray(response.staff)) {
+          // Filtrar el usuario actual para evitar auto-relaciones
+          this.listStaff = response.staff.body.data;
+        }
+
+        // Procesar respuesta de relationship types
+        if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes)) {
+          this.listRelationshipTypes = response.relationshipTypes.body.data;
+        }
+
         this._changeDetectorRef.detectChanges();
+      },
+      error: (error) => {
+        this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
+      },
+      complete: () => {
       }
     });
   }

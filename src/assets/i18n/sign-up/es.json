@@ -1,0 +1,160 @@
+{
+  "sign-up": {
+    "title": "Intención de Participación",
+    "program": {
+      "label": "¿A qué programa desea participar?"
+    },
+    "non-profit": {
+      "label": "¿Es una organización sin fines de lucro?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "basic-education-registry": {
+      "label": "¿Posee Certificación de Registro de Educación Básica?",
+      "granted": "Otorgado",
+      "in-progress": "En Proceso",
+      "no": "No"
+    },
+    "state-funds-denied": {
+      "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "federal-funds-denied": {
+      "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "organized-athletic-programs": {
+      "label": "¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interestelares o a nivel comunitario?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "service-time": {
+      "label": " ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
+      "placeholder": "Seleccione la fecha en que comenzó a operar la organización",
+      "hint": "Seleccione la fecha en que comenzará a ofrecer el servicio"
+    },
+    "service-time-not-eligible": {
+      "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
+    },
+    "at-risk-service": {
+      "label": "¿Está interesado en participar en el servicio de merienda y cena en riesgo?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "national-youth-program": {
+      "label": "¿Su Institución es un Programa Nacional de Juventud?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "is-day-care-home": {
+      "label": "¿Es usted una Agencia Auspiciadora de Hogares?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "sponsor-information": "Información del Auspiciador",
+    "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
+    "agency": {
+      "label": "Nombre de la Agencia Auspiciadora",
+      "placeholder": "Ingresa el nombre de la agencia auspiciadora",
+      "description": "Información del auspiciador"
+    },
+    "state-department-registration": {
+      "label": "Número de Registro del Departamento de Estado",
+      "placeholder": "Ingresa el número de registro del departamento de estado"
+    },
+    "address": {
+      "label": "Dirección",
+      "placeholder": "Ingresa la dirección",
+      "description": "Información de la dirección"
+    },
+    "city": {
+      "label": "Ciudad",
+      "placeholder": "Selecciona tu ciudad"
+    },
+    "region": {
+      "label": "Región",
+      "placeholder": "Selecciona tu región"
+    },
+          "zip-code": {
+        "label": "Código Postal",
+        "placeholder": "Ingresa el código postal"
+      },
+      "same-as-physical-address": {
+        "label": "¿Es la misma dirección física?"
+      },
+      "postal-address": {
+        "label": "Dirección Postal",
+        "placeholder": "Ingresa la dirección postal",
+        "description": "Información de la dirección postal"
+      },
+    "user-information": "Información del Usuario",
+    "user-information-description": "Aquí puede agregar la información del usuario",
+    "first-name": {
+      "label": "Nombre",
+      "placeholder": "Ingresa el nombre"
+    },
+    "father-last-name": {
+      "label": "Primer Apellido",
+      "placeholder": "Ingresa el primer apellido"
+    },
+    "admin-title": {
+      "label": "Título del Administrador",
+      "placeholder": "Ingresa el título del administrador"
+    },
+    "uie": {
+      "label": "# UIE",
+      "placeholder": "Ingresa el número de UIE"
+    },
+    "ein": {
+      "label": "Número de Seguro Social Patronal (EIN)",
+      "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)"
+    },
+    "latitude": {
+      "label": "Latitud",
+      "placeholder": "Ingresa la latitud"
+    },
+    "longitude": {
+      "label": "Longitud",
+      "placeholder": "Ingresa la longitud"
+    },
+    "phone": {
+      "label": "Teléfono",
+      "placeholder": "(xxx) xxx-xxxx"
+    },
+    "email": {
+      "label": "Correo Electrónico",
+      "placeholder": "Ingresa el correo electrónico"
+    },
+    "middle-name": {
+      "label": "Segundo Nombre",
+      "placeholder": "Ingresa el segundo nombre"
+    },
+    "mother-last-name": {
+      "label": "Segundo Apellido",
+      "placeholder": "Ingresa el segundo apellido"
+    },
+    "submit": "Aplicar al Programa",
+    "select-program-first": "Por favor, seleccione al menos un programa para continuar con el registro",
+    "form-invalid": {
+      "message": "Por favor, complete todos los campos requeridos",
+      "close": "Cerrar"
+    },
+    "tax-exemption-status": {
+      "label": "¿En qué estatus se encuentra su Exención Contributiva?"
+    },
+    "tax-exemption-type": {
+      "label": "¿Qué tipo de Exención Contributiva tiene?"
+    },
+    "type-of-entity": {
+      "label": "Tipo de Entidad"
+    },
+    "type-of-applicant": {
+      "label": "Tipo de Solicitante"
+    },
+    "public-alliance-contract": {
+      "label": "¿De poseer un contrato Público Alianza especifique su modalidad?"
+    }
+  }
+}

@@ -484,7 +484,15 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           case true:
             // Mensaje específico para staff usando traducciones
             const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
-            this._notificationService.showSuccessDialog(this._translocoService.translate(staffTypeKey));
+            this._notificationService.showSuccessDialogWithCallback(
+              this._translocoService.translate(staffTypeKey),
+              (result) => {
+                if (result === 'confirmed') {
+                  // Usuario presionó Confirm, navegar a la lista
+                  this._customRouterService.navigate(['staff/list']);
+                }
+              }
+            );
             break;
           default:
             this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));

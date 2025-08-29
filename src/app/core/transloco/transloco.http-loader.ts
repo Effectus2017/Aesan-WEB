@@ -40,9 +40,7 @@ export class TranslocoHttpLoader implements TranslocoLoader
         this._httpClient.get<string[]>('./assets/i18n/file-index.json')
             .pipe(catchError(() => of([])))
             .subscribe(files => {
-                console.log('[TranslocoHttpLoader] Archivos encontrados en file-index.json:', files);
                 this._processTranslationFiles(files);
-                console.log('[TranslocoHttpLoader] _translationFilePaths:', this._translationFilePaths);
                 this._filesReady$.next(); // Indicar que los archivos están listos
             });
     }
@@ -62,10 +60,8 @@ export class TranslocoHttpLoader implements TranslocoLoader
                     this._translationFilePaths[lang] = [];
                 }
                 this._translationFilePaths[lang].push(file);
-                console.log(`[TranslocoHttpLoader] Archivo registrado para idioma '${lang}':`, file);
             }
         });
-        console.log('[TranslocoHttpLoader] Estado final de _translationFilePaths:', this._translationFilePaths);
     }
 
     /**
@@ -87,7 +83,6 @@ export class TranslocoHttpLoader implements TranslocoLoader
      */
     getTranslation(lang: string): Observable<Translation>
     {
-        console.log(`[TranslocoHttpLoader] getTranslation llamado para: ${lang}`);
         // Esperar a que los archivos estén listos antes de continuar
         return this._filesReady$.pipe(
             take(1),
@@ -95,11 +90,9 @@ export class TranslocoHttpLoader implements TranslocoLoader
                 // Si no tenemos la lista de archivos o no hay archivos para este idioma,
                 // cargar solo el archivo principal
                 if (!this._translationFilePaths[lang] || this._translationFilePaths[lang].length === 0) {
-                    console.warn(`[TranslocoHttpLoader] No se encontraron archivos para el idioma '${lang}', cargando solo el archivo principal.`);
                     return this._httpClient.get<Translation>(`./assets/i18n/${lang}.json`)
                         .pipe(
-                            catchError((err) => {
-                                console.error(`[TranslocoHttpLoader] Error cargando archivo principal para '${lang}':`, err);
+                            catchError(() => {
                                 return of({});
                             })
                         );
@@ -108,8 +101,7 @@ export class TranslocoHttpLoader implements TranslocoLoader
                 // Cargar todos los archivos para el idioma solicitado
                 const translationRequests = this._translationFilePaths[lang].map(path =>
                     this._httpClient.get<Translation>(path).pipe(
-                        catchError(error => {
-                            console.error(`[TranslocoHttpLoader] Error cargando traducción desde ${path}:`, error);
+                        catchError(() => {
                             return of({});
                         })
                     )
@@ -118,7 +110,6 @@ export class TranslocoHttpLoader implements TranslocoLoader
                 // Combinar todos los archivos en un solo objeto
                 return forkJoin(translationRequests).pipe(
                     map(translations => {
-                        console.log(`[TranslocoHttpLoader] Traducciones cargadas para '${lang}':`, translations);
                         return translations.reduce((acc, curr) => {
                             return this._deepMerge(acc, curr);
                         }, {});

@@ -302,6 +302,7 @@
             "relatedStaffPosition": "Cargo del Personal Relacionado",
             "relatedStaffType": "Tipo de Personal Relacionado",
             "relatedStaffEmail": "Email del Personal Relacionado",
+            "isActive": "¿Activo?",
             "actions": "Acciones"
           },
           "buttons": {
@@ -320,6 +321,11 @@
             "placeholder": "Seleccione el tipo de relación",
             "required": "Debe seleccionar un tipo de relación"
           },
+          "isActive": {
+            "label": "¿Activo?",
+            "placeholder": "Seleccione el estado de la relación",
+            "required": "El estado activo es requerido"
+          },
           "buttons": {
             "save": "Guardar",
             "update": "Actualizar",
@@ -331,6 +337,12 @@
             "createRelationship": "Relación creada exitosamente",
             "updateRelationship": "Relación actualizada exitosamente",
             "deleteRelationship": "Relación eliminada exitosamente"
+          },
+          "error": {
+            "createRelationship": "Error al crear la relación",
+            "updateRelationship": "Error al actualizar la relación",
+            "deleteRelationship": "Error al eliminar la relación",
+            "loadingStaffList": "Error al cargar la lista de personal"
           }
         }
       },

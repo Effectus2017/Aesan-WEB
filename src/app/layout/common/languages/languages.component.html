@@ -1,8 +1,10 @@
 <!-- Button -->
 <button
     mat-icon-button
-    [matMenuTriggerFor]="languages">
-    <ng-container *ngTemplateOutlet="flagImage; context: {$implicit: activeLang}"></ng-container>
+    [matMenuTriggerFor]="languages"
+    [attr.aria-label]="'Select language'"
+    [title]="'Select language'">
+    <ng-container *ngTemplateOutlet="flagImage; context: {$implicit: activeLang || 'en'}"></ng-container>
 </button>
 
 <!-- Language menu -->
@@ -14,7 +16,7 @@
             mat-menu-item
             (click)="setActiveLang(lang.id)">
             <span class="flex items-center">
-                <ng-container *ngTemplateOutlet="flagImage; context: {$implicit: lang.id}"></ng-container>
+                <ng-container *ngTemplateOutlet="flagImage; context: {$implicit: lang?.id || 'en'}"></ng-container>
                 <span class="ml-3">{{lang.label}}</span>
             </span>
         </button>
@@ -29,7 +31,8 @@
         <span class="absolute inset-0 ring-1 ring-inset ring-black ring-opacity-10"></span>
         <img
             class="w-full"
-            [src]="'assets/images/flags/' + flagCodes[lang].toUpperCase() + '.svg'"
-            [alt]="'Flag image for ' + lang">
+            [src]="'assets/images/flags/' + (lang && flagCodes && flagCodes[lang] ? flagCodes[lang].toUpperCase() : 'us') + '.svg'"
+            [alt]="'Flag image for ' + (lang || 'en')"
+            [title]="'Flag for ' + (lang || 'en')">
     </span>
 </ng-template>

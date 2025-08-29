@@ -16,6 +16,7 @@ import { MessagesComponent } from 'app/layout/common/messages/messages.component
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/deadline-banner.component';
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
+import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -34,6 +35,7 @@ import { filter, Subject, takeUntil } from 'rxjs';
         ThemeToggleComponent,
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
+        AgencyStatusBannerComponent,
         MessagesComponent
     ]
 })

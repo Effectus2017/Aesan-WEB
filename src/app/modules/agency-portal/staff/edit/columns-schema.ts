@@ -13,6 +13,16 @@ export const STAFF_RELATIONSHIPS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'staff.edit.relationships.table.columns.relationshipType',
   },
   {
+    key: 'comment',
+    type: 'text',
+    label: 'staff.edit.relationships.table.columns.comment',
+  },
+  {
+    key: 'isActive',
+    type: 'boolean',
+    label: 'staff.edit.relationships.table.columns.isActive',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'staff.edit.relationships.table.columns.actions',

@@ -1,0 +1,36 @@
+<!-- Agency Status Banner -->
+<!-- DEBUG: showBanner={{showBanner}}, statusColor={{statusColor}}, agencyStatus={{agencyStatus}} -->
+<div
+    *ngIf="showBanner"
+    [class]="'flex items-center px-3 py-1.5 rounded-lg shadow-sm border ' +
+             (statusColor === 'green' ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : '') +
+             (statusColor === 'red' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : '') +
+             (statusColor === 'yellow' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : '') +
+             (statusColor === 'purple' ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800' : '') +
+             (statusColor === 'indigo' ? 'bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800' : '') +
+             (statusColor === 'blue' ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : '')">
+
+    <!-- Status Icon -->
+    <mat-icon
+        [class]="'mr-2 ' +
+                 (statusColor === 'green' ? 'text-green-600 dark:text-green-400' : '') +
+                 (statusColor === 'red' ? 'text-red-600 dark:text-red-400' : '') +
+                 (statusColor === 'yellow' ? 'text-yellow-600 dark:text-yellow-400' : '') +
+                 (statusColor === 'purple' ? 'text-purple-600 dark:text-purple-400' : '') +
+                 (statusColor === 'indigo' ? 'text-indigo-600 dark:text-indigo-400' : '') +
+                 (statusColor === 'blue' ? 'text-blue-600 dark:text-blue-400' : '')"
+        [svgIcon]="statusIcon"
+        [matTooltip]="tooltipText">
+    </mat-icon>
+
+    <!-- Banner Text -->
+    <span [class]="'text-sm font-medium ' +
+                   (statusColor === 'green' ? 'text-green-800 dark:text-green-200' : '') +
+                   (statusColor === 'red' ? 'text-red-800 dark:text-red-200' : '') +
+                   (statusColor === 'yellow' ? 'text-yellow-800 dark:text-yellow-200' : '') +
+                   (statusColor === 'purple' ? 'text-purple-800 dark:text-purple-200' : '') +
+                   (statusColor === 'indigo' ? 'text-indigo-800 dark:text-indigo-200' : '') +
+                   (statusColor === 'blue' ? 'text-blue-800 dark:text-blue-200' : '')">
+        {{ bannerText }}
+    </span>
+</div>

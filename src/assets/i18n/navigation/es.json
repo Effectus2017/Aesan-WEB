@@ -79,7 +79,11 @@
         },
         "currentProgram": {
             "program": "Programa Actual: {{program}}",
-            "tooltip": "Programa actual en el cual se encuentra el usuario"
+            "tooltip": "Programa actual en el cual se encuentra la agencia"
+        },
+        "agencyStatus": {
+            "status": "Estado: {{status}}",
+            "tooltip": "Estado actual de la agencia"
         }
     }
 }

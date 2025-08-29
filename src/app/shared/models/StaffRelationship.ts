@@ -4,6 +4,7 @@ export interface StaffRelationship {
   relatedStaffId: number;
   relationshipTypeId: number;
   isActive: boolean;
+  comment?: string;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -38,4 +39,6 @@ export interface CreateStaffRelationshipRequest {
 export interface UpdateStaffRelationshipRequest {
   id: number;
   relationshipTypeId: number;
+  isActive: boolean;
+  comment?: string;
 }

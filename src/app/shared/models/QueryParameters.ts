@@ -5,6 +5,7 @@ export interface QueryParameters {
   names?: string;
   alls?: boolean;
   isList?: boolean;
+  excludeRelated?: boolean;  // Nuevo parámetro para excluir staff ya relacionado
   id?: number;
   agencyId?: number;
   programId?: number;

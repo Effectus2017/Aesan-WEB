@@ -7,9 +7,22 @@ import { AuthService } from './core/auth/auth.service';
 
 export const initialDataResolver = () => {
   const navigationService = inject(NavigationService);
+  const agencyService = inject(AgencyService);
+  const authService = inject(AuthService);
 
-  // Fork join multiple API endpoint calls to wait all of them to finish
-  return forkJoin([navigationService.get()]);
+  const agencyId = authService.getAgencyId();
+
+  // Solo cargar la agencia si hay un agencyId válido
+  if (agencyId) {
+    const params: QueryParameters = {
+      agencyId: agencyId,
+    };
+    // Fork join multiple API endpoint calls to wait all of them to finish
+    return forkJoin([navigationService.get(), agencyService.getAgencyById(params)]);
+  } else {
+    // Fork join multiple API endpoint calls to wait all of them to finish
+    return forkJoin([navigationService.get()]);
+  }
 };
 
 export const initialDataAgencyPortalResolver = () => {

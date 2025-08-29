@@ -126,6 +126,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   const requestParametersId: QueryParameters = {
     id: staffId,
     isList: false,
+    isActive: false,
   };
 
   const requestParameters: QueryParameters = {

@@ -336,6 +336,11 @@
             "placeholder": "Select the relationship type",
             "required": "You must select a relationship type"
           },
+          "isActive": {
+            "label": "Is Active?",
+            "placeholder": "Select the relationship status",
+            "required": "Active status is required"
+          },
           "buttons": {
             "save": "Save",
             "update": "Update",
@@ -347,6 +352,12 @@
             "createRelationship": "Relationship created successfully",
             "updateRelationship": "Relationship updated successfully",
             "deleteRelationship": "Relationship deleted successfully"
+          },
+          "error": {
+            "createRelationship": "Error creating relationship",
+            "updateRelationship": "Error updating relationship",
+            "deleteRelationship": "Error deleting relationship",
+            "loadingStaffList": "Error loading staff list"
           }
         }
       },
