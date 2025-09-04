@@ -1,4 +1,14 @@
 {
+    "global": {
+        "buttons": {
+            "close": "Cerrar",
+            "save": "Guardar",
+            "cancel": "Cancelar",
+            "edit": "Editar",
+            "delete": "Eliminar",
+            "add": "Agregar"
+        }
+    },
     "common": {
         "welcome-back": "Bienvenido",
         "Project": "Proyecto",
@@ -8,105 +18,33 @@
         "orientation-request-sent": "Su solicitud de orientación fue enviada al Coordinador del Programa",
         "accept": "Aceptar"
     },
-    "validation-to-program": {
-        "list": {
-            "title": "Evaluación de Auspiciadores",
-            "search": {
-                "placeholder": "Buscar usuario",
-                "button": "Buscar"
-            },
-            "table": {
-                "columns": {
-                    "program": "Programa",
-                    "agencyName": "Nombre de la Agencia Auspiciadora:",
-                    "stateDepartmentRegistration": "Registro Depto. Estado:",
-                    "address": "Dirección:",
-                    "city": "Ciudad:",
-                    "region": "Región:",
-                    "zipCpde": "Código Postal:",
-                    "firstName": "Nombre:",
-                    "fatherLastName": "Primer Apellido",
-                    "adminTitle": "Título Admin.",
-                    "nonProfit": "Sin Fines de Lucro",
-                    "uieNumber": "# UIE",
-                    "einNumber": "Número de Seguro Social Patronal (EIN)",
-                    "ssPatronal": "Número de Registro del Departamento de Estado",
-                    "latitude": "Latitud",
-                    "longitude": "Longitud",
-                    "phone": "Teléfono",
-                    "email": "Correo",
-                    "middleName": "Segundo Nombre",
-                    "motherLastName": "Segundo Apellido",
-                    "createdBy": "Creado por",
-                    "assignedTo": "Asignado a",
-                    "createdAt": "Fecha de Creación",
-                    "status": "Estatus",
-                    "actions": "Acciones"
-                },
-                "buttons": {
-                    "edit": "Editar",
-                    "delete": "Eliminar"
-                }
-            },
-            "buttons": {
-                "add": "Agregar",
-                "clear": "Limpiar",
-                "save": "Guardar"
-            }
+    "reset-password": {
+        "title": "Restablecer Contraseña",
+        "temp-password": {
+            "label": "Contraseña Temporal",
+            "placeholder": "Ingrese su contraseña temporal",
+            "required": "La contraseña temporal es requerida"
         },
-        "edit": {
-            "title": "Editar Evaluación de Auspiciadores",
-            "monitor": {
-                "label": "Asignado a:"
-            },
-            "program": {
-                "label": "Programa al que desea participar:",
-                "placeholder": "Seleccione un programa"
-            },
-            "status": {
-                "label": "Estatus:",
-                "placeholder": "Seleccione un estatus"
-            },
-            "agency": {
-                "label": "Nombre de la Agencia Auspiciadora:",
-                "placeholder": "Ingrese el nombre de la agencia"
-            },
-            "state-department-registration": {
-                "label": "Registro Depto. Estado:",
-                "placeholder": "Ingrese el número de registro"
-            },
-            "uieNumber": {
-                "label": "UIE #:",
-                "placeholder": "Ingrese el número UIE"
-            },
-            "einNumber": {
-                "label": "EIN #:",
-                "placeholder": "Ingrese el número EIN"
-            },
-            "address": {
-                "label": "Dirección:",
-                "placeholder": "Ingrese la dirección"
-            },
-            "phone": {
-                "label": "Teléfono:",
-                "placeholder": "(xxx) xxx-xxxx"
-            },
-            "zip-code": {
-                "label": "Código Postal:",
-                "placeholder": "Ingrese el código postal"
-            },
-            "postal-address": {
-                "label": "Dirección Postal:",
-                "placeholder": "Ingrese la dirección postal"
-            },
-            "city": {
-                "label": "Ciudad:",
-                "placeholder": "Seleccione una ciudad"
-            },
-            "region": {
-                "label": "Región:",
-                "placeholder": "Seleccione una región"
-            }
+        "new-password": {
+            "label": "Nueva Contraseña",
+            "placeholder": "Ingrese su nueva contraseña",
+            "required": "La nueva contraseña es requerida",
+            "minlength": "La contraseña debe tener al menos 8 caracteres"
+        },
+        "confirm-password": {
+            "label": "Confirmar Contraseña",
+            "placeholder": "Confirme su nueva contraseña",
+            "required": "La confirmación de contraseña es requerida"
+        },
+        "submit": "Actualizar Contraseña",
+        "passwords-must-match": "Las contraseñas deben coincidir",
+        "success": {
+            "password-updated": "Su contraseña ha sido actualizada exitosamente"
+        },
+        "error": {
+            "invalid-temp-password": "Contraseña temporal inválida",
+            "not-updated": "No se pudo actualizar la contraseña",
+            "server-error": "Error del servidor. Por favor intente más tarde"
         }
     }
 }

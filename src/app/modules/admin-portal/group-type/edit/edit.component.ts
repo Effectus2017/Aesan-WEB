@@ -65,10 +65,12 @@ export class EditGroupTypeComponent implements OnInit, OnGenericHeaderHandlers {
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    const data = this._route.snapshot.data['data'];
-    if (data) {
-      this.groupTypeId = data.id;
-      this.onSetForm(data);
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.groupTypeId = resolvedData.groupType.id;
+      this.onSetForm(resolvedData.groupType);
     }
   }
 

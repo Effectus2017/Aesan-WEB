@@ -71,10 +71,13 @@ export class EditHouseholdMemberComponent implements OnInit, OnGenericHeaderHand
   constructor() {}
 
   ngOnInit(): void {
-    this._householdMemberService.householdMember$.subscribe((result: any) => {
-      this.householdMemberId = result.body.id;
-      this.onSetForm(result.body);
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.householdMemberId = resolvedData.householdMember.id;
+      this.onSetForm(resolvedData.householdMember);
+    }
   }
 
   onSetForm(param: any) {

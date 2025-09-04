@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
@@ -56,6 +57,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService: TranslocoService = inject(TranslocoService);
   private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
+  private _route: ActivatedRoute = inject(ActivatedRoute);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
@@ -96,7 +98,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           firstName: new FormControl(null, Validators.required),
           middleName: new FormControl(null),
           fatherLastName: new FormControl(null, Validators.required),
-          motherLastName: new FormControl(null, Validators.required),
+          motherLastName: new FormControl(null),
           role: new FormControl(null, Validators.required),
           agency: new FormControl(null, Validators.required),
           isActive: new FormControl(true),
@@ -109,27 +111,21 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       ),
     });
 
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.listRoles = resolvedData.roles.data || resolvedData.roles;
+      this.listAgencies = resolvedData.agencies;
+      this._changeDetectorRef.markForCheck();
+    }
+
     // Suscribirse a los cambios del campo email
     this.headerConfig.formGroup.get('datosPersonales.email').valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(value => {
         this.headerConfig.formGroup.get('datosPersonales.username').setValue(value);
       });
-
-    // Get the accountings
-    this._usersService.roles$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.listRoles = result.body.data;
-      // Mark for check
-      this._changeDetectorRef.markForCheck();
-    });
-
-    // Get the agencies list
-    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.listAgencies = result.body;
-      // Mark for check
-      this._changeDetectorRef.markForCheck();
-    });
-
   }
 
   onPassword(formGroup: FormGroup) {

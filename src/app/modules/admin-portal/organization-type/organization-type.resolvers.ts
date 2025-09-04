@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 export const initialDataOrganizationTypeListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const organizationTypeService = inject(OrganizationTypeService);
@@ -13,13 +13,22 @@ export const initialDataOrganizationTypeListResolver: ResolveFn<any> = (route: A
     alls: true,
   };
 
-  return forkJoin([
-    organizationTypeService.getAll(requestParameters)
-  ]);
+  return forkJoin([organizationTypeService.getAllOrganizationTypesFromDb(requestParameters)]).pipe(
+    map(([organizationTypes]) => ({
+      organizationTypes: organizationTypes.body,
+    }))
+  );
 };
 
 export const initialDataOrganizationTypeEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const organizationTypeService = inject(OrganizationTypeService);
   const id = Number(route.paramMap.get('id'));
-  return organizationTypeService.getById(id);
+  const requestParameters: QueryParameters = {
+    id: id,
+  };
+  return organizationTypeService.getOrganizationTypeById(requestParameters).pipe(
+    map((organizationType) => ({
+      organizationType: organizationType.body,
+    }))
+  );
 };

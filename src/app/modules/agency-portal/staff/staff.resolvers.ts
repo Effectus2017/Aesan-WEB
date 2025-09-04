@@ -6,7 +6,7 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
-import { forkJoin, switchMap, of } from 'rxjs';
+import { forkJoin, switchMap, of, map } from 'rxjs';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { AuthService } from 'app/core/auth/auth.service';
 
@@ -18,16 +18,22 @@ export const initialDataStaffBoardMembersListResolver: ResolveFn<any> = (route: 
   const staffService = inject(StaffService);
   const authService = inject(AuthService);
 
+  const agencyId = authService.getAgencyId();
+
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: false,
     isList: false,
     staffTypeId: 2,
-    agencyId: authService.getAgencyId(),
+    agencyId: agencyId,
   };
 
-  return forkJoin([staffService.getAllStaffFromDb(requestParameters)]);
+  return forkJoin([staffService.getAllStaffFromDb(requestParameters)]).pipe(
+    map(([staff]) => ({
+      staff: staff.body,
+    }))
+  );
 };
 
 // Resolver para la lista de staff de empleados
@@ -35,16 +41,22 @@ export const initialDataStaffEmployeesListResolver: ResolveFn<any> = (route: Act
   const staffService = inject(StaffService);
   const authService = inject(AuthService);
 
+  const agencyId = authService.getAgencyId();
+
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: false,
     isList: false,
     staffTypeId: 1,
-    agencyId: authService.getAgencyId(),
+    agencyId: agencyId,
   };
 
-  return forkJoin([staffService.getAllStaffFromDb(requestParameters)]);
+  return forkJoin([staffService.getAllStaffFromDb(requestParameters)]).pipe(
+    map(([staff]) => ({
+      staff: staff.body,
+    }))
+  );
 };
 
 // Resolver para la creación de un staff
@@ -94,7 +106,15 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     // Staff classification service
     // Servicio para clasificaciones de staff
     staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
-  ]);
+  ]).pipe(
+    map(([cities, regions, options, staffTypes, staffClassifications]) => ({
+      cities: cities.body,
+      regions: regions.body,
+      options: options.body,
+      staffTypes: staffTypes.body,
+      staffClassifications: staffClassifications.body,
+    }))
+  );
 };
 
 // Resolver para la edición de un staff
@@ -164,7 +184,17 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
           // NO cargar relaciones para empleados
           of(null),
-        ]);
+        ]).pipe(
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, relationships]) => ({
+            staff: staff.body,
+            cities: cities.body,
+            regions: regions.body,
+            options: options.body,
+            staffTypes: staffTypes.body,
+            staffClassifications: staffClassifications.body,
+            relationships: relationships, // null para empleados
+          }))
+        );
       } else {
         // Si NO es empleado, cargar todo incluyendo relaciones
         return forkJoin([
@@ -185,7 +215,17 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
           // Staff relationships service (solo para no empleados)
           staffRelationshipService.getRelationshipsByStaffId(requestParametersId),
-        ]);
+        ]).pipe(
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, relationships]) => ({
+            staff: staff.body,
+            cities: cities.body,
+            regions: regions.body,
+            options: options.body,
+            staffTypes: staffTypes.body,
+            staffClassifications: staffClassifications.body,
+            relationships: relationships.body,
+          }))
+        );
       }
     })
   );

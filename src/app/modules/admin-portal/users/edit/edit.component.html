@@ -1,14 +1,14 @@
-<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+<div class="flex overflow-y-auto absolute inset-0 flex-col min-w-0" cdkScrollable>
   <!-- Header -->
   <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
 
   <!-- Main -->
-  <div class="flex-auto overflow-y-auto sm:p-6" cdkScrollable>
-    <div class="flex justify-center w-full p-8 py-4 rounded-full sm:justify-start">
+  <div class="overflow-y-auto flex-auto sm:p-6" cdkScrollable>
+    <div class="flex justify-center p-8 py-4 w-full rounded-full sm:justify-start">
       <img
         title="{{ 'users.edit.avatar.title' | transloco }}"
         (click)="fileInput.click()"
-        class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
+        class="object-cover rounded-full ring-4 ring-gray-400 cursor-pointer w-26 h-26"
         [src]="imageURL || 'assets/images/avatars/profile.png'"
         [alt]="'users.edit.avatar.alt' | transloco"
         (error)="handleMissingImage($event)"
@@ -27,7 +27,7 @@
     </div>
 
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
-      <form [formGroup]="headerConfig.formGroup" class="flex flex-col col-span-12 overflow-hidden sm:col-span-8">
+      <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-8">
         <div formGroupName="datosPersonales">
           <!-- Personal Information -->
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
@@ -83,9 +83,7 @@
                 [attr.aria-label]="'users.edit.motherLastName.label' | transloco"
                 [title]="'users.edit.motherLastName.label' | transloco"
               />
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('motherLastName').hasError('required')">
-                {{ "users.edit.motherLastName.required" | transloco }}
-              </mat-error>
+
             </mat-form-field>
           </div>
           <!-- Access Information -->
@@ -109,7 +107,7 @@
               <mat-select
                 formControlName="role"
                 [placeholder]="'users.edit.role.placeholder' | transloco"
-                [compareWith]="compare"
+                [compareWith]="compareById"
                 data-cy="role-select"
                 [attr.aria-label]="'users.edit.role.label' | transloco"
               >
@@ -125,7 +123,7 @@
                 [placeholder]="'users.add.agency.placeholder' | transloco"
                 data-cy="agency-select"
                 [attr.aria-label]="'users.add.agency.label' | transloco"
-                [compareWith]="compare"
+                [compareWith]="compareById"
               >
                 <mat-option *ngFor="let _agencies of listAgencies" [value]="_agencies" data-cy="agency-option">
                   {{ _agencies.name }}
@@ -157,7 +155,7 @@
           </div>
           }
         </div>
-        <div class="col-span-10 overflow-hidden">
+        <div class="overflow-hidden col-span-10">
           <div class="prose-sm prose">
             <h2 class="my-12">{{ "users.edit.password-section" | transloco }}</h2>
           </div>
@@ -326,7 +324,7 @@
           }
         </div>
         <div class="mt-1 text-md text-hint">{{ "users.edit.password-requirements" | transloco }}</div>
-        <div class="col-span-10 overflow-hidden">
+        <div class="overflow-hidden col-span-10">
           <div class="prose-sm prose">
             <h2 class="my-12">{{ "users.edit.permissions-section" | transloco }}</h2>
           </div>

@@ -1,6 +1,9 @@
 {
   "sign-up": {
     "title": "Intención de Participación",
+    "program-name": {
+      "label": "¿A qué programa desea participar?"
+    },
     "program": {
       "label": "¿A qué programa desea participar?"
     },
@@ -140,6 +143,29 @@
     "form-invalid": {
       "message": "Por favor, complete todos los campos requeridos",
       "close": "Cerrar"
+    },
+    "notification": {
+      "title": "Notificación",
+      "confirm": "Aceptar"
+    },
+    "pdam-psav-not-eligible": {
+      "message": "No es elegible para participar en los programas PDAM o PSAV"
+    },
+    "basic-education-not-eligible": {
+      "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
+    },
+    "error": {
+      "creating-user": "Error al crear el usuario. Por favor, intente nuevamente"
+    },
+    "success": {
+      "default": "Usuario registrado exitosamente"
+    },
+    "pacna-not-eligible": {
+      "message": "No es elegible para participar en el programa PACNA"
+    },
+    "program": {
+      "required": "Debe seleccionar un programa para continuar",
+      "required-close": "Cerrar"
     },
     "tax-exemption-status": {
       "label": "¿En qué estatus se encuentra su Exención Contributiva?"

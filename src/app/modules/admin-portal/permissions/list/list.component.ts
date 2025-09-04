@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -47,6 +48,7 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
   private _permissionService = inject(PermissionService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -74,16 +76,14 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
   constructor() {}
 
   ngOnInit() {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._permissionService.permissions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-
-    if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.tableConfig.dataSource.data = result.body.data;
-        this.tableConfig.length = result.body.count;
-        this._changeDetectorRef.markForCheck();
-      }
-    });
-
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.permissions.data;
+      this.tableConfig.length = resolvedData.permissions.count;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {

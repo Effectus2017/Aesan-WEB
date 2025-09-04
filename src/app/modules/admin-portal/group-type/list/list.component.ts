@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -49,6 +50,7 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -77,17 +79,15 @@ export class GroupTypeListComponent implements OnInit, OnDestroy, OnGenericTable
   constructor() {}
 
   ngOnInit() {
-    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result && result.body) {
-        const dataWithOrder = result.body.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
-        this.tableConfig.dataSource.data = dataWithOrder;
-        this.tableConfig.length = result.body.count;
-      } else {
-        this.tableConfig.dataSource.data = [];
-        this.tableConfig.length = 0;
-      }
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      const dataWithOrder = resolvedData.groupTypes.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
+      this.tableConfig.dataSource.data = dataWithOrder;
+      this.tableConfig.length = resolvedData.groupTypes.count;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {

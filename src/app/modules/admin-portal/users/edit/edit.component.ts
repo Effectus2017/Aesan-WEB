@@ -15,7 +15,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { compare, compareString, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, compareById, compareString, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -35,24 +35,24 @@ import { Permission } from 'app/shared/models/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
 
 @Component({
-    selector: 'app-users-edit',
-    templateUrl: './edit.component.html',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatTabsModule,
-        MatInputModule,
-        NgFor,
-        NgIf,
-        MatButtonModule,
-        MatSelectModule,
-        MatIconModule,
-        TranslocoModule,
-        GenericHeaderComponent,
-        MatCheckboxModule,
-        GenericTableComponent,
-    ]
+  selector: 'app-users-edit',
+  templateUrl: './edit.component.html',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatInputModule,
+    NgFor,
+    NgIf,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    TranslocoModule,
+    GenericHeaderComponent,
+    MatCheckboxModule,
+    GenericTableComponent,
+  ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -83,12 +83,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
       }),
-      password: this._formBuilder.group(
-        {
-          currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-        }
-      ),
+      password: this._formBuilder.group({
+        currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+      }),
     }),
     saveButtonShow: true,
     saveButtonText: 'users.edit.buttons.update',
@@ -133,63 +131,39 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   userRole: string = null;
 
   compare = compare;
+  compareById = compareById;
   compareString = compareString;
 
-  constructor() {
-    this.userRole = this._authService.getUserRole();
-
-    this._permissionsService.permissionsUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
-      this._changeDetectorRef.markForCheck();
-    });
-  }
+  constructor() {}
 
   ngOnInit() {
+    this.userRole = this._authService.getUserRole();
 
-    this._usersService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.onSetForm(result.body);
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-      }
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this.route.snapshot.data['data'];
 
-    // Get the accountings
-    this._usersService.roles$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.listRoles = result.body.data;
+    if (resolvedData) {
+      // Asignar datos directamente desde el resolver
+      this.user = resolvedData.user;
+      this.listRoles = resolvedData.roles.data || resolvedData.roles;
+      this.listAgencies = resolvedData.agencies;
 
-      if (this.user) {
-
-        // bsucar el rol en la lista de roles
-        const role = this.listRoles.find((role: any) => role.name === this.user.roles[0]);
-
-        this.headerConfig.formGroup.controls.datosPersonales.patchValue({
-          role: role,
-        });
+      // Configurar permisos si existen
+      if (resolvedData.permissions) {
+        this.tableConfig.dataSource.data = resolvedData.permissions.data || resolvedData.permissions;
+        this.tableConfig.length = resolvedData.permissions.count || resolvedData.permissions.length;
       }
 
-      // Mark for check
+      // Configurar el formulario con los datos del usuario
+      this.onSetForm(this.user);
+
       this._changeDetectorRef.markForCheck();
-    });
-
-    this._agencyService.agenciesList$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        this.listAgencies = result.body;
-
-        if (this.user) {
-          const agency = this.listAgencies.find((agency: any) => agency.id === this.user.agencyId);
-          this.headerConfig.formGroup.controls.datosPersonales.patchValue({
-            agency: agency,
-          });
-        }
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-      });
+    }
 
     // Suscribirse a los cambios del formulario para actualizar el estado del botón
-    this.headerConfig.formGroup.get('password').valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('password')
+      .valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         // Actualizar el estado del botón basado en la validación del formulario
         this.headerConfig.submitDisabled = this.headerConfig.formGroup.get('password').invalid;
@@ -235,9 +209,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       isActive: this.user.isActive,
       isTemporalPasswordActived: this.user.isTemporalPasswordActived,
       emailConfirmed: this.user.emailConfirmed,
+      role: this.user.role,
+      agency: this.user.agency,
     });
 
-     this.disableEditableFormControls();
+    this.disableEditableFormControls();
   }
 
   getById() {
@@ -245,7 +221,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       userId: this.id,
     };
 
-    this._usersService.getUserByIdFromDb(requestParameters).subscribe();
+    this._usersService.getUserByIdWithSP(requestParameters).subscribe();
   }
 
   // Para cuando se actualiza la contraseña. submit button
@@ -262,12 +238,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Para cuando se actualiza el usuario. save button
   onSave(): void {
     if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
-        this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
-      } else {
-        this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
-        this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
-        this.headerConfig.formGroup.markAllAsTouched();
-      }
+      this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
+    } else {
+      this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.markAllAsTouched();
+    }
   }
 
   // Para cuando se cancela el usuario. cancel button
@@ -277,8 +253,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Para cuando se actualiza el usuario, excepto la contraseña
   onUpdate(form: any) {
-    const requestParameters: QueryParameters = {};
-
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email) && isNullOrUndefinedEmptyStringNullArray(this.user.email)) {
       this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
@@ -303,6 +277,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       roleName = form.role.name;
     }
 
+    const requestParameters: QueryParameters = {
+      currentUserId: loggedInUserId,
+    };
+
     const _model: RequestUser = {
       id: this.id,
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -319,10 +297,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailConfirmed: form.emailConfirmed,
     };
 
-    this._usersService.update(_model, requestParameters).subscribe({
+    this._usersService.updateWithSP(_model, requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
-          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
 
           // Mostrar mensaje de éxito
@@ -332,18 +310,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             icon: {
               show: true,
               name: 'heroicons_outline:check-circle',
-              color: 'success'
+              color: 'success',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
         }
       },
@@ -355,18 +333,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
       },
       complete: () => {
@@ -377,7 +355,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Para cuando se actualiza la contraseña, para uso del usuario
   onUpdatePassword(form: any) {
-
     const requestParameters: QueryParameters = {
       userId: this.id,
       password: form.currentPassword,
@@ -387,7 +364,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.changePassword(requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
-          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+          const requestParameters: QueryParameters = {
+            userId: this.id,
+          };
+          this._usersService.getUserByIdWithSP(requestParameters).subscribe();
           this._changeDetectorRef.markForCheck();
 
           // Mostrar mensaje de éxito
@@ -397,18 +377,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             icon: {
               show: true,
               name: 'heroicons_outline:check-circle',
-              color: 'success'
+              color: 'success',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
         }
       },
@@ -420,22 +400,21 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
       },
-      complete: () => {
-      },
+      complete: () => {},
     });
   }
 
@@ -450,7 +429,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.resetPassword(requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
-          this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe();
           this._changeDetectorRef.markForCheck();
 
           // Mostrar mensaje de éxito
@@ -460,18 +439,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             icon: {
               show: true,
               name: 'heroicons_outline:check-circle',
-              color: 'success'
+              color: 'success',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
         }
       },
@@ -483,18 +462,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
       },
       complete: () => {},
@@ -521,18 +500,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             icon: {
               show: true,
               name: 'heroicons_outline:check-circle',
-              color: 'success'
+              color: 'success',
             },
             actions: {
               confirm: {
                 show: true,
                 label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary'
+                color: 'primary',
               },
               cancel: {
-                show: false
-              }
-            }
+                show: false,
+              },
+            },
           });
         }
       },
@@ -543,20 +522,20 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
-      }
+      },
     });
   }
 
@@ -581,11 +560,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   }
 
   onUpload(file: File, forlderTo: any) {
-
     var requestParameters: QueryParameters = {
-        userId: this.id,
-        description: 'userProfile',
-        documentType: 'userProfile',
+      userId: this.id,
+      description: 'userProfile',
+      documentType: 'userProfile',
     };
 
     this._uploadService.uploadUserAvatar(requestParameters, file).subscribe({
@@ -598,10 +576,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           this._usersService.updateUserAvatar(this.id, this.imageURL).subscribe({
             next: (avatarResult: any) => {
               // Comprobar si la operación fue exitosa
-              const isSuccess = avatarResult && (
-                avatarResult.status === 200 ||
-                (avatarResult.body && (avatarResult.body.valid === true || avatarResult.body.statusCode === 200))
-              );
+              const isSuccess = avatarResult && (avatarResult.status === 200 || (avatarResult.body && (avatarResult.body.valid === true || avatarResult.body.statusCode === 200)));
 
               if (isSuccess) {
                 this._fuseConfirmationService.open({
@@ -610,22 +585,22 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
                   icon: {
                     show: true,
                     name: 'heroicons_outline:check-circle',
-                    color: 'success'
+                    color: 'success',
                   },
                   actions: {
                     confirm: {
                       show: true,
                       label: this._translocoService.translate('dialog.success.confirm'),
-                      color: 'primary'
+                      color: 'primary',
                     },
                     cancel: {
-                      show: false
-                    }
-                  }
+                      show: false,
+                    },
+                  },
                 });
 
                 // Actualizar la vista
-                this._usersService.getUserByIdFromDb({ userId: this.id }).subscribe();
+                this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe();
               } else {
                 // Si no es éxito pero tampoco hubo un error, mostrar un mensaje genérico
                 this._fuseConfirmationService.open({
@@ -634,18 +609,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
                   icon: {
                     show: true,
                     name: 'heroicons_outline:exclamation-circle',
-                    color: 'error'
+                    color: 'error',
                   },
                   actions: {
                     confirm: {
                       show: true,
                       label: this._translocoService.translate('dialog.error.confirm'),
-                      color: 'primary'
+                      color: 'primary',
                     },
                     cancel: {
-                      show: false
-                    }
-                  }
+                      show: false,
+                    },
+                  },
                 });
               }
             },
@@ -657,20 +632,20 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
                 icon: {
                   show: true,
                   name: 'heroicons_outline:exclamation-circle',
-                  color: 'error'
+                  color: 'error',
                 },
                 actions: {
                   confirm: {
                     show: true,
                     label: this._translocoService.translate('dialog.error.confirm'),
-                    color: 'primary'
+                    color: 'primary',
                   },
                   cancel: {
-                    show: false
-                  }
-                }
+                    show: false,
+                  },
+                },
               });
-            }
+            },
           });
 
           this._changeDetectorRef.markForCheck();
@@ -684,20 +659,20 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
-      }
+      },
     });
   }
 

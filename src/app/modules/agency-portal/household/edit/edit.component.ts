@@ -65,20 +65,22 @@ export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {
   constructor() {}
 
   ngOnInit(): void {
-    const resolverData = this._route.snapshot.data['data'];
-    if (resolverData && resolverData.body) {
-      this.householdId = resolverData.body.id;
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.householdId = resolvedData.household.id;
       this.headerConfig.formGroup.patchValue({
-        street: resolverData.body.street,
-        apartment: resolverData.body.apartment,
-        city: resolverData.body.city,
-        region: resolverData.body.region,
-        zipcode: resolverData.body.zipcode,
-        phone: resolverData.body.phone,
-        email: resolverData.body.email,
-        completedBy: resolverData.body.completedBy,
-        completedDate: resolverData.body.completedDate,
-        isActive: resolverData.body.isActive,
+        street: resolvedData.household.street,
+        apartment: resolvedData.household.apartment,
+        city: resolvedData.household.city,
+        region: resolvedData.household.region,
+        zipcode: resolvedData.household.zipcode,
+        phone: resolvedData.household.phone,
+        email: resolvedData.household.email,
+        completedBy: resolvedData.household.completedBy,
+        completedDate: resolvedData.household.completedDate,
+        isActive: resolvedData.household.isActive,
       });
       this._cdr.markForCheck();
     }

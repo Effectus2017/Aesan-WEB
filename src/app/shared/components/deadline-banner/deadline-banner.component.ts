@@ -108,6 +108,8 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
             if (!isNullOrUndefinedEmptyStringNullArray(result)) {
                 const agency = result.body;
 
+
+
                 if (agency.deadlineToCompleteRegistration) {
                     this._calculateDaysRemaining(agency.deadlineToCompleteRegistration);
                 } else {

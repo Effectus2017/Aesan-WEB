@@ -78,9 +78,7 @@
                   data-cy="mother-last-name-input"
                   [attr.aria-label]="'users.add.motherLastName.label' | transloco"
                 />
-                <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('motherLastName').hasError('required')" data-cy="mother-last-name-error">
-                  {{ 'users.add.motherLastName.required' | transloco }}
-                </mat-error>
+
               </mat-form-field>
           </div>
 

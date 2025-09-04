@@ -55,8 +55,6 @@ export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGene
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-
-
   headerConfig: GenericHeaderConfig = {
     title: 'staff.boardMembers.list.title',
     formGroup: this._formBuilder.group({
@@ -82,17 +80,18 @@ export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGene
   };
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Filtrar solo miembros de junta
-        const boardMembers = result.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
-        );
-        this.tableConfig.dataSource.data = boardMembers;
-        this.tableConfig.length = boardMembers.length;
-      }
-    });
+    if (resolvedData && resolvedData.staff) {
+      // Filtrar solo miembros de junta
+      const boardMembers = resolvedData.staff.data.filter((staff: StaffList) =>
+        staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
+      );
+      this.tableConfig.dataSource.data = boardMembers;
+      this.tableConfig.length = boardMembers.length;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {

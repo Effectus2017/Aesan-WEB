@@ -35,9 +35,9 @@
         </button>
         <!-- Components -->
         <div class="flex items-center pl-2 ml-auto space-x-0.5 sm:space-x-2">
-                            <current-program-banner></current-program-banner>
-                <agency-status-banner></agency-status-banner>
-            <deadline-banner></deadline-banner>
+            <current-program-banner *ngIf="showCurrentProgramBanner"></current-program-banner>
+            <agency-status-banner *ngIf="showAgencyStatusBanner"></agency-status-banner>
+            <deadline-banner *ngIf="showDeadlineBanner"></deadline-banner>
             <languages></languages>
             <theme-toggle></theme-toggle>
             <messages></messages>

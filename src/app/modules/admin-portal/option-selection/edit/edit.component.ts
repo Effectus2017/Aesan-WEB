@@ -69,10 +69,15 @@ export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHand
   constructor() {}
 
   ngOnInit(): void {
-    this._route.params.subscribe(params => {
-      this.optionSelectionId = +params['id'];
-      this.loadOptionSelection();
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.optionSelectionId = resolvedData.optionSelection.id;
+      this.loadOptionSelection(resolvedData.optionSelection);
+    }
+
+    // Cargar todas las opciones para las posiciones
     this._optionSelectionService.getAllOptionSelections({ take: 1000, skip: 0, alls: true }).subscribe((result: any) => {
       this.optionSelections = (result.body?.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
       this.positionOptions = this.optionSelections.map((_, idx) => ({
@@ -84,24 +89,20 @@ export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHand
     });
   }
 
-  loadOptionSelection() {
-    this._optionSelectionService.getOptionSelectionById({ id: this.optionSelectionId }).subscribe((res: any) => {
-      const data = res.body || res;
+  loadOptionSelection(data: OptionSelection) {
+    this.headerConfig.formGroup.patchValue({
+      name: data.name,
+      nameEN: data.nameEN,
+      optionKey: data.optionKey,
+      booleanValue: data.booleanValue,
+      isActive: data.isActive,
+      displayOrder: data.displayOrder,
+    });
 
-      this.headerConfig.formGroup.patchValue({
-        name: data.name,
-        nameEN: data.nameEN,
-        optionKey: data.optionKey,
-        booleanValue: data.booleanValue,
-        isActive: data.isActive,
-        displayOrder: data.displayOrder,
-      });
-
-      // Calcular la posición actual
+    // Calcular la posición actual
       const idx = this.optionSelections.findIndex(o => o.id === data.id);
       this.headerConfig.formGroup.get('position').setValue(idx >= 0 ? idx + 1 : this.positionOptions.length);
       this._cdr.markForCheck();
-    });
   }
 
   onSave() {

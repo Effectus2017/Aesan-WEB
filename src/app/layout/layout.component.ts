@@ -59,15 +59,12 @@ export class LayoutComponent implements OnInit, OnDestroy {
       this._fuseConfigService.config = { scheme: savedTheme };
     }
 
-    // Suscribirse a los cambios de navegación
-    this._navigationService.navigation$.pipe(takeUntil(this._unsubscribeAll)).subscribe((navigation: Navigation) => {
-      // Actualizar la navegación en el componente
-      // (asumiendo que tienes una propiedad para almacenar la navegación)
-      this.navigation = navigation;
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._activatedRoute.snapshot.data['initialData'];
 
-    // Obtener la navegación inicial
-    this._navigationService.get();
+    if (resolvedData && resolvedData.navigation) {
+      this.navigation = resolvedData.navigation;
+    }
 
     // Set the theme and scheme based on the configuration
     combineLatest([this._fuseConfigService.config$, this._fuseMediaWatcherService.onMediaQueryChange$(['(prefers-color-scheme: dark)', '(prefers-color-scheme: light)'])])
@@ -185,6 +182,8 @@ export class LayoutComponent implements OnInit, OnDestroy {
         this.layout = path.routeConfig.data.layout;
       }
     });
+
+    console.log('Layout Component - Current layout:', this.layout);
   }
 
   /**

@@ -59,23 +59,19 @@ export class EditAgencyStatusComponent implements OnInit, OnGenericHeaderHandler
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this._route.params.subscribe(params => {
-      this.agencyStatusId = +params['id'];
-      this.loadAgencyStatus();
-    });
-  }
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-  loadAgencyStatus() {
-    this._agencyStatusService.getAgencyStatusById({ id: this.agencyStatusId }).subscribe((res: any) => {
-      const data = res.body || res;
+    if (resolvedData) {
+      this.agencyStatusId = resolvedData.agencyStatus.id;
       this.form.patchValue({
-        name: data.name,
-        nameEN: data.nameEN,
-        isActive: data.isActive,
-        displayOrder: data.displayOrder,
+        name: resolvedData.agencyStatus.name,
+        nameEN: resolvedData.agencyStatus.nameEN,
+        isActive: resolvedData.agencyStatus.isActive,
+        displayOrder: resolvedData.agencyStatus.displayOrder,
       });
       this._cdr.markForCheck();
-    });
+    }
   }
 
   onSave() {

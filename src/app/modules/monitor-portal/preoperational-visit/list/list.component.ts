@@ -75,13 +75,14 @@ export class MonitorPreoperationalVisitListComponent implements OnInit, OnDestro
   }
 
   ngOnInit(): void {
-    // Get the agencies
-    this._agencyService.agencies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
-      // Mark for check
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.agencies.data;
+      this.tableConfig.length = resolvedData.agencies.count;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {

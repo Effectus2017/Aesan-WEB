@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +15,6 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { ActivatedRoute } from '@angular/router';
 import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
 
 @Component({
@@ -70,13 +70,16 @@ export class EditCenterTypeComponent implements OnInit, OnGenericHeaderHandlers 
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this._route.data.subscribe((data) => {
-      this.centerType = data['data']?.body;
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.centerType = resolvedData.centerType;
       if (this.centerType) {
         this.headerConfig.formGroup.patchValue(this.centerType);
       }
       this._cdr.markForCheck();
-    });
+    }
   }
 
   onSave() {

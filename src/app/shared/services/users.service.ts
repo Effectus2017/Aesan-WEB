@@ -1,34 +1,25 @@
+import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-
+import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/QueryParameters';
 import { Role, RequestUser } from '../../modules/admin-portal/users/users.types';
-import { handleError } from '../utils';
-import { getHttpOptions } from '../utils';
+import { getHttpOptions, handleError } from '../utils';
 import { TokenResponse } from '../models/user.types';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
-import { throwError } from 'rxjs';
 import { UploadService } from './upload.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UsersService {
-  // Private
   private _users: BehaviorSubject<RequestUser[] | null> = new BehaviorSubject(null);
   private _user: BehaviorSubject<RequestUser | null> = new BehaviorSubject(null);
-
   private _roles: BehaviorSubject<Role[] | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
-
-  constructor(
-    private _httpClient: HttpClient,
-    private _uploadService: UploadService
-  ) {}
+  private _httpClient = inject(HttpClient);
+  private _uploadService = inject(UploadService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -75,12 +66,18 @@ export class UsersService {
    * @returns Observable<any>
    */
   getUserByIdFromDb(requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-user-by-id', getHttpOptions(requestParameters)).pipe(
-      tap((response: any) => {
-        this._user.next(response);
-      }),
-      catchError(handleError)
-    );
+    return this._httpClient.get(`${this.apiUrl}/get-user-by-id`, getHttpOptions(requestParameters))
+      .pipe(tap((response: any) => this._user.next(response)));
+  }
+
+  /**
+   * Obtiene un usuario por su ID usando Stored Procedure
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  getUserByIdWithSP(requestParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-user-by-id-with-sp`, getHttpOptions(requestParameters))
+      .pipe(tap((response: any) => this._user.next(response)));
   }
 
   /**
@@ -89,12 +86,8 @@ export class UsersService {
    * @returns Observable<any>
    */
   getAllUsersFromDb(requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-users-from-db', getHttpOptions(requestParameters)).pipe(
-      tap((response: any) => {
-        this._users.next(response);
-      }),
-      catchError(handleError)
-    );
+    return this._httpClient.get(`${this.apiUrl}/get-all-users-from-db`, getHttpOptions(requestParameters))
+      .pipe(tap((response: any) => this._users.next(response)));
   }
 
   /**
@@ -103,12 +96,8 @@ export class UsersService {
    * @returns Observable<any>
    */
   getAllUsersFromDbWithSP(requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-users-from-db-with-sp', getHttpOptions(requestParameters)).pipe(
-      tap((response: any) => {
-        this._users.next(response);
-      }),
-      catchError(handleError)
-    );
+    return this._httpClient.get(`${this.apiUrl}/get-all-users-from-db-with-sp`, getHttpOptions(requestParameters))
+      .pipe(tap((response: any) => this._users.next(response)));
   }
 
   /**
@@ -136,13 +125,23 @@ export class UsersService {
   }
 
   /**
-   * Agrega un usuario a la base de datos
+   * Actualiza un usuario usando Stored Procedure
+   * @param param Parámetros del usuario
+   * @param requestParameters Parámetros de la solicitud
+   * @returns Observable<any>
+   */
+  updateWithSP(param: RequestUser, requestParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-user-from-db-with-sp`, param, getHttpOptions(requestParameters));
+  }
+
+  /**
+   * Actualiza un usuario (método original mantenido para compatibilidad)
    * @param param Parámetros del usuario
    * @param requestParameters Parámetros de la solicitud
    * @returns Observable<any>
    */
   update(param: RequestUser, requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.put<any>(`${this.apiUrl}` + '/update-user-from-db', param, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+    return this._httpClient.put(`${this.apiUrl}/update-user-from-db`, param, getHttpOptions(requestParameters));
   }
 
   /**

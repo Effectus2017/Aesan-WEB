@@ -29,7 +29,7 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-
+import { ActivatedRoute } from '@angular/router';
 
 
 @Component({
@@ -67,6 +67,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _geoService = inject(GeoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private _route = inject(ActivatedRoute);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -152,33 +153,21 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.currentLang = lang;
     });
 
-    // Cargar opciones
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Status
-        this.listStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Positions
-        this.listPositions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'employeePosition');
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+    if (resolvedData) {
+      // Status
+      this.listStatus = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      // Positions
+      this.listPositions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'employeePosition');
+      // Cities
+      this.listCities = resolvedData.cities;
+      // Regions
+      this.listRegions = resolvedData.regions;
 
-    // Cities
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Regions
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+      this._changeDetectorRef.detectChanges();
+    }
   }
 
   ngOnDestroy(): void {

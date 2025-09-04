@@ -20,10 +20,11 @@ import { OnGenericEditComponentHandler } from 'app/shared/components/generic-int
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
+
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareById, compareItems, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -37,32 +38,36 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
 import { UserRequest } from 'app/shared/models/Request/UserRequest';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { ActivatedRoute } from '@angular/router';
+import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
 
 @Component({
-    selector: 'app-admin-validation-to-program-edit',
-    templateUrl: './edit.component.html',
-    encapsulation: ViewEncapsulation.None,
-    imports: [
-        MatIconModule,
-        ReactiveFormsModule,
-        FormsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        TextFieldModule,
-        MatDividerModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatSelectModule,
-        MatOptionModule,
-        MatRadioModule,
-        MatTableModule,
-        MatPaginatorModule,
-        NgFor,
-        GenericHeaderComponent,
-        TranslocoModule,
-        MatSnackBarModule,
-        MatDialogModule,
-    ]
+  selector: 'app-admin-validation-to-program-edit',
+  templateUrl: './edit.component.html',
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatIconModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    TextFieldModule,
+    MatDividerModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatOptionModule,
+    MatRadioModule,
+    MatTableModule,
+    MatPaginatorModule,
+    NgFor,
+    GenericHeaderComponent,
+    TranslocoModule,
+    MatSnackBarModule,
+    MatDialogModule,
+  ],
 })
 export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -80,6 +85,8 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   private _snackBar = inject(MatSnackBar);
   private _dialog = inject(MatDialog);
   private _customRouterService = inject(CustomRouterService);
+  private _optionSelectionService = inject(OptionSelectionService);
+  private _route = inject(ActivatedRoute);
 
   listAgencyStatus = [];
   listPrograms = [];
@@ -87,8 +94,16 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   listRegions = [];
   listPostalRegions = [];
   listUsers = [];
+  listPositions: OptionSelection[] = [];
 
   param: Agency;
+
+  // Lenguaje actual
+  currentLang: string = 'es';
+
+  // Compare methods
+  compareById = compareById;
+  compareItems = compareItems;
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -121,14 +136,14 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalRegion: [null, Validators.required],
 
       // Datos del Contacto
-      firstName: [{ value: null }, Validators.required],
+      firstName: [{ value: null }],
       middleName: [{ value: null }],
-      fatherLastName: [{ value: null }, Validators.required],
+      fatherLastName: [{ value: null }],
       motherLastName: [{ value: null }],
 
       // Datos del Administrador
       email: [{ value: null, disabled: true }, Validators.email],
-      administrationTitle: [{ value: null }],
+      position: [{ value: null }],
 
       // Monitor
       monitor: [null],
@@ -144,48 +159,29 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   constructor() {}
 
   ngOnInit() {
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body;
-        this.listPostalRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+    if (resolvedData) {
+      // Asignar datos directamente desde el resolver (sin .body)
+      this.param = resolvedData.agency;
+      this.listAgencyStatus = resolvedData.agencyStatuses;
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+      this.listPostalRegions = resolvedData.regions;
+      this.listPrograms = resolvedData.programs;
+      this.listUsers = resolvedData.users;
+      this.listPositions = resolvedData.options.data;
 
-    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listPrograms = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+      // Configurar el formulario con los datos
+      this.onSetForm(resolvedData.agency);
+      this._changeDetectorRef.detectChanges();
+    }
 
-    this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listAgencyStatus = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
+    // Solo mantener la suscripción de Transloco que no causa conflictos
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
     });
-
-    this._usersService.users$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listUsers = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-          this.onSetForm(result.body);
-          this._changeDetectorRef.detectChanges();
-        }
-      });
   }
 
   ngOnDestroy(): void {
@@ -195,8 +191,8 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   }
 
   onSetForm(param: Agency) {
-
     this.param = param;
+
     this.headerConfig.formGroup.patchValue({
       name: param.name || null,
       city: param.city || null,
@@ -217,13 +213,13 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalCity: param.postalCity || null,
       postalRegion: param.postalRegion || null,
       // Datos del Contacto
-      firstName: param.user.firstName || null,
-      middleName: param.user.middleName || null,
-      fatherLastName: param.user.fatherLastName || null,
-      motherLastName: param.user.motherLastName || null,
+      firstName: param.user?.firstName || null,
+      middleName: param.user?.middleName || null,
+      fatherLastName: param.user?.fatherLastName || null,
+      motherLastName: param.user?.motherLastName || null,
       email: param.email || null,
       phone: param.phone || null,
-      administrationTitle: param.user.administrationTitle || null,
+      position: param.user?.position || null,
       monitor: param.monitor || null,
     });
   }
@@ -268,25 +264,25 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalRegionId: formValues.postalRegion?.id,
       email: formValues.email,
       phone: formValues.phone,
-      administrationTitle: formValues.administrationTitle,
+      //positionId: formValues.position?.id,
       programs: formValues.program ? [formValues.program.id] : [],
       monitorId: formValues.monitor ? formValues.monitor.id : null,
       assignedBy: assignedBy,
     };
 
-    const userRequest: UserRequest = {
+    const userRequest: StaffRequest = {
       id: this.param.user.id,
       firstName: formValues.firstName,
       middleName: formValues.middleName,
       fatherLastName: formValues.fatherLastName,
       motherLastName: formValues.motherLastName,
-      administrationTitle: formValues.administrationTitle,
+      positionId: formValues.position?.id,
       email: formValues.email,
     };
 
     const userAgencyRequest: UserAgencyRequest = {
       agency: agencyRequest,
-      user: userRequest,
+      staff: userRequest,
     };
 
     // Parámetros de consulta
@@ -297,7 +293,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     // Llamar al servicio para actualizar
     this._agencyService.updateAgency(userAgencyRequest, queryParams).subscribe({
       next: (response) => {
-
         switch (response.status) {
           case 200:
             this._fuseConfirmationService.open({
@@ -333,16 +328,15 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
             });
             break;
         }
-
       },
       error: (error) => {
         this._fuseConfirmationService.open({
-            title: this._translocoService.translate('dialog.error.title'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:exclamation-circle',
-              color: 'error',
-            },
+          title: this._translocoService.translate('dialog.error.title'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error',
+          },
           message: this._translocoService.translate('dialog.error.message'),
         });
         this.enableEditableFormControls();
@@ -533,14 +527,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     });
   }
 
-  // Función única para comparar diferentes tipos de elementos
-  compareItems<T>(item1: T, item2: T): boolean {
-    return compareByProperty(item1, item2, 'id' as keyof T);
-  }
-
-  /**
-   * Habilita los controles editables del formulario
-   */
   private enableEditableFormControls(): void {
     // Habilitar todos los controles excepto email y otros campos sensibles
     handleFormControls(this.headerConfig.formGroup, 'enable', {

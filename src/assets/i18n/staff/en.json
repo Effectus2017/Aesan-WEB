@@ -182,6 +182,86 @@
           "placeholder": "Additional comments about the board member"
         }
       },
+      "review": {
+        "label": "Review",
+        "description": "Information about employee review"
+      },
+      "review-result": {
+        "label": "Review Result",
+        "placeholder": "Select the review result",
+        "required": "Review result is required"
+      },
+      "review-date": {
+        "label": "Review Date",
+        "placeholder": "Select the review date",
+        "required": "Review date is required"
+      },
+      "review-justification": {
+        "label": "Review Justification",
+        "placeholder": "Enter the justification for the review performed",
+        "required": "Review justification is required"
+      },
+      "relationships": {
+        "label": "Staff Relationships",
+        "description": "Manage relationships between staff members",
+        "add": "Add Relationship",
+        "edit": "Edit Relationship",
+        "no-relationships": {
+          "title": "No relationships configured",
+          "description": "Configure relationships between staff members to improve organization and communication"
+        },
+        "table": {
+          "columns": {
+            "relatedStaffFullName": "Related Staff Full Name",
+            "relationshipType": "Relationship Type",
+            "comment": "Comment",
+            "relatedStaffPosition": "Related Staff Position",
+            "relatedStaffType": "Related Staff Type",
+            "relatedStaffEmail": "Related Staff Email",
+            "isActive": "Active?",
+            "actions": "Actions"
+          },
+          "buttons": {
+            "edit": "Edit",
+            "delete": "Delete"
+          }
+        },
+        "modal": {
+          "relatedStaff": {
+            "label": "Related Staff",
+            "placeholder": "Select the related staff",
+            "required": "You must select a related staff"
+          },
+          "relationshipType": {
+            "label": "Relationship Type",
+            "placeholder": "Select the relationship type",
+            "required": "You must select a relationship type"
+          },
+          "isActive": {
+            "label": "Is Active?",
+            "placeholder": "Select the relationship status",
+            "required": "Active status is required"
+          },
+          "buttons": {
+            "save": "Save",
+            "update": "Update",
+            "cancel": "Cancel",
+            "saving": "Saving...",
+            "updating": "Updating..."
+          },
+          "success": {
+            "createRelationship": "Relationship created successfully",
+            "updateRelationship": "Relationship updated successfully",
+            "deleteRelationship": "Relationship deleted successfully"
+          },
+          "error": {
+            "createRelationship": "Error creating relationship",
+            "updateRelationship": "Error updating relationship",
+            "deleteRelationship": "Error deleting relationship",
+            "loadingStaffList": "Error loading staff list"
+          }
+        }
+      },
       "buttons": {
         "save": "Save",
         "cancel": "Cancel"
@@ -315,9 +395,11 @@
           "columns": {
             "relatedStaffFullName": "Related Staff Full Name",
             "relationshipType": "Relationship Type",
+            "comment": "Comment",
             "relatedStaffPosition": "Related Staff Position",
             "relatedStaffType": "Related Staff Type",
             "relatedStaffEmail": "Related Staff Email",
+            "isActive": "Active?",
             "actions": "Actions"
           },
           "buttons": {

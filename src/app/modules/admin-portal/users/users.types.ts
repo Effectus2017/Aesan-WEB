@@ -23,12 +23,18 @@ export interface UserToken {
     userName?: string;
     email?: string;
     password?: string;
-    roles?: string[];
+    role?: any;
+    roles?: any;
     imageURL?: string;
     agencyId?: number;
     isActive?: boolean;
     isTemporalPasswordActived?: boolean;
     emailConfirmed?: boolean;
+  }
+
+  export interface DTOUserRole {
+    id: string;
+    name: string;
   }
 
   export interface Token {

@@ -446,7 +446,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     };
 
     const userRequest: UserRequest = {
-      id: this.param.user.id,
+      id: this.param.user.id?.toString(),
       firstName: formValues.firstName,
       middleName: formValues.middleName,
       fatherLastName: formValues.fatherLastName,
@@ -457,7 +457,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
 
     const userAgencyRequest: UserAgencyRequest = {
       agency: agencyRequest,
-      user: userRequest,
+      //user: userRequest,
     };
 
     // Parámetros de consulta

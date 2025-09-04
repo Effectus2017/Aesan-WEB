@@ -1,128 +1,158 @@
 {
-    "list": {
-        "title": "Evaluación de Auspiciadores",
-        "search": {
-            "placeholder": "Buscar usuario",
-            "button": "Buscar"
-        },
-        "table": {
-            "columns": {
-                "program": "Programa",
-                "agencyName": "Nombre de la Agencia Auspiciadora:",
-                "stateDepartmentRegistration": "Registro Depto. Estado:",
-                "address": "Dirección:",
-                "city": "Ciudad:",
-                "region": "Región:",
-                "zipCpde": "Código Postal:",
-                "firstName": "Nombre:",
-                "fatherLastName": "Primer Apellido",
-                "adminTitle": "Título Admin.",
-                "nonProfit": "Sin Fines de Lucro",
-                "uieNumber": "# UIE",
-                "einNumber": "Número de Seguro Social Patronal (EIN)",
-                "ssPatronal": "Número de Registro del Departamento de Estado",
-                "latitude": "Latitud",
-                "longitude": "Longitud",
-                "phone": "Teléfono",
-                "email": "Correo",
-                "middleName": "Segundo Nombre",
-                "motherLastName": "Segundo Apellido",
-                "createdBy": "Creado por",
-                "assignedTo": "Asignado a",
-                "createdAt": "Fecha de Creación",
-                "status": "Estatus",
-                "actions": "Acciones"
+    "validation-to-program": {
+        "list": {
+            "title": "Evaluación de Auspiciadores",
+            "search": {
+                "placeholder": "Buscar usuario",
+                "button": "Buscar"
+            },
+            "table": {
+                "columns": {
+                    "programName": "Programa",
+                    "agencyName": "Nombre de la Agencia Auspiciadora",
+                    "stateDepartmentRegistration": "Registro Depto. Estado",
+                    "address": "Dirección",
+                    "city": "Ciudad",
+                    "region": "Región",
+                    "zipCode": "Código Postal",
+                    "firstName": "Nombre",
+                    "fatherLastName": "Primer Apellido",
+                    "adminTitle": "Título Admin.",
+                    "nonProfit": "Sin Fines de Lucro",
+                    "uieNumber": "# UIE",
+                    "einNumber": "Número de Seguro Social Patronal (EIN)",
+                    "ssPatronal": "Número de Registro del Departamento de Estado",
+                    "latitude": "Latitud",
+                    "longitude": "Longitud",
+                    "phone": "Teléfono",
+                    "email": "Correo",
+                    "middleName": "Segundo Nombre",
+                    "motherLastName": "Segundo Apellido",
+                    "createdBy": "Creado por",
+                    "assignedTo": "Asignado a",
+                    "createdAt": "Fecha de Creación",
+                    "status": "Estatus",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "delete": "Eliminar"
+                }
             },
             "buttons": {
-                "edit": "Editar",
-                "delete": "Eliminar"
+                "add": "Agregar",
+                "clear": "Limpiar",
+                "save": "Guardar"
             }
         },
-        "buttons": {
-            "add": "Agregar",
-            "clear": "Limpiar",
-            "save": "Guardar"
+        "edit": {
+            "title": "Editar Evaluación de Auspiciadores",
+            "submit": "Aprobar",
+            "save": "Guardar",
+            "reject": "Rechazar",
+            "program": {
+                "label": "Programa"
+            },
+            "status": {
+                "label": "Estatus"
+            },
+            "monitor": {
+                "label": "Asignado a"
+            },
+            "agency": {
+                "label": "Agencia",
+                "placeholder": "Ingrese el nombre de la agencia"
+            },
+            "state-department-registration": {
+                "label": "Registro Depto. Estado",
+                "placeholder": "Ingrese el número de registro"
+            },
+            "uieNumber": {
+                "label": "UIE #",
+                "placeholder": "Ingrese el número UIE"
+            },
+            "einNumber": {
+                "label": "EIN #",
+                "placeholder": "Ingrese el número EIN"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Ingrese la dirección"
+            },
+            "city": {
+                "label": "Ciudad"
+            },
+            "region": {
+                "label": "Región"
+            },
+            "zip-code": {
+                "label": "Código Postal",
+                "placeholder": "Ingrese el código postal"
+            },
+            "first-name": {
+                "label": "Nombre",
+                "placeholder": "Ingrese el nombre"
+            },
+            "middle-name": {
+                "label": "Segundo Nombre",
+                "placeholder": "Ingrese el segundo nombre"
+            },
+            "father-last-name": {
+                "label": "Primer Apellido",
+                "placeholder": "Ingrese el primer apellido"
+            },
+            "mother-last-name": {
+                "label": "Segundo Apellido",
+                "placeholder": "Ingrese el segundo apellido"
+            },
+            "email": {
+                "label": "Correo",
+                "placeholder": "Ingrese el correo electrónico"
+            },
+            "phone": {
+                "label": "Teléfono",
+                "placeholder": "Ingrese el número de teléfono"
+            },
+            "administration-title": {
+                "label": "Título Administrador",
+                "placeholder": "Ingrese el título del administrador"
+            },
+            "sections": {
+                "sponsor-information": "Información del Auspiciador",
+                "sponsor-information-description": "Ingrese la información de la agencia auspiciadora",
+                "address": "Información de Dirección",
+                "address-description": "Ingrese los detalles de la dirección física",
+                "postal-address": "Dirección Postal",
+                "postal-address-description": "Ingrese los detalles de la dirección postal",
+                "user-information": "Información del Usuario",
+                "user-information-description": "Ingrese la información de la persona de contacto"
+            },
+            "postal": {
+                "address": {
+                    "label": "Dirección Postal",
+                    "placeholder": "Ingrese la dirección postal"
+                },
+                "city": {
+                    "label": "Ciudad"
+                },
+                "region": {
+                    "label": "Región"
+                },
+                "zip-code": {
+                    "label": "Código Postal",
+                    "placeholder": "Ingrese el código postal"
+                }
+            },
+            "coordinates": {
+                "latitude": {
+                    "label": "Latitud",
+                    "placeholder": "Ingrese la latitud"
+                },
+                "longitude": {
+                    "label": "Longitud",
+                    "placeholder": "Ingrese la longitud"
+                }
+            }
         }
-    },
-    "edit": {
-        "title": "Editar Evaluación de Auspiciadores",
-        "monitor": {
-            "label": "Asignado a:"
-        },
-        "program": {
-            "label": "Programa al que desea participar:",
-            "placeholder": "Seleccione un programa"
-        },
-        "status": {
-            "label": "Estatus:",
-            "placeholder": "Seleccione un estatus"
-        },
-        "agency": {
-            "label": "Nombre de la Agencia Auspiciadora:",
-            "placeholder": "Ingrese el nombre de la agencia"
-        },
-        "state-department-registration": {
-            "label": "Registro Depto. Estado:",
-            "placeholder": "Ingrese el número de registro"
-        },
-        "uieNumber": {
-            "label": "UIE #:",
-            "placeholder": "Ingrese el número UIE"
-        },
-        "einNumber": {
-            "label": "EIN #:",
-            "placeholder": "Ingrese el número EIN"
-        },
-        "address": {
-            "label": "Dirección:",
-            "placeholder": "Ingrese la dirección"
-        },
-        "phone": {
-            "label": "Teléfono:",
-            "placeholder": "(xxx) xxx-xxxx"
-        },
-        "zip-code": {
-            "label": "Código Postal:",
-            "placeholder": "Ingrese el código postal"
-        },
-        "postal-address": {
-            "label": "Dirección Postal:",
-            "placeholder": "Ingrese la dirección postal"
-        },
-        "city": {
-            "label": "Ciudad:",
-            "placeholder": "Seleccione una ciudad"
-        },
-        "region": {
-            "label": "Región:",
-            "placeholder": "Seleccione una región"
-        },
-        "first-name": {
-            "label": "Nombre:",
-            "placeholder": "Ingrese el nombre"
-        },
-        "middle-name": {
-            "label": "Segundo Nombre:",
-            "placeholder": "Ingrese el segundo nombre"
-        },
-        "father-last-name": {
-            "label": "Primer Apellido:",
-            "placeholder": "Ingrese el primer apellido"
-        },
-        "mother-last-name": {
-            "label": "Segundo Apellido:",
-            "placeholder": "Ingrese el segundo apellido"
-        },
-        "email": {
-            "label": "Correo:",
-            "placeholder": "Ingrese el correo electrónico"
-        },
-        "administration-title": {
-            "label": "Título Administrador:",
-            "placeholder": "Ingrese el título del administrador"
-        },
-        "save": "Guardar",
-        "submit": "Aprobar",
-        "reject": "Rechazar"
     }
 }

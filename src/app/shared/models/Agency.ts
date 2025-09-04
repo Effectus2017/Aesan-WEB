@@ -2,6 +2,8 @@ import { AgencyStatus } from "./AgencyStatus";
 import { City } from "./City";
 import { Program } from "./Program";
 import { Region } from "./Region";
+import { OptionSelection } from "./OptionSelection";
+import { Staff } from "./Staff";
 
 export interface Agency {
     id?: number;
@@ -43,8 +45,8 @@ export interface Agency {
     // Program
     programs?: Program[];
     // User
-    user?: User;
-    monitor?: User;
+    user?: Staff;
+    monitor?: Staff;
     // Cita coordinada
     appointmentCoordinated?: boolean;
     appointmentDate?: string;
@@ -54,12 +56,5 @@ export interface Agency {
     deadlineToCompleteRegistration?: string;
 }
 
-export interface User {
-    id?: string;
-    firstName: string;
-    middleName: string;
-    fatherLastName: string;
-    motherLastName: string;
-    administrationTitle: string;
-}
+
 

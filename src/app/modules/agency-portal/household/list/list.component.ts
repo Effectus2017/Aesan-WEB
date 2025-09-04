@@ -76,17 +76,15 @@ export class HouseholdListComponent implements OnInit, OnDestroy, OnGenericTable
   constructor() {}
 
   ngOnInit() {
-    // Usar datos del resolver
-    const resolverData = this._route.snapshot.data['data']?.[0];
-    if (resolverData && resolverData.body) {
-      const data = resolverData.body.data || [];
-      this.tableConfig.dataSource.data = data;
-      this.tableConfig.length = resolverData.body.count;
-      this.tableConfig.dataSourceList = data;
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.households.data;
+      this.tableConfig.length = resolvedData.households.count;
+      this.tableConfig.dataSourceList = resolvedData.households.data;
+      this._changeDetectorRef.markForCheck();
     }
-    this._changeDetectorRef.markForCheck();
-    // Suscribirse a cambios si el servicio expone observable
-    // this._householdService.households$.pipe(takeUntil(this._unsubscribeAll)).subscribe(...)
   }
 
   ngOnDestroy(): void {

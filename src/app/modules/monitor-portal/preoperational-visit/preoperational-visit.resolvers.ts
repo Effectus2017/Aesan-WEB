@@ -6,7 +6,7 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, map } from 'rxjs';
 
 export const initialMonitorPreoperationalVisitResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
@@ -25,7 +25,11 @@ export const initialMonitorPreoperationalVisitResolver = () => {
   return forkJoin([
     //_programService.getAllProgramInscriptions(requestParameters),
     _agencyService.getAllAgenciesFromDb(requestParameters),
-  ]);
+  ]).pipe(
+    map(([agencies]) => ({
+      agencies: agencies.body,
+    }))
+  );
 };
 
 @Injectable({
@@ -53,6 +57,14 @@ export class editMonitorPreoperationalVisitResolver implements Resolve<any> {
       this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
       this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),
       this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false }),
-    ]);
+    ]).pipe(
+      map(([agency, agencyStatuses, cities, regions, programs]) => ({
+        agency: agency.body,
+        agencyStatuses: agencyStatuses.body,
+        cities: cities.body,
+        regions: regions.body,
+        programs: programs.body,
+      }))
+    );
   }
 }

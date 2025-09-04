@@ -6,29 +6,39 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { UserService } from 'app/shared/services/user.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 export const initialSignUpResolver = () => {
-  const _agencyService: AgencyService = inject(AgencyService);
-  const _geoService: GeoService = inject(GeoService);
-  const _userService: UserService = inject(UserService);
-  const _authService: AuthService = inject(AuthService);
-  const _programService: ProgramService = inject(ProgramService);
-  const _optionSelectionService: OptionSelectionService = inject(OptionSelectionService);
-  const userId = _authService.getUserId();
-
+  const agencyService: AgencyService = inject(AgencyService);
+  const geoService: GeoService = inject(GeoService);
+  const userService: UserService = inject(UserService);
+  const authService: AuthService = inject(AuthService);
+  const programService: ProgramService = inject(ProgramService);
+  const optionSelectionService: OptionSelectionService = inject(OptionSelectionService);
+  const userId = authService.getUserId();
 
   return forkJoin([
-    _geoService.getCitiesFromDb({
+    geoService.getCitiesFromDb({
       alls: true,
       isList: true,
     }),
-    _programService.getAllProgramsFromDb({
-        alls: false,
-        names: 'PDAM,PSAV,PACNA',
-      }),
-      _optionSelectionService.getOptionSelectionByOptionKey({
-        optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract'
-      })
-  ]);
+    programService.getAllProgramsFromDb({
+      alls: false,
+      names: 'PDAM,PSAV,PACNA',
+    }),
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract',
+    }),
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'administrativePosition',
+      names: 'Administrador,Director,Coordinador(a) del Programa',
+    }),
+  ]).pipe(
+    map(([cities, programs, options1, options2]) => ({
+      cities: cities.body,
+      programs: programs.body,
+      options1: options1.body,
+      options2: options2.body,
+    }))
+  );
 };

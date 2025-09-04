@@ -182,6 +182,25 @@
           "placeholder": "Comentarios adicionales sobre el miembro de la junta directiva"
         }
       },
+      "review": {
+        "label": "Revisión",
+        "description": "Información sobre la revisión del empleado"
+      },
+      "review-result": {
+        "label": "Resultado de Revisión",
+        "placeholder": "Seleccione el resultado de la revisión",
+        "required": "El resultado de revisión es requerido"
+      },
+      "review-date": {
+        "label": "Fecha de Revisión",
+        "placeholder": "Seleccione la fecha de revisión",
+        "required": "La fecha de revisión es requerida"
+      },
+      "review-justification": {
+        "label": "Justificación de Revisión",
+        "placeholder": "Ingrese la justificación de la revisión realizada",
+        "required": "La justificación de revisión es requerida"
+      },
       "buttons": {
         "save": "Guardar",
         "cancel": "Cancelar"
@@ -299,6 +318,7 @@
           "columns": {
             "relatedStaffFullName": "Nombre del Personal Relacionado",
             "relationshipType": "Tipo de Relación",
+            "comment": "Comentario",
             "relatedStaffPosition": "Cargo del Personal Relacionado",
             "relatedStaffType": "Tipo de Personal Relacionado",
             "relatedStaffEmail": "Email del Personal Relacionado",

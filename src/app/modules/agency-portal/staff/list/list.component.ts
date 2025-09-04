@@ -82,17 +82,14 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   };
 
   ngOnInit(): void {
-
-    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Filtrar solo miembros de junta
-        const boardMembers = result.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
-        );
-        this.tableConfig.dataSource.data = boardMembers;
-        this.tableConfig.length = boardMembers.length;
-      }
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+    
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.staff.data;
+      this.tableConfig.length = resolvedData.staff.count;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {

@@ -66,13 +66,19 @@ export class EditSponsorTypeComponent implements OnInit, OnGenericHeaderHandlers
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this._sponsorTypeService.sponsorType$.subscribe((result: any) => {
-      this.sponsorTypeId = result.body.id;
-      this.onSetForm(result.body);
-    });
+
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.onSetForm(resolvedData.sponsorType);
+    }
   }
 
   onSetForm(data: SponsorType) {
+
+    this.sponsorTypeId = data.id;
+
     this.headerConfig.formGroup.patchValue({
       id: data.id,
       name: data.name,

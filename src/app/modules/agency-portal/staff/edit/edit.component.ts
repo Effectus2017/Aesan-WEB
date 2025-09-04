@@ -620,7 +620,16 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             // Mensaje específico para staff usando traducciones
             const staffTypeKey = this.isEmployee ? 'staff.edit.success.employee' : 'staff.edit.success.boardMember';
 
-            this._notificationService.showSuccessDialog(staffTypeKey);
+            this._notificationService.showSuccessDialogWithCallback(
+              this._translocoService.translate(staffTypeKey),
+              (result) => {
+                if (result === 'confirmed') {
+                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
+                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+                  this._customRouterService.navigate([targetRoute]);
+                }
+              }
+            );
             break;
           default:
             this._notificationService.showErrorDialog('staff.edit.error.general');

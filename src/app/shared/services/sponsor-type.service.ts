@@ -27,22 +27,49 @@ export class SponsorTypeService {
     return this._sponsorType.asObservable();
   }
 
+  /**
+   * Obtiene un tipo de patrocinador por su ID
+   * @param queryParameters Los parámetros de consulta
+   * @returns El tipo de patrocinador
+   */
   getSponsorTypeById(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-sponsor-type-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._sponsorType.next(response)));
   }
 
+  /**
+   * Obtiene todos los tipos de patrocinadores de la base de datos
+   * @param queryParameters Los parámetros de consulta
+   * @returns Los tipos de patrocinadores
+   */
   getAllSponsorTypesFromDb(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-all-sponsor-types-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._sponsorTypes.next(response)));
   }
 
+  /**
+   * Inserta un tipo de patrocinador
+   * @param sponsorType El tipo de patrocinador
+   * @param queryParameters Los parámetros de consulta
+   * @returns El tipo de patrocinador
+   */
   insertSponsorType(sponsorType: SponsorType | SponsorTypeRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-sponsor-type`, sponsorType, getHttpOptions(queryParameters));
   }
 
+  /**
+   * Actualiza un tipo de patrocinador
+   * @param sponsorType El tipo de patrocinador
+   * @param queryParameters Los parámetros de consulta
+   * @returns El tipo de patrocinador
+   */
   updateSponsorType(sponsorType: SponsorType, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-sponsor-type`, sponsorType, getHttpOptions(queryParameters));
   }
 
+  /**
+   * Elimina un tipo de patrocinador
+   * @param queryParameters Los parámetros de consulta
+   * @returns El tipo de patrocinador
+   */
   deleteSponsorType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-sponsor-type`, getHttpOptions(queryParameters));
   }

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -51,6 +52,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -75,14 +77,14 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   };
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._employeeService.employees$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.tableConfig.dataSource.data = result.body.data;
-        this.tableConfig.length = result.body.count;
-      }
-    });
-
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.employees.data;
+      this.tableConfig.length = resolvedData.employees.count;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {

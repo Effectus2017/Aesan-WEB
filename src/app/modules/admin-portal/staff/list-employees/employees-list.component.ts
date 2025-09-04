@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -51,6 +52,7 @@ export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGeneric
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -78,17 +80,16 @@ export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGeneric
   };
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Filtrar solo empleados
-        const employees = result.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-        );
-        this.tableConfig.dataSource.data = employees;
-        this.tableConfig.length = employees.length;
-      }
-    });
+    if (resolvedData && resolvedData.staff) {
+      // Filtrar solo empleados
+      const employees = resolvedData.staff.data;
+      this.tableConfig.dataSource.data = employees;
+      this.tableConfig.length = employees.length;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {
@@ -111,9 +112,7 @@ export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGeneric
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
         // Filtrar solo empleados en el resultado
-        const employees = response.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-        );
+        const employees = response.body.data;
         this.tableConfig.dataSource.data = employees;
         this.tableConfig.length = employees.length;
         this._changeDetectorRef.markForCheck();

@@ -250,6 +250,65 @@
             <textarea matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
           </mat-form-field>
         </div>
+
+        <!-- Campos de Revisión (solo para administradores) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="canViewReviewFields">
+          <p class="text-lg font-medium">
+            {{ "staff.add.review.label" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staff.add.review.description" | transloco }}
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="canViewReviewFields">
+          <!-- Resultado de revisión -->
+          <mat-form-field data-cy="review-result-field">
+            <mat-label>{{ "staff.add.review-result.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'reviewResult'" [compareWith]="compareById" data-cy="review-result-select">
+              <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('reviewResult')?.hasError('required')">
+              {{ "staff.add.review-result.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Fecha de revisión -->
+          <mat-form-field data-cy="review-date-field">
+            <mat-label>{{ "staff.add.review-date.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'reviewDate'"
+              placeholder="{{ 'staff.add.review-date.placeholder' | transloco }}"
+              [matDatepicker]="pickerReviewDate"
+              data-cy="review-date-input"
+            />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerReviewDate" />
+            <mat-datepicker #pickerReviewDate />
+            <mat-error *ngIf="headerConfig.formGroup.get('reviewDate')?.hasError('required')">
+              {{ "staff.add.review-date.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="canViewReviewFields">
+          <!-- Justificación de revisión -->
+          <mat-form-field data-cy="review-justification-field">
+            <mat-label>{{ "staff.add.review-justification.label" | transloco }}</mat-label>
+            <textarea
+              matInput
+              [formControlName]="'reviewJustification'"
+              placeholder="{{ 'staff.add.review-justification.placeholder' | transloco }}"
+              data-cy="review-justification-input"
+              rows="3"
+            ></textarea>
+            <mat-error *ngIf="headerConfig.formGroup.get('reviewJustification')?.hasError('required')">
+              {{ "staff.add.review-justification.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
       </div>
     </form>
   </div>

@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 export const initialDataOptionSelectionListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const optionSelectionService = inject(OptionSelectionService);
@@ -13,9 +13,11 @@ export const initialDataOptionSelectionListResolver: ResolveFn<any> = (route: Ac
     alls: true,
   };
 
-  return forkJoin([
-    optionSelectionService.getAllOptionSelections(requestParameters)
-  ]);
+  return forkJoin([optionSelectionService.getAllOptionSelections(requestParameters)]).pipe(
+    map(([optionSelections]) => ({
+      optionSelections: optionSelections.body,
+    }))
+  );
 };
 
 export const initialDataOptionSelectionEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
@@ -23,5 +25,9 @@ export const initialDataOptionSelectionEditResolver: ResolveFn<any> = (route: Ac
   const requestParameters: QueryParameters = {
     id: Number(route.paramMap.get('id')),
   };
-  return optionSelectionService.getOptionSelectionById(requestParameters);
+  return optionSelectionService.getOptionSelectionById(requestParameters).pipe(
+    map((optionSelection) => ({
+      optionSelection: optionSelection.body,
+    }))
+  );
 };

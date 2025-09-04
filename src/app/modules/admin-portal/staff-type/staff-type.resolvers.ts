@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 // Resolver para la lista de tipos de staff
 // Resolver for staff types list
@@ -15,9 +15,11 @@ export const initialDataStaffTypeListResolver: ResolveFn<any> = (route: Activate
     alls: true,
   };
 
-  return forkJoin([
-    staffTypeService.getAllStaffTypesFromDb(requestParameters)
-  ]);
+  return forkJoin([staffTypeService.getAllStaffTypesFromDb(requestParameters)]).pipe(
+    map(([staffTypes]) => ({
+      staffTypes: staffTypes.body,
+    }))
+  );
 };
 
 // Resolver para la creación de un tipo de staff
@@ -33,5 +35,9 @@ export const initialDataStaffTypeEditResolver: ResolveFn<any> = (route: Activate
   const requestParameters: QueryParameters = {
     id: Number(route.paramMap.get('id')),
   };
-  return staffTypeService.getStaffTypeById(requestParameters);
+  return staffTypeService.getStaffTypeById(requestParameters).pipe(
+    map((staffType) => ({
+      staffType: staffType.body,
+    }))
+  );
 };

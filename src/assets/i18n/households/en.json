@@ -1,0 +1,36 @@
+{
+  "title": "Households",
+  "list": {
+    "header": "Households List"
+  },
+  "add": {
+    "header": "Add Household"
+  },
+  "edit": {
+    "header": "Edit Household"
+  },
+  "fields": {
+    "street": "Street",
+    "apartment": "Apartment",
+    "city": "City",
+    "region": "Region",
+    "zipcode": "Postal Code",
+    "phone": "Phone",
+    "email": "Email",
+    "completedBy": "Completed by",
+    "completedDate": "Completion Date"
+  },
+  "actions": {
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "messages": {
+    "successAdd": "Household added successfully.",
+    "successEdit": "Household updated successfully.",
+    "successDelete": "Household deleted successfully.",
+    "error": "An error occurred. Please try again."
+  }
+}

@@ -1,0 +1,81 @@
+{
+    "readability-module": {
+        "household-member-dialog": {
+            "name": "Name",
+            "name-placeholder": "Name",
+            "name-required": "Name is required",
+            "name-maxLength": "Name must have a maximum of 100 characters",
+            "last-name": "Last Name",
+            "last-name-placeholder": "Last Name",
+            "last-name-required": "Last name is required",
+            "last-name-maxLength": "Last name must have a maximum of 100 characters",
+            "age": "Age",
+            "age-required": "Age is required",
+            "age-min": "Age must be greater than or equal to 0",
+            "is-student": "Student",
+            "is-student-yes": "Yes",
+            "is-student-no": "No",
+            "grade": "Grade",
+            "grade-required": "Grade is required",
+            "id-dining-room": "Dining Room ID",
+            "id-dining-room-required": "Dining room ID is required",
+            "id-dining-room-placeholder": "Dining room ID",
+            "foster": "Foster",
+            "foster-yes": "Yes",
+            "foster-no": "No",
+            "migrant": "Migrant",
+            "migrant-yes": "Yes",
+            "migrant-no": "No"
+        },
+        "household-income-dialog": {
+            "title": "Add Income Source",
+            "income": "Income",
+            "income-required": "Income is required",
+            "income-min": "Income must be greater than or equal to 0",
+            "income-maxLength": "Income must have a maximum of 100 characters",
+            "income-frequency": "How often?",
+            "income-frequency-required": "Income frequency is required",
+            "income-frequency-min": "Income frequency must be greater than or equal to 0",
+            "income-frequency-maxLength": "Income frequency must have a maximum of 100 characters",
+
+            "income-two": "Public assistance, child support, spousal support",
+            "income-two-required": "Income is required",
+            "income-two-min": "Income must be greater than or equal to 0",
+            "income-two-maxLength": "Income must have a maximum of 100 characters",
+            "income-frequency-two": "How often?",
+            "income-frequency-two-required": "Income frequency is required",
+            "income-frequency-two-min": "Income frequency must be greater than or equal to 0",
+            "income-frequency-two-maxLength": "Income frequency must have a maximum of 100 characters",
+
+            "income-three": "Pension, Retirement, other income",
+            "income-three-required": "Income is required",
+            "income-three-min": "Income must be greater than or equal to 0",
+            "income-three-maxLength": "Income must have a maximum of 100 characters",
+            "income-frequency-three": "How often?",
+            "income-frequency-three-required": "Income frequency is required",
+            "income-frequency-three-min": "Income frequency must be greater than or equal to 0",
+            "income-frequency-three-maxLength": "Income frequency must have a maximum of 100 characters"
+
+        },
+        "add": {
+            "title": "Application for Free and Reduced Price School Meals",
+            "householdMembers": {
+                "columns": {
+                    "name": "Name",
+                    "lastName": "Last Name",
+                    "age": "Age",
+                    "isStudent": "Student",
+                    "grade": "Grade",
+                    "idDiningRoom": "Dining Room ID",
+                    "isFoster": "Foster",
+                    "isMigrant": "Migrant"
+                }
+            },
+            "householdIncome": {
+                "columns": {
+                    "income": "Income"
+                }
+            }
+        }
+    }
+}

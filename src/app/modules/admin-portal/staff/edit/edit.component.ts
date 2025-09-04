@@ -270,6 +270,39 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   }
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      // Asignar datos directamente desde el resolver
+      this.param = resolvedData.staff;
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+      this.allOptionSelections = resolvedData.options.data;
+      this.listStaffTypes = resolvedData.staffTypes;
+      this.listStaffClassifications = resolvedData.staffClassifications;
+
+      // Filtrar opciones específicas
+      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+      this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+      this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
+      this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+
+      // Configurar el formulario con los datos del staff
+      this.setFormData();
+
+      // Configurar relaciones si existen
+      if (resolvedData.relationships) {
+        this.setupRelationshipsTable(resolvedData.relationships);
+      }
+
+      // Determinar tipo de staff y configurar validaciones
+      this.determineStaffTypeAndSetupValidations();
+
+      this._changeDetectorRef.detectChanges();
+    }
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
@@ -281,130 +314,15 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       this.currentLang = lang;
     });
 
-    // Cargar opciones
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Guardar todas las opciones para filtrar en memoria
-        this.allOptionSelections = result.body.data;
-        // Status
-        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
-
-        // Poblar listas separadas
-        this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-        this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
-        this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
-
-        // Asignar posiciones directamente para miembros de junta
-        this.listPositions = this.listBoardMemberTitles;
-
-        // Resultado de revisión / Review result
-        this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cargar tipos de staff
-    this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffTypes = result.body;
-
-        // Preseleccionar "Miembro de la Junta" por defecto
-        const boardMemberType = this.listStaffTypes.find((staffType) => staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member');
-
-        // Configurar las variables de estado
-        this.isEmployee = false;
-        this.isBoardMember = true;
-
-        // Cargar posiciones para miembros de junta
-        this.loadPositionsByType();
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cargar clasificaciones de staff
-    this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffClassifications = result.body;
-
-        const boardMemberClassification = this.listStaffClassifications.find(
-          (staffClassification) => staffClassification.name === 'Miembro de la Junta' || staffClassification.nameEn === 'Board Member'
-        );
-
-        if (boardMemberClassification) {
-          this.headerConfig.formGroup.patchValue({
-            staffClassification: boardMemberClassification,
-          });
-
-          // Configurar las variables de estado
-          this.isEmployee = false;
-          this.isBoardMember = true;
-
-          // Actualizar validaciones
-          this.updateValidations();
-        }
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // car clasificaciones de staff
-    this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffClassifications = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cities
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Regions
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
     // Suscribirse a cambios en el tipo de staff
-    this.headerConfig.formGroup
-      .get('staffType')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((staffType: StaffType) => {
-        this.onStaffTypeChange(staffType);
-      });
+    this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: StaffType) => {
+      this.onStaffTypeChange(staffType);
+    });
 
     // Suscribirse a cambios en la clasificación
-    this.headerConfig.formGroup
-      .get('staffClassification')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((classification: StaffClassification) => {
-        this.onClassificationChange(classification);
-      });
-
-      // Subscribierse a obtener relaciones
-      this._staffRelationshipService.relationships$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-          this.loadStaffRelationships();
-        }
-      });
-
-      // Subscribierse a obtener staff
-      this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-          this.onSetForm(result.body);
-        }
-      });
-
-      // Actualizar el estado inicial del botón de submit
-      this.updateSubmitButtonState();
+    this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
+      this.onClassificationChange(classification);
+    });
   }
 
   ngOnDestroy(): void {
@@ -449,7 +367,7 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       region: param.region,
       areaCode: param.areaCode,
       comments: param.comments,
-      //reviewResult: this.reviewResult.find((o) => o.id === staff.reviewResultId),
+      reviewResult: this.reviewResult.find((o) => o.id === param.reviewResultId),
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
     });
@@ -594,6 +512,13 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       staffRequest.birthDate = birthDate;
     }
 
+    // Agregar campos de revisión solo si el usuario tiene permisos para verlos
+    if (this.canViewReviewFields) {
+      staffRequest.reviewResultId = reviewResultId;
+      staffRequest.reviewDate = reviewDate;
+      staffRequest.reviewJustification = reviewJustification;
+    }
+
     // Disable the form
     this.headerConfig.formGroup.disable();
 
@@ -605,7 +530,16 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
             // Mensaje específico para staff usando traducciones
             const staffTypeKey = this.isEmployee ? 'staff.edit.success.employee' : 'staff.edit.success.boardMember';
 
-            this._notificationService.showSuccessDialog(staffTypeKey);
+            this._notificationService.showSuccessDialogWithCallback(
+              this._translocoService.translate(staffTypeKey),
+              (result) => {
+                if (result === 'confirmed') {
+                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
+                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+                  this._customRouterService.navigate([targetRoute]);
+                }
+              }
+            );
             break;
           default:
             this._notificationService.showErrorDialog('staff.edit.error.general');
@@ -626,7 +560,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   }
 
   onCancel(): void {
-    this._customRouterService.navigate(['staff/list']);
+    // Navegar a la lista correspondiente según el tipo de staff seleccionado
+    const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+    this._customRouterService.navigate([targetRoute]);
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad
@@ -1001,25 +937,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     this._changeDetectorRef.detectChanges();
   }
 
-  private checkAdminPermissions(): void {
-    const userRole = this._authService.getUserRole();
-    // Solo mostrar campos de revisión si el usuario es administrador
-    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
-
-    if (this.canViewReviewFields) {
-      this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('reviewDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('reviewJustification')?.setValidators([Validators.required]);
-    } else {
-      this.headerConfig.formGroup.get('reviewResult')?.clearValidators();
-      this.headerConfig.formGroup.get('reviewDate')?.clearValidators();
-      this.headerConfig.formGroup.get('reviewJustification')?.clearValidators();
-    }
-    this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
-  }
-
   /**
    * Abre el modal para agregar una nueva relación
    */
@@ -1173,5 +1090,105 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
    */
   private updateSubmitButtonState(): void {
     this.headerConfig.submitDisabled = !this.isSubmitButtonEnabled;
+  }
+
+  /**
+   * Verifica los permisos de administrador para mostrar campos de revisión
+   */
+  private checkAdminPermissions(): void {
+    const userRole = this._authService.getUserRole();
+    // Solo mostrar campos de revisión si el usuario es administrador
+    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+
+    if (this.canViewReviewFields) {
+      this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewJustification')?.setValidators([Validators.required]);
+    } else {
+      this.headerConfig.formGroup.get('reviewResult')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewDate')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewJustification')?.clearValidators();
+    }
+    this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
+  }
+
+  /**
+   * Configura el formulario con los datos del staff
+   */
+  private setFormData(): void {
+    if (this.param) {
+      this.headerConfig.formGroup.patchValue({
+        id: this.param.id,
+        firstName: this.param.firstName,
+        middleName: this.param.middleName,
+        fatherLastName: this.param.fatherLastName,
+        motherLastName: this.param.motherLastName,
+        status: this.listStatus.find(status => status.id === this.param?.statusId),
+        position: this.findPositionById(this.param.positionId),
+        staffType: this.listStaffTypes.find(type => type.id === this.param?.staffTypeId),
+        staffClassification: this.listStaffClassifications.find(classification => classification.id === this.param?.staffClassificationId),
+        contractStartDate: this.param.contractStartDate,
+        contractEndDate: this.param.contractEndDate,
+        birthDate: this.param.birthDate,
+        email: this.param.email,
+        postalAddress: this.param.postalAddress,
+        city: this.listCities.find(city => city.id === this.param?.cityId),
+        region: this.listRegions.find(region => region.id === this.param?.regionId),
+        areaCode: this.param.areaCode,
+        comments: this.param.comments,
+        reviewResult: this.reviewResult.find(result => result.id === this.param?.reviewResultId),
+        reviewDate: this.param.reviewDate,
+        reviewJustification: this.param.reviewJustification,
+      });
+    }
+  }
+
+  /**
+   * Encuentra la posición por ID en las listas de posiciones
+   */
+  private findPositionById(positionId: number): OptionSelection | null {
+    const adminPosition = this.listAdministrativePositions.find(pos => pos.id === positionId);
+    if (adminPosition) return adminPosition;
+
+    const operationalPosition = this.listOperationalPositions.find(pos => pos.id === positionId);
+    if (operationalPosition) return operationalPosition;
+
+    const boardMemberTitle = this.listBoardMemberTitles.find(pos => pos.id === positionId);
+    if (boardMemberTitle) return boardMemberTitle;
+
+    return null;
+  }
+
+  /**
+   * Configura la tabla de relaciones
+   */
+  private setupRelationshipsTable(relationships: any[]): void {
+    if (relationships && relationships.length > 0) {
+      this.relationshipsTableConfig.dataSource.data = relationships;
+      this.relationshipsTableConfig.length = relationships.length;
+    }
+  }
+
+  /**
+   * Determina el tipo de staff y configura las validaciones
+   */
+  private determineStaffTypeAndSetupValidations(): void {
+    if (this.param) {
+      const staffType = this.param.staffType;
+
+      if (staffType?.name === 'Empleado' || staffType?.nameEn === 'Employee') {
+        this.isEmployee = true;
+        this.isBoardMember = false;
+        this.listPositions = [...this.listAdministrativePositions, ...this.listOperationalPositions];
+      } else if (staffType?.name === 'Miembro de la Junta' || staffType?.nameEn === 'Board Member') {
+        this.isEmployee = false;
+        this.isBoardMember = true;
+        this.listPositions = this.listBoardMemberTitles;
+      }
+
+      this.updateValidations();
+    }
   }
 }

@@ -1,4 +1,5 @@
 import { Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,6 +38,7 @@ export class EditOperatingPolicyComponent implements OnInit, OnGenericHeaderHand
   private _transloco = inject(TranslocoService);
   private _customRouterService = inject(CustomRouterService);
   private _notificationService = inject(NotificationService);
+  private _route = inject(ActivatedRoute);
 
   operatingPolicyId: number;
   currentLang: string;
@@ -62,10 +64,13 @@ export class EditOperatingPolicyComponent implements OnInit, OnGenericHeaderHand
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this._operatingPolicyService.operatingPolicy$.subscribe((result: any) => {
-      this.operatingPolicyId = result.body.id;
-      this.onSetForm(result.body);
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.operatingPolicyId = resolvedData.operatingPolicy.id;
+      this.onSetForm(resolvedData.operatingPolicy);
+    }
   }
 
   onSetForm(data: OperatingPolicy) {

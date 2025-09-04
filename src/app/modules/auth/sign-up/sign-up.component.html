@@ -10,8 +10,8 @@
         <!-- Sponsor Information -->
         <div class="grid grid-cols-12 gap-2 pb-2">
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-                    <p class="text-lg font-medium">{{ "sign-up.sponsor-information" | transloco }}</p>
-        <p class="mb-6 text-secondary">{{ "sign-up.sponsor-information-description" | transloco }}</p>
+            <p class="text-lg font-medium">{{ "sign-up.sponsor-information" | transloco }}</p>
+            <p class="mb-6 text-secondary">{{ "sign-up.sponsor-information-description" | transloco }}</p>
           </div>
 
           <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1" *ngIf="signUpForm && !signUpForm.get('program')?.value">
@@ -24,7 +24,7 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
-              <mat-label>{{ "sign-up.program.label" | transloco }}</mat-label>
+              <mat-label>{{ "sign-up.program-name.label" | transloco }}</mat-label>
               <mat-select id="program-select" [formControlName]="'program'" data-cy="program-select">
                 <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">
                   {{ currentLang === "en" ? program.nameEN : program.name }}
@@ -64,7 +64,9 @@
             <mat-form-field data-cy="state-funds-denied-field">
               <mat-label>{{ "sign-up.state-funds-denied.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'stateFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="state-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -74,21 +76,22 @@
             <mat-form-field data-cy="federal-funds-denied-field">
               <mat-label>{{ "sign-up.federal-funds-denied.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="federal-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
-
 
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
             <!-- Si (1) y No (2) -->
             <mat-form-field data-cy="organized-athletic-programs-field">
-                        <mat-label matTooltip="{{ 'sign-up.organized-athletic-programs.label' | transloco }}">{{
-            "sign-up.organized-athletic-programs.label" | transloco
-          }}</mat-label>
+              <mat-label matTooltip="{{ 'sign-up.organized-athletic-programs.label' | transloco }}">{{ "sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
 
@@ -98,7 +101,9 @@
             <mat-form-field *ngIf="signUpForm && signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
               <mat-label>{{ "sign-up.at-risk-service.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -115,12 +120,12 @@
                 [formControlName]="'serviceTime'"
                 [matDatepicker]="servicePicker"
                 (dateChange)="checkServiceTime()"
-                                  placeholder="{{ 'sign-up.service-time.placeholder' | transloco }}"
+                placeholder="{{ 'sign-up.service-time.placeholder' | transloco }}"
                 data-cy="service-time-input"
               />
               <mat-datepicker-toggle matIconSuffix [for]="servicePicker"></mat-datepicker-toggle>
               <mat-datepicker #servicePicker></mat-datepicker>
-                              <mat-hint>{{ "sign-up.service-time.hint" | transloco }}</mat-hint>
+              <mat-hint>{{ "sign-up.service-time.hint" | transloco }}</mat-hint>
             </mat-form-field>
           </div>
 
@@ -203,7 +208,9 @@
             <mat-form-field data-cy="national-youth-program-field" *ngIf="signUpForm && isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.national-youth-program.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'nationalYouthProgram'" data-cy="national-youth-program-input">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="national-youth-program-option"> {{ currentLang === "en" ? option.nameEN : option.name }} </mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="national-youth-program-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -215,7 +222,9 @@
             <mat-form-field data-cy="is-day-care-home-field" *ngIf="signUpForm && isPACNAProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.is-day-care-home.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'isDayCareHome'" data-cy="is-day-care-home-input">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-day-care-home-option"> {{ currentLang === "en" ? option.nameEN : option.name }} </mat-option>
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-day-care-home-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
           </div>
@@ -225,8 +234,8 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
             <!-- Name of the Sponsoring Agency *  -->
             <mat-form-field data-cy="agency-field">
-                        <mat-label>{{ "sign-up.agency.label" | transloco }}</mat-label>
-          <input matInput [formControlName]="'name'" placeholder="{{ 'sign-up.agency.placeholder' | transloco }}" data-cy="agency-input" />
+              <mat-label>{{ "sign-up.agency.label" | transloco }}</mat-label>
+              <input matInput [formControlName]="'name'" placeholder="{{ 'sign-up.agency.placeholder' | transloco }}" data-cy="agency-input" />
             </mat-form-field>
 
             <!-- UIE Number *  -->
@@ -317,10 +326,10 @@
               <input matInput [formControlName]="'latitude'" placeholder="{{ 'sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
             </mat-form-field>
             <!-- Longitude *  -->
-                          <div class="flex gap-2 items-center">
-                <mat-form-field data-cy="longitude-field" class="flex-grow">
-                  <mat-label>{{ "sign-up.longitude.label" | transloco }}</mat-label>
-                  <input matInput [formControlName]="'longitude'" placeholder="{{ 'sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+            <div class="flex gap-2 items-center">
+              <mat-form-field data-cy="longitude-field" class="flex-grow">
+                <mat-label>{{ "sign-up.longitude.label" | transloco }}</mat-label>
+                <input matInput [formControlName]="'longitude'" placeholder="{{ 'sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
               </mat-form-field>
               <button
                 mat-icon-button
@@ -429,7 +438,11 @@
             <!-- Admin Title *  -->
             <mat-form-field data-cy="admin-title-field">
               <mat-label>{{ "sign-up.admin-title.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'administrationTitle'" placeholder="{{ 'sign-up.admin-title.placeholder' | transloco }}" data-cy="admin-title-input" />
+              <mat-select [formControlName]="'positionId'" data-cy="admin-title-select">
+                <mat-option *ngFor="let option of listAdministrativePositions" [value]="option.id" data-cy="admin-title-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
         </div>
@@ -442,7 +455,7 @@
             [disabled]="!isEligible || signUpForm.invalid"
             data-cy="submit-button"
           >
-                          <span *ngIf="!signUpForm.disabled">{{ "sign-up.submit" | transloco }}</span>
+            <span *ngIf="!signUpForm.disabled">{{ "sign-up.submit" | transloco }}</span>
             <mat-progress-spinner *ngIf="signUpForm.disabled" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
           </button>
         </div>

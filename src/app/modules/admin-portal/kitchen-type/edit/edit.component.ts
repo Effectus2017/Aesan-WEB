@@ -64,10 +64,13 @@ export class EditKitchenTypeComponent implements OnInit, OnGenericHeaderHandlers
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
 
-    this._kitchenTypeService.kitchenType$.subscribe((result: any) => {
-      this.kitchenTypeId = result.body.id;
-      this.onSetForm(result.body);
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.kitchenTypeId = resolvedData.kitchenType.id;
+      this.onSetForm(resolvedData.kitchenType);
+    }
   }
 
   onSetForm(param: KitchenType) {

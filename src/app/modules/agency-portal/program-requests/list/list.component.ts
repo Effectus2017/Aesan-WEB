@@ -21,6 +21,7 @@ import { programRequestsColumnsData } from './columns-data';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'agency-program-requests-list',
@@ -40,6 +41,7 @@ export class AgencyProgramRequestsListComponent implements OnInit, OnDestroy, On
   private _programRequestService: ProgramRequestService = inject(ProgramRequestService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _route = inject(ActivatedRoute);
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -72,16 +74,18 @@ export class AgencyProgramRequestsListComponent implements OnInit, OnDestroy, On
   constructor() {}
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this.tableConfig.dataSource.data = programRequestsColumnsData;
-
-    // this._programService.programInscriptions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //     this.tableConfig.dataSource.data = result.body.data;
-    //     this.tableConfig.length = result.body.count;
-    //     // Mark for check
-    //     this._changeDetectorRef.markForCheck();
-    //   });
-
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.programInscriptions.data;
+      this.tableConfig.length = resolvedData.programInscriptions.count;
+      this.tableConfig.dataSourceList = resolvedData.programInscriptions.data;
+      this._changeDetectorRef.markForCheck();
+    } else {
+      // Fallback a datos estáticos si no hay resolver
+      this.tableConfig.dataSource.data = programRequestsColumnsData;
+    }
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -63,6 +64,7 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
   private _agencyFilesService = inject(AgencyFilesService);
+  private _route = inject(ActivatedRoute);
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -98,21 +100,19 @@ export class DocumentsListComponent implements OnInit, OnDestroy, OnGenericTable
   userId: string;
   constructor() {}
 
-  ngOnInit(): void {
-    // Obtener el ID de la agencia del usuario actual
+  ngOnInit() {
     this.agencyId = this._authService.getAgencyId();
     this.userId = this._authService.getUserId();
 
-    this._agencyFilesService.files$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-      // Lista de datos
-      this.tableConfig.dataSourceList = result.body.data;
-
-      // Marcar para que se actualice la vista
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.documents.data;
+      this.tableConfig.length = resolvedData.documents.count;
+      this.tableConfig.dataSourceList = resolvedData.documents.data;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {

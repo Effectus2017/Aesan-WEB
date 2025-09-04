@@ -60,11 +60,13 @@ export class OrganizationTypeEditComponent implements OnInit, OnGenericHeaderHan
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this.organizationTypeId = +this._route.snapshot.paramMap.get('id');
-    this._organizationTypeService.getOrganizationTypeById({ id: this.organizationTypeId }).subscribe((result: any) => {
-      this.organizationTypeId = result.id;
-      this.onSetForm(result);
-    });
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.organizationTypeId = resolvedData.organizationType.id;
+      this.onSetForm(resolvedData.organizationType);
+    }
   }
 
   onSetForm(param: OrganizationType) {

@@ -5,7 +5,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { UserService } from 'app/shared/services/user.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 export const initialAgencyProgramRequestsResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
@@ -23,7 +23,9 @@ export const initialAgencyProgramRequestsResolver = () => {
     alls: true,
   };
 
-  return forkJoin([
-    _programService.getAllProgramInscriptions(requestParameters)
-  ]);
+  return forkJoin([_programService.getAllProgramInscriptions(requestParameters)]).pipe(
+    map(([programInscriptions]) => ({
+      programInscriptions: programInscriptions.body,
+    }))
+  );
 };

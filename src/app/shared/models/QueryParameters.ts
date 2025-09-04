@@ -57,5 +57,11 @@ export interface QueryParameters {
   // Campos para Staff
   staffId?: number;
   staffTypeId?: number;
+
+  // ID del usuario actual logueado
+  currentUserId?: string;
+
+  // Campos para No traer agencias propietarias
+  isPropietary?: boolean;
 }
 

@@ -7,6 +7,7 @@ import { FuseLoadingBarComponent } from '@fuse/components/loading-bar';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AgencyService } from 'app/shared/services/agency.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
@@ -47,7 +48,13 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   backgroundClass: string;
   logoPath: string;
 
+  // Propiedades para controlar la visibilidad de los banners
+  showCurrentProgramBanner: boolean = true;
+  showAgencyStatusBanner: boolean = true;
+  showDeadlineBanner: boolean = true;
+
   private _authService = inject(AuthService);
+  private _agencyService = inject(AgencyService);
   private _routeStyleService = inject(RouteStyleService);
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
@@ -97,6 +104,10 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
 
     // Inicializar estilos
     this.updateRouteStyles();
+
+    // Verificar si los banners deben mostrarse
+    console.log('Compact Layout - ngOnInit - calling checkBannerVisibility');
+    this.checkBannerVisibility();
   }
 
   /**
@@ -141,5 +152,68 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
       this.backgroundClass = backgroundClass;
       this.logoPath = logoPath;
     }
+  }
+
+  /**
+   * Verifica si los banners deben mostrarse basado en el rol del usuario y la agencia
+   */
+  private checkBannerVisibility(): void {
+    console.log('Compact Layout - checkBannerVisibility called');
+
+    // Verificar si el usuario es administrador
+    const userRole = this._authService.getUserRole();
+    const isAdmin = userRole === 'Administrator' || userRole === 'Admin';
+
+    console.log('Compact Layout - User role:', userRole, 'Is admin:', isAdmin);
+
+    // Si es administrador, ocultar todos los banners
+    if (isAdmin) {
+      console.log('Compact Layout - Hiding all banners for admin user');
+      this.showCurrentProgramBanner = false;
+      this.showAgencyStatusBanner = false;
+      this.showDeadlineBanner = false;
+      console.log('Compact Layout - Banner visibility after admin check:', {
+        showCurrentProgramBanner: this.showCurrentProgramBanner,
+        showAgencyStatusBanner: this.showAgencyStatusBanner,
+        showDeadlineBanner: this.showDeadlineBanner
+      });
+      return;
+    }
+
+    // Verificar si la agencia es NUTRE
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      console.log('Compact Layout - Agency service result:', result);
+
+      if (result && result.body) {
+        const agency = result.body;
+        const isNutreAgency = agency && (
+          agency.id === 1 ||
+          agency.id === '1' ||
+          agency.id == 1 ||
+          (agency.name && agency.name.toLowerCase() === 'nutre')
+        );
+
+        console.log('Compact Layout - Agency data:', agency);
+        console.log('Compact Layout - Is NUTRE agency:', isNutreAgency);
+
+        if (isNutreAgency) {
+          console.log('Compact Layout - Hiding all banners for NUTRE agency');
+          this.showCurrentProgramBanner = false;
+          this.showAgencyStatusBanner = false;
+          this.showDeadlineBanner = false;
+        } else {
+          console.log('Compact Layout - Showing all banners for non-NUTRE agency');
+          this.showCurrentProgramBanner = true;
+          this.showAgencyStatusBanner = true;
+          this.showDeadlineBanner = true;
+        }
+
+        console.log('Compact Layout - Final banner visibility:', {
+          showCurrentProgramBanner: this.showCurrentProgramBanner,
+          showAgencyStatusBanner: this.showAgencyStatusBanner,
+          showDeadlineBanner: this.showDeadlineBanner
+        });
+      }
+    });
   }
 }

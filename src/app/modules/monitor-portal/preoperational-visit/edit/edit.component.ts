@@ -40,6 +40,7 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { AgencyStatus } from 'app/shared/models/AgencyStatus';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-monitor-preoperational-visit-edit',
@@ -85,6 +86,7 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   private _dialog = inject(MatDialog);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfigService = inject(FuseConfigService);
+  private _route = inject(ActivatedRoute);
 
   listAgencyStatus: AgencyStatus[] = [];
   listPrograms: Program[] = [];
@@ -142,6 +144,18 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
   constructor() {}
 
   ngOnInit() {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+      this.listPrograms = resolvedData.programs;
+      this.listAgencyStatus = resolvedData.agencyStatuses;
+      this.onSetForm(resolvedData.agency);
+      this._changeDetectorRef.detectChanges();
+    }
+
     // Agregar el observador para appointmentCoordinated
     this.headerConfig.formGroup.get('appointmentCoordinated').valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -154,41 +168,6 @@ export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestro
         }
         appointmentDateControl.updateValueAndValidity();
       });
-
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-          this.listPrograms = result.body;
-          this._changeDetectorRef.detectChanges();
-        }
-      });
-
-    this._agencyStatusService.agencyStatuses$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listAgencyStatus = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.onSetForm(result.body);
-        this._changeDetectorRef.detectChanges();
-      }
-    });
 
     // Suscribirse a los cambios del tema
     this._fuseConfigService.config$

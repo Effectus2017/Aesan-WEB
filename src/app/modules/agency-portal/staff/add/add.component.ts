@@ -488,8 +488,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
               this._translocoService.translate(staffTypeKey),
               (result) => {
                 if (result === 'confirmed') {
-                  // Usuario presionó Confirm, navegar a la lista
-                  this._customRouterService.navigate(['staff/list']);
+                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
+                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+                  this._customRouterService.navigate([targetRoute]);
                 }
               }
             );
@@ -512,7 +513,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   }
 
   onCancel(): void {
-    this._customRouterService.navigate(['staff/list']);
+    // Navegar a la lista correspondiente según el tipo de staff seleccionado
+    const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+    this._customRouterService.navigate([targetRoute]);
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad

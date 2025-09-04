@@ -1,7 +1,7 @@
 {
   "sign-up": {
     "title": "Intent to Participate",
-    "program": {
+    "program-name": {
       "label": "Which program do you want to participate in?"
     },
     "non-profit": {
@@ -140,6 +140,29 @@
     "form-invalid": {
       "message": "Please complete all required fields",
       "close": "Close"
+    },
+    "notification": {
+      "title": "Notification",
+      "confirm": "Accept"
+    },
+    "pdam-psav-not-eligible": {
+      "message": "You are not eligible to participate in PDAM or PSAV programs"
+    },
+    "basic-education-not-eligible": {
+      "message": "To participate in PDAM or PSAV programs, you must have Basic Education Registry granted or in progress"
+    },
+    "error": {
+      "creating-user": "Error creating user. Please try again"
+    },
+    "success": {
+      "default": "User registered successfully"
+    },
+    "pacna-not-eligible": {
+      "message": "You are not eligible to participate in the PACNA program"
+    },
+    "program": {
+      "required": "You must select a program to continue",
+      "required-close": "Close"
     },
     "tax-exemption-status": {
       "label": "What is the status of your Tax Exemption?"

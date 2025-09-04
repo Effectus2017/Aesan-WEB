@@ -1,4 +1,5 @@
 import { Component, ViewEncapsulation, OnInit, OnDestroy, inject, ChangeDetectorRef } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -40,6 +41,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
   private _notificationService: NotificationService = inject(NotificationService);
   private _translocoService: TranslocoService = inject(TranslocoService);
+  private _route: ActivatedRoute = inject(ActivatedRoute);
 
   data: any[];
 
@@ -59,8 +61,8 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     displayedColumns: USERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSize: 10,
-    pageSizeOptions: [10, 25, 50, 100],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
   };
 
@@ -71,14 +73,14 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   }
 
   ngOnInit() {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    // Get the accountings
-    this._usersService.users$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
-      // Mark for check
+    if (resolvedData && resolvedData.users) {
+      this.tableConfig.dataSource.data = resolvedData.users.data;
+      this.tableConfig.length = resolvedData.users.count;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {
@@ -104,10 +106,10 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: form.name,
+      name: form.name || null,
     };
 
-    this._usersService.getAllUsersFromDb(requestParameters).subscribe();
+    this._usersService.getAllUsersFromDbWithSP(requestParameters).subscribe();
   }
 
   onClear(event: Event) {

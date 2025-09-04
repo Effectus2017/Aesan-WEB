@@ -7,7 +7,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -31,7 +31,11 @@ export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedR
     agencyId: agencyId,
   };
 
-  return forkJoin([schoolService.getAllSchoolsFromDb(requestParameters)]);
+  return forkJoin([schoolService.getAllSchoolsFromDb(requestParameters)]).pipe(
+    map(([schools]) => ({
+      schools: schools.body,
+    }))
+  );
 };
 
 // Resolver para la creación de una escuela
@@ -139,7 +143,25 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Types of area
     // Tipos de área
     areaTypeService.getAllAreaTypesFromDb(requestParameters),
-  ]);
+  ]).pipe(
+    map(([hasMainSchool, options, kitchenTypes, groupTypes, sponsorTypes, schools, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, centerTypes, areaTypes]) => ({
+      hasMainSchool: hasMainSchool, // hasMainSchool devuelve boolean directamente
+      options: options.body,
+      kitchenTypes: kitchenTypes.body,
+      groupTypes: groupTypes.body,
+      sponsorTypes: sponsorTypes.body,
+      schools: schools.body,
+      cities: cities.body,
+      regions: regions.body,
+      organizationTypes: organizationTypes.body,
+      educationLevels: educationLevels.body,
+      operatingPeriods: operatingPeriods.body,
+      operatingPolicies: operatingPolicies.body,
+      deliveryTypes: deliveryTypes.body,
+      centerTypes: centerTypes.body,
+      areaTypes: areaTypes.body,
+    }))
+  );
 };
 
 // Resolver para la edición de una escuela
@@ -251,5 +273,24 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Types of area
     // Tipos de área
     areaTypeService.getAllAreaTypesFromDb(requestParameters),
-  ]);
+  ]).pipe(
+    map(([school, schools, options, kitchenTypes, groupTypes, sponsorTypes, allSchools, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, centerTypes, areaTypes]) => ({
+      school: school.body,
+      schools: schools.body,
+      options: options.body,
+      kitchenTypes: kitchenTypes.body,
+      groupTypes: groupTypes.body,
+      sponsorTypes: sponsorTypes.body,
+      allSchools: allSchools.body,
+      cities: cities.body,
+      regions: regions.body,
+      organizationTypes: organizationTypes.body,
+      educationLevels: educationLevels.body,
+      operatingPeriods: operatingPeriods.body,
+      operatingPolicies: operatingPolicies.body,
+      deliveryTypes: deliveryTypes.body,
+      centerTypes: centerTypes.body,
+      areaTypes: areaTypes.body,
+    }))
+  );
 };

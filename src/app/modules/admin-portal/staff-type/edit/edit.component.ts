@@ -73,11 +73,20 @@ export class EditStaffTypeComponent implements OnInit, OnGenericHeaderHandlers {
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
 
-    // Obtener el ID del parámetro de la ruta
-    this.staffTypeId = Number(this._route.snapshot.paramMap.get('id'));
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    if (this.staffTypeId) {
-      this.loadStaffType();
+    if (resolvedData) {
+      const staffType = resolvedData.staffType;
+      this.staffTypeId = staffType.id;
+      this.headerConfig.formGroup.patchValue({
+        id: staffType.id,
+        name: staffType.name,
+        nameEn: staffType.nameEn,
+        optionKey: staffType.optionKey,
+        sortOrder: staffType.sortOrder,
+        isActive: staffType.isActive,
+      });
     }
   }
 
@@ -108,15 +117,19 @@ export class EditStaffTypeComponent implements OnInit, OnGenericHeaderHandlers {
   }
 
   onSave() {
-    if (this.headerConfig.formGroup.invalid) return;
+    if (this.headerConfig.formGroup.invalid) { return; }
+
+    const formValues = this.headerConfig.formGroup.getRawValue();
+
     const staffType: StaffTypeRequest = {
-      id: this.headerConfig.formGroup.value.id,
-      name: this.headerConfig.formGroup.value.name,
-      nameEn: this.headerConfig.formGroup.value.nameEn,
-      optionKey: this.headerConfig.formGroup.value.optionKey,
-      sortOrder: this.headerConfig.formGroup.value.sortOrder,
-      isActive: this.headerConfig.formGroup.value.isActive,
+      id: formValues.id,
+      name: formValues.name,
+      nameEn: formValues.nameEn,
+      optionKey: formValues.optionKey,
+      sortOrder: formValues.sortOrder,
+      isActive: formValues.isActive,
     };
+
     this._staffTypeService.updateStaffType(staffType, {}).subscribe({
       next: () => {
         this._snackBar.open('Tipo de staff actualizado correctamente', 'Cerrar', { duration: 3000 });

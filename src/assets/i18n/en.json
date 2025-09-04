@@ -1,4 +1,14 @@
 {
+    "global": {
+        "buttons": {
+            "close": "Close",
+            "save": "Save",
+            "cancel": "Cancel",
+            "edit": "Edit",
+            "delete": "Delete",
+            "add": "Add"
+        }
+    },
     "side-menu": {
         "welcome-back": "Welcome back",
         "Project": "Program Application",
@@ -14,105 +24,33 @@
         "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
         "accept": "Accept"
     },
-    "validation-to-program": {
-        "list": {
-            "title": "Sponsor Evaluation",
-            "search": {
-                "placeholder": "Search user",
-                "button": "Search"
-            },
-            "table": {
-                "columns": {
-                    "program": "Program",
-                    "agencyName": "Name of the Sponsoring Agency",
-                    "stateDepartmentRegistration": "State Dept. Registration",
-                    "address": "Address",
-                    "city": "City",
-                    "region": "Region",
-                    "zipCode": "Postal Code",
-                    "firstName": "First Name",
-                    "fatherLastName": "Father's Last Name",
-                    "adminTitle": "Admin Title",
-                    "nonProfit": "Non Profit",
-                    "uieNumber": "# UIE",
-                    "einNumber": "Employer Identification Number (EIN)",
-                    "ssPatronal": "State Department Registration Number",
-                    "latitude": "Latitude",
-                    "longitude": "Longitude",
-                    "phone": "Phone",
-                    "email": "Email",
-                    "middleName": "Middle Name",
-                    "motherLastName": "Mother's Last Name",
-                    "createdBy": "Created By",
-                    "assignedTo": "Assigned To",
-                    "createdAt": "Creation Date",
-                    "status": "Status",
-                    "actions": "Actions"
-                },
-                "buttons": {
-                    "edit": "Edit",
-                    "delete": "Delete"
-                }
-            },
-            "buttons": {
-                "add": "Add",
-                "clear": "Clear",
-                "save": "Save"
-            }
+    "reset-password": {
+        "title": "Reset Password",
+        "temp-password": {
+            "label": "Temporary Password",
+            "placeholder": "Enter your temporary password",
+            "required": "Temporary password is required"
         },
-        "edit": {
-            "title": "Edit Sponsor Evaluation",
-            "monitor": {
-                "label": "Assigned to:"
-            },
-            "program": {
-                "label": "Program to participate in:",
-                "placeholder": "Select a program"
-            },
-            "status": {
-                "label": "Status:",
-                "placeholder": "Select a status"
-            },
-            "agency": {
-                "label": "Name of the Sponsoring Agency:",
-                "placeholder": "Enter the agency name"
-            },
-            "state-department-registration": {
-                "label": "State Dept. Registration:",
-                "placeholder": "Enter the registration number"
-            },
-            "uieNumber": {
-                "label": "UIE #:",
-                "placeholder": "Enter the UIE number"
-            },
-            "einNumber": {
-                "label": "EIN #:",
-                "placeholder": "Enter the EIN number"
-            },
-            "address": {
-                "label": "Address:",
-                "placeholder": "Enter the address"
-            },
-            "phone": {
-                "label": "Phone:",
-                "placeholder": "(xxx) xxx-xxxx"
-            },
-            "zip-code": {
-                "label": "Postal Code:",
-                "placeholder": "Enter the postal code"
-            },
-            "postal-address": {
-                "label": "Postal Address:",
-                "placeholder": "Enter the postal address"
-            },
-            "city": {
-                "label": "City:",
-                "placeholder": "Select a city"
-            },
-            "region": {
-                "label": "Region:",
-                "placeholder": "Select a region"
-            }
+        "new-password": {
+            "label": "New Password",
+            "placeholder": "Enter your new password",
+            "required": "New password is required",
+            "minlength": "Password must be at least 8 characters long"
+        },
+        "confirm-password": {
+            "label": "Confirm Password",
+            "placeholder": "Confirm your new password",
+            "required": "Password confirmation is required"
+        },
+        "submit": "Update Password",
+        "passwords-must-match": "Passwords must match",
+        "success": {
+            "password-updated": "Your password has been updated successfully"
+        },
+        "error": {
+            "invalid-temp-password": "Invalid temporary password",
+            "not-updated": "Password could not be updated",
+            "server-error": "Server error. Please try again later"
         }
     }
 }

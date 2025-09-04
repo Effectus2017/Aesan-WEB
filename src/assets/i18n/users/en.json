@@ -1,0 +1,177 @@
+{
+    "users": {
+        "edit": {
+            "title": "Edit User",
+            "personal-info": "Personal Information",
+            "access-info": "Access Information",
+            "password-section": "Edit Password",
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email",
+                "required": "Email is required",
+                "email": "You must enter a valid email"
+            },
+            "username": {
+                "label": "Username",
+                "placeholder": "Enter username",
+                "required": "Username is required",
+                "email": "You must enter a valid email"
+            },
+            "role": {
+                "label": "Role",
+                "placeholder": "Select a role",
+                "required": "Role is required"
+            },
+            "current-password": {
+                "label": "Current Password",
+                "placeholder": "Enter current password",
+                "required": "Password is required",
+                "min-length": "A minimum of 8 characters is required"
+            },
+            "password": {
+                "toggle-visibility": "Show password",
+                "success": {
+                    "title": "Password updated",
+                    "message": "Password updated successfully"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error updating password"
+                },
+                "reset": {
+                    "success": {
+                        "title": "Password reset",
+                        "message": "Password reset successfully"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "Error resetting password"
+                    }
+                }
+            },
+            "new-password": {
+                "label": "New Password",
+                "placeholder": "Enter new password",
+                "required": "New password is required",
+                "min-length": "A minimum of 8 characters is required"
+            },
+            "new-password-repeat": {
+                "label": "Repeat New Password",
+                "placeholder": "Enter new password again",
+                "required": "Password confirmation is required",
+                "min-length": "A minimum of 8 characters is required"
+            },
+            "password-requirements": "NOTE: The password must have a minimum of 8 characters and include at least one uppercase letter, one lowercase letter, one number and one special character. In addition, only using the 'Update Password' button will update the user's password.",
+            "buttons": {
+                "cancel": "Cancel",
+                "update": "Update",
+                "update-password": "Update Password",
+                "force-password": "Force Password Change"
+            },
+            "firstName": {
+                "label": "First Name",
+                "placeholder": "Enter first name",
+                "required": "First name is required"
+            },
+            "middleName": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "fatherLastName": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter father's last name",
+                "required": "Father's last name is required"
+            },
+            "motherLastName": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter mother's last name"
+            },
+            "messages": {
+                "force-password": {
+                    "title": "Password Change",
+                    "success": "A new temporary password has been generated and sent by email to the user.",
+                    "error": "An error occurred while generating the temporary password."
+                },
+                "avatar": {
+                    "title": "Avatar",
+                    "success": "Avatar updated successfully",
+                    "error": "Error updating avatar"
+                },
+                "upload": {
+                    "title": "Upload",
+                    "success": "File uploaded successfully",
+                    "error": "Error uploading file"
+                }
+            }
+        },
+        "add": {
+            "title": "Add User",
+            "personal-info": "Personal Information",
+            "username": {
+                "label": "Username",
+                "placeholder": "Enter username",
+                "required": "Username is required",
+                "email": "You must enter a valid email"
+            },
+            "current-password": {
+                "label": "Password",
+                "placeholder": "Enter password",
+                "required": "Password is required",
+                "min-length": "A minimum of 8 characters is required"
+            },
+            "new-password": {
+                "label": "Repeat Password",
+                "placeholder": "Enter password again",
+                "required": "Password confirmation is required",
+                "min-length": "A minimum of 8 characters is required"
+            },
+            "password-requirements": "The password must have a minimum of 8 characters and include at least one uppercase letter, one lowercase letter, one number and one special character.",
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email",
+                "required": "Email is required",
+                "email": "You must enter a valid email"
+            },
+            "firstName": {
+                "label": "First Name",
+                "placeholder": "Enter first name",
+                "required": "First name is required"
+            },
+            "middleName": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "fatherLastName": {
+                "label": "Father's Last Name",
+                "placeholder": "Enter father's last name",
+                "required": "Father's last name is required"
+            },
+            "motherLastName": {
+                "label": "Mother's Last Name",
+                "placeholder": "Enter mother's last name",
+                "required": "Mother's last name is required"
+            },
+            "role": {
+                "label": "Role",
+                "placeholder": "Select a role",
+                "required": "Role is required"
+            },
+            "submit": "Save",
+            "back": "Back",
+            "agency": {
+                "label": "Agency to which it belongs",
+                "placeholder": "Select an agency",
+                "required": "Agency is required"
+            },
+            "isActive": {
+                "label": "Active User"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Temporary Password Activated"
+            },
+            "emailConfirmed": {
+                "label": "Email Confirmed"
+            }
+        }
+    }
+}

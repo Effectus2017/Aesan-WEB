@@ -140,6 +140,10 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       areaCode: new FormControl('', [Validators.required]),
       // Comentarios
       comments: new FormControl(''),
+      // Campos de revisión (solo para administradores)
+      reviewResult: new FormControl(''),
+      reviewDate: new FormControl(''),
+      reviewJustification: new FormControl(''),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -166,6 +170,12 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   // Variable para pre-seleccionar el tipo de staff
   preSelectStaffType: string | null = null;
 
+  // Propiedad para controlar si mostrar campos de revisión (solo para administradores)
+  canViewReviewFields: boolean = false;
+
+  // Lista de opciones de revisión
+  reviewResult: OptionSelection[] = [];
+
   /**
    * Obtiene el label correcto para el campo de comentarios según el tipo de staff
    */
@@ -180,8 +190,46 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+
+    if (resolvedData) {
+      // Asignar datos directamente desde el resolver
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+      this.allOptionSelections = resolvedData.options.data;
+      this.listStaffTypes = resolvedData.staffTypes;
+      this.listStaffClassifications = resolvedData.staffClassifications;
+
+      // Filtrar opciones específicas
+      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+      this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+      this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
+      this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+
+      // Preseleccionar estado "Activo" por defecto
+      const activeStatus = this.listStatus.find(status =>
+        status.name === 'Activo' || status.nameEN === 'Active'
+      );
+
+      if (activeStatus) {
+        this.headerConfig.formGroup.patchValue({
+          status: activeStatus
+        });
+      }
+
+      // Pre-seleccionar tipo de staff según query parameter o por defecto
+      this.handleStaffTypePreselection();
+
+      this._changeDetectorRef.detectChanges();
+    }
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
+
+    // Verificar permisos de administrador
+    this.checkAdminPermissions();
 
     // Leer query parameters para pre-seleccionar el tipo de staff
     this._activatedRoute.queryParams.pipe(takeUntil(this._unsubscribeAll)).subscribe(params => {
@@ -189,6 +237,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       if (staffTypeParam) {
         // Guardar el parámetro para usarlo cuando se carguen los tipos de staff
         this.preSelectStaffType = staffTypeParam;
+        this.handleStaffTypePreselection();
       }
     });
 
@@ -196,146 +245,73 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
     });
+  }
 
-    // Cargar opciones SOLO UNA VEZ desde el resolver
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Guardar todas las opciones para filtrar en memoria
-        this.allOptionSelections = result.body.data;
-        // Status
-        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+  /**
+   * Maneja la pre-selección del tipo de staff
+   */
+  private handleStaffTypePreselection(): void {
+    if (this.preSelectStaffType === 'employee') {
+      // Pre-seleccionar "Empleado"
+      const employeeType = this.listStaffTypes.find(staffType =>
+        staffType.name === 'Empleado' || staffType.nameEn === 'Employee'
+      );
 
-        // Preseleccionar estado "Activo" por defecto
-        const activeStatus = this.listStatus.find(status =>
-          status.name === 'Activo' || status.nameEN === 'Active'
-        );
+      if (employeeType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: employeeType
+        });
 
-        if (activeStatus) {
-          this.headerConfig.formGroup.patchValue({
-            status: activeStatus
-          });
-        }
-        // Poblar listas separadas
-        this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-        this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
-        this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
-        this._changeDetectorRef.detectChanges();
+        // Configurar las variables de estado
+        this.isEmployee = true;
+        this.isBoardMember = false;
+
+        // Actualizar validaciones
+        this.updateValidations();
       }
-    });
+    } else if (this.preSelectStaffType === 'board-member') {
+      // Pre-seleccionar "Miembro de la Junta"
+      const boardMemberType = this.listStaffTypes.find(staffType =>
+        staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
+      );
 
-    // Cargar tipos de staff
-    this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffTypes = result.body;
+      if (boardMemberType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: boardMemberType
+        });
 
-        // Pre-seleccionar tipo de staff según query parameter o por defecto
-        if (this.preSelectStaffType === 'employee') {
-          // Pre-seleccionar "Empleado"
-          const employeeType = this.listStaffTypes.find(staffType =>
-            staffType.name === 'Empleado' || staffType.nameEn === 'Employee'
-          );
+        // Configurar las variables de estado
+        this.isEmployee = false;
+        this.isBoardMember = true;
 
-          if (employeeType) {
-            this.headerConfig.formGroup.patchValue({
-              staffType: employeeType
-            });
+        // Actualizar validaciones
+        this.updateValidations();
 
-            // Configurar las variables de estado
-            this.isEmployee = true;
-            this.isBoardMember = false;
-
-            // Actualizar validaciones
-            this.updateValidations();
-          }
-        } else if (this.preSelectStaffType === 'board-member') {
-          // Pre-seleccionar "Miembro de la Junta"
-          const boardMemberType = this.listStaffTypes.find(staffType =>
-            staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
-          );
-
-          if (boardMemberType) {
-            this.headerConfig.formGroup.patchValue({
-              staffType: boardMemberType
-            });
-
-            // Configurar las variables de estado
-            this.isEmployee = false;
-            this.isBoardMember = true;
-
-            // Actualizar validaciones
-            this.updateValidations();
-
-            // Cargar posiciones para miembros de junta
-            this.loadPositionsByType();
-          }
-        } else {
-          // Pre-seleccionar "Miembro de la Junta" por defecto (comportamiento original)
-          const boardMemberType = this.listStaffTypes.find(staffType =>
-            staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
-          );
-
-          if (boardMemberType) {
-            this.headerConfig.formGroup.patchValue({
-              staffType: boardMemberType
-            });
-
-            // Configurar las variables de estado
-            this.isEmployee = false;
-            this.isBoardMember = true;
-
-            // Actualizar validaciones
-            this.updateValidations();
-
-            // Cargar posiciones para miembros de junta
-            this.loadPositionsByType();
-          }
-        }
-
-        this._changeDetectorRef.detectChanges();
+        // Cargar posiciones para miembros de junta
+        this.loadPositionsByType();
       }
-    });
+    } else {
+      // Pre-seleccionar "Miembro de la Junta" por defecto (comportamiento original)
+      const boardMemberType = this.listStaffTypes.find(staffType =>
+        staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
+      );
 
-    // Cargar clasificaciones de staff
-    this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffClassifications = result.body;
+      if (boardMemberType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: boardMemberType
+        });
 
-        // Si ya está preseleccionado como empleado, actualizar validaciones después de cargar las clasificaciones
-        if (this.isEmployee) {
-          this.updateValidations();
-        }
+        // Configurar las variables de estado
+        this.isEmployee = false;
+        this.isBoardMember = true;
 
-        this._changeDetectorRef.detectChanges();
+        // Actualizar validaciones
+        this.updateValidations();
+
+        // Cargar posiciones para miembros de junta
+        this.loadPositionsByType();
       }
-    });
-
-    // Cities
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Regions
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Suscribirse a cambios en el tipo de staff
-    this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: StaffType) => {
-      this.onStaffTypeChange(staffType);
-    });
-
-    // Suscribirse a cambios en la clasificación
-    this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
-      this.onClassificationChange(classification);
-    });
-
-
+    }
   }
 
   ngOnDestroy(): void {
@@ -463,6 +439,13 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       staffRequest.birthDate = birthDate;
     }
 
+    // Agregar campos de revisión solo si el usuario tiene permisos para verlos
+    if (this.canViewReviewFields) {
+      staffRequest.reviewResultId = formValues.reviewResult?.id;
+      staffRequest.reviewDate = formValues.reviewDate;
+      staffRequest.reviewJustification = formValues.reviewJustification;
+    }
+
     // Disable the form
     this.headerConfig.formGroup.disable();
 
@@ -474,7 +457,16 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
             // Mensaje específico para staff usando traducciones
             const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
 
-            this._notificationService.showSuccessDialog(staffTypeKey);
+            this._notificationService.showSuccessDialogWithCallback(
+              this._translocoService.translate(staffTypeKey),
+              (result) => {
+                if (result === 'confirmed') {
+                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
+                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+                  this._customRouterService.navigate([targetRoute]);
+                }
+              }
+            );
             break;
           default:
             this._notificationService.showErrorDialog('staff.add.error.general');
@@ -496,7 +488,9 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onCancel(): void {
-    this._customRouterService.navigate(['staff/list']);
+    // Navegar a la lista correspondiente según el tipo de staff seleccionado
+    const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+    this._customRouterService.navigate([targetRoute]);
   }
 
   // Método para obtener todas las regiones según el ID de la ciudad
@@ -845,5 +839,27 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     this.updateValidations();
 
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Verifica los permisos de administrador para mostrar campos de revisión
+   */
+  private checkAdminPermissions(): void {
+    const userRole = this._authService.getUserRole();
+    // Solo mostrar campos de revisión si el usuario es administrador
+    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+
+    if (this.canViewReviewFields) {
+      this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewJustification')?.setValidators([Validators.required]);
+    } else {
+      this.headerConfig.formGroup.get('reviewResult')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewDate')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewJustification')?.clearValidators();
+    }
+    this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
   }
 }

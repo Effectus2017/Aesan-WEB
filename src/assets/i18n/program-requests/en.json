@@ -1,0 +1,20 @@
+{
+    "program-requests": {
+        "list": {
+            "title": "Program Requests",
+            "search": {
+                "placeholder": "Search request"
+            },
+            "columns": {
+                "title": "Application Number",
+                "createdBy": "Created By",
+                "createdAt": "Creation Date",
+                "actions": "Actions"
+            },
+            "buttons": {
+                "save": "Save",
+                "edit": "Edit"
+            }
+        }
+    }
+}

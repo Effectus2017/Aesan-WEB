@@ -17,7 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -51,6 +51,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -78,17 +79,14 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   };
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-    this._staffService.staffs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Filtrar solo empleados
-        const employees = result.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-        );
-        this.tableConfig.dataSource.data = employees;
-        this.tableConfig.length = employees.length;
-      }
-    });
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.staff.data;
+      this.tableConfig.length = resolvedData.staff.count;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {
@@ -111,9 +109,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
         // Filtrar solo empleados en el resultado
-        const employees = response.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Empleado' || staff.staffTypeName === 'Employee'
-        );
+        const employees = response.body.data;
         this.tableConfig.dataSource.data = employees;
         this.tableConfig.length = employees.length;
         this._changeDetectorRef.markForCheck();

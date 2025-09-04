@@ -5,7 +5,7 @@ import { EmployeeService } from 'app/shared/services/employee.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 // Resolver para la lista de empleados
 // Resolver for employees list
@@ -21,7 +21,11 @@ export const initialDataEmployeesListResolver: ResolveFn<any> = (route: Activate
     isList: false,
   };
 
-  return forkJoin([employeeService.getAllEmployeesFromDb(requestParameters)]);
+  return forkJoin([employeeService.getAllEmployeesFromDb(requestParameters)]).pipe(
+    map(([employees]) => ({
+      employees: employees.body,
+    }))
+  );
 };
 
 // Resolver para la creación de un empleado
@@ -59,7 +63,13 @@ export const initialDataEmployeesAddResolver: ResolveFn<any> = (route: Activated
       optionKey: 'employeePosition,isActive',
       names: null,
     }),
-  ]);
+  ]).pipe(
+    map(([cities, regions, options]) => ({
+      cities: cities.body,
+      regions: regions.body,
+      options: options.body,
+    }))
+  );
 };
 
 // Resolver para la edición de un empleado
@@ -85,5 +95,10 @@ export const initialDataEmployeesEditResolver: ResolveFn<any> = (route: Activate
     // Lista completa para dropdowns
     // Complete list for dropdowns
     employeeService.getAllEmployeesFromDb(requestParameters),
-  ]);
+  ]).pipe(
+    map(([employee, employees]) => ({
+      employee: employee.body,
+      employees: employees.body,
+    }))
+  );
 };

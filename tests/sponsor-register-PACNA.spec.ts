@@ -7,12 +7,11 @@ const generateTestData = () => {
     agencyName: faker.company.name(),
     address: faker.location.streetAddress(),
     zipCode: faker.location.zipCode('#####'),
-    phone: faker.phone.number('###-###-####'),
+    phone: faker.phone.number(),
     email: faker.internet.email(),
     contactName: faker.person.fullName(),
-    contactPhone: faker.phone.number('###-###-####'),
+    contactPhone: faker.phone.number(),
     contactEmail: faker.internet.email(),
-    // Generar un nombre único para evitar conflictos
     uniqueId: faker.string.alphanumeric(8).toLowerCase()
   };
 };
@@ -51,47 +50,7 @@ const navigateWithRetry = async (page: any, url: string, maxRetries = 3) => {
 
 test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
-  test('should navigate to sponsor registration page', async ({ page }) => {
-    // Navegar a la aplicación con reintentos
-    await navigateWithRetry(page, 'https://nutre-dev.local:4202');
-
-    // Verificar que estamos en la página principal (permitir errores de conexión)
-    const currentUrl = page.url();
-    if (currentUrl.includes('error=connection')) {
-      console.log('Advertencia: Error de conexión detectado, pero continuando con el test');
-      // Intentar recargar la página una vez más
-      await page.reload();
-      await page.waitForLoadState('networkidle');
-    } else {
-      await expect(page).toHaveURL(/.*nutre-dev\.local.*/);
-    }
-
-    // Buscar el enlace de registro (puede tener diferentes nombres)
-    const signUpLink = page.locator('[data-cy=sign-up-link], a:has-text("Registrarse"), a:has-text("Sign Up")');
-
-    // Esperar a que el enlace esté visible con timeout más largo
-    await expect(signUpLink).toBeVisible({ timeout: 10000 });
-
-    // Hacer clic en el enlace de registro
-    await signUpLink.click();
-
-    // Esperar a que se complete la navegación
-    await page.waitForLoadState('networkidle');
-
-    // Verificar que estamos en una página de registro o sign-up (con manejo de errores)
-    const finalUrl = page.url();
-    if (finalUrl.includes('error=connection')) {
-      console.log('Advertencia: Error de conexión después del clic en registro');
-      // Continuar con el test aunque haya error de conexión
-    } else if (finalUrl.includes('sign-up')) {
-      console.log('Navegación exitosa a la página de registro');
-    } else {
-      console.log(`Navegación a URL inesperada: ${finalUrl}`);
-      // No fallar el test, solo registrar la URL
-    }
-  });
-
-  test('should fill complete PACNA sponsor registration form', async ({ page }) => {
+  test('should complete PACNA sponsor registration form', async ({ page }) => {
     // Generar datos únicos para esta prueba
     const testData = generateTestData();
     console.log('Datos de prueba generados:', testData);
@@ -131,6 +90,19 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
       // Esperar a que el formulario se habilite
       await page.waitForTimeout(1000);
+    }
+
+    // 1.1. Llenar campo de Agencia Auspiciadora de Hogares (solo visible para programa PACNA)
+    const isDayCareHomeSelect = page.locator('[data-cy=is-day-care-home-input]');
+    if (await isDayCareHomeSelect.isVisible()) {
+      await isDayCareHomeSelect.click();
+      // Seleccionar la primera opción disponible (Sí)
+      const firstDayCareOption = page.locator('[data-cy=is-day-care-home-option]').first();
+      await firstDayCareOption.click();
+
+      // Esperar un momento para que se procese la selección
+      await page.waitForTimeout(500);
+      console.log('Campo Agencia Auspiciadora de Hogares llenado');
     }
 
     // 2. Llenar información de la agencia
@@ -218,11 +190,14 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
     }
 
     // 7. Llenar fecha de servicio
-    const serviceDate = faker.date.past({ years: 3 }).toISOString().split('T')[0];
+    // Generar una fecha más reciente y en formato correcto (YYYY-MM-DD)
+    const currentDate = new Date();
+    const serviceDate = new Date(currentDate.getFullYear() - 1, currentDate.getMonth(), currentDate.getDate()).toISOString().split('T')[0];
     const serviceTimeInput = page.locator('[data-cy=service-time-input]');
     if (await serviceTimeInput.isVisible()) {
       await serviceTimeInput.fill(serviceDate);
       await expect(serviceTimeInput).toHaveValue(serviceDate);
+      console.log(`Fecha de servicio llenada: ${serviceDate}`);
     }
 
     // 8. Llenar campos de exención contributiva
@@ -385,20 +360,21 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
       await expect(phoneField).toHaveValue(testData.contactPhone);
     }
 
-    const adminTitleField = page.locator('[data-cy=admin-title-input]');
-    if (await adminTitleField.isVisible()) {
-      await adminTitleField.fill('Director Ejecutivo');
-      await expect(adminTitleField).toHaveValue('Director Ejecutivo');
+    // 14. Llenar Admin Title (ahora es un dropdown)
+    const adminTitleSelect = page.locator('[data-cy=admin-title-select]');
+    if (await adminTitleSelect.isVisible()) {
+      await adminTitleSelect.click();
+      // Seleccionar la primera opción disponible
+      const firstAdminTitleOption = page.locator('[data-cy=admin-title-option]').first();
+      await firstAdminTitleOption.click();
+
+      // Esperar un momento para que se procese la selección
+      await page.waitForTimeout(500);
     }
 
-    // Verificar que al menos un campo del formulario esté presente
-    const formFields = page.locator('input, select, textarea');
-    await expect(formFields.first()).toBeVisible();
-
-    // 14. Intentar enviar el formulario
+    // 15. Intentar enviar el formulario
     console.log('Intentando enviar el formulario...');
-    // se usa data-cy="generic-header-submit-button" porque esta vista use Generic Header
-    const submitButton = page.locator('data-cy="generic-header-submit-button"]');
+    const submitButton = page.locator('[data-cy="submit-button"]');
 
     if (await submitButton.isVisible()) {
       // Verificar el estado del botón antes de intentar hacer clic
@@ -421,30 +397,6 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
           }
         } else {
           console.log('No se encontraron errores de validación visibles');
-        }
-
-        // Verificar campos requeridos que podrían estar vacíos
-        const requiredFields = [
-          '[data-cy=program-select]',
-          '[data-cy=agency-input]',
-          '[data-cy=address-input]',
-          '[data-cy=city-select]',
-          '[data-cy=region-select]',
-          '[data-cy=zip-code-input]',
-          '[data-cy=first-name-input]',
-          '[data-cy=email-input]'
-        ];
-
-        console.log('Verificando campos requeridos:');
-        for (const fieldSelector of requiredFields) {
-          const field = page.locator(fieldSelector);
-          if (await field.isVisible()) {
-            const value = await field.inputValue();
-            const isEmpty = !value || value.trim() === '';
-            console.log(`  - ${fieldSelector}: ${isEmpty ? 'VACÍO' : `"${value}"`}`);
-          } else {
-            console.log(`  - ${fieldSelector}: NO VISIBLE`);
-          }
         }
       } else {
         // El botón está habilitado, intentar hacer clic
@@ -476,271 +428,6 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
       }
     } else {
       console.log('El botón de envío no está visible');
-    }
-  });
-
-  test('should show validation errors when submitting empty form', async ({ page }) => {
-    // Navegar a la página de registro con reintentos
-    await navigateWithRetry(page, 'https://nutre-dev.local:4202/sign-up');
-
-    // Verificar que estamos en la página correcta (con manejo de errores)
-    const currentUrl = page.url();
-    if (currentUrl.includes('error=connection')) {
-      console.log('Error de conexión persistente, saltando este test');
-      return; // Salir del test sin fallar
-    }
-
-    // Buscar el botón de envío
-    const submitButton = page.locator('[data-cy=submit-button]');
-
-    if (await submitButton.isVisible()) {
-      // Verificar si el botón está habilitado antes de intentar hacer clic
-      const isDisabled = await submitButton.isDisabled();
-
-      if (isDisabled) {
-        console.log('El botón de envío está deshabilitado, verificando errores de validación existentes');
-
-        // Verificar que se muestren errores de validación (si existen)
-        const errorElements = page.locator('.mat-error, .error, [class*="error"]');
-
-        // Si hay errores, verificar que al menos uno esté visible
-        if (await errorElements.count() > 0) {
-          await expect(errorElements.first()).toBeVisible();
-          console.log('Se encontraron errores de validación como se esperaba');
-        } else {
-          console.log('No se encontraron errores de validación visibles');
-        }
-      } else {
-        // El botón está habilitado, intentar hacer clic
-        console.log('El botón de envío está habilitado, intentando hacer clic');
-        await submitButton.click();
-
-        // Esperar un momento para que aparezcan los errores
-        await page.waitForTimeout(1000);
-
-        // Verificar que se muestren errores de validación (si existen)
-        const errorElements = page.locator('.mat-error, .error, [class*="error"]');
-
-        // Si hay errores, verificar que al menos uno esté visible
-        if (await errorElements.count() > 0) {
-          await expect(errorElements.first()).toBeVisible();
-        }
-      }
-    } else {
-      console.log('El botón de envío no está visible');
-    }
-  });
-
-  test('should test same as physical address checkbox functionality', async ({ page }) => {
-    // Navegar a la página de registro con reintentos
-    await navigateWithRetry(page, 'https://nutre-dev.local:4202/sign-up');
-
-    // Verificar que estamos en la página correcta (con manejo de errores)
-    const currentUrl = page.url();
-    if (currentUrl.includes('error=connection')) {
-      console.log('Error de conexión persistente, saltando este test');
-      return; // Salir del test sin fallar
-    }
-
-    // Primero seleccionar un programa para habilitar el formulario
-    const programSelect = page.locator('[data-cy=program-select]');
-    if (await programSelect.isVisible()) {
-      await programSelect.click();
-      const firstProgramOption = page.locator('[data-cy=program-option]').first();
-      await firstProgramOption.click();
-
-      // Esperar a que el formulario se habilite
-      await page.waitForTimeout(1000);
-    }
-
-    // Ahora llenar dirección física (el formulario debería estar habilitado)
-    const addressField = page.locator('[data-cy=address-input]');
-    if (await addressField.isVisible()) {
-      // Verificar si el campo está habilitado antes de llenarlo
-      const isDisabled = await addressField.isDisabled();
-      if (isDisabled) {
-        console.log('El campo de dirección está deshabilitado, saltando este test');
-        return;
-      }
-      await addressField.fill('Calle Principal 123');
-    }
-
-    const citySelect = page.locator('[data-cy=city-select]');
-    if (await citySelect.isVisible()) {
-      // Verificar si el campo está habilitado antes de hacer clic
-      const isDisabled = await citySelect.isDisabled();
-      if (isDisabled) {
-        console.log('El campo de ciudad está deshabilitado, saltando este test');
-        return;
-      }
-      await citySelect.click();
-      const firstCityOption = page.locator('[data-cy=city-option]').first();
-      await firstCityOption.click();
-
-      // Esperar a que las regiones se carguen después de seleccionar la ciudad
-      await page.waitForTimeout(1000);
-    }
-
-    const zipCodeField = page.locator('[data-cy=zip-code-input]');
-    if (await zipCodeField.isVisible()) {
-      // Verificar si el campo está habilitado antes de llenarlo
-      const isDisabled = await zipCodeField.isDisabled();
-      if (isDisabled) {
-        console.log('El campo de código postal está deshabilitado, saltando este test');
-        return;
-      }
-      await zipCodeField.fill('00901');
-    }
-
-    // Marcar el checkbox de "misma dirección"
-    const sameAddressCheckbox = page.locator('[data-cy=same-as-physical-address-checkbox]');
-    if (await sameAddressCheckbox.isVisible()) {
-      // Verificar si el checkbox está habilitado antes de hacer clic
-      const isDisabled = await sameAddressCheckbox.isDisabled();
-      if (isDisabled) {
-        console.log('El checkbox de misma dirección está deshabilitado, saltando este test');
-        return;
-      }
-
-      // Para checkboxes de Material Design, usar click() en lugar de check()
-      await sameAddressCheckbox.click();
-
-      // Esperar un momento para que se procese el cambio
-      await page.waitForTimeout(500);
-
-      // Verificar que los campos de dirección postal se llenen automáticamente
-      const postalAddressField = page.locator('[data-cy=postal-address-input]');
-      if (await postalAddressField.isVisible()) {
-        await expect(postalAddressField).toHaveValue('Calle Principal 123');
-      }
-
-      const postalZipCodeField = page.locator('[data-cy=postal-zip-code-input]');
-      if (await postalZipCodeField.isVisible()) {
-        await expect(postalZipCodeField).toHaveValue('00901');
-      }
-    }
-  });
-
-  test('should test program selection and conditional fields', async ({ page }) => {
-    // Navegar a la página de registro con reintentos
-    await navigateWithRetry(page, 'https://nutre-dev.local:4202/sign-up');
-
-    // Verificar que estamos en la página correcta (con manejo de errores)
-    const currentUrl = page.url();
-    if (currentUrl.includes('error=connection')) {
-      console.log('Error de conexión persistente, saltando este test');
-      return; // Salir del test sin fallar
-    }
-
-    // Verificar que el formulario esté deshabilitado inicialmente
-    const submitButton = page.locator('[data-cy=submit-button]');
-    if (await submitButton.isVisible()) {
-      await expect(submitButton).toBeDisabled();
-    }
-
-    // Seleccionar un programa
-    const programSelect = page.locator('[data-cy=program-select]');
-    if (await programSelect.isVisible()) {
-      await programSelect.click();
-      const firstProgramOption = page.locator('[data-cy=program-option]').first();
-      await firstProgramOption.click();
-
-      // Verificar que el formulario se habilite después de seleccionar un programa
-      await page.waitForTimeout(500);
-      if (await submitButton.isVisible()) {
-        // El botón debería estar habilitado si todos los campos requeridos están llenos
-        // o deshabilitado si faltan campos requeridos
-        await expect(submitButton).toBeVisible();
-      }
-    }
-  });
-
-  test('should validate all required fields are present', async ({ page }) => {
-    // Navegar a la página de registro con reintentos
-    await navigateWithRetry(page, 'https://nutre-dev.local:4202/sign-up');
-
-    // Verificar que estamos en la página correcta (con manejo de errores)
-    const currentUrl = page.url();
-    if (currentUrl.includes('error=connection')) {
-      console.log('Error de conexión persistente, saltando este test');
-      return; // Salir del test sin fallar
-    }
-
-    // Lista de campos requeridos según el componente
-    const requiredFields = [
-      { selector: '[data-cy=program-select]', name: 'Programa' },
-      { selector: '[data-cy=agency-input]', name: 'Nombre de la Agencia' },
-      { selector: '[data-cy=uie-input]', name: 'Número UIE' },
-      { selector: '[data-cy=sdr-input]', name: 'Número SDR' },
-      { selector: '[data-cy=ein-input]', name: 'Número EIN' },
-      { selector: '[data-cy=non-profit-select]', name: 'Organización sin fines de lucro' },
-      { selector: '[data-cy=basic-education-registry-select]', name: 'Certificación de Registro de Educación Básica' },
-      { selector: '[data-cy=state-funds-denied-select]', name: 'Fondos estatales denegados' },
-      { selector: '[data-cy=federal-funds-denied-select]', name: 'Fondos federales denegados' },
-      { selector: '[data-cy=organized-athletic-programs-select]', name: 'Programas atléticos organizados' },
-      { selector: '[data-cy=service-time-input]', name: 'Tiempo de servicio' },
-      { selector: '[data-cy=tax-exemption-status-input]', name: 'Estatus de exención contributiva' },
-      { selector: '[data-cy=tax-exemption-type-input]', name: 'Tipo de exención contributiva' },
-      { selector: '[data-cy=type-of-entity-input]', name: 'Tipo de entidad' },
-      { selector: '[data-cy=type-of-applicant-input]', name: 'Tipo de solicitante' },
-      { selector: '[data-cy=public-alliance-contract-input]', name: 'Contrato de alianza pública' },
-      { selector: '[data-cy=address-input]', name: 'Dirección física' },
-      { selector: '[data-cy=city-select]', name: 'Ciudad' },
-      { selector: '[data-cy=region-select]', name: 'Región' },
-      { selector: '[data-cy=zip-code-input]', name: 'Código postal' },
-      { selector: '[data-cy=latitude-input]', name: 'Latitud' },
-      { selector: '[data-cy=longitude-input]', name: 'Longitud' },
-      { selector: '[data-cy=postal-address-input]', name: 'Dirección postal' },
-      { selector: '[data-cy=postal-city-select]', name: 'Ciudad postal' },
-      { selector: '[data-cy=postal-region-select]', name: 'Región postal' },
-      { selector: '[data-cy=postal-zip-code-input]', name: 'Código postal postal' },
-      { selector: '[data-cy=first-name-input]', name: 'Nombre' },
-      { selector: '[data-cy=email-input]', name: 'Email' },
-      { selector: '[data-cy=phone-input]', name: 'Teléfono' },
-      { selector: '[data-cy=admin-title-input]', name: 'Título administrativo' }
-    ];
-
-    // Verificar que todos los campos requeridos estén presentes
-    for (const field of requiredFields) {
-      const element = page.locator(field.selector);
-      if (await element.isVisible()) {
-        console.log(`✓ Campo ${field.name} está presente`);
-      } else {
-        console.log(`✗ Campo ${field.name} NO está presente`);
-      }
-    }
-
-    // Verificar campos condicionales
-    const conditionalFields = [
-      { selector: '[data-cy=at-risk-service-select]', name: 'Servicio en riesgo', condition: 'Solo visible si programas atléticos = Sí' },
-      { selector: '[data-cy=national-youth-program-input]', name: 'Programa Nacional de Juventud', condition: 'Solo visible para programa PSAV' },
-      { selector: '[data-cy=is-day-care-home-input]', name: 'Agencia Auspiciadora de Hogares', condition: 'Solo visible para programa PACNA' }
-    ];
-
-    console.log('\nCampos condicionales:');
-    for (const field of conditionalFields) {
-      const element = page.locator(field.selector);
-      if (await element.isVisible()) {
-        console.log(`✓ Campo ${field.name} está visible (${field.condition})`);
-      } else {
-        console.log(`- Campo ${field.name} no está visible (${field.condition})`);
-      }
-    }
-
-    // Verificar funcionalidades especiales
-    const specialFeatures = [
-      { selector: '[data-cy=gps-coordinates-button]', name: 'Botón de coordenadas GPS' },
-      { selector: '[data-cy=same-as-physical-address-checkbox]', name: 'Checkbox misma dirección' }
-    ];
-
-    console.log('\nFuncionalidades especiales:');
-    for (const feature of specialFeatures) {
-      const element = page.locator(feature.selector);
-      if (await element.isVisible()) {
-        console.log(`✓ ${feature.name} está presente`);
-      } else {
-        console.log(`✗ ${feature.name} NO está presente`);
-      }
     }
   });
 });

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -49,6 +50,7 @@ export class HouseholdMemberListComponent implements OnInit, OnDestroy, OnGeneri
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -79,18 +81,15 @@ export class HouseholdMemberListComponent implements OnInit, OnDestroy, OnGeneri
   constructor() {}
 
   ngOnInit() {
-    this._householdMemberService.householdMembers$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (result && result.body) {
-        this.tableConfig.dataSource.data = result.body.data;
-        this.tableConfig.length = result.body.count;
-        this.tableConfig.dataSourceList = result.body.data;
-      } else {
-        this.tableConfig.dataSource.data = [];
-        this.tableConfig.length = 0;
-        this.tableConfig.dataSourceList = [];
-      }
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.householdMembers.data;
+      this.tableConfig.length = resolvedData.householdMembers.count;
+      this.tableConfig.dataSourceList = resolvedData.householdMembers.data;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {

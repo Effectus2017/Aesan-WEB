@@ -36,6 +36,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { takeUntil } from 'rxjs';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'auth-sign-up',
@@ -130,6 +131,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Socio-Económico (17), Híbrido (18)
   publicAllianceContract: OptionSelection[] = [];
 
+  // Posición del Staff
+  // Staff Position
+  // Administrativo (19), Operativo (20), Miembro del Consejo (21)
+  listAdministrativePositions: OptionSelection[] = [];
+
+  // Current Language
   currentLang: string = 'es';
 
   // Agregar esta propiedad
@@ -153,122 +160,125 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Inicializar el formulario en el constructor para evitar errores de undefined
     // Create the form
     this.signUpForm = this._formBuilder.group({
-        name: [null, Validators.required],
-        program: [null, Validators.required],
+      name: [null, Validators.required],
+      program: [null, Validators.required],
 
-        // Datos de la Agencia
-        sdrNumber: [null, [Validators.required]],
-        uieNumber: [null, [Validators.required]],
-        einNumber: [null, [Validators.required]],
+      // Datos de la Agencia
+      sdrNumber: [null, [Validators.required]],
+      uieNumber: [null, [Validators.required]],
+      einNumber: [null, [Validators.required]],
 
-        // Datos de la Agencia
+      // Datos de la Agencia
 
-        // ¿Es una organización sin fines de lucro?
-        // Is it a non-profit organization?
-        // Si (1) y No (2)
-        nonProfit: [null, Validators.required],
+      // ¿Es una organización sin fines de lucro?
+      // Is it a non-profit organization?
+      // Si (1) y No (2)
+      nonProfit: [null, Validators.required],
 
-        // ¿Posee Certificación de Registro de Educación Básica?
-        // Do you have Basic Education Registry Certification?
-        // En Proceso (3), Otorgado (4), Denegado (5)
-        basicEducationRegistryId: [null, Validators.required],
+      // ¿Posee Certificación de Registro de Educación Básica?
+      // Do you have Basic Education Registry Certification?
+      // En Proceso (3), Otorgado (4), Denegado (5)
+      basicEducationRegistryId: [null, Validators.required],
 
-        // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
-        // Have you been denied or disqualified from state funds in the last seven years?
-        // Si (1) y No (2)
-        stateFundsDenied: [null, Validators.required],
+      // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
+      // Have you been denied or disqualified from state funds in the last seven years?
+      // Si (1) y No (2)
+      stateFundsDenied: [null, Validators.required],
 
-        // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
-        // Have you been denied or disqualified from federal funds in the last seven years?
-        // Si (1) y No (2)
-        federalFundsDenied: [null, Validators.required],
+      // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
+      // Have you been denied or disqualified from federal funds in the last seven years?
+      // Si (1) y No (2)
+      federalFundsDenied: [null, Validators.required],
 
-        // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-        // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
-        // Si (1) y No (2)
-        organizedAthleticPrograms: [null, Validators.required],
+      // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+      // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
+      // Si (1) y No (2)
+      organizedAthleticPrograms: [null, Validators.required],
 
-        // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
-        // Is the Sponsor interested in participating in the at-risk snack and dinner service?
-        // Si (1) y No (2)
-        atRiskService: [{ value: null, disabled: true }],
+      // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
+      // Is the Sponsor interested in participating in the at-risk snack and dinner service?
+      // Si (1) y No (2)
+      atRiskService: [{ value: null, disabled: true }],
 
-        // ¿En qué estatus se encuentra su Exención Contributiva?"
-        // In what status is your Tax Exemption?
-        // En Proceso (3), Otorgado (4), Denegado (5)
-        taxExemptionStatusId: [null, Validators.required],
+      // ¿En qué estatus se encuentra su Exención Contributiva?"
+      // In what status is your Tax Exemption?
+      // En Proceso (3), Otorgado (4), Denegado (5)
+      taxExemptionStatusId: [null, Validators.required],
 
-        // ¿Qué tipo de Exención Contributiva tiene?
-        // What type of Tax Exemption does it have?
-        // Estatal (11), Federal (12)
-        taxExemptionTypeId: [null, Validators.required],
+      // ¿Qué tipo de Exención Contributiva tiene?
+      // What type of Tax Exemption does it have?
+      // Estatal (11), Federal (12)
+      taxExemptionTypeId: [null, Validators.required],
 
-        // Service Time
-        serviceTime: [null, Validators.required],
+      // Service Time
+      serviceTime: [null, Validators.required],
 
-        // Dirección
-        address: [null, Validators.required],
-        zipCode: [null, [Validators.required]],
-        city: [null, Validators.required],
-        region: [null, Validators.required],
-        latitude: [null, Validators.required],
-        longitude: [null, Validators.required],
+      // Dirección
+      address: [null, Validators.required],
+      zipCode: [null, [Validators.required]],
+      city: [null, Validators.required],
+      region: [null, Validators.required],
+      latitude: [null, Validators.required],
+      longitude: [null, Validators.required],
 
-        // Copiar Dirección Física
-        sameAsPhysicalAddress: [false],
+      // Copiar Dirección Física
+      sameAsPhysicalAddress: [false],
 
-        // Dirección Postal
-        postalAddress: [null, Validators.required],
-        postalZipCode: [null, Validators.required],
-        postalCity: [null, Validators.required],
-        postalRegion: [null, Validators.required],
+      // Dirección Postal
+      postalAddress: [null, Validators.required],
+      postalZipCode: [null, Validators.required],
+      postalCity: [null, Validators.required],
+      postalRegion: [null, Validators.required],
 
-        // Datos del Contacto
-        firstName: [null, Validators.required],
-        middleName: [null],
-        fatherLastName: [null, Validators.required],
-        motherLastName: [null],
+      // Datos del Contacto
+      firstName: [null, Validators.required],
+      middleName: [null],
+      fatherLastName: [null, Validators.required],
+      motherLastName: [null],
 
-        // Datos del Correo Electrónico y Cargo
-        email: [null, [Validators.required, Validators.email]],
-        phone: [null, [Validators.required]],
-        administrationTitle: [null, Validators.required],
+      // Datos del Correo Electrónico y Cargo
+      email: [null, [Validators.required, Validators.email]],
+      phone: [null, [Validators.required]],
 
-        // Tipo de Entidad
-        // Type of Entity
-        // Gobierno (13), Privado (14)
-        typeOfEntityId: [null, Validators.required],
+      // Posición del Staff
+      // Staff Position
+      // Administrativo (19), Operativo (20), Miembro del Consejo (21)
+      positionId: [null, Validators.required],
 
-        // Tipo de Solicitante
-        // Type of Applicant
-        // Laico (15), Base de fe (16)
-        typeOfApplicantId: [null, Validators.required],
+      // Tipo de Entidad
+      // Type of Entity
+      // Gobierno (13), Privado (14)
+      typeOfEntityId: [null, Validators.required],
 
-        // ¿De poseer un contrato Público Alianza especifique su modalidad?
-        // If you have a Public Alliance contract, please specify the type of contract
-        // Socio-Económico (17), Híbrido (18)
-        publicAllianceContractId: [null, Validators.required],
+      // Tipo de Solicitante
+      // Type of Applicant
+      // Laico (15), Base de fe (16)
+      typeOfApplicantId: [null, Validators.required],
 
-        // National Youth Program
-        // ¿Su Institución es un Programa Nacional de Juventud?
-        // Si (1) y No (2)
-        nationalYouthProgram: [null],
+      // ¿De poseer un contrato Público Alianza especifique su modalidad?
+      // If you have a Public Alliance contract, please specify the type of contract
+      // Socio-Económico (17), Híbrido (18)
+      publicAllianceContractId: [null, Validators.required],
 
-        // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
-        // Are you a Day Care Homes? (Only for PACNA program)
-        // Si (1) y No (2)
-        isDayCareHome: [null],
-      });
+      // National Youth Program
+      // ¿Su Institución es un Programa Nacional de Juventud?
+      // Si (1) y No (2)
+      nationalYouthProgram: [null],
+
+      // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+      // Are you a Day Care Homes? (Only for PACNA program)
+      // Si (1) y No (2)
+      isDayCareHome: [null],
+    });
   }
 
   ngOnInit(): void {
+
     // Suscribirse a cambios de idioma
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
       this._changeDetectorRef.detectChanges();
     });
-
-
 
     // Deshabilitar inicialmente todos los controles excepto program
     disableAllControlsExcept(this.signUpForm, 'program');
@@ -388,6 +398,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Socio-Económico (17), Híbrido (18)
         this.publicAllianceContract = result.body.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
 
+        // Posición del Staff
+        // Staff Position
+        // Administrativo (19), Operativo (20), Miembro del Consejo (21)
+        this.listAdministrativePositions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -466,7 +481,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   signUp(): void {
     if (this.signUpForm.invalid) {
-      this._snackBar.open(this._translocoService.translate('auth.sign-up.form-invalid.message'), this._translocoService.translate('auth.sign-up.form-invalid.close'), {
+      this._snackBar.open(this._translocoService.translate('sign-up.form-invalid.message'), this._translocoService.translate('sign-up.form-invalid.close'), {
         duration: 5000,
       });
 
@@ -478,7 +493,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar que se haya seleccionado un programa
     if (!formValues.program) {
-      this._snackBar.open(this._translocoService.translate('auth.sign-up.program.required'), this._translocoService.translate('auth.sign-up.program.required-close'), {
+      this._snackBar.open(this._translocoService.translate('sign-up.program.required'), this._translocoService.translate('sign-up.program.required-close'), {
         duration: 5000,
       });
       return;
@@ -496,7 +511,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if (!programId || typeof programId !== 'number') {
       this.alert = {
         type: 'error',
-        message: this._translocoService.translate('auth.sign-up.program.required'),
+        message: this._translocoService.translate('sign-up.program.required'),
       };
       this.showAlert = true;
       this.signUpForm.enable();
@@ -509,97 +524,145 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Hide the alert
     this.showAlert = false;
 
+    const name = formValues.name;
+    const sdrNumber: number = formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0;
+    const uieNumber: number = formValues.uieNumber ? parseInt(formValues.uieNumber) : 0;
+    const einNumber: number = formValues.einNumber ? parseInt(formValues.einNumber) : 0;
+    const address: string = formValues.address;
+    const zipCode: string = formValues.zipCode;
+    const latitude: number = formValues.latitude;
+    const longitude: number = formValues.longitude;
+    const postalAddress: string = formValues.postalAddress;
+    const postalZipCode: string = formValues.postalZipCode;
+
+    const serviceTime = formValues.serviceTime;
+    const email = formValues.email;
+    const phone = formValues.phone;
+
+    const nonProfit = formValues.nonProfit;
+    const basicEducationRegistryId = formValues.basicEducationRegistryId == null ? false : formValues.basicEducationRegistryId;
+    const federalFundsDenied = formValues.federalFundsDenied == null ? false : formValues.federalFundsDenied;
+    const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
+    const organizedAthleticPrograms = formValues.organizedAthleticPrograms;
+    const atRiskService = formValues.atRiskService == null ? false : formValues.atRiskService;
+    const taxExemptionStatusId = formValues.taxExemptionStatusId;
+    const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? false : formValues.taxExemptionTypeId;
+    const typeOfEntityId = formValues.typeOfEntityId;
+    const typeOfApplicantId = formValues.typeOfApplicantId == null ? false : formValues.typeOfApplicantId;
+    const publicAllianceContractId = formValues.publicAllianceContractId == null ? false : formValues.publicAllianceContractId;
+    const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
+    const isDayCareHome = formValues.isDayCareHome == null ? false : formValues.isDayCareHome;
+
+    const firstName = formValues.firstName;
+    const middleName = formValues.middleName;
+    const fatherLastName = formValues.fatherLastName;
+    const motherLastName = formValues.motherLastName;
+    const positionId = formValues.positionId;
+
     // Obtener los valores del formulario
     const userAgencyRequest: UserAgencyRequest = {
       agency: {
-        name: formValues.name ? formValues.name : '',
+        name: name,
         // Datos de la Agencia
-        sdrNumber: formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0,
-        uieNumber: formValues.uieNumber ? parseInt(formValues.uieNumber) : 0,
-        einNumber: formValues.einNumber ? parseInt(formValues.einNumber) : 0,
+        sdrNumber: sdrNumber,
+        uieNumber: uieNumber,
+        einNumber: einNumber,
         // Dirección Física
-        address: formValues.address ? formValues.address : '',
-        zipCode: formValues.zipCode ? formValues.zipCode : 0,
+        address: address,
+        zipCode: zipCode,
         cityId: cityId,
         regionId: regionId,
-        latitude: formValues.latitude ? formValues.latitude : 0,
-        longitude: formValues.longitude ? formValues.longitude : 0,
+        latitude: latitude,
+        longitude: longitude,
         // Dirección Postal
-        postalAddress: formValues.postalAddress ? formValues.postalAddress : '',
-        postalZipCode: formValues.postalZipCode ? formValues.postalZipCode : 0,
+        postalAddress: postalAddress,
+        postalZipCode: postalZipCode,
         postalCityId: postalCityId,
         postalRegionId: postalRegionId,
         // Service Time
-        serviceTime: formValues.serviceTime ? formValues.serviceTime : 0,
+        serviceTime: serviceTime,
         // Programas
         programs: [programId],
         // Datos del Correo Electrónico
-        email: formValues.email ? formValues.email : '',
+        email: email,
         // Datos del usuario
-        phone: formValues.phone ? formValues.phone : '',
+        phone: phone,
         // ¿Es una organización sin fines de lucro?
         // Is it a non-profit organization?
         // Si (1) y No (2)
-        nonProfit: formValues.nonProfit,
+        nonProfit: nonProfit,
         // ¿Posee Certificación de Registro de Educación Básica?
         // Do you have Basic Education Registry Certification?
         // En Proceso (3), Otorgado (4), Denegado (5)
-        basicEducationRegistryId: formValues.basicEducationRegistryId ? formValues.basicEducationRegistryId : 0,
+        basicEducationRegistryId: basicEducationRegistryId,
         // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
         // Have you been denied or disqualified from federal funds in the last seven years?
         // Si (1) y No (2)
-        federalFundsDenied: formValues.federalFundsDenied,
+        federalFundsDenied: federalFundsDenied,
         // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
         // Have you been denied or disqualified from state funds in the last seven years?
         // Si (1) y No (2)
-        stateFundsDenied: formValues.stateFundsDenied,
+        stateFundsDenied: stateFundsDenied,
         // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
         // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
         // Si (1) y No (2)
-        organizedAthleticPrograms: formValues.organizedAthleticPrograms,
+        organizedAthleticPrograms: organizedAthleticPrograms,
         // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
         // Is the Sponsor interested in participating in the at-risk snack and dinner service?
         // Si (1) y No (2)
         // At Risk Service
-        atRiskService: formValues.atRiskService == null ? false : formValues.atRiskService,
+        atRiskService: atRiskService,
         // ¿En qué estatus se encuentra su Exención Contributiva?
         // In what status is your Tax Exemption?
         // En Proceso (3), Otorgado (4), Denegado (5)
-        taxExemptionStatusId: formValues.taxExemptionStatusId,
+        taxExemptionStatusId: taxExemptionStatusId,
         // ¿Qué tipo de Exención Contributiva tiene?
         // What type of Tax Exemption does it have?
         // Estatal (11), Federal (12)
-        taxExemptionTypeId: formValues.taxExemptionTypeId,
+        taxExemptionTypeId: taxExemptionTypeId,
         // Tipo de Entidad
         // Type of Entity
         // Gobierno (13), Privado (14)
-        typeOfEntityId: formValues.typeOfEntityId,
+        typeOfEntityId: typeOfEntityId,
         // Tipo de Solicitante
         // Type of Applicant
         // Laico (15), Base de fe (16)
-        typeOfApplicantId: formValues.typeOfApplicantId,
+        typeOfApplicantId: typeOfApplicantId,
         // ¿De poseer un contrato Público Alianza especifique su modalidad?
         // If you have a Public Alliance contract, please specify the type of contract
         // Socio-Económico (17), Híbrido (18)
-        publicAllianceContractId: formValues.publicAllianceContractId,
+        publicAllianceContractId: publicAllianceContractId,
         // National Youth Program
         // ¿Su Institución es un Programa Nacional de Juventud?
         // Si (1) y No (2)
-        nationalYouthProgram: formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram,
+        nationalYouthProgram: nationalYouthProgram,
         // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
         // Are you a Day Care Homes? (Only for PACNA program)
         // Si (1) y No (2)
-        isDayCareHome: formValues.isDayCareHome == null ? false : formValues.isDayCareHome,
+        isDayCareHome: isDayCareHome,
       },
-      user: {
+      staff: {
         // Datos del Contacto
-        firstName: formValues.firstName,
-        middleName: formValues.middleName,
-        fatherLastName: formValues.fatherLastName,
-        motherLastName: formValues.motherLastName,
+        firstName: firstName,
+        middleName: middleName,
+        fatherLastName: fatherLastName,
+        motherLastName: motherLastName,
         // Datos del Correo Electrónico y Cargo
-        administrationTitle: formValues.administrationTitle,
-        email: formValues.email,
+        positionId: positionId,
+        email: email,
+        // Datos adicionales del Staff
+        phoneNumber: phone,
+        imageURL: '', // Por defecto vacío, se puede actualizar después
+        // Campos requeridos con valores por defecto
+        statusId: 21, // Activo por defecto
+        staffTypeId: 1, // Empleado por defecto
+        staffClassificationId: 1, // Empleado Administrativo por defecto
+        birthDate: null, // Fecha por defecto, se puede actualizar después
+        postalAddress: postalAddress,
+        cityId: cityId,
+        regionId: regionId,
+        areaCode: '787', // Código de área por defecto para PR
+        isActive: true,
       },
     };
 
@@ -607,14 +670,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this._userService.registerUserAgency(userAgencyRequest, {}).subscribe({
       next: (response) => {
         // Mostrar mensaje de éxito del backend
-        const message = response?.value?.message || this._translocoService.translate('auth.sign-up.success.default');
+        const message = response?.value?.message || this._translocoService.translate('sign-up.success.default');
         this._snackBar.open(message, this._translocoService.translate('common.close'), { duration: 5000 });
         // Navigate to the confirmation required page
         this._customRouterService.navigate(['/sign-in']);
       },
       error: (error) => {
         // Mostrar mensaje de error del backend si existe
-        let errorMessage = this._translocoService.translate('auth.sign-up.error.creating-user');
+        let errorMessage = this._translocoService.translate('sign-up.error.creating-user');
         if (error?.error?.value?.message) {
           errorMessage = error.error.value.message;
         } else if (error?.error?.message) {
@@ -628,7 +691,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Re-enable the form
         this.signUpForm.enable();
         // Reset the form
-        this.signUpNgForm.resetForm();
+        if (!environment.production) {
+          this.signUpNgForm.resetForm();
+        }
       },
     });
   }
@@ -644,11 +709,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pdam-psav-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
         actions: {
           confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            label: this._translocoService.translate('sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -677,11 +742,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
         actions: {
           confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            label: this._translocoService.translate('sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -718,11 +783,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
         actions: {
           confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            label: this._translocoService.translate('sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -745,11 +810,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
       this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.pacna-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
         actions: {
           confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            label: this._translocoService.translate('sign-up.notification.confirm'),
           },
           cancel: {
             show: false,
@@ -773,11 +838,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         this.isEligible = false;
         disableAllControlsExcept(this.signUpForm, 'program');
         this._fuseConfirmationService.open({
-          title: this._translocoService.translate('auth.sign-up.notification.title'),
-          message: this._translocoService.translate('auth.sign-up.service-time-not-eligible.message'),
+          title: this._translocoService.translate('sign-up.notification.title'),
+          message: this._translocoService.translate('sign-up.service-time-not-eligible.message'),
           actions: {
             confirm: {
-              label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+              label: this._translocoService.translate('sign-up.notification.confirm'),
             },
             cancel: {
               show: false,
@@ -846,11 +911,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({
-        title: this._translocoService.translate('auth.sign-up.notification.title'),
-        message: this._translocoService.translate('auth.sign-up.basic-education-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
         actions: {
           confirm: {
-            label: this._translocoService.translate('auth.sign-up.notification.confirm'),
+            label: this._translocoService.translate('sign-up.notification.confirm'),
           },
           cancel: {
             show: false,

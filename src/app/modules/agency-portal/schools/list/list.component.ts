@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
@@ -50,6 +50,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -77,21 +78,15 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   constructor() {}
 
   ngOnInit() {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
 
-
-    // Obtener las escuelas
-    this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.tableConfig.dataSource.data = result.body.data;
-        this.tableConfig.length = result.body.count;
-
-        // Lista de datos
-        this.tableConfig.dataSourceList = result.body.data;
-      }
-
-      // Marcar para que se actualice la vista
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.schools.data;
+      this.tableConfig.length = resolvedData.schools.count;
+      this.tableConfig.dataSourceList = resolvedData.schools.data;
       this._changeDetectorRef.markForCheck();
-    });
+    }
   }
 
   ngOnDestroy(): void {

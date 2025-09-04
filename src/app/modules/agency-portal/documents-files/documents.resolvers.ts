@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyFilesService } from 'app/shared/services/agency-files.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 
 export const initialDataDocumentsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
@@ -20,5 +20,9 @@ export const initialDataDocumentsListResolver: ResolveFn<any> = (route: Activate
     agencyId: agencyId,
   };
 
-  return forkJoin([agencyFileService.getAgencyFiles(requestParameters)]);
+  return forkJoin([agencyFileService.getAgencyFiles(requestParameters)]).pipe(
+    map(([documents]) => ({
+      documents: documents.body,
+    }))
+  );
 };

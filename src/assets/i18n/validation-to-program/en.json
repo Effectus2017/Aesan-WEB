@@ -1,0 +1,158 @@
+{
+    "validation-to-program": {
+        "list": {
+            "title": "Sponsor Evaluation",
+            "search": {
+                "placeholder": "Search user",
+                "button": "Search"
+            },
+            "table": {
+                "columns": {
+                    "programName": "Program",
+                    "agencyName": "Name of the Sponsoring Agency",
+                    "stateDepartmentRegistration": "State Dept. Registration",
+                    "address": "Address",
+                    "city": "City",
+                    "region": "Region",
+                    "zipCode": "Postal Code",
+                    "firstName": "First Name",
+                    "fatherLastName": "Father's Last Name",
+                    "adminTitle": "Admin Title",
+                    "nonProfit": "Non Profit",
+                    "uieNumber": "# UIE",
+                    "einNumber": "Employer Identification Number (EIN)",
+                    "ssPatronal": "State Department Registration Number",
+                    "latitude": "Latitude",
+                    "longitude": "Longitude",
+                    "phone": "Phone",
+                    "email": "Email",
+                    "middleName": "Middle Name",
+                    "motherLastName": "Mother's Last Name",
+                    "createdBy": "Created By",
+                    "assignedTo": "Assigned To",
+                    "createdAt": "Creation Date",
+                    "status": "Status",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "edit": "Edit",
+                    "delete": "Delete"
+                }
+            },
+            "buttons": {
+                "add": "Add",
+                "clear": "Clear",
+                "save": "Save"
+            }
+        },
+        "edit": {
+            "title": "Edit Sponsor Evaluation",
+            "submit": "Submit",
+            "save": "Save",
+            "reject": "Reject",
+            "program": {
+                "label": "Program"
+            },
+            "status": {
+                "label": "Status"
+            },
+            "monitor": {
+                "label": "Users Monitor"
+            },
+            "agency": {
+                "label": "Agency",
+                "placeholder": "Enter agency name"
+            },
+            "state-department-registration": {
+                "label": "State Department Registration",
+                "placeholder": "Enter state department registration number"
+            },
+            "uieNumber": {
+                "label": "UIE Number",
+                "placeholder": "Enter UIE number"
+            },
+            "einNumber": {
+                "label": "EIN Number",
+                "placeholder": "Enter EIN number"
+            },
+            "address": {
+                "label": "Address",
+                "placeholder": "Enter address"
+            },
+            "city": {
+                "label": "City"
+            },
+            "region": {
+                "label": "Region"
+            },
+            "zip-code": {
+                "label": "Zip Code",
+                "placeholder": "Enter zip code"
+            },
+            "first-name": {
+                "label": "First Name",
+                "placeholder": "Enter first name"
+            },
+            "middle-name": {
+                "label": "Middle Name",
+                "placeholder": "Enter middle name"
+            },
+            "father-last-name": {
+                "label": "Father Last Name",
+                "placeholder": "Enter father's last name"
+            },
+            "mother-last-name": {
+                "label": "Mother Last Name",
+                "placeholder": "Enter mother's last name"
+            },
+            "email": {
+                "label": "Email",
+                "placeholder": "Enter email address"
+            },
+            "phone": {
+                "label": "Phone",
+                "placeholder": "Enter phone number"
+            },
+            "administration-title": {
+                "label": "Administration Title",
+                "placeholder": "Enter administration title"
+            },
+            "sections": {
+                "sponsor-information": "Sponsor Information",
+                "sponsor-information-description": "Enter the sponsor agency information",
+                "address": "Address Information",
+                "address-description": "Enter the physical address details",
+                "postal-address": "Postal Address",
+                "postal-address-description": "Enter the postal address details",
+                "user-information": "User Information",
+                "user-information-description": "Enter the contact person information"
+            },
+            "postal": {
+                "address": {
+                    "label": "Postal Address",
+                    "placeholder": "Enter postal address"
+                },
+                "city": {
+                    "label": "City"
+                },
+                "region": {
+                    "label": "Region"
+                },
+                "zip-code": {
+                    "label": "Zip Code",
+                    "placeholder": "Enter zip code"
+                }
+            },
+            "coordinates": {
+                "latitude": {
+                    "label": "Latitude",
+                    "placeholder": "Enter latitude"
+                },
+                "longitude": {
+                    "label": "Longitude",
+                    "placeholder": "Enter longitude"
+                }
+            }
+        }
+    }
+}
