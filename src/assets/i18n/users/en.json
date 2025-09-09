@@ -103,6 +103,15 @@
                     "error": "Error uploading file"
                 }
             },
+            "isActive": {
+                "label": "Active User"
+            },
+            "isTemporalPasswordActived": {
+                "label": "Temporary Password Activated"
+            },
+            "emailConfirmed": {
+                "label": "Email Confirmed"
+            },
             "permissions-section": "Assigned Permissions",
             "permissions": {
                 "table": {

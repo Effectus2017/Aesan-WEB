@@ -42,6 +42,7 @@
           "columns": {
             "fullName": "Full Name",
             "classification": "Classification",
+            "agency": "Agency",
             "position": "Position",
             "status": "Status",
             "description": "Employee description",

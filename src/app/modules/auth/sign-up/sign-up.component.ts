@@ -2,6 +2,7 @@ import { NgFor, NgIf } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -90,6 +91,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _optionSelectionService = inject(OptionSelectionService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _route = inject(ActivatedRoute);
 
   listPrograms: Program[] = [];
   listCities: City[] = [];
@@ -273,6 +275,54 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      // Asignar ciudades
+      this.listCities = resolvedData.cities.data || resolvedData.cities;
+
+      // Asignar programas
+      this.listPrograms = resolvedData.programs.data || resolvedData.programs;
+
+      // Asignar opciones
+      const allOptions = [...resolvedData.options1.data, ...resolvedData.options2.data];
+
+      // Yes No Options (1, 2)
+      this.yesNoOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+
+      // ¿En qué estatus se encuentra su Exención Contributiva?
+      // In what status is your Tax Exemption?
+      // En Proceso (3), Otorgado (4), Denegado (5)
+      this.exceptionStatus = allOptions.filter((option: OptionSelection) => option.optionKey === 'exceptionStatus' && option.id !== 5);
+
+      // ¿Qué tipo de Exención Contributiva tiene?
+      // What type of Tax Exemption does it have?
+      // Estatal (11), Federal (12)
+      this.taxExemptionType = allOptions.filter((option: OptionSelection) => option.optionKey === 'taxExemptionType');
+
+      // Tipo de Entidad
+      // Type of Entity
+      // Gobierno (13), Privado (14)
+      this.typeOfEntity = allOptions.filter((option: OptionSelection) => option.optionKey === 'typeOfEntity');
+
+      // Tipo de Solicitante
+      // Type of Applicant
+      // Laico (15), Base de fe (16)
+      this.typeOfApplicant = allOptions.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+
+      // ¿De poseer un contrato Público Alianza especifique su modalidad?
+      // If you have a Public Alliance contract, please specify the type of contract
+      // Socio-Económico (17), Híbrido (18)
+      this.publicAllianceContract = allOptions.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
+
+      // Posición del Staff
+      // Staff Position
+      // Administrativo (19), Operativo (20), Miembro del Consejo (21)
+      this.listAdministrativePositions = allOptions.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+
+      this._changeDetectorRef.markForCheck();
+    }
 
     // Suscribirse a cambios de idioma
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -350,62 +400,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this.signUpForm.get('typeOfEntityId').valueChanges.subscribe(() => {
       this.checkTypeOfEntity();
     });
-
-    // Cargar programas
-    this._programService.programs$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listPrograms = result.body.data;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cargar ciudades
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cargar opciones
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Yes No Options (1, 2)
-        this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-
-        // ¿En qué estatus se encuentra su Exención Contributiva?
-        // In what status is your Tax Exemption?
-        // En Proceso (3), Otorgado (4), Denegado (5)
-        this.exceptionStatus = result.body.data.filter((option: OptionSelection) => option.optionKey === 'exceptionStatus' && option.id !== 5);
-
-        // ¿Qué tipo de Exención Contributiva tiene?
-        // What type of Tax Exemption does it have?
-        // Estatal (11), Federal (12)
-        this.taxExemptionType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'taxExemptionType');
-
-        // Tipo de Entidad
-        // Type of Entity
-        // Gobierno (13), Privado (14)
-        this.typeOfEntity = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfEntity');
-
-        // Tipo de Solicitante
-        // Type of Applicant
-        // Laico (15), Base de fe (16)
-        this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-
-        // ¿De poseer un contrato Público Alianza especifique su modalidad?
-        // If you have a Public Alliance contract, please specify the type of contract
-        // Socio-Económico (17), Híbrido (18)
-        this.publicAllianceContract = result.body.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
-
-        // Posición del Staff
-        // Staff Position
-        // Administrativo (19), Operativo (20), Miembro del Consejo (21)
-        this.listAdministrativePositions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -425,10 +419,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         this.listCities = response.body;
       },
       error: (error) => {
-        console.error('Error al cargar las ciudades', error);
+
       },
       complete: () => {
-        console.log('Ciudades cargadas con éxito');
+
       },
     });
   }
@@ -902,9 +896,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   checkBasicEducationRegistry(): void {
     const selectedProgram = this.signUpForm.value.program;
     const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
-
-    console.log('Programa seleccionado:', selectedProgram);
-    console.log('Valor de basicEducationRegistry:', basicEducationRegistry);
 
     // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
     if (basicEducationRegistry === 3 && isPDAMOrPSAVProgram(selectedProgram)) {
