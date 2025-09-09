@@ -24,21 +24,16 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareById, compareItems, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareById, compareItems, compareMonitors, handleFormControls } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RejectDialogComponent } from '../reject-dialog/reject-dialog.component';
-import { AgencyStatusService } from 'app/shared/services/agency-status.service';
-import { ProgramService } from 'app/shared/services/program.service';
-import { UsersService } from 'app/shared/services/users.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
-import { UserRequest } from 'app/shared/models/Request/UserRequest';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { ActivatedRoute } from '@angular/router';
 import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
@@ -74,10 +69,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
-  private _agencyStatusService = inject(AgencyStatusService);
   private _geoService = inject(GeoService);
-  private _programService = inject(ProgramService);
-  private _usersService = inject(UsersService);
   private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
@@ -85,7 +77,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   private _snackBar = inject(MatSnackBar);
   private _dialog = inject(MatDialog);
   private _customRouterService = inject(CustomRouterService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _route = inject(ActivatedRoute);
 
   listAgencyStatus = [];
@@ -104,6 +95,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   // Compare methods
   compareById = compareById;
   compareItems = compareItems;
+  compareMonitors = compareMonitors;
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -264,13 +256,12 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       postalRegionId: formValues.postalRegion?.id,
       email: formValues.email,
       phone: formValues.phone,
-      //positionId: formValues.position?.id,
       programs: formValues.program ? [formValues.program.id] : [],
       monitorId: formValues.monitor ? formValues.monitor.id : null,
       assignedBy: assignedBy,
     };
 
-    const userRequest: StaffRequest = {
+    const staffRequest: StaffRequest = {
       id: this.param.user.id,
       firstName: formValues.firstName,
       middleName: formValues.middleName,
@@ -282,7 +273,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
     const userAgencyRequest: UserAgencyRequest = {
       agency: agencyRequest,
-      staff: userRequest,
+      staff: staffRequest,
     };
 
     // Parámetros de consulta
@@ -329,7 +320,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
             break;
         }
       },
-      error: (error) => {
+      error: () => {
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('dialog.error.title'),
           icon: {
@@ -342,8 +333,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
         this.enableEditableFormControls();
       },
       complete: () => {
-        console.log('Actualización completada');
-        //this.enableEditableFormControls();
+        this.enableEditableFormControls();
         //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
         this._customRouterService.navigate([`admin/validation-to-program/list`]);
       },
@@ -381,7 +371,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
           });
         }
       },
-      error: (error) => {
+      error: () => {
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('dialog.error.title'),
           icon: {
@@ -402,9 +392,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
         this.enableEditableFormControls();
       },
       complete: () => {
-        //this.enableEditableFormControls();
+        this.enableEditableFormControls();
         //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
-        //this._customRouterService.navigate([`admin/validation-to-program/list`]);
+        this._customRouterService.navigate([`admin/validation-to-program/list`]);
       },
     });
   }
@@ -456,7 +446,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
               });
             }
           },
-          error: (error) => {
+          error: () => {
             this._fuseConfirmationService.open({
               title: this._translocoService.translate('dialog.error.title'),
               icon: {

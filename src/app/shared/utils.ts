@@ -69,6 +69,32 @@ export function compareItems<T>(item1: T, item2: T): boolean {
 }
 
 /**
+ * Compara monitores por StaffId para resolver inconsistencias entre DTOUser y DTOStaff
+ * @param monitor1 Monitor 1 (puede ser DTOUser o DTOStaff)
+ * @param monitor2 Monitor 2 (puede ser DTOUser o DTOStaff)
+ * @returns true si los monitores son iguales, false en caso contrario
+ */
+export function compareMonitors(monitor1: any, monitor2: any): boolean {
+  // Comparar por StaffId si ambos lo tienen
+  if (monitor1.staffId && monitor2.staffId) {
+    return monitor1.staffId === monitor2.staffId;
+  }
+
+  // Si el monitor guardado es DTOStaff, usar su Id
+  if (monitor1.id && monitor2.staffId) {
+    return monitor1.id === monitor2.staffId;
+  }
+
+  // Si el monitor del dropdown es DTOUser, usar su StaffId
+  if (monitor1.staffId && monitor2.id) {
+    return monitor1.staffId === monitor2.id;
+  }
+
+  // Fallback a comparación normal por id
+  return monitor1.id === monitor2.id;
+}
+
+/**
  * Compara dos elementos por una propiedad específica
  * @param item1 Elemento 1
  * @param item2 Elemento 2

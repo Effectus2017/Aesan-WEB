@@ -9,13 +9,20 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { UsersService } from 'app/shared/services/users.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 
+/**
+ * Resolver para obtener los datos iniciales de la lista de programas de validación
+ */
 export const initialDataValidationToProgramListResolver: ResolveFn<any> = () => {
+
   const agencyService = inject(AgencyService);
   const geoService = inject(GeoService);
   const programService = inject(ProgramService);
+
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
+    alls: true,
+    isPropietary: false,
   };
 
   return forkJoin([
@@ -31,6 +38,9 @@ export const initialDataValidationToProgramListResolver: ResolveFn<any> = () => 
   );
 };
 
+/**
+ * Resolver para obtener los datos iniciales de la edición de un programa de validación
+ */
 export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route) => {
   const agencyService = inject(AgencyService);
   const agencyStatusService = inject(AgencyStatusService);

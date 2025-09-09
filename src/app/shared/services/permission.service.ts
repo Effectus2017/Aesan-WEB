@@ -45,6 +45,15 @@ export class PermissionService {
   }
 
   /**
+   * Obtiene un permiso por su ValueKey
+   * @param queryParameters Parámetros de consulta
+   * @returns Observable con el permiso
+   */
+  getPermissionByValueKey(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-permission-by-value-key`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._permission.next(response)));
+  }
+
+  /**
    * Obtiene todos los permisos de la base de datos
    * @param queryParameters Parámetros de consulta
    * @returns Observable con la lista de permisos
@@ -92,7 +101,7 @@ export class PermissionService {
    * @returns Observable con el permiso asignado
    */
   assignPermissionToUser(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/assign-permission-to-user`, getHttpOptions(queryParameters));
+    return this._httpClient.post(`${this.apiUrl}/assign-permission-to-user`, null, getHttpOptions(queryParameters));
   }
 
   /**
@@ -110,7 +119,7 @@ export class PermissionService {
    * @returns Observable con el permiso asignado
    */
   assignPermissionToRole(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/assign-permission-to-role`, getHttpOptions(queryParameters));
+    return this._httpClient.post(`${this.apiUrl}/assign-permission-to-role`, null, getHttpOptions(queryParameters));
   }
 
   /**

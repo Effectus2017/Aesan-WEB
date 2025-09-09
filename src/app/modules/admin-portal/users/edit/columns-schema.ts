@@ -4,21 +4,28 @@ export const PERMISSIONS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
-    label: 'permissions.list.table.columns.name',
+    label: 'users.edit.permissions.table.columns.name',
   },
   {
-    key: 'description',
+    key: 'nameEn',
     type: 'text',
-    label: 'permissions.list.table.columns.description',
+    label: 'users.edit.permissions.table.columns.nameEn',
+  },
+  {
+    key: 'isActive',
+    type: 'boolean',
+    label: 'users.edit.permissions.table.columns.isActive',
   },
   {
     key: 'actions',
     type: 'button',
-    label: 'permissions.list.table.columns.actions',
+    label: 'users.edit.permissions.table.columns.actions',
     buttons: [
       {
         key: 'delete',
-        label: 'permissions.list.table.buttons.delete',
+        label: 'users.edit.permissions.table.buttons.delete',
+        color: 'warn',
+        icon: 'delete',
       },
     ],
   },

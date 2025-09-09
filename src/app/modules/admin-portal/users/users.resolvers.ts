@@ -50,7 +50,7 @@ export const initialAgenciesUsersListResolver: ResolveFn<any> = () => {
 
   return forkJoin([usersService.getAllUsersFromDbWithSP(requestParameters)]).pipe(
     map(([users]) => ({
-      users: users.body
+      users: users.body,
     }))
   );
 };
@@ -60,7 +60,7 @@ export const initialRolesResolver: ResolveFn<any> = () => {
 
   return forkJoin([usersService.getAllRolesFromDb({ take: 25, skip: 0 })]).pipe(
     map(([roles]) => ({
-      roles: roles
+      roles: roles.body
     }))
   );
 };
@@ -75,7 +75,7 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
   ]).pipe(
     map(([agencies, roles]) => ({
       agencies: agencies.body,
-      roles: roles
+      roles: roles.body
     }))
   );
 };
@@ -105,7 +105,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     map(([agencies, user, roles, permissions]) => ({
       agencies: agencies.body,
       user: user.body,
-      roles: roles,
+      roles: roles.body,
       permissions: permissions.body
     }))
   );

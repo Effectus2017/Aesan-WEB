@@ -40,7 +40,7 @@
           </mat-form-field>
 
           <!-- Fecha de inactivación -->
-          <mat-form-field data-cy="inactive-date-field" >
+          <mat-form-field data-cy="inactive-date-field">
             <mat-label>{{ "schools.edit.inactive-date.label" | transloco }}</mat-label>
             <input
               matInput
@@ -212,7 +212,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.administrative-information.description" | transloco }}</p>
         </div>
 
-         <!-- ¿Es una organización sin fines de lucro? -->
+        <!-- ¿Es una organización sin fines de lucro? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <!-- ¿Es una organización sin fines de lucro? -->
           <mat-form-field data-cy="non-profit-field">
@@ -338,7 +338,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.edit.kitchen-type.label" | transloco }}</mat-label>
@@ -346,7 +346,9 @@
               <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+        </div>
 
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
           <!-- Tipo de grupo -->
           <mat-form-field data-cy="group-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.edit.group-type.label" | transloco }}</mat-label>
@@ -374,8 +376,7 @@
 
         <!-- Tipo de auspiciador -->
         <!-- Tipo de solicitante -->
-        <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <!-- Tipo de auspiciador -->
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.edit.sponsor-type.label" | transloco }}</mat-label>
@@ -391,8 +392,10 @@
               <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+        </div>
 
-          <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
+         <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.edit.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">

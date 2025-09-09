@@ -1,26 +1,31 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgIf } from '@angular/common';
 import { fuseAnimations } from '@fuse/animations';
 import { RouterLink, RouterModule } from '@angular/router';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from './generic-header.interface';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
     selector: 'app-generic-header',
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, NgIf, RouterModule, RouterLink, TranslocoModule]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, NgIf, RouterModule, RouterLink, TranslocoModule]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;
   @Input() handler: OnGenericHeaderHandlers;
+
+  private _translocoService = inject(TranslocoService);
+  private _authService = inject(AuthService);
 
   // Search Field config
   @Input() searchFieldShow: boolean = false;
@@ -56,6 +61,56 @@ export class GenericHeaderComponent {
 
   // Loading config
   @Input() isLoading: boolean = false;
+
+  /**
+   * Verifica si un botón debe estar deshabilitado por permisos
+   * @param permission Permiso requerido para el botón
+   * @param isManuallyDisabled Si el botón está deshabilitado manualmente
+   * @returns true si el botón debe estar deshabilitado
+   */
+  isButtonDisabledByPermission(permission?: string, isManuallyDisabled: boolean = false): boolean {
+    // Si está deshabilitado manualmente, retornar true
+    if (isManuallyDisabled) {
+      return true;
+    }
+
+    // Si tiene permiso definido, verificar si el usuario lo tiene
+    if (permission) {
+      return !this._authService.hasPermission(permission);
+    }
+
+    // Si no tiene permiso definido, el botón está habilitado
+    return false;
+  }
+
+  /**
+   * Obtiene el tooltip para un botón del header
+   * @param tooltipKey Clave de traducción del tooltip
+   * @param disabledTooltipKey Clave de traducción del tooltip deshabilitado
+   * @param permission Permiso requerido para el botón
+   * @param isManuallyDisabled Si el botón está deshabilitado manualmente
+   * @returns El mensaje del tooltip apropiado
+   */
+  getButtonTooltip(tooltipKey?: string, disabledTooltipKey?: string, permission?: string, isManuallyDisabled: boolean = false): string | undefined {
+    const isDisabled = this.isButtonDisabledByPermission(permission, isManuallyDisabled);
+
+    // Si está deshabilitado y tiene tooltip para deshabilitado, usarlo
+    if (isDisabled && disabledTooltipKey) {
+      return this._translocoService.translate(disabledTooltipKey);
+    }
+
+    // Si está deshabilitado por permisos y no tiene tooltip específico, usar genérico
+    if (isDisabled && permission && !this._authService.hasPermission(permission)) {
+      return this._translocoService.translate('global.tooltips.noPermission');
+    }
+
+    // Si está habilitado y tiene tooltip normal, usarlo
+    if (!isDisabled && tooltipKey) {
+      return this._translocoService.translate(tooltipKey);
+    }
+
+    return undefined;
+  }
 
   onSubmit() {
     this.handler.onSubmit();

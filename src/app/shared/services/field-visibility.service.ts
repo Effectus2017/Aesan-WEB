@@ -1,5 +1,16 @@
 import { Injectable } from '@angular/core';
 import fieldConfig from '../../modules/agency-portal/staff/edit/field-visibility-config.json';
+import {
+  isPSAVProgram,
+  isPDAMProgram,
+  isPACNAProgram,
+  isPFHFProgram,
+  isPDFEProgram,
+  isAESANProgram,
+  isPAFProgram,
+  isPDAMOrPSAVProgram,
+  PROGRAM_IDS
+} from 'app/shared/const';
 
 export interface FieldVisibilityConfig {
   showFor: string[];
@@ -9,6 +20,10 @@ export interface FieldVisibilityConfig {
   // Propiedades para roles y permisos
   roles?: string[];
   permissions?: string[];
+  // ✅ NUEVO: Propiedades para programas
+  showForPrograms?: number[]; // IDs de programas donde se muestra
+  hideForPrograms?: number[]; // IDs de programas donde se oculta
+  requiredForPrograms?: number[]; // IDs de programas donde es requerido
 }
 
 export interface EntityTypeConfig {
@@ -46,6 +61,17 @@ export class FieldVisibilityService {
   // Propiedades para roles y permisos del usuario actual
   private currentUserRole: string = '';
   private currentUserPermissions: string[] = [];
+
+  // ✅ NUEVO: Funciones helper para programas (como en AuthSignUpComponent)
+  readonly isPSAVProgram = isPSAVProgram;
+  readonly isPDAMProgram = isPDAMProgram;
+  readonly isPACNAProgram = isPACNAProgram;
+  readonly isPFHFProgram = isPFHFProgram;
+  readonly isPDFEProgram = isPDFEProgram;
+  readonly isAESANProgram = isAESANProgram;
+  readonly isPAFProgram = isPAFProgram;
+  readonly isPDAMOrPSAVProgram = isPDAMOrPSAVProgram;
+  readonly PROGRAM_IDS = PROGRAM_IDS;
 
   constructor() {
     //console.log('🔧 FieldVisibilityService constructor');
@@ -435,5 +461,129 @@ export class FieldVisibilityService {
    */
   getConfig(configName: string): any {
     return this.fieldConfigs.get(configName);
+  }
+
+  /**
+   * ✅ NUEVO: Determina si un campo debe mostrarse basado en programa seleccionado
+   * Para contexto: AuthSignUpComponent
+   */
+  shouldShowFieldForProgram(fieldName: string, program: any): boolean {
+    const config = this.getActiveConfig();
+    if (!config) return true;
+
+    const field = config.fieldVisibility[fieldName];
+    if (!field) return true;
+
+    // Si el campo tiene configuración de programas
+    if (field.showForPrograms) {
+      const programId = program?.id;
+      if (!programId) return false;
+
+      // Verificar si debe ocultarse para este programa
+      if (field.hideForPrograms?.includes(programId)) {
+        return false;
+      }
+
+      // Verificar si debe mostrarse para este programa
+      return field.showForPrograms.includes(programId);
+    }
+
+    // Mantener lógica existente como fallback
+    return this.shouldShowField(fieldName, program?.name || 'default');
+  }
+
+  /**
+   * ✅ NUEVO: Determina si un campo debe mostrarse basado en programas de agencia
+   * Para contexto: AddSchoolComponent
+   */
+  shouldShowFieldForAgencyPrograms(fieldName: string, programs: any[]): boolean {
+    const config = this.getActiveConfig();
+    if (!config) return true;
+
+    const field = config.fieldVisibility[fieldName];
+    if (!field) return true;
+
+    // Si el campo tiene configuración de programas
+    if (field.showForPrograms) {
+      const programIds = programs.map(p => p.id);
+
+      // Verificar si debe ocultarse para algún programa de la agencia
+      if (field.hideForPrograms) {
+        const hasHiddenProgram = programIds.some(id => field.hideForPrograms!.includes(id));
+        if (hasHiddenProgram) {
+          return false;
+        }
+      }
+
+      // Verificar si debe mostrarse para algún programa de la agencia
+      return programIds.some(id => field.showForPrograms!.includes(id));
+    }
+
+    // Mantener lógica existente como fallback
+    return this.shouldShowField(fieldName, 'default');
+  }
+
+  /**
+   * ✅ NUEVO: Determina si un campo es requerido basado en programa seleccionado
+   */
+  isFieldRequiredForProgram(fieldName: string, program: any): boolean {
+    const config = this.getActiveConfig();
+    if (!config) return false;
+
+    const field = config.fieldVisibility[fieldName];
+    if (!field) return false;
+
+    // Si el campo tiene configuración de programas
+    if (field.requiredForPrograms) {
+      const programId = program?.id;
+      return programId ? field.requiredForPrograms.includes(programId) : false;
+    }
+
+    // Mantener lógica existente como fallback
+    return this.isFieldRequired(fieldName, program?.name || 'default');
+  }
+
+  /**
+   * ✅ NUEVO: Determina si un campo es requerido basado en programas de agencia
+   */
+  isFieldRequiredForAgencyPrograms(fieldName: string, programs: any[]): boolean {
+    const config = this.getActiveConfig();
+    if (!config) return false;
+
+    const field = config.fieldVisibility[fieldName];
+    if (!field) return false;
+
+    // Si el campo tiene configuración de programas
+    if (field.requiredForPrograms) {
+      const programIds = programs.map(p => p.id);
+      return programIds.some(id => field.requiredForPrograms!.includes(id));
+    }
+
+    // Mantener lógica existente como fallback
+    return this.isFieldRequired(fieldName, 'default');
+  }
+
+  /**
+   * ✅ NUEVO: Obtiene todos los campos visibles para un programa seleccionado
+   */
+  getVisibleFieldsForProgram(program: any): string[] {
+    const config = this.getActiveConfig();
+    if (!config) return [];
+
+    return Object.keys(config.fieldVisibility).filter(fieldName =>
+      this.shouldShowFieldForProgram(fieldName, program)
+    );
+  }
+
+  /**
+   * ✅ NUEVO: Obtiene todos los campos visibles para programas de agencia
+   */
+  getVisibleFieldsForAgencyPrograms(programs: any[]): string[] {
+    const config = this.getActiveConfig();
+    if (!config) return [];
+
+    return Object.keys(config.fieldVisibility).filter(fieldName =>
+      this.shouldShowFieldForAgencyPrograms(fieldName, programs)
+    );
   }
 }

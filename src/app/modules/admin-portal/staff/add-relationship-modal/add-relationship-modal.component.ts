@@ -14,7 +14,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { Staff } from 'app/shared/models/Staff';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { isNullOrUndefinedEmptyStringNullArray, compareById } from 'app/shared/utils';
+import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseLoadingService } from '@fuse/services/loading';
 import { CreateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
@@ -54,7 +54,6 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   listRelationshipTypes: OptionSelection[] = [];
 
   // Comparator for selects
-  compareById = compareById;
 
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),

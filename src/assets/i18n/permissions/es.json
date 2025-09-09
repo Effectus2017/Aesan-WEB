@@ -8,10 +8,17 @@
             "table": {
                 "columns": {
                     "id": "Id",
+                    "valueKey": "Clave de Valor",
                     "name": "Nombre",
+                    "nameEn": "Nombre en Inglés",
                     "description": "Descripción",
                     "active": "Activo",
+                    "isActive": "Activo",
                     "actions": "Acciones"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "delete": "Eliminar"
                 }
             },
             "actions": {
@@ -26,20 +33,59 @@
         },
         "add": {
             "title": "Agregar Permiso",
-            "form": {
-                "name": "Nombre",
-                "name_required": "El nombre es obligatorio",
-                "description": "Descripción",
-                "description_required": "La descripción es obligatoria"
+            "information": "Información del Nuevo Permiso",
+            "information-description": "Complete los datos para crear un nuevo permiso",
+            "valueKey": {
+                "label": "Clave de Valor",
+                "placeholder": "Clave única del permiso",
+                "required": "La clave de valor es obligatoria",
+                "maxlength": "La clave de valor no puede exceder 50 caracteres"
+            },
+            "name": {
+                "label": "Nombre",
+                "placeholder": "Nombre del permiso",
+                "required": "El nombre es obligatorio",
+                "maxlength": "El nombre no puede exceder 100 caracteres"
+            },
+            "nameEn": {
+                "label": "Nombre en Inglés",
+                "placeholder": "Nombre del permiso en inglés",
+                "maxlength": "El nombre en inglés no puede exceder 100 caracteres"
+            },
+            "isActive": {
+                "label": "Activo"
+            },
+            "messages": {
+                "success": "Permiso creado correctamente",
+                "error": "Error al crear el permiso"
             }
         },
         "edit": {
             "title": "Editar Permiso",
-            "form": {
-                "name": "Nombre",
-                "name_required": "El nombre es obligatorio",
-                "description": "Descripción",
-                "description_required": "La descripción es obligatoria"
+            "information": "Información del Permiso",
+            "information-description": "Modifica los datos del permiso seleccionado",
+            "valueKey": {
+                "label": "Clave de Valor",
+                "placeholder": "Clave única del permiso",
+                "required": "La clave de valor es obligatoria"
+            },
+            "name": {
+                "label": "Nombre",
+                "placeholder": "Nombre del permiso",
+                "required": "El nombre es obligatorio",
+                "maxlength": "El nombre no puede exceder 100 caracteres"
+            },
+            "nameEn": {
+                "label": "Nombre en Inglés",
+                "placeholder": "Nombre del permiso en inglés",
+                "maxlength": "El nombre en inglés no puede exceder 100 caracteres"
+            },
+            "isActive": {
+                "label": "Activo"
+            },
+            "messages": {
+                "success": "Permiso actualizado correctamente",
+                "error": "Error al actualizar el permiso"
             }
         }
     }

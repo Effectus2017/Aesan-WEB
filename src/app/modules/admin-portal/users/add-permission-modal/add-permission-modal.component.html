@@ -1,0 +1,87 @@
+<div class="flex flex-col -m-6 h-[800px] min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ "users.permission.modal.add.title" | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Loading Spinner for Initial Data -->
+    <div *ngIf="isInitialLoading" class="flex justify-center items-center py-8">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
+      <!-- Description -->
+      <p class="text-secondary">
+        {{ "users.permission.modal.add.description" | transloco : { userName: data.userName } }}
+      </p>
+
+      <!-- Search Field -->
+      <mat-form-field data-cy="search-field">
+        <mat-label>{{ "users.permission.modal.add.search.label" | transloco }}</mat-label>
+        <input matInput
+               formControlName="search"
+               [placeholder]="'users.permission.modal.add.search.placeholder' | transloco"
+               data-cy="search-input">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <!-- Bulk Selection Controls -->
+      <div class="flex gap-4 items-center">
+        <button mat-button type="button" (click)="selectAll()" [disabled]="filteredPermissions.length === 0" data-cy="select-all-button">
+          {{ "users.permission.modal.add.bulk.selectAll" | transloco }}
+        </button>
+        <button mat-button type="button" (click)="deselectAll()" [disabled]="selectedPermissions.length === 0" data-cy="deselect-all-button">
+          {{ "users.permission.modal.add.bulk.deselectAll" | transloco }}
+        </button>
+        <span class="text-sm text-secondary">
+          {{ "users.permission.modal.add.bulk.selectedCount" | transloco : { count: selectedPermissions.length } }}
+        </span>
+      </div>
+
+      <!-- Permissions Table -->
+      <div class="overflow-hidden rounded-lg border">
+        <div class="px-4 py-2 bg-gray-50 border-b dark:bg-gray-800">
+          <div class="text-sm font-medium">{{ "users.permission.modal.add.table.title" | transloco }}</div>
+        </div>
+
+        <div class="overflow-y-auto h-80">
+          <div *ngIf="filteredPermissions.length === 0" class="p-4 text-center text-secondary">
+            {{ "users.permission.modal.add.table.noPermissions" | transloco }}
+          </div>
+
+          <div *ngFor="let permission of filteredPermissions"
+               class="flex items-center p-4 border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+               data-cy="permission-row">
+            <mat-checkbox
+              [checked]="isPermissionSelected(permission)"
+              (change)="togglePermissionSelection(permission)"
+              class="mr-4"
+              data-cy="permission-checkbox">
+            </mat-checkbox>
+
+            <div class="flex-1">
+              <div class="font-medium">{{ currentLang === 'es' ? permission.name : permission.nameEn }}</div>
+              <div class="text-sm text-secondary">{{ permission.valueKey }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-3 justify-end pt-6 mt-6 border-t">
+      <button mat-button type="button" (click)="onCancel()" [disabled]="isLoading || isInitialLoading" data-cy="cancel-button">
+        {{ "global.buttons.cancel" | transloco }}
+      </button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="selectedPermissions.length === 0 || isLoading || isInitialLoading" data-cy="save-button">
+        {{ "users.permission.modal.add.buttons.assignSelected" | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

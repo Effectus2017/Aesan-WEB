@@ -17,7 +17,7 @@
         </div>
         <div class="col-span-12 sm:col-span-4 flex flex-col gap-4">
           <mat-form-field appearance="fill">
-            <mat-label>{{ 'sponsor-type.add.position' | transloco }}</mat-label>
+            <mat-label>{{ 'sponsor-type.add.displayOrder' | transloco }}</mat-label>
             <mat-select formControlName="position">
               <mat-option *ngFor="let option of positionOptions" [value]="option.value">{{ option.label }}</mat-option>
             </mat-select>

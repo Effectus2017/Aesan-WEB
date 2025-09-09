@@ -117,6 +117,7 @@ export class AuthService {
     if (userData) {
       this._userService.user = userData;
       this._authenticated = true;
+      // Los permisos ya se cargan en getUserDataFromToken()
       return of(true);
     }
 
@@ -193,7 +194,8 @@ export class AuthService {
         const payloadPart = token.split('.')[1];
         const decodedPayload = atob(payloadPart);
         const payload = JSON.parse(decodedPayload);
-        return {
+
+        const userData = {
             nameid: payload.nameid,
             unique_name: payload.unique_name,
             role: payload.role,
@@ -206,10 +208,17 @@ export class AuthService {
             agency: payload.agency,
             programs: payload.programs,
             programIds: payload.programIds,
+            permissions: payload.permissions || [],
             nbf: payload.nbf,
             exp: payload.exp,
             iat: payload.iat
         };
+
+        // Cargar los permisos en el servicio
+        this._permissions = userData.permissions || [];
+        console.log('AuthService - Loaded permissions from token:', this._permissions);
+
+        return userData;
     } catch (error) {
         console.error('Error al decodificar el token:', error);
         return null;

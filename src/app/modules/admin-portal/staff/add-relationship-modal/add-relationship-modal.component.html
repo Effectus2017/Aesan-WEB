@@ -15,7 +15,6 @@
         <mat-label>{{ "staff.edit.relationships.modal.relatedStaff.label" | transloco }}</mat-label>
         <mat-select formControlName="relatedStaff"
           [placeholder]="'staff.edit.relationships.modal.relatedStaff.placeholder' | transloco"
-          [compareWith]="compareById"
           data-cy="related-staff-select"
         >
           <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option"> {{ staff.firstName }} {{ staff.fatherLastName }} </mat-option>
@@ -31,7 +30,6 @@
         <mat-select
           formControlName="relationshipType"
           [placeholder]="'staff.edit.relationships.modal.relationshipType.placeholder' | transloco"
-          [compareWith]="compareById"
           data-cy="relationship-type-select"
         >
           <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">

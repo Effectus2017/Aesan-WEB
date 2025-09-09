@@ -1,25 +1,79 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
-import { GenericTableButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
-import { TranslocoModule } from '@ngneat/transloco';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, TranslocoModule]
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, TranslocoModule]
 })
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;
   @Input() handler: OnGenericTableHandler;
   @Input() darkMode: boolean = false;
 
+  private _authService = inject(AuthService);
+  private _translocoService = inject(TranslocoService);
+
   ngOnInit(): void {
 
+  }
+
+  /**
+   * Verifica si un botón debe estar deshabilitado basado en permisos
+   * @param button Configuración del botón
+   * @returns true si el botón debe estar deshabilitado
+   */
+  isButtonDisabled(button: ButtonConfig): boolean {
+    // Si está explícitamente deshabilitado, retornar true
+    if (button.disabled) {
+      return true;
+    }
+
+    // Si tiene permiso definido, verificar si el usuario lo tiene
+    if (button.permission) {
+      return !this._authService.hasPermission(button.permission);
+    }
+
+    // Si no tiene permiso definido, el botón está habilitado
+    return false;
+  }
+
+  /**
+   * Obtiene el tooltip para un botón
+   * @param button Configuración del botón
+   * @returns El mensaje del tooltip apropiado
+   */
+  getButtonTooltip(button: ButtonConfig): string | undefined {
+    // Si está deshabilitado, mostrar tooltip de deshabilitado
+    if (this.isButtonDisabled(button)) {
+      // Si tiene tooltip personalizado para deshabilitado, usarlo
+      if (button.disabledTooltip) {
+        return this._translocoService.translate(button.disabledTooltip);
+      }
+
+      // Si está deshabilitado por permisos, mostrar mensaje genérico
+      if (button.permission && !this._authService.hasPermission(button.permission)) {
+        return this._translocoService.translate('global.tooltips.noPermission');
+      }
+
+      return undefined;
+    }
+
+    // Si está habilitado, mostrar tooltip normal si existe
+    if (button.tooltip) {
+      return this._translocoService.translate(button.tooltip);
+    }
+
+    return undefined;
   }
 
   // Functions
@@ -58,7 +112,7 @@ export class GenericTableComponent implements OnInit {
     }
   }
 
-  onButtonClick(event: Event, button: GenericTableButtonConfig, element: any): void {
+  onButtonClick(event: Event, button: ButtonConfig, element: any): void {
     event.preventDefault();
     event.stopPropagation();
 

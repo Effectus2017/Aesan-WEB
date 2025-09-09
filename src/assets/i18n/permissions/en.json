@@ -8,10 +8,17 @@
       "table": {
         "columns": {
           "id": "Id",
+          "valueKey": "Value Key",
           "name": "Name",
+          "nameEn": "English Name",
           "description": "Description",
           "active": "Active",
+          "isActive": "Active",
           "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit",
+          "delete": "Delete"
         }
       },
       "actions": {
@@ -26,15 +33,60 @@
     },
     "add": {
       "title": "Add Permission",
-      "form": {
-        "name": "Name",
-        "name_required": "The name is required",
-        "description": "Description",
-        "description_required": "The description is required"
+      "information": "New Permission Information",
+      "information-description": "Complete the data to create a new permission",
+      "valueKey": {
+        "label": "Value Key",
+        "placeholder": "Unique permission key",
+        "required": "The value key is required",
+        "maxlength": "The value key cannot exceed 50 characters"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Permission name",
+        "required": "The name is required",
+        "maxlength": "The name cannot exceed 100 characters"
+      },
+      "nameEn": {
+        "label": "English Name",
+        "placeholder": "Permission name in English",
+        "maxlength": "The English name cannot exceed 100 characters"
+      },
+      "isActive": {
+        "label": "Active"
+      },
+      "messages": {
+        "success": "Permission created successfully",
+        "error": "Error creating permission"
       }
     },
     "edit": {
-      "title": "Edit Permission"
+      "title": "Edit Permission",
+      "information": "Permission Information",
+      "information-description": "Modify the data of the selected permission",
+      "valueKey": {
+        "label": "Value Key",
+        "placeholder": "Unique permission key",
+        "required": "The value key is required"
+      },
+      "name": {
+        "label": "Name",
+        "placeholder": "Permission name",
+        "required": "The name is required",
+        "maxlength": "The name cannot exceed 100 characters"
+      },
+      "nameEn": {
+        "label": "English Name",
+        "placeholder": "Permission name in English",
+        "maxlength": "The English name cannot exceed 100 characters"
+      },
+      "isActive": {
+        "label": "Active"
+      },
+      "messages": {
+        "success": "Permission updated successfully",
+        "error": "Error updating permission"
+      }
     }
   }
 }

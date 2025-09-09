@@ -58,55 +58,67 @@
         @for (button of col?.buttons; track button) {
 
         @if (button.key === 'edit') {
-        <button
-          [title]="'users.list.actions.' + button.key | transloco"
-          type="button"
-          mat-icon-button
-          (click)="onEdit($event, element.id)"
-          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
-        >
-          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
-          <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
-        </button>
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onEdit($event, element.id)"
+            [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
+          </button>
+        </div>
         }
 
         @if (button.key === 'element') {
-        <button
-          [title]="'users.list.actions.edit' | transloco"
-          type="button"
-          mat-icon-button
-          (click)="onEditElement($event, element)"
-          [attr.aria-label]="'users.list.actions.edit' | transloco"
-        >
-          <span class="sr-only">{{ "users.list.actions.edit" | transloco }}</span>
-          <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
-        </button>
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onEditElement($event, element)"
+            [attr.aria-label]="'users.list.actions.edit' | transloco"
+          >
+            <span class="sr-only">{{ "users.list.actions.edit" | transloco }}</span>
+            <mat-icon [svgIcon]="'mat_solid:launch'" [attr.aria-hidden]="true" style="color: blue;"></mat-icon>
+          </button>
+        </div>
         }
 
         @if (button.key === 'delete') {
-        <button
-          [title]="'users.list.actions.' + button.key | transloco"
-          type="button"
-          mat-icon-button
-          (click)="onDelete($event, element.id)"
-          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
-        >
-          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
-          <mat-icon [svgIcon]="'mat_solid:delete'" [attr.aria-hidden]="true" style="color: red;"></mat-icon>
-        </button>
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onDelete($event, element.id)"
+            [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="'mat_solid:delete'" [attr.aria-hidden]="true" style="color: red;"></mat-icon>
+          </button>
+        </div>
         }
 
         @if (button.key === 'download') {
-        <button
-          [title]="'users.list.actions.' + button.key | transloco"
-          type="button"
-          mat-icon-button
-          (click)="onDownload($event, element.id)"
-          [attr.aria-label]="'users.list.actions.' + button.key | transloco"
-        >
-          <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
-          <mat-icon [svgIcon]="'mat_solid:download'" [attr.aria-hidden]="true" style="color: green;"></mat-icon>
-        </button>
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onDownload($event, element.id)"
+            [attr.aria-label]="'users.list.actions.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "users.list.actions." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="'mat_solid:download'" [attr.aria-hidden]="true" style="color: green;"></mat-icon>
+          </button>
+        </div>
         }
         }
       </div>
@@ -168,54 +180,66 @@
         @for (button of col?.buttons; track button) {
 
             @if (button.key === 'edit') {
-            <button
-                [title]="'users.list.actions.edit' | transloco"
-                type="button"
-                mat-flat-button
-                color="primary"
-                (click)="onEdit($event, element.id)"
-                [attr.aria-label]="'users.list.actions.edit' | transloco"
-            >
-                Editar
-            </button>
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onEdit($event, element.id)"
+                  [attr.aria-label]="'users.list.actions.edit' | transloco"
+              >
+                  Editar
+              </button>
+            </div>
             }
 
             @if (button.key === 'element') {
-            <button
-                [title]="'users.list.actions.edit' | transloco"
-                type="button"
-                mat-flat-button
-                color="primary"
-                (click)="onEditElement($event, element)"
-                [attr.aria-label]="'users.list.actions.edit' | transloco"
-            >
-                Editar
-            </button>
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onEditElement($event, element)"
+                  [attr.aria-label]="'users.list.actions.edit' | transloco"
+              >
+                  Editar
+              </button>
+            </div>
             }
 
             @if (button.key === 'delete') {
-            <button
-                [title]="'users.list.actions.delete' | transloco"
-                type="button"
-                mat-flat-button
-                color="warm"
-                (click)="onDelete($event, element.id)"
-                [attr.aria-label]="'users.list.actions.delete' | transloco"
-            >
-                Eliminar
-            </button>
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('users.list.actions.delete' | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="warm"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onDelete($event, element.id)"
+                  [attr.aria-label]="'users.list.actions.delete' | transloco"
+              >
+                  Eliminar
+              </button>
+            </div>
             }
             @if (button.key === 'download') {
-            <button
-                [title]="'users.list.actions.download' | transloco"
-                type="button"
-                mat-flat-button
-                color="primary"
-                (click)="onDownload($event, element.id)"
-                [attr.aria-label]="'users.list.actions.download' | transloco"
-            >
-                Descargar
-            </button>
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('users.list.actions.download' | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onDownload($event, element.id)"
+                  [attr.aria-label]="'users.list.actions.download' | transloco"
+              >
+                  Descargar
+              </button>
+            </div>
             }
 
         }

@@ -6,7 +6,29 @@
             "cancel": "Cancel",
             "edit": "Edit",
             "delete": "Delete",
-            "add": "Add"
+            "add": "Add",
+            "addPermission": "Add Permission"
+        },
+        "tooltips": {
+            "addPermission": "Add a new permission to the user",
+            "edit": "Edit element",
+            "delete": "Delete element",
+            "download": "Download element",
+            "noPermission": "You don't have permissions to perform this action",
+            "header": {
+                "clear": "Clear form",
+                "search": "Search elements",
+                "add": "Add new element",
+                "cancel": "Cancel operation",
+                "save": "Save changes",
+                "reject": "Reject element",
+                "submit": "Create element",
+                "custom": "Custom action",
+                "upload": "Upload file"
+            }
+        },
+        "search": {
+            "placeholder": "Search..."
         }
     },
     "side-menu": {
@@ -51,6 +73,93 @@
             "invalid-temp-password": "Invalid temporary password",
             "not-updated": "Password could not be updated",
             "server-error": "Server error. Please try again later"
+        }
+    },
+    "users": {
+        "permission": {
+            "modal": {
+                "add": {
+                    "title": "Add Permissions",
+                    "description": "Select permissions to assign to user {{ userName }}",
+                    "search": {
+                        "label": "Search permissions",
+                        "placeholder": "Search by name or description..."
+                    },
+                    "bulk": {
+                        "selectAll": "Select all",
+                        "deselectAll": "Deselect all",
+                        "selectedCount": "{{ count }} permissions selected"
+                    },
+                    "table": {
+                        "title": "Available Permissions",
+                        "noPermissions": "No permissions available"
+                    },
+                    "buttons": {
+                        "assignSelected": "Assign"
+                    }
+                },
+                "delete": {
+                    "title": "Delete Permission",
+                    "description": "Are you sure you want to delete the permission '{{ permissionName }}' from user {{ userName }}?",
+                    "permission": {
+                        "name": "Permission Name",
+                        "valueKey": "Permission Key",
+                        "description": "Description"
+                    },
+                    "buttons": {
+                        "deleting": "Deleting..."
+                    }
+                },
+                "success": {
+                    "assigned": "Permission assigned successfully",
+                    "multipleAssigned": "{{ count }} permissions assigned successfully",
+                    "deleted": "Permission deleted successfully"
+                },
+                "error": {
+                    "loadingData": "Error loading data",
+                    "assign": "Error assigning permission",
+                    "delete": "Error deleting permission"
+                }
+            }
+        }
+    },
+    "permissions": {
+        "list": {
+            "table": {
+                "columns": {
+                    "name": "Name",
+                    "description": "Description",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "delete": "Delete"
+                }
+            }
+        }
+    },
+    "sponsor-type": {
+        "list": {
+            "title": "Sponsor Types",
+            "table": {
+                "columns": {
+                    "id": "ID",
+                    "name": "Name",
+                    "nameEN": "Name (English)",
+                    "isActive": "Active",
+                    "displayOrder": "Display Order",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "edit": "Edit",
+                    "delete": "Delete"
+                },
+                "tooltips": {
+                    "edit": "Edit sponsor type",
+                    "delete": "Delete sponsor type",
+                    "editDisabled": "You don't have permissions to edit sponsor types",
+                    "deleteDisabled": "You don't have permissions to delete sponsor types"
+                }
+            }
         }
     }
 }

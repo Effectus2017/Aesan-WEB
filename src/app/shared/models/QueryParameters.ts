@@ -58,6 +58,12 @@ export interface QueryParameters {
   staffId?: number;
   staffTypeId?: number;
 
+  // Campos para Permisos
+  permissionId?: string; // Cambiado a string
+  roleId?: string;
+  stringId?: string; // Para IDs de tipo string (como Permission)
+  valueKey?: string; // Para filtrar por ValueKey en permisos
+
   // ID del usuario actual logueado
   currentUserId?: string;
 

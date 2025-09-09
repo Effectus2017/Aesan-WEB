@@ -5,19 +5,66 @@
   <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
-        <!-- Información del permiso -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <mat-form-field appearance="fill">
-            <mat-label>{{ "permissions.add.form.name" | transloco }}</mat-label>
-            <input matInput formControlName="name" required maxlength="100" />
-            <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "permissions.add.form.name_required" | transloco }}</mat-error>
-          </mat-form-field>
+        <!-- Información General -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">
+            {{ "permissions.add.information" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "permissions.add.information-description" | transloco }}
+          </p>
+        </div>
 
-          <mat-form-field appearance="fill">
-            <mat-label>{{ "permissions.add.form.description" | transloco }}</mat-label>
-            <input matInput formControlName="description" required maxlength="255" />
-            <mat-error *ngIf="headerConfig.formGroup.get('description').hasError('required')">{{ "permissions.add.form.description_required" | transloco }}</mat-error>
-          </mat-form-field>
+        <!-- Campos de Permiso -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+          <!-- Value Key -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "permissions.add.valueKey.label" | transloco }}</mat-label>
+              <input matInput formControlName="valueKey" maxlength="50" [placeholder]="'permissions.add.valueKey.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('valueKey')?.hasError('required')">
+                {{ "permissions.add.valueKey.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('valueKey')?.hasError('maxlength')">
+                {{ "permissions.add.valueKey.maxlength" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Name -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "permissions.add.name.label" | transloco }}</mat-label>
+              <input matInput formControlName="name" maxlength="100" [placeholder]="'permissions.add.name.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('name')?.hasError('required')">
+                {{ "permissions.add.name.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('name')?.hasError('maxlength')">
+                {{ "permissions.add.name.maxlength" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Name En -->
+          <div class="col-span-1">
+            <mat-form-field class="w-full">
+              <mat-label>{{ "permissions.add.nameEn.label" | transloco }}</mat-label>
+              <input matInput formControlName="nameEn" maxlength="100" [placeholder]="'permissions.add.nameEn.placeholder' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('nameEn')?.hasError('maxlength')">
+                {{ "permissions.add.nameEn.maxlength" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Campos adicionales -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+          <!-- Is Active -->
+          <div class="flex col-span-1 items-center">
+            <mat-checkbox formControlName="isActive" class="mt-4">
+              {{ "permissions.add.isActive.label" | transloco }}
+            </mat-checkbox>
+          </div>
         </div>
       </div>
     </form>

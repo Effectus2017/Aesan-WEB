@@ -23,6 +23,13 @@ export interface FileTypeIcon {
 export interface ButtonConfig {
   key: string;
   label?: string;
+  color?: 'primary' | 'accent' | 'warn';
+  icon?: string;
+  tooltip?: string;              // Tooltip cuando el botón está habilitado
+  permission?: string;           // Permiso requerido para habilitar el botón
+  disabled?: boolean;            // Estado de deshabilitado manual
+  disabledTooltip?: string;      // Tooltip cuando está deshabilitado
+  action?: (event: Event, element: any) => void; // Acción personalizada del botón
 }
 
 export interface FileSizeConfig {

@@ -28,11 +28,14 @@ import { TranslocoService } from '@ngneat/transloco';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { PERMISSIONS_COLUMNS_SCHEMA } from './columns-schema';
 import { MatTableDataSource } from '@angular/material/table';
 import { Permission } from 'app/shared/models/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
+import { MatDialog } from '@angular/material/dialog';
+import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
+import { DeletePermissionModalComponent } from '../delete-permission-modal/delete-permission-modal.component';
 
 @Component({
   selector: 'app-users-edit',
@@ -54,7 +57,7 @@ import { PermissionService } from 'app/shared/services/permission.service';
     GenericTableComponent,
   ],
 })
-export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private route: ActivatedRoute = inject(ActivatedRoute);
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
@@ -67,6 +70,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
   private _permissionsService: PermissionService = inject(PermissionService);
+  private _matDialog: MatDialog = inject(MatDialog);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
@@ -114,7 +118,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     addButtonTooltip: 'global.tooltips.addPermission',
     addButtonTooltipPosition: 'above',
     onAddButtonClick: (event: Event, tableId?: string) => {
-      console.log('add button clicked', event, tableId);
+      this.openAddPermissionModal();
     },
   };
 
@@ -697,6 +701,119 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // deshabilitar el campo de rol para evitar que cambie su propio rol
     if (loggedInUserId === this.id) {
       this.headerConfig.formGroup.get('datosPersonales.role').disable();
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Permission Modal Methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Abre el modal para agregar permisos
+   */
+  openAddPermissionModal(): void {
+    const dialogRef = this._matDialog.open(AddPermissionModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        userId: this.id,
+        userName: this.user?.firstName + ' ' + this.user?.fatherLastName,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        // Recargar los permisos del usuario
+        this.loadUserPermissions();
+      }
+    });
+  }
+
+  /**
+   * Método requerido por GenericTable para el botón de agregar
+   */
+  onAdd(): void {
+    this.openAddPermissionModal();
+  }
+
+  /**
+   * Abre el modal para eliminar permisos
+   */
+  openDeletePermissionModal(permission: Permission): void {
+    const dialogRef = this._matDialog.open(DeletePermissionModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        userId: this.id,
+        userName: this.user?.firstName + ' ' + this.user?.fatherLastName,
+        permission: permission,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        // Recargar los permisos del usuario
+        this.loadUserPermissions();
+      }
+    });
+  }
+
+  /**
+   * Carga los permisos del usuario
+   */
+  private loadUserPermissions(): void {
+    const requestParameters: QueryParameters = {
+      userId: this.id,
+    };
+
+    this._permissionsService.getUserPermissions(requestParameters).subscribe({
+      next: (result: any) => {
+        if (result?.body?.data) {
+          this.tableConfig.dataSource.data = result.body.data;
+          this.tableConfig.length = result.body.count || result.body.data.length;
+          this._changeDetectorRef.markForCheck();
+        }
+      },
+      error: (error) => {
+        console.error('Error loading user permissions:', error);
+      }
+    });
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Generic Table Handler Methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Maneja los eventos de la tabla de permisos
+   */
+  onTableAction(event: Event, action: string, item: any): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    switch (action) {
+      case 'delete':
+        this.openDeletePermissionModal(item);
+        break;
+      default:
+        console.warn('Unknown table action:', action);
+        break;
+    }
+  }
+
+  /**
+   * Método requerido por OnGenericTableHandler para eliminar permisos
+   */
+  onTableDelete(event: Event, id: any): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Buscar el permiso por ID en la tabla
+    const permission = this.tableConfig.dataSource.data.find(p => p.id === id);
+    if (permission) {
+      this.openDeletePermissionModal(permission);
+    } else {
+      console.warn('Permission not found with id:', id);
     }
   }
 }

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { initialDataStaffAddResolver, initialDataStaffEditResolver, initialDataStaffEmployeesListResolver, initialDataStaffBoardMembersListResolver } from './staff.resolvers';
 
 export default [
@@ -13,6 +14,8 @@ export default [
       {
         path: 'employees',
         loadComponent: () => import('./list-employees/employees-list.component').then(c => c.ListEmployeesComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.view' },
         resolve: {
           data: initialDataStaffEmployeesListResolver
         }
@@ -20,6 +23,8 @@ export default [
       {
         path: 'board-members',
         loadComponent: () => import('./list/list.component').then(c => c.ListBoardMembersComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.view' },
         resolve: {
           data: initialDataStaffBoardMembersListResolver
         }
@@ -27,6 +32,8 @@ export default [
       {
         path: 'add',
         loadComponent: () => import('./add/add.component').then(c => c.AddStaffComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.create' },
         resolve: {
           data: initialDataStaffAddResolver
         }
@@ -34,6 +41,8 @@ export default [
       {
         path: 'edit/:id',
         loadComponent: () => import('./edit/edit.component').then(c => c.EditStaffComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.edit' },
         resolve: {
           data: initialDataStaffEditResolver
         }

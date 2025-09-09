@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/QueryParameters';
-import { Role, RequestUser } from '../../modules/admin-portal/users/users.types';
+import { RequestUser } from '../../modules/admin-portal/users/users.types';
 import { getHttpOptions, handleError } from '../utils';
 import { TokenResponse } from '../models/user.types';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
@@ -15,7 +15,7 @@ import { UploadService } from './upload.service';
 export class UsersService {
   private _users: BehaviorSubject<RequestUser[] | null> = new BehaviorSubject(null);
   private _user: BehaviorSubject<RequestUser | null> = new BehaviorSubject(null);
-  private _roles: BehaviorSubject<Role[] | null> = new BehaviorSubject(null);
+  private _roles: BehaviorSubject<any | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
   private _httpClient = inject(HttpClient);
@@ -40,7 +40,7 @@ export class UsersService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
-  get roles$(): Observable<Role[]> {
+  get roles$(): Observable<any> {
     return this._roles.asObservable();
   }
 
@@ -103,9 +103,9 @@ export class UsersService {
   /**
    * Obtiene todos los roles desde la base de datos
    * @param requestParameters Parámetros de la solicitud
-   * @returns Observable<Role[]>
+   * @returns Observable<any>
    */
-  getAllRolesFromDb(requestParameters: QueryParameters): Observable<Role[]> {
+  getAllRolesFromDb(requestParameters: QueryParameters): Observable<any> {
     return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-roles-from-db', getHttpOptions(requestParameters)).pipe(
       tap((response: any) => {
         this._roles.next(response);

@@ -1,15 +1,15 @@
-<div class="absolute inset-0 flex flex-col min-w-0">
+<div class="flex absolute inset-0 flex-col min-w-0">
 
   <!-- Header con título y botones -->
   <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
 
   <!-- Main -->
-  <div class="flex-auto overflow-y-auto sm:p-6 dark:bg-" cdkScrollable>
-    <div class="flex justify-center w-full p-8 py-4 rounded-full sm:justify-start">
+  <div class="overflow-y-auto flex-auto sm:p-6 dark:bg-" cdkScrollable>
+    <div class="flex justify-center p-8 py-4 w-full rounded-full sm:justify-start">
       <img
         title="Avatar"
         (click)="fileInput.click()"
-        class="object-cover rounded-full cursor-pointer w-26 h-26 ring-4 ring-gray-400"
+        class="object-cover rounded-full ring-4 ring-gray-400 cursor-pointer w-26 h-26"
         [src]="imageURL ?? 'assets/images/avatars/profile.png'"
         alt="Profile"
         (error)="handleMissingImage($event)"
@@ -27,7 +27,7 @@
       />
     </div>
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
-      <form [formGroup]="headerConfig.formGroup" class="flex flex-col col-span-12 overflow-hidden sm:col-span-10">
+      <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-10">
         <div formGroupName="datosPersonales">
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
             <mat-form-field class="flex-auto">

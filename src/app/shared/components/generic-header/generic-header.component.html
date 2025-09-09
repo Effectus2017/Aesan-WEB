@@ -16,9 +16,17 @@
     <!-- Botón Clear -->
     @if (config.clearVisible) {
     <div class="animated-box" [@fadeInRight]="config.clearVisible" [@fadeOutRight]="config.clearVisible">
-      <button title="Limpiar" type="button" mat-flat-button color="primary" (click)="onClean($event)">
-        <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
-      </button>
+      <div [matTooltip]="getButtonTooltip(config.clearButtonTooltip, config.clearButtonDisabledTooltip, config.clearButtonPermission)" [matTooltipDisabled]="!config.clearButtonTooltip && !config.clearButtonDisabledTooltip">
+        <button
+          [title]="getButtonTooltip(config.clearButtonTooltip, config.clearButtonDisabledTooltip, config.clearButtonPermission) || 'Limpiar'"
+          type="button"
+          mat-flat-button
+          color="primary"
+          [disabled]="isButtonDisabledByPermission(config.clearButtonPermission)"
+          (click)="onClean($event)">
+          <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
+        </button>
+      </div>
     </div>
     }
 
@@ -29,92 +37,132 @@
       <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" data-cy="generic-header-search-input" />
     </mat-form-field>
 
-    <button title="Buscar" mat-flat-button color="primary" type="button" (click)="onSearch()" data-cy="generic-header-search-button">
-      <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.searchButtonTooltip, config.searchButtonDisabledTooltip, config.searchButtonPermission)" [matTooltipDisabled]="!config.searchButtonTooltip && !config.searchButtonDisabledTooltip">
+      <button
+        [title]="getButtonTooltip(config.searchButtonTooltip, config.searchButtonDisabledTooltip, config.searchButtonPermission) || 'Buscar'"
+        mat-flat-button
+        color="primary"
+        type="button"
+        [disabled]="isButtonDisabledByPermission(config.searchButtonPermission)"
+        (click)="onSearch()"
+        data-cy="generic-header-search-button">
+        <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
+      </button>
+    </div>
     }
     <!-- Botón Agregar -->
     @if (config.goToAddButtonShow) {
     <a [routerLink]="'add'">
-      <button type="button" title="Agregar" class="text-white bg-[#F1A621]" mat-flat-button [color]="'primary'">
-        <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
-      </button>
+      <div [matTooltip]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission)" [matTooltipDisabled]="!config.goToAddButtonTooltip && !config.goToAddButtonDisabledTooltip">
+        <button
+          type="button"
+          [title]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission) || 'Agregar'"
+          class="text-white bg-[#F1A621]"
+          mat-flat-button
+          [color]="'primary'"
+          [disabled]="isButtonDisabledByPermission(config.goToAddButtonPermission)">
+          <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
+        </button>
+      </div>
     </a>
     }
 
     <!-- Botón Cancelar -->
     @if (config.cancelButtonShow) {
-    <button type="button" title="Cancelar" (click)="onCancel($event)" mat-button>
-      {{ config.cancelButtonText | transloco }}
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.cancelButtonTooltip, config.cancelButtonDisabledTooltip, config.cancelButtonPermission)" [matTooltipDisabled]="!config.cancelButtonTooltip && !config.cancelButtonDisabledTooltip">
+      <button
+        type="button"
+        [title]="getButtonTooltip(config.cancelButtonTooltip, config.cancelButtonDisabledTooltip, config.cancelButtonPermission) || 'Cancelar'"
+        [disabled]="isButtonDisabledByPermission(config.cancelButtonPermission)"
+        (click)="onCancel($event)"
+        mat-button>
+        {{ config.cancelButtonText | transloco }}
+      </button>
+    </div>
     }
 
     <!-- Botón Guardar -->
     @if (config.saveButtonShow) {
-    <button class="bg-[#F39B1A]" type="button" title="Guardar" mat-flat-button color="primary" (click)="onSave()">
-      {{ config.saveButtonText | transloco }}
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.saveButtonTooltip, config.saveButtonDisabledTooltip, config.saveButtonPermission)" [matTooltipDisabled]="!config.saveButtonTooltip && !config.saveButtonDisabledTooltip">
+      <button
+        class="bg-[#F39B1A]"
+        type="button"
+        [title]="getButtonTooltip(config.saveButtonTooltip, config.saveButtonDisabledTooltip, config.saveButtonPermission) || 'Guardar'"
+        mat-flat-button
+        color="primary"
+        [disabled]="isButtonDisabledByPermission(config.saveButtonPermission)"
+        (click)="onSave()">
+        {{ config.saveButtonText | transloco }}
+      </button>
+    </div>
     }
 
     <!-- Botón Rechazar -->
     @if (config.rejectButtonShow) {
-    <button type="button" title="Rechazar" (click)="onReject()" mat-button>
-      {{ config.rejectButtonText | transloco }}
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.rejectButtonTooltip, config.rejectButtonDisabledTooltip)" [matTooltipDisabled]="!config.rejectButtonTooltip && !config.rejectButtonDisabledTooltip">
+      <button type="button" [title]="getButtonTooltip(config.rejectButtonTooltip, config.rejectButtonDisabledTooltip) || 'Rechazar'" (click)="onReject()" mat-button>
+        {{ config.rejectButtonText | transloco }}
+      </button>
+    </div>
     }
 
     <!-- Botón Submit -->
     @if (config.submitButtonShow) {
-    <button
-      type="submit"
-      title="Crear"
-      mat-raised-button
-      color="primary"
-      class="ml-2"
-      [disabled]="isLoading || config.submitDisabled"
-      (click)="onSubmit()"
-      data-cy="generic-header-submit-button"
-    >
-      <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
-      <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.submitButtonTooltip, config.submitButtonDisabledTooltip, config.submitButtonPermission, isLoading || config.submitDisabled)" [matTooltipDisabled]="!config.submitButtonTooltip && !config.submitButtonDisabledTooltip">
+      <button
+        type="submit"
+        [title]="getButtonTooltip(config.submitButtonTooltip, config.submitButtonDisabledTooltip, config.submitButtonPermission, isLoading || config.submitDisabled) || 'Crear'"
+        mat-raised-button
+        color="primary"
+        class="ml-2"
+        [disabled]="isLoading || config.submitDisabled || isButtonDisabledByPermission(config.submitButtonPermission)"
+        (click)="onSubmit()"
+        data-cy="generic-header-submit-button"
+      >
+        <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+        <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
+      </button>
+    </div>
     }
 
 
     <!-- Botón Custom -->
     @if (config.customButtonShow) {
-    <button
-        type="button"
-        title="Custom"
-        [color]="config.customButtonColor"
-        class="ml-2 {{ config.customButtonClass }}"
-        [disabled]="isLoading || config.customButtonDisabled"
-        (click)="onCustom()"
-        mat-raised-button
-        data-cy="generic-header-custom-button"
-    >
-        <mat-icon *ngIf="!isLoading && config.customButtonIconEnabled" class="mr-2" [svgIcon]="config.customButtonIcon"></mat-icon>
-        <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.customButtonText | transloco) }}</span>
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.customButtonTooltip, config.customButtonDisabledTooltip, isLoading || config.customButtonDisabled)" [matTooltipDisabled]="!config.customButtonTooltip && !config.customButtonDisabledTooltip">
+      <button
+          type="button"
+          [title]="getButtonTooltip(config.customButtonTooltip, config.customButtonDisabledTooltip, isLoading || config.customButtonDisabled) || 'Custom'"
+          [color]="config.customButtonColor"
+          class="ml-2 {{ config.customButtonClass }}"
+          [disabled]="isLoading || config.customButtonDisabled"
+          (click)="onCustom()"
+          mat-raised-button
+          data-cy="generic-header-custom-button"
+      >
+          <mat-icon *ngIf="!isLoading && config.customButtonIconEnabled" class="mr-2" [svgIcon]="config.customButtonIcon"></mat-icon>
+          <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.customButtonText | transloco) }}</span>
+      </button>
+    </div>
     }
 
 
     <!-- Botón Upload -->
     @if (config.uploadButtonShow) {
-    <button
-        type="button"
-        title="Subir"
-        [color]="config.uploadButtonColor"
-        [class]="config.uploadButtonClass"
-        (click)="fileUploadInput.click()"
-        mat-raised-button
-        [disabled]="isLoading || config.uploadButtonDisabled"
-        data-cy="generic-header-upload-button"
-
-    >
-        <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
-        <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.uploadButtonText | transloco) }}</span>
-    </button>
+    <div [matTooltip]="getButtonTooltip(config.uploadButtonTooltip, config.uploadButtonDisabledTooltip, isLoading || config.uploadButtonDisabled)" [matTooltipDisabled]="!config.uploadButtonTooltip && !config.uploadButtonDisabledTooltip">
+      <button
+          type="button"
+          [title]="getButtonTooltip(config.uploadButtonTooltip, config.uploadButtonDisabledTooltip, isLoading || config.uploadButtonDisabled) || 'Subir'"
+          [color]="config.uploadButtonColor"
+          [class]="config.uploadButtonClass"
+          (click)="fileUploadInput.click()"
+          mat-raised-button
+          [disabled]="isLoading || config.uploadButtonDisabled"
+          data-cy="generic-header-upload-button"
+      >
+          <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+          <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.uploadButtonText | transloco) }}</span>
+      </button>
+    </div>
     <input
         hidden
         onclick="this.value=null"

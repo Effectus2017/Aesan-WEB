@@ -6,7 +6,29 @@
             "cancel": "Cancelar",
             "edit": "Editar",
             "delete": "Eliminar",
-            "add": "Agregar"
+            "add": "Agregar",
+            "addPermission": "Agregar Permiso"
+        },
+        "tooltips": {
+            "addPermission": "Agregar un nuevo permiso al usuario",
+            "edit": "Editar elemento",
+            "delete": "Eliminar elemento",
+            "download": "Descargar elemento",
+            "noPermission": "No tiene permisos para realizar esta acción",
+            "header": {
+                "clear": "Limpiar formulario",
+                "search": "Buscar elementos",
+                "add": "Agregar nuevo elemento",
+                "cancel": "Cancelar operación",
+                "save": "Guardar cambios",
+                "reject": "Rechazar elemento",
+                "submit": "Crear elemento",
+                "custom": "Acción personalizada",
+                "upload": "Subir archivo"
+            }
+        },
+        "search": {
+            "placeholder": "Buscar..."
         }
     },
     "common": {
@@ -45,6 +67,93 @@
             "invalid-temp-password": "Contraseña temporal inválida",
             "not-updated": "No se pudo actualizar la contraseña",
             "server-error": "Error del servidor. Por favor intente más tarde"
+        }
+    },
+    "users": {
+        "permission": {
+            "modal": {
+                "add": {
+                    "title": "Agregar Permisos",
+                    "description": "Selecciona los permisos para asignar al usuario {{ userName }}",
+                    "search": {
+                        "label": "Buscar permisos",
+                        "placeholder": "Buscar por nombre o descripción..."
+                    },
+                    "bulk": {
+                        "selectAll": "Seleccionar todos",
+                        "deselectAll": "Deseleccionar todos",
+                        "selectedCount": "{{ count }} permisos seleccionados"
+                    },
+                    "table": {
+                        "title": "Permisos Disponibles",
+                        "noPermissions": "No hay permisos disponibles"
+                    },
+                    "buttons": {
+                        "assignSelected": "Asignar"
+                    }
+                },
+                "delete": {
+                    "title": "Eliminar Permiso",
+                    "description": "¿Estás seguro de que deseas eliminar el permiso '{{ permissionName }}' del usuario {{ userName }}?",
+                    "permission": {
+                        "name": "Nombre del Permiso",
+                        "valueKey": "Clave del Permiso",
+                        "description": "Descripción"
+                    },
+                    "buttons": {
+                        "deleting": "Eliminando..."
+                    }
+                },
+                "success": {
+                    "assigned": "Permiso asignado exitosamente",
+                    "multipleAssigned": "{{ count }} permisos asignados exitosamente",
+                    "deleted": "Permiso eliminado exitosamente"
+                },
+                "error": {
+                    "loadingData": "Error al cargar los datos",
+                    "assign": "Error al asignar el permiso",
+                    "delete": "Error al eliminar el permiso"
+                }
+            }
+        }
+    },
+    "permissions": {
+        "list": {
+            "table": {
+                "columns": {
+                    "name": "Nombre",
+                    "description": "Descripción",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "delete": "Eliminar"
+                }
+            }
+        }
+    },
+    "sponsor-type": {
+        "list": {
+            "title": "Tipos de Patrocinador",
+            "table": {
+                "columns": {
+                    "id": "ID",
+                    "name": "Nombre",
+                    "nameEN": "Nombre (Inglés)",
+                    "isActive": "Activo",
+                    "displayOrder": "Orden de Visualización",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "delete": "Eliminar"
+                },
+                "tooltips": {
+                    "edit": "Editar tipo de patrocinador",
+                    "delete": "Eliminar tipo de patrocinador",
+                    "editDisabled": "No tiene permisos para editar tipos de patrocinador",
+                    "deleteDisabled": "No tiene permisos para eliminar tipos de patrocinador"
+                }
+            }
         }
     }
 }

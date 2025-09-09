@@ -117,7 +117,22 @@
                 "alt": "Foto de perfil del usuario",
                 "select": "Seleccionar Foto de Perfil"
             },
-            "permissions-section": "Permisos asignados"
+            "permissions-section": "Permisos asignados",
+            "permissions": {
+                "table": {
+                    "columns": {
+                        "valueKey": "Clave de Valor",
+                        "nameEn": "Nombre en Inglés",
+                        "name": "Nombre",
+                        "description": "Descripción",
+                        "isActive": "Activo",
+                        "actions": "Acciones"
+                    },
+                    "buttons": {
+                        "delete": "Eliminar"
+                    }
+                }
+            }
         },
         "list": {
             "title": "Usuarios",

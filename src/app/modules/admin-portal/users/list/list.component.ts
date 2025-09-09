@@ -109,7 +109,13 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
       name: form.name || null,
     };
 
-    this._usersService.getAllUsersFromDbWithSP(requestParameters).subscribe();
+    this._usersService.getAllUsersFromDbWithSP(requestParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response) => {
+        this.tableConfig.dataSource.data = response.body.data;
+        this.tableConfig.length = response.body.count;
+        this._changeDetectorRef.markForCheck();
+      });
   }
 
   onClear(event: Event) {

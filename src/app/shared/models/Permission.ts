@@ -1,5 +1,7 @@
 export interface Permission {
-  id: number;
+  id: string;
+  valueKey: string;
   name: string;
-  description: string;
+  nameEn?: string;
+  isActive: boolean;
 }

@@ -102,6 +102,22 @@
                     "success": "File uploaded successfully",
                     "error": "Error uploading file"
                 }
+            },
+            "permissions-section": "Assigned Permissions",
+            "permissions": {
+                "table": {
+                    "columns": {
+                        "valueKey": "Value Key",
+                        "nameEn": "English Name",
+                        "name": "Name",
+                        "description": "Description",
+                        "isActive": "Active",
+                        "actions": "Actions"
+                    },
+                    "buttons": {
+                        "delete": "Delete"
+                    }
+                }
             }
         },
         "add": {
@@ -171,6 +187,35 @@
             },
             "emailConfirmed": {
                 "label": "Email Confirmed"
+            }
+        },
+        "list": {
+            "title": "Users",
+            "search": {
+                "placeholder": "Search user"
+            },
+            "columns": {
+                "firstName": "First Name",
+                "fatherLastName": "Last Name",
+                "email": "Email",
+                "roles": "Roles",
+                "avatar": "Profile Picture",
+                "isActive": "Active",
+                "isTemporalPasswordActived": "Temporary Password Activated",
+                "emailConfirmed": "Email Confirmed"
+            },
+            "delete": {
+                "title": "Delete User",
+                "message": "Are you sure you want to delete this user?",
+                "confirm": "Delete",
+                "cancel": "Cancel",
+                "success": "User deleted successfully.",
+                "error": "An error occurred while deleting the user."
+            },
+            "actions": {
+                "edit": "Edit",
+                "delete": "Delete",
+                "download": "Download"
             }
         }
     }

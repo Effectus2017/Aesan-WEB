@@ -42,8 +42,8 @@ import { PermissionService } from 'app/shared/services/permission.service';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { DTOStaffRelationship } from 'app/shared/models/StaffRelationship';
 import { MatDialog } from '@angular/material/dialog';
-import { AdminAddRelationshipModalComponent } from '../relationship-modal/add-relationship-modal.component';
-import { AdminEditRelationshipModalComponent } from '../relationship-modal/edit-relationship-modal.component';
+import { AdminAddRelationshipModalComponent } from '../add-relationship-modal/add-relationship-modal.component';
+import { AdminEditRelationshipModalComponent } from '../edit-relationship-modal/edit-relationship-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 

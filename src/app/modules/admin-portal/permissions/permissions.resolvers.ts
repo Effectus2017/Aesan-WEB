@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { PermissionService } from 'app/shared/services/permission.service';
-import { forkJoin, map } from 'rxjs';
+import { map } from 'rxjs';
 
 export const initialDataPermissionsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const permissionService = inject(PermissionService);
@@ -13,8 +13,8 @@ export const initialDataPermissionsListResolver: ResolveFn<any> = (route: Activa
     alls: true,
   };
 
-  return forkJoin([permissionService.getAllPermissionsFromDb(requestParameters)]).pipe(
-    map(([permissions]) => ({
+  return permissionService.getAllPermissionsFromDb(requestParameters).pipe(
+    map((permissions) => ({
       permissions: permissions.body,
     }))
   );
@@ -22,8 +22,15 @@ export const initialDataPermissionsListResolver: ResolveFn<any> = (route: Activa
 
 export const initialDataPermissionsEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const permissionService = inject(PermissionService);
+  const idParam = route.paramMap.get('id');
+
+  // Validar que el ID sea válido (debe ser un string no vacío)
+  if (!idParam || idParam.trim() === '') {
+    throw new Error('Invalid permission ID');
+  }
+
   const requestParameters: QueryParameters = {
-    id: Number(route.paramMap.get('id')),
+    permissionId: idParam,
   };
   return permissionService.getPermissionById(requestParameters).pipe(
     map((permission) => ({

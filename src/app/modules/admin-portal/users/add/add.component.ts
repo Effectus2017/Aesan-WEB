@@ -1,6 +1,17 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
+} from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 
@@ -28,26 +39,25 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 @Component({
-    selector: 'app-users-add',
-    templateUrl: './add.component.html',
-    imports: [
-        FormsModule,
-        ReactiveFormsModule,
-        MatFormFieldModule,
-        MatTabsModule,
-        MatInputModule,
-        NgFor,
-        NgIf,
-        MatButtonModule,
-        MatSelectModule,
-        MatIconModule,
-        MatCheckboxModule,
-        TranslocoModule,
-        GenericHeaderComponent
-    ]
+  selector: 'app-users-add',
+  templateUrl: './add.component.html',
+  imports: [
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatTabsModule,
+    MatInputModule,
+    NgFor,
+    NgIf,
+    MatButtonModule,
+    MatSelectModule,
+    MatIconModule,
+    MatCheckboxModule,
+    TranslocoModule,
+    GenericHeaderComponent,
+  ],
 })
 export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
-
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _usersService: UsersService = inject(UsersService);
@@ -61,6 +71,28 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
+    formGroup: this._formBuilder.group({
+      datosPersonales: this._formBuilder.group(
+        {
+          username: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email, this.emailValidator()]),
+          currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+          newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+          email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()]),
+          firstName: new FormControl(null, Validators.required),
+          middleName: new FormControl(null),
+          fatherLastName: new FormControl(null, Validators.required),
+          motherLastName: new FormControl(null),
+          role: new FormControl(null, Validators.required),
+          agency: new FormControl(null, Validators.required),
+          isActive: new FormControl(true),
+          isTemporalPasswordActived: new FormControl(true),
+          emailConfirmed: new FormControl(false),
+        },
+        {
+          validators: this.onPassword.bind(this),
+        }
+      ),
+    }),
     saveButtonShow: true,
     saveButtonText: 'users.add.submit',
   };
@@ -88,28 +120,6 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   constructor() {}
 
   ngOnInit() {
-    this.headerConfig.formGroup = this._formBuilder.group({
-      datosPersonales: this._formBuilder.group(
-        {
-          username: new FormControl({value: null, disabled: true}, [Validators.required, Validators.email, this.emailValidator()]),
-          currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()]),
-          firstName: new FormControl(null, Validators.required),
-          middleName: new FormControl(null),
-          fatherLastName: new FormControl(null, Validators.required),
-          motherLastName: new FormControl(null),
-          role: new FormControl(null, Validators.required),
-          agency: new FormControl(null, Validators.required),
-          isActive: new FormControl(true),
-          isTemporalPasswordActived: new FormControl(true),
-          emailConfirmed: new FormControl(false),
-        },
-        {
-          validators: this.onPassword.bind(this),
-        }
-      ),
-    });
 
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
@@ -121,9 +131,10 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
 
     // Suscribirse a los cambios del campo email
-    this.headerConfig.formGroup.get('datosPersonales.email').valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(value => {
+    this.headerConfig.formGroup
+      .get('datosPersonales.email')
+      .valueChanges.pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((value) => {
         this.headerConfig.formGroup.get('datosPersonales.username').setValue(value);
       });
   }
@@ -148,32 +159,32 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   onSave(): void {
     if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
-        this.submitForm(this.headerConfig.formGroup.value.datosPersonales);
-      } else {
-        this.headerConfig.formGroup.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
-        this.headerConfig.formGroup.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
-        this.headerConfig.formGroup.markAllAsTouched();
-      }
+      this.submitForm(this.headerConfig.formGroup.value.datosPersonales);
+    } else {
+      this.headerConfig.formGroup.get('datosPersonales').get('currentPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('newPassword').setErrors({ passwordNotMatch: true });
+      this.headerConfig.formGroup.markAllAsTouched();
+    }
   }
 
   submitForm(form: any) {
     const requestParameters: QueryParameters = {
-        agencyId: form.agency.id,
+      agencyId: form.agency.id,
     };
 
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email)) {
-        this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
-        this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
-        return;
-      }
+      this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
+      return;
+    }
 
-      // si rol es null, no se puede actualizar
-      if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
-        this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
-        this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
-        return;
-      }
+    // si rol es null, no se puede actualizar
+    if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
+      this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+      return;
+    }
 
     const _model: RequestUser = {
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -228,11 +239,10 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   }
 
   onUpload(file: File, forlderTo: any) {
-
     var requestParameters: QueryParameters = {
-        userId: null,
-        description: 'userProfile',
-        documentType: 'userProfile',
+      userId: null,
+      description: 'userProfile',
+      documentType: 'userProfile',
     };
 
     this._uploadService.uploadUserAvatar(requestParameters, file).subscribe({
@@ -250,20 +260,20 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           icon: {
             show: true,
             name: 'heroicons_outline:exclamation-circle',
-            color: 'error'
+            color: 'error',
           },
           actions: {
             confirm: {
               show: true,
               label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary'
+              color: 'primary',
             },
             cancel: {
-              show: false
-            }
-          }
+              show: false,
+            },
+          },
         });
-      }
+      },
     });
   }
 

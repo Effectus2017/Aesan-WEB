@@ -7,9 +7,19 @@ export const PERMISSIONS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'permissions.list.table.columns.name',
   },
   {
-    key: 'description',
+    key: 'nameEn',
     type: 'text',
-    label: 'permissions.list.table.columns.description',
+    label: 'permissions.list.table.columns.nameEn',
+  },
+  {
+    key: 'valueKey',
+    type: 'text',
+    label: 'permissions.list.table.columns.valueKey',
+  },
+  {
+    key: 'isActive',
+    type: 'boolean',
+    label: 'permissions.list.table.columns.isActive',
   },
   {
     key: 'actions',

@@ -68,8 +68,8 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
     displayedColumns: PERMISSIONS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSize: 15,
-    pageSizeOptions: [15, 50, 100],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
   };
 
@@ -105,7 +105,13 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
       name: form.name || null,
     };
 
-    this._permissionService.getAllPermissionsFromDb(requestParameters).subscribe()
+    this._permissionService.getAllPermissionsFromDb(requestParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((response) => {
+        this.tableConfig.dataSource.data = response.body.data;
+        this.tableConfig.length = response.body.count;
+        this._changeDetectorRef.markForCheck();
+      });
   }
 
   getPaginator(event?: PageEvent) {
@@ -122,7 +128,7 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
     this.getAll(0, this.headerConfig.formGroup.value);
   }
 
-  onTableEdit(event: Event, id: number) {
+  onTableEdit(event: Event, id: string) {
     event.stopPropagation();
     event.preventDefault();
     this._customRouterService.navigate([`permissions/edit/${id}`]);

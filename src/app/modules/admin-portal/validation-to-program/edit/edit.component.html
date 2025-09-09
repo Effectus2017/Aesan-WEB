@@ -4,8 +4,7 @@
 
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup">
-
-        <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+      <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- Sponsor Information Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "validation-to-program.edit.sections.sponsor-information" | transloco }}</p>
@@ -34,8 +33,8 @@
           <!-- Users Monitor *  -->
           <mat-form-field data-cy="monitor-field">
             <mat-label>{{ "validation-to-program.edit.monitor.label" | transloco }}</mat-label>
-            <mat-select formControlName="monitor" [compareWith]="compareItems" data-cy="monitor-select">
-              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + ' ' + monitor.fatherLastName }}</mat-option>
+            <mat-select formControlName="monitor" [compareWith]="compareMonitors" data-cy="monitor-select">
+              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + " " + monitor.fatherLastName }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -44,48 +43,54 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.agency.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="name"
-                   [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.agency.label' | transloco"
-                   [title]="'validation-to-program.edit.agency.label' | transloco" />
+            <input
+              matInput
+              formControlName="name"
+              [placeholder]="'validation-to-program.edit.agency.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.agency.label' | transloco"
+              [title]="'validation-to-program.edit.agency.label' | transloco"
+            />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.uieNumber.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="uieNumber"
-                   [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco"
-                   type="number"
-                   [attr.aria-label]="'validation-to-program.edit.uieNumber.label' | transloco"
-                   [title]="'validation-to-program.edit.uieNumber.label' | transloco" />
+            <input
+              matInput
+              formControlName="uieNumber"
+              [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco"
+              type="number"
+              [attr.aria-label]="'validation-to-program.edit.uieNumber.label' | transloco"
+              [title]="'validation-to-program.edit.uieNumber.label' | transloco"
+            />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.einNumber.label" | transloco }}</mat-label>
-            <input matInput
-                formControlName="einNumber"
-                [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco"
-                type="number"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                numericOnly
-                [attr.aria-label]="'validation-to-program.edit.einNumber.label' | transloco"
-                [title]="'validation-to-program.edit.einNumber.label' | transloco"
+            <input
+              matInput
+              formControlName="einNumber"
+              [placeholder]="'validation-to-program.edit.einNumber.placeholder' | transloco"
+              type="number"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              numericOnly
+              [attr.aria-label]="'validation-to-program.edit.einNumber.label' | transloco"
+              [title]="'validation-to-program.edit.einNumber.label' | transloco"
             />
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.state-department-registration.label" | transloco }}</mat-label>
-            <input matInput
-                formControlName="sdrNumber"
-                [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco"
-                type="number"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                numericOnly
-                [attr.aria-label]="'validation-to-program.edit.state-department-registration.label' | transloco"
-                [title]="'validation-to-program.edit.state-department-registration.label' | transloco"
+            <input
+              matInput
+              formControlName="sdrNumber"
+              [placeholder]="'validation-to-program.edit.state-department-registration.placeholder' | transloco"
+              type="number"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              numericOnly
+              [attr.aria-label]="'validation-to-program.edit.state-department-registration.label' | transloco"
+              [title]="'validation-to-program.edit.state-department-registration.label' | transloco"
             />
           </mat-form-field>
         </div>
@@ -100,11 +105,13 @@
           <!-- Address *  -->
           <mat-form-field data-cy="address-field">
             <mat-label>{{ "validation-to-program.edit.address.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="address"
-                   [placeholder]="'validation-to-program.edit.address.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.address.label' | transloco"
-                   [title]="'validation-to-program.edit.address.label' | transloco" />
+            <input
+              matInput
+              formControlName="address"
+              [placeholder]="'validation-to-program.edit.address.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.address.label' | transloco"
+              [title]="'validation-to-program.edit.address.label' | transloco"
+            />
           </mat-form-field>
           <!-- City *  -->
           <mat-form-field data-cy="city-field">
@@ -127,29 +134,35 @@
           <!-- Zip Code *  -->
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="zipCode"
-                   [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.zip-code.label' | transloco"
-                   [title]="'validation-to-program.edit.zip-code.label' | transloco" />
+            <input
+              matInput
+              formControlName="zipCode"
+              [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.zip-code.label' | transloco"
+              [title]="'validation-to-program.edit.zip-code.label' | transloco"
+            />
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.coordinates.latitude.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="latitude"
-                   [placeholder]="'validation-to-program.edit.coordinates.latitude.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.coordinates.latitude.label' | transloco"
-                   [title]="'validation-to-program.edit.coordinates.latitude.label' | transloco" />
+            <input
+              matInput
+              formControlName="latitude"
+              [placeholder]="'validation-to-program.edit.coordinates.latitude.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.coordinates.latitude.label' | transloco"
+              [title]="'validation-to-program.edit.coordinates.latitude.label' | transloco"
+            />
           </mat-form-field>
           <!-- Longitude *  -->
           <mat-form-field>
             <mat-label>{{ "validation-to-program.edit.coordinates.longitude.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="longitude"
-                   [placeholder]="'validation-to-program.edit.coordinates.longitude.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.coordinates.longitude.label' | transloco"
-                   [title]="'validation-to-program.edit.coordinates.longitude.label' | transloco" />
+            <input
+              matInput
+              formControlName="longitude"
+              [placeholder]="'validation-to-program.edit.coordinates.longitude.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.coordinates.longitude.label' | transloco"
+              [title]="'validation-to-program.edit.coordinates.longitude.label' | transloco"
+            />
           </mat-form-field>
         </div>
 
@@ -163,12 +176,14 @@
           <!-- Postal Address *  -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "validation-to-program.edit.postal.address.label" | transloco }}</mat-label>
-            <input matInput
-                   [formControlName]="'postalAddress'"
-                   [placeholder]="'validation-to-program.edit.postal.address.placeholder' | transloco"
-                   data-cy="postal-address-input"
-                   [attr.aria-label]="'validation-to-program.edit.postal.address.label' | transloco"
-                   [title]="'validation-to-program.edit.postal.address.label' | transloco" />
+            <input
+              matInput
+              [formControlName]="'postalAddress'"
+              [placeholder]="'validation-to-program.edit.postal.address.placeholder' | transloco"
+              data-cy="postal-address-input"
+              [attr.aria-label]="'validation-to-program.edit.postal.address.label' | transloco"
+              [title]="'validation-to-program.edit.postal.address.label' | transloco"
+            />
           </mat-form-field>
           <!-- Postal City *  -->
           <mat-form-field data-cy="postal-city-field">
@@ -187,12 +202,14 @@
           <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "validation-to-program.edit.postal.zip-code.label" | transloco }}</mat-label>
-            <input matInput
-                   [formControlName]="'postalZipCode'"
-                   [placeholder]="'validation-to-program.edit.postal.zip-code.placeholder' | transloco"
-                   data-cy="postal-zip-code-input"
-                   [attr.aria-label]="'validation-to-program.edit.postal.zip-code.label' | transloco"
-                   [title]="'validation-to-program.edit.postal.zip-code.label' | transloco" />
+            <input
+              matInput
+              [formControlName]="'postalZipCode'"
+              [placeholder]="'validation-to-program.edit.postal.zip-code.placeholder' | transloco"
+              data-cy="postal-zip-code-input"
+              [attr.aria-label]="'validation-to-program.edit.postal.zip-code.label' | transloco"
+              [title]="'validation-to-program.edit.postal.zip-code.label' | transloco"
+            />
           </mat-form-field>
         </div>
 
@@ -206,38 +223,46 @@
           <!-- First Name *  -->
           <mat-form-field data-cy="first-name-field">
             <mat-label>{{ "validation-to-program.edit.first-name.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="firstName"
-                   [placeholder]="'validation-to-program.edit.first-name.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.first-name.label' | transloco"
-                   [title]="'validation-to-program.edit.first-name.label' | transloco" />
+            <input
+              matInput
+              formControlName="firstName"
+              [placeholder]="'validation-to-program.edit.first-name.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.first-name.label' | transloco"
+              [title]="'validation-to-program.edit.first-name.label' | transloco"
+            />
           </mat-form-field>
           <!-- Middle Name *  -->
           <mat-form-field data-cy="middle-name-field">
             <mat-label>{{ "validation-to-program.edit.middle-name.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="middleName"
-                   [placeholder]="'validation-to-program.edit.middle-name.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.middle-name.label' | transloco"
-                   [title]="'validation-to-program.edit.middle-name.label' | transloco" />
+            <input
+              matInput
+              formControlName="middleName"
+              [placeholder]="'validation-to-program.edit.middle-name.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.middle-name.label' | transloco"
+              [title]="'validation-to-program.edit.middle-name.label' | transloco"
+            />
           </mat-form-field>
           <!-- Father Last Name *  -->
           <mat-form-field data-cy="father-last-name-field">
             <mat-label>{{ "validation-to-program.edit.father-last-name.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="fatherLastName"
-                   [placeholder]="'validation-to-program.edit.father-last-name.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.father-last-name.label' | transloco"
-                   [title]="'validation-to-program.edit.father-last-name.label' | transloco" />
+            <input
+              matInput
+              formControlName="fatherLastName"
+              [placeholder]="'validation-to-program.edit.father-last-name.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.father-last-name.label' | transloco"
+              [title]="'validation-to-program.edit.father-last-name.label' | transloco"
+            />
           </mat-form-field>
           <!-- Mother Last Name *  -->
           <mat-form-field data-cy="mother-last-name-field">
             <mat-label>{{ "validation-to-program.edit.mother-last-name.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="motherLastName"
-                   [placeholder]="'validation-to-program.edit.mother-last-name.placeholder' | transloco"
-                   [attr.aria-label]="'validation-to-program.edit.mother-last-name.label' | transloco"
-                   [title]="'validation-to-program.edit.mother-last-name.label' | transloco" />
+            <input
+              matInput
+              formControlName="motherLastName"
+              [placeholder]="'validation-to-program.edit.mother-last-name.placeholder' | transloco"
+              [attr.aria-label]="'validation-to-program.edit.mother-last-name.label' | transloco"
+              [title]="'validation-to-program.edit.mother-last-name.label' | transloco"
+            />
           </mat-form-field>
         </div>
 
@@ -246,29 +271,33 @@
           <!-- Email *  -->
           <mat-form-field data-cy="email-field">
             <mat-label>{{ "validation-to-program.edit.email.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="email"
-                   [placeholder]="'validation-to-program.edit.email.placeholder' | transloco"
-                   type="email"
-                   [attr.aria-label]="'validation-to-program.edit.email.label' | transloco"
-                   [title]="'validation-to-program.edit.email.label' | transloco" />
+            <input
+              matInput
+              formControlName="email"
+              [placeholder]="'validation-to-program.edit.email.placeholder' | transloco"
+              type="email"
+              [attr.aria-label]="'validation-to-program.edit.email.label' | transloco"
+              [title]="'validation-to-program.edit.email.label' | transloco"
+            />
           </mat-form-field>
           <!-- Phone *  -->
           <mat-form-field data-cy="phone-field">
             <mat-label>{{ "validation-to-program.edit.phone.label" | transloco }}</mat-label>
-            <input matInput
-                   formControlName="phone"
-                   [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco"
-                   type="tel"
-                   [attr.aria-label]="'validation-to-program.edit.phone.label' | transloco"
-                   [title]="'validation-to-program.edit.phone.label' | transloco" />
+            <input
+              matInput
+              formControlName="phone"
+              [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco"
+              type="tel"
+              [attr.aria-label]="'validation-to-program.edit.phone.label' | transloco"
+              [title]="'validation-to-program.edit.phone.label' | transloco"
+            />
           </mat-form-field>
           <!-- Administration Title *  -->
           <mat-form-field data-cy="administration-title-field">
             <mat-label>{{ "validation-to-program.edit.administration-title.label" | transloco }}</mat-label>
             <mat-select formControlName="position" [compareWith]="compareById" data-cy="administration-title-select">
               <mat-option *ngFor="let position of listPositions" [value]="position" data-cy="administration-title-option">
-                {{ currentLang === 'es' ? position.name : position.nameEN }}
+                {{ currentLang === "es" ? position.name : position.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>

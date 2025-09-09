@@ -155,12 +155,5 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/staff/board-members',
       },
     ],
-  },
-  {
-    id: 'permissions',
-    title: 'navigation.permissions',
-    type: 'basic',
-    icon: 'mat_solid:lock',
-    link: '/permissions',
   }
 ];

@@ -61,6 +61,10 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     searchInputPlaceholder: 'sponsor-type.list.search.placeholder',
     submitButtonText: 'sponsor-type.list.buttons.save',
     goToAddButtonShow: true,
+    // Configuración de tooltips y permisos directamente en cada botón
+    searchButtonTooltip: 'global.tooltips.header.search',
+    goToAddButtonTooltip: 'global.tooltips.header.add',
+    goToAddButtonPermission: 'sponsor-type.create'  // Ejemplo de permiso para el botón agregar
   };
 
   tableConfig: GenericTableConfig = {
@@ -80,7 +84,7 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
   ngOnInit() {
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
-    
+
     if (resolvedData) {
       const dataWithOrder = resolvedData.sponsorTypes.data.map((item, idx) => ({ ...item, displayOrderUI: idx + 1 }));
       this.tableConfig.dataSource.data = dataWithOrder;

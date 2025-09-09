@@ -267,7 +267,7 @@
           <p class="mb-6 text-secondary">{{ "schools.add.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-9">
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
@@ -346,43 +346,43 @@
           </mat-form-field>
         </div>
 
-       <!-- Comunidad -->
+        <!-- Comunidad -->
         <!-- Caminantes / Walkers -->
         <!-- Tipo de sitio -->
         <!-- Experiencia -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="isPSAV">
-            <!-- Comunidad -->
-            <mat-form-field data-cy="community-field" *ngIf="isPSAV">
-              <mat-label>{{ "schools.add.community.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
-                <mat-option *ngFor="let option of community" [value]="option" data-cy="community-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <!-- Caminantes / Walkers -->
-            <mat-form-field data-cy="walkers-field" *ngIf="isPSAV">
-              <mat-label>{{ "schools.add.walkers.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
-                <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+          <!-- Comunidad -->
+          <mat-form-field data-cy="community-field" *ngIf="isPSAV">
+            <mat-label>{{ "schools.add.community.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of community" [value]="option" data-cy="community-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- Caminantes / Walkers -->
+          <mat-form-field data-cy="walkers-field" *ngIf="isPSAV">
+            <mat-label>{{ "schools.add.walkers.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-            <!-- Tipo de sitio -->
-            <mat-form-field data-cy="site-type-field" *ngIf="isPSAV">
-              <mat-label>{{ "schools.add.site-type.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
-                <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-            <!-- Experiencia -->
-            <mat-form-field data-cy="experience-field" *ngIf="isPSAV">
-              <mat-label>{{ "schools.add.experience.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
-                <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
+          <!-- Tipo de sitio -->
+          <mat-form-field data-cy="site-type-field" *ngIf="isPSAV">
+            <mat-label>{{ "schools.add.site-type.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <!-- Experiencia -->
+          <mat-form-field data-cy="experience-field" *ngIf="isPSAV">
+            <mat-label>{{ "schools.add.experience.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
 
         <!-- Política de funcionamiento= Esto se contestará luego de completar el módulo de elegibilidad -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
@@ -625,7 +625,7 @@
         <!-- Merienda nocturna (si, no) -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV" >
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV">
           <!-- Merienda nocturna (si, no) -->
           <mat-form-field data-cy="snack-night-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.snack-night.label" | transloco }}</mat-label>
@@ -663,8 +663,6 @@
             <mat-timepicker #pickerSnackNightTo />
           </mat-form-field>
         </div>
-
-
       </div>
     </form>
   </div>

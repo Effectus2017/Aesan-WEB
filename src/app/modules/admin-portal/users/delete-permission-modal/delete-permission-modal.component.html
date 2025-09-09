@@ -1,0 +1,46 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'users.permission.modal.delete.title' | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <div class="flex flex-col gap-6">
+      <!-- Description -->
+      <p class="text-secondary">
+        {{ 'users.permission.modal.delete.description' | transloco: {
+          userName: data.userName,
+          permissionName: data.permission.name
+        } }}
+      </p>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-3 mt-6 pt-6 border-t">
+      <button
+        mat-button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isLoading"
+        data-cy="cancel-button"
+      >
+        {{ 'global.buttons.cancel' | transloco }}
+      </button>
+      <button
+        mat-flat-button
+        color="warn"
+        type="button"
+        [disabled]="isLoading"
+        (click)="onDelete()"
+        data-cy="delete-button"
+      >
+        {{ "global.buttons.delete" | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

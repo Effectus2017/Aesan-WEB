@@ -83,7 +83,6 @@
                 [attr.aria-label]="'users.edit.motherLastName.label' | transloco"
                 [title]="'users.edit.motherLastName.label' | transloco"
               />
-
             </mat-form-field>
           </div>
           <!-- Access Information -->
@@ -188,11 +187,21 @@
                 [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
                 [title]="'users.edit.password.toggle-visibility' | transloco"
               >
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="currentPassword.type === 'password'"
+                  [svgIcon]="'heroicons_solid:eye'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="currentPassword.type === 'text'"
+                  [svgIcon]="'heroicons_solid:eye-off'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('required')">
@@ -226,11 +235,21 @@
                 [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
                 [title]="'users.edit.password.toggle-visibility' | transloco"
               >
-                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="newPassword.type === 'password'"
+                  [svgIcon]="'heroicons_solid:eye'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="newPassword.type === 'text'"
+                  [svgIcon]="'heroicons_solid:eye-off'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('required')">
@@ -269,11 +288,21 @@
                 [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
                 [title]="'users.edit.password.toggle-visibility' | transloco"
               >
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="currentPassword.type === 'password'"
+                  [svgIcon]="'heroicons_solid:eye'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="currentPassword.type === 'text'"
+                  [svgIcon]="'heroicons_solid:eye-off'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('currentPassword').hasError('required')">
@@ -306,11 +335,21 @@
                 [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
                 [title]="'users.edit.password.toggle-visibility' | transloco"
               >
-                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'password'" [svgIcon]="'heroicons_solid:eye'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="newPasswordRepeat.type === 'password'"
+                  [svgIcon]="'heroicons_solid:eye'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
-                <mat-icon class="icon-size-5" *ngIf="newPasswordRepeat.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'" [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco">
-                  {{ 'users.edit.password.toggle-visibility' | transloco }}
+                <mat-icon
+                  class="icon-size-5"
+                  *ngIf="newPasswordRepeat.type === 'text'"
+                  [svgIcon]="'heroicons_solid:eye-off'"
+                  [attr.aria-label]="'users.edit.password.toggle-visibility' | transloco"
+                >
+                  {{ "users.edit.password.toggle-visibility" | transloco }}
                 </mat-icon>
               </button>
               <mat-error *ngIf="headerConfig.formGroup.get('password').get('newPassword').hasError('required')">

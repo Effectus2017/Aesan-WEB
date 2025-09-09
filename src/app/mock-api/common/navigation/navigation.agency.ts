@@ -63,7 +63,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_outline:academic-cap',
     link: '/schools',
     roles: ['Agency-Administrator'],
-    permissions: ['SchoolView'],
+    permissions: ['school.view'],
   },
   {
     id: 'forms.agency',
@@ -155,6 +155,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         icon: 'mat_solid:add',
         link: '/staff/add',
         roles: ['Agency-Administrator'],
+        permissions: ['staff.create'],
       },
       {
         id: 'staff.employees',
@@ -163,6 +164,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:users',
         link: '/staff/employees',
         roles: ['Agency-Administrator'],
+        permissions: ['staff.view'],
       },
       {
         id: 'staff.board-members',
@@ -171,10 +173,11 @@ export const agencyNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:user-group',
         link: '/staff/board-members',
         roles: ['Agency-Administrator'],
+        permissions: ['staff.view'],
       },
     ],
     roles: ['Agency-Administrator'],
-    // permissions: ['StaffView'],
+    permissions: ['staff.view'],
   },
   {
     id: 'reports.agency',

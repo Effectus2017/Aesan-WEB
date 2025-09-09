@@ -9,27 +9,45 @@ export interface GenericHeaderConfig {
   // Search Field config
   searchFieldShow?: boolean;
   searchInputPlaceholder?: string;
+  searchButtonTooltip?: string;
+  searchButtonDisabledTooltip?: string;
+  searchButtonPermission?: string;
 
   // Buttons config
   goToAddButtonShow?: boolean;
+  goToAddButtonTooltip?: string;
+  goToAddButtonDisabledTooltip?: string;
+  goToAddButtonPermission?: string;
 
   // Cancel Button config
   cancelButtonShow?: boolean;
   cancelButtonText?: string;
+  cancelButtonTooltip?: string;
+  cancelButtonDisabledTooltip?: string;
+  cancelButtonPermission?: string;
 
   // Submit Button config
   submitButtonShow?: boolean;
   submitButtonText?: string;
   submitLoadingText?: string;
   submitDisabled?: boolean;
+  submitButtonTooltip?: string;
+  submitButtonDisabledTooltip?: string;
+  submitButtonPermission?: string;
 
   // Save Button config
   saveButtonShow?: boolean;
   saveButtonText?: string;
+  saveButtonTooltip?: string;
+  saveButtonDisabledTooltip?: string;
+  saveButtonPermission?: string;
 
   // Reject Button config
   rejectButtonShow?: boolean;
   rejectButtonText?: string;
+  rejectButtonTooltip?: string;
+  rejectButtonDisabledTooltip?: string;
+  rejectButtonPermission?: string;
 
   // Custom Button config
   customButtonShow?: boolean;
@@ -39,9 +57,15 @@ export interface GenericHeaderConfig {
   customButtonDisabled?: boolean;
   customButtonIcon?: string;
   customButtonIconEnabled?: boolean;
+  customButtonTooltip?: string;
+  customButtonDisabledTooltip?: string;
+  customButtonPermission?: string;
 
   // Clear Button config
   clearVisible?: boolean;
+  clearButtonTooltip?: string;
+  clearButtonDisabledTooltip?: string;
+  clearButtonPermission?: string;
 
   // Upload Button config
   uploadButtonShow?: boolean;
@@ -49,6 +73,9 @@ export interface GenericHeaderConfig {
   uploadButtonColor?: string;
   uploadButtonClass?: string;
   uploadButtonDisabled?: boolean;
+  uploadButtonTooltip?: string;
+  uploadButtonDisabledTooltip?: string;
+  uploadButtonPermission?: string;
 
   // Loading config
   isLoading?: boolean;
