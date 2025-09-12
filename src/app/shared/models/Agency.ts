@@ -54,7 +54,36 @@ export interface Agency {
     rejectionJustification?: string;
     // Deadline to complete the registration of the Sites
     deadlineToCompleteRegistration?: string;
+    // inscription
+    inscription?: InscriptionResponse;
 }
 
 
-
+class InscriptionResponse {
+    appointmentCoordinated?: boolean;
+    appointmentDate?: string | null;
+    atRiskService?: boolean;
+    basicEducationRegistry?: OptionSelection | null;
+    basicEducationRegistryId?: number | null;
+    comments?: string | null;
+    deadlineToCompleteRegistration?: string | null;
+    federalFundsDenied?: boolean;
+    id?: number;
+    isDayCareHome?: boolean;
+    nationalYouthProgram?: boolean;
+    nonProfit?: boolean;
+    organizedAthleticPrograms?: boolean;
+    publicAllianceContract?: OptionSelection | null;
+    publicAllianceContractId?: number | null;
+    rejectionJustification?: string | null;
+    serviceTime?: string | null;
+    stateFundsDenied?: boolean;
+    taxExemptionStatus?: OptionSelection | null;
+    taxExemptionStatusId?: number | null;
+    taxExemptionType?: OptionSelection | null;
+    taxExemptionTypeId?: number | null;
+    typeOfApplicant?: OptionSelection | null;
+    typeOfApplicantId?: number | null;
+    typeOfEntity?: OptionSelection | null;
+    typeOfEntityId?: number | null;
+}

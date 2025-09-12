@@ -57,6 +57,7 @@ export interface QueryParameters {
   // Campos para Staff
   staffId?: number;
   staffTypeId?: number;
+  groupTypeId?: number;
 
   // Campos para Permisos
   permissionId?: string; // Cambiado a string

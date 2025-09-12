@@ -5,6 +5,198 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup" #schoolsAddForm="ngForm" data-cy="schools-add-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <!-- Campos específicos para Day Care Home (PACNA) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowDayCareFields()">
+          <p class="text-lg font-medium">{{ "schools.add.daycare-home-fields.title" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.add.daycare-home-fields.description" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Este hogar está autorizado a funcionar? -->
+          <mat-form-field data-cy="is-authorized-to-operate-field">
+            <mat-label>{{ "schools.add.is-authorized-to-operate.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'isAuthorizedToOperate'" data-cy="is-authorized-to-operate-select">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-authorized-to-operate-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('isAuthorizedToOperate').hasError('required')">{{
+              "schools.add.is-authorized-to-operate.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Cuenta con la licencia del Departamento de la Familia? -->
+          <mat-form-field data-cy="has-family-department-license-field">
+            <mat-label>{{ "schools.add.has-family-department-license.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'hasFamilyDepartmentLicense'" data-cy="has-family-department-license-select">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-family-department-license-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('hasFamilyDepartmentLicense').hasError('required')">{{
+              "schools.add.has-family-department-license.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- Número de Niños Matriculados -->
+          <mat-form-field data-cy="number-of-enrolled-children-field">
+            <mat-label>{{ "schools.add.number-of-enrolled-children.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'numberOfEnrolledChildren'"
+              type="number"
+              min="0"
+              placeholder="{{ 'schools.add.number-of-enrolled-children.placeholder' | transloco }}"
+              data-cy="number-of-enrolled-children-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('numberOfEnrolledChildren').hasError('required')">{{
+              "schools.add.number-of-enrolled-children.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Cuántos son hijos del proveedor? -->
+          <mat-form-field data-cy="number-of-provider-children-field">
+            <mat-label>{{ "schools.add.number-of-provider-children.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'numberOfProviderChildren'"
+              type="number"
+              min="0"
+              placeholder="{{ 'schools.add.number-of-provider-children.placeholder' | transloco }}"
+              data-cy="number-of-provider-children-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('numberOfProviderChildren').hasError('required')">{{
+              "schools.add.number-of-provider-children.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Con cuántos de los participantes tiene lazos sanguíneos? -->
+          <mat-form-field data-cy="number-of-participants-with-blood-ties-field">
+            <mat-label>{{ "schools.add.number-of-participants-with-blood-ties.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'numberOfParticipantsWithBloodTies'"
+              type="number"
+              min="0"
+              placeholder="{{ 'schools.add.number-of-participants-with-blood-ties.placeholder' | transloco }}"
+              data-cy="number-of-participants-with-blood-ties-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('numberOfParticipantsWithBloodTies').hasError('required')">{{
+              "schools.add.number-of-participants-with-blood-ties.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Con cuántos de los participantes no tiene lazos sanguíneos? -->
+          <mat-form-field data-cy="number-of-participants-without-blood-ties-field">
+            <mat-label>{{ "schools.add.number-of-participants-without-blood-ties.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'numberOfParticipantsWithoutBloodTies'"
+              type="number"
+              min="0"
+              placeholder="{{ 'schools.add.number-of-participants-without-blood-ties.placeholder' | transloco }}"
+              data-cy="number-of-participants-without-blood-ties-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('numberOfParticipantsWithoutBloodTies').hasError('required')">{{
+              "schools.add.number-of-participants-without-blood-ties.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Los menores viven con usted? -->
+          <mat-form-field data-cy="minors-live-with-provider-field">
+            <mat-label>{{ "schools.add.minors-live-with-provider.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'minorsLiveWithProvider'" data-cy="minors-live-with-provider-select">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="minors-live-with-provider-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('minorsLiveWithProvider').hasError('required')">{{
+              "schools.add.minors-live-with-provider.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- Parentesco -->
+          <mat-form-field data-cy="relationship-type-field">
+            <mat-label>{{ "schools.add.relationship-type.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'relationshipType'" data-cy="relationship-type-select">
+              <mat-option *ngFor="let option of relationshipTypeOptions" [value]="option.id" data-cy="relationship-type-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('relationshipType').hasError('required')">{{ "schools.add.relationship-type.required" | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Ofrece el servicio a niños inmigrantes? -->
+          <mat-form-field data-cy="offers-service-to-immigrant-children-field">
+            <mat-label>{{ "schools.add.offers-service-to-immigrant-children.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'offersServiceToImmigrantChildren'" data-cy="offers-service-to-immigrant-children-select">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-immigrant-children-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToImmigrantChildren').hasError('required')">{{
+              "schools.add.offers-service-to-immigrant-children.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- Tipo de Hogar -->
+          <mat-form-field data-cy="home-type-field">
+            <mat-label>{{ "schools.add.home-type.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'homeType'" data-cy="home-type-select">
+              <mat-option *ngFor="let option of homeTypeOptions" [value]="option.id" data-cy="home-type-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('homeType').hasError('required')">{{ "schools.add.home-type.required" | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- Participantes (selección múltiple) -->
+          <mat-form-field data-cy="participant-types-field">
+            <mat-label>{{ "schools.add.participant-types.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'participantTypes'" multiple data-cy="participant-types-select">
+              <mat-option *ngFor="let option of participantTypeOptions" [value]="option.id" data-cy="participant-types-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('participantTypes').hasError('required')">{{ "schools.add.participant-types.required" | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <!-- ¿Ofrece servicio a diferentes grupos de niños? -->
+          <mat-form-field data-cy="offers-service-to-different-groups-field">
+            <mat-label>{{ "schools.add.offers-service-to-different-groups.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'offersServiceToDifferentGroups'" data-cy="offers-service-to-different-groups-select">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-different-groups-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToDifferentGroups').hasError('required')">{{
+              "schools.add.offers-service-to-different-groups.required" | transloco
+            }}</mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- Sponsor Information Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "schools.add.information" | transloco }}</p>
@@ -88,12 +280,12 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <p class="text-lg font-medium">{{ "schools.add.postal-address.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.postal-address.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{
             "schools.add.same-as-physical-address.label" | transloco
           }}</mat-checkbox>
@@ -131,12 +323,12 @@
         </div>
 
         <!-- Información Administrativa -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <p class="text-lg font-medium">{{ "schools.add.administrative-information.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.administrative-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="shouldShowField()">
           <!-- ¿Es una organización sin fines de lucro? -->
           <!-- Is it a non-profit organization? -->
           <!-- Si (1) y No (2) -->
@@ -151,7 +343,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="shouldShowField()">
           <!-- Fecha de Inicio -->
           <mat-form-field data-cy="start-date-field">
             <mat-label>{{ "schools.add.start-date.label" | transloco }}</mat-label>
@@ -179,7 +371,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="shouldShowField()">
           <!-- Tipo de organización -->
           <mat-form-field data-cy="organization-type-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.add.organization-type.label" | transloco }}</mat-label>
@@ -211,12 +403,12 @@
         </div>
 
         <!-- Fechas de funcionamiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <p class="text-lg font-medium">{{ "schools.add.operating-dates.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.operating-dates.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="shouldShowField()">
           <!-- Fecha desde -->
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "schools.add.operating-from-date.label" | transloco }}</mat-label>
@@ -261,38 +453,35 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <!-- Datos Operacionales -->
           <p class="text-lg font-medium">{{ "schools.add.operational-information.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-9">
-          <!-- Tipo de cocina -->
-          <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
-            <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Tipo de grupo=Requerido -->
+        <!-- Tipo de grupo=Requerido -->
+        <!-- Tipo de cocina -->
+        <!-- Tipo de entrega -->
+        <!-- Tipo de área -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="shouldShowField()">
           <mat-form-field data-cy="group-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.add.group-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'groupType'" (valueChange)="getKitchenTypesByGroupType($event)" data-cy="group-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de entrega -->
+          <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
+            <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'kitchenType'" [disabled]="isKitchenTypeDisabled" data-cy="kitchen-type-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
           <mat-form-field data-cy="delivery-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.add.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de área -->
           <mat-form-field data-cy="type-of-area-field">
             <mat-label>{{ "schools.add.type-of-area.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
@@ -305,8 +494,7 @@
         <!-- Tipo de solicitante -->
         <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
         <!-- Tipo de distribución -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
-          <!-- Tipo de auspiciador -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="shouldShowField()">
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.add.sponsor-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
@@ -315,9 +503,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de solicitante -->
-          <mat-form-field data-cy="applicant-type-field">
+          <mat-form-field data-cy="applicant-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.add.applicant-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">
@@ -325,9 +511,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
-          <mat-form-field data-cy="residential-type-field">
+          <mat-form-field data-cy="residential-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.add.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">
@@ -335,7 +519,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- Tipo de distribución - Solo para PFHF -->
           <mat-form-field data-cy="distribution-type-field">
             <mat-label>{{ "schools.add.distribution-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'distributionType'" data-cy="distribution-type-select" [compareWith]="compareById">
@@ -350,8 +533,7 @@
         <!-- Caminantes / Walkers -->
         <!-- Tipo de sitio -->
         <!-- Experiencia -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="isPSAV">
-          <!-- Comunidad -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="isPSAV">
           <mat-form-field data-cy="community-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.community.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
@@ -360,22 +542,18 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- Caminantes / Walkers -->
           <mat-form-field data-cy="walkers-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.walkers.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de sitio -->
           <mat-form-field data-cy="site-type-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.site-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- Experiencia -->
           <mat-form-field data-cy="experience-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.add.experience.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
@@ -398,8 +576,7 @@
 
         <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
         <!-- ¿Cuenta con un Salón Comedor?= Es una respuesta de si o no. -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="shouldShowField()">
           <mat-form-field data-cy="has-warehouse-field">
             <mat-label>{{ "schools.add.has-warehouse.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select">
@@ -408,7 +585,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- ¿Cuenta con un Salón Comedor?= Es una respuesta de si o no. -->
           <mat-form-field data-cy="has-dining-room-field">
             <mat-label>{{ "schools.add.has-dining-room.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasDiningRoom'" data-cy="has-dining-room-select">
@@ -420,7 +596,7 @@
         </div>
 
         <!-- Administrador/Representante Autorizado -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <p class="text-lg font-medium">{{ "schools.add.administrator-authorized.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.administrator-authorized.description" | transloco }}</p>
         </div>
@@ -429,8 +605,7 @@
         <!-- Teléfono del Sitio -->
         <!-- Extensión -->
         <!-- Teléfono Móvil -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- Nombre Completo del Administrador o Representante -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="shouldShowField()">
           <mat-form-field data-cy="administrator-authorized-name-field">
             <mat-label>{{ "schools.add.administrator-authorized-name.label" | transloco }}</mat-label>
             <input
@@ -440,17 +615,27 @@
               data-cy="administrator-authorized-name-input"
             />
           </mat-form-field>
-          <!-- Teléfono del Sitio -->
           <mat-form-field data-cy="site-phone-field">
             <mat-label>{{ "schools.add.site-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'schools.add.site-phone.placeholder' | transloco }}" data-cy="site-phone-input" />
           </mat-form-field>
-          <!-- Extensión -->
           <mat-form-field data-cy="extension-field">
             <mat-label>{{ "schools.add.extension.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'extension'" placeholder="{{ 'schools.add.extension.placeholder' | transloco }}" data-cy="extension-input" />
           </mat-form-field>
-          <!-- Teléfono Móvil -->
+          <mat-form-field data-cy="mobile-phone-field">
+            <mat-label>{{ "schools.add.mobile-phone.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'schools.add.mobile-phone.placeholder' | transloco }}" data-cy="mobile-phone-input" />
+          </mat-form-field>
+        </div>
+
+        <!-- Teléfono del Sitio -->
+        <!-- Teléfono Móvil -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="shouldShowDayCareFields()">
+          <mat-form-field data-cy="site-phone-field">
+            <mat-label>{{ "schools.add.site-phone.label" | transloco }}</mat-label>
+            <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'schools.add.site-phone.placeholder' | transloco }}" data-cy="site-phone-input" />
+          </mat-form-field>
           <mat-form-field data-cy="mobile-phone-field">
             <mat-label>{{ "schools.add.mobile-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'schools.add.mobile-phone.placeholder' | transloco }}" data-cy="mobile-phone-input" />

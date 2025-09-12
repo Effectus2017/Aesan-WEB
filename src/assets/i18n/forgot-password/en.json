@@ -1,0 +1,16 @@
+{
+  "forgot-password": {
+    "title": "Forgot your password?",
+    "subtitle": "Enter your email address and we'll send you a link to reset your password",
+    "email": {
+      "label": "Email Address",
+      "placeholder": "Enter your email address",
+      "required": "Email address is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "submit": "Send Reset Link",
+    "back-to-login": "Back to sign in",
+    "success": "A reset link has been sent to your email address",
+    "error": "Could not send reset link. Please try again"
+  }
+}

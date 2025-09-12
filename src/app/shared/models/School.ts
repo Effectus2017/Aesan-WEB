@@ -8,6 +8,9 @@ import { DeliveryType } from './DeliveryType';
 import { SponsorType } from './SponsorType';
 import { CenterType } from './CenterType';
 import { AreaType } from './AreaType';
+import { SchoolServiceResponse } from './Response/SchoolServiceResponse';
+import { SchoolDayCareHomeResponse } from './Response/SchoolDayCareHomeResponse';
+import { SchoolParticipantResponse } from './Response/SchoolParticipantResponse';
 
 export interface School {
   id: number;
@@ -67,22 +70,10 @@ export interface School {
   extension?: string;
   mobilePhone?: string;
 
-  // Servicios y Horarios
-  breakfast?: boolean;
-  breakfastFrom?: string;
-  breakfastTo?: string;
-  lunch?: boolean;
-  lunchFrom?: string;
-  lunchTo?: string;
-  snack?: boolean;
-  snackFrom?: string;
-  snackTo?: string;
-  dinner?: boolean;
-  dinnerFrom?: string;
-  dinnerTo?: string;
-  snackNight?: boolean;
-  snackNightFrom?: string;
-  snackNightTo?: string;
+  // ===== RELACIONES CON MODELOS RESPONSE =====
+  services?: SchoolServiceResponse[];
+  dayCareHome?: SchoolDayCareHomeResponse;
+  participants?: SchoolParticipantResponse[];
 
   // Campos adicionales
   communityId?: number;

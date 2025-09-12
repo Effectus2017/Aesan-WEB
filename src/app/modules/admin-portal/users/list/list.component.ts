@@ -182,4 +182,18 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
       this.headerConfig.clearVisible = true;
     }
   }
+
+  onClean(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Limpiar el formulario
+    this.headerConfig.formGroup.reset();
+
+    // Ocultar el botón de limpiar
+    this.headerConfig.clearVisible = false;
+
+    // Recargar los datos sin filtros
+    this.getAll(0, this.headerConfig.formGroup.value);
+  }
 }

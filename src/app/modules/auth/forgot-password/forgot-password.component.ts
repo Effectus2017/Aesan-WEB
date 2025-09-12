@@ -116,7 +116,7 @@ export class AuthForgotPasswordComponent implements OnInit
                     // Set the alert
                     this.alert = {
                         type   : 'success',
-                        message: 'auth.forgot-password.success',
+                        message: 'forgot-password.success',
                     };
 
                     // Redirect to the sign-in page after a delay
@@ -129,7 +129,7 @@ export class AuthForgotPasswordComponent implements OnInit
                     // Set the alert
                     this.alert = {
                         type   : 'error',
-                        message: 'auth.forgot-password.error',
+                        message: 'forgot-password.error',
                     };
                 },
             );

@@ -1,0 +1,16 @@
+{
+  "forgot-password": {
+    "title": "¿Olvidaste tu contraseña?",
+    "subtitle": "Ingresa tu dirección de correo electrónico y te enviaremos un enlace para restablecer tu contraseña",
+    "email": {
+      "label": "Correo Electrónico",
+      "placeholder": "Ingresa tu correo electrónico",
+      "required": "El correo electrónico es requerido",
+      "invalid": "Por favor ingresa un correo electrónico válido"
+    },
+    "submit": "Enviar Enlace de Restablecimiento",
+    "back-to-login": "Volver al inicio de sesión",
+    "success": "Se ha enviado un enlace de restablecimiento a tu correo electrónico",
+    "error": "No se pudo enviar el enlace de restablecimiento. Por favor intenta de nuevo"
+  }
+}

@@ -99,7 +99,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -229,7 +229,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType',
     }),
     // Types of kitchen
     // Tipos de cocina

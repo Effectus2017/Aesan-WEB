@@ -1,6 +1,8 @@
 [
   "./assets/i18n/es.json",
   "./assets/i18n/en.json",
+  "./assets/i18n/forgot-password/es.json",
+  "./assets/i18n/forgot-password/en.json",
   "./assets/i18n/navigation/es.json",
   "./assets/i18n/navigation/en.json",
   "./assets/i18n/staff/es.json",
@@ -15,6 +17,8 @@
   "./assets/i18n/staff-classification/en.json",
   "./assets/i18n/program-requests/es.json",
   "./assets/i18n/program-requests/en.json",
+  "./assets/i18n/reset-password/es.json",
+  "./assets/i18n/reset-password/en.json",
   "./assets/i18n/employees/es.json",
   "./assets/i18n/employees/en.json",
   "./assets/i18n/households/es.json",

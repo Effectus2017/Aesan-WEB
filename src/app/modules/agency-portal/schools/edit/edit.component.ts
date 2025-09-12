@@ -735,20 +735,21 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const centerType = param.centerType;
     const areaType = param.areaType;
 
-    const breakfastFrom: Date | null = toTimeDate(param.breakfastFrom);
-    const breakfastTo: Date | null = toTimeDate(param.breakfastTo);
-    const lunchFrom: Date | null = toTimeDate(param.lunchFrom);
-    const lunchTo: Date | null = toTimeDate(param.lunchTo);
-    const snackFrom: Date | null = toTimeDate(param.snackFrom);
-    const snackTo: Date | null = toTimeDate(param.snackTo);
+    //const breakfastFrom: Date | null = toTimeDate(param.breakfastFrom);
+    //const breakfastTo: Date | null = toTimeDate(param.breakfastTo);
+    //const lunchFrom: Date | null = toTimeDate(param.lunchFrom);
+    //const lunchTo: Date | null = toTimeDate(param.lunchTo);
+    //const snackFrom: Date | null = toTimeDate(param.snackFrom);
+    //const snackTo: Date | null = toTimeDate(param.snackTo);
 
     const mainSchool = param.mainSchool;
 
     // Campos adicionales
-    const dinnerFrom: Date | null = toTimeDate(param.dinnerFrom);
-    const dinnerTo: Date | null = toTimeDate(param.dinnerTo);
-    const snackNightFrom: Date | null = toTimeDate(param.snackNightFrom);
-    const snackNightTo: Date | null = toTimeDate(param.snackNightTo);
+    //const dinnerFrom: Date | null = toTimeDate(param.dinnerFrom);
+    //const dinnerTo: Date | null = toTimeDate(param.dinnerTo);
+    //const snackNightFrom: Date | null = toTimeDate(param.snackNightFrom);
+    //const snackNightTo: Date | null = toTimeDate(param.snackNightTo);
+
     const communityId = param.communityId;
     const walkersId = param.walkersId;
     const siteTypeId = param.siteTypeId;
@@ -786,21 +787,21 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       sitePhone: param.sitePhone,
       extension: param.extension,
       mobilePhone: param.mobilePhone,
-      breakfast: param.breakfast,
-      breakfastFrom: breakfastFrom,
-      breakfastTo: breakfastTo,
-      lunch: param.lunch,
-      lunchFrom: lunchFrom,
-      lunchTo: lunchTo,
-      snack: param.snack,
-      snackFrom: snackFrom,
-      snackTo: snackTo,
-      dinner: param.dinner,
-      dinnerFrom: dinnerFrom,
-      dinnerTo: dinnerTo,
-      snackNight: param.snackNight,
-      snackNightFrom: snackNightFrom,
-      snackNightTo: snackNightTo,
+      //breakfast: param.breakfast,
+      //breakfastFrom: breakfastFrom,
+      //breakfastTo: breakfastTo,
+      //lunch: param.lunch,
+      //lunchFrom: lunchFrom,
+      //lunchTo: lunchTo,
+      //snack: param.snack,
+      //snackFrom: snackFrom,
+      //snackTo: snackTo,
+      //dinner: param.dinner,
+      //dinnerFrom: dinnerFrom,
+      //dinnerTo: dinnerTo,
+      //snackNight: param.snackNight,
+      //snackNightFrom: snackNightFrom,
+      //snackNightTo: snackNightTo,
       community: this.community.find(o => o.id === communityId),
       walkers: this.walkers.find(o => o.id === walkersId),
       siteType: this.siteType.find(o => o.id === siteTypeId),
@@ -864,24 +865,25 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const operatingPolicyId: number = formValues.operatingPolicy?.id;
     const areaTypeId: number = formValues.areaType?.id;
 
-    const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
-    const breakfastTo: string = toTimeString(formValues.breakfastTo);
-    const lunchFrom: string = toTimeString(formValues.lunchFrom);
-    const lunchTo: string = toTimeString(formValues.lunchTo);
-    const snackFrom: string = toTimeString(formValues.snackFrom);
-    const snackTo: string = toTimeString(formValues.snackTo);
+    //const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
+    //const breakfastTo: string = toTimeString(formValues.breakfastTo);
+    //const lunchFrom: string = toTimeString(formValues.lunchFrom);
+    //const lunchTo: string = toTimeString(formValues.lunchTo);
+    //const snackFrom: string = toTimeString(formValues.snackFrom);
+    //const snackTo: string = toTimeString(formValues.snackTo);
 
-    const snack = formValues.snack;
-    const lunch = formValues.lunch;
-    const breakfast = formValues.breakfast;
+    //const snack = formValues.snack;
+    //const lunch = formValues.lunch;
+    //const breakfast = formValues.breakfast;
 
     // Campos adicionales
-    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
-    const dinnerTo: string = toTimeString(formValues.dinnerTo);
-    const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
-    const snackNightTo: string = toTimeString(formValues.snackNightTo);
-    const dinner = formValues.dinner;
-    const snackNight = formValues.snackNight;
+    //const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
+    //const dinnerTo: string = toTimeString(formValues.dinnerTo);
+    //const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
+    //const snackNightTo: string = toTimeString(formValues.snackNightTo);
+    //const dinner = formValues.dinner;
+    //const snackNight = formValues.snackNight;
+
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
     const siteTypeId = formValues.siteType?.id;
@@ -910,7 +912,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       postalZipCode: formValues.postalZipCode || null,
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
-      educationLevelIds: educationLevelIds,
+      //educationLevelIds: educationLevelIds,
       organizationTypeId: organizationTypeId,
       centerTypeId: centerTypeId,
       operatingFromDate: formValues.operatingFromDate ?? null,
@@ -934,21 +936,21 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       sitePhone: formValues.sitePhone ?? null,
       extension: formValues.extension ?? null,
       mobilePhone: formValues.mobilePhone ?? null,
-      breakfast: breakfast ?? null,
-      breakfastFrom: breakfastFrom ?? null,
-      breakfastTo: breakfastTo ?? null,
-      lunch: lunch ?? null,
-      lunchFrom: lunchFrom ?? null,
-      lunchTo: lunchTo ?? null,
-      snack: snack ?? null,
-      snackFrom: snackFrom ?? null,
-      snackTo: snackTo ?? null,
-      dinner: dinner ?? null,
-      dinnerFrom: dinnerFrom ?? null,
-      dinnerTo: dinnerTo ?? null,
-      snackNight: snackNight ?? null,
-      snackNightFrom: snackNightFrom ?? null,
-      snackNightTo: snackNightTo ?? null,
+      //breakfast: breakfast ?? null,
+      //breakfastFrom: breakfastFrom ?? null,
+      //breakfastTo: breakfastTo ?? null,
+      //lunch: lunch ?? null,
+      //lunchFrom: lunchFrom ?? null,
+      //lunchTo: lunchTo ?? null,
+      //snack: snack ?? null,
+      //snackFrom: snackFrom ?? null,
+      //snackTo: snackTo ?? null,
+      //dinner: dinner ?? null,
+      //dinnerFrom: dinnerFrom ?? null,
+      //dinnerTo: dinnerTo ?? null,
+      //snackNight: snackNight ?? null,
+      //snackNightFrom: snackNightFrom ?? null,
+      //snackNightTo: snackNightTo ?? null,
       communityId: communityId ?? null,
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,

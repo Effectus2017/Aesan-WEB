@@ -1,4 +1,10 @@
+import { SchoolServiceRequest } from './SchoolServiceRequest';
+import { SchoolDayCareHomeRequest } from './SchoolDayCareHomeRequest';
+import { SchoolParticipantRequest } from './SchoolParticipantRequest';
+import { SchoolEducationLevelRequest } from './SchoolEducationLevelRequest';
+
 export interface SchoolRequest {
+    // ===== CAMPOS PRINCIPALES DE SCHOOL =====
     id?: number;
     agencyId?: number;
     mainSchoolId?: number;
@@ -26,8 +32,6 @@ export interface SchoolRequest {
     startDate?: string;
     baseYear?: number;
     renewalYear?: number;
-    educationLevelId?: number; // DEPRECATED - usar educationLevelIds
-    educationLevelIds?: number[]; // Nueva propiedad para múltiples IDs
     operatingFromDate?: string;
     operatingToDate?: string;
     operatingDaysCalculated?: number;
@@ -50,23 +54,6 @@ export interface SchoolRequest {
     extension?: string;
     mobilePhone?: string;
 
-    // Servicios y Horarios
-    breakfast?: boolean;
-    breakfastFrom?: string;
-    breakfastTo?: string;
-    lunch?: boolean;
-    lunchFrom?: string;
-    lunchTo?: string;
-    snack?: boolean;
-    snackFrom?: string;
-    snackTo?: string;
-    dinner?: boolean;
-    dinnerFrom?: string;
-    dinnerTo?: string;
-    snackNight?: boolean;
-    snackNightFrom?: string;
-    snackNightTo?: string;
-
     // Campos adicionales
     communityId?: number;
     walkersId?: number;
@@ -83,4 +70,10 @@ export interface SchoolRequest {
     isActive?: boolean;
     inactiveJustification?: string;
     inactiveDate?: string;
+
+    // ===== RELACIONES CON MODELOS REQUEST =====
+    services?: SchoolServiceRequest[];
+    dayCareHome?: SchoolDayCareHomeRequest;
+    participants?: SchoolParticipantRequest[];
+    educationLevels?: SchoolEducationLevelRequest[];
 }

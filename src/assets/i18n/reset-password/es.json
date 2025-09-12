@@ -1,0 +1,31 @@
+{
+  "reset-password": {
+    "title": "Restablecer Contraseña",
+    "temp-password": {
+      "label": "Contraseña Temporal",
+      "placeholder": "Ingrese su contraseña temporal",
+      "required": "La contraseña temporal es requerida"
+    },
+    "new-password": {
+      "label": "Nueva Contraseña",
+      "placeholder": "Ingrese su nueva contraseña",
+      "required": "La nueva contraseña es requerida",
+      "minlength": "La contraseña debe tener al menos 8 caracteres"
+    },
+    "confirm-password": {
+      "label": "Confirmar Contraseña",
+      "placeholder": "Confirme su nueva contraseña",
+      "required": "La confirmación de contraseña es requerida"
+    },
+    "submit": "Actualizar Contraseña",
+    "passwords-must-match": "Las contraseñas deben coincidir",
+    "success": {
+      "password-updated": "Su contraseña ha sido actualizada exitosamente"
+    },
+    "error": {
+      "invalid-temp-password": "Contraseña temporal inválida",
+      "not-updated": "No se pudo actualizar la contraseña",
+      "server-error": "Error del servidor. Por favor intente más tarde"
+    }
+  }
+}

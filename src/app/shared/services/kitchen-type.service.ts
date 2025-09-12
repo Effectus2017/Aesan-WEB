@@ -46,4 +46,13 @@ export class KitchenTypeService {
   deleteKitchenType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-kitchen-type`, getHttpOptions(queryParameters));
   }
+
+  /**
+   * Obtiene los tipos de cocina válidos para un tipo de grupo específico
+   * @param queryParameters Los parámetros de consulta que incluyen el ID del tipo de grupo
+   * @returns Un observable que emite los tipos de cocina obtenidos
+   */
+  getKitchenTypesByGroupType(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-kitchen-types-by-group-type`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._kitchenTypes.next(response)));
+  }
 }

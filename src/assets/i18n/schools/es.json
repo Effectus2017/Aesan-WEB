@@ -347,6 +347,65 @@
                 "save": "Guardar",
                 "cancel": "Cancelar",
                 "submit": "Enviar"
+            },
+            "daycare-home-fields": {
+                "title": "Campos Específicos para Hogar de Cuidado Diurno",
+                "description": "Información específica para hogares de cuidado diurno del programa PACNA"
+            },
+            "is-authorized-to-operate": {
+                "label": "¿Este hogar está autorizado a funcionar?",
+                "required": "Este campo es requerido"
+            },
+            "has-family-department-license": {
+                "label": "¿Cuenta con la licencia del Departamento de la Familia?",
+                "required": "Este campo es requerido"
+            },
+            "number-of-enrolled-children": {
+                "label": "Número de Niños Matriculados",
+                "placeholder": "Ingrese el número de niños matriculados",
+                "required": "Este campo es requerido"
+            },
+            "number-of-provider-children": {
+                "label": "¿Cuántos son hijos del proveedor?",
+                "placeholder": "Ingrese el número de hijos del proveedor",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-with-blood-ties": {
+                "label": "¿Con cuántos de los participantes tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes con lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-without-blood-ties": {
+                "label": "¿Con cuántos de los participantes no tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes sin lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "minors-live-with-provider": {
+                "label": "¿Los menores viven con usted?",
+                "required": "Este campo es requerido"
+            },
+            "relationship-type": {
+                "label": "Parentesco",
+                "placeholder": "Seleccione el parentesco",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-immigrant-children": {
+                "label": "¿Ofrece el servicio a niños inmigrantes?",
+                "required": "Este campo es requerido"
+            },
+            "home-type": {
+                "label": "Tipo de Hogar",
+                "placeholder": "Seleccione el tipo de hogar",
+                "required": "Este campo es requerido"
+            },
+            "participant-types": {
+                "label": "Participantes",
+                "placeholder": "Seleccione los tipos de participantes",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-different-groups": {
+                "label": "¿Ofrece servicio a diferentes grupos de niños?",
+                "required": "Este campo es requerido"
             }
         },
         "edit": {
