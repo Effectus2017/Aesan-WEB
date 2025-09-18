@@ -1,0 +1,69 @@
+{
+  "delivery-type": {
+    "add": {
+      "title": "Add Delivery Type",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter delivery type name"
+      },
+      "nameEN": {
+        "label": "Name (EN)",
+        "placeholder": "Enter name in English"
+      },
+      "isActive": {
+        "label": "Active"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select position"
+      },
+      "selectionNotification": {
+        "label": "Selection Notification"
+      }
+    },
+    "edit": {
+      "title": "Edit Delivery Type",
+      "name": {
+        "label": "Name",
+        "placeholder": "Enter delivery type name"
+      },
+      "nameEN": {
+        "label": "Name (EN)",
+        "placeholder": "Enter name in English"
+      },
+      "isActive": {
+        "label": "Active"
+      },
+      "position": {
+        "label": "Position",
+        "placeholder": "Select position"
+      },
+      "selectionNotification": {
+        "label": "Selection Notification"
+      }
+    },
+    "list": {
+      "title": "Delivery Types",
+      "search": {
+        "placeholder": "Search by name..."
+      },
+      "buttons": {
+        "save": "Search"
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Name",
+          "nameEN": "Name (EN)",
+          "isActive": "Active",
+          "selectionNotification": "Selection Notification",
+          "displayOrder": "Position",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit"
+        }
+      }
+    }
+  }
+}

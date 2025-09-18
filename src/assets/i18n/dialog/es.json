@@ -9,6 +9,24 @@
       "title": "Error",
       "message": "Ha ocurrido un error durante la operación. Por favor, inténtelo de nuevo.",
       "confirm": "Aceptar"
+    },
+    "permission-request": {
+      "title": "Solicitar Permiso",
+      "message": "Para seleccionar esta alternativa deberá solicitar un permiso a AESAN. ¿Desea solicitar el permiso?",
+      "yes": "Sí",
+      "no": "No"
+    },
+    "permission-request-form": {
+      "title": "Solicitud de Permiso",
+      "message": "Por favor, proporcione una breve explicación de por qué necesita este tipo de entrega. Su solicitud será revisada por el personal de AESAN.",
+      "reason": {
+        "label": "Motivo de la solicitud",
+        "placeholder": "Explique por qué necesita este tipo de entrega...",
+        "required": "El motivo es requerido",
+        "minlength": "El motivo debe tener al menos 10 caracteres"
+      },
+      "submit": "Enviar Solicitud",
+      "cancel": "Cancelar"
     }
   }
 }

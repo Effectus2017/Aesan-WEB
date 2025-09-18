@@ -8,10 +8,11 @@
                     "id": "Id",
                     "name": "Nombre",
                     "address": "Dirección",
-                    "city": "Ciudad",
+                    "city": "Municipio",
                     "region": "Región",
                     "isMainSchool": "Es sitio principal?",
                     "mainSchool": "Sitio Principal",
+                    "siteCode": "Código de Sitio",
                     "actions": "Acciones",
                     "satelliteSchoolName": "Nombre del Sitio Satélite",
                     "assignmentDate": "Fecha de Asignación",
@@ -38,9 +39,9 @@
             },
             "address.description": "Datos de la dirección física del sitio",
             "city": {
-                "label": "Ciudad",
-                "placeholder": "Ciudad del sitio",
-                "required": "La ciudad es requerida"
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio",
+                "required": "El municipio es requerido"
             },
             "region": {
                 "label": "Región",
@@ -75,8 +76,8 @@
                 "label": "Igual que la dirección física"
             },
             "postalCity": {
-                "label": "Ciudad",
-                "placeholder": "Ciudad del sitio"
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio"
             },
             "postalRegion": {
                 "label": "Región",
@@ -96,9 +97,9 @@
                 "required": "El campo es requerido"
             },
             "center": {
-                "label": "Centros",
-                "placeholder": "Centros del sitio",
-                "required": "Los centros son requeridos"
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
             },
             "non-profit": {
                 "label": "¿Es una organización sin fines de lucro?",
@@ -333,7 +334,8 @@
             },
             "distribution-type": {
                 "label": "Tipo de Distribución",
-                "placeholder": "Seleccione el tipo de distribución"
+                "placeholder": "Seleccione el tipo de distribución",
+                "required": "El tipo de distribución es requerido"
             },
             "site-type": {
                 "label": "Tipo de Sitio",
@@ -406,6 +408,14 @@
             "offers-service-to-different-groups": {
                 "label": "¿Ofrece servicio a diferentes grupos de niños?",
                 "required": "Este campo es requerido"
+            },
+            "general-enrollment": {
+                "label": "Matrícula General",
+                "placeholder": "Matrícula General"
+            },
+            "site-number": {
+                "label": "Número de Sitio",
+                "description": "Código único del sitio generado automáticamente"
             }
         },
         "edit": {
@@ -431,9 +441,9 @@
             },
             "address.description": "Datos de la dirección física del sitio",
             "city": {
-                "label": "Ciudad",
-                "placeholder": "Ciudad del sitio",
-                "required": "La ciudad es requerida"
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio",
+                "required": "El municipio es requerido"
             },
             "region": {
                 "label": "Región",
@@ -468,8 +478,8 @@
                 "label": "Igual que la dirección física"
             },
             "postalCity": {
-                "label": "Ciudad",
-                "placeholder": "Ciudad del sitio"
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio"
             },
             "postalRegion": {
                 "label": "Región",
@@ -489,9 +499,9 @@
                 "required": "El campo es requerido"
             },
             "center": {
-                "label": "Centros",
-                "placeholder": "Centros del sitio",
-                "required": "Los centros son requeridos"
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
             },
             "non-profit": {
                 "label": "¿Es una organización sin fines de lucro?",
@@ -716,6 +726,11 @@
                 "label": "Caminantes",
                 "placeholder": "Seleccione el tipo de caminantes"
             },
+            "distribution-type": {
+                "label": "Tipo de Distribución",
+                "placeholder": "Seleccione el tipo de distribución",
+                "required": "El tipo de distribución es requerido"
+            },
             "site-type": {
                 "label": "Tipo de Sitio",
                 "placeholder": "Seleccione el tipo de sitio"
@@ -739,6 +754,14 @@
             "review-justification": {
                 "label": "Justificación de Revisión",
                 "placeholder": "Ingrese la justificación de la revisión realizada"
+            },
+            "general-enrollment": {
+                "label": "Matrícula General",
+                "placeholder": "Matrícula General"
+            },
+            "site-number": {
+                "label": "Número de Sitio",
+                "description": "Código único del sitio generado automáticamente"
             },
             "buttons": {
                 "save": "Guardar",

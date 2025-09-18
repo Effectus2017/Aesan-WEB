@@ -12,6 +12,7 @@
                     "region": "Region",
                     "isMainSchool": "Is main site?",
                     "mainSchool": "Main Site",
+                    "siteCode": "Site Code",
                     "actions": "Actions",
                     "satelliteSchoolName": "Satellite Site Name",
                     "assignmentDate": "Assignment Date",
@@ -331,7 +332,8 @@
             },
             "distribution-type": {
                 "label": "Distribution Type",
-                "placeholder": "Select distribution type"
+                "placeholder": "Select distribution type",
+                "required": "Distribution type is required"
             },
             "site-type": {
                 "label": "Site Type",
@@ -420,6 +422,14 @@
             "offers-service-to-different-groups": {
                 "label": "Does it offer service to different groups of children?",
                 "required": "This field is required"
+            },
+            "general-enrollment": {
+                "label": "General Enrollment",
+                "placeholder": "General Enrollment"
+            },
+            "site-number": {
+                "label": "Site Number",
+                "description": "Unique site code generated automatically"
             }
         },
         "edit": {
@@ -723,6 +733,11 @@
                 "label": "Walkers",
                 "placeholder": "Select walkers type"
             },
+            "distribution-type": {
+                "label": "Distribution Type",
+                "placeholder": "Select distribution type",
+                "required": "Distribution type is required"
+            },
             "site-type": {
                 "label": "Site Type",
                 "placeholder": "Select site type"
@@ -746,6 +761,14 @@
             "review-justification": {
                 "label": "Review Justification",
                 "placeholder": "Enter the justification for the review conducted"
+            },
+            "general-enrollment": {
+                "label": "General Enrollment",
+                "placeholder": "General Enrollment"
+            },
+            "site-number": {
+                "label": "Site Number",
+                "description": "Unique site code generated automatically"
             },
             "buttons": {
                 "save": "Save",

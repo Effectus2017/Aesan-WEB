@@ -20,7 +20,7 @@
         <button
           [title]="getButtonTooltip(config.clearButtonTooltip, config.clearButtonDisabledTooltip, config.clearButtonPermission) || 'Limpiar'"
           type="button"
-          mat-flat-button
+          mat-raised-button
           color="primary"
           [disabled]="isButtonDisabledByPermission(config.clearButtonPermission)"
           (click)="onClean($event)">
@@ -40,7 +40,7 @@
     <div [matTooltip]="getButtonTooltip(config.searchButtonTooltip, config.searchButtonDisabledTooltip, config.searchButtonPermission)" [matTooltipDisabled]="!config.searchButtonTooltip && !config.searchButtonDisabledTooltip">
       <button
         [title]="getButtonTooltip(config.searchButtonTooltip, config.searchButtonDisabledTooltip, config.searchButtonPermission) || 'Buscar'"
-        mat-flat-button
+        mat-raised-button
         color="primary"
         type="button"
         [disabled]="isButtonDisabledByPermission(config.searchButtonPermission)"
@@ -58,7 +58,7 @@
           type="button"
           [title]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission) || 'Agregar'"
           class="text-white bg-[#F1A621]"
-          mat-flat-button
+          mat-raised-button
           [color]="'primary'"
           [disabled]="isButtonDisabledByPermission(config.goToAddButtonPermission)">
           <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
@@ -88,7 +88,7 @@
         class="bg-[#F39B1A]"
         type="button"
         [title]="getButtonTooltip(config.saveButtonTooltip, config.saveButtonDisabledTooltip, config.saveButtonPermission) || 'Guardar'"
-        mat-flat-button
+        mat-raised-button
         color="primary"
         [disabled]="isButtonDisabledByPermission(config.saveButtonPermission)"
         (click)="onSave()">
@@ -100,7 +100,7 @@
     <!-- Botón Rechazar -->
     @if (config.rejectButtonShow) {
     <div [matTooltip]="getButtonTooltip(config.rejectButtonTooltip, config.rejectButtonDisabledTooltip)" [matTooltipDisabled]="!config.rejectButtonTooltip && !config.rejectButtonDisabledTooltip">
-      <button type="button" [title]="getButtonTooltip(config.rejectButtonTooltip, config.rejectButtonDisabledTooltip) || 'Rechazar'" (click)="onReject()" mat-button>
+      <button type="button" [title]="getButtonTooltip(config.rejectButtonTooltip, config.rejectButtonDisabledTooltip) || 'Rechazar'" (click)="onReject()" mat-raised-button>
         {{ config.rejectButtonText | transloco }}
       </button>
     </div>

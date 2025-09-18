@@ -1,0 +1,24 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'dialog.permission-request.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="'no'" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <p class="mb-6">{{ 'dialog.permission-request.message' | transloco }}</p>
+
+    <!-- Actions -->
+    <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+      <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="'no'">
+        {{ 'dialog.permission-request.no' | transloco }}
+      </button>
+      <button mat-flat-button type="button" [color]="'primary'" [mat-dialog-close]="'yes'">
+        {{ 'dialog.permission-request.yes' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

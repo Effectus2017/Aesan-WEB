@@ -53,6 +53,7 @@ export class AddDeliveryTypeComponent implements OnInit, OnGenericHeaderHandlers
       nameEN: [null, Validators.required],
       isActive: [true],
       position: [1, Validators.required],
+      selectionNotification: [false],
     }),
     saveButtonShow: true,
     saveButtonText: 'global.buttons.save',
@@ -96,6 +97,7 @@ export class AddDeliveryTypeComponent implements OnInit, OnGenericHeaderHandlers
       nameEN: this.headerConfig.formGroup.get('nameEN').value,
       isActive: this.headerConfig.formGroup.get('isActive').value,
       displayOrder,
+      selectionNotification: this.headerConfig.formGroup.get('selectionNotification').value,
     };
     this._deliveryTypeService.create(newType).subscribe({
       next: () => {

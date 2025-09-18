@@ -24,7 +24,6 @@ import { Region } from 'app/shared/models/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
@@ -48,8 +47,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
+import { MatDialog } from '@angular/material/dialog';
+import { PermissionRequestDialogComponent } from '../permission-request-dialog/permission-request-dialog.component';
+import { PermissionRequestFormDialogComponent } from '../permission-request-form-dialog/permission-request-form-dialog.component';
+import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { Agency } from 'app/shared/models/Agency';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
@@ -92,7 +96,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
   private _sponsorTypeService = inject(SponsorTypeService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _kitchenTypeService = inject(KitchenTypeService);
   private _deliveryTypeService = inject(DeliveryTypeService);
   private _centerTypeService = inject(CenterTypeService);
@@ -104,6 +107,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   private _notificationService = inject(NotificationService);
   private _customRouterService = inject(CustomRouterService);
   private _agencyService = inject(AgencyService);
+  private _dialog = inject(MatDialog);
+  private _fieldVisibilityService = inject(FieldVisibilityService);
 
   // Catálogos
   // Catalogs
@@ -114,6 +119,18 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Yes No Options (1, 2)
   // Si (1) y No (2)
   yesNoOptions: OptionSelection[] = [];
+
+  // Relationship Type Options
+  // Opciones de Parentesco
+  relationshipTypeOptions: OptionSelection[] = [];
+
+  // Home Type Options
+  // Opciones de Tipo de Hogar
+  homeTypeOptions: OptionSelection[] = [];
+
+  // Participant Type Options
+  // Opciones de Tipo de Participantes
+  participantTypeOptions: OptionSelection[] = [];
 
   // Tipo de Organización Escuela (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for school classification
@@ -154,6 +171,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Tipo de cocina
   // Type of kitchen
   kitchenTypes: OptionSelection[] = [];
+  isKitchenTypeDisabled: boolean = false;
 
   // Tipo de grupo
   // Type of group
@@ -198,6 +216,26 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   isPFHF: boolean = false;
   isPDFE: boolean = false;
   isAESAN: boolean = false;
+
+  // Propiedad para controlar visibilidad cuando es Day Care Home
+  isDayCareHome: boolean = false;
+
+  // Función helper para determinar si un campo debe mostrarse
+  shouldShowField(): boolean {
+    if (this.isDayCareHome) {
+      // Por ahora, ocultar TODOS los campos cuando es Day Care Home
+      // TODO: Cuando se especifiquen campos específicos para Day Care Home,
+      // agregar lógica aquí para mostrar solo esos campos
+      return false;
+    }
+    // Cuando no es Day Care Home, mostrar todos los campos normalmente
+    return true;
+  }
+
+  // Función para mostrar campos específicos de Day Care Home (PACNA + isDayCareHome)
+  shouldShowDayCareFields(): boolean {
+    return this.isDayCareHome && this.isPACNA;
+  }
 
   currentLang: string = 'es';
 
@@ -289,6 +327,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
       groupType: [null],
+      // Tipo de distribución - Método de distribución para sitios no congregados
+      // Distribution type - Distribution method for non-congregate sites
+      distributionType: [{ value: null, disabled: true }],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
       deliveryType: [null],
@@ -303,7 +344,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       typeOfResidential: [null],
       // Tipo de área - Tipo de área de la escuela
       // Type of area - Type of area of the school
-      areaType: [null],
+      // (tipo select-SOLO DISABLED - se auto-selecciona según ciudad)
+      areaType: [{ value: null, disabled: true }],
       // Política de operación - Política de operación de la escuela
       // Operating policy - Operating policy of the school
       operatingPolicy: [null],
@@ -400,6 +442,49 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Justificación de revisión - Justificación de la revisión
       // Review justification - Justification of the review
       reviewJustification: [null],
+      // Matrícula General
+      // General Enrollment
+      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      // Campos específicos para Day Care Home (PACNA)
+      // ¿Este hogar está autorizado a funcionar?
+      // Is this home authorized to operate?
+      isAuthorizedToOperate: [null],
+      // ¿Cuenta con la licencia del Departamento de la Familia?
+      // Does it have a Family Department license?
+      hasFamilyDepartmentLicense: [null],
+      // Número de Niños Matriculados
+      // Number of Enrolled Children
+      numberOfEnrolledChildren: [null],
+      // ¿Cuántos son hijos del proveedor?
+      // How many are provider's children?
+      numberOfProviderChildren: [null],
+      // ¿Con cuántos de los participantes tiene lazos sanguíneos?
+      // How many participants have blood ties?
+      numberOfParticipantsWithBloodTies: [null],
+      // ¿Con cuántos de los participantes no tiene lazos sanguíneos?
+      // How many participants do not have blood ties?
+      numberOfParticipantsWithoutBloodTies: [null],
+      // ¿Los menores viven con usted?
+      // Do the minors live with you?
+      minorsLiveWithProvider: [null],
+      // Parentesco
+      // Relationship Type
+      relationshipType: [null],
+      // ¿Ofrece el servicio a niños inmigrantes?
+      // Does it offer service to immigrant children?
+      offersServiceToImmigrantChildren: [null],
+      // Tipo de Hogar
+      // Home Type
+      homeType: [null],
+       // Participantes (selección múltiple)
+       // Participants (multiple selection)
+       participantTypes: [[]],
+      // ¿Ofrece servicio a diferentes grupos de niños?
+      // Does it offer service to different groups of children?
+      offersServiceToDifferentGroups: [null],
+      // Código de Sitio
+      // Site Code
+      siteCode: [{ value: '', disabled: true }],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -435,6 +520,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Agencia Id
   // Agency ID
   agencyId: number = 0;
+  agency: Agency = null;
 
   // Escuela Id
   // School ID
@@ -444,7 +530,92 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
-    this.loadData();
+
+    // Configurar FieldVisibilityService SOLO para distributionType
+    this._fieldVisibilityService.setActiveConfig('schools');
+
+    // Obtener Agencia desde local storage desde AuthService
+    this.agencyId = this._authService.getAgencyId();
+
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      // Yes No Options
+      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      // Tipo de residencial
+      this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+      // Tipo de solicitante
+      this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      // Opciones de Day Care Home
+      this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+      this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
+      this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
+      // Estatus
+      this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      // Política de operación
+      this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
+      // Tipo de cocina
+      this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
+      // Tipo de grupo
+      this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
+      // Comunidad
+      this.community = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community');
+      // Caminantes / Walkers
+      this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
+      // Tipo de distribución / Distribution type
+      this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+      // Tipo de sitio / Site type
+      this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+      // Experiencia / Experience
+      this.experience = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience');
+      // Resultado de revisión / Review result
+      this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+
+      // Catálogos
+      this.centerTypes = resolvedData.centerTypes;
+      this.organizationTypes = resolvedData.organizationTypes;
+      this.educationLevels = resolvedData.educationLevels;
+      this.kitchenTypes = resolvedData.kitchenTypes;
+      this.groupTypes = resolvedData.groupTypes;
+      this.sponsorType = resolvedData.sponsorTypes;
+      this.operatingPolicies = resolvedData.operatingPolicies;
+      this.deliveryTypes = resolvedData.deliveryTypes;
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+      this.areaTypes = resolvedData.areaTypes;
+      this.listSchools = resolvedData.schools;
+
+      // Verificar escuela principal
+      this.isMainSchool = !resolvedData.hasMainSchool;
+
+      // Usar la escuela del resolver
+      // Use school from resolver
+      this.onSetForm(resolvedData.school);
+
+      this._changeDetectorRef.markForCheck();
+    }
+
+    // Obtener datos de la agencia para determinar campos visibles
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        this.agency = result.body;
+        const programs = this.agency.programs || [];
+
+        // Obtener el valor de isDayCareHome de la inscripción
+        this.isDayCareHome = this.agency?.inscription?.isDayCareHome || false;
+
+        // Determinar qué campos mostrar según los programas
+        this.determineVisibleFields(programs);
+      }
+    });
+
+    // Transloco
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+    });
+
+
     this.setupFormListeners();
   }
 
@@ -457,6 +628,29 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
       this.calculateOperatingDays();
     });
+
+    // Listener para cambios en groupType que afectan distributionType
+    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe(() => {
+      this.updateDistributionTypeValidation();
+      this._changeDetectorRef.detectChanges();
+    });
+
+    // Suscribirse a cambios en el control isActive para manejar campos de inactivación
+    this.headerConfig.formGroup.get('isActive')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((isActive: boolean) => {
+      const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+
+      if (isActive === false) {
+        // Si la escuela está inactiva, requerir justificación
+        inactiveJustificationControl?.setValidators([Validators.required]);
+      } else {
+        // Si la escuela está activa, limpiar validadores y valores
+        inactiveJustificationControl?.clearValidators();
+        inactiveJustificationControl?.setValue('');
+        this.headerConfig.formGroup.get('inactiveDate')?.setValue(null);
+      }
+
+      inactiveJustificationControl?.updateValueAndValidity();
+    });
   }
 
   private calculateOperatingDays(): void {
@@ -464,217 +658,66 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
 
     if (fromDate && toDate) {
-      const from = new Date(fromDate);
-      const to = new Date(toDate);
-      const diffTime = Math.abs(to.getTime() - from.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 para incluir ambos días
+      try {
+        const workingDays = this.calculateWorkingDays(fromDate, toDate);
 
-      this.headerConfig.formGroup.patchValue({
-        operatingDaysCalculated: diffDays
-      });
+        this.headerConfig.formGroup.patchValue({
+          operatingDaysCalculated: workingDays,
+        });
+      } catch (error) {
+        console.error('Error calculating working days:', error);
+        this.headerConfig.formGroup.patchValue({
+          operatingDaysCalculated: null,
+        });
+      }
     } else {
       this.headerConfig.formGroup.patchValue({
-        operatingDaysCalculated: null
+        operatingDaysCalculated: null,
       });
     }
   }
 
-  private loadData(): void {
-    this.isLoading = true;
+  /**
+   * Calcula los días laborables entre dos fechas (excluyendo fines de semana)
+   * @param startDate Fecha de inicio
+   * @param endDate Fecha de fin
+   * @returns Número de días laborables
+   */
+  private calculateWorkingDays(startDate: Date, endDate: Date): number {
+    // Validar fechas
+    if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return 0;
+    }
 
-    // Obtener Agencia desde local storage desde AuthService
-    this.agencyId = this._authService.getAgencyId();
+    // Normalizar fechas a medianoche para evitar problemas de zona horaria
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
-    // Suscribirse a cambios en el control isActive para manejar campos de inactivación
-    this.headerConfig.formGroup.get('isActive').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((isActive: boolean) => {
-      const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+    // Asegurar que las fechas estén en el orden correcto
+    const [earlier, later] = start <= end ? [start, end] : [end, start];
 
-      if (isActive === false) {
-        // Si la escuela está inactiva, requerir justificación
-        inactiveJustificationControl.setValidators([Validators.required]);
-      } else {
-        // Si la escuela está activa, limpiar validadores y valores
-        inactiveJustificationControl.clearValidators();
-        inactiveJustificationControl.setValue('');
-        this.headerConfig.formGroup.get('inactiveDate').setValue(null);
+    // Calcular semanas completas para optimización
+    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const fullWeeks = Math.floor(totalDays / 7);
+    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
+
+    // Calcular días restantes
+    const remainingDays = totalDays % 7;
+    const startDayOfWeek = earlier.getDay();
+    let remainingWorkingDays = 0;
+
+    for (let i = 0; i < remainingDays; i++) {
+      const dayOfWeek = (startDayOfWeek + i) % 7;
+      // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
+      // Excluir sábado (6) y domingo (0)
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        remainingWorkingDays++;
       }
+    }
 
-      inactiveJustificationControl.updateValueAndValidity();
-    });
-
-    // Transloco
-    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
-      this.currentLang = lang;
-    });
-
-    // Verificar si existe una escuela principal
-    // Check if there is a main school
-    this._schoolService.hasMainSchool$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.isMainSchool = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Obtener datos de la agencia para determinar campos visibles
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        const agency = result.body;
-        const programs = agency.programs || [];
-
-        // Determinar qué campos mostrar según los programas
-        this.determineVisibleFields(programs);
-      }
-    });
-
-    // Cargar catálogos
-    // Load catalogs
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Yes No
-        this.yesNoOptions = result.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-        // Tipo de residencial
-        this.typeOfResidential = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
-        // Tipo de solicitante
-        this.typeOfApplicant = result.body.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-        // Estatus
-        this.isActive = result.body.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Política de operación
-        this.operatingPolicies = result.body.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
-        // Tipo de cocina
-        this.kitchenTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
-        // Tipo de grupo
-        this.groupTypes = result.body.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
-        // Comunidad
-        this.community = result.body.data.filter((option: OptionSelection) => option.optionKey === 'community');
-        // Caminantes / Walkers
-        this.walkers = result.body.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
-        // Tipo de distribución / Distribution type
-        this.distributionType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-        // Tipo de sitio / Site type
-        this.siteType = result.body.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
-        // Experiencia / Experience
-        this.experience = result.body.data.filter((option: OptionSelection) => option.optionKey === 'experience');
-        // Resultado de revisión / Review result
-        this.reviewResult = result.body.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-      }
-    });
-
-    // Tipo de centro
-    this._centerTypeService.centerTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.centerTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de organización
-    this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.organizationTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Ciudad
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Región
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.listRegions = result.body;
-        this.listPostalRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de cocina
-    // Kitchen type
-    this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.kitchenTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de grupo
-    // Group type
-    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.groupTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de auspiciador
-    // Sponsor type
-    this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.sponsorType = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Política de operación
-    // Operating policy
-    this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.operatingPolicies = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de entrega
-    // Delivery type
-    this._deliveryTypeService.deliveryTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.deliveryTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Nivel educativo
-    // Education level
-    this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.educationLevels = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Tipo de Area
-    this._areaTypeService.areaTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
-        this.areaTypes = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Lista de escuelas
-    // List of schools
-    this._schoolService.schools$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listSchools = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Escuela
-    // School
-    this._schoolService.school$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.onSetForm(result.body);
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    this.isLoading = false;
+    return workingDaysInFullWeeks + remainingWorkingDays;
   }
+
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
@@ -694,8 +737,63 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   }
 
   private updateValidations(): void {
-    // Actualizar validaciones según los campos visibles
-    // Similar a como se hace en Staff
+    // Si es Day Care Home, remover todas las validaciones requeridas
+    if (this.isDayCareHome) {
+      // Remover validaciones requeridas de todos los campos
+      const fieldsToUpdate = [
+        'name',
+        'address',
+        'city',
+        'region',
+        'zipCode',
+        'latitude',
+        'longitude',
+        'postalCity',
+        'postalRegion',
+        'nonProfit',
+        'organizationType',
+        'centerType',
+        'educationLevels',
+        'areaType',
+      ];
+
+      fieldsToUpdate.forEach((fieldName) => {
+        const control = this.headerConfig.formGroup.get(fieldName);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    } else {
+      // Restaurar validaciones requeridas cuando no es Day Care Home
+      this.restoreRequiredValidations();
+    }
+  }
+
+  private restoreRequiredValidations(): void {
+    // Restaurar validaciones requeridas para campos básicos
+    const requiredFields = {
+      name: [Validators.required],
+      address: [Validators.required],
+      city: [Validators.required],
+      region: [Validators.required],
+      zipCode: [Validators.required],
+      latitude: [Validators.required],
+      longitude: [Validators.required],
+      postalCity: [Validators.required],
+      nonProfit: [Validators.required],
+      organizationType: [Validators.required],
+      centerType: [Validators.required],
+      educationLevels: [Validators.required],
+    };
+
+    Object.keys(requiredFields).forEach((fieldName) => {
+      const control = this.headerConfig.formGroup.get(fieldName);
+      if (control) {
+        control.setValidators(requiredFields[fieldName]);
+        control.updateValueAndValidity();
+      }
+    });
   }
 
   onSetForm(param: School): void {
@@ -821,7 +919,12 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       residentialType: residentialType,
       operatingPolicy: operatingPolicy,
       areaType: areaType,
+      generalEnrollment: param.generalEnrollment,
+      siteCode: param.siteCode || '',
     });
+
+    // Actualizar validaciones de distributionType basado en groupType
+    this.updateDistributionTypeValidation();
 
     // Satélites
     this.satellitesTableConfig.dataSource.data = param.satellites || [];
@@ -962,6 +1065,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       isActive: formValues.isActive ?? true,
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
+      generalEnrollment: formValues.generalEnrollment ?? null,
     };
 
     this.isLoading = true;
@@ -1011,6 +1115,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     this._customRouter.navigate(['schools/list']);
   }
 
+  // Método para agregar una escuela satélite
+  onTableAddSatelliteSchool(event: Event, element: any) {
+    console.log('onTableAddSatelliteSchool', event, element);
+  }
+
   /**
    * Obtiene todas las regiones según el ID de la ciudad
    * Gets all regions by city ID
@@ -1054,6 +1163,83 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       },
     });
   }
+
+  // Método para obtener tipos de cocina según el tipo de grupo seleccionado
+  // Get kitchen types by group type
+  getKitchenTypesByGroupType(groupType: OptionSelection): void {
+    if (!groupType) {
+      this.kitchenTypes = [];
+      this.isKitchenTypeDisabled = false; // Mantener habilitado
+      return;
+    }
+
+    // Para TODOS los tipos de grupo, usar la API para obtener los tipos de cocina válidos
+    this.isKitchenTypeDisabled = false;
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response) {
+          this.kitchenTypes = response.body;
+
+          // Determinar si el tipo de grupo es "Comedor" o "Satélite" dentro del callback
+          const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+          const isSatelite = groupType.name === 'Satélite' || groupType.nameEN === 'Satellite';
+
+          // Si NO es "Comedor" ni "Satélite", auto-seleccionar "N/A"
+          if (!isComedor && !isSatelite) {
+            const naKitchenType = this.kitchenTypes.find(kt =>
+              kt.name === 'N/A' || kt.nameEN === 'N/A'
+            );
+
+            if (naKitchenType) {
+              this.headerConfig.formGroup.patchValue({ kitchenType: naKitchenType });
+            }
+          } else {
+            // Para "Comedor" y "Satélite", limpiar la selección para que el usuario elija
+            this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          }
+
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar los tipos de cocina:', error);
+      },
+    });
+  }
+
+  // Método para obtener el tipo de área según la ciudad seleccionada
+  // Get area type by city
+  getAreaTypeByCity(city: City): void {
+    if (!city) {
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      cityId: city.id,
+    };
+
+    this._areaTypeService.getAreaTypeByCity(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body && response.body.length > 0) {
+          // Auto-seleccionar el tipo de área obtenido
+          const areaType = response.body[0]; // Debería haber solo un tipo de área por ciudad
+          this.headerConfig.formGroup.patchValue({ areaType: areaType });
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener el tipo de área para la ciudad:', error);
+      },
+    });
+  }
+
+  // Método para obtener tipos de centro según el programa seleccionado
+  // Get center types by program
 
   // Copiar Dirección Física
   // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
@@ -1150,5 +1336,116 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
     // Forzar detección de cambios
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Maneja la selección de tipo de entrega con notificación de permiso
+   */
+  onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
+    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+      this.showPermissionRequestDialog(selectedDeliveryType);
+    }
+  }
+
+  /**
+   * Muestra el diálogo de solicitud de permiso
+   */
+  private showPermissionRequestDialog(deliveryType: DeliveryType): void {
+    const dialogRef = this._dialog.open(PermissionRequestDialogComponent, {
+      width: '500px',
+      data: {
+        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeNameEN: deliveryType.nameEN
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.showPermissionRequestFormDialog(deliveryType);
+      } else if (result === 'no') {
+        // Si el usuario dice "No", deseleccionar el tipo de entrega
+        this.headerConfig.formGroup.patchValue({
+          deliveryType: null
+        });
+      }
+    });
+  }
+
+  /**
+   * Muestra el formulario de solicitud de permiso
+   */
+  private showPermissionRequestFormDialog(deliveryType: DeliveryType): void {
+    const dialogRef = this._dialog.open(PermissionRequestFormDialogComponent, {
+      width: '600px',
+      data: {
+        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeNameEN: deliveryType.nameEN
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'submit') {
+        // Aquí se implementaría la lógica para enviar la solicitud de permiso
+        // Por ahora, solo mostramos un mensaje de confirmación
+        this._notificationService.showSuccess('Solicitud de permiso enviada correctamente');
+
+        // El usuario puede continuar con el tipo de entrega seleccionado
+        // No necesitamos hacer nada más aquí
+      } else if (result && result.action === 'cancel') {
+        // Si el usuario cancela, deseleccionar el tipo de entrega
+        this.headerConfig.formGroup.patchValue({
+          deliveryType: null
+        });
+      }
+    });
+  }
+
+  /**
+   * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
+   */
+  shouldShowDistributionType(): boolean {
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+
+    // Obtener el tipo de grupo como string para el servicio
+    const groupTypeKey = this.getGroupTypeKey(groupType);
+
+    return this._fieldVisibilityService.shouldShowField('distributionType', groupTypeKey);
+  }
+
+  /**
+   * Actualiza las validaciones condicionales usando FieldVisibilityService
+   */
+  private updateDistributionTypeValidation(): void {
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+    const distributionTypeControl = this.headerConfig.formGroup.get('distributionType');
+
+    // Obtener el tipo de grupo como string para el servicio
+    const groupTypeKey = this.getGroupTypeKey(groupType);
+
+    const isRequired = this._fieldVisibilityService.isFieldRequired('distributionType', groupTypeKey);
+
+    if (isRequired) {
+      // Requerir distribución type
+      distributionTypeControl?.setValidators([Validators.required]);
+      distributionTypeControl?.enable();
+    } else {
+      // No requerir para otros tipos y deshabilitar el campo
+      distributionTypeControl?.clearValidators();
+      distributionTypeControl?.setValue(null); // Limpiar el valor
+      distributionTypeControl?.disable();
+      distributionTypeControl?.markAsUntouched(); // Limpiar estado de validación
+    }
+
+    distributionTypeControl?.updateValueAndValidity();
+  }
+
+  /**
+   * Convierte el objeto groupType a la clave usada en la configuración
+   */
+  private getGroupTypeKey(groupType: any): string {
+    if (!groupType) return '';
+
+    // Usar directamente el nombre del groupType
+    return groupType.name || groupType.nameEN || '';
   }
 }

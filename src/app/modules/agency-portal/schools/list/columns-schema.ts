@@ -13,12 +13,12 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'schools.list.table.columns.address',
   },
   {
-    key: 'city.name',
+    key: 'cityName',
     type: 'text',
     label: 'schools.list.table.columns.city',
   },
   {
-    key: 'region.name',
+    key: 'regionName',
     type: 'text',
     label: 'schools.list.table.columns.region',
   },
@@ -28,9 +28,14 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'schools.list.table.columns.isMainSchool',
   },
   {
-    key: 'mainSchool.name',
+    key: 'mainSchoolName',
     type: 'text',
     label: 'schools.list.table.columns.mainSchool',
+  },
+  {
+    key: 'siteCode',
+    type: 'text',
+    label: 'schools.list.table.columns.siteCode',
   },
   {
     key: 'actions',

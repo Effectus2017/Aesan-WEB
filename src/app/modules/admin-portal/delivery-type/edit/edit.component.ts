@@ -53,6 +53,7 @@ export class EditDeliveryTypeComponent implements OnInit, OnGenericHeaderHandler
       nameEN: [null, Validators.required],
       isActive: [true],
       position: [1, Validators.required],
+      selectionNotification: [false],
     }),
     saveButtonShow: true,
     saveButtonText: 'global.buttons.save',
@@ -81,6 +82,7 @@ export class EditDeliveryTypeComponent implements OnInit, OnGenericHeaderHandler
       nameEN: param.nameEN,
       isActive: param.isActive,
       position: param.displayOrder,
+      selectionNotification: param.selectionNotification,
     });
   }
 
@@ -99,6 +101,7 @@ export class EditDeliveryTypeComponent implements OnInit, OnGenericHeaderHandler
       nameEN: formValues.nameEN,
       isActive: formValues.isActive,
       displayOrder: formValues.position,
+      selectionNotification: formValues.selectionNotification,
     };
 
     this._deliveryTypeService.updateDeliveryType(deliveryTypeRequest, {}).subscribe({

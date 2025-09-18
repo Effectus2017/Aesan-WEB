@@ -45,4 +45,8 @@ export class CenterTypeService {
   deleteCenterType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-center-type`, getHttpOptions(queryParameters));
   }
+
+  getCenterTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-center-types-by-program`, getHttpOptions(queryParameters));
+  }
 }

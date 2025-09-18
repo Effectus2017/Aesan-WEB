@@ -110,6 +110,14 @@ export interface School {
 
   // Satélites
   satellites?: SchoolSatellite[];
+
+  // Matrícula General
+  generalEnrollment?: number;
+
+  // Número de Sitio y Código de Agencia
+  siteNumber?: number;
+  agencyCode?: string;
+  siteCode?: string;
 }
 
 export interface SchoolList {

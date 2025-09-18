@@ -1,0 +1,10 @@
+{
+  "fieldVisibility": {
+    "distributionType": {
+      "showFor": ["Non-Congregate"],
+      "hideFor": ["Congregate", "Dining Room", "Satellite"],
+      "requiredFor": ["Non-Congregate"],
+      "optionalFor": []
+    }
+  }
+}

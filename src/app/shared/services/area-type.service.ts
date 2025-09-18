@@ -50,4 +50,15 @@ export class AreaTypeService {
   deleteAreaType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-area-type`, getHttpOptions(queryParameters));
   }
+
+  /**
+   * Obtiene el tipo de área válido para una ciudad específica
+   * @param queryParameters Los parámetros de consulta que incluyen el ID de la ciudad
+   * @returns Un observable que emite el tipo de área obtenido
+   */
+  getAreaTypeByCity(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-area-type-by-city`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => this._areaType.next(response))
+    );
+  }
 }

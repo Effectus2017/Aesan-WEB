@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { NavigationService } from 'app/core/navigation/navigation.service';
-import { forkJoin, map } from 'rxjs';
+import { forkJoin, map, tap } from 'rxjs';
 import { AgencyService } from './shared/services/agency.service';
 import { QueryParameters } from './shared/models/QueryParameters';
 import { AuthService } from './core/auth/auth.service';
@@ -19,6 +19,12 @@ export const initialDataResolver = () => {
     };
     // Fork join multiple API endpoint calls to wait all of them to finish
     return forkJoin([navigationService.get(), agencyService.getAgencyById(params)]).pipe(
+      tap(([navigation, agency]) => {
+        // Almacenar los programas de la agencia en localStorage
+        if (agency?.body?.programs) {
+          localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
+        }
+      }),
       map(([navigation, agency]) => ({
         navigation: navigation, // NavigationService devuelve Navigation directamente
         agency: agency.body,     // AgencyService devuelve HttpResponse
@@ -47,6 +53,12 @@ export const initialDataAgencyPortalResolver = () => {
 
   // Fork join multiple API endpoint calls to wait all of them to finish
   return forkJoin([navigationService.get(), agencyService.getAgencyById(params)]).pipe(
+    tap(([navigation, agency]) => {
+      // Almacenar los programas de la agencia en localStorage
+      if (agency?.body?.programs) {
+        localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
+      }
+    }),
     map(([navigation, agency]) => ({
       navigation: navigation, // NavigationService devuelve Navigation directamente
       agency: agency.body,     // AgencyService devuelve HttpResponse

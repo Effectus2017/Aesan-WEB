@@ -5,7 +5,7 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup" #schoolsEditForm="ngForm" data-cy="schools-edit-form">
       <!-- Si la escuela actual es la principal, mostrar un mensaje de que es la principal -->
-      <div *ngIf="isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 mb-2 sm:grid-cols-1 sm:col-span-8">
+      <div *ngIf="isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 mb-2 sm:grid-cols-1 sm:col-span-12">
         <div class="mb-2">
           <div class="flex items-center p-3 text-green-800 bg-green-50 rounded-md">
             <mat-icon class="mr-2 text-green-500">check_circle</mat-icon>
@@ -21,7 +21,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.information-description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- name -->
           <mat-form-field data-cy="name-field">
             <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label>
@@ -54,7 +54,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!--fecha de inactivacion -->
           <mat-form-field data-cy="inactive-justification-field">
             <mat-label>{{ "schools.edit.inactive-justification.label" | transloco }}</mat-label>
@@ -76,7 +76,7 @@
         </div>
 
         <!-- Mostramos la lista de escuelas Para seleccionar la escuela principal -->
-        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <div class="flex gap-2 justify-center items-center">
             <mat-form-field class="w-full" data-cy="main-school-field" [subscriptSizing]="'dynamic'">
               <mat-select [formControlName]="'mainSchool'" data-cy="main-school-select" [compareWith]="compareById">
@@ -97,12 +97,12 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <p class="text-lg font-medium">{{ "schools.edit.address.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.address.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Address *  -->
           <mat-form-field data-cy="address-field">
             <mat-label>{{ "schools.edit.address.label" | transloco }}</mat-label>
@@ -113,7 +113,12 @@
           <!-- City para Dirección Física *  -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "schools.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'city'" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select" [compareWith]="compareById">
+            <mat-select
+              [formControlName]="'city'"
+              (valueChange)="getRegionsByCityId($event, 'region'); getAreaTypeByCity($event)"
+              data-cy="city-select"
+              [compareWith]="compareById"
+            >
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
                 {{ city.name }}
               </mat-option>
@@ -131,7 +136,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Zip Code *  -->
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "schools.edit.zip-code.label" | transloco }}</mat-label>
@@ -170,13 +175,13 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.postal-address.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4 sm:col-span-12">
           <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{
             "schools.edit.same-as-physical-address.label" | transloco
           }}</mat-checkbox>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
           <!-- Postal Address *  -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "schools.edit.postal-address.label" | transloco }}</mat-label>
@@ -213,7 +218,7 @@
         </div>
 
         <!-- ¿Es una organización sin fines de lucro? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- ¿Es una organización sin fines de lucro? -->
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "schools.edit.non-profit.label" | transloco }}</mat-label>
@@ -229,7 +234,7 @@
         <!-- Fecha de Inicio -->
         <!-- Año base -->
         <!-- Año de renovación -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="start-date-field">
             <mat-label>{{ "schools.edit.start-date.label" | transloco }}</mat-label>
             <input
@@ -252,7 +257,34 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <!-- Matrícula General -->
+          <mat-form-field data-cy="general-enrollment-field">
+            <mat-label>{{ "schools.edit.general-enrollment.label" | transloco }}</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              [formControlName]="'generalEnrollment'"
+              placeholder="{{ 'schools.edit.general-enrollment.placeholder' | transloco }}"
+              data-cy="general-enrollment-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('generalEnrollment').hasError('pattern')">
+              {{ "validation.numeric" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <!-- Número de Sitio -->
+          <mat-form-field data-cy="site-number-field">
+            <mat-label>{{ "schools.edit.site-number.label" | transloco }}</mat-label>
+            <input matInput formControlName="siteCode" readonly disabled data-cy="site-number-input" />
+            <mat-hint>{{ "schools.edit.site-number.description" | transloco }}</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Tipo de organización -->
           <mat-form-field data-cy="organization-type-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.edit.organization-type.label" | transloco }}</mat-label>
@@ -287,7 +319,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.operating-dates.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Fecha desde -->
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "schools.edit.operating-from-date.label" | transloco }}</mat-label>
@@ -338,7 +370,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.operational-information.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Tipo de cocina -->
           <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.edit.kitchen-type.label" | transloco }}</mat-label>
@@ -348,8 +380,11 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
-          <!-- Tipo de grupo -->
+        <!-- Tipo de grupo -->
+        <!-- Tipo de distribución -->
+        <!-- Tipo de entrega -->
+        <!-- Tipo de área -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
           <mat-form-field data-cy="group-type-field" *ngIf="isPDAM || isPSAV">
             <mat-label>{{ "schools.edit.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareById">
@@ -357,15 +392,30 @@
             </mat-select>
           </mat-form-field>
 
-          <!-- Tipo de entrega -->
-          <mat-form-field data-cy="delivery-type-field" *ngIf="isPDAM || isPSAV">
+          <mat-form-field data-cy="distribution-type-field" *ngIf="isPSAV">
+            <mat-label>{{ "schools.edit.distribution-type.label" | transloco }}</mat-label>
+            <mat-select
+              [formControlName]="'distributionType'"
+              data-cy="distribution-type-select"
+              [compareWith]="compareById"
+              matTooltip="Seleccione el tipo de distribución para sitios no congregados"
+            >
+              <mat-option *ngFor="let option of distributionType" [value]="option" data-cy="distribution-type-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('distributionType')?.hasError('required')">
+              {{ "schools.edit.distribution-type.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field data-cy="delivery-type-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.delivery-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById" (selectionChange)="onDeliveryTypeChange($event.value)">
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
 
-          <!-- Tipo de área -->
           <mat-form-field data-cy="type-of-area-field">
             <mat-label>{{ "schools.edit.type-of-area.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
@@ -376,16 +426,13 @@
 
         <!-- Tipo de auspiciador -->
         <!-- Tipo de solicitante -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- Tipo de auspiciador -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.edit.sponsor-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of sponsorType" [value]="option" data-cy="sponsor-type-option">{{ option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Tipo de solicitante -->
           <mat-form-field data-cy="applicant-type-field">
             <mat-label>{{ "schools.edit.applicant-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
@@ -394,8 +441,8 @@
           </mat-form-field>
         </div>
 
-         <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.edit.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
@@ -408,7 +455,7 @@
         <!-- Caminantes / Walkers -->
         <!-- Tipo de sitio -->
         <!-- Experiencia -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8" *ngIf="isPSAV">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12" *ngIf="isPSAV">
           <!-- Comunidad -->
           <mat-form-field data-cy="community-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.community.label" | transloco }}</mat-label>
@@ -443,7 +490,7 @@
         </div>
 
         <!-- Política de funcionamiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="operating-policy-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.edit.operating-policy.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareById">
@@ -454,7 +501,7 @@
 
         <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
         <!-- ¿Cuenta con un Salón Comedor?= Es una respuesta de si o no. -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
           <mat-form-field data-cy="has-warehouse-field">
             <mat-label>{{ "schools.edit.has-warehouse.label" | transloco }}</mat-label>
@@ -485,7 +532,7 @@
         <!-- Teléfono del Sitio -->
         <!-- Extensión -->
         <!-- Teléfono Móvil -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Nombre Completo del Administrador o Representante -->
           <mat-form-field data-cy="administrator-authorized-name-field">
             <mat-label>{{ "schools.edit.administrator-authorized-name.label" | transloco }}</mat-label>
@@ -522,7 +569,7 @@
         <!-- Desayuno (si, no) -->
         <!-- Horario desde para el desayuno -->
         <!-- Horario hasta para el desayuno -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Desayuno (si, no) -->
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "schools.edit.breakfast.label" | transloco }}</mat-label>
@@ -565,7 +612,7 @@
         <!-- Almuerzo (si, no) -->
         <!-- Horario desde para el almuerzo -->
         <!-- Horario hasta para el almuerzo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Almuerzo (si, no) -->
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "schools.edit.lunch.label" | transloco }}</mat-label>
@@ -608,7 +655,7 @@
         <!-- Merienda (si, no) -->
         <!-- Horario desde para la merienda -->
         <!-- Horario hasta para la merienda -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Merienda (si, no) -->
           <mat-form-field data-cy="snack-field">
             <mat-label>{{ "schools.edit.snack.label" | transloco }}</mat-label>
@@ -651,7 +698,7 @@
         <!-- Cena (si, no) -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV">
           <!-- Cena (si, no) -->
           <mat-form-field data-cy="dinner-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.dinner.label" | transloco }}</mat-label>
@@ -692,7 +739,7 @@
         <!-- Merienda nocturna (si, no) -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-8" *ngIf="isPSAV">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV">
           <!-- Merienda nocturna (si, no) -->
           <mat-form-field data-cy="snack-night-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.snack-night.label" | transloco }}</mat-label>
@@ -737,7 +784,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.review.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Resultado de revisión -->
           <mat-form-field data-cy="review-result-field">
             <mat-label>{{ "schools.edit.review-result.label" | transloco }}</mat-label>
@@ -763,7 +810,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Justificación de revisión -->
           <mat-form-field data-cy="review-justification-field">
             <mat-label>{{ "schools.edit.review-justification.label" | transloco }}</mat-label>
@@ -784,7 +831,7 @@
         </div>
 
         <div
-          class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 sm:grid-cols-1 sm:col-span-8"
+          class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 sm:grid-cols-1 sm:col-span-12"
           *ngIf="satellitesTableConfig.dataSource.data.length > 0"
         >
           <app-generic-table [config]="satellitesTableConfig" [handler]="this" #satellitesTable></app-generic-table>

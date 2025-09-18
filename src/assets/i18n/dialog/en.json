@@ -9,6 +9,24 @@
       "title": "Error",
       "message": "An error occurred during the operation. Please try again.",
       "confirm": "OK"
+    },
+    "permission-request": {
+      "title": "Request Permission",
+      "message": "To select this alternative you will need to request permission from AESAN. Do you want to request permission?",
+      "yes": "Yes",
+      "no": "No"
+    },
+    "permission-request-form": {
+      "title": "Permission Request",
+      "message": "Please provide a brief explanation of why you need this delivery type. Your request will be reviewed by AESAN staff.",
+      "reason": {
+        "label": "Reason for request",
+        "placeholder": "Explain why you need this delivery type...",
+        "required": "Reason is required",
+        "minlength": "Reason must be at least 10 characters"
+      },
+      "submit": "Submit Request",
+      "cancel": "Cancel"
     }
   }
 }

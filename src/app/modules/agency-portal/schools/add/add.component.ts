@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
@@ -46,6 +47,9 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { PermissionRequestDialogComponent } from '../permission-request-dialog/permission-request-dialog.component';
+import { PermissionRequestFormDialogComponent } from '../permission-request-form-dialog/permission-request-form-dialog.component';
+import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 
 @Component({
   selector: 'app-schools-add',
@@ -82,7 +86,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _authService = inject(AuthService);
   private _agencyService = inject(AgencyService);
   private _kitchenTypeService = inject(KitchenTypeService);
+  private _areaTypeService = inject(AreaTypeService);
+  private _centerTypeService = inject(CenterTypeService);
   private _route = inject(ActivatedRoute);
+  private _dialog = inject(MatDialog);
+  private _fieldVisibilityService = inject(FieldVisibilityService);
 
   // catálogos
   listCities: City[] = [];
@@ -143,6 +151,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   kitchenTypes: OptionSelection[] = [];
   isKitchenTypeDisabled: boolean = false;
 
+  // Tipo de área
+  // Type of area
+  areaTypes: AreaType[] = [];
+
   // Tipo de grupo
   // Type of group
   groupTypes: OptionSelection[] = [];
@@ -169,11 +181,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Lenguaje actual
   currentLang: string = 'es';
-
-  // Tipos de área (nuevo catálogo)
-  // Type of area (new catalog)
-  // Rural (1), Urbana (2)
-  areaTypes: AreaType[] = [];
 
   // Header config and reactive form
   // Configuración del header y formulario reactivo
@@ -256,6 +263,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
       groupType: [null],
+      // Tipo de distribución - Método de distribución para sitios no congregados
+      // Distribution type - Distribution method for non-congregate sites
+      distributionType: [{ value: null, disabled: true }],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
       deliveryType: [null],
@@ -269,7 +279,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de área - Campo requerido para clasificación de la escuela
       // Type of area - Required field for school classification
       // Rural (23), Urbana (24)
-      areaType: [null],
+      // (tipo select-SOLO DISABLED - se auto-selecciona según ciudad)
+      areaType: [{ value: null, disabled: true }],
       // Tipo de residencial - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Residential type - Required field for RCCI classification (Residential/Non-residential)
       // Pernoctan (17), No Pernoctan (18)
@@ -330,9 +341,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Caminantes / Walkers
       // Walkers
       walkers: [null],
-      // Tipo de distribución / Distribution type
-      // Distribution type
-      distributionType: [null],
       // Tipo de sitio / Site type
       // Site type
       siteType: [null],
@@ -391,9 +399,12 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
        // Participantes (selección múltiple)
        // Participants (multiple selection)
        participantTypes: [[]],
-       // ¿Ofrece servicio a diferentes grupos de niños?
-       // Does it offer service to different groups of children?
-       offersServiceToDifferentGroups: [null],
+      // ¿Ofrece servicio a diferentes grupos de niños?
+      // Does it offer service to different groups of children?
+      offersServiceToDifferentGroups: [null],
+      // Matrícula General
+      // General Enrollment
+      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -452,6 +463,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
+
+    // Configurar FieldVisibilityService SOLO para distributionType
+    this._fieldVisibilityService.setActiveConfig('schools');
 
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
@@ -514,6 +528,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.currentLang = lang;
     });
 
+    // Actualizar validaciones de distributionType inicialmente
+    this.updateDistributionTypeValidation();
+
     this.setupFormListeners();
   }
 
@@ -533,15 +550,18 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
 
     if (fromDate && toDate) {
-      const from = new Date(fromDate);
-      const to = new Date(toDate);
+      try {
+        const workingDays = this.calculateWorkingDays(fromDate, toDate);
 
-      // Calcular días laborables (excluyendo fines de semana)
-      const workingDays = this.calculateWorkingDays(from, to);
-
-      this.headerConfig.formGroup.patchValue({
-        operatingDaysCalculated: workingDays,
-      });
+        this.headerConfig.formGroup.patchValue({
+          operatingDaysCalculated: workingDays,
+        });
+      } catch (error) {
+        console.error('Error calculating working days:', error);
+        this.headerConfig.formGroup.patchValue({
+          operatingDaysCalculated: null,
+        });
+      }
     } else {
       this.headerConfig.formGroup.patchValue({
         operatingDaysCalculated: null,
@@ -556,28 +576,38 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    * @returns Número de días laborables
    */
   private calculateWorkingDays(startDate: Date, endDate: Date): number {
+    // Validar fechas
+    if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return 0;
+    }
+
+    // Normalizar fechas a medianoche para evitar problemas de zona horaria
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
     // Asegurar que las fechas estén en el orden correcto
-    const start = new Date(Math.min(startDate.getTime(), endDate.getTime()));
-    const end = new Date(Math.max(startDate.getTime(), endDate.getTime()));
+    const [earlier, later] = start <= end ? [start, end] : [end, start];
 
-    let workingDays = 0;
-    const currentDate = new Date(start);
+    // Calcular semanas completas para optimización
+    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const fullWeeks = Math.floor(totalDays / 7);
+    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
 
-    // Iterar día por día desde la fecha de inicio hasta la fecha de fin
-    while (currentDate <= end) {
-      const dayOfWeek = currentDate.getDay();
+    // Calcular días restantes
+    const remainingDays = totalDays % 7;
+    const startDayOfWeek = earlier.getDay();
+    let remainingWorkingDays = 0;
 
+    for (let i = 0; i < remainingDays; i++) {
+      const dayOfWeek = (startDayOfWeek + i) % 7;
       // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
       // Excluir sábado (6) y domingo (0)
       if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        workingDays++;
+        remainingWorkingDays++;
       }
-
-      // Avanzar al siguiente día
-      currentDate.setDate(currentDate.getDate() + 1);
     }
 
-    return workingDays;
+    return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
   ngOnDestroy(): void {
@@ -593,8 +623,25 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
     this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
 
+    // Cargar tipos de centro según el programa
+    this.loadCenterTypesByProgram(programs);
+
     this.updateValidations();
+
+    // Listener para cambios en groupType que afectan distributionType
+    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe(() => {
+      this.updateDistributionTypeValidation();
+      this._changeDetectorRef.detectChanges();
+    });
+
     this._changeDetectorRef.detectChanges();
+  }
+
+  // Método para cargar tipos de centro según los programas de la agencia
+  // Load center types by agency programs
+  private loadCenterTypesByProgram(programs: any[]): void {
+    // Los tipos de centro ya vienen filtrados desde el resolver
+    // No necesitamos cargar nada adicional aquí
   }
 
   private updateValidations(): void {
@@ -911,6 +958,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Si la escuela es la principal
       // If the school is the main school
       isMainSchool: this.isMainSchool,
+
+      // Matrícula General
+      // General Enrollment
+      generalEnrollment: formValues.generalEnrollment ?? null,
     };
 
     this.isLoading = true;
@@ -1015,6 +1066,36 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   }
 
 
+  // Método para obtener el tipo de área según la ciudad seleccionada
+  // Get area type by city
+  getAreaTypeByCity(city: City): void {
+    if (!city) {
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      cityId: city.id,
+    };
+
+    this._areaTypeService.getAreaTypeByCity(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body && response.body.length > 0) {
+          // Auto-seleccionar el tipo de área obtenido
+          const areaType = response.body[0]; // Debería haber solo un tipo de área por ciudad
+          this.headerConfig.formGroup.patchValue({ areaType: areaType });
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener el tipo de área para la ciudad:', error);
+      },
+    });
+  }
+
+  // Método para obtener tipos de centro según el programa seleccionado
+  // Get center types by program
+
+
   // Método para obtener todas las regiones según el ID de la ciudad
   // Get all regions by city ID
   getRegionsByCityId(city: City, target: string): void {
@@ -1085,5 +1166,116 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         postalZipCode: '',
       });
     }
+  }
+
+  /**
+   * Maneja la selección de tipo de entrega con notificación de permiso
+   */
+  onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
+    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+      this.showPermissionRequestDialog(selectedDeliveryType);
+    }
+  }
+
+  /**
+   * Muestra el diálogo de solicitud de permiso
+   */
+  private showPermissionRequestDialog(deliveryType: DeliveryType): void {
+    const dialogRef = this._dialog.open(PermissionRequestDialogComponent, {
+      width: '500px',
+      data: {
+        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeNameEN: deliveryType.nameEN
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'yes') {
+        this.showPermissionRequestFormDialog(deliveryType);
+      } else if (result === 'no') {
+        // Si el usuario dice "No", deseleccionar el tipo de entrega
+        this.headerConfig.formGroup.patchValue({
+          deliveryType: null
+        });
+      }
+    });
+  }
+
+  /**
+   * Muestra el formulario de solicitud de permiso
+   */
+  private showPermissionRequestFormDialog(deliveryType: DeliveryType): void {
+    const dialogRef = this._dialog.open(PermissionRequestFormDialogComponent, {
+      width: '600px',
+      data: {
+        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeNameEN: deliveryType.nameEN
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'submit') {
+        // Aquí se implementaría la lógica para enviar la solicitud de permiso
+        // Por ahora, solo mostramos un mensaje de confirmación
+        this._notificationService.showSuccess('Solicitud de permiso enviada correctamente');
+
+        // El usuario puede continuar con el tipo de entrega seleccionado
+        // No necesitamos hacer nada más aquí
+      } else if (result && result.action === 'cancel') {
+        // Si el usuario cancela, deseleccionar el tipo de entrega
+        this.headerConfig.formGroup.patchValue({
+          deliveryType: null
+        });
+      }
+    });
+  }
+
+  /**
+   * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
+   */
+  shouldShowDistributionType(): boolean {
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+
+    // Obtener el tipo de grupo como string para el servicio
+    const groupTypeKey = this.getGroupTypeKey(groupType);
+
+    return this._fieldVisibilityService.shouldShowField('distributionType', groupTypeKey);
+  }
+
+  /**
+   * Actualiza las validaciones condicionales usando FieldVisibilityService
+   */
+  private updateDistributionTypeValidation(): void {
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+    const distributionTypeControl = this.headerConfig.formGroup.get('distributionType');
+
+    // Obtener el tipo de grupo como string para el servicio
+    const groupTypeKey = this.getGroupTypeKey(groupType);
+
+    const isRequired = this._fieldVisibilityService.isFieldRequired('distributionType', groupTypeKey);
+
+    if (isRequired) {
+      // Requerir distribución type
+      distributionTypeControl?.setValidators([Validators.required]);
+      distributionTypeControl?.enable();
+    } else {
+      // No requerir para otros tipos y deshabilitar el campo
+      distributionTypeControl?.clearValidators();
+      distributionTypeControl?.setValue(null); // Limpiar el valor
+      distributionTypeControl?.disable();
+      distributionTypeControl?.markAsUntouched(); // Limpiar estado de validación
+    }
+
+    distributionTypeControl?.updateValueAndValidity();
+  }
+
+  /**
+   * Convierte el objeto groupType a la clave usada en la configuración
+   */
+  private getGroupTypeKey(groupType: any): string {
+    if (!groupType) return '';
+
+    // Usar directamente el nombre del groupType
+    return groupType.name || groupType.nameEN || '';
   }
 }

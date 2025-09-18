@@ -12,7 +12,7 @@
   "fields": {
     "street": "Calle",
     "apartment": "Apartamento",
-    "city": "Ciudad",
+    "city": "Municipio",
     "region": "Región",
     "zipcode": "Código Postal",
     "phone": "Teléfono",

@@ -16,7 +16,7 @@
           "staffType": "Tipo de Personal",
           "birthDate": "Fecha de Nacimiento",
           "email": "Correo Electrónico",
-          "city": "Ciudad",
+          "city": "Municipio",
           "region": "Región",
           "userName": "Usuario",
           "isActive": "Activo",
@@ -155,9 +155,9 @@
         "required": "La dirección postal es requerida"
       },
       "city": {
-        "label": "Ciudad",
-        "placeholder": "Seleccione la ciudad",
-        "required": "La ciudad es requerida"
+        "label": "Municipio",
+        "placeholder": "Seleccione el municipio",
+        "required": "El municipio es requerido"
       },
       "region": {
         "label": "Región",
@@ -283,9 +283,9 @@
         "invalid": "El correo electrónico no es válido"
       },
       "city": {
-        "label": "Ciudad",
-        "placeholder": "Seleccione la ciudad",
-        "required": "La ciudad es requerida"
+        "label": "Municipio",
+        "placeholder": "Seleccione el municipio",
+        "required": "El municipio es requerido"
       },
       "region": {
         "label": "Región",

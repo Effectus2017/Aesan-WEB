@@ -71,6 +71,12 @@ export interface SchoolRequest {
     inactiveJustification?: string;
     inactiveDate?: string;
 
+    // Matrícula General
+    generalEnrollment?: number;
+
+    // Número de Sitio
+    siteNumber?: number;
+
     // ===== RELACIONES CON MODELOS REQUEST =====
     services?: SchoolServiceRequest[];
     dayCareHome?: SchoolDayCareHomeRequest;

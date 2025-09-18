@@ -1,0 +1,42 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'dialog.permission-request-form.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="{ action: 'cancel' }" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <p class="mb-4">{{ 'dialog.permission-request-form.message' | transloco }}</p>
+
+      <mat-form-field>
+        <mat-label>{{ 'dialog.permission-request-form.reason.label' | transloco }}</mat-label>
+        <textarea
+          matInput
+          formControlName="reason"
+          [placeholder]="'dialog.permission-request-form.reason.placeholder' | transloco"
+          rows="4">
+        </textarea>
+        <mat-error *ngIf="form.get('reason')?.hasError('required')">
+          {{ 'dialog.permission-request-form.reason.required' | transloco }}
+        </mat-error>
+        <mat-error *ngIf="form.get('reason')?.hasError('minlength')">
+          {{ 'dialog.permission-request-form.reason.minlength' | transloco }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="{ action: 'cancel' }">
+          {{ 'dialog.permission-request-form.cancel' | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid">
+          {{ 'dialog.permission-request-form.submit' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

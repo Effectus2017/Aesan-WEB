@@ -1,0 +1,69 @@
+{
+  "delivery-type": {
+    "add": {
+      "title": "Agregar Tipo de Entrega",
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre del tipo de entrega"
+      },
+      "nameEN": {
+        "label": "Nombre (EN)",
+        "placeholder": "Ingrese el nombre en inglés"
+      },
+      "isActive": {
+        "label": "Activo"
+      },
+      "position": {
+        "label": "Posición",
+        "placeholder": "Seleccione la posición"
+      },
+      "selectionNotification": {
+        "label": "Notificación de Selección"
+      }
+    },
+    "edit": {
+      "title": "Editar Tipo de Entrega",
+      "name": {
+        "label": "Nombre",
+        "placeholder": "Ingrese el nombre del tipo de entrega"
+      },
+      "nameEN": {
+        "label": "Nombre (EN)",
+        "placeholder": "Ingrese el nombre en inglés"
+      },
+      "isActive": {
+        "label": "Activo"
+      },
+      "position": {
+        "label": "Posición",
+        "placeholder": "Seleccione la posición"
+      },
+      "selectionNotification": {
+        "label": "Notificación de Selección"
+      }
+    },
+    "list": {
+      "title": "Tipos de Entrega",
+      "search": {
+        "placeholder": "Buscar por nombre..."
+      },
+      "buttons": {
+        "save": "Buscar"
+      },
+      "table": {
+        "columns": {
+          "id": "ID",
+          "name": "Nombre",
+          "nameEN": "Nombre (EN)",
+          "isActive": "Activo",
+          "selectionNotification": "Notificación de Selección",
+          "displayOrder": "Posición",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar"
+        }
+      }
+    }
+  }
+}

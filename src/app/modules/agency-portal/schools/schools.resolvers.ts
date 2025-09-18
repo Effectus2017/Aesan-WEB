@@ -7,7 +7,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { forkJoin, map } from 'rxjs';
+import { forkJoin, map, switchMap, of } from 'rxjs';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -16,6 +16,7 @@ import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 // Resolver para la lista de escuelas
 export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
@@ -82,6 +83,9 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
   // Area types service
   // Servicio para tipos de área
   const areaTypeService = inject(AreaTypeService);
+  // Auth service
+  // Servicio de autenticación
+  const authService = inject(AuthService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -91,6 +95,14 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     alls: true,
     isList: true,
   };
+
+  // Obtener programas de la agencia desde localStorage (almacenados por app.resolver)
+  const programsJson = localStorage.getItem('agencyPrograms');
+  const programs = programsJson ? JSON.parse(programsJson) : [];
+
+  // Determinar si la agencia tiene PDAM o PACNA
+  const isPDAM = programs.some((p: any) => p.id === PROGRAM_IDS.PDAM);
+  const isPACNA = programs.some((p: any) => p.id === PROGRAM_IDS.PACNA);
 
   return forkJoin([
     // Verificar si existe una escuela principal
@@ -137,30 +149,84 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Types of delivery
     // Tipos de entrega
     deliveryTypeService.getAllDeliveryTypesFromDb(requestParameters),
-    // Types of center
-    // Tipos de centro
-    centerTypeService.getAllCenterTypesFromDb(requestParameters),
     // Types of area
     // Tipos de área
     areaTypeService.getAllAreaTypesFromDb(requestParameters),
   ]).pipe(
-    map(([hasMainSchool, options, kitchenTypes, groupTypes, sponsorTypes, schools, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, centerTypes, areaTypes]) => ({
-      hasMainSchool: hasMainSchool, // hasMainSchool devuelve boolean directamente
-      options: options.body,
-      kitchenTypes: kitchenTypes.body,
-      groupTypes: groupTypes.body,
-      sponsorTypes: sponsorTypes.body,
-      schools: schools.body,
-      cities: cities.body,
-      regions: regions.body,
-      organizationTypes: organizationTypes.body,
-      educationLevels: educationLevels.body,
-      operatingPeriods: operatingPeriods.body,
-      operatingPolicies: operatingPolicies.body,
-      deliveryTypes: deliveryTypes.body,
-      centerTypes: centerTypes.body,
-      areaTypes: areaTypes.body,
-    }))
+    switchMap(([hasMainSchool, options, kitchenTypes, groupTypes, sponsorTypes, schools, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, areaTypes]) => {
+      // Si tiene PDAM o PACNA, obtener los tipos de centro específicos
+      if (isPDAM || isPACNA) {
+        // Si tiene PDAM, usar el primer programa PDAM encontrado
+        const pdamProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PDAM);
+        if (pdamProgram) {
+          return centerTypeService.getCenterTypesByProgram({ programId: pdamProgram.id }).pipe(
+            map((filteredCenterTypes) => ({
+              hasMainSchool: hasMainSchool,
+              options: options.body,
+              kitchenTypes: kitchenTypes.body,
+              groupTypes: groupTypes.body,
+              sponsorTypes: sponsorTypes.body,
+              schools: schools.body,
+              cities: cities.body,
+              regions: regions.body,
+              organizationTypes: organizationTypes.body,
+              educationLevels: educationLevels.body,
+              operatingPeriods: operatingPeriods.body,
+              operatingPolicies: operatingPolicies.body,
+              deliveryTypes: deliveryTypes.body,
+              centerTypes: filteredCenterTypes.body,
+              areaTypes: areaTypes.body,
+              programs: programs,
+            }))
+          );
+        } else {
+          // Si tiene PACNA, usar el primer programa PACNA encontrado
+          const pacnaProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PACNA);
+          if (pacnaProgram) {
+            return centerTypeService.getCenterTypesByProgram({ programId: pacnaProgram.id }).pipe(
+              map((filteredCenterTypes) => ({
+                hasMainSchool: hasMainSchool,
+                options: options.body,
+                kitchenTypes: kitchenTypes.body,
+                groupTypes: groupTypes.body,
+                sponsorTypes: sponsorTypes.body,
+                schools: schools.body,
+                cities: cities.body,
+                regions: regions.body,
+                organizationTypes: organizationTypes.body,
+                educationLevels: educationLevels.body,
+                operatingPeriods: operatingPeriods.body,
+                operatingPolicies: operatingPolicies.body,
+                deliveryTypes: deliveryTypes.body,
+                centerTypes: filteredCenterTypes.body,
+                areaTypes: areaTypes.body,
+                programs: programs,
+              }))
+            );
+          }
+        }
+      }
+
+      // Si no tiene PDAM ni PACNA, devolver array vacío para tipos de centro
+      return of({
+        hasMainSchool: hasMainSchool,
+        options: options.body,
+        kitchenTypes: kitchenTypes.body,
+        groupTypes: groupTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        schools: schools.body,
+        cities: cities.body,
+        regions: regions.body,
+        organizationTypes: organizationTypes.body,
+        educationLevels: educationLevels.body,
+        operatingPeriods: operatingPeriods.body,
+        operatingPolicies: operatingPolicies.body,
+        deliveryTypes: deliveryTypes.body,
+        centerTypes: [],
+        areaTypes: areaTypes.body,
+        programs: programs,
+      });
+    })
   );
 };
 
@@ -210,6 +276,9 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
   // Area types service
   // Servicio para tipos de área
   const areaTypeService = inject(AreaTypeService);
+  // Auth service
+  // Servicio de autenticación
+  const authService = inject(AuthService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -219,6 +288,14 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     alls: true,
     isList: true,
   };
+
+  // Obtener programas de la agencia desde localStorage (almacenados por app.resolver)
+  const programsJson = localStorage.getItem('agencyPrograms');
+  const programs = programsJson ? JSON.parse(programsJson) : [];
+
+  // Determinar si la agencia tiene PDAM o PACNA
+  const isPDAM = programs.some((p: any) => p.id === PROGRAM_IDS.PDAM);
+  const isPACNA = programs.some((p: any) => p.id === PROGRAM_IDS.PACNA);
 
   return forkJoin([
     // School service
@@ -240,9 +317,6 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Types of sponsor
     // Tipos de auspiciador
     sponsorTypeService.getAllSponsorTypesFromDb(requestParameters),
-    // School service
-    // Servicio para operaciones de escuelas
-    schoolService.getAllSchoolsFromDb(requestParameters),
     // Geographic service
     // Servicio para operaciones geográficas
     geoService.getCitiesFromDb(requestParameters),
@@ -267,30 +341,83 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Types of delivery
     // Tipos de entrega
     deliveryTypeService.getAllDeliveryTypesFromDb(requestParameters),
-    // Types of center
-    // Tipos de centro
-    centerTypeService.getAllCenterTypesFromDb(requestParameters),
     // Types of area
     // Tipos de área
     areaTypeService.getAllAreaTypesFromDb(requestParameters),
   ]).pipe(
-    map(([school, schools, options, kitchenTypes, groupTypes, sponsorTypes, allSchools, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, centerTypes, areaTypes]) => ({
-      school: school.body,
-      schools: schools.body,
-      options: options.body,
-      kitchenTypes: kitchenTypes.body,
-      groupTypes: groupTypes.body,
-      sponsorTypes: sponsorTypes.body,
-      allSchools: allSchools.body,
-      cities: cities.body,
-      regions: regions.body,
-      organizationTypes: organizationTypes.body,
-      educationLevels: educationLevels.body,
-      operatingPeriods: operatingPeriods.body,
-      operatingPolicies: operatingPolicies.body,
-      deliveryTypes: deliveryTypes.body,
-      centerTypes: centerTypes.body,
-      areaTypes: areaTypes.body,
-    }))
+    switchMap(([school, schools, options, kitchenTypes, groupTypes, sponsorTypes, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, deliveryTypes, areaTypes]) => {
+      // Si tiene PDAM o PACNA, obtener los tipos de centro específicos
+      if (isPDAM || isPACNA) {
+        // Si tiene PDAM, usar el primer programa PDAM encontrado
+        const pdamProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PDAM);
+        if (pdamProgram) {
+          return centerTypeService.getCenterTypesByProgram({ programId: pdamProgram.id }).pipe(
+            map((filteredCenterTypes) => ({
+              school: school.body,
+              schools: schools.body,
+              options: options.body,
+              kitchenTypes: kitchenTypes.body,
+              groupTypes: groupTypes.body,
+              sponsorTypes: sponsorTypes.body,
+              cities: cities.body,
+              regions: regions.body,
+              organizationTypes: organizationTypes.body,
+              educationLevels: educationLevels.body,
+              operatingPeriods: operatingPeriods.body,
+              operatingPolicies: operatingPolicies.body,
+              deliveryTypes: deliveryTypes.body,
+              centerTypes: filteredCenterTypes.body,
+              areaTypes: areaTypes.body,
+              programs: programs,
+            }))
+          );
+        } else {
+          // Si tiene PACNA, usar el primer programa PACNA encontrado
+          const pacnaProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PACNA);
+          if (pacnaProgram) {
+            return centerTypeService.getCenterTypesByProgram({ programId: pacnaProgram.id }).pipe(
+              map((filteredCenterTypes) => ({
+                school: school.body,
+                schools: schools.body,
+                options: options.body,
+                kitchenTypes: kitchenTypes.body,
+                groupTypes: groupTypes.body,
+                sponsorTypes: sponsorTypes.body,
+                cities: cities.body,
+                regions: regions.body,
+                organizationTypes: organizationTypes.body,
+                educationLevels: educationLevels.body,
+                operatingPeriods: operatingPeriods.body,
+                operatingPolicies: operatingPolicies.body,
+                deliveryTypes: deliveryTypes.body,
+                centerTypes: filteredCenterTypes.body,
+                areaTypes: areaTypes.body,
+                programs: programs,
+              }))
+            );
+          }
+        }
+      }
+
+      // Si no tiene PDAM ni PACNA, devolver array vacío para tipos de centro
+      return of({
+        school: school.body,
+        schools: schools.body,
+        options: options.body,
+        kitchenTypes: kitchenTypes.body,
+        groupTypes: groupTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        cities: cities.body,
+        regions: regions.body,
+        organizationTypes: organizationTypes.body,
+        educationLevels: educationLevels.body,
+        operatingPeriods: operatingPeriods.body,
+        operatingPolicies: operatingPolicies.body,
+        deliveryTypes: deliveryTypes.body,
+        centerTypes: [],
+        areaTypes: areaTypes.body,
+        programs: programs,
+      });
+    })
   );
 };

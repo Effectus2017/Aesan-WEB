@@ -12,7 +12,7 @@
                     "agencyName": "Nombre de la Agencia Auspiciadora",
                     "stateDepartmentRegistration": "Registro Depto. Estado",
                     "address": "Dirección",
-                    "city": "Ciudad",
+                    "city": "Municipio",
                     "region": "Región",
                     "zipCode": "Código Postal",
                     "firstName": "Nombre",
@@ -80,7 +80,7 @@
                 "placeholder": "Ingrese la dirección"
             },
             "city": {
-                "label": "Ciudad"
+                "label": "Municipio"
             },
             "region": {
                 "label": "Región"
@@ -133,7 +133,7 @@
                     "placeholder": "Ingrese la dirección postal"
                 },
                 "city": {
-                    "label": "Ciudad"
+                    "label": "Municipio"
                 },
                 "region": {
                     "label": "Región"

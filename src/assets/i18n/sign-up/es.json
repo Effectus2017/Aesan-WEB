@@ -73,8 +73,8 @@
       "description": "Información de la dirección"
     },
     "city": {
-      "label": "Ciudad",
-      "placeholder": "Selecciona tu ciudad"
+      "label": "Municipio",
+      "placeholder": "Selecciona tu municipio"
     },
     "region": {
       "label": "Región",

@@ -7,26 +7,30 @@
         <!-- Información del tipo de entrega -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre</mat-label>
-            <input matInput formControlName="name" required placeholder="Nombre" />
+            <mat-label>{{ 'delivery-type.edit.name.label' | transloco }}</mat-label>
+            <input matInput formControlName="name" required [placeholder]="'delivery-type.edit.name.placeholder' | transloco" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">El nombre es obligatorio</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
-            <mat-label>Nombre (EN)</mat-label>
-            <input matInput formControlName="nameEN" required placeholder="Nombre en inglés" />
+            <mat-label>{{ 'delivery-type.edit.nameEN.label' | transloco }}</mat-label>
+            <input matInput formControlName="nameEN" required [placeholder]="'delivery-type.edit.nameEN.placeholder' | transloco" />
             <mat-error *ngIf="headerConfig.formGroup.get('nameEN').hasError('required')">El nombre en inglés es obligatorio</mat-error>
           </mat-form-field>
         </div>
         <!-- Posición y opciones -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Posición</mat-label>
+            <mat-label>{{ 'delivery-type.edit.position.label' | transloco }}</mat-label>
             <mat-select formControlName="position" required>
               <mat-option *ngFor="let option of positionOptions" [value]="option.value">{{ option.label }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('position').hasError('required')">La posición es obligatoria</mat-error>
           </mat-form-field>
-          <mat-checkbox formControlName="isActive">Activo</mat-checkbox>
+          <mat-checkbox formControlName="isActive">{{ 'delivery-type.edit.isActive.label' | transloco }}</mat-checkbox>
+        </div>
+        <!-- Notificación de selección -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <mat-checkbox formControlName="selectionNotification">{{ 'delivery-type.edit.selectionNotification.label' | transloco }}</mat-checkbox>
         </div>
       </div>
     </form>

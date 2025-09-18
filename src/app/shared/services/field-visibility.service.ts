@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import fieldConfig from '../../modules/agency-portal/staff/edit/field-visibility-config.json';
+import schoolsFieldConfig from '../../modules/agency-portal/schools/field-visibility-config.json';
 import {
   isPSAVProgram,
   isPDAMProgram,
@@ -77,8 +78,9 @@ export class FieldVisibilityService {
     //console.log('🔧 FieldVisibilityService constructor');
     //console.log('🔧 fieldConfig import:', fieldConfig);
 
-    // Cargar la configuración por defecto del staff
+    // Cargar las configuraciones por defecto
     this.loadConfig('staff', fieldConfig);
+    this.loadConfig('schools', schoolsFieldConfig);
     //console.log('🔧 Configuración cargada, fieldConfigs size:', this.fieldConfigs.size);
   }
 
@@ -575,15 +577,4 @@ export class FieldVisibilityService {
     );
   }
 
-  /**
-   * ✅ NUEVO: Obtiene todos los campos visibles para programas de agencia
-   */
-  getVisibleFieldsForAgencyPrograms(programs: any[]): string[] {
-    const config = this.getActiveConfig();
-    if (!config) return [];
-
-    return Object.keys(config.fieldVisibility).filter(fieldName =>
-      this.shouldShowFieldForAgencyPrograms(fieldName, programs)
-    );
-  }
 }
