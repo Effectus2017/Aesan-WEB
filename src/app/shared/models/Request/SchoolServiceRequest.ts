@@ -1,6 +1,4 @@
 export interface SchoolServiceRequest {
-  id?: number;
-  schoolId: number;
   childGroupId?: number;
   breakfast?: boolean;
   breakfastFrom?: string;
@@ -20,4 +18,21 @@ export interface SchoolServiceRequest {
   snackNight?: boolean;
   snackNightFrom?: string;
   snackNightTo?: string;
+
+  // Servicios adicionales para PACNA
+  dinnerExtended?: boolean;
+  dinnerExtendedFrom?: string;
+  dinnerExtendedTo?: string;
+
+  dinnerAtRisk?: boolean;
+  dinnerAtRiskFrom?: string;
+  dinnerAtRiskTo?: string;
+
+  snackExtended?: boolean;
+  snackExtendedFrom?: string;
+  snackExtendedTo?: string;
+
+  snackAtRisk?: boolean;
+  snackAtRiskFrom?: string;
+  snackAtRiskTo?: string;
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -13,7 +13,7 @@ import { EducationLevelService } from 'app/shared/services/education-level.servi
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgForOf, NgIf, NgClass } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -24,6 +24,7 @@ import { Region } from 'app/shared/models/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
+import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
@@ -217,6 +218,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   isPDFE: boolean = false;
   isAESAN: boolean = false;
 
+  // ViewChild para el contenedor del grid
+  @ViewChild('gridContainer') gridContainer!: ElementRef;
+
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
 
@@ -242,6 +246,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Tipo de área
   // Type of area
   areaTypes: AreaType[] = [];
+
+  // Tipo de localización
+  // Type of location
+  locationTypes: AreaType[] = [];
 
   // Parámetro de la escuela
   // School parameter
@@ -346,6 +354,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Type of area - Type of area of the school
       // (tipo select-SOLO DISABLED - se auto-selecciona según ciudad)
       areaType: [{ value: null, disabled: true }],
+      // Localización - Tipo de localización de la escuela
+      // Location - Type of location of the school
+      // (tipo select - selección manual)
+      locationType: [null, Validators.required],
       // Política de operación - Política de operación de la escuela
       // Operating policy - Operating policy of the school
       operatingPolicy: [null],
@@ -513,6 +525,18 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Compare methods
   compareById = compareById;
 
+  // Función para obtener la clase de grid dinámica
+  getGridColumnsClass(): string {
+    if (!this.gridContainer) {
+      return 'sm:grid-cols-4'; // valor por defecto
+    }
+
+    const visibleFields = this.gridContainer.nativeElement.querySelectorAll('mat-form-field');
+    const count = visibleFields.length;
+
+    return `sm:grid-cols-${count}`;
+  }
+
   // Estado de carga y variables de contexto
   // Loading state and context variables
   isLoading = false;
@@ -584,6 +608,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
+      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
       this.listSchools = resolvedData.schools;
 
       // Verificar escuela principal
@@ -832,21 +857,40 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const organizationType = param.organizationType;
     const centerType = param.centerType;
     const areaType = param.areaType;
+    const locationType = param.locationType;
 
-    //const breakfastFrom: Date | null = toTimeDate(param.breakfastFrom);
-    //const breakfastTo: Date | null = toTimeDate(param.breakfastTo);
-    //const lunchFrom: Date | null = toTimeDate(param.lunchFrom);
-    //const lunchTo: Date | null = toTimeDate(param.lunchTo);
-    //const snackFrom: Date | null = toTimeDate(param.snackFrom);
-    //const snackTo: Date | null = toTimeDate(param.snackTo);
+    // Obtener datos de servicios desde la primera entrada del array services
+    const schoolService = param.services && param.services.length > 0 ? param.services[0] : null;
+
+    // Horarios de servicios básicos
+    const breakfastFrom: Date | null = schoolService ? toTimeDate(schoolService.breakfastFrom) : null;
+    const breakfastTo: Date | null = schoolService ? toTimeDate(schoolService.breakfastTo) : null;
+    const lunchFrom: Date | null = schoolService ? toTimeDate(schoolService.lunchFrom) : null;
+    const lunchTo: Date | null = schoolService ? toTimeDate(schoolService.lunchTo) : null;
+    const snackFrom: Date | null = schoolService ? toTimeDate(schoolService.snackAMFrom) : null;
+    const snackTo: Date | null = schoolService ? toTimeDate(schoolService.snackAMTo) : null;
 
     const mainSchool = param.mainSchool;
 
     // Campos adicionales
-    //const dinnerFrom: Date | null = toTimeDate(param.dinnerFrom);
-    //const dinnerTo: Date | null = toTimeDate(param.dinnerTo);
-    //const snackNightFrom: Date | null = toTimeDate(param.snackNightFrom);
-    //const snackNightTo: Date | null = toTimeDate(param.snackNightTo);
+    const dinnerFrom: Date | null = schoolService ? toTimeDate(schoolService.dinnerFrom) : null;
+    const dinnerTo: Date | null = schoolService ? toTimeDate(schoolService.dinnerTo) : null;
+    const snackNightFrom: Date | null = schoolService ? toTimeDate(schoolService.snackNightFrom) : null;
+    const snackNightTo: Date | null = schoolService ? toTimeDate(schoolService.snackNightTo) : null;
+
+    // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
+    // Horarios de cena horario extendido
+    const dinnerExtendedFrom: Date | null = schoolService ? toTimeDate(schoolService.dinnerExtendedFrom) : null;
+    const dinnerExtendedTo: Date | null = schoolService ? toTimeDate(schoolService.dinnerExtendedTo) : null;
+    // Horarios de cena en riesgo
+    const dinnerAtRiskFrom: Date | null = schoolService ? toTimeDate(schoolService.dinnerAtRiskFrom) : null;
+    const dinnerAtRiskTo: Date | null = schoolService ? toTimeDate(schoolService.dinnerAtRiskTo) : null;
+    // Horarios de merienda horario extendido
+    const snackExtendedFrom: Date | null = schoolService ? toTimeDate(schoolService.snackExtendedFrom) : null;
+    const snackExtendedTo: Date | null = schoolService ? toTimeDate(schoolService.snackExtendedTo) : null;
+    // Horarios de merienda en riesgo
+    const snackAtRiskFrom: Date | null = schoolService ? toTimeDate(schoolService.snackAtRiskFrom) : null;
+    const snackAtRiskTo: Date | null = schoolService ? toTimeDate(schoolService.snackAtRiskTo) : null;
 
     const communityId = param.communityId;
     const walkersId = param.walkersId;
@@ -885,21 +929,35 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       sitePhone: param.sitePhone,
       extension: param.extension,
       mobilePhone: param.mobilePhone,
-      //breakfast: param.breakfast,
-      //breakfastFrom: breakfastFrom,
-      //breakfastTo: breakfastTo,
-      //lunch: param.lunch,
-      //lunchFrom: lunchFrom,
-      //lunchTo: lunchTo,
-      //snack: param.snack,
-      //snackFrom: snackFrom,
-      //snackTo: snackTo,
-      //dinner: param.dinner,
-      //dinnerFrom: dinnerFrom,
-      //dinnerTo: dinnerTo,
-      //snackNight: param.snackNight,
-      //snackNightFrom: snackNightFrom,
-      //snackNightTo: snackNightTo,
+      // Servicios básicos
+      breakfast: schoolService?.breakfast || false,
+      breakfastFrom: breakfastFrom,
+      breakfastTo: breakfastTo,
+      lunch: schoolService?.lunch || false,
+      lunchFrom: lunchFrom,
+      lunchTo: lunchTo,
+      snack: schoolService?.snackAM || false, // Mapear snackAM a snack
+      snackFrom: snackFrom,
+      snackTo: snackTo,
+      dinner: schoolService?.dinner || false,
+      dinnerFrom: dinnerFrom,
+      dinnerTo: dinnerTo,
+      snackNight: schoolService?.snackNight || false,
+      snackNightFrom: snackNightFrom,
+      snackNightTo: snackNightTo,
+      // Servicios adicionales para PACNA
+      dinnerExtended: schoolService?.dinnerExtended || false,
+      dinnerExtendedFrom: dinnerExtendedFrom,
+      dinnerExtendedTo: dinnerExtendedTo,
+      dinnerAtRisk: schoolService?.dinnerAtRisk || false,
+      dinnerAtRiskFrom: dinnerAtRiskFrom,
+      dinnerAtRiskTo: dinnerAtRiskTo,
+      snackExtended: schoolService?.snackExtended || false,
+      snackExtendedFrom: snackExtendedFrom,
+      snackExtendedTo: snackExtendedTo,
+      snackAtRisk: schoolService?.snackAtRisk || false,
+      snackAtRiskFrom: snackAtRiskFrom,
+      snackAtRiskTo: snackAtRiskTo,
       community: this.community.find(o => o.id === communityId),
       walkers: this.walkers.find(o => o.id === walkersId),
       siteType: this.siteType.find(o => o.id === siteTypeId),
@@ -919,6 +977,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       residentialType: residentialType,
       operatingPolicy: operatingPolicy,
       areaType: areaType,
+      locationType: locationType,
       generalEnrollment: param.generalEnrollment,
       siteCode: param.siteCode || '',
     });
@@ -967,25 +1026,42 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const residentialTypeId: number = formValues.typeOfResidential?.id;
     const operatingPolicyId: number = formValues.operatingPolicy?.id;
     const areaTypeId: number = formValues.areaType?.id;
+    const locationTypeId: number = formValues.locationType?.id;
 
-    //const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
-    //const breakfastTo: string = toTimeString(formValues.breakfastTo);
-    //const lunchFrom: string = toTimeString(formValues.lunchFrom);
-    //const lunchTo: string = toTimeString(formValues.lunchTo);
-    //const snackFrom: string = toTimeString(formValues.snackFrom);
-    //const snackTo: string = toTimeString(formValues.snackTo);
+    // Horarios de servicios básicos
+    const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
+    const breakfastTo: string = toTimeString(formValues.breakfastTo);
+    const lunchFrom: string = toTimeString(formValues.lunchFrom);
+    const lunchTo: string = toTimeString(formValues.lunchTo);
+    const snackFrom: string = toTimeString(formValues.snackFrom);
+    const snackTo: string = toTimeString(formValues.snackTo);
 
-    //const snack = formValues.snack;
-    //const lunch = formValues.lunch;
-    //const breakfast = formValues.breakfast;
+    // Servicios básicos
+    const snack = formValues.snack;
+    const lunch = formValues.lunch;
+    const breakfast = formValues.breakfast;
 
     // Campos adicionales
-    //const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
-    //const dinnerTo: string = toTimeString(formValues.dinnerTo);
-    //const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
-    //const snackNightTo: string = toTimeString(formValues.snackNightTo);
-    //const dinner = formValues.dinner;
-    //const snackNight = formValues.snackNight;
+    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
+    const dinnerTo: string = toTimeString(formValues.dinnerTo);
+    const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
+    const snackNightTo: string = toTimeString(formValues.snackNightTo);
+    const dinner = formValues.dinner;
+    const snackNight = formValues.snackNight;
+
+    // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
+    // Horario de cena horario extendido
+    const dinnerExtendedFrom: string = toTimeString(formValues.dinnerExtendedFrom);
+    const dinnerExtendedTo: string = toTimeString(formValues.dinnerExtendedTo);
+    // Horario de cena en riesgo
+    const dinnerAtRiskFrom: string = toTimeString(formValues.dinnerAtRiskFrom);
+    const dinnerAtRiskTo: string = toTimeString(formValues.dinnerAtRiskTo);
+    // Horario de merienda horario extendido
+    const snackExtendedFrom: string = toTimeString(formValues.snackExtendedFrom);
+    const snackExtendedTo: string = toTimeString(formValues.snackExtendedTo);
+    // Horario de merienda en riesgo
+    const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
+    const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
@@ -1029,6 +1105,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       operatingPolicyId: operatingPolicyId,
       residentialTypeId: residentialTypeId,
       areaTypeId: areaTypeId,
+      locationTypeId: locationTypeId,
       nonProfit: formValues.nonProfit ?? null,
       startDate: formValues.startDate ?? null,
       baseYear: formValues.baseYear ?? null,
@@ -1067,6 +1144,70 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
     };
+
+    // ===== CREAR SCHOOL SERVICE REQUEST =====
+    // Constantes para servicios básicos
+    const breakfastService = breakfast ?? null;
+    const lunchService = lunch ?? null;
+    const snackService = snack ?? null;
+    const dinnerService = dinner ?? null;
+    const snackNightService = snackNight ?? null;
+
+    // Constantes para servicios adicionales PACNA
+    const dinnerExtendedService = formValues.dinnerExtended ?? null;
+    const dinnerAtRiskService = formValues.dinnerAtRisk ?? null;
+    const snackExtendedService = formValues.snackExtended ?? null;
+    const snackAtRiskService = formValues.snackAtRisk ?? null;
+
+    // Crear SchoolServiceRequest
+    const schoolServiceRequest: SchoolServiceRequest = {
+      childGroupId: null, // Servicio general
+
+      // Servicios básicos
+      breakfast: breakfastService,
+      breakfastFrom: breakfastFrom ?? null,
+      breakfastTo: breakfastTo ?? null,
+
+      lunch: lunchService,
+      lunchFrom: lunchFrom ?? null,
+      lunchTo: lunchTo ?? null,
+
+      snackAM: snackService, // Mapear 'snack' a 'snackAM'
+      snackAMFrom: snackFrom ?? null,
+      snackAMTo: snackTo ?? null,
+
+      dinner: dinnerService,
+      dinnerFrom: dinnerFrom ?? null,
+      dinnerTo: dinnerTo ?? null,
+
+      snackPM: null, // No se usa en el formulario actual
+      snackPMFrom: null,
+      snackPMTo: null,
+
+      snackNight: snackNightService,
+      snackNightFrom: snackNightFrom ?? null,
+      snackNightTo: snackNightTo ?? null,
+
+      // Servicios adicionales para PACNA
+      dinnerExtended: dinnerExtendedService,
+      dinnerExtendedFrom: dinnerExtendedFrom ?? null,
+      dinnerExtendedTo: dinnerExtendedTo ?? null,
+
+      dinnerAtRisk: dinnerAtRiskService,
+      dinnerAtRiskFrom: dinnerAtRiskFrom ?? null,
+      dinnerAtRiskTo: dinnerAtRiskTo ?? null,
+
+      snackExtended: snackExtendedService,
+      snackExtendedFrom: snackExtendedFrom ?? null,
+      snackExtendedTo: snackExtendedTo ?? null,
+
+      snackAtRisk: snackAtRiskService,
+      snackAtRiskFrom: snackAtRiskFrom ?? null,
+      snackAtRiskTo: snackAtRiskTo ?? null
+    };
+
+    // Agregar servicios al SchoolRequest
+    schoolRequest.services = [schoolServiceRequest]; // Array con un solo elemento
 
     this.isLoading = true;
     this.headerConfig.formGroup.disable();

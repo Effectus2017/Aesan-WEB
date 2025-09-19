@@ -42,6 +42,7 @@ export interface School {
   organizationType?: OrganizationType;
   centerType?: CenterType;
   areaType?: AreaType;
+  locationType?: AreaType;
   nonProfit?: boolean;
   startDate?: string;
   baseYear?: number;

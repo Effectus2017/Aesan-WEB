@@ -104,9 +104,9 @@
                 "required": "This field is required"
             },
             "start-date": {
-                "label": "Start Date",
-                "placeholder": "Select start date",
-                "required": "Start date is required"
+                "label": "Provision Start Date",
+                "placeholder": "Select provision start date",
+                "required": "Provision start date is required"
             },
             "base-year": {
                 "label": "Base Year",
@@ -139,9 +139,9 @@
                 "description": "Date to when site operation ends"
             },
             "operating-days-calculated": {
-                "label": "Days",
-                "placeholder": "Calculated operating days",
-                "description": "Days calculated automatically"
+                "label": "Total Operating Days",
+                "placeholder": "Total calculated operating days",
+                "description": "Total days calculated automatically"
             },
             "operating-dates": {
                 "label": "Operating Days",
@@ -289,6 +289,54 @@
                 "label": "Night Snack To",
                 "placeholder": "Night snack to"
             },
+            "dinner-extended": {
+                "label": "Extended Hours Dinner",
+                "placeholder": "Extended Hours Dinner"
+            },
+            "dinner-extended-from": {
+                "label": "Extended Hours Dinner From",
+                "placeholder": "Extended Hours Dinner From"
+            },
+            "dinner-extended-to": {
+                "label": "Extended Hours Dinner To",
+                "placeholder": "Extended Hours Dinner To"
+            },
+            "dinner-at-risk": {
+                "label": "At-Risk Dinner",
+                "placeholder": "At-Risk Dinner"
+            },
+            "dinner-at-risk-from": {
+                "label": "At-Risk Dinner From",
+                "placeholder": "At-Risk Dinner From"
+            },
+            "dinner-at-risk-to": {
+                "label": "At-Risk Dinner To",
+                "placeholder": "At-Risk Dinner To"
+            },
+            "snack-extended": {
+                "label": "Extended Hours Snack",
+                "placeholder": "Extended Hours Snack"
+            },
+            "snack-extended-from": {
+                "label": "Extended Hours Snack From",
+                "placeholder": "Extended Hours Snack From"
+            },
+            "snack-extended-to": {
+                "label": "Extended Hours Snack To",
+                "placeholder": "Extended Hours Snack To"
+            },
+            "snack-at-risk": {
+                "label": "At-Risk Snack",
+                "placeholder": "At-Risk Snack"
+            },
+            "snack-at-risk-from": {
+                "label": "At-Risk Snack From",
+                "placeholder": "At-Risk Snack From"
+            },
+            "snack-at-risk-to": {
+                "label": "At-Risk Snack To",
+                "placeholder": "At-Risk Snack To"
+            },
             "satellites": {
                 "label": "Satellite Sites",
                 "description": "List of satellite sites associated with this main site"
@@ -430,6 +478,17 @@
             "site-number": {
                 "label": "Site Number",
                 "description": "Unique site code generated automatically"
+            },
+            "dev-section": {
+                "title": "Development Tools - Program Selection",
+                "disclaimer": "⚠️ WARNING: This section is ONLY for development testing. It allows manual switching between programs to test different field configurations. DO NOT use in production.",
+                "pdam": "PDAM",
+                "psav": "PSAV",
+                "pacna": "PACNA",
+                "pfhf": "PFHF",
+                "pdfe": "PDFE",
+                "aesan": "AESAN",
+                "daycare-home": "Day Care Home"
             }
         },
         "edit": {
@@ -515,9 +574,9 @@
                 "required": "This field is required"
             },
             "start-date": {
-                "label": "Start Date",
-                "placeholder": "Select start date",
-                "required": "Start date is required"
+                "label": "Provision Start Date",
+                "placeholder": "Select provision start date",
+                "required": "Provision start date is required"
             },
             "base-year": {
                 "label": "Base Year",
@@ -550,9 +609,9 @@
                 "description": "Date to when site operation ends"
             },
             "operating-days-calculated": {
-                "label": "Days",
-                "placeholder": "Calculated operating days",
-                "description": "Days calculated automatically"
+                "label": "Total Operating Days",
+                "placeholder": "Total calculated operating days",
+                "description": "Total days calculated automatically"
             },
             "operating-dates": {
                 "label": "Operating Dates",
@@ -699,6 +758,54 @@
             "snack-night-to": {
                 "label": "Night Snack To",
                 "placeholder": "Night snack to"
+            },
+            "dinner-extended": {
+                "label": "Extended Hours Dinner",
+                "placeholder": "Extended Hours Dinner"
+            },
+            "dinner-extended-from": {
+                "label": "Extended Hours Dinner From",
+                "placeholder": "Extended Hours Dinner From"
+            },
+            "dinner-extended-to": {
+                "label": "Extended Hours Dinner To",
+                "placeholder": "Extended Hours Dinner To"
+            },
+            "dinner-at-risk": {
+                "label": "At-Risk Dinner",
+                "placeholder": "At-Risk Dinner"
+            },
+            "dinner-at-risk-from": {
+                "label": "At-Risk Dinner From",
+                "placeholder": "At-Risk Dinner From"
+            },
+            "dinner-at-risk-to": {
+                "label": "At-Risk Dinner To",
+                "placeholder": "At-Risk Dinner To"
+            },
+            "snack-extended": {
+                "label": "Extended Hours Snack",
+                "placeholder": "Extended Hours Snack"
+            },
+            "snack-extended-from": {
+                "label": "Extended Hours Snack From",
+                "placeholder": "Extended Hours Snack From"
+            },
+            "snack-extended-to": {
+                "label": "Extended Hours Snack To",
+                "placeholder": "Extended Hours Snack To"
+            },
+            "snack-at-risk": {
+                "label": "At-Risk Snack",
+                "placeholder": "At-Risk Snack"
+            },
+            "snack-at-risk-from": {
+                "label": "At-Risk Snack From",
+                "placeholder": "At-Risk Snack From"
+            },
+            "snack-at-risk-to": {
+                "label": "At-Risk Snack To",
+                "placeholder": "At-Risk Snack To"
             },
             "satellites": {
                 "label": "Satellite Sites",

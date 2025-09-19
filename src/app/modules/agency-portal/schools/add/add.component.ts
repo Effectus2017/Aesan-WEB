@@ -11,9 +11,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
-import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
-import { EducationLevelService } from 'app/shared/services/education-level.service';
-import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -21,8 +18,6 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { GroupTypeService } from 'app/shared/services/group-type.service';
-import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -30,9 +25,8 @@ import { Region } from 'app/shared/models/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
-import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -154,6 +148,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Tipo de área
   // Type of area
   areaTypes: AreaType[] = [];
+
+  // Tipo de localización
+  // Type of location
+  locationTypes: AreaType[] = [];
 
   // Tipo de grupo
   // Type of group
@@ -281,6 +279,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Rural (23), Urbana (24)
       // (tipo select-SOLO DISABLED - se auto-selecciona según ciudad)
       areaType: [{ value: null, disabled: true }],
+      // Localización - Campo requerido para clasificación de la escuela
+      // Location - Required field for school classification
+      // Rural (23), Urbana (24)
+      // (tipo select - selección manual)
+      locationType: [null, Validators.required],
       // Tipo de residencial - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Residential type - Required field for RCCI classification (Residential/Non-residential)
       // Pernoctan (17), No Pernoctan (18)
@@ -365,6 +368,36 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Horario hasta para la merienda nocturna
       // Snack night schedule to
       snackNightTo: [null],
+
+      // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
+      // Cena Horario Extendido (si, no)
+      dinnerExtended: [false],
+      // Horario desde para la cena horario extendido
+      dinnerExtendedFrom: [null],
+      // Horario hasta para la cena horario extendido
+      dinnerExtendedTo: [null],
+
+      // Cena en Riesgo (si, no)
+      dinnerAtRisk: [false],
+      // Horario desde para la cena en riesgo
+      dinnerAtRiskFrom: [null],
+      // Horario hasta para la cena en riesgo
+      dinnerAtRiskTo: [null],
+
+      // Merienda Horario Extendido (si, no)
+      snackExtended: [false],
+      // Horario desde para la merienda horario extendido
+      snackExtendedFrom: [null],
+      // Horario hasta para la merienda horario extendido
+      snackExtendedTo: [null],
+
+      // Merienda en Riesgo (si, no)
+      snackAtRisk: [false],
+      // Horario desde para la merienda en riesgo
+      snackAtRiskFrom: [null],
+      // Horario hasta para la merienda en riesgo
+      snackAtRiskTo: [null],
+
       // Campos específicos para Day Care Home (PACNA)
       // ¿Este hogar está autorizado a funcionar?
       // Is this home authorized to operate?
@@ -422,6 +455,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   comparePostal = comparePostal;
   compareById = compareById;
 
+
   isLoading = false;
 
   // Agencia Id
@@ -438,6 +472,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   isPFHF: boolean = false;
   isPDFE: boolean = false;
   isAESAN: boolean = false;
+
+
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
@@ -499,6 +535,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
+      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
       // Verificar escuela principal
       this.isMainSchool = !resolvedData.hasMainSchool;
@@ -663,6 +700,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         'centerType',
         'educationLevels',
         'areaType',
+        'locationType',
       ];
 
       fieldsToUpdate.forEach((fieldName) => {
@@ -693,6 +731,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       organizationType: [Validators.required],
       centerType: [Validators.required],
       educationLevels: [Validators.required],
+      locationType: [Validators.required],
     };
 
     Object.keys(requiredFields).forEach((fieldName) => {
@@ -740,6 +779,20 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
     const snackNightTo: string = toTimeString(formValues.snackNightTo);
 
+    // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
+    // Horario de cena horario extendido
+    const dinnerExtendedFrom: string = toTimeString(formValues.dinnerExtendedFrom);
+    const dinnerExtendedTo: string = toTimeString(formValues.dinnerExtendedTo);
+    // Horario de cena en riesgo
+    const dinnerAtRiskFrom: string = toTimeString(formValues.dinnerAtRiskFrom);
+    const dinnerAtRiskTo: string = toTimeString(formValues.dinnerAtRiskTo);
+    // Horario de merienda horario extendido
+    const snackExtendedFrom: string = toTimeString(formValues.snackExtendedFrom);
+    const snackExtendedTo: string = toTimeString(formValues.snackExtendedTo);
+    // Horario de merienda en riesgo
+    const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
+    const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
+
     // Niveles educativos (MÚLTIPLE SELECCIÓN)
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     // Tipo de organización
@@ -767,6 +820,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Tipo de área
     const areaTypeId: number = formValues.areaType?.id;
+
+    // Tipo de localización
+    const locationTypeId: number = formValues.locationType?.id;
 
     // Obtener los valores del formulario
     const schoolRequest: SchoolRequest = {
@@ -846,6 +902,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de área - Campo requerido para clasificación
       // Type of area - Required field for classification
       areaTypeId: areaTypeId,
+      // Tipo de localización - Campo requerido para clasificación
+      // Location type - Required field for classification
+      locationTypeId: locationTypeId,
       // Política de operación - Campo requerido para operación
       // Operating policy - Required field for operation
       operatingPolicyId: operatingPolicyId,
@@ -963,6 +1022,70 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
     };
+
+    // ===== CREAR SCHOOL SERVICE REQUEST =====
+    // Constantes para servicios básicos
+    const breakfast = formValues.breakfast ?? null;
+    const lunch = formValues.lunch ?? null;
+    const snack = formValues.snack ?? null;
+    const dinner = formValues.dinner ?? null;
+    const snackNight = formValues.snackNight ?? null;
+
+    // Constantes para servicios adicionales PACNA
+    const dinnerExtended = formValues.dinnerExtended ?? null;
+    const dinnerAtRisk = formValues.dinnerAtRisk ?? null;
+    const snackExtended = formValues.snackExtended ?? null;
+    const snackAtRisk = formValues.snackAtRisk ?? null;
+
+    // Crear SchoolServiceRequest
+    const schoolServiceRequest: SchoolServiceRequest = {
+      childGroupId: null, // Servicio general
+
+      // Servicios básicos
+      breakfast: breakfast,
+      breakfastFrom: breakfastFrom ?? null,
+      breakfastTo: breakfastTo ?? null,
+
+      lunch: lunch,
+      lunchFrom: lunchFrom ?? null,
+      lunchTo: lunchTo ?? null,
+
+      snackAM: snack, // Mapear 'snack' a 'snackAM'
+      snackAMFrom: snackFrom ?? null,
+      snackAMTo: snackTo ?? null,
+
+      dinner: dinner,
+      dinnerFrom: dinnerFrom ?? null,
+      dinnerTo: dinnerTo ?? null,
+
+      snackPM: null, // No se usa en el formulario actual
+      snackPMFrom: null,
+      snackPMTo: null,
+
+      snackNight: snackNight,
+      snackNightFrom: snackNightFrom ?? null,
+      snackNightTo: snackNightTo ?? null,
+
+      // Servicios adicionales para PACNA
+      dinnerExtended: dinnerExtended,
+      dinnerExtendedFrom: dinnerExtendedFrom ?? null,
+      dinnerExtendedTo: dinnerExtendedTo ?? null,
+
+      dinnerAtRisk: dinnerAtRisk,
+      dinnerAtRiskFrom: dinnerAtRiskFrom ?? null,
+      dinnerAtRiskTo: dinnerAtRiskTo ?? null,
+
+      snackExtended: snackExtended,
+      snackExtendedFrom: snackExtendedFrom ?? null,
+      snackExtendedTo: snackExtendedTo ?? null,
+
+      snackAtRisk: snackAtRisk,
+      snackAtRiskFrom: snackAtRiskFrom ?? null,
+      snackAtRiskTo: snackAtRiskTo ?? null
+    };
+
+    // Agregar servicios al SchoolRequest
+    schoolRequest.services = [schoolServiceRequest]; // Array con un solo elemento
 
     this.isLoading = true;
 
@@ -1277,5 +1400,72 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Usar directamente el nombre del groupType
     return groupType.name || groupType.nameEN || '';
+  }
+
+  // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
+
+  /**
+   * Maneja el cambio de estado de PDAM para desarrollo
+   */
+  onDevPDAMChange(checked: boolean): void {
+    this.isPDAM = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PSAV para desarrollo
+   */
+  onDevPSAVChange(checked: boolean): void {
+    this.isPSAV = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PACNA para desarrollo
+   */
+  onDevPACNAChange(checked: boolean): void {
+    this.isPACNA = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PFHF para desarrollo
+   */
+  onDevPFHFChange(checked: boolean): void {
+    this.isPFHF = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PDFE para desarrollo
+   */
+  onDevPDFEChange(checked: boolean): void {
+    this.isPDFE = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de AESAN para desarrollo
+   */
+  onDevAESANChange(checked: boolean): void {
+    this.isAESAN = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de Day Care Home para desarrollo
+   */
+  onDevDayCareHomeChange(checked: boolean): void {
+    this.isDayCareHome = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Actualiza los programas activos basado en los checkboxes de desarrollo
+   */
+  private updateDevPrograms(): void {
+    // Actualizar validaciones y campos visibles
+    this.updateValidations();
+    this._changeDetectorRef.detectChanges();
   }
 }

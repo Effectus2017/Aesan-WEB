@@ -43,6 +43,7 @@ export interface SchoolRequest {
     sponsorTypeId?: number;
     applicantTypeId?: number;
     areaTypeId?: number;
+    locationTypeId?: number;
     residentialTypeId?: number;
     operatingPolicyId?: number;
     hasWarehouse?: boolean;

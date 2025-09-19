@@ -106,9 +106,9 @@
                 "required": "Este campo es requerido"
             },
             "start-date": {
-                "label": "Fecha de inicio",
-                "placeholder": "Seleccione la fecha de inicio",
-                "required": "La fecha de inicio es requerida"
+                "label": "Fecha de Inicio de la Provisión",
+                "placeholder": "Seleccione la fecha de inicio de la provisión",
+                "required": "La fecha de inicio de la provisión es requerida"
             },
             "base-year": {
                 "label": "Año base",
@@ -141,9 +141,9 @@
                 "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
             },
             "operating-days-calculated": {
-                "label": "Días",
-                "placeholder": "Días calculados de funcionamiento",
-                "description": "Días calculados automáticamente"
+                "label": "Total de Días de Funcionamiento",
+                "placeholder": "Total de días calculados de funcionamiento",
+                "description": "Total de días calculados automáticamente"
             },
             "operating-dates": {
                 "label": "Días de funcionamiento",
@@ -291,6 +291,54 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "dinner-extended": {
+                "label": "Cena Horario Extendido",
+                "placeholder": "Cena Horario Extendido"
+            },
+            "dinner-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-at-risk": {
+                "label": "Cena en Riesgo",
+                "placeholder": "Cena en Riesgo"
+            },
+            "dinner-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-extended": {
+                "label": "Merienda Horario Extendido",
+                "placeholder": "Merienda Horario Extendido"
+            },
+            "snack-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-at-risk": {
+                "label": "Merienda en Riesgo",
+                "placeholder": "Merienda en Riesgo"
+            },
+            "snack-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -416,6 +464,17 @@
             "site-number": {
                 "label": "Número de Sitio",
                 "description": "Código único del sitio generado automáticamente"
+            },
+            "dev-section": {
+                "title": "Herramientas de Desarrollo - Selección de Programas",
+                "disclaimer": "⚠️ ADVERTENCIA: Esta sección es SOLO para pruebas de desarrollo. Permite cambiar manualmente entre programas para probar diferentes configuraciones de campos. NO usar en producción.",
+                "pdam": "PDAM",
+                "psav": "PSAV",
+                "pacna": "PACNA",
+                "pfhf": "PFHF",
+                "pdfe": "PDFE",
+                "aesan": "AESAN",
+                "daycare-home": "Day Care Home"
             }
         },
         "edit": {
@@ -508,9 +567,9 @@
                 "required": "Este campo es requerido"
             },
             "start-date": {
-                "label": "Fecha de inicio",
-                "placeholder": "Seleccione la fecha de inicio",
-                "required": "La fecha de inicio es requerida"
+                "label": "Fecha de Inicio de la Provisión",
+                "placeholder": "Seleccione la fecha de inicio de la provisión",
+                "required": "La fecha de inicio de la provisión es requerida"
             },
             "base-year": {
                 "label": "Año base",
@@ -543,9 +602,9 @@
                 "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
             },
             "operating-days-calculated": {
-                "label": "Días",
-                "placeholder": "Días calculados de funcionamiento",
-                "description": "Días calculados automáticamente"
+                "label": "Total de Días de Funcionamiento",
+                "placeholder": "Total de días calculados de funcionamiento",
+                "description": "Total de días calculados automáticamente"
             },
             "operating-dates": {
                 "label": "Fechas de Funcionamiento",
@@ -690,6 +749,54 @@
                 "placeholder": "Desde"
             },
             "snack-night-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-extended": {
+                "label": "Cena Horario Extendido",
+                "placeholder": "Cena Horario Extendido"
+            },
+            "dinner-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-at-risk": {
+                "label": "Cena en Riesgo",
+                "placeholder": "Cena en Riesgo"
+            },
+            "dinner-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-extended": {
+                "label": "Merienda Horario Extendido",
+                "placeholder": "Merienda Horario Extendido"
+            },
+            "snack-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-at-risk": {
+                "label": "Merienda en Riesgo",
+                "placeholder": "Merienda en Riesgo"
+            },
+            "snack-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-at-risk-to": {
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
