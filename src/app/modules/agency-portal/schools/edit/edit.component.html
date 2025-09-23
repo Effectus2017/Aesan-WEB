@@ -193,11 +193,12 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: ¿Ofrece servicio a diferentes grupos de niños? - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
           <!-- ¿Ofrece servicio a diferentes grupos de niños? -->
           <mat-form-field data-cy="offers-service-to-different-groups-field">
             <mat-label>{{ "schools.edit.offers-service-to-different-groups.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'offersServiceToDifferentGroups'" data-cy="offers-service-to-different-groups-select">
+            <mat-select [formControlName]="'offersServiceToDifferentGroups'" data-cy="offers-service-to-different-groups-select" (selectionChange)="onOffersServiceToDifferentGroupsChange($event.value)">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-different-groups-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -206,6 +207,19 @@
               "schools.edit.offers-service-to-different-groups.required" | transloco
             }}</mat-error>
           </mat-form-field>
+        </div>
+
+        <!-- Tabla de Servicios por Grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDifferentGroupsFields()">
+          <div class="mb-4">
+            <h3 class="text-lg font-medium mb-2">{{ "schools.add.services.table.title" | transloco }}</h3>
+            <p class="text-sm text-gray-600 mb-4">{{ "schools.add.services.table.description" | transloco }}</p>
+
+            <!-- Tabla de servicios -->
+            <div class="rounded-lg shadow-md">
+              <app-generic-table [config]="servicesTableConfig" [handler]="this" #servicesTable></app-generic-table>
+            </div>
+          </div>
         </div>
 
         <!-- Sponsor Information Section -->
@@ -237,7 +251,7 @@
         </div>
 
         <!-- Campos específicos del Edit -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <!-- Desactivar/Activar -->
           <mat-form-field data-cy="is-active-field">
             <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
@@ -318,7 +332,7 @@
         <!-- Dirección *  -->
         <!-- Municipio para Dirección Física *  -->
         <!-- Region * / Region -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="address-field">
             <mat-label>{{ "schools.edit.address.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'address'" placeholder="{{ 'schools.edit.address.placeholder' | transloco }}" data-cy="address-input" />
@@ -353,7 +367,7 @@
         <!-- Código postal / ZIP code -->
         <!-- Latitude / Latitude -->
         <!-- Longitude / Longitude -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "schools.edit.zip-code.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'zipCode'" placeholder="{{ 'schools.edit.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
@@ -533,7 +547,7 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
@@ -765,7 +779,10 @@
         </div>
 
         <!-- Servicios que operará y horario -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <!-- NOTA: Cuando offersServiceToDifferentGroups = true, se podrían mostrar campos adicionales -->
+        <!-- para especificar horarios diferentes por grupo usando shouldShowDifferentGroupsFields() -->
+        <!-- Servicios que operará y horario - Solo mostrar si NO se están usando servicios por grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldHideIndividualServiceFields()">
           <p class="text-lg font-medium">{{ "schools.edit.services-and-schedule.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.services-and-schedule.description" | transloco }}</p>
         </div>
@@ -774,7 +791,7 @@
         <!-- Desayuno (si, no) -->
         <!-- Horario desde para el desayuno -->
         <!-- Horario hasta para el desayuno -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <!-- Desayuno (si, no) -->
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "schools.edit.breakfast.label" | transloco }}</mat-label>
@@ -818,7 +835,7 @@
         <!-- Almuerzo (si, no) -->
         <!-- Horario desde para el almuerzo -->
         <!-- Horario hasta para el almuerzo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <!-- Almuerzo (si, no) -->
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "schools.edit.lunch.label" | transloco }}</mat-label>
@@ -862,7 +879,7 @@
         <!-- Merienda AM / Snack AM -->
         <!-- Horario desde para la merienda AM -->
         <!-- Horario hasta para la merienda AM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "schools.edit.snack-am.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select" [compareWith]="compareById">
@@ -895,7 +912,7 @@
         <!-- Merienda PM / Snack PM -->
         <!-- Horario desde para la merienda PM -->
         <!-- Horario hasta para la merienda PM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "schools.edit.snack-pm.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select" [compareWith]="compareById">
@@ -928,7 +945,7 @@
         <!-- Cena (si, no) -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV || isPACNA">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="dinner-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.dinner.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
@@ -967,7 +984,7 @@
         <!-- Merienda nocturna (si, no) -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "schools.edit.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">

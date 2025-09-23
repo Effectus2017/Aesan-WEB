@@ -504,6 +504,125 @@
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
                 "daycare-home": "Day Care Home"
+            },
+            "child-groups": {
+                "title": "Grupos de Niños Específicos",
+                "description": "Configure los grupos específicos de niños para este sitio",
+                "add-group": "Agregar Grupo",
+                "group-name": {
+                    "label": "Nombre del Grupo",
+                    "placeholder": "Ej: Grupo 1, Grupo 2"
+                },
+                "number-of-children": {
+                    "label": "Cantidad de Niños",
+                    "placeholder": "Ingrese la cantidad de niños"
+                },
+                "no-groups": "No hay grupos configurados"
+            },
+            "services": {
+                "add-service": "Agregar Servicio",
+                "modal": {
+                    "title": "Configurar Servicio por Grupo",
+                     "group": {
+                         "label": "Nombre del Grupo",
+                         "placeholder": "Ingrese el nombre del grupo",
+                         "required": "El grupo es requerido"
+                     },
+                    "number-of-children": {
+                        "label": "Cantidad de Niños",
+                        "required": "La cantidad de niños es requerida",
+                        "min": "Debe ser al menos 1"
+                    },
+                    "basic-services": {
+                        "title": "Servicios Básicos"
+                    },
+                    "pacna-services": {
+                        "title": "Servicios PACNA"
+                    },
+                    "breakfast": {
+                        "label": "Desayuno"
+                    },
+                    "lunch": {
+                        "label": "Almuerzo"
+                    },
+                    "snack-am": {
+                        "label": "Merienda AM"
+                    },
+                    "dinner": {
+                        "label": "Cena"
+                    },
+                    "snack-pm": {
+                        "label": "Merienda PM"
+                    },
+                    "snack-night": {
+                        "label": "Merienda Nocturna"
+                    },
+                    "dinner-extended": {
+                        "label": "Cena Horario Extendido"
+                    },
+                    "dinner-at-risk": {
+                        "label": "Cena en Riesgo"
+                    },
+                    "snack-extended": {
+                        "label": "Merienda Horario Extendido"
+                    },
+                    "snack-at-risk": {
+                        "label": "Merienda en Riesgo"
+                    },
+                    "from": {
+                        "label": "Desde"
+                    },
+                    "to": {
+                        "label": "Hasta"
+                    }
+                },
+                "table": {
+                    "title": "Servicios por Grupos",
+                    "description": "Configure los horarios de servicios específicos para cada grupo de niños",
+                    "filter-placeholder": "Filtrar servicios...",
+                    "no-data": "No hay servicios configurados",
+                    "loading": "Cargando servicios...",
+                    "error": "Error al cargar servicios",
+                    "group-name": "Grupo",
+                    "number-of-children": "Niños",
+                    "breakfast": "Desayuno",
+                    "breakfast-from": "Desayuno Desde",
+                    "breakfast-to": "Desayuno Hasta",
+                    "lunch": "Almuerzo",
+                    "lunch-from": "Almuerzo Desde",
+                    "lunch-to": "Almuerzo Hasta",
+                    "snack-am": "Merienda AM",
+                    "snack-am-from": "Merienda AM Desde",
+                    "snack-am-to": "Merienda AM Hasta",
+                    "dinner": "Cena",
+                    "dinner-from": "Cena Desde",
+                    "dinner-to": "Cena Hasta",
+                    "snack-pm": "Merienda PM",
+                    "snack-pm-from": "Merienda PM Desde",
+                    "snack-pm-to": "Merienda PM Hasta",
+                    "snack-night": "Merienda Nocturna",
+                    "snack-night-from": "Merienda Nocturna Desde",
+                    "snack-night-to": "Merienda Nocturna Hasta",
+                    "dinner-extended": "Cena Extendida",
+                    "dinner-extended-from": "Cena Extendida Desde",
+                    "dinner-extended-to": "Cena Extendida Hasta",
+                    "dinner-at-risk": "Cena en Riesgo",
+                    "dinner-at-risk-from": "Cena en Riesgo Desde",
+                    "dinner-at-risk-to": "Cena en Riesgo Hasta",
+                    "snack-extended": "Merienda Extendida",
+                    "snack-extended-from": "Merienda Extendida Desde",
+                    "snack-extended-to": "Merienda Extendida Hasta",
+                    "snack-at-risk": "Merienda en Riesgo",
+                    "snack-at-risk-from": "Merienda en Riesgo Desde",
+                    "snack-at-risk-to": "Merienda en Riesgo Hasta"
+                },
+                "confirm-delete": "¿Está seguro de que desea eliminar el servicio para el grupo '{{groupName}}'?",
+                "success": {
+                    "deleted": "Servicio eliminado correctamente"
+                },
+                "error": {
+                    "service-not-found": "Servicio no encontrado"
+                }
             }
         },
         "edit": {

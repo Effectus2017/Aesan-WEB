@@ -518,6 +518,125 @@
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
                 "daycare-home": "Day Care Home"
+            },
+            "child-groups": {
+                "title": "Specific Child Groups",
+                "description": "Configure specific child groups for this site",
+                "add-group": "Add Group",
+                "group-name": {
+                    "label": "Group Name",
+                    "placeholder": "E.g: Group 1, Group 2"
+                },
+                "number-of-children": {
+                    "label": "Number of Children",
+                    "placeholder": "Enter number of children"
+                },
+                "no-groups": "No groups configured"
+            },
+            "services": {
+                "add-service": "Add Service",
+                "modal": {
+                    "title": "Configure Service by Group",
+                     "group": {
+                         "label": "Group Name",
+                         "placeholder": "Enter group name",
+                         "required": "Group is required"
+                     },
+                    "number-of-children": {
+                        "label": "Number of Children",
+                        "required": "Number of children is required",
+                        "min": "Must be at least 1"
+                    },
+                    "basic-services": {
+                        "title": "Basic Services"
+                    },
+                    "pacna-services": {
+                        "title": "PACNA Services"
+                    },
+                    "breakfast": {
+                        "label": "Breakfast"
+                    },
+                    "lunch": {
+                        "label": "Lunch"
+                    },
+                    "snack-am": {
+                        "label": "AM Snack"
+                    },
+                    "dinner": {
+                        "label": "Dinner"
+                    },
+                    "snack-pm": {
+                        "label": "PM Snack"
+                    },
+                    "snack-night": {
+                        "label": "Night Snack"
+                    },
+                    "dinner-extended": {
+                        "label": "Extended Dinner"
+                    },
+                    "dinner-at-risk": {
+                        "label": "At-Risk Dinner"
+                    },
+                    "snack-extended": {
+                        "label": "Extended Snack"
+                    },
+                    "snack-at-risk": {
+                        "label": "At-Risk Snack"
+                    },
+                    "from": {
+                        "label": "From"
+                    },
+                    "to": {
+                        "label": "To"
+                    }
+                },
+                "table": {
+                    "title": "Services by Groups",
+                    "description": "Configure specific service schedules for each child group",
+                    "filter-placeholder": "Filter services...",
+                    "no-data": "No services configured",
+                    "loading": "Loading services...",
+                    "error": "Error loading services",
+                    "group-name": "Group",
+                    "number-of-children": "Children",
+                    "breakfast": "Breakfast",
+                    "breakfast-from": "Breakfast From",
+                    "breakfast-to": "Breakfast To",
+                    "lunch": "Lunch",
+                    "lunch-from": "Lunch From",
+                    "lunch-to": "Lunch To",
+                    "snack-am": "AM Snack",
+                    "snack-am-from": "AM Snack From",
+                    "snack-am-to": "AM Snack To",
+                    "dinner": "Dinner",
+                    "dinner-from": "Dinner From",
+                    "dinner-to": "Dinner To",
+                    "snack-pm": "PM Snack",
+                    "snack-pm-from": "PM Snack From",
+                    "snack-pm-to": "PM Snack To",
+                    "snack-night": "Night Snack",
+                    "snack-night-from": "Night Snack From",
+                    "snack-night-to": "Night Snack To",
+                    "dinner-extended": "Extended Dinner",
+                    "dinner-extended-from": "Extended Dinner From",
+                    "dinner-extended-to": "Extended Dinner To",
+                    "dinner-at-risk": "At-Risk Dinner",
+                    "dinner-at-risk-from": "At-Risk Dinner From",
+                    "dinner-at-risk-to": "At-Risk Dinner To",
+                    "snack-extended": "Extended Snack",
+                    "snack-extended-from": "Extended Snack From",
+                    "snack-extended-to": "Extended Snack To",
+                    "snack-at-risk": "At-Risk Snack",
+                    "snack-at-risk-from": "At-Risk Snack From",
+                    "snack-at-risk-to": "At-Risk Snack To"
+                },
+                "confirm-delete": "Are you sure you want to delete the service for group '{{groupName}}'?",
+                "success": {
+                    "deleted": "Service deleted successfully"
+                },
+                "error": {
+                    "service-not-found": "Service not found"
+                }
             }
         },
         "edit": {

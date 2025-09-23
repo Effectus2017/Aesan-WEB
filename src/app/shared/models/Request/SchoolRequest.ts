@@ -2,6 +2,7 @@ import { SchoolServiceRequest } from './SchoolServiceRequest';
 import { SchoolDayCareHomeRequest } from './SchoolDayCareHomeRequest';
 import { SchoolParticipantRequest } from './SchoolParticipantRequest';
 import { SchoolEducationLevelRequest } from './SchoolEducationLevelRequest';
+import { SchoolChildGroupRequest } from './SchoolChildGroupRequest';
 
 export interface SchoolRequest {
     // ===== CAMPOS PRINCIPALES DE SCHOOL =====
@@ -83,4 +84,5 @@ export interface SchoolRequest {
     dayCareHome?: SchoolDayCareHomeRequest;
     participants?: SchoolParticipantRequest[];
     educationLevels?: SchoolEducationLevelRequest[];
+    childGroups?: SchoolChildGroupRequest[];
 }

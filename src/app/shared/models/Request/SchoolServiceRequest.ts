@@ -1,4 +1,5 @@
 export interface SchoolServiceRequest {
+  schoolId?: number;
   childGroupId?: number;
   breakfast?: boolean;
   breakfastFrom?: string;

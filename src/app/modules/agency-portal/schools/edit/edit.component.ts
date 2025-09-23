@@ -25,6 +25,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
+import { SchoolChildGroupRequest } from 'app/shared/models/Request/SchoolChildGroupRequest';
+import { SchoolDayCareHomeRequest } from 'app/shared/models/Request/SchoolDayCareHomeRequest';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
@@ -43,9 +45,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
+import { SERVICES_COLUMNS_SCHEMA } from '../add-service-by-group-modal/services-columns-schema';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
 import { MatDialog } from '@angular/material/dialog';
@@ -80,7 +84,7 @@ import { PROGRAM_IDS } from 'app/shared/const';
     GenericTableComponent,
   ],
 })
-export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente
   // Subject to unsubscribe from all observables on component destroy
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -223,6 +227,34 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
+  showDifferentGroupsFields: boolean = false;
+
+  // Propiedades para manejar grupos de niños específicos
+  childGroups: SchoolChildGroupRequest[] = [];
+  nextGroupNumber: number = 1;
+
+  // Tabla de servicios por grupos
+  servicesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: SERVICES_COLUMNS_SCHEMA,
+    displayedColumns: SERVICES_COLUMNS_SCHEMA.map(col => col.key as string),
+    addButtonShow: true,
+    addButtonIcon: 'add',
+    addButtonLabel: 'schools.add.services.add-service',
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25, 50],
+    pageSize: 10,
+    onAddButtonClick: (event: Event, tableId?: string) => {
+      this.onTableAdd();
+    },
+  };
+
+  // Lista de servicios por grupos (en memoria hasta el envío)
+  servicesByGroups: ServiceByGroupDialogData[] = [];
+
+  // Configuración de tabla requerida por OnGenericTableHandler
+  tableConfig: GenericTableConfig = this.servicesTableConfig;
 
   // Función helper para determinar si un campo debe mostrarse
   shouldShowField(): boolean {
@@ -239,6 +271,21 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Función para mostrar campos específicos de Day Care Home (PACNA + isDayCareHome)
   shouldShowDayCareFields(): boolean {
     return this.isDayCareHome && this.isPACNA;
+  }
+
+  /**
+   * Determina si se deben mostrar campos adicionales para diferentes grupos
+   */
+  shouldShowDifferentGroupsFields(): boolean {
+    return this.showDifferentGroupsFields && this.isDayCareHome && this.isPACNA;
+  }
+
+  /**
+   * Determina si se deben ocultar los campos de servicios individuales
+   * cuando se están usando servicios por grupos
+   */
+  shouldHideIndividualServiceFields(): boolean {
+    return this.shouldShowDifferentGroupsFields();
   }
 
   currentLang: string = 'es';
@@ -1599,6 +1646,32 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   }
 
   /**
+   * Maneja el cambio del campo "¿Ofrece servicio a diferentes grupos de niños?"
+   */
+  onOffersServiceToDifferentGroupsChange(checked: boolean): void {
+    this.showDifferentGroupsFields = checked;
+    console.log('Offers service to different groups:', checked);
+    console.log('Show different groups fields:', this.showDifferentGroupsFields);
+
+    // Si no ofrece servicio a diferentes grupos, limpiar campos adicionales
+    if (!checked) {
+      this.clearDifferentGroupsFields();
+    }
+  }
+
+  /**
+   * Limpia los campos adicionales cuando no se ofrecen servicios a diferentes grupos
+   */
+  private clearDifferentGroupsFields(): void {
+    // Limpiar grupos de niños cuando no se ofrecen servicios a diferentes grupos
+    this.childGroups = [];
+    this.nextGroupNumber = 1;
+    this.servicesByGroups = [];
+    this.updateServicesTableDataSource();
+    console.log('Clearing different groups fields');
+  }
+
+  /**
    * Convierte el objeto groupType a la clave usada en la configuración
    */
   private getGroupTypeKey(groupType: any): string {
@@ -1606,5 +1679,105 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
     // Usar directamente el nombre del groupType
     return groupType.name || groupType.nameEN || '';
+  }
+
+  // ==========================================
+  // MÉTODOS HANDLER PARA TABLA DE SERVICIOS
+  // ==========================================
+
+  /**
+   * Maneja el evento de agregar servicio desde la tabla
+   */
+  onTableAdd(): void {
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        isEdit: false,
+        yesNoOptions: this.yesNoOptions,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        // Generar ID único para el servicio
+        const newId = this.servicesByGroups.length > 0
+          ? Math.max(...this.servicesByGroups.map(s => s.id || 0)) + 1
+          : 1;
+
+        result.id = newId;
+        this.servicesByGroups.push(result);
+        this.updateServicesTableDataSource();
+      }
+    });
+  }
+
+  /**
+   * Maneja el evento de editar servicio desde la tabla
+   */
+  onTableEdit(event: Event, id: number): void {
+    const serviceToEdit = this.servicesByGroups.find(s => s.id === id);
+    if (!serviceToEdit) {
+      this._notificationService.showError('schools.add.services.error.service-not-found');
+      return;
+    }
+
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        ...serviceToEdit,
+        isEdit: true,
+        yesNoOptions: this.yesNoOptions,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        const index = this.servicesByGroups.findIndex(s => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups[index] = result;
+          this.updateServicesTableDataSource();
+        }
+      }
+    });
+  }
+
+  /**
+   * Maneja el evento de eliminar servicio desde la tabla
+   */
+  onTableDelete(event: Event, id: number): void {
+    const serviceToDelete = this.servicesByGroups.find(s => s.id === id);
+    if (!serviceToDelete) {
+      this._notificationService.showError('schools.add.services.error.service-not-found');
+      return;
+    }
+
+    // Confirmar eliminación
+    const confirmMessage = this._translocoService.translate('schools.add.services.confirm-delete', {
+      groupName: serviceToDelete.groupName
+    });
+
+    if (confirm(confirmMessage)) {
+      const index = this.servicesByGroups.findIndex(s => s.id === id);
+      if (index !== -1) {
+        this.servicesByGroups.splice(index, 1);
+        this.updateServicesTableDataSource();
+        this._notificationService.showSuccess('schools.add.services.success.deleted');
+      }
+    }
+  }
+
+  /**
+   * Actualiza el dataSource de la tabla de servicios
+   */
+  private updateServicesTableDataSource(): void {
+    this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
   }
 }
