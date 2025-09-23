@@ -281,6 +281,18 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
+        <!-- Niveles educativos (selección múltiple) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
+          <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
+            <mat-label>{{ "schools.add.education-levels.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
+              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('educationLevels').hasError('required')">{{ "schools.add.education-levels.required" | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- Tipo de organización / Organization Type -->
         <!-- ✅ VERIFICADO: Tipo de Centro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
 
@@ -305,18 +317,6 @@
               <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.add.center.required" | transloco }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
-        <!-- Niveles educativos (selección múltiple) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
-          <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
-            <mat-label>{{ "schools.add.education-levels.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
-              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('educationLevels').hasError('required')">{{ "schools.add.education-levels.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
