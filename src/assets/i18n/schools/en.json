@@ -519,6 +519,65 @@
                 "aesan": "AESAN",
                 "daycare-home": "Day Care Home"
             },
+            "daycare-home-fields": {
+                "title": "Day Care Home Specific Fields",
+                "description": "Specific information for day care homes in the PACNA program"
+            },
+            "is-authorized-to-operate": {
+                "label": "Is this home authorized to operate?",
+                "required": "This field is required"
+            },
+            "has-family-department-license": {
+                "label": "Does it have a Family Department license?",
+                "required": "This field is required"
+            },
+            "number-of-enrolled-children": {
+                "label": "Number of Enrolled Children",
+                "placeholder": "Enter the number of enrolled children",
+                "required": "This field is required"
+            },
+            "number-of-provider-children": {
+                "label": "How many are provider's children?",
+                "placeholder": "Enter the number of provider's children",
+                "required": "This field is required"
+            },
+            "number-of-participants-with-blood-ties": {
+                "label": "How many participants have blood ties?",
+                "placeholder": "Enter the number of participants with blood ties",
+                "required": "This field is required"
+            },
+            "number-of-participants-without-blood-ties": {
+                "label": "How many participants do not have blood ties?",
+                "placeholder": "Enter the number of participants without blood ties",
+                "required": "This field is required"
+            },
+            "minors-live-with-provider": {
+                "label": "Do the minors live with you?",
+                "required": "This field is required"
+            },
+            "relationship-type": {
+                "label": "Relationship Type",
+                "placeholder": "Select relationship type",
+                "required": "This field is required"
+            },
+            "offers-service-to-immigrant-children": {
+                "label": "Does it offer service to immigrant children?",
+                "required": "This field is required"
+            },
+            "home-type": {
+                "label": "Home Type",
+                "placeholder": "Select home type",
+                "required": "This field is required"
+            },
+            "participant-types": {
+                "label": "Participants",
+                "placeholder": "Select participant types",
+                "required": "This field is required"
+            },
+            "offers-service-to-different-groups": {
+                "label": "Does it offer service to different groups of children?",
+                "required": "This field is required"
+            },
             "child-groups": {
                 "title": "Specific Child Groups",
                 "description": "Configure specific child groups for this site",
@@ -643,6 +702,17 @@
             "title": "Edit Site",
             "information": "Information",
             "information-description": "Site information",
+            "dev-section": {
+                "title": "Development Tools - Program Selection",
+                "disclaimer": "⚠️ WARNING: This section is ONLY for development testing. Allows manual program switching to test different field configurations. DO NOT use in production.",
+                "pdam": "PDAM",
+                "psav": "PSAV",
+                "pacna": "PACNA",
+                "pfhf": "PFHF",
+                "pdfe": "PDFE",
+                "aesan": "AESAN",
+                "daycare-home": "Day Care Home"
+            },
             "main-school": {
                 "label": "Main Site",
                 "description": "Select the main site to which this site belongs. Leave blank if this is an independent site.",
@@ -1048,6 +1118,70 @@
             "site-number": {
                 "label": "Site Number",
                 "description": "Unique site code generated automatically"
+            },
+            "location-type": {
+                "label": "Location",
+                "placeholder": "Select location",
+                "required": "Location is required"
+            },
+            "daycare-home-fields": {
+                "title": "Day Care Home Specific Fields",
+                "description": "Specific information for day care homes in the PACNA program"
+            },
+            "is-authorized-to-operate": {
+                "label": "Is this home authorized to operate?",
+                "required": "This field is required"
+            },
+            "has-family-department-license": {
+                "label": "Does it have a Family Department license?",
+                "required": "This field is required"
+            },
+            "number-of-enrolled-children": {
+                "label": "Number of Enrolled Children",
+                "placeholder": "Enter the number of enrolled children",
+                "required": "This field is required"
+            },
+            "number-of-provider-children": {
+                "label": "How many are provider's children?",
+                "placeholder": "Enter the number of provider's children",
+                "required": "This field is required"
+            },
+            "number-of-participants-with-blood-ties": {
+                "label": "How many participants have blood ties?",
+                "placeholder": "Enter the number of participants with blood ties",
+                "required": "This field is required"
+            },
+            "number-of-participants-without-blood-ties": {
+                "label": "How many participants do not have blood ties?",
+                "placeholder": "Enter the number of participants without blood ties",
+                "required": "This field is required"
+            },
+            "minors-live-with-provider": {
+                "label": "Do the minors live with you?",
+                "required": "This field is required"
+            },
+            "relationship-type": {
+                "label": "Relationship Type",
+                "placeholder": "Select relationship type",
+                "required": "This field is required"
+            },
+            "offers-service-to-immigrant-children": {
+                "label": "Does it offer service to immigrant children?",
+                "required": "This field is required"
+            },
+            "home-type": {
+                "label": "Home Type",
+                "placeholder": "Select home type",
+                "required": "This field is required"
+            },
+            "participant-types": {
+                "label": "Participants",
+                "placeholder": "Select participant types",
+                "required": "This field is required"
+            },
+            "offers-service-to-different-groups": {
+                "label": "Does it offer service to different groups of children?",
+                "required": "This field is required"
             },
             "buttons": {
                 "save": "Save",

@@ -480,6 +480,31 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Merienda nocturna hasta - Campo requerido para indicar la hora de fin de la merienda nocturna
       // Snack night to - Required field indicating the end time of snack night
       snackNightTo: [null],
+      // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
+      // Cena Horario Extendido (si, no)
+      dinnerExtended: [false],
+      // Horario desde para la cena horario extendido
+      dinnerExtendedFrom: [null],
+      // Horario hasta para la cena horario extendido
+      dinnerExtendedTo: [null],
+      // Cena en Riesgo (si, no)
+      dinnerAtRisk: [false],
+      // Horario desde para la cena en riesgo
+      dinnerAtRiskFrom: [null],
+      // Horario hasta para la cena en riesgo
+      dinnerAtRiskTo: [null],
+      // Merienda Horario Extendido (si, no)
+      snackExtended: [false],
+      // Horario desde para la merienda horario extendido
+      snackExtendedFrom: [null],
+      // Horario hasta para la merienda horario extendido
+      snackExtendedTo: [null],
+      // Merienda en Riesgo (si, no)
+      snackAtRisk: [false],
+      // Horario desde para la merienda en riesgo
+      snackAtRiskFrom: [null],
+      // Horario hasta para la merienda en riesgo
+      snackAtRiskTo: [null],
       // Comunidad - Campo requerido para indicar la comunidad de la escuela
       // Community - Required field indicating the community of the school
       community: [null],
@@ -1779,5 +1804,72 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
    */
   private updateServicesTableDataSource(): void {
     this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+  }
+
+  // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
+
+  /**
+   * Maneja el cambio de estado de PDAM para desarrollo
+   */
+  onDevPDAMChange(checked: boolean): void {
+    this.isPDAM = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PSAV para desarrollo
+   */
+  onDevPSAVChange(checked: boolean): void {
+    this.isPSAV = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PACNA para desarrollo
+   */
+  onDevPACNAChange(checked: boolean): void {
+    this.isPACNA = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PFHF para desarrollo
+   */
+  onDevPFHFChange(checked: boolean): void {
+    this.isPFHF = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de PDFE para desarrollo
+   */
+  onDevPDFEChange(checked: boolean): void {
+    this.isPDFE = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de AESAN para desarrollo
+   */
+  onDevAESANChange(checked: boolean): void {
+    this.isAESAN = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Maneja el cambio de estado de Day Care Home para desarrollo
+   */
+  onDevDayCareHomeChange(checked: boolean): void {
+    this.isDayCareHome = checked;
+    this.updateDevPrograms();
+  }
+
+  /**
+   * Actualiza los programas activos basado en los checkboxes de desarrollo
+   */
+  private updateDevPrograms(): void {
+    // Actualizar validaciones y campos visibles
+    this.updateValidations();
+    this._changeDetectorRef.detectChanges();
   }
 }
