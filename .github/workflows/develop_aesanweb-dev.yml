@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: ./dist/aesanweb
+          path: ./dist/aesanweb/browser
 
   deploy:
     runs-on: ubuntu-latest
@@ -66,6 +66,7 @@ jobs:
           app-name: 'aesanweb-dev'
           slot-name: 'Production'
           package: .
+          clean: true
 
       - name: logout
         run: |
