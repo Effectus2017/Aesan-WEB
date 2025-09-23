@@ -417,7 +417,7 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Fecha de Inicio, Año base, Año de renovación - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Fecha de Inicio, Año base, Año de renovación - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Fecha de Inicio de la provisión / Provision Start Date -->
         <!-- Año base / Base Year -->
         <!-- Año de renovación / Renewal Year -->
@@ -479,8 +479,9 @@
         </div>
 
         <!-- Tipo de organización / Organization Type -->
-        <!-- Tipo de Centro / Center Type -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="shouldShowField()">
+        <!-- ✅ VERIFICADO: Tipo de Centro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowField()">
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.add.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
@@ -490,6 +491,11 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "schools.add.organization-type.required" | transloco }}</mat-error>
           </mat-form-field>
+        </div>
+
+        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ -->
+        <!-- Tipo de Centro / Center Type -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM || isPACNA">
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.add.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
@@ -499,8 +505,9 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Niveles educativos (selección múltiple) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowField()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
           <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.add.education-levels.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
@@ -522,14 +529,17 @@
         </div>
 
         <!-- Fechas de funcionamiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <p class="text-lg font-medium">{{ "schools.add.operating-dates.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.add.operating-dates.description" | transloco }}</p>
-        </div>
+        </div> -->
 
         <!-- Dias de funcionamiento desde -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Dias de funcionamiento hasta -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Días calculados -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "schools.add.operating-from-date.label" | transloco }}</mat-label>
@@ -572,6 +582,7 @@
           </mat-form-field>
         </div>
 
+        <!-- TITULO -->
         <!-- Datos Operacionales -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">
           <p class="text-lg font-medium">{{ "schools.add.operational-information.label" | transloco }}</p>
@@ -794,7 +805,13 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-am-to-field">
             <mat-label>{{ "schools.add.snack-am-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.add.snack-am-to.placeholder' | transloco }}" formControlName="snackAMTo" [matTimepicker]="pickerSnackAMTo" data-cy="snack-am-to-input" />
+            <input
+              matInput
+              placeholder="{{ 'schools.add.snack-am-to.placeholder' | transloco }}"
+              formControlName="snackAMTo"
+              [matTimepicker]="pickerSnackAMTo"
+              data-cy="snack-am-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
             <mat-timepicker #pickerSnackAMTo />
           </mat-form-field>
@@ -827,7 +844,13 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-pm-to-field">
             <mat-label>{{ "schools.add.snack-pm-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.add.snack-pm-to.placeholder' | transloco }}" formControlName="snackPMTo" [matTimepicker]="pickerSnackPMTo" data-cy="snack-pm-to-input" />
+            <input
+              matInput
+              placeholder="{{ 'schools.add.snack-pm-to.placeholder' | transloco }}"
+              formControlName="snackPMTo"
+              [matTimepicker]="pickerSnackPMTo"
+              data-cy="snack-pm-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMTo" />
             <mat-timepicker #pickerSnackPMTo />
           </mat-form-field>

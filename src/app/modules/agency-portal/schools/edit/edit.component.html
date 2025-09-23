@@ -534,7 +534,6 @@
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
-          <!-- Tipo de organización -->
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
@@ -542,8 +541,12 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "schools.edit.organization-type.required" | transloco }}</mat-error>
           </mat-form-field>
+        </div>
 
-          <!-- Centro -->
+        <!-- ✅ VERIFICADO: Tipo de Centro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+
+        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM || isPACNA">
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.edit.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
@@ -551,8 +554,10 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "schools.edit.center.required" | transloco }}</mat-error>
           </mat-form-field>
+        </div>
 
-          <!-- Niveles educativos (selección múltiple) -->
+        <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
           <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.edit.education-levels.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
@@ -573,15 +578,18 @@
           </mat-form-field>
         </div>
 
-        <!-- Fechas de funcionamiento -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "schools.edit.operating-dates.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.operating-dates.description" | transloco }}</p>
         </div>
 
         <!-- Fecha desde -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Fecha hasta -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Días calculados -->
+        <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM || isPSAV || isPACNA">
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "schools.edit.operating-from-date.label" | transloco }}</mat-label>
