@@ -12,5 +12,9 @@
     "latex",
     "plaintext",
     "typescript"
+  ],
+  "appService.zipIgnorePattern": [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
   ]
 }
