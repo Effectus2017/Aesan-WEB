@@ -65,7 +65,7 @@ jobs:
         with:
           app-name: 'aesanweb-dev'
           slot-name: 'Production'
-          package: ./dist/aesanweb/browser
+          package: .
           clean: true
 
       - name: logout
