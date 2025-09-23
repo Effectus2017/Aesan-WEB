@@ -1,5 +1,5 @@
 {
     "localUrl": "https://localhost:5002",
-    "devUrl": "https://apiaes.azurewebsites.net",
-    "prodUrl": "https://apiaes.azurewebsites.net"
+    "devUrl": "https://aesanapi.azurewebsites.net",
+    "prodUrl": "https://nutreapidev.azurewebsites.net"
 }
