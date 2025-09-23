@@ -1,7 +1,7 @@
 {
   "files.exclude": {
     "**/node_modules": true,
-    "**/dist": true,
+    "**/dist": false,
   },
   "spellright.language": [
     "es",
@@ -16,5 +16,7 @@
   "appService.zipIgnorePattern": [
     "node_modules{,/**}",
     ".vscode{,/**}"
-  ]
+],
+"appService.defaultWebAppToDeploy": "None",
+"appService.deploySubpath": "dist/aesanweb/browser"
 }
