@@ -184,9 +184,9 @@
                 "required": "El tipo de centro es requerido"
             },
             "residential-type": {
-                "label": "Tipo de Institución Infantil Residencial (RCCI)",
-                "placeholder": "Tipo de institución infantil residencial (RCCI) del sitio",
-                "required": "El tipo de institución infantil residencial (RCCI) es requerido"
+                "label": "Tipo de Institución Residencial",
+                "placeholder": "Tipo de institución residencial del sitio",
+                "required": "El tipo de institución residencial es requerido"
             },
             "operating-policy": {
                 "label": "Política de Funcionamiento",
@@ -264,6 +264,30 @@
                 "placeholder": "Desde"
             },
             "snack-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-am": {
+                "label": "Merienda AM",
+                "placeholder": "Merienda AM"
+            },
+            "snack-am-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-am-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-pm": {
+                "label": "Merienda PM",
+                "placeholder": "Merienda PM"
+            },
+            "snack-pm-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-pm-to": {
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
@@ -363,6 +387,11 @@
             "type-of-area": {
                 "label": "Tipo de Área",
                 "placeholder": "Tipo de área"
+            },
+            "location-type": {
+                "label": "Localización",
+                "placeholder": "Seleccione la localización",
+                "required": "La localización es requerida"
             },
             "new-fields": {
                 "label": "Información Adicional",
@@ -645,9 +674,9 @@
                 "required": "El tipo de centro es requerido"
             },
             "residential-type": {
-                "label": "Tipo de Institución Infantil Residencial (RCCI)",
-                "placeholder": "Tipo de institución infantil residencial (RCCI) del sitio",
-                "required": "El tipo de institución infantil residencial (RCCI) es requerido"
+                "label": "Tipo de Institución Residencial",
+                "placeholder": "Tipo de institución residencial del sitio",
+                "required": "El tipo de institución residencial es requerido"
             },
             "operating-policy": {
                 "label": "Política de Funcionamiento",
@@ -725,6 +754,30 @@
                 "placeholder": "Desde"
             },
             "snack-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-am": {
+                "label": "Merienda AM",
+                "placeholder": "Merienda AM"
+            },
+            "snack-am-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-am-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-pm": {
+                "label": "Merienda PM",
+                "placeholder": "Merienda PM"
+            },
+            "snack-pm-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-pm-to": {
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },

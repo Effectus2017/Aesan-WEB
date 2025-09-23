@@ -265,6 +265,30 @@
                 "label": "Snack To",
                 "placeholder": "Snack to"
             },
+            "snack-am": {
+                "label": "AM Snack",
+                "placeholder": "AM Snack"
+            },
+            "snack-am-from": {
+                "label": "AM Snack From",
+                "placeholder": "AM Snack from"
+            },
+            "snack-am-to": {
+                "label": "AM Snack To",
+                "placeholder": "AM Snack to"
+            },
+            "snack-pm": {
+                "label": "PM Snack",
+                "placeholder": "PM Snack"
+            },
+            "snack-pm-from": {
+                "label": "PM Snack From",
+                "placeholder": "PM Snack from"
+            },
+            "snack-pm-to": {
+                "label": "PM Snack To",
+                "placeholder": "PM Snack to"
+            },
             "dinner": {
                 "label": "Dinner",
                 "placeholder": "Dinner"
@@ -361,6 +385,11 @@
             "type-of-area": {
                 "label": "Type of Area",
                 "placeholder": "Type of area"
+            },
+            "location-type": {
+                "label": "Location",
+                "placeholder": "Select location",
+                "required": "Location is required"
             },
             "new-fields": {
                 "label": "Additional Information",
@@ -734,6 +763,30 @@
             "snack-to": {
                 "label": "Snack To",
                 "placeholder": "Snack to"
+            },
+            "snack-am": {
+                "label": "AM Snack",
+                "placeholder": "AM Snack"
+            },
+            "snack-am-from": {
+                "label": "AM Snack From",
+                "placeholder": "AM Snack from"
+            },
+            "snack-am-to": {
+                "label": "AM Snack To",
+                "placeholder": "AM Snack to"
+            },
+            "snack-pm": {
+                "label": "PM Snack",
+                "placeholder": "PM Snack"
+            },
+            "snack-pm-from": {
+                "label": "PM Snack From",
+                "placeholder": "PM Snack from"
+            },
+            "snack-pm-to": {
+                "label": "PM Snack To",
+                "placeholder": "PM Snack to"
             },
             "dinner": {
                 "label": "Dinner",

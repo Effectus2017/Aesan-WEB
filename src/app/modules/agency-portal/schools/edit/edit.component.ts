@@ -397,15 +397,24 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Almuerzo hasta - Campo requerido para indicar la hora de fin del almuerzo
       // Lunch to - Required field indicating the end time of lunch
       lunchTo: [null],
-      // Merienda - Campo requerido para indicar si la escuela tiene merienda
-      // Snack - Required field indicating if the school has snack
-      snack: [false],
-      // Merienda desde - Campo requerido para indicar la hora de inicio de la merienda
-      // Snack from - Required field indicating the start time of snack
-      snackFrom: [null],
-      // Merienda hasta - Campo requerido para indicar la hora de fin de la merienda
-      // Snack to - Required field indicating the end time of snack
-      snackTo: [null],
+      // Merienda AM - Campo requerido para indicar si la escuela tiene merienda AM
+      // Snack AM - Required field indicating if the school has snack AM
+      snackAM: [false],
+      // Merienda AM desde - Campo requerido para indicar la hora de inicio de la merienda AM
+      // Snack AM from - Required field indicating the start time of snack AM
+      snackAMFrom: [null],
+      // Merienda AM hasta - Campo requerido para indicar la hora de fin de la merienda AM
+      // Snack AM to - Required field indicating the end time of snack AM
+      snackAMTo: [null],
+      // Merienda PM - Campo requerido para indicar si la escuela tiene merienda PM
+      // Snack PM - Required field indicating if the school has snack PM
+      snackPM: [false],
+      // Merienda PM desde - Campo requerido para indicar la hora de inicio de la merienda PM
+      // Snack PM from - Required field indicating the start time of snack PM
+      snackPMFrom: [null],
+      // Merienda PM hasta - Campo requerido para indicar la hora de fin de la merienda PM
+      // Snack PM to - Required field indicating the end time of snack PM
+      snackPMTo: [null],
       // Cena - Campo requerido para indicar si la escuela tiene cena
       // Dinner - Required field indicating if the school has dinner
       dinner: [false],
@@ -867,8 +876,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const breakfastTo: Date | null = schoolService ? toTimeDate(schoolService.breakfastTo) : null;
     const lunchFrom: Date | null = schoolService ? toTimeDate(schoolService.lunchFrom) : null;
     const lunchTo: Date | null = schoolService ? toTimeDate(schoolService.lunchTo) : null;
-    const snackFrom: Date | null = schoolService ? toTimeDate(schoolService.snackAMFrom) : null;
-    const snackTo: Date | null = schoolService ? toTimeDate(schoolService.snackAMTo) : null;
+    const snackAMFrom: Date | null = schoolService ? toTimeDate(schoolService.snackAMFrom) : null;
+    const snackAMTo: Date | null = schoolService ? toTimeDate(schoolService.snackAMTo) : null;
+    const snackPMFrom: Date | null = schoolService ? toTimeDate(schoolService.snackPMFrom) : null;
+    const snackPMTo: Date | null = schoolService ? toTimeDate(schoolService.snackPMTo) : null;
 
     const mainSchool = param.mainSchool;
 
@@ -936,9 +947,12 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       lunch: schoolService?.lunch || false,
       lunchFrom: lunchFrom,
       lunchTo: lunchTo,
-      snack: schoolService?.snackAM || false, // Mapear snackAM a snack
-      snackFrom: snackFrom,
-      snackTo: snackTo,
+      snackAM: schoolService?.snackAM || false,
+      snackAMFrom: snackAMFrom,
+      snackAMTo: snackAMTo,
+      snackPM: schoolService?.snackPM || false,
+      snackPMFrom: snackPMFrom,
+      snackPMTo: snackPMTo,
       dinner: schoolService?.dinner || false,
       dinnerFrom: dinnerFrom,
       dinnerTo: dinnerTo,
@@ -1033,11 +1047,14 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const breakfastTo: string = toTimeString(formValues.breakfastTo);
     const lunchFrom: string = toTimeString(formValues.lunchFrom);
     const lunchTo: string = toTimeString(formValues.lunchTo);
-    const snackFrom: string = toTimeString(formValues.snackFrom);
-    const snackTo: string = toTimeString(formValues.snackTo);
+    const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
+    const snackAMTo: string = toTimeString(formValues.snackAMTo);
+    const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
+    const snackPMTo: string = toTimeString(formValues.snackPMTo);
 
     // Servicios básicos
-    const snack = formValues.snack;
+    const snackAM = formValues.snackAM;
+    const snackPM = formValues.snackPM;
     const lunch = formValues.lunch;
     const breakfast = formValues.breakfast;
 
@@ -1149,7 +1166,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     // Constantes para servicios básicos
     const breakfastService = breakfast ?? null;
     const lunchService = lunch ?? null;
-    const snackService = snack ?? null;
+    const snackAMService = snackAM ?? null;
+    const snackPMService = snackPM ?? null;
     const dinnerService = dinner ?? null;
     const snackNightService = snackNight ?? null;
 
@@ -1172,17 +1190,17 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       lunchFrom: lunchFrom ?? null,
       lunchTo: lunchTo ?? null,
 
-      snackAM: snackService, // Mapear 'snack' a 'snackAM'
-      snackAMFrom: snackFrom ?? null,
-      snackAMTo: snackTo ?? null,
+      snackAM: snackAMService,
+      snackAMFrom: snackAMFrom ?? null,
+      snackAMTo: snackAMTo ?? null,
 
       dinner: dinnerService,
       dinnerFrom: dinnerFrom ?? null,
       dinnerTo: dinnerTo ?? null,
 
-      snackPM: null, // No se usa en el formulario actual
-      snackPMFrom: null,
-      snackPMTo: null,
+      snackPM: snackPMService,
+      snackPMFrom: snackPMFrom ?? null,
+      snackPMTo: snackPMTo ?? null,
 
       snackNight: snackNightService,
       snackNightFrom: snackNightFrom ?? null,

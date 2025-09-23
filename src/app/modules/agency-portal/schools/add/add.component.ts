@@ -329,15 +329,24 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Horario hasta para el almuerzo
       // Lunch schedule to
       lunchTo: [null],
-      // Merienda (si, no)
-      // Snack (yes, no)
-      snack: [false],
-      // Horario desde para la merienda
-      // Snack schedule from
-      snackFrom: [null],
-      // Horario hasta para la merienda
-      // Snack schedule to
-      snackTo: [null],
+      // Merienda AM (si, no)
+      // Snack AM (yes, no)
+      snackAM: [false],
+      // Horario desde para la merienda AM
+      // Snack AM schedule from
+      snackAMFrom: [null],
+      // Horario hasta para la merienda AM
+      // Snack AM schedule to
+      snackAMTo: [null],
+      // Merienda PM (si, no)
+      // Snack PM (yes, no)
+      snackPM: [false],
+      // Horario desde para la merienda PM
+      // Snack PM schedule from
+      snackPMFrom: [null],
+      // Horario hasta para la merienda PM
+      // Snack PM schedule to
+      snackPMTo: [null],
       // Comunidad
       // Community
       community: [null],
@@ -768,9 +777,12 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Horario de almuerzo
     const lunchFrom: string = toTimeString(formValues.lunchFrom);
     const lunchTo: string = toTimeString(formValues.lunchTo);
-    // Horario de merienda
-    const snackFrom: string = toTimeString(formValues.snackFrom);
-    const snackTo: string = toTimeString(formValues.snackTo);
+    // Horario de merienda AM
+    const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
+    const snackAMTo: string = toTimeString(formValues.snackAMTo);
+    // Horario de merienda PM
+    const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
+    const snackPMTo: string = toTimeString(formValues.snackPMTo);
 
     // Horario de cena
     const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
@@ -944,54 +956,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Teléfono móvil - Campo para contacto
       // Mobile phone - Contact field
       mobilePhone: formValues.mobilePhone ?? null,
-      // Servicios y Horarios / Services and Schedules
-      // Desayuno - Indicador de servicio
-      // Breakfast - Service indicator
-      //breakfast: formValues.breakfast ?? null,
-      // Horario desde para el desayuno
-      // Breakfast schedule from
-      //breakfastFrom: breakfastFrom ?? null,
-      // Horario hasta para el desayuno
-      // Breakfast schedule to
-      //breakfastTo: breakfastTo ?? null,
-      // Almuerzo - Indicador de servicio
-      // Lunch - Service indicator
-      //lunch: formValues.lunch ?? null,
-      // Horario desde para el almuerzo
-      // Lunch schedule from
-      //lunchFrom: lunchFrom ?? null,
-      // Horario hasta para el almuerzo
-      // Lunch schedule to
-      //lunchTo: lunchTo ?? null,
-      // Merienda - Indicador de servicio
-      // Snack - Service indicator
-      //snack: formValues.snack ?? null,
-      // Horario desde para la merienda
-      // Snack schedule from
-      //snackFrom: snackFrom ?? null,
-      // Horario hasta para la merienda
-      // Snack schedule to
-      //snackTo: snackTo ?? null,
-
-      // Cena - Indicador de servicio
-      // Dinner - Service indicator
-      //dinner: formValues.dinner ?? null,
-      // Horario desde para la cena
-      // Dinner schedule from
-      //dinnerFrom: dinnerFrom ?? null,
-      // Horario hasta para la cena
-      // Dinner schedule to
-      //dinnerTo: dinnerTo ?? null,
-      // Merienda nocturna - Indicador de servicio
-      // Snack night - Service indicator
-      //snackNight: formValues.snackNight ?? null,
-      // Horario desde para la merienda nocturna
-      // Snack night schedule from
-      //snackNightFrom: snackNightFrom ?? null,
-      // Horario hasta para la merienda nocturna
-      // Snack night schedule to
-      //snackNightTo: snackNightTo ?? null,
-
       // Comunidad
       // Community
       communityId: formValues.communityId ?? null,
@@ -1027,7 +991,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Constantes para servicios básicos
     const breakfast = formValues.breakfast ?? null;
     const lunch = formValues.lunch ?? null;
-    const snack = formValues.snack ?? null;
+    const snackAM = formValues.snackAM ?? null;
+    const snackPM = formValues.snackPM ?? null;
     const dinner = formValues.dinner ?? null;
     const snackNight = formValues.snackNight ?? null;
 
@@ -1050,17 +1015,17 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       lunchFrom: lunchFrom ?? null,
       lunchTo: lunchTo ?? null,
 
-      snackAM: snack, // Mapear 'snack' a 'snackAM'
-      snackAMFrom: snackFrom ?? null,
-      snackAMTo: snackTo ?? null,
+      snackAM: snackAM,
+      snackAMFrom: snackAMFrom ?? null,
+      snackAMTo: snackAMTo ?? null,
 
       dinner: dinner,
       dinnerFrom: dinnerFrom ?? null,
       dinnerTo: dinnerTo ?? null,
 
-      snackPM: null, // No se usa en el formulario actual
-      snackPMFrom: null,
-      snackPMTo: null,
+      snackPM: snackPM,
+      snackPMFrom: snackPMFrom ?? null,
+      snackPMTo: snackPMTo ?? null,
 
       snackNight: snackNight,
       snackNightFrom: snackNightFrom ?? null,

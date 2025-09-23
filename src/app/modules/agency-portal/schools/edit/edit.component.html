@@ -179,6 +179,7 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Participantes / Participants - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
           <!-- Participantes (selección múltiple) -->
           <mat-form-field data-cy="participant-types-field">
@@ -213,6 +214,9 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.information-description" | transloco }}</p>
         </div>
 
+        <!-- AQUI ES DONDE COMIENZA EL FORMULARIO -->
+        <!-- HAY QUE SACAR LA PARTE PREVIA Y CAMBIARLA DE LUGAR -->
+
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Número de Sitio -->
           <mat-form-field data-cy="site-number-field">
@@ -222,14 +226,18 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <!-- ✅ VERIFICADO: Nombre del sitio - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- name -->
           <mat-form-field data-cy="name-field">
             <mat-label>{{ "schools.edit.name.label" | transloco }}</mat-label>
             <input matInput formControlName="name" required placeholder="{{ 'schools.edit.name.placeholder' | transloco }}" data-cy="name-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "schools.edit.name.required" | transloco }}</mat-error>
           </mat-form-field>
+        </div>
 
+        <!-- Campos específicos del Edit -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Desactivar/Activar -->
           <mat-form-field data-cy="is-active-field">
             <mat-label>{{ "schools.edit.is-active.label" | transloco }}</mat-label>
@@ -298,20 +306,25 @@
           </div>
         </div>
 
+        <!-- ✅ VERIFICADO: Dirección física - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Dirección * / Address -->
+        <!-- Datos de la dirección física del sitio / Site physical address data -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <p class="text-lg font-medium">{{ "schools.edit.address.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.address.description" | transloco }}</p>
         </div>
 
+        <!-- ✅ VERIFICADO: Dirección, Ciudad, Región - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Dirección *  -->
+        <!-- Municipio para Dirección Física *  -->
+        <!-- Region * / Region -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
-          <!-- Address *  -->
           <mat-form-field data-cy="address-field">
             <mat-label>{{ "schools.edit.address.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'address'" placeholder="{{ 'schools.edit.address.placeholder' | transloco }}" data-cy="address-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('address').hasError('required')">{{ "schools.edit.address.required" | transloco }}</mat-error>
           </mat-form-field>
 
-          <!-- City para Dirección Física *  -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "schools.edit.city.label" | transloco }}</mat-label>
             <mat-select
@@ -327,7 +340,6 @@
             <mat-error *ngIf="headerConfig.formGroup.get('city').hasError('required')">{{ "schools.edit.city.required" | transloco }}</mat-error>
           </mat-form-field>
 
-          <!-- Region *  -->
           <mat-form-field data-cy="region-field">
             <mat-label>{{ "schools.edit.region.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compareById">
@@ -337,20 +349,23 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Código postal, Latitud, Longitud - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Código postal / ZIP code -->
+        <!-- Latitude / Latitude -->
+        <!-- Longitude / Longitude -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
-          <!-- Zip Code *  -->
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "schools.edit.zip-code.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'zipCode'" placeholder="{{ 'schools.edit.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">{{ "schools.edit.zip-code.required" | transloco }}</mat-error>
           </mat-form-field>
-          <!-- Latitude *  -->
+
           <mat-form-field data-cy="latitude-field">
             <mat-label>{{ "schools.edit.latitude.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'latitude'" placeholder="{{ 'schools.edit.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('latitude').hasError('required')">{{ "schools.edit.latitude.required" | transloco }}</mat-error>
           </mat-form-field>
-          <!-- Longitude *  -->
+
           <div class="flex gap-2 items-center">
             <mat-form-field data-cy="longitude-field" class="flex-grow">
               <mat-label>{{ "schools.edit.longitude.label" | transloco }}</mat-label>
@@ -371,24 +386,33 @@
           </div>
         </div>
 
+        <!-- ✅ VERIFICADO: Dirección postal - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Dirección Postal / Postal Address -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "schools.edit.postal-address.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "schools.edit.postal-address.description" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4 sm:col-span-12">
+        <!-- Datos de la dirección postal del sitio / Site postal address data -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-checkbox data-cy="same-as-physical-address-checkbox" [formControlName]="'sameAsPhysicalAddress'" (change)="onCheckboxChange($event)">{{
             "schools.edit.same-as-physical-address.label" | transloco
           }}</mat-checkbox>
         </div>
 
+        <!-- ✅ VERIFICADO: Dirección postal, Ciudad postal, Región postal, Código postal postal - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Dirección Postal / Postal Address *  -->
+        <!-- Municipio para Dirección Postal *  -->
+        <!-- Region para Dirección Postal *  -->
+        <!-- Código postal para Dirección Postal *  -->
+        <!-- Tipo de Área / Type of Area -->
+        <!-- Localización / Location -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
-          <!-- Postal Address *  -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "schools.edit.postal-address.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'schools.edit.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
           </mat-form-field>
-          <!-- City para Dirección Postal *  -->
+
           <mat-form-field data-cy="postal-city-field">
             <mat-label>{{ "schools.edit.city.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [compareWith]="compareById">
@@ -396,7 +420,7 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('postalCity').hasError('required')">{{ "schools.edit.city.required" | transloco }}</mat-error>
           </mat-form-field>
-          <!-- Region para Dirección Postal *  -->
+
           <mat-form-field data-cy="postal-region-field">
             <mat-label>{{ "schools.edit.region.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compareById">
@@ -405,7 +429,6 @@
             <mat-error *ngIf="headerConfig.formGroup.get('postalRegion').hasError('required')">{{ "schools.edit.region.required" | transloco }}</mat-error>
           </mat-form-field>
 
-          <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "schools.edit.zip-code.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'schools.edit.zip-code.placeholder' | transloco }}" numericOnly data-cy="postal-zip-code-input" />
@@ -438,6 +461,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.administrative-information.description" | transloco }}</p>
         </div>
 
+        <!-- ✅ VERIFICADO: Es una organización sin fines de lucro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Es una organización sin fines de lucro? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- ¿Es una organización sin fines de lucro? -->
@@ -452,10 +476,11 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Fecha de Inicio, Año base, Año de renovación - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Fecha de Inicio -->
         <!-- Año base -->
         <!-- Año de renovación -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM">
           <mat-form-field data-cy="start-date-field">
             <mat-label>{{ "schools.edit.start-date.label" | transloco }}</mat-label>
             <input
@@ -478,9 +503,10 @@
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <!-- ✅ VERIFICADO: Política de funcionamiento - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
           <!-- Política de funcionamiento -->
-          <mat-form-field data-cy="operating-policy-field" *ngIf="isPDAM">
+          <mat-form-field data-cy="operating-policy-field">
             <mat-label>{{ "schools.edit.operating-policy.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of operatingPolicies" [value]="option" data-cy="operating-policy-option">{{ option.name }}</mat-option>
@@ -488,6 +514,7 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Matrícula General - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Matrícula General -->
           <mat-form-field data-cy="general-enrollment-field">
@@ -508,7 +535,7 @@
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <!-- Tipo de organización -->
-          <mat-form-field data-cy="organization-type-field" *ngIf="isPDAM">
+          <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "schools.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">{{ option.name }}</mat-option>
@@ -517,7 +544,7 @@
           </mat-form-field>
 
           <!-- Centro -->
-          <mat-form-field data-cy="center-field" *ngIf="isPDAM">
+          <mat-form-field data-cy="center-field">
             <mat-label>{{ "schools.edit.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ option.name }}</mat-option>
@@ -535,8 +562,9 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Institución Residencial - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Tipo de Institución Infantil Residencial (RCCI)= Pernoctan o No Pernoctan=Requerido -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.edit.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
@@ -554,7 +582,7 @@
         <!-- Fecha desde -->
         <!-- Fecha hasta -->
         <!-- Días calculados -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM || isPSAV || isPACNA">
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "schools.edit.operating-from-date.label" | transloco }}</mat-label>
             <input
@@ -602,8 +630,9 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.operational-information.description" | transloco }}</p>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Auspiciador - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ -->
         <!-- Tipo de Auspiciador -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM || isPACNA">
           <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "schools.edit.sponsor-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
@@ -612,9 +641,10 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Grupo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Tipo de Grupo -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="group-type-field" *ngIf="isPDAM || isPSAV">
+          <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "schools.edit.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" data-cy="group-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ option.name }}</mat-option>
@@ -622,9 +652,10 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Entrega - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Tipo de Entrega -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="delivery-type-field" *ngIf="isPSAV">
+          <mat-form-field data-cy="delivery-type-field">
             <mat-label>{{ "schools.edit.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById" (selectionChange)="onDeliveryTypeChange($event.value)">
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ option.name }}</mat-option>
@@ -632,9 +663,10 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Cocina - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Tipo de cocina -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="kitchen-type-field" *ngIf="isPDAM || isPSAV">
+          <mat-form-field data-cy="kitchen-type-field">
             <mat-label>{{ "schools.edit.kitchen-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ option.name }}</mat-option>
@@ -642,9 +674,24 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Tipo de Solicitante - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Tipo de Solicitante -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <mat-form-field data-cy="applicant-type-field">
+            <mat-label>{{ "schools.edit.applicant-type.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- ✅ VERIFICADO: Comunidad - Aplica a: PDAM ❌ PSAV ✅ PACNA ❌ -->
         <!-- Comunidad -->
+        <!-- ✅ VERIFICADO: Caminantes - Aplica a: PDAM ❌ PSAV ✅ PACNA ❌ -->
         <!-- Caminantes / Walkers -->
+        <!-- ✅ VERIFICADO: Tipo de Sitio - Aplica a: PDAM ❌ PSAV ✅ PACNA ❌ -->
         <!-- Tipo de sitio -->
+        <!-- ✅ VERIFICADO: Experiencia - Aplica a: PDAM ❌ PSAV ✅ PACNA ❌ -->
         <!-- Experiencia -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12" *ngIf="isPSAV">
           <!-- Comunidad -->
@@ -680,17 +727,9 @@
           </mat-form-field>
         </div>
 
-        <!-- Tipo de Solicitante -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="applicant-type-field">
-            <mat-label>{{ "schools.edit.applicant-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">{{ option.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
+        <!-- ✅ VERIFICADO: ¿Cuenta con un Almacén? - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Cuenta con un Almacén?= Es una respuesta de si o no. -->
+        <!-- ✅ VERIFICADO: ¿Cuenta con un Salón Comedor? - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Cuenta con un Salón Comedor?= Es una respuesta de si o no. -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="has-warehouse-field">
@@ -723,6 +762,7 @@
           <p class="mb-6 text-secondary">{{ "schools.edit.services-and-schedule.description" | transloco }}</p>
         </div>
 
+        <!-- ✅ VERIFICADO: Desayuno - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Desayuno (si, no) -->
         <!-- Horario desde para el desayuno -->
         <!-- Horario hasta para el desayuno -->
@@ -766,6 +806,7 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Almuerzo (si, no) -->
         <!-- Horario desde para el almuerzo -->
         <!-- Horario hasta para el almuerzo -->
@@ -809,48 +850,77 @@
           </mat-form-field>
         </div>
 
-        <!-- Merienda (si, no) -->
-        <!-- Horario desde para la merienda -->
-        <!-- Horario hasta para la merienda -->
+        <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Merienda AM / Snack AM -->
+        <!-- Horario desde para la merienda AM -->
+        <!-- Horario hasta para la merienda AM -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
-          <mat-form-field data-cy="snack-field">
-            <mat-label>{{ "schools.edit.snack.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snack'" data-cy="snack-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-option">
+          <mat-form-field data-cy="snack-am-field">
+            <mat-label>{{ "schools.edit.snack-am.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-am-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field data-cy="snack-from-field">
-            <mat-label>{{ "schools.edit.snack-from.label" | transloco }}</mat-label>
+          <mat-form-field data-cy="snack-am-from-field">
+            <mat-label>{{ "schools.edit.snack-am-from.label" | transloco }}</mat-label>
             <input
               matInput
-              placeholder="{{ 'schools.edit.snack-from.placeholder' | transloco }}"
-              formControlName="snackFrom"
-              [matTimepicker]="pickerSnackFrom"
-              data-cy="snack-from-input"
+              placeholder="{{ 'schools.edit.snack-am-from.placeholder' | transloco }}"
+              formControlName="snackAMFrom"
+              [matTimepicker]="pickerSnackAMFrom"
+              data-cy="snack-am-from-input"
             />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackFrom" />
-            <mat-timepicker #pickerSnackFrom />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMFrom" />
+            <mat-timepicker #pickerSnackAMFrom />
           </mat-form-field>
-          <mat-form-field data-cy="snack-to-field">
-            <mat-label>{{ "schools.edit.snack-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'schools.edit.snack-to.placeholder' | transloco }}"
-              formControlName="snackTo"
-              [matTimepicker]="pickerSnackTo"
-              data-cy="snack-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackTo" />
-            <mat-timepicker #pickerSnackTo />
+          <mat-form-field data-cy="snack-am-to-field">
+            <mat-label>{{ "schools.edit.snack-am-to.label" | transloco }}</mat-label>
+            <input matInput placeholder="{{ 'schools.edit.snack-am-to.placeholder' | transloco }}" formControlName="snackAMTo" [matTimepicker]="pickerSnackAMTo" data-cy="snack-am-to-input" />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
+            <mat-timepicker #pickerSnackAMTo />
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Merienda PM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Merienda PM / Snack PM -->
+        <!-- Horario desde para la merienda PM -->
+        <!-- Horario hasta para la merienda PM -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <mat-form-field data-cy="snack-pm-field">
+            <mat-label>{{ "schools.edit.snack-pm.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-pm-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field data-cy="snack-pm-from-field">
+            <mat-label>{{ "schools.edit.snack-pm-from.label" | transloco }}</mat-label>
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.snack-pm-from.placeholder' | transloco }}"
+              formControlName="snackPMFrom"
+              [matTimepicker]="pickerSnackPMFrom"
+              data-cy="snack-pm-from-input"
+            />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMFrom" />
+            <mat-timepicker #pickerSnackPMFrom />
+          </mat-form-field>
+          <mat-form-field data-cy="snack-pm-to-field">
+            <mat-label>{{ "schools.edit.snack-pm-to.label" | transloco }}</mat-label>
+            <input matInput placeholder="{{ 'schools.edit.snack-pm-to.placeholder' | transloco }}" formControlName="snackPMTo" [matTimepicker]="pickerSnackPMTo" data-cy="snack-pm-to-input" />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMTo" />
+            <mat-timepicker #pickerSnackPMTo />
+          </mat-form-field>
+        </div>
+
+        <!-- ✅ VERIFICADO: Cena - Aplica a: PDAM ❌ PSAV ✅ PACNA ✅ -->
         <!-- Cena (si, no) -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV || isPACNA">
           <mat-form-field data-cy="dinner-field" *ngIf="isPSAV">
             <mat-label>{{ "schools.edit.dinner.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
@@ -885,11 +955,12 @@
           </mat-form-field>
         </div>
 
+        <!-- ✅ VERIFICADO: Merienda nocturna - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Merienda nocturna (si, no) -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPSAV">
-          <mat-form-field data-cy="snack-night-field" *ngIf="isPSAV">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA">
+          <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "schools.edit.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
@@ -897,7 +968,7 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field data-cy="snack-night-from-field" *ngIf="isPSAV">
+          <mat-form-field data-cy="snack-night-from-field">
             <mat-label>{{ "schools.edit.snack-night-from.label" | transloco }}</mat-label>
             <input
               matInput
@@ -909,7 +980,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightFrom" />
             <mat-timepicker #pickerSnackNightFrom />
           </mat-form-field>
-          <mat-form-field data-cy="snack-night-to-field" *ngIf="isPSAV">
+          <mat-form-field data-cy="snack-night-to-field">
             <mat-label>{{ "schools.edit.snack-night-to.label" | transloco }}</mat-label>
             <input
               matInput
@@ -923,10 +994,10 @@
           </mat-form-field>
         </div>
 
-        <!-- Nombre Completo del Administrador o Representante -->
-        <!-- Teléfono del Sitio -->
-        <!-- Extensión -->
-        <!-- Teléfono Móvil -->
+        <!-- ✅ VERIFICADO: Nombre Completo del Administrador o Representante - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Teléfono del Sitio - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Extensión - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Teléfono Móvil - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="administrator-authorized-name-field">
             <mat-label>{{ "schools.edit.administrator-authorized-name.label" | transloco }}</mat-label>
@@ -951,8 +1022,8 @@
           </mat-form-field>
         </div>
 
-        <!-- Teléfono del Sitio -->
-        <!-- Teléfono Móvil -->
+        <!-- ✅ VERIFICADO: Teléfono del Sitio (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
+        <!-- ✅ VERIFICADO: Teléfono Móvil (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
           <mat-form-field data-cy="site-phone-field">
             <mat-label>{{ "schools.edit.site-phone.label" | transloco }}</mat-label>
