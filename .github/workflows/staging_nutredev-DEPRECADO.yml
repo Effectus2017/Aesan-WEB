@@ -6,17 +6,19 @@
 #   pages: write
 #   id-token: write
 
-# name: Build and deploy Node.js app to Azure Web App - aesanweb-dev
+# name: Build and deploy Node.js app to Azure Web App - nutreDev
 
 # on:
 #   push:
 #     branches:
-#       - develop
+#       - staging
 #   workflow_dispatch:
 
 # jobs:
 #   build:
 #     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read #This is required for actions/checkout
 
 #     steps:
 #       - uses: actions/checkout@v4
@@ -26,10 +28,13 @@
 #         with:
 #           node-version: '22.x'
 
+#       - name: Clear npm cache
+#         run: npm cache clean --force
+
 #       - name: npm install, build, and test
 #         run: |
 #           npm install --force
-#           npm run dev
+#           npm run prod
 
 #       - name: Upload artifact for deployment job
 #         uses: actions/upload-artifact@v4
@@ -55,15 +60,15 @@
 #       - name: Login to Azure
 #         uses: azure/login@v2
 #         with:
-#           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2A8FB62DE65E49DA8E0D78792D8B333A }}
-#           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_22AE26968E2D45AFA381A16626D9BE52 }}
-#           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_43A7529998EF4817B77CE043018B587F }}
+#           client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F426073EC062421CB75E157892EAA978 }}
+#           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BC63B301631746DAA940AB501B842D3B }}
+#           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1F80513AF3634D5997391205C449E0B0 }}
 
 #       - name: 'Deploy to Azure Web App'
 #         id: deploy-to-webapp
 #         uses: azure/webapps-deploy@v3
 #         with:
-#           app-name: 'aesanweb-dev'
+#           app-name: 'nutreDev'
 #           slot-name: 'Production'
 #           package: .
 #           clean: true

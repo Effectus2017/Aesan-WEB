@@ -3,15 +3,14 @@
 
 permissions:
   contents: read
-  pages: write
   id-token: write
 
-name: Build and deploy Node.js app to Azure Web App - nutreDev
+name: Build and deploy Node.js app to Azure Web App - nutre-web-dev
 
 on:
   push:
     branches:
-      - staging
+      - develop
   workflow_dispatch:
 
 jobs:
@@ -28,13 +27,10 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: Clear npm cache
-        run: npm cache clean --force
-
       - name: npm install, build, and test
         run: |
           npm install --force
-          npm run prod
+          npm run dev
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -45,11 +41,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: Download artifact from build job
@@ -60,17 +54,17 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_F426073EC062421CB75E157892EAA978 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_BC63B301631746DAA940AB501B842D3B }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_1F80513AF3634D5997391205C449E0B0 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_26524946DA384D85840A47A6372D3629 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_3CBE861C871F45EF90A5541BF2652CFF }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E0403C2E47C041EB9984E811537D5F77 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'nutreDev'
+          app-name: 'nutre-web-dev'
           slot-name: 'Production'
-          package: ./dist/aesanweb/browser
+          package: .
           clean: true
 
       - name: logout
