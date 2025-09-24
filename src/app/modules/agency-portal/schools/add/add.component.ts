@@ -51,6 +51,7 @@ import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components
 import { SERVICES_COLUMNS_SCHEMA } from '../add-service-by-group-modal/services-columns-schema';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../add-service-by-group-modal/add-service-by-group-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-schools-add',
@@ -495,6 +496,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
   showDifferentGroupsFields: boolean = false;
+
+  // Propiedad para controlar la visibilidad de la sección de desarrollo
+  isDevelopmentMode: boolean = !environment.production;
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SchoolChildGroupRequest[] = [];

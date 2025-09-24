@@ -60,6 +60,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-schools-edit',
@@ -228,6 +229,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
   showDifferentGroupsFields: boolean = false;
+
+  // Propiedad para controlar la visibilidad de la sección de desarrollo
+  isDevelopmentMode: boolean = !environment.production;
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SchoolChildGroupRequest[] = [];
