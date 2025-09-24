@@ -1,5 +1,5 @@
 {
     "localUrl": "https://localhost:5002",
     "devUrl": "https://nutre-api-dev.azurewebsites.net",
-    "prodUrl": "https://nutreapidev.azurewebsites.net"
+    "prodUrl": "https://nutre-api-staging.azurewebsites.net"
 }
