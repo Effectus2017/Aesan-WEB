@@ -10,10 +10,10 @@
       "no": "No"
     },
     "basic-education-registry": {
-      "label": "Do you have Basic Education Registry Certification?",
-      "granted": "Granted",
-      "in-progress": "In Progress",
-      "no": "No"
+      "label": "Do you have Basic Education Registry Certification?"
+    },
+    "extended-hours": {
+      "label": "Are you interested in participating in extended hours?"
     },
     "state-funds-denied": {
       "label": "Have you been denied or disqualified from state funds in the last seven years?",
@@ -150,6 +150,9 @@
     },
     "basic-education-not-eligible": {
       "message": "To participate in PDAM or PSAV programs, you must have Basic Education Registry granted or in progress"
+    },
+    "extended-hours-not-eligible": {
+      "message": "To participate in the PACNA program, you must be interested in participating in extended hours"
     },
     "error": {
       "creating-user": "Error creating user. Please try again"

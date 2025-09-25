@@ -21,7 +21,7 @@
           <!-- Programa *  -->
           <!-- ¿Es una organización sin fines de lucro? -->
           <!-- ¿Posee Certificación de Registro de Educación Básica? -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
+          <div class="grid grid-cols-1 col-span-12 gap-4" appDynamicGrid="3">
             <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "sign-up.program-name.label" | transloco }}</mat-label>
@@ -46,11 +46,25 @@
 
             <!-- ¿Posee Certificación de Registro de Educación Básica? -->
             <!-- Do you have Basic Education Registry Certification? -->
-            <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
-            <mat-form-field data-cy="basic-education-registry-field">
+            <!-- Si (1) y No (2) -->
+            <mat-form-field data-cy="basic-education-registry-field" *ngIf="!isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.basic-education-registry.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'basicEducationRegistryId'" data-cy="basic-education-registry-select">
-                <mat-option *ngFor="let option of exceptionStatus" [value]="option.id" data-cy="basic-education-registry-option">
+              <mat-select [formControlName]="'basicEducationRegistry'" data-cy="basic-education-registry-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="basic-education-registry-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <!-- ¿Está interesado en participar de horario extendido? (Solo para PACNA) -->
+            <!-- Are you interested in participating in extended hours? (Only for PACNA) -->
+            <!-- Si (1) y No (2) -->
+            <mat-form-field data-cy="extended-hours-field" *ngIf="isPACNAProgram(signUpForm.get('program')?.value) && signUpForm.get('basicEducationRegistry')?.value === true">
+              <mat-label>{{ "sign-up.extended-hours.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'extendedHours'" data-cy="extended-hours-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="extended-hours-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>

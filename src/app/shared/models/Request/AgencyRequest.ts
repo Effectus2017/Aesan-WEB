@@ -40,8 +40,12 @@ export interface AgencyRequest {
     nonProfit?: boolean;
     // ¿Posee Certificación de Registro de Educación Básica?
     // Does it have a Basic Education Registry Certificate?
-    // En Proceso (3), Otorgado (4), Denegado (5)
-    basicEducationRegistryId?: number;
+    // Si (1) y No (2)
+    basicEducationRegistry?: boolean;
+    // ¿Está interesado en participar de horario extendido? (Solo para PACNA)
+    // Are you interested in participating in extended hours? (Only for PACNA)
+    // Si (1) y No (2)
+    extendedHours?: boolean;
     // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
     // Si (1) y No (2)
     stateFundsDenied?: boolean;

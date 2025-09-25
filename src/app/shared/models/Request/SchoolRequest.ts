@@ -68,6 +68,11 @@ export interface SchoolRequest {
     // Si la escuela es la principal
     isMainSchool?: boolean;
 
+    // Site Location - Determined by Group Type
+    // Mobile: for "Servicio en Camiones" (Truck Service)
+    // Fixed: for all other group types
+    siteLocationId?: number;
+
     // Estado de actividad
     isActive?: boolean;
     inactiveJustification?: string;

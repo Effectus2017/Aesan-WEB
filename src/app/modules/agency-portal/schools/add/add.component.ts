@@ -28,6 +28,7 @@ import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
 import { SchoolChildGroupRequest } from 'app/shared/models/Request/SchoolChildGroupRequest';
 import { SchoolDayCareHomeRequest } from 'app/shared/models/Request/SchoolDayCareHomeRequest';
+import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
@@ -88,6 +89,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _agencyService = inject(AgencyService);
+  private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _centerTypeService = inject(CenterTypeService);
@@ -152,7 +154,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Tipo de cocina
   // Type of kitchen
   kitchenTypes: OptionSelection[] = [];
-  isKitchenTypeDisabled: boolean = false;
+
+  // Site Location
+  // Site location - Determined by group type
+  siteLocations: OptionSelection[] = [];
 
   // Tipo de área
   // Type of area
@@ -267,6 +272,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
       kitchenType: [null],
+      // Site Location - Determined by Group Type
+      // Site location - Determined by group type
+      siteLocation: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
       groupType: [null],
@@ -586,6 +594,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
       this.experience = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience');
+      this.siteLocations = resolvedData.siteLocations || [];
 
       // Catálogos
       this.centerTypes = resolvedData.centerTypes;
@@ -604,8 +613,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Verificar escuela principal
       this.isMainSchool = !resolvedData.hasMainSchool;
 
-      // Inicializar estado del tipo de cocina
-      this.isKitchenTypeDisabled = false; // Siempre habilitado
+      // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
       this._changeDetectorRef.markForCheck();
     }
@@ -729,9 +737,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     this.updateValidations();
 
-    // Listener para cambios en groupType que afectan distributionType
-    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe(() => {
+    // Listener para cambios en groupType que afectan distributionType y siteLocation
+    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
+      this.getSiteLocationByGroupType(groupType);
       this._changeDetectorRef.detectChanges();
     });
 
@@ -867,6 +876,8 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Días de operación
     // Tipo de cocina
     const kitchenTypeId: number = formValues.kitchenType?.id;
+    // Site Location
+    const siteLocationId: number = formValues.siteLocation?.id;
     // Tipo de grupo
     const groupTypeId: number = formValues.groupType?.id;
     // Tipo de entrega
@@ -954,6 +965,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de cocina - Campo requerido para servicio de alimentos
       // Kitchen type - Required field for food service
       kitchenTypeId: kitchenTypeId,
+      // Site Location - Campo requerido determinado por Group Type
+      // Site location - Required field determined by Group Type
+      siteLocationId: siteLocationId,
       // Tipo de grupo - Campo requerido para clasificación
       // Group type - Required field for classification
       groupTypeId: groupTypeId,
@@ -1232,14 +1246,16 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Método para obtener tipos de cocina según el tipo de grupo seleccionado
   // Get kitchen types by group type
   getKitchenTypesByGroupType(groupType: OptionSelection): void {
+    const kitchenTypeControl = this.headerConfig.formGroup.get('kitchenType');
+
     if (!groupType) {
       this.kitchenTypes = [];
-      this.isKitchenTypeDisabled = false; // Mantener habilitado
+      kitchenTypeControl?.enable();
       return;
     }
 
-    // Para TODOS los tipos de grupo, usar la API para obtener los tipos de cocina válidos
-    this.isKitchenTypeDisabled = false;
+    // Habilitar el control para todos los tipos de grupo
+    kitchenTypeControl?.enable();
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
@@ -1250,21 +1266,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         if (response) {
           this.kitchenTypes = response.body;
 
-          // Determinar si el tipo de grupo es "Comedor" o "Satélite" dentro del callback
-          const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-          const isSatelite = groupType.name === 'Satélite' || groupType.nameEN === 'Satellite';
-
-          // Si NO es "Comedor" ni "Satélite", auto-seleccionar "N/A"
-          if (!isComedor && !isSatelite) {
-            const naKitchenType = this.kitchenTypes.find(kt =>
-              kt.name === 'N/A' || kt.nameEN === 'N/A'
-            );
-
-            if (naKitchenType) {
-              this.headerConfig.formGroup.patchValue({ kitchenType: naKitchenType });
-            }
+          // Si solo hay una opción disponible, auto-seleccionarla
+          if (this.kitchenTypes.length === 1) {
+            this.headerConfig.formGroup.patchValue({ kitchenType: this.kitchenTypes[0] });
           } else {
-            // Para "Comedor" y "Satélite", limpiar la selección para que el usuario elija
+            // Si hay múltiples opciones, limpiar para que el usuario elija
             this.headerConfig.formGroup.patchValue({ kitchenType: null });
           }
 
@@ -1489,6 +1495,43 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Usar directamente el nombre del groupType
     return groupType.name || groupType.nameEN || '';
+  }
+
+  // Método para obtener Site Location según el tipo de grupo seleccionado
+  // Get site location by group type
+  getSiteLocationByGroupType(groupType: OptionSelection): void {
+    const siteLocationControl = this.headerConfig.formGroup.get('siteLocation');
+
+    if (!groupType) {
+      this.siteLocations = [];
+      siteLocationControl?.enable();
+      return;
+    }
+
+    // Habilitar el control para todos los tipos de grupo
+    siteLocationControl?.enable();
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._groupTypeService.getSiteLocationByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response) {
+          this.siteLocations = response.body;
+
+          // Auto-seleccionar el Site Location obtenido (solo hay uno por Group Type)
+          if (this.siteLocations && this.siteLocations.length > 0) {
+            this.headerConfig.formGroup.patchValue({ siteLocation: this.siteLocations[0] });
+          }
+
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar Site Location:', error);
+      },
+    });
   }
 
   // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====

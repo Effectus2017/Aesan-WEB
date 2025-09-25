@@ -38,6 +38,7 @@ import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { takeUntil } from 'rxjs';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 @Component({
   selector: 'auth-sign-up',
@@ -67,6 +68,7 @@ import { environment } from 'environments/environment';
     MatNativeDateModule,
     MatInputModule,
     MatTooltipModule,
+    DynamicGridDirective,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -179,8 +181,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // ¿Posee Certificación de Registro de Educación Básica?
       // Do you have Basic Education Registry Certification?
-      // En Proceso (3), Otorgado (4), Denegado (5)
-      basicEducationRegistryId: [null, Validators.required],
+      // Si (1) y No (2)
+      basicEducationRegistry: [null, Validators.required],
+
+      // ¿Está interesado en participar de horario extendido? (Solo para PACNA)
+      // Are you interested in participating in extended hours? (Only for PACNA)
+      // Si (1) y No (2)
+      extendedHours: [null],
 
       // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
       // Have you been denied or disqualified from state funds in the last seven years?
@@ -383,16 +390,26 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         isDayCareHomeControl.updateValueAndValidity();
         // --- Fin lógica ---
 
+        // Limpiar el campo extendedHours si no es PACNA
+        if (!isPACNAProgram(currentProgram)) {
+          this.signUpForm.get('extendedHours').setValue(null);
+        }
+
         // Verificar el registro de educación básica si ya tiene un valor
-        const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
-        if (basicEducationRegistry) {
+        const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
+        if (basicEducationRegistry !== null && basicEducationRegistry !== undefined) {
           this.checkBasicEducationRegistry();
         }
       }
     });
 
     // Suscribirse a cambios en el control basicEducationRegistry
-    this.signUpForm.get('basicEducationRegistryId').valueChanges.subscribe(() => {
+    this.signUpForm.get('basicEducationRegistry').valueChanges.subscribe(() => {
+      this.checkBasicEducationRegistry();
+    });
+
+    // Suscribirse a cambios en el control extendedHours
+    this.signUpForm.get('extendedHours').valueChanges.subscribe(() => {
       this.checkBasicEducationRegistry();
     });
 
@@ -534,7 +551,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const phone = formValues.phone;
 
     const nonProfit = formValues.nonProfit;
-    const basicEducationRegistryId = formValues.basicEducationRegistryId == null ? false : formValues.basicEducationRegistryId;
+    const basicEducationRegistry = formValues.basicEducationRegistry == null ? false : formValues.basicEducationRegistry;
     const federalFundsDenied = formValues.federalFundsDenied == null ? false : formValues.federalFundsDenied;
     const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
     const organizedAthleticPrograms = formValues.organizedAthleticPrograms;
@@ -587,8 +604,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         nonProfit: nonProfit,
         // ¿Posee Certificación de Registro de Educación Básica?
         // Do you have Basic Education Registry Certification?
-        // En Proceso (3), Otorgado (4), Denegado (5)
-        basicEducationRegistryId: basicEducationRegistryId,
+        // Si (1) y No (2)
+        basicEducationRegistry: basicEducationRegistry,
         // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
         // Have you been denied or disqualified from federal funds in the last seven years?
         // Si (1) y No (2)
@@ -665,7 +682,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       next: (response) => {
         // Mostrar mensaje de éxito del backend
         const message = response?.value?.message || this._translocoService.translate('sign-up.success.default');
-        this._snackBar.open(message, this._translocoService.translate('common.close'), { duration: 5000 });
+        this._snackBar.open(message, this._translocoService.translate('sign-up.close'), { duration: 5000 });
         // Navigate to the confirmation required page
         this._customRouterService.navigate(['/sign-in']);
       },
@@ -677,7 +694,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         } else if (error?.error?.message) {
           errorMessage = error.error.message;
         }
-        this._snackBar.open(errorMessage, this._translocoService.translate('common.close'), { duration: 5000 });
+        this._snackBar.open(errorMessage, this._translocoService.translate('sign-up.close'), { duration: 5000 });
         // Re-enable the form
         this.signUpForm.enable();
       },
@@ -891,14 +908,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   // Check Basic Education Registry
-  // Si el programa es PDAM o PSAV y el registro de educación básica es "No" (id: 3), deshabilitar el formulario
-  // Si el programa no es PDAM o PSAV o el registro de educación básica no es "No", habilitar el formulario
+  // Si el programa es PDAM y el registro de educación básica es "No" (false), deshabilitar el formulario
+  // Si el programa no es PDAM o el registro de educación básica no es "No", habilitar el formulario
   checkBasicEducationRegistry(): void {
     const selectedProgram = this.signUpForm.value.program;
-    const basicEducationRegistry = this.signUpForm.get('basicEducationRegistryId').value;
+    const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
 
-    // Verificar elegibilidad para PDAM y PSAV cuando no tiene registro de educación básica (opción "No" = 3)
-    if (basicEducationRegistry === 3 && isPDAMOrPSAVProgram(selectedProgram)) {
+    // No validar si no hay programa seleccionado o si basicEducationRegistry es null/undefined
+    if (!selectedProgram || basicEducationRegistry === null || basicEducationRegistry === undefined) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Verificar elegibilidad para PDAM cuando no tiene registro de educación básica (false = No)
+    if (!basicEducationRegistry && isPDAMProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this._fuseConfirmationService.open({
@@ -913,9 +937,50 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           },
         },
       });
-    } else {
-      this.isEligible = true;
-      enableAllControls(this.signUpForm);
+      return;
     }
+
+    // Verificar elegibilidad para PACNA cuando no tiene registro de educación básica (false = No)
+    if (!basicEducationRegistry && isPACNAProgram(selectedProgram)) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
+      return;
+    }
+
+    // Verificar elegibilidad para PACNA cuando no está interesado en horario extendido (false = No)
+    const extendedHours = this.signUpForm.get('extendedHours')?.value;
+    if (basicEducationRegistry && isPACNAProgram(selectedProgram) && extendedHours !== null && extendedHours !== undefined && extendedHours === false) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('sign-up.notification.title'),
+        message: this._translocoService.translate('sign-up.extended-hours-not-eligible.message'),
+        actions: {
+          confirm: {
+            label: this._translocoService.translate('sign-up.notification.confirm'),
+          },
+          cancel: {
+            show: false,
+          },
+        },
+      });
+      return;
+    }
+
+    // Si no hay problemas de elegibilidad, habilitar el formulario
+    this.isEligible = true;
+    enableAllControls(this.signUpForm);
   }
 }

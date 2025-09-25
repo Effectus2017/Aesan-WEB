@@ -420,6 +420,15 @@
               <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+          <mat-form-field data-cy="site-location-field">
+            <mat-label>{{ "schools.add.site-location.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'siteLocation'" data-cy="site-location-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of siteLocations" [value]="option" data-cy="site-location-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>{{ "schools.add.site-location.hint" | transloco }}</mat-hint>
+          </mat-form-field>
           <mat-form-field data-cy="delivery-type-field">
             <mat-label>{{ "schools.add.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById" (selectionChange)="onDeliveryTypeChange($event.value)">
@@ -428,7 +437,7 @@
           </mat-form-field>
           <mat-form-field data-cy="kitchen-type-field">
             <mat-label>{{ "schools.add.kitchen-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'kitchenType'" [disabled]="isKitchenTypeDisabled" data-cy="kitchen-type-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>

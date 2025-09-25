@@ -11,6 +11,7 @@ import { AreaType } from './AreaType';
 import { SchoolServiceResponse } from './Response/SchoolServiceResponse';
 import { SchoolDayCareHomeResponse } from './Response/SchoolDayCareHomeResponse';
 import { SchoolParticipantResponse } from './Response/SchoolParticipantResponse';
+import { SiteLocation } from './SiteLocation';
 
 export interface School {
   id: number;
@@ -55,6 +56,7 @@ export interface School {
 
   // Información Operacional
   kitchenType?: KitchenType;
+  siteLocation?: SiteLocation;
   groupType?: GroupType;
   deliveryType?: DeliveryType;
   sponsorType?: SponsorType;
@@ -103,6 +105,9 @@ export interface School {
   isMainSchool?: boolean;
   mainSchoolId?: number;
   mainSchool?: School;
+
+  // Site Location
+  siteLocationId?: number;
 
   // Estado de actividad
   isActive?: boolean;

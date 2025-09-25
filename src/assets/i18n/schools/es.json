@@ -163,6 +163,10 @@
                 "placeholder": "Tipo de grupo del sitio",
                 "required": "El tipo de grupo es requerido"
             },
+            "site-location": {
+                "label": "Ubicación del Sitio",
+                "hint": "Se determina automáticamente según el Tipo de Grupo"
+            },
             "delivery-type": {
                 "label": "Tipo de Entrega",
                 "placeholder": "Tipo de entrega del sitio",
@@ -841,6 +845,10 @@
                 "label": "Tipo de Grupo",
                 "placeholder": "Tipo de grupo del sitio",
                 "required": "El tipo de grupo es requerido"
+            },
+            "site-location": {
+                "label": "Ubicación del Sitio",
+                "hint": "Se determina automáticamente según el Tipo de Grupo"
             },
             "delivery-type": {
                 "label": "Tipo de Entrega",

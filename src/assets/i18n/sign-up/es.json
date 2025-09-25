@@ -13,10 +13,10 @@
       "no": "No"
     },
     "basic-education-registry": {
-      "label": "¿Posee Certificación de Registro de Educación Básica?",
-      "granted": "Otorgado",
-      "in-progress": "En Proceso",
-      "no": "No"
+      "label": "¿Posee Certificación de Registro de Educación Básica?"
+    },
+    "extended-hours": {
+      "label": "¿Está interesado en participar de horario extendido?"
     },
     "state-funds-denied": {
       "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
@@ -138,6 +138,7 @@
       "label": "Segundo Apellido",
       "placeholder": "Ingresa el segundo apellido"
     },
+    "close": "Cerrar",
     "submit": "Aplicar al Programa",
     "select-program-first": "Por favor, seleccione al menos un programa para continuar con el registro",
     "form-invalid": {
@@ -153,6 +154,9 @@
     },
     "basic-education-not-eligible": {
       "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
+    },
+    "extended-hours-not-eligible": {
+      "message": "Para participar en el programa PACNA debe estar interesado en participar de horario extendido"
     },
     "error": {
       "creating-user": "Error al crear el usuario. Por favor, intente nuevamente"

@@ -73,4 +73,13 @@ export class GroupTypeService {
   deleteGroupType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-group-type`, getHttpOptions(queryParameters));
   }
+
+  /**
+   * Obtiene Site Location por Group Type
+   * @param queryParameters Los parámetros de consulta que incluyen el ID del tipo de grupo
+   * @returns Un observable que emite el Site Location obtenido
+   */
+  getSiteLocationByGroupType(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-site-location-by-group-type`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._groupTypes.next(response)));
+  }
 }

@@ -111,7 +111,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -164,6 +164,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
               hasMainSchool: hasMainSchool,
               options: options.body,
               kitchenTypes: kitchenTypes.body,
+              siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
               groupTypes: groupTypes.body,
               sponsorTypes: sponsorTypes.body,
               schools: schools.body,
@@ -212,6 +213,7 @@ export const initialDataSchoolsAddResolver: ResolveFn<any> = (route: ActivatedRo
         hasMainSchool: hasMainSchool,
         options: options.body,
         kitchenTypes: kitchenTypes.body,
+        siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
         groupTypes: groupTypes.body,
         sponsorTypes: sponsorTypes.body,
         schools: schools.body,
@@ -306,7 +308,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType',
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -357,6 +359,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
               schools: schools.body,
               options: options.body,
               kitchenTypes: kitchenTypes.body,
+              siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
               groupTypes: groupTypes.body,
               sponsorTypes: sponsorTypes.body,
               cities: cities.body,
@@ -405,6 +408,7 @@ export const initialDataSchoolsEditResolver: ResolveFn<any> = (route: ActivatedR
         schools: schools.body,
         options: options.body,
         kitchenTypes: kitchenTypes.body,
+        siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
         groupTypes: groupTypes.body,
         sponsorTypes: sponsorTypes.body,
         cities: cities.body,

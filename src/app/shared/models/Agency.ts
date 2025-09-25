@@ -63,8 +63,8 @@ class InscriptionResponse {
     appointmentCoordinated?: boolean;
     appointmentDate?: string | null;
     atRiskService?: boolean;
-    basicEducationRegistry?: OptionSelection | null;
-    basicEducationRegistryId?: number | null;
+    basicEducationRegistry?: boolean | null;
+    extendedHours?: boolean | null;
     comments?: string | null;
     deadlineToCompleteRegistration?: string | null;
     federalFundsDenied?: boolean;

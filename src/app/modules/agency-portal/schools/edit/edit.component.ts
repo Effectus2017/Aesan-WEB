@@ -27,10 +27,10 @@ import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
 import { SchoolChildGroupRequest } from 'app/shared/models/Request/SchoolChildGroupRequest';
 import { SchoolDayCareHomeRequest } from 'app/shared/models/Request/SchoolDayCareHomeRequest';
+import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
-import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
@@ -178,6 +178,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   // Type of kitchen
   kitchenTypes: OptionSelection[] = [];
   isKitchenTypeDisabled: boolean = false;
+
+  // Site Location
+  // Site location - Determined by group type
+  siteLocations: OptionSelection[] = [];
+  isSiteLocationDisabled: boolean = false;
 
   // Tipo de grupo
   // Type of group
@@ -383,6 +388,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
       kitchenType: [null],
+      // Site Location - Determined by Group Type
+      // Site location - Determined by group type
+      siteLocation: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
       groupType: [null],
@@ -666,6 +674,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
+      // Site Location
+      this.siteLocations = resolvedData.siteLocations || [];
       // Tipo de grupo
       this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
@@ -686,6 +696,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.organizationTypes = resolvedData.organizationTypes;
       this.educationLevels = resolvedData.educationLevels;
       this.kitchenTypes = resolvedData.kitchenTypes;
+      this.siteLocations = resolvedData.siteLocations || [];
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
       this.operatingPolicies = resolvedData.operatingPolicies;
@@ -739,9 +750,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.calculateOperatingDays();
     });
 
-    // Listener para cambios en groupType que afectan distributionType
-    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe(() => {
+    // Listener para cambios en groupType que afectan distributionType y siteLocation
+    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
+      this.getSiteLocationByGroupType(groupType);
       this._changeDetectorRef.detectChanges();
     });
 
@@ -932,6 +944,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const postalRegion = param.postalRegion;
 
     const kitchenType = param.kitchenType;
+    const siteLocation = param.siteLocation;
     const groupType = param.groupType;
     const deliveryType = param.deliveryType;
     const sponsorType = param.sponsorType;
@@ -1060,6 +1073,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       inactiveDate: param.inactiveDate,
       //
       kitchenType: kitchenType,
+      siteLocation: siteLocation,
       groupType: groupType,
       deliveryType: deliveryType,
       sponsorType: sponsorType,
@@ -1108,6 +1122,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     const organizationTypeId: number = formValues.organizationType?.id;
     const operatingDays: number = Number(formValues.operatingDays);
     const kitchenTypeId: number = formValues.kitchenType?.id;
+    const siteLocationId: number = formValues.siteLocation?.id;
     const groupTypeId: number = formValues.groupType?.id;
     const deliveryTypeId: number = formValues.deliveryType?.id;
     const sponsorTypeId: number = formValues.sponsorType?.id ?? null;
@@ -1191,6 +1206,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
       kitchenTypeId: kitchenTypeId,
+      siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,
       deliveryTypeId: deliveryTypeId,
       sponsorTypeId: sponsorTypeId,
@@ -1808,6 +1824,41 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
    */
   private updateServicesTableDataSource(): void {
     this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+  }
+
+  // Método para obtener Site Location según el tipo de grupo seleccionado
+  // Get site location by group type
+  getSiteLocationByGroupType(groupType: OptionSelection): void {
+    if (!groupType) {
+      this.siteLocations = [];
+      this.isSiteLocationDisabled = false; // Mantener habilitado
+      return;
+    }
+
+    // Para TODOS los tipos de grupo, usar la API para obtener el Site Location válido
+    this.isSiteLocationDisabled = false;
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._groupTypeService.getSiteLocationByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response) {
+          this.siteLocations = response.body;
+
+          // Auto-seleccionar el Site Location obtenido (solo hay uno por Group Type)
+          if (this.siteLocations && this.siteLocations.length > 0) {
+            this.headerConfig.formGroup.patchValue({ siteLocation: this.siteLocations[0] });
+          }
+
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar Site Location:', error);
+      },
+    });
   }
 
   // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
