@@ -512,6 +512,10 @@
                 "label": "Site Number",
                 "description": "Unique site code generated automatically"
             },
+            "main-school": {
+                "label": "Main Site",
+                "description": "Select the main site to which this site belongs. Leave blank if this is an independent site."
+            },
             "dev-section": {
                 "title": "Development Tools - Program Selection",
                 "disclaimer": "⚠️ WARNING: This section is ONLY for development testing. It allows manual switching between programs to test different field configurations. DO NOT use in production.",
@@ -1195,6 +1199,14 @@
                 "save": "Save",
                 "cancel": "Cancel",
                 "submit": "Submit"
+            }
+        },
+        "calendar": {
+            "title": "Operating Calendar",
+            "legend": {
+                "normal": "Normal days",
+                "weekend": "Weekends",
+                "excluded": "Excluded days"
             }
         }
     }

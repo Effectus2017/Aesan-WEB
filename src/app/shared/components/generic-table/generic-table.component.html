@@ -120,6 +120,22 @@
           </button>
         </div>
         }
+
+        @if (button.key === 'calendar') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onCalendar($event, element.id)"
+            [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "schools.list.table.buttons." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:calendar'" [attr.aria-hidden]="true" style="color: orange;"></mat-icon>
+          </button>
+        </div>
+        }
         }
       </div>
       } @default {

@@ -137,6 +137,11 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableDelete(event, element.id);
         }
         break;
+      case 'calendar':
+        if (this.handler?.onTableCalendar) {
+          this.handler.onTableCalendar(event, element.id);
+        }
+        break;
     }
   }
 
@@ -172,6 +177,16 @@ export class GenericTableComponent implements OnInit {
    */
   onDownload(event: Event, id: number): void {
     this.handler.onTableDownload(event, id);
+  }
+
+  /**
+   * Método para manejar el calendario de un elemento de la tabla.
+   * Llama a la función onTableCalendar del handler proporcionado.
+   * @param event El evento de calendario.
+   * @param id El ID del elemento para el calendario.
+   */
+  onCalendar(event: Event, id: number): void {
+    this.handler.onTableCalendar(event, id);
   }
 
   /**

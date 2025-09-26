@@ -707,8 +707,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
       this.listSchools = resolvedData.schools;
 
-      // Verificar escuela principal
-      this.isMainSchool = !resolvedData.hasMainSchool;
+      // Verificar escuela principal - se establecerá en onSetForm con el valor correcto
+      // this.isMainSchool = !resolvedData.hasMainSchool; // Comentado: lógica incorrecta
 
       // Usar la escuela del resolver
       // Use school from resolver

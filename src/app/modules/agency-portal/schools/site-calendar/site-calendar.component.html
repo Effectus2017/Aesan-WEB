@@ -1,0 +1,44 @@
+<div class="flex overflow-hidden absolute inset-0 flex-col min-w-0">
+  <!-- Header con título y botones -->
+  <div class="flex justify-between items-center p-6 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <div class="flex gap-4 items-center">
+      <button
+        mat-icon-button
+        (click)="goBack()"
+        class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+        {{ 'schools.calendar.title' | transloco }} - {{ schoolName }}
+      </h3>
+    </div>
+    <div class="flex flex-wrap gap-5">
+      <div class="flex gap-2 items-center">
+        <span class="w-4 h-4 bg-green-500 rounded"></span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.normal' | transloco }}</span>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="w-4 h-4 bg-orange-500 rounded"></span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.weekend' | transloco }}</span>
+      </div>
+      <div class="flex gap-2 items-center">
+        <span class="w-4 h-4 bg-red-500 rounded"></span>
+        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.excluded' | transloco }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="overflow-y-auto flex-auto h-full bg-white dark:bg-gray-900" cdkScrollable>
+    <div class="h-full">
+      <mwl-calendar-month-view
+        [viewDate]="viewDate"
+        [events]="events"
+        [locale]="currentLanguage"
+        (dayClicked)="onDayClick($event)"
+        (eventClicked)="onEventClick($event)"
+        class="h-full">
+      </mwl-calendar-month-view>
+    </div>
+  </div>
+</div>

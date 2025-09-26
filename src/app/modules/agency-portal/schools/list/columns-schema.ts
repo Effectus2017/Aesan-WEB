@@ -46,6 +46,11 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit',
         label: 'schools.list.table.buttons.edit',
       },
+      {
+        key: 'calendar',
+        label: 'schools.list.table.buttons.calendar',
+        icon: 'heroicons_outline:calendar',
+      },
     ],
   },
 ];

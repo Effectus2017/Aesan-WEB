@@ -18,6 +18,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { School } from 'app/shared/models/School';
 import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -101,6 +102,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   listCities: City[] = [];
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
+  listSchools: School[] = [];
 
   // Yes No Options (1, 2)
   // Si (1) y No (2)
@@ -204,6 +206,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Nombre de la escuela - Campo requerido para identificar la escuela
       // School name - Required field for identifying the school
       name: ['', Validators.required],
+      // Escuela principal - Campo para seleccionar la escuela principal (solo si no es escuela principal)
+      // Main school - Field for selecting the main school (only if not main school)
+      mainSchool: [null],
       // Dirección física - Campo requerido para la ubicación de la escuela
       // Physical address - Required field for school location
       address: ['', Validators.required],
@@ -607,6 +612,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
+      this.listSchools = resolvedData.schools;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
@@ -1050,6 +1056,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Si la escuela es la principal
       // If the school is the main school
       isMainSchool: this.isMainSchool,
+      // ID de la escuela principal (si no es escuela principal)
+      // Main school ID (if not main school)
+      mainSchoolId: formValues.mainSchool?.id ?? null,
 
       // Matrícula General
       // General Enrollment
@@ -1716,6 +1725,15 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    */
   private updateServicesTableDataSource(): void {
     this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+  }
+
+
+  /**
+   * Limpia el campo de la escuela principal
+   * Clears the main school field
+   */
+  onClearMainSchool() {
+    this.headerConfig.formGroup.get('mainSchool').setValue(null);
   }
 
   /**

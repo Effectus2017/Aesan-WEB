@@ -50,9 +50,10 @@
                             "src/@fuse/styles/themes.scss",
                             "src/styles/vendors.scss",
                             "src/@fuse/styles/main.scss",
-                            "src/styles/styles.scss",
                             "src/styles/tailwind.scss",
-                            "node_modules/quill/dist/quill.snow.css"
+                            "node_modules/quill/dist/quill.snow.css",
+                            "node_modules/angular-calendar/css/angular-calendar.css",
+                            "src/styles/styles.scss"
                         ],
                         "scripts": [],
                         "browser": "src/main.ts"

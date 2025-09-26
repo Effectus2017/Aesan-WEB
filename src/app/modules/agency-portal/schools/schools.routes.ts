@@ -35,6 +35,12 @@ export default [
           data: initialDataSchoolsEditResolver,
         },
       },
+      {
+        path: 'calendar/:id',
+        loadComponent: () => import('./site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'school.edit' },
+      },
     ],
   },
 ] as Routes;

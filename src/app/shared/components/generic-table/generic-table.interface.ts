@@ -99,6 +99,7 @@ export interface OnGenericTableHandler {
   onTableEditElement?: (event: Event, element: any) => void;
   onTableDelete?: (event: Event, id: any) => void;
   onTableDownload?: (event: Event, id: any) => void;
+  onTableCalendar?: (event: Event, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;
   onAddButtonClick?: (event?: Event, tableId?: string) => void;
   getPaginator?: (event?: PageEvent) => void;

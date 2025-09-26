@@ -15,6 +15,15 @@ import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { isNullOrUndefinedEmptyStringNullArray } from './shared/utils';
 import { provideToastr, ToastrModule } from 'ngx-toastr';
 import { environment } from '../environments/environment';
+import { CalendarModule, DateAdapter as CalendarDateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+import localeEn from '@angular/common/locales/en';
+
+// Registrar locales para Angular
+registerLocaleData(localeEs, 'es');
+registerLocaleData(localeEn, 'en');
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -93,6 +102,14 @@ export const appConfig: ApplicationConfig = {
     },
 
     importProvidersFrom(ToastrModule.forRoot()),
+
+    // Angular Calendar - Configuración según documentación
+    importProvidersFrom(
+      CalendarModule.forRoot({
+        provide: CalendarDateAdapter,
+        useFactory: adapterFactory,
+      })
+    ),
 
     // Fuse
     provideAuth(),

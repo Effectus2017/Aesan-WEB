@@ -56,6 +56,34 @@
           </mat-form-field>
         </div>
 
+        <!-- Seleccionar escuela principal -->
+        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "schools.add.main-school.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "schools.add.main-school.description" | transloco }}</p>
+        </div>
+
+        <!-- Mostramos la lista de escuelas Para seleccionar la escuela principal -->
+        <div *ngIf="!isMainSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="flex gap-2 justify-center items-center">
+            <mat-form-field class="w-full" data-cy="main-school-field" [subscriptSizing]="'dynamic'">
+              <mat-select [formControlName]="'mainSchool'" data-cy="main-school-select" [compareWith]="compareById">
+                <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="main-school-option">{{ school.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('mainSchool').hasError('required')">{{ "schools.add.main-school.required" | transloco }}</mat-error>
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              (click)="onClearMainSchool()"
+              matTooltip="{{ 'schools.add.main-school.clear' | transloco }}"
+              data-cy="clear-main-school-button"
+              aria-label="Limpiar selección de escuela principal"
+            >
+              <mat-icon class="icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
+            </button>
+          </div>
+        </div>
+
         <!-- ✅ VERIFICADO: Dirección física - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Datos de la dirección física del sitio / Site physical address data -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">

@@ -135,6 +135,12 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     this._customRouterService.navigate([`schools/edit/${id}`]);
   }
 
+  onTableCalendar(event: Event, id: number) {
+    event.stopPropagation();
+    event.preventDefault();
+    this._customRouterService.navigate([`schools/calendar/${id}`]);
+  }
+
   onAdd() {
     this._customRouterService.navigate(['schools/add']);
   }

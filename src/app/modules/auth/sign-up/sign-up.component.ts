@@ -941,23 +941,24 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
 
     // Verificar elegibilidad para PACNA cuando no tiene registro de educación básica (false = No)
-    if (!basicEducationRegistry && isPACNAProgram(selectedProgram)) {
-      this.isEligible = false;
-      disableAllControlsExcept(this.signUpForm, 'program');
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
-      return;
-    }
+    // REMOVED: PACNA validation for basic education registry - no longer shows message when "No" is selected
+    // if (!basicEducationRegistry && isPACNAProgram(selectedProgram)) {
+    //   this.isEligible = false;
+    //   disableAllControlsExcept(this.signUpForm, 'program');
+    //   this._fuseConfirmationService.open({
+    //     title: this._translocoService.translate('sign-up.notification.title'),
+    //     message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
+    //     actions: {
+    //       confirm: {
+    //         label: this._translocoService.translate('sign-up.notification.confirm'),
+    //       },
+    //       cancel: {
+    //         show: false,
+    //       },
+    //     },
+    //   });
+    //   return;
+    // }
 
     // Verificar elegibilidad para PACNA cuando no está interesado en horario extendido (false = No)
     const extendedHours = this.signUpForm.get('extendedHours')?.value;
