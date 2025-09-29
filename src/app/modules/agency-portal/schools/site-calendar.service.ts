@@ -39,6 +39,7 @@ export interface SiteCalendarResponse {
 export class SiteCalendarService {
   private apiUrl = '/api/site-calendar';
   private useMockData = true; // Cambiar a false cuando el backend esté listo
+  private mockData: SiteCalendarResponse | null = null;
 
   constructor(private http: HttpClient) {}
 
@@ -47,7 +48,10 @@ export class SiteCalendarService {
    */
   getOperatingDays(schoolId: number): Observable<SiteCalendarResponse> {
     if (this.useMockData) {
-      return of(this.generateMockData(schoolId)).pipe(delay(500));
+      if (!this.mockData) {
+        this.mockData = this.generateMockData(schoolId);
+      }
+      return of(this.mockData).pipe(delay(500));
     }
     return this.http.get<SiteCalendarResponse>(`${this.apiUrl}/get-operating-days/${schoolId}`);
   }
@@ -58,6 +62,7 @@ export class SiteCalendarService {
   toggleOperatingDay(request: SiteOperatingDayRequest): Observable<boolean> {
     if (this.useMockData) {
       console.log('Mock toggle operating day:', request);
+      this.updateMockData(request);
       return of(true).pipe(delay(300));
     }
     return this.http.post<boolean>(`${this.apiUrl}/toggle-operating-day`, request);
@@ -197,5 +202,65 @@ export class SiteCalendarService {
       SchoolName: `Escuela de Prueba ${schoolId}`,
       OperatingDays: operatingDays
     };
+  }
+
+  /**
+   * Actualiza los datos mock con los cambios realizados
+   */
+  private updateMockData(request: SiteOperatingDayRequest): void {
+    console.log('updateMockData called with request:', request);
+
+    if (!this.mockData) {
+      console.log('No mock data available, generating new data');
+      this.mockData = this.generateMockData(request.SchoolId);
+    }
+
+    const operatingDate = new Date(request.OperatingDate);
+    console.log('Looking for date:', operatingDate.toDateString());
+
+    const existingDayIndex = this.mockData.OperatingDays.findIndex(day => {
+      const dayDate = new Date(day.OperatingDate);
+      const isMatch = dayDate.toDateString() === operatingDate.toDateString();
+      console.log(`Comparing ${dayDate.toDateString()} with ${operatingDate.toDateString()}: ${isMatch}`);
+      return isMatch;
+    });
+
+    console.log('Found existing day at index:', existingDayIndex);
+
+    if (existingDayIndex >= 0) {
+      // Actualizar día existente
+      const oldDay = this.mockData.OperatingDays[existingDayIndex];
+      console.log('Old day data:', oldDay);
+
+      this.mockData.OperatingDays[existingDayIndex] = {
+        ...oldDay,
+        StartTime: request.StartTime || '',
+        EndTime: request.EndTime || '',
+        IsWeekendOverride: request.IsWeekendOverride || false,
+        IsExcluded: request.IsExcluded || false,
+        Comment: request.Comment || '',
+        UpdatedAt: new Date()
+      };
+
+      console.log('Updated day data:', this.mockData.OperatingDays[existingDayIndex]);
+    } else {
+      // Agregar nuevo día
+      const newDay: SiteOperatingDay = {
+        Id: this.mockData.OperatingDays.length + 1,
+        SchoolId: request.SchoolId,
+        OperatingDate: operatingDate,
+        StartTime: request.StartTime || '',
+        EndTime: request.EndTime || '',
+        IsWeekendOverride: request.IsWeekendOverride || false,
+        IsExcluded: request.IsExcluded || false,
+        Comment: request.Comment || '',
+        CreatedAt: new Date(),
+        UpdatedAt: new Date()
+      };
+      this.mockData.OperatingDays.push(newDay);
+      console.log('Added new day:', newDay);
+    }
+
+    console.log('Mock data updated successfully:', this.mockData);
   }
 }

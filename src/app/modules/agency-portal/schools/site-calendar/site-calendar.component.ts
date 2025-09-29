@@ -189,21 +189,31 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   }
 
   private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+    console.log('Updating operating day with form data:', formData);
+    console.log('Original operating day:', operatingDay);
+
+    // Convertir DateTime objects a strings si es necesario
+    const startTime = this.formatTimeValue(formData.startTime);
+    const endTime = this.formatTimeValue(formData.endTime);
+
     const request: SiteOperatingDayRequest = {
       SchoolId: this.currentSchoolId,
       OperatingDate: new Date(operatingDay.OperatingDate),
-      StartTime: formData.startTime,
-      EndTime: formData.endTime,
+      StartTime: startTime,
+      EndTime: endTime,
       IsWeekendOverride: formData.isWeekendOverride,
       IsExcluded: formData.isExcluded,
       Comment: formData.comment
     };
 
+    console.log('Request to send:', request);
+
     this.loading = true;
     this.siteCalendarService.toggleOperatingDay(request)
       .subscribe({
         next: (response) => {
-          console.log('Operating day updated:', response);
+          console.log('Operating day updated successfully:', response);
+          console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
           this.loading = false;
         },
@@ -348,11 +358,20 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
 
         // Si hay horarios, usarlos; si no, usar horarios por defecto
         if (day.StartTime && day.EndTime) {
-          const [startHour, startMin] = day.StartTime.split(':');
-          const [endHour, endMin] = day.EndTime.split(':');
+          const startTimeStr = this.formatTimeValue(day.StartTime);
+          const endTimeStr = this.formatTimeValue(day.EndTime);
 
-          startDate.setHours(parseInt(startHour), parseInt(startMin), 0, 0);
-          endDate.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
+          if (startTimeStr && endTimeStr) {
+            const [startHour, startMin] = startTimeStr.split(':');
+            const [endHour, endMin] = endTimeStr.split(':');
+
+            startDate.setHours(parseInt(startHour), parseInt(startMin), 0, 0);
+            endDate.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
+          } else {
+            // Horarios por defecto si no se pueden parsear
+            startDate.setHours(8, 0, 0, 0);
+            endDate.setHours(16, 0, 0, 0);
+          }
         } else {
           // Horarios por defecto
           startDate.setHours(8, 0, 0, 0);
@@ -377,6 +396,28 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
       return { primary: '#ff9800', secondary: '#ffcc80' }; // Naranja para fines de semana
     }
     return { primary: '#4caf50', secondary: '#c8e6c9' }; // Verde para días normales
+  }
+
+  private formatTimeValue(timeValue: any): string {
+    if (!timeValue) return '';
+
+    // Si es un string, devolverlo tal como está
+    if (typeof timeValue === 'string') {
+      return timeValue;
+    }
+
+    // Si es un objeto DateTime (Luxon), convertir a string
+    if (timeValue && typeof timeValue === 'object' && timeValue.toFormat) {
+      return timeValue.toFormat('HH:mm');
+    }
+
+    // Si es un objeto Date, convertir a string
+    if (timeValue instanceof Date) {
+      return timeValue.toTimeString().substring(0, 5); // HH:mm
+    }
+
+    // Fallback: convertir a string
+    return String(timeValue);
   }
 
   private isSameDate(date1: Date, date2: Date): boolean {
