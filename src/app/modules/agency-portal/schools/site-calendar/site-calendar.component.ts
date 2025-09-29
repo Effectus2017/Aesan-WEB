@@ -55,6 +55,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     // Obtener el ID de la escuela desde la ruta o input
     this.currentSchoolId = this.schoolId || +this.route.snapshot.paramMap.get('id')!;
 
+    // Si no hay schoolId, usar uno por defecto para pruebas
+    if (!this.currentSchoolId || this.currentSchoolId === 0) {
+      this.currentSchoolId = 1;
+    }
+
+    console.log('SiteCalendarComponent initialized with schoolId:', this.currentSchoolId);
+
     // Configurar el idioma del calendario
     this.setCalendarLanguage();
 
@@ -74,9 +81,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
         this.updateDarkTheme();
       });
 
-    if (this.currentSchoolId) {
-      this.loadOperatingDays();
-    }
+    // Cargar datos
+    this.loadOperatingDays();
   }
 
   ngOnDestroy(): void {
@@ -122,9 +128,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     // TODO: Implementar modal para editar horarios y comentarios
   }
 
-  goBack() {
-    this.router.navigate(['/schools']);
-  }
 
   setView(view: CalendarView) {
     this.view = view;
@@ -158,14 +161,54 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     this.viewDate = new Date();
   }
 
+  getCurrentDateLabel(): string {
+    const date = this.viewDate;
+    const monthNames = [
+      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+
+    const monthName = monthNames[date.getMonth()];
+    const year = date.getFullYear();
+
+    if (this.view === CalendarView.Month) {
+      return `${monthName} ${year}`;
+    } else if (this.view === CalendarView.Week) {
+      // Calcular el rango de la semana
+      const startOfWeek = new Date(date);
+      const day = startOfWeek.getDay();
+      const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Ajustar para que la semana empiece en lunes
+      startOfWeek.setDate(diff);
+
+      const endOfWeek = new Date(startOfWeek);
+      endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+      const startMonth = monthNames[startOfWeek.getMonth()];
+      const endMonth = monthNames[endOfWeek.getMonth()];
+
+      if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
+        return `${startMonth} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${year}`;
+      } else {
+        return `${startMonth} ${startOfWeek.getDate()} - ${endMonth} ${endOfWeek.getDate()}, ${year}`;
+      }
+    } else {
+      // Vista de día
+      const day = date.getDate();
+      return `${day} de ${monthName}, ${year}`;
+    }
+  }
+
   private loadOperatingDays() {
+    console.log('Loading operating days for schoolId:', this.currentSchoolId);
     this.loading = true;
     this.siteCalendarService.getOperatingDays(this.currentSchoolId)
       .subscribe({
         next: (response) => {
+          console.log('Operating days loaded:', response);
           this.operatingDays = response.OperatingDays;
           this.events = this.transformToCalendarEvents(response.OperatingDays);
           this.schoolName = response.SchoolName;
+          console.log('Events transformed:', this.events);
           this.loading = false;
         },
         error: (error) => {
@@ -206,15 +249,41 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   }
 
   private transformToCalendarEvents(days: SiteOperatingDay[]): CalendarEvent[] {
-    return days
+    console.log('Transforming days to events:', days);
+    const events = days
       .filter(day => !day.IsExcluded)
-      .map(day => ({
-        start: new Date(`${day.OperatingDate}T${day.StartTime}`),
-        end: new Date(`${day.OperatingDate}T${day.EndTime}`),
-        title: day.Comment || 'Día de funcionamiento',
-        color: this.getEventColor(day),
-        meta: { ...day }
-      }));
+      .map(day => {
+        // Asegurar que OperatingDate sea un objeto Date
+        const operatingDate = day.OperatingDate instanceof Date ? day.OperatingDate : new Date(day.OperatingDate);
+
+        // Crear fechas de inicio y fin
+        const startDate = new Date(operatingDate);
+        const endDate = new Date(operatingDate);
+
+        // Si hay horarios, usarlos; si no, usar horarios por defecto
+        if (day.StartTime && day.EndTime) {
+          const [startHour, startMin] = day.StartTime.split(':');
+          const [endHour, endMin] = day.EndTime.split(':');
+
+          startDate.setHours(parseInt(startHour), parseInt(startMin), 0, 0);
+          endDate.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
+        } else {
+          // Horarios por defecto
+          startDate.setHours(8, 0, 0, 0);
+          endDate.setHours(16, 0, 0, 0);
+        }
+
+        return {
+          start: startDate,
+          end: endDate,
+          title: day.Comment || 'Día de funcionamiento',
+          color: this.getEventColor(day),
+          meta: { ...day }
+        };
+      });
+
+    console.log('Events created:', events);
+    return events;
   }
 
   private getEventColor(day: SiteOperatingDay): any {

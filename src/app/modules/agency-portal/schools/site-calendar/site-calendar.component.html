@@ -4,12 +4,6 @@
     <!-- Primera fila: Título y leyenda -->
     <div class="flex justify-between items-center">
       <div class="flex gap-4 items-center">
-        <button
-          mat-icon-button
-          (click)="goBack()"
-          class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-          <mat-icon>arrow_back</mat-icon>
-        </button>
         <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
           {{ 'schools.calendar.title' | transloco }} - {{ schoolName }}
         </h3>
@@ -32,8 +26,16 @@
 
     <!-- Segunda fila: Controles de navegación y vista -->
     <div class="flex justify-between items-center">
-      <!-- Botones de navegación -->
-      <div class="flex gap-2 items-center">
+      <!-- Indicador de fecha actual y botones de navegación -->
+      <div class="flex gap-4 items-center">
+        <!-- Indicador de fecha actual -->
+        <div class="flex items-center gap-2 px-3 py-1 bg-gray-100 dark:bg-gray-700 rounded-lg">
+          <mat-icon class="text-gray-600 dark:text-gray-400">calendar_today</mat-icon>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ getCurrentDateLabel() }}
+          </span>
+        </div>
+
         <button
           mat-icon-button
           (click)="previous()"
