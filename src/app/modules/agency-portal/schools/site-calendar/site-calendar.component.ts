@@ -25,6 +25,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   @Input() schoolName: string = '';
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
 
+  // Exponer CalendarView para uso en template
+  CalendarView = CalendarView;
+
   view: CalendarView = CalendarView.Month;
   viewDate: Date = new Date();
   events: CalendarEvent[] = [];
@@ -121,6 +124,38 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
 
   goBack() {
     this.router.navigate(['/schools']);
+  }
+
+  setView(view: CalendarView) {
+    this.view = view;
+  }
+
+  previous() {
+    const newDate = new Date(this.viewDate);
+    if (this.view === CalendarView.Month) {
+      newDate.setMonth(newDate.getMonth() - 1);
+    } else if (this.view === CalendarView.Week) {
+      newDate.setDate(newDate.getDate() - 7);
+    } else {
+      newDate.setDate(newDate.getDate() - 1);
+    }
+    this.viewDate = newDate;
+  }
+
+  next() {
+    const newDate = new Date(this.viewDate);
+    if (this.view === CalendarView.Month) {
+      newDate.setMonth(newDate.getMonth() + 1);
+    } else if (this.view === CalendarView.Week) {
+      newDate.setDate(newDate.getDate() + 7);
+    } else {
+      newDate.setDate(newDate.getDate() + 1);
+    }
+    this.viewDate = newDate;
+  }
+
+  today() {
+    this.viewDate = new Date();
   }
 
   private loadOperatingDays() {

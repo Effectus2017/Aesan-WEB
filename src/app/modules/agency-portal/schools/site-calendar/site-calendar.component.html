@@ -1,29 +1,92 @@
 <div class="flex overflow-hidden absolute inset-0 flex-col min-w-0">
   <!-- Header con título y botones -->
-  <div class="flex justify-between items-center p-6 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-    <div class="flex gap-4 items-center">
-      <button
-        mat-icon-button
-        (click)="goBack()"
-        class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-        <mat-icon>arrow_back</mat-icon>
-      </button>
-      <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-        {{ 'schools.calendar.title' | transloco }} - {{ schoolName }}
-      </h3>
+  <div class="flex flex-col gap-4 p-6 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+    <!-- Primera fila: Título y leyenda -->
+    <div class="flex justify-between items-center">
+      <div class="flex gap-4 items-center">
+        <button
+          mat-icon-button
+          (click)="goBack()"
+          class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+          {{ 'schools.calendar.title' | transloco }} - {{ schoolName }}
+        </h3>
+      </div>
+      <div class="flex flex-wrap gap-5">
+        <div class="flex gap-2 items-center">
+          <span class="w-4 h-4 bg-green-500 rounded"></span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.normal' | transloco }}</span>
+        </div>
+        <div class="flex gap-2 items-center">
+          <span class="w-4 h-4 bg-orange-500 rounded"></span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.weekend' | transloco }}</span>
+        </div>
+        <div class="flex gap-2 items-center">
+          <span class="w-4 h-4 bg-red-500 rounded"></span>
+          <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.excluded' | transloco }}</span>
+        </div>
+      </div>
     </div>
-    <div class="flex flex-wrap gap-5">
+
+    <!-- Segunda fila: Controles de navegación y vista -->
+    <div class="flex justify-between items-center">
+      <!-- Botones de navegación -->
       <div class="flex gap-2 items-center">
-        <span class="w-4 h-4 bg-green-500 rounded"></span>
-        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.normal' | transloco }}</span>
+        <button
+          mat-icon-button
+          (click)="previous()"
+          class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          mat-button
+          (click)="today()"
+          class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+          <mat-icon>today</mat-icon>
+          Hoy
+        </button>
+        <button
+          mat-icon-button
+          (click)="next()"
+          class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
       </div>
-      <div class="flex gap-2 items-center">
-        <span class="w-4 h-4 bg-orange-500 rounded"></span>
-        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.weekend' | transloco }}</span>
-      </div>
-      <div class="flex gap-2 items-center">
-        <span class="w-4 h-4 bg-red-500 rounded"></span>
-        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'schools.calendar.legend.excluded' | transloco }}</span>
+
+      <!-- Selector de vista -->
+      <div class="flex gap-1 bg-gray-100 dark:bg-gray-700 rounded-lg p-1">
+        <button
+          mat-button
+          (click)="setView(CalendarView.Month)"
+          [class.bg-white]="view === CalendarView.Month"
+          [class.dark:bg-gray-600]="view === CalendarView.Month"
+          [class.text-blue-600]="view === CalendarView.Month"
+          [class.dark:text-blue-400]="view === CalendarView.Month"
+          class="px-3 py-1 text-sm rounded-md transition-colors">
+          Mes
+        </button>
+        <button
+          mat-button
+          (click)="setView(CalendarView.Week)"
+          [class.bg-white]="view === CalendarView.Week"
+          [class.dark:bg-gray-600]="view === CalendarView.Week"
+          [class.text-blue-600]="view === CalendarView.Week"
+          [class.dark:text-blue-400]="view === CalendarView.Week"
+          class="px-3 py-1 text-sm rounded-md transition-colors">
+          Semana
+        </button>
+        <button
+          mat-button
+          (click)="setView(CalendarView.Day)"
+          [class.bg-white]="view === CalendarView.Day"
+          [class.dark:bg-gray-600]="view === CalendarView.Day"
+          [class.text-blue-600]="view === CalendarView.Day"
+          [class.dark:text-blue-400]="view === CalendarView.Day"
+          class="px-3 py-1 text-sm rounded-md transition-colors">
+          Día
+        </button>
       </div>
     </div>
   </div>
@@ -31,7 +94,9 @@
   <!-- Main -->
   <div class="overflow-y-auto flex-auto h-full bg-white dark:bg-gray-900" cdkScrollable>
     <div class="h-full">
+      <!-- Vista de Mes -->
       <mwl-calendar-month-view
+        *ngIf="view === CalendarView.Month"
         [viewDate]="viewDate"
         [events]="events"
         [locale]="currentLanguage"
@@ -39,6 +104,28 @@
         (eventClicked)="onEventClick($event)"
         class="h-full">
       </mwl-calendar-month-view>
+
+      <!-- Vista de Semana -->
+      <mwl-calendar-week-view
+        *ngIf="view === CalendarView.Week"
+        [viewDate]="viewDate"
+        [events]="events"
+        [locale]="currentLanguage"
+        (dayClicked)="onDayClick($event)"
+        (eventClicked)="onEventClick($event)"
+        class="h-full">
+      </mwl-calendar-week-view>
+
+      <!-- Vista de Día -->
+      <mwl-calendar-day-view
+        *ngIf="view === CalendarView.Day"
+        [viewDate]="viewDate"
+        [events]="events"
+        [locale]="currentLanguage"
+        (dayClicked)="onDayClick($event)"
+        (eventClicked)="onEventClick($event)"
+        class="h-full">
+      </mwl-calendar-day-view>
     </div>
   </div>
 </div>
