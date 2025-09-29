@@ -4,6 +4,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {
   CalendarView,
   CalendarEvent,
@@ -14,10 +20,23 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../site-calendar.service';
 import { Subject, takeUntil } from 'rxjs';
 import { FuseConfigService } from '@fuse/services/config';
+import { EditEventDialogComponent } from './edit-event-dialog.component';
 
 @Component({
   selector: 'app-site-calendar',
-  imports: [CommonModule, CalendarModule, MatButtonModule, MatIconModule, TranslocoModule],
+  imports: [
+    CommonModule,
+    CalendarModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    ReactiveFormsModule,
+    TranslocoModule
+  ],
   templateUrl: './site-calendar.component.html'
 })
 export class SiteCalendarComponent implements OnInit, OnDestroy {
@@ -36,6 +55,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   currentSchoolId: number = 0;
   currentLanguage: string = 'es';
   isDarkMode: boolean = false;
+  editForm: FormGroup;
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
@@ -48,8 +68,18 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private translocoService: TranslocoService,
-    private fuseConfigService: FuseConfigService
-  ) {}
+    private fuseConfigService: FuseConfigService,
+    private dialog: MatDialog,
+    private fb: FormBuilder
+  ) {
+    this.editForm = this.fb.group({
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      comment: [''],
+      isWeekendOverride: [false],
+      isExcluded: [false]
+    });
+  }
 
   ngOnInit() {
     // Obtener el ID de la escuela desde la ruta o input
@@ -125,7 +155,63 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
 
   onEventClick({ event }: { event: CalendarEvent }) {
     console.log('Event clicked:', event);
-    // TODO: Implementar modal para editar horarios y comentarios
+    this.openEditEventDialog(event);
+  }
+
+  openEditEventDialog(event: CalendarEvent) {
+    const operatingDay = event.meta as SiteOperatingDay;
+
+    // Preparar el formulario con los datos actuales
+    this.editForm.patchValue({
+      startTime: operatingDay.StartTime || '08:00',
+      endTime: operatingDay.EndTime || '16:00',
+      comment: operatingDay.Comment || '',
+      isWeekendOverride: operatingDay.IsWeekendOverride || false,
+      isExcluded: operatingDay.IsExcluded || false
+    });
+
+    const dialogRef = this.dialog.open(EditEventDialogComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        form: this.editForm,
+        event: event,
+        operatingDay: operatingDay,
+        schoolId: this.currentSchoolId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateOperatingDay(operatingDay, result);
+      }
+    });
+  }
+
+  private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+    const request: SiteOperatingDayRequest = {
+      SchoolId: this.currentSchoolId,
+      OperatingDate: new Date(operatingDay.OperatingDate),
+      StartTime: formData.startTime,
+      EndTime: formData.endTime,
+      IsWeekendOverride: formData.isWeekendOverride,
+      IsExcluded: formData.isExcluded,
+      Comment: formData.comment
+    };
+
+    this.loading = true;
+    this.siteCalendarService.toggleOperatingDay(request)
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day updated:', response);
+          this.loadOperatingDays(); // Recargar datos
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error updating operating day:', error);
+          this.loading = false;
+        }
+      });
   }
 
 
