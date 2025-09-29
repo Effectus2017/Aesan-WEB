@@ -119,6 +119,9 @@
       "label": "Longitude",
       "placeholder": "Enter the longitude"
     },
+    "gps-coordinates": {
+      "tooltip": "Click to get GPS coordinates"
+    },
     "phone": {
       "label": "Phone",
       "placeholder": "(xxx) xxx-xxxx"
@@ -135,6 +138,7 @@
       "label": "Mother's Last Name",
       "placeholder": "Enter the mother's last name"
     },
+    "close": "Close",
     "submit": "Apply to Program",
     "select-program-first": "Please select at least one program to continue with registration",
     "form-invalid": {

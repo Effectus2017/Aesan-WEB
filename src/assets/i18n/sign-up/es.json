@@ -122,6 +122,9 @@
       "label": "Longitud",
       "placeholder": "Ingresa la longitud"
     },
+    "gps-coordinates": {
+      "tooltip": "Hacer clic para obtener coordenadas GPS"
+    },
     "phone": {
       "label": "Teléfono",
       "placeholder": "(xxx) xxx-xxxx"
