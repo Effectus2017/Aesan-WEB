@@ -26,7 +26,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { FuseConfigService } from '@fuse/services/config';
 import { SchoolCalendarEditModalComponent } from '../school-calendar-edit-modal/school-calendar-edit-modal.component';
 import { SchoolCalendarAddModalComponent } from '../school-calendar-add-modal/school-calendar-add-modal.component';
-import { DayEventsModalComponent } from '../day-events-modal/day-events-modal.component';
+import { SchoolCalendarTableModalComponent } from '../school-calendar-table-modal/school-calendar-table-modal.component';
 
 @Component({
   selector: 'app-school-calendar',
@@ -651,7 +651,6 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
           this.operatingDays = response.OperatingDays;
           this.events = this.transformToCalendarEvents(response.OperatingDays);
           this.schoolName = response.SchoolName;
-          console.log('Events transformed:', this.events);
           this.loading = false;
         },
         error: (error) => {
@@ -1003,7 +1002,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
 
   // Abrir modal con tabla de eventos del día
   openDayEventsModal(date: Date): void {
-    const dialogRef = this.dialog.open(DayEventsModalComponent, {
+    const dialogRef = this.dialog.open(SchoolCalendarTableModalComponent, {
       width: '80%',
       maxWidth: '1200px',
       data: {
