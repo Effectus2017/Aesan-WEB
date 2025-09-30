@@ -243,48 +243,22 @@ export class SchoolCalendarService {
     const operatingDate = new Date(request.OperatingDate);
     console.log('Looking for date:', operatingDate.toDateString());
 
-    const existingDayIndex = this.mockData.OperatingDays.findIndex(day => {
-      const dayDate = new Date(day.OperatingDate);
-      const isMatch = dayDate.toDateString() === operatingDate.toDateString();
-      console.log(`Comparing ${dayDate.toDateString()} with ${operatingDate.toDateString()}: ${isMatch}`);
-      return isMatch;
-    });
+    // Siempre agregar como nuevo evento (permitir múltiples eventos por día)
+    const newDay: SiteOperatingDay = {
+      Id: this.mockData.OperatingDays.length + 1,
+      SchoolId: request.SchoolId,
+      OperatingDate: operatingDate,
+      StartTime: request.StartTime || '',
+      EndTime: request.EndTime || '',
+      IsWeekendOverride: request.IsWeekendOverride || false,
+      IsExcluded: request.IsExcluded || false,
+      Comment: request.Comment || '',
+      CreatedAt: new Date(),
+      UpdatedAt: new Date()
+    };
 
-    console.log('Found existing day at index:', existingDayIndex);
-
-    if (existingDayIndex >= 0) {
-      // Actualizar día existente
-      const oldDay = this.mockData.OperatingDays[existingDayIndex];
-      console.log('Old day data:', oldDay);
-
-      this.mockData.OperatingDays[existingDayIndex] = {
-        ...oldDay,
-        StartTime: request.StartTime || '',
-        EndTime: request.EndTime || '',
-        IsWeekendOverride: request.IsWeekendOverride || false,
-        IsExcluded: request.IsExcluded || false,
-        Comment: request.Comment || '',
-        UpdatedAt: new Date()
-      };
-
-      console.log('Updated day data:', this.mockData.OperatingDays[existingDayIndex]);
-    } else {
-      // Agregar nuevo día
-      const newDay: SiteOperatingDay = {
-        Id: this.mockData.OperatingDays.length + 1,
-        SchoolId: request.SchoolId,
-        OperatingDate: operatingDate,
-        StartTime: request.StartTime || '',
-        EndTime: request.EndTime || '',
-        IsWeekendOverride: request.IsWeekendOverride || false,
-        IsExcluded: request.IsExcluded || false,
-        Comment: request.Comment || '',
-        CreatedAt: new Date(),
-        UpdatedAt: new Date()
-      };
-      this.mockData.OperatingDays.push(newDay);
-      console.log('Added new day:', newDay);
-    }
+    this.mockData.OperatingDays.push(newDay);
+    console.log('Added new event for day:', newDay);
 
     console.log('Mock data updated successfully:', this.mockData);
   }

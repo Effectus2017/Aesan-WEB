@@ -222,9 +222,9 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
     console.log('Found day data:', dayData);
 
     if (dayData) {
-      // Si el día ya tiene horario, abrir modal de edición
-      console.log('Day has existing data, opening edit dialog');
-      this.openEditDayDialog(date, dayData);
+      // Si el día ya tiene horario, permitir agregar otro evento
+      console.log('Day has existing data, but allowing to add another event');
+      this.openAddDayDialog(date);
     } else {
       // Si el día no tiene horario, abrir modal para agregar
       console.log('Day has no data, opening add dialog');
@@ -235,6 +235,53 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
   onEventClick({ event }: { event: CalendarEvent }) {
     console.log('Event clicked:', event);
     this.openEditEventDialog(event);
+  }
+
+  onEventTimesChanged({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
+    console.log('Event times changed:', { event, newStart, newEnd });
+
+    if (this.loading) return;
+
+    const operatingDay = event.meta as SiteOperatingDay;
+    if (!operatingDay) {
+      console.error('No operating day data found for event');
+      return;
+    }
+
+    // Actualizar el evento con los nuevos horarios
+    const updatedOperatingDay: SiteOperatingDay = {
+      ...operatingDay,
+      OperatingDate: newStart,
+      StartTime: this.formatTimeFromDate(newStart),
+      EndTime: this.formatTimeFromDate(newEnd),
+      UpdatedAt: new Date()
+    };
+
+    console.log('Updated operating day:', updatedOperatingDay);
+    this.updateOperatingDayFromDrag(updatedOperatingDay);
+  }
+
+  onEventResized({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
+    console.log('Event resized:', { event, newStart, newEnd });
+
+    if (this.loading) return;
+
+    const operatingDay = event.meta as SiteOperatingDay;
+    if (!operatingDay) {
+      console.error('No operating day data found for event');
+      return;
+    }
+
+    // Actualizar el evento con los nuevos horarios
+    const updatedOperatingDay: SiteOperatingDay = {
+      ...operatingDay,
+      StartTime: this.formatTimeFromDate(newStart),
+      EndTime: this.formatTimeFromDate(newEnd),
+      UpdatedAt: new Date()
+    };
+
+    console.log('Updated operating day from resize:', updatedOperatingDay);
+    this.updateOperatingDayFromDrag(updatedOperatingDay);
   }
 
   onHourSegmentClicked(event: { date: Date }) {
@@ -251,9 +298,9 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
     console.log('Found day data:', dayData);
 
     if (dayData) {
-      // Si el día ya tiene horario, abrir modal de edición
-      console.log('Day has existing data, opening edit dialog');
-      this.openEditDayDialog(date, dayData);
+      // Si el día ya tiene horario, permitir agregar otro evento
+      console.log('Day has existing data, but allowing to add another event');
+      this.openAddDayDialog(date);
     } else {
       // Si el día no tiene horario, abrir modal para agregar
       console.log('Day has no data, opening add dialog');
@@ -380,6 +427,26 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
     const startTime = this.formatTimeValue(formData.startTime);
     const endTime = this.formatTimeValue(formData.endTime);
 
+    // Para múltiples eventos, actualizar el evento específico
+    if (this.schoolCalendarService['mockData']) {
+      const mockData = this.schoolCalendarService['mockData'];
+      const eventIndex = mockData.OperatingDays.findIndex(day => day.Id === operatingDay.Id);
+      if (eventIndex !== -1) {
+        mockData.OperatingDays[eventIndex] = {
+          ...operatingDay,
+          StartTime: startTime,
+          EndTime: endTime,
+          IsWeekendOverride: formData.isWeekendOverride,
+          IsExcluded: formData.isExcluded,
+          Comment: formData.comment,
+          UpdatedAt: new Date()
+        };
+        console.log('Event updated in mock data:', mockData.OperatingDays[eventIndex]);
+        this.loadOperatingDays(); // Recargar datos
+        return;
+      }
+    }
+
     const request: SiteOperatingDayRequest = {
       SchoolId: this.currentSchoolId,
       OperatingDate: new Date(operatingDay.OperatingDate),
@@ -465,6 +532,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
 
   setView(view: CalendarView) {
     this.view = view;
+    // Recalcular eventos para actualizar draggable/resizable
+    this.events = this.transformToCalendarEvents(this.operatingDays);
   }
 
   previous() {
@@ -615,11 +684,16 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
           endDate.setHours(16, 0, 0, 0);
         }
 
+        const draggable = this.view === CalendarView.Week ? true : false;
+        const resizable = this.view === CalendarView.Week ? { beforeStart: true, afterEnd: true } : { beforeStart: false, afterEnd: false };
+
         return {
           start: startDate,
           end: endDate,
-          title: day.IsExcluded ? 'Día cerrado' : (day.Comment || 'Día de funcionamiento'),
+          title: day.IsExcluded ? 'Día cerrado' : (day.Comment || `Horario ${day.StartTime}-${day.EndTime}`),
           color: this.getEventColor(day),
+          draggable: draggable,
+          resizable: resizable,
           meta: { ...day }
         };
       });
@@ -663,6 +737,58 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
 
     // Fallback: convertir a string
     return String(timeValue);
+  }
+
+  private formatTimeFromDate(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }
+
+  private updateOperatingDayFromDrag(operatingDay: SiteOperatingDay) {
+    console.log('Updating operating day from drag/resize:', operatingDay);
+
+    // Para múltiples eventos, actualizar el evento específico
+    if (this.schoolCalendarService['mockData']) {
+      const mockData = this.schoolCalendarService['mockData'];
+      const eventIndex = mockData.OperatingDays.findIndex(day => day.Id === operatingDay.Id);
+      if (eventIndex !== -1) {
+        mockData.OperatingDays[eventIndex] = {
+          ...operatingDay,
+          UpdatedAt: new Date()
+        };
+        console.log('Event updated in mock data from drag/resize:', mockData.OperatingDays[eventIndex]);
+        this.loadOperatingDays(); // Recargar datos
+        return;
+      }
+    }
+
+    // Si no es mock data, enviar al backend
+    const request: SiteOperatingDayRequest = {
+      SchoolId: this.currentSchoolId,
+      OperatingDate: new Date(operatingDay.OperatingDate),
+      StartTime: operatingDay.StartTime,
+      EndTime: operatingDay.EndTime,
+      IsWeekendOverride: operatingDay.IsWeekendOverride,
+      IsExcluded: operatingDay.IsExcluded,
+      Comment: operatingDay.Comment
+    };
+
+    console.log('Request to send for drag/resize:', request);
+
+    this.loading = true;
+    this.schoolCalendarService.toggleOperatingDay(request)
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day updated from drag/resize successfully:', response);
+          this.loadOperatingDays(); // Recargar datos
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error updating operating day from drag/resize:', error);
+          this.loading = false;
+        }
+      });
   }
 
   private findDayData(date: Date): SiteOperatingDay | undefined {
