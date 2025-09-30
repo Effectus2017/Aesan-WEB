@@ -351,8 +351,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       Id: 0,
       SchoolId: this.currentSchoolId,
       OperatingDate: date,
-      StartTime: '08:00:00',
-      EndTime: '16:00:00',
+      StartTime: '08:00',
+      EndTime: '16:00',
       IsWeekendOverride: false,
       IsExcluded: false,
       Comment: '',
@@ -668,8 +668,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     const request: SiteOperatingDayRequest = {
       SchoolId: this.currentSchoolId,
       OperatingDate: date,
-      StartTime: isOperating ? '08:00:00' : undefined,
-      EndTime: isOperating ? '16:00:00' : undefined,
+      StartTime: isOperating ? '08:00' : undefined,
+      EndTime: isOperating ? '16:00' : undefined,
       IsWeekendOverride: isWeekend && isOperating,
       IsExcluded: !isOperating,
       Comment: isOperating ? 'Día de funcionamiento' : 'Día no operativo'
@@ -708,11 +708,12 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
           const endTimeStr = this.formatTimeValue(day.EndTime);
 
           if (startTimeStr && endTimeStr) {
-            const [startHour, startMin] = startTimeStr.split(':');
-            const [endHour, endMin] = endTimeStr.split(':');
+            // Convertir formato 12h a 24h para Date
+            const startTime = this.parseTime12To24(startTimeStr);
+            const endTime = this.parseTime12To24(endTimeStr);
 
-            startDate.setHours(parseInt(startHour), parseInt(startMin), 0, 0);
-            endDate.setHours(parseInt(endHour), parseInt(endMin), 0, 0);
+            startDate.setHours(startTime.hours, startTime.minutes, 0, 0);
+            endDate.setHours(endTime.hours, endTime.minutes, 0, 0);
           } else {
             // Horarios por defecto si no se pueden parsear
             startDate.setHours(8, 0, 0, 0);
@@ -760,19 +761,34 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   private formatTimeValue(timeValue: any): string {
     if (!timeValue) return '';
 
-    // Si es un string, devolverlo tal como está
+    // Si es un string, convertir de 24h a 12h si es necesario
     if (typeof timeValue === 'string') {
+      // Si ya está en formato 12h (contiene AM/PM), devolverlo tal como está
+      if (timeValue.includes('AM') || timeValue.includes('PM')) {
+        return timeValue;
+      }
+      // Si está en formato 24h, convertir a 12h
+      const time24Match = timeValue.match(/(\d{1,2}):(\d{2})/);
+      if (time24Match) {
+        const hours = parseInt(time24Match[1]);
+        const minutes = time24Match[2];
+        return this.convert24To12(hours, minutes);
+      }
       return timeValue;
     }
 
     // Si es un objeto DateTime (Luxon), convertir a string
     if (timeValue && typeof timeValue === 'object' && timeValue.toFormat) {
-      return timeValue.toFormat('HH:mm');
+      return timeValue.toFormat('hh:mm a'); // Formato 12h con AM/PM
     }
 
     // Si es un objeto Date, convertir a string
     if (timeValue instanceof Date) {
-      return timeValue.toTimeString().substring(0, 5); // HH:mm
+      return timeValue.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }); // Formato 12h con AM/PM
     }
 
     // Fallback: convertir a string
@@ -780,9 +796,55 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   }
 
   private formatTimeFromDate(date: Date): string {
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true
+    }); // Formato 12h con AM/PM
+  }
+
+  private convert24To12(hours24: number, minutes: string): string {
+    let hours12 = hours24;
+    let period = 'AM';
+
+    if (hours24 === 0) {
+      hours12 = 12;
+    } else if (hours24 === 12) {
+      period = 'PM';
+    } else if (hours24 > 12) {
+      hours12 = hours24 - 12;
+      period = 'PM';
+    }
+
+    return `${hours12}:${minutes} ${period}`;
+  }
+
+  private parseTime12To24(time12: string): { hours: number, minutes: number } {
+    // Parsear formato 12h (ej: "8:00 AM", "4:30 PM")
+    const match = time12.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+    if (!match) {
+      // Si no coincide con formato 12h, intentar formato 24h como fallback
+      const match24 = time12.match(/(\d{1,2}):(\d{2})/);
+      if (match24) {
+        return {
+          hours: parseInt(match24[1]),
+          minutes: parseInt(match24[2])
+        };
+      }
+      return { hours: 8, minutes: 0 }; // Fallback por defecto
+    }
+
+    let hours = parseInt(match[1]);
+    const minutes = parseInt(match[2]);
+    const period = match[3].toUpperCase();
+
+    if (period === 'PM' && hours !== 12) {
+      hours += 12;
+    } else if (period === 'AM' && hours === 12) {
+      hours = 0;
+    }
+
+    return { hours, minutes };
   }
 
   private updateOperatingDayFromDrag(operatingDay: SiteOperatingDay) {
@@ -894,8 +956,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     const tableData = dayEvents.map(event => ({
       id: event.meta?.Id,
       title: event.title,
-      startTime: event.meta?.StartTime || '',
-      endTime: event.meta?.EndTime || '',
+      startTime: this.formatTimeValue(event.meta?.StartTime || ''),
+      endTime: this.formatTimeValue(event.meta?.EndTime || ''),
       type: this.getEventTypeLabel(event.meta),
       comment: event.meta?.Comment || '',
       meta: event.meta

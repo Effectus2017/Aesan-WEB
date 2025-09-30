@@ -247,6 +247,23 @@
 
         <!-- Ciudad y Región -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('city', currentStaffType)">
+          <!-- Postal Address -->
+          <mat-form-field data-cy="postal-address-field">
+            <mat-label>{{ "staff.edit.postalAddress.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="postalAddress"
+              [required]="fieldVisibilityService.isFieldRequired('postalAddress', currentStaffType)"
+              placeholder="{{ 'staff.edit.postalAddress.placeholder' | transloco }}"
+              title="{{ 'staff.edit.postalAddress.label' | transloco }}"
+              [attr.aria-label]="'staff.edit.postalAddress.label' | transloco"
+              data-cy="postalAddress-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
+              {{ "staff.edit.postalAddress.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
           <!-- City -->
           <mat-form-field data-cy="city-field">
             <mat-label>{{ "staff.edit.city.label" | transloco }}</mat-label>
@@ -266,7 +283,10 @@
               {{ "staff.edit.city.required" | transloco }}
             </mat-error>
           </mat-form-field>
+        </div>
 
+        <!-- Area Code and Postal Address -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('areaCode', currentStaffType)">
           <!-- Region -->
           <mat-form-field data-cy="region-field">
             <mat-label>{{ "staff.edit.region.label" | transloco }}</mat-label>
@@ -285,10 +305,6 @@
               {{ "staff.edit.region.required" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
-
-        <!-- Area Code and Postal Address -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="fieldVisibilityService.shouldShowField('areaCode', currentStaffType)">
           <!-- Area Code -->
           <mat-form-field data-cy="area-code-field">
             <mat-label>{{ "staff.edit.areaCode.label" | transloco }}</mat-label>
@@ -303,23 +319,6 @@
             />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
               {{ "staff.edit.areaCode.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-
-          <!-- Postal Address -->
-          <mat-form-field data-cy="postal-address-field">
-            <mat-label>{{ "staff.edit.postalAddress.label" | transloco }}</mat-label>
-            <input
-              matInput
-              formControlName="postalAddress"
-              [required]="fieldVisibilityService.isFieldRequired('postalAddress', currentStaffType)"
-              placeholder="{{ 'staff.edit.postalAddress.placeholder' | transloco }}"
-              title="{{ 'staff.edit.postalAddress.label' | transloco }}"
-              [attr.aria-label]="'staff.edit.postalAddress.label' | transloco"
-              data-cy="postalAddress-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
-              {{ "staff.edit.postalAddress.required" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>

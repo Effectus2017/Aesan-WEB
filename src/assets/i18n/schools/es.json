@@ -17,6 +17,10 @@
                     "satelliteSchoolName": "Nombre del Sitio Satélite",
                     "assignmentDate": "Fecha de Asignación",
                     "comment": "Comentario"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "calendar": "Calendario"
                 }
             },
             "search": {

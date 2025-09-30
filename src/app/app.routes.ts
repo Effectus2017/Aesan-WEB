@@ -57,7 +57,11 @@ export const appRoutes: Route[] = [
     data: {
       layout: 'empty',
     },
-    children: [{ path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes') }],
+    children: [
+      { path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes') },
+      // Demo del árbol de escuelas
+      { path: 'demo/schools-tree', loadChildren: () => import('app/shared/components/schools-tree/schools-tree-demo.routes') },
+    ],
   },
 
   // Admin routes

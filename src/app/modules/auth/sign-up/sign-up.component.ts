@@ -370,24 +370,45 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         // --- Lógica para nationalYouthProgram ---
         const nationalYouthProgramControl = this.signUpForm.get('nationalYouthProgram');
+
         if (isPSAVProgram(currentProgram)) {
           nationalYouthProgramControl.setValidators([Validators.required]);
         } else {
           nationalYouthProgramControl.clearValidators();
           nationalYouthProgramControl.setValue(null); // Limpiar si no es PSAV
         }
+
         nationalYouthProgramControl.updateValueAndValidity();
         // --- Fin lógica ---
 
         // --- Lógica para isDayCareHome ---
         const isDayCareHomeControl = this.signUpForm.get('isDayCareHome');
+
         if (isPACNAProgram(currentProgram)) {
           isDayCareHomeControl.setValidators([Validators.required]);
         } else {
           isDayCareHomeControl.clearValidators();
           isDayCareHomeControl.setValue(null); // Limpiar si no es PACNA
         }
+
         isDayCareHomeControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // --- Lógica para basicEducationRegistry ---
+        const basicEducationRegistryControl = this.signUpForm.get('basicEducationRegistry');
+
+        if (isPSAVProgram(currentProgram)) {
+
+            // Para PSAV, quitar la validación requerida y limpiar el valor
+          basicEducationRegistryControl.clearValidators();
+          basicEducationRegistryControl.setValue(null);
+
+        } else {
+          // Para otros programas, mantener la validación requerida
+          basicEducationRegistryControl.setValidators([Validators.required]);
+        }
+
+        basicEducationRegistryControl.updateValueAndValidity();
         // --- Fin lógica ---
 
         // Limpiar el campo extendedHours si no es PACNA
@@ -397,6 +418,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         // Verificar el registro de educación básica si ya tiene un valor
         const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
+
         if (basicEducationRegistry !== null && basicEducationRegistry !== undefined) {
           this.checkBasicEducationRegistry();
         }
@@ -455,9 +477,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
       next: (response) => {
         if (response?.body?.data) {
-          if (target === 'region') {
+
+            if (target === 'region') {
+
             this.listRegions = response.body.data;
             const regionControl = this.signUpForm.get('region');
+
             if (regionControl) {
               if (this.listRegions.length === 1) {
                 // Asignar automáticamente la única región encontrada para Dirección Física
@@ -466,9 +491,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                 regionControl.setValue(null);
               }
             }
+
           } else if (target === 'postalRegion') {
+
             this.listPostalRegions = response.body.data;
             const regionControl = this.signUpForm.get('postalRegion');
+
             if (regionControl) {
               if (this.listPostalRegions.length === 1) {
                 // Asignar automáticamente la única región encontrada para Dirección Postal

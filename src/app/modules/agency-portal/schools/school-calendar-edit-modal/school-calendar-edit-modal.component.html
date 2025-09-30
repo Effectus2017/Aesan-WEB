@@ -26,14 +26,11 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <mat-form-field>
           <mat-label>Hora de Inicio</mat-label>
-          <input
-            matInput
-            placeholder="Seleccionar hora de inicio"
-            formControlName="startTime"
-            [matTimepicker]="pickerStartTime"
-            required>
-          <mat-timepicker-toggle matIconSuffix [for]="pickerStartTime" />
-          <mat-timepicker #pickerStartTime />
+          <mat-select formControlName="startTime" required>
+            <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+              {{ time.display }}
+            </mat-option>
+          </mat-select>
           <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
             La hora de inicio es requerida
           </mat-error>
@@ -41,14 +38,11 @@
 
         <mat-form-field>
           <mat-label>Hora de Fin</mat-label>
-          <input
-            matInput
-            placeholder="Seleccionar hora de fin"
-            formControlName="endTime"
-            [matTimepicker]="pickerEndTime"
-            required>
-          <mat-timepicker-toggle matIconSuffix [for]="pickerEndTime" />
-          <mat-timepicker #pickerEndTime />
+          <mat-select formControlName="endTime" required>
+            <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+              {{ time.display }}
+            </mat-option>
+          </mat-select>
           <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
             La hora de fin es requerida
           </mat-error>

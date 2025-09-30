@@ -25,7 +25,13 @@
     "error": {
       "invalid-temp-password": "Invalid temporary password",
       "not-updated": "Password could not be updated",
-      "server-error": "Server error. Please try again later"
+      "server-error": "Server error. Please try again later",
+      "invalid-token": "The reset link is not valid or has expired",
+      "reset-error": "An error occurred while resetting the password"
+    },
+    "password-visibility": {
+      "show": "Show password",
+      "hide": "Hide password"
     }
   }
 }

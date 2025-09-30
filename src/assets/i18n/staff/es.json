@@ -11,7 +11,7 @@
           "fatherLastName": "Primer Apellido",
           "motherLastName": "Segundo Apellido",
           "fullName": "Nombre Completo",
-          "status": "Estado",
+          "status": "Estatus",
           "position": "Cargo",
           "staffType": "Tipo de Personal",
           "birthDate": "Fecha de Nacimiento",
@@ -107,9 +107,9 @@
         "placeholder": "Ingrese el segundo apellido"
       },
       "status": {
-        "label": "Estado",
-        "placeholder": "Seleccione el estado",
-        "required": "El estado es requerido",
+        "label": "Estatus",
+        "placeholder": "Seleccione el estatus",
+        "required": "El estatus es requerido",
         "active": "Activo",
         "inactive": "Inactivo"
       },
@@ -253,9 +253,9 @@
         "placeholder": "Ingrese el segundo apellido (opcional)"
       },
       "status": {
-        "label": "Estado",
-        "placeholder": "Seleccione el estado",
-        "required": "El estado es requerido"
+        "label": "Estatus",
+        "placeholder": "Seleccione el estatus",
+        "required": "El estatus es requerido"
       },
       "position": {
         "label": "Cargo",
