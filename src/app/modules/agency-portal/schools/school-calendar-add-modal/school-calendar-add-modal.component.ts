@@ -14,7 +14,8 @@ import { SiteOperatingDay } from '../school-calendar.service';
 
 export interface SchoolCalendarAddModalData {
   form: FormGroup;
-  operatingDay: SiteOperatingDay;
+  operatingDay?: SiteOperatingDay;
+  date?: Date;
   schoolId: number;
 }
 
@@ -44,7 +45,9 @@ export class SchoolCalendarAddModalComponent {
   ) {}
 
   getFormattedDate(): string {
-    const date = new Date(this.data.operatingDay.OperatingDate);
+    const date = this.data.operatingDay?.OperatingDate ?
+      new Date(this.data.operatingDay.OperatingDate) :
+      this.data.date || new Date();
     return date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',

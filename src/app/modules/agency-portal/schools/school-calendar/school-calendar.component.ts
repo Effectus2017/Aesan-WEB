@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import {
   CalendarView,
@@ -18,10 +19,14 @@ import {
 } from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SchoolCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../school-calendar.service';
+import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
+import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
+import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
 import { Subject, takeUntil } from 'rxjs';
 import { FuseConfigService } from '@fuse/services/config';
 import { SchoolCalendarEditModalComponent } from '../school-calendar-edit-modal/school-calendar-edit-modal.component';
 import { SchoolCalendarAddModalComponent } from '../school-calendar-add-modal/school-calendar-add-modal.component';
+import { DayEventsModalComponent } from '../day-events-modal/day-events-modal.component';
 
 @Component({
   selector: 'app-school-calendar',
@@ -40,7 +45,7 @@ import { SchoolCalendarAddModalComponent } from '../school-calendar-add-modal/sc
   ],
   templateUrl: './school-calendar.component.html'
 })
-export class SchoolCalendarComponent implements OnInit, OnDestroy {
+export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   @Input() schoolId?: number;
   @Input() schoolName: string = '';
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
@@ -54,9 +59,24 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
   operatingDays: SiteOperatingDay[] = [];
   loading = false;
   currentSchoolId: number = 0;
+  activeDayIsOpen: boolean = false;
+  selectedDate: Date | null = null;
   currentLanguage: string = 'es';
   isDarkMode: boolean = false;
   editForm: FormGroup;
+
+  // Configuración de la tabla de eventos del día
+  tableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>([]),
+    dataSourceList: [],
+    columnsSchema: DAY_EVENTS_COLUMNS_SCHEMA,
+    displayedColumns: DAY_EVENTS_COLUMNS_SCHEMA.map(col =>
+      Array.isArray(col.key) ? col.key[0] : col.key
+    ),
+    handler: this,
+    showPaginator: false,
+    addButtonShow: false // Deshabilitar botón agregar de la tabla
+  };
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
@@ -218,17 +238,32 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
 
     console.log('Extracted date:', date);
 
-    const dayData = this.findDayData(date);
-    console.log('Found day data:', dayData);
+    // Solo manejar clicks en la vista de mes
+    if (this.view === CalendarView.Month) {
+      // Buscar eventos para este día
+      const dayEvents = this.events.filter(event =>
+        this.isSameDate(event.start, date)
+      );
 
-    if (dayData) {
-      // Si el día ya tiene horario, permitir agregar otro evento
-      console.log('Day has existing data, but allowing to add another event');
-      this.openAddDayDialog(date);
+      console.log('Events for this day:', dayEvents);
+
+      if (dayEvents.length > 0) {
+        // Si hay eventos, abrir modal con tabla
+        this.selectedDate = date;
+        this.updateDayEventsTable(date);
+        this.openDayEventsModal(date);
+      } else {
+        // Si no hay eventos, abrir modal para agregar
+        this.openAddDayDialog(date);
+      }
     } else {
-      // Si el día no tiene horario, abrir modal para agregar
-      console.log('Day has no data, opening add dialog');
-      this.openAddDayDialog(date);
+      // Para otras vistas, mantener el comportamiento actual
+      const dayData = this.findDayData(date);
+      if (dayData) {
+        this.openAddDayDialog(date);
+      } else {
+        this.openAddDayDialog(date);
+      }
     }
   }
 
@@ -466,6 +501,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
           console.log('Operating day updated successfully:', response);
           console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
+          this.refreshDayEventsTable(); // Actualizar tabla
           this.loading = false;
         },
         error: (error) => {
@@ -502,6 +538,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
           console.log('Operating day added successfully:', response);
           console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
+          this.refreshDayEventsTable(); // Actualizar tabla
           this.loading = false;
         },
         error: (error) => {
@@ -521,6 +558,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
           console.log('Operating day deleted successfully:', response);
           console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
+          this.refreshDayEventsTable(); // Actualizar tabla
           this.loading = false;
         },
         error: (error) => {
@@ -534,6 +572,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
     this.view = view;
     // Recalcular eventos para actualizar draggable/resizable
     this.events = this.transformToCalendarEvents(this.operatingDays);
+    // Limpiar selección al cambiar de vista
+    this.selectedDate = null;
   }
 
   previous() {
@@ -839,4 +879,105 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy {
       return false;
     }
   }
+
+  // Métodos para manejar eventos de la tabla
+  getDayEvents(date: Date): CalendarEvent[] {
+    return this.events.filter(event =>
+      this.isSameDate(event.start, date)
+    );
+  }
+
+  updateDayEventsTable(date: Date): void {
+    const dayEvents = this.getDayEvents(date);
+
+    // Transformar CalendarEvent a formato de tabla
+    const tableData = dayEvents.map(event => ({
+      id: event.meta?.Id,
+      title: event.title,
+      startTime: event.meta?.StartTime || '',
+      endTime: event.meta?.EndTime || '',
+      type: this.getEventTypeLabel(event.meta),
+      comment: event.meta?.Comment || '',
+      meta: event.meta
+    }));
+
+    this.tableConfig.dataSource = new MatTableDataSource(tableData);
+    this.tableConfig.dataSourceList = tableData;
+  }
+
+  getEventTypeLabel(operatingDay: SiteOperatingDay): string {
+    if (operatingDay.IsExcluded) {
+      return 'Día cerrado';
+    }
+    if (operatingDay.IsWeekendOverride) {
+      return 'Fin de semana';
+    }
+    return 'Día normal';
+  }
+
+  // Implementación de OnGenericTableHandler
+  onTableEdit(event: Event, id: any): void {
+    // Encontrar el evento por ID y abrir modal de edición
+    const calendarEvent = this.events.find(e => e.meta?.Id === id);
+    if (calendarEvent) {
+      this.openEditEventDialog(calendarEvent);
+    }
+  }
+
+  onTableDelete(event: Event, id: any): void {
+    // Encontrar el evento por ID y eliminarlo
+    const calendarEvent = this.events.find(e => e.meta?.Id === id);
+    if (calendarEvent) {
+      this.deleteOperatingDay(calendarEvent.meta.Id);
+    }
+  }
+
+  onAddButtonClick(event?: Event): void {
+    // Abrir modal para agregar evento al día seleccionado
+    if (this.selectedDate) {
+      this.openAddDayDialog(this.selectedDate);
+    }
+  }
+
+  // Abrir modal con tabla de eventos del día
+  openDayEventsModal(date: Date): void {
+    const dialogRef = this.dialog.open(DayEventsModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        date: date,
+        events: this.getDayEvents(date),
+        tableConfig: this.tableConfig,
+        handler: this,
+        schoolId: this.schoolId,
+        onEventAdded: () => {
+          // Callback para actualizar la tabla cuando se agrega un evento
+          this.loadOperatingDays();
+        }
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'refresh') {
+        this.loadOperatingDays(); // Recargar datos si hubo cambios
+      }
+      // Ya no necesitamos manejar 'add-event' aquí porque se maneja en el modal hijo
+    });
+  }
+
+  // Actualizar tabla después de agregar/editar/eliminar eventos
+  private refreshDayEventsTable(): void {
+    if (this.view === CalendarView.Month && this.selectedDate) {
+      this.updateDayEventsTable(this.selectedDate);
+    }
+  }
+
+  // Métodos requeridos por OnGenericTableHandler (no utilizados)
+  onTableAdd?(event: Event, element: any): void {}
+  onTableEditElement?(event: Event, element: any): void {}
+  onTableDownload?(event: Event, id: any): void {}
+  onTableCalendar?(event: Event, id: any): void {}
+  onTableCheckChange?(event: any, element: any): void {}
+  getPaginator?(event?: any): void {}
+  getById?(id: number): void {}
 }

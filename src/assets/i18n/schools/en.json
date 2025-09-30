@@ -1207,6 +1207,22 @@
                 "normal": "Normal days",
                 "weekend": "Weekends",
                 "excluded": "Excluded days"
+            },
+            "day-events": {
+                "table": {
+                    "columns": {
+                        "title": "Title",
+                        "startTime": "Start Time",
+                        "endTime": "End Time",
+                        "type": "Type",
+                        "comment": "Comment",
+                        "actions": "Actions"
+                    },
+                    "buttons": {
+                        "edit": "Edit",
+                        "delete": "Delete"
+                    }
+                }
             }
         }
     }

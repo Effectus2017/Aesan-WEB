@@ -1082,6 +1082,22 @@
                 "normal": "Días normales",
                 "weekend": "Fines de semana",
                 "excluded": "Días excluidos"
+            },
+            "day-events": {
+                "table": {
+                    "columns": {
+                        "title": "Título",
+                        "startTime": "Hora Inicio",
+                        "endTime": "Hora Fin",
+                        "type": "Tipo",
+                        "comment": "Comentario",
+                        "actions": "Acciones"
+                    },
+                    "buttons": {
+                        "edit": "Editar",
+                        "delete": "Eliminar"
+                    }
+                }
             }
         }
     }
