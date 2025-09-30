@@ -114,6 +114,7 @@
         [events]="events"
         [locale]="currentLanguage"
         (dayClicked)="onDayClick($event)"
+        (hourSegmentClicked)="onHourSegmentClicked($event)"
         (eventClicked)="onEventClick($event)"
         class="h-full">
       </mwl-calendar-week-view>
@@ -125,6 +126,7 @@
         [events]="events"
         [locale]="currentLanguage"
         (dayClicked)="onDayClick($event)"
+        (hourSegmentClicked)="onHourSegmentClicked($event)"
         (eventClicked)="onEventClick($event)"
         class="h-full">
       </mwl-calendar-day-view>

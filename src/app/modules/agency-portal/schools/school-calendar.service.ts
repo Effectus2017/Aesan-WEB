@@ -36,7 +36,7 @@ export interface SiteCalendarResponse {
 @Injectable({
   providedIn: 'root'
 })
-export class SiteCalendarService {
+export class SchoolCalendarService {
   private apiUrl = '/api/site-calendar';
   private useMockData = true; // Cambiar a false cuando el backend esté listo
   private mockData: SiteCalendarResponse | null = null;
@@ -112,7 +112,11 @@ export class SiteCalendarService {
       // Fines de semana
       if (isWeekend) {
         if (day % 3 === 0) {
-          // Algunos fines de semana funcionan por excepción
+          // Explicación de "Sobrescribir fin de semana":
+          // ¿Para qué sirve?
+          // - Marcar fines de semana que sí operan (excepción)
+          // - Diferenciarlos de los fines de semana cerrados
+          // - Permitir horarios específicos en sábados/domingos
           isWeekendOverride = true;
           comment = 'Fin de semana - Funciona por excepción';
         } else {
@@ -202,6 +206,27 @@ export class SiteCalendarService {
       SchoolName: `Escuela de Prueba ${schoolId}`,
       OperatingDays: operatingDays
     };
+  }
+
+  /**
+   * Elimina un día de funcionamiento
+   */
+  deleteOperatingDay(id: number): Observable<boolean> {
+    if (this.useMockData) {
+      console.log('Deleting operating day with mock data, ID:', id);
+
+      if (this.mockData) {
+        const dayIndex = this.mockData.OperatingDays.findIndex(day => day.Id === id);
+        if (dayIndex !== -1) {
+          this.mockData.OperatingDays.splice(dayIndex, 1);
+          console.log('Operating day deleted from mock data');
+        }
+      }
+
+      return of(true).pipe(delay(500));
+    }
+
+    return this.http.delete<boolean>(`${this.apiUrl}/delete-operating-day/${id}`);
   }
 
   /**

@@ -37,7 +37,7 @@ export default [
       },
       {
         path: 'calendar/:id',
-        loadComponent: () => import('./site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
+        loadComponent: () => import('./school-calendar/school-calendar.component').then((c) => c.SchoolCalendarComponent),
         canActivate: [PermissionGuard],
         data: { permission: 'school.edit' },
       },

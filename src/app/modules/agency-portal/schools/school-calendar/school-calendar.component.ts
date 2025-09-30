@@ -17,13 +17,14 @@ import {
   DateAdapter
 } from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SiteCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../site-calendar.service';
+import { SchoolCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../school-calendar.service';
 import { Subject, takeUntil } from 'rxjs';
 import { FuseConfigService } from '@fuse/services/config';
-import { EditEventDialogComponent } from './edit-event-dialog.component';
+import { SchoolCalendarEditModalComponent } from '../school-calendar-edit-modal/school-calendar-edit-modal.component';
+import { SchoolCalendarAddModalComponent } from '../school-calendar-add-modal/school-calendar-add-modal.component';
 
 @Component({
-  selector: 'app-site-calendar',
+  selector: 'app-school-calendar',
   imports: [
     CommonModule,
     CalendarModule,
@@ -37,9 +38,9 @@ import { EditEventDialogComponent } from './edit-event-dialog.component';
     ReactiveFormsModule,
     TranslocoModule
   ],
-  templateUrl: './site-calendar.component.html'
+  templateUrl: './school-calendar.component.html'
 })
-export class SiteCalendarComponent implements OnInit, OnDestroy {
+export class SchoolCalendarComponent implements OnInit, OnDestroy {
   @Input() schoolId?: number;
   @Input() schoolName: string = '';
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
@@ -64,7 +65,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   private dateAdapter = inject(DateAdapter);
 
   constructor(
-    private siteCalendarService: SiteCalendarService,
+    private schoolCalendarService: SchoolCalendarService,
     private route: ActivatedRoute,
     private router: Router,
     private translocoService: TranslocoService,
@@ -140,22 +141,201 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     }
   }
 
-  onDayClick({ date }: { date: Date }) {
+  onDayClick(event: any) {
     if (this.loading) return;
 
-    const dayData = this.operatingDays.find(d =>
-      this.isSameDate(new Date(d.OperatingDate), date)
-    );
+    console.log('Day clicked event:', event);
+    console.log('Current view:', this.view);
+    console.log('Available operating days:', this.operatingDays.length);
+    console.log('Event structure:', JSON.stringify(event, null, 2));
 
-    const isCurrentlyOperating = dayData ? !dayData.IsExcluded : false;
-    const newOperatingStatus = !isCurrentlyOperating;
+    let date: Date | null = null;
 
-    this.toggleOperatingDay(date, newOperatingStatus);
+    // Manejar diferentes estructuras de evento según la vista
+    if (this.view === CalendarView.Month) {
+      // En vista de mes: {day: {…}, sourceEvent: PointerEvent}
+      date = event?.day || event?.date || event;
+      console.log('Month view - extracted date:', date);
+    } else if (this.view === CalendarView.Week) {
+      // En vista de semana: {date: Date, sourceEvent: PointerEvent}
+      date = event?.date || event?.day || event;
+      console.log('Week view - extracted date:', date);
+    } else if (this.view === CalendarView.Day) {
+      // En vista de día: {date: Date, sourceEvent: PointerEvent}
+      date = event?.date || event?.day || event;
+      console.log('Day view - extracted date:', date);
+    }
+
+    if (!date) {
+      console.error('Date parameter is undefined in onDayClick, event:', event);
+      return;
+    }
+
+    console.log('Raw date value:', date, 'Type:', typeof date);
+
+    // Asegurar que date es un objeto Date válido
+    if (!(date instanceof Date)) {
+      console.log('Converting date to Date object:', date);
+
+      // Intentar diferentes formas de conversión
+      if (typeof date === 'string') {
+        // Si es string, intentar parsearlo
+        const parsedDate = new Date(date);
+        if (!isNaN(parsedDate.getTime())) {
+          date = parsedDate;
+        } else {
+          console.error('Failed to parse date string:', date);
+          return;
+        }
+      } else if (typeof date === 'number') {
+        // Si es número (timestamp)
+        date = new Date(date);
+      } else if (date && typeof date === 'object') {
+        // Si es objeto, intentar extraer propiedades de fecha
+        const dateObj = date as any;
+        if (dateObj.year && dateObj.month !== undefined && dateObj.day !== undefined) {
+          date = new Date(dateObj.year, dateObj.month, dateObj.day);
+        } else if (dateObj.date) {
+          // Si tiene propiedad date (estructura de angular-calendar)
+          date = new Date(dateObj.date);
+        } else if ('getTime' in dateObj) {
+          date = new Date(dateObj.getTime());
+        } else {
+          console.error('Cannot convert object to date:', date);
+          return;
+        }
+      } else {
+        console.error('Unknown date type:', typeof date, date);
+        return;
+      }
+    }
+
+    if (isNaN(date.getTime())) {
+      console.error('Invalid date after conversion:', date);
+      console.error('Original event:', event);
+      return;
+    }
+
+    console.log('Extracted date:', date);
+
+    const dayData = this.findDayData(date);
+    console.log('Found day data:', dayData);
+
+    if (dayData) {
+      // Si el día ya tiene horario, abrir modal de edición
+      console.log('Day has existing data, opening edit dialog');
+      this.openEditDayDialog(date, dayData);
+    } else {
+      // Si el día no tiene horario, abrir modal para agregar
+      console.log('Day has no data, opening add dialog');
+      this.openAddDayDialog(date);
+    }
   }
 
   onEventClick({ event }: { event: CalendarEvent }) {
     console.log('Event clicked:', event);
     this.openEditEventDialog(event);
+  }
+
+  onHourSegmentClicked(event: { date: Date }) {
+    if (this.loading) return;
+
+    console.log('Hour segment clicked:', event);
+    console.log('Current view:', this.view);
+    console.log('Available operating days:', this.operatingDays.length);
+
+    const date = event.date;
+    console.log('Extracted date from hour segment:', date);
+
+    const dayData = this.findDayData(date);
+    console.log('Found day data:', dayData);
+
+    if (dayData) {
+      // Si el día ya tiene horario, abrir modal de edición
+      console.log('Day has existing data, opening edit dialog');
+      this.openEditDayDialog(date, dayData);
+    } else {
+      // Si el día no tiene horario, abrir modal para agregar
+      console.log('Day has no data, opening add dialog');
+      this.openAddDayDialog(date);
+    }
+  }
+
+  openAddDayDialog(date: Date) {
+    console.log('Opening add day dialog for date:', date);
+
+    // Crear un día vacío para el modal
+    const newDay: SiteOperatingDay = {
+      Id: 0,
+      SchoolId: this.currentSchoolId,
+      OperatingDate: date,
+      StartTime: '08:00:00',
+      EndTime: '16:00:00',
+      IsWeekendOverride: false,
+      IsExcluded: false,
+      Comment: '',
+      CreatedAt: new Date(),
+      UpdatedAt: new Date()
+    };
+
+    // Preparar el formulario con valores por defecto
+    this.editForm.patchValue({
+      startTime: '08:00',
+      endTime: '16:00',
+      comment: 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
+      isWeekendOverride: false,
+      isExcluded: false
+    });
+
+    const dialogRef = this.dialog.open(SchoolCalendarAddModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        form: this.editForm,
+        operatingDay: newDay,
+        schoolId: this.currentSchoolId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.addOperatingDay(newDay, result);
+      }
+    });
+  }
+
+  openEditDayDialog(date: Date, dayData: SiteOperatingDay) {
+    console.log('Opening edit day dialog for date:', date, 'with data:', dayData);
+
+    // Preparar el formulario con los datos actuales
+    this.editForm.patchValue({
+      startTime: dayData.StartTime || '08:00',
+      endTime: dayData.EndTime || '16:00',
+      comment: dayData.Comment || 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
+      isWeekendOverride: dayData.IsWeekendOverride || false,
+      isExcluded: dayData.IsExcluded || false
+    });
+
+    const dialogRef = this.dialog.open(SchoolCalendarEditModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        form: this.editForm,
+        event: null, // No hay evento para días existentes
+        operatingDay: dayData,
+        schoolId: this.currentSchoolId
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.action === 'delete') {
+          this.deleteOperatingDay(dayData);
+        } else {
+          this.updateOperatingDay(dayData, result);
+        }
+      }
+    });
   }
 
   openEditEventDialog(event: CalendarEvent) {
@@ -165,12 +345,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     this.editForm.patchValue({
       startTime: operatingDay.StartTime || '08:00',
       endTime: operatingDay.EndTime || '16:00',
-      comment: operatingDay.Comment || '',
+      comment: operatingDay.Comment || 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
       isWeekendOverride: operatingDay.IsWeekendOverride || false,
       isExcluded: operatingDay.IsExcluded || false
     });
 
-    const dialogRef = this.dialog.open(EditEventDialogComponent, {
+    const dialogRef = this.dialog.open(SchoolCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -183,7 +363,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.updateOperatingDay(operatingDay, result);
+        if (result.action === 'delete') {
+          this.deleteOperatingDay(operatingDay);
+        } else {
+          this.updateOperatingDay(operatingDay, result);
+        }
       }
     });
   }
@@ -209,7 +393,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     console.log('Request to send:', request);
 
     this.loading = true;
-    this.siteCalendarService.toggleOperatingDay(request)
+    this.schoolCalendarService.toggleOperatingDay(request)
       .subscribe({
         next: (response) => {
           console.log('Operating day updated successfully:', response);
@@ -224,6 +408,60 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
       });
   }
 
+  private addOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+    console.log('Adding new operating day with form data:', formData);
+    console.log('New operating day:', operatingDay);
+
+    // Convertir DateTime objects a strings si es necesario
+    const startTime = this.formatTimeValue(formData.startTime);
+    const endTime = this.formatTimeValue(formData.endTime);
+
+    const request: SiteOperatingDayRequest = {
+      SchoolId: this.currentSchoolId,
+      OperatingDate: new Date(operatingDay.OperatingDate),
+      StartTime: startTime,
+      EndTime: endTime,
+      IsWeekendOverride: formData.isWeekendOverride,
+      IsExcluded: formData.isExcluded,
+      Comment: formData.comment
+    };
+
+    console.log('Request to send:', request);
+
+    this.loading = true;
+    this.schoolCalendarService.toggleOperatingDay(request)
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day added successfully:', response);
+          console.log('Reloading operating days...');
+          this.loadOperatingDays(); // Recargar datos
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error adding operating day:', error);
+          this.loading = false;
+        }
+      });
+  }
+
+  private deleteOperatingDay(operatingDay: SiteOperatingDay) {
+    console.log('Deleting operating day:', operatingDay);
+
+    this.loading = true;
+    this.schoolCalendarService.deleteOperatingDay(operatingDay.Id)
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day deleted successfully:', response);
+          console.log('Reloading operating days...');
+          this.loadOperatingDays(); // Recargar datos
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error deleting operating day:', error);
+          this.loading = false;
+        }
+      });
+  }
 
   setView(view: CalendarView) {
     this.view = view;
@@ -297,7 +535,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   private loadOperatingDays() {
     console.log('Loading operating days for schoolId:', this.currentSchoolId);
     this.loading = true;
-    this.siteCalendarService.getOperatingDays(this.currentSchoolId)
+    this.schoolCalendarService.getOperatingDays(this.currentSchoolId)
       .subscribe({
         next: (response) => {
           console.log('Operating days loaded:', response);
@@ -328,7 +566,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
       Comment: isOperating ? 'Día de funcionamiento' : 'Día no operativo'
     };
 
-    this.siteCalendarService.toggleOperatingDay(request)
+    this.schoolCalendarService.toggleOperatingDay(request)
       .subscribe({
         next: (success) => {
           if (success) {
@@ -347,7 +585,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   private transformToCalendarEvents(days: SiteOperatingDay[]): CalendarEvent[] {
     console.log('Transforming days to events:', days);
     const events = days
-      .filter(day => !day.IsExcluded)
       .map(day => {
         // Asegurar que OperatingDate sea un objeto Date
         const operatingDate = day.OperatingDate instanceof Date ? day.OperatingDate : new Date(day.OperatingDate);
@@ -381,7 +618,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
         return {
           start: startDate,
           end: endDate,
-          title: day.Comment || 'Día de funcionamiento',
+          title: day.IsExcluded ? 'Día cerrado' : (day.Comment || 'Día de funcionamiento'),
           color: this.getEventColor(day),
           meta: { ...day }
         };
@@ -392,6 +629,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
   }
 
   private getEventColor(day: SiteOperatingDay): any {
+    if (day.IsExcluded) {
+      return { primary: '#f44336', secondary: '#ffcdd2' }; // Rojo para días excluidos
+    }
+    // Explicación de "Sobrescribir fin de semana":
+    // ¿Para qué sirve?
+    // - Marcar fines de semana que sí operan (excepción)
+    // - Diferenciarlos de los fines de semana cerrados
+    // - Permitir horarios específicos en sábados/domingos
     if (day.IsWeekendOverride) {
       return { primary: '#ff9800', secondary: '#ffcc80' }; // Naranja para fines de semana
     }
@@ -420,9 +665,52 @@ export class SiteCalendarComponent implements OnInit, OnDestroy {
     return String(timeValue);
   }
 
+  private findDayData(date: Date): SiteOperatingDay | undefined {
+    console.log('Searching for day data for date:', date);
+    console.log('Operating days to search:', this.operatingDays);
+
+    // Asegurar que date es un objeto Date válido
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+      console.error('Invalid date parameter:', date);
+      return undefined;
+    }
+
+    const found = this.operatingDays.find(d => {
+      if (!d.OperatingDate) {
+        console.log('Day has no OperatingDate:', d);
+        return false;
+      }
+
+      try {
+        const operatingDate = new Date(d.OperatingDate);
+        if (!operatingDate || isNaN(operatingDate.getTime())) {
+          console.log('Invalid OperatingDate:', d.OperatingDate);
+          return false;
+        }
+
+        const isMatch = this.isSameDate(operatingDate, date);
+        console.log(`Comparing ${operatingDate.toDateString()} with ${date.toDateString()}: ${isMatch}`);
+        return isMatch;
+      } catch (error) {
+        console.error('Error processing OperatingDate:', d.OperatingDate, error);
+        return false;
+      }
+    });
+
+    console.log('Found day data:', found);
+    return found;
+  }
+
   private isSameDate(date1: Date, date2: Date): boolean {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+    if (!date1 || !date2) return false;
+
+    try {
+      return date1.getFullYear() === date2.getFullYear() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getDate() === date2.getDate();
+    } catch (error) {
+      console.error('Error comparing dates:', error, { date1, date2 });
+      return false;
+    }
   }
 }
