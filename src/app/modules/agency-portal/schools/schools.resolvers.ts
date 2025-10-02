@@ -17,6 +17,28 @@ import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { SchoolCalendarService } from './school-calendar.service';
+
+// Resolver para el calendario de la escuela
+export const initialDataSchoolCalendarResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const schoolId = Number(route.paramMap.get('id'));
+  const schoolCalendarService = inject(SchoolCalendarService);
+  const schoolService = inject(SchoolService);
+
+  const queryParameters: QueryParameters = {
+    schoolId: schoolId
+  };
+
+  return forkJoin([
+    schoolCalendarService.getOperatingDays(queryParameters),
+    schoolService.getSchoolById({ id: schoolId })
+  ]).pipe(
+    map(([operatingDays, school]) => ({
+      operatingDays: operatingDays.body,
+      school: school.body
+    }))
+  );
+};
 
 // Resolver para la lista de escuelas
 export const initialDataSchoolsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {

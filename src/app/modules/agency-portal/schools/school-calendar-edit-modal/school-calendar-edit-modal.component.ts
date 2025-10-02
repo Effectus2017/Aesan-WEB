@@ -10,12 +10,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { CalendarEvent } from 'angular-calendar';
-import { SiteOperatingDay } from '../school-calendar.service';
+import { SchoolOperatingDay } from '../school-calendar.service';
 
 export interface SchoolCalendarEditModalData {
   form: FormGroup;
   event: CalendarEvent | null;
-  operatingDay: SiteOperatingDay;
+  operatingDay: SchoolOperatingDay;
   schoolId: number;
 }
 
@@ -191,7 +191,7 @@ export class SchoolCalendarEditModalComponent {
   }
 
   getFormattedDate(): string {
-    const date = new Date(this.data.operatingDay.OperatingDate);
+    const date = new Date(this.data.operatingDay.operatingDate);
     return date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
@@ -216,4 +216,5 @@ export class SchoolCalendarEditModalComponent {
       this.dialogRef.close({ action: 'delete' });
     }
   }
+
 }

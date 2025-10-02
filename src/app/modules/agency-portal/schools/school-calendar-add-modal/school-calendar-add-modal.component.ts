@@ -9,11 +9,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
-import { SiteOperatingDay } from '../school-calendar.service';
+import { SchoolOperatingDay } from '../school-calendar.service';
 
 export interface SchoolCalendarAddModalData {
   form: FormGroup;
-  operatingDay?: SiteOperatingDay;
+  operatingDay?: SchoolOperatingDay;
   date?: Date;
   schoolId: number;
 }
@@ -94,8 +94,8 @@ export class SchoolCalendarAddModalComponent {
   }
 
   getFormattedDate(): string {
-    const date = this.data.operatingDay?.OperatingDate ?
-      new Date(this.data.operatingDay.OperatingDate) :
+    const date = this.data.operatingDay?.operatingDate ?
+      new Date(this.data.operatingDay.operatingDate) :
       this.data.date || new Date();
     return date.toLocaleDateString('es-ES', {
       weekday: 'long',

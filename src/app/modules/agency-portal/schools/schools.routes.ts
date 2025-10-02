@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { SchoolsComponent } from './schools.component';
-import { initialDataSchoolsEditResolver, initialDataSchoolsListResolver } from './schools.resolvers';
+import { initialDataSchoolsEditResolver, initialDataSchoolsListResolver, initialDataSchoolCalendarResolver } from './schools.resolvers';
 import { initialDataSchoolsAddResolver } from './schools.resolvers';
 export default [
   {
@@ -40,6 +40,9 @@ export default [
         loadComponent: () => import('./school-calendar/school-calendar.component').then((c) => c.SchoolCalendarComponent),
         canActivate: [PermissionGuard],
         data: { permission: 'school.edit' },
+        resolve: {
+          data: initialDataSchoolCalendarResolver,
+        },
       },
     ],
   },

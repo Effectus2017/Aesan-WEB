@@ -18,7 +18,7 @@ import {
   DateAdapter
 } from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SchoolCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../school-calendar.service';
+import { SchoolCalendarService, SchoolOperatingDay, SchoolOperatingDayRequest } from '../school-calendar.service';
 import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
@@ -50,13 +50,21 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   @Input() schoolName: string = '';
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
 
+  private schoolCalendarService: SchoolCalendarService = inject(SchoolCalendarService);
+  private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
+  private translocoService: TranslocoService = inject(TranslocoService);
+  private fuseConfigService: FuseConfigService = inject(FuseConfigService);
+  private dialog: MatDialog = inject(MatDialog);
+  private fb: FormBuilder = inject(FormBuilder);
+
   // Exponer CalendarView para uso en template
   CalendarView = CalendarView;
 
   view: CalendarView = CalendarView.Month;
   viewDate: Date = new Date();
   events: CalendarEvent[] = [];
-  operatingDays: SiteOperatingDay[] = [];
+  operatingDays: SchoolOperatingDay[] = [];
   loading = false;
   currentSchoolId: number = 0;
   activeDayIsOpen: boolean = false;
@@ -81,18 +89,11 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
   private readonly darkThemeClass = 'dark-theme';
+  private currentTableModal: any = null; // Referencia al modal de tabla actual
 
   private dateAdapter = inject(DateAdapter);
 
-  constructor(
-    private schoolCalendarService: SchoolCalendarService,
-    private route: ActivatedRoute,
-    private router: Router,
-    private translocoService: TranslocoService,
-    private fuseConfigService: FuseConfigService,
-    private dialog: MatDialog,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.editForm = this.fb.group({
       startTime: ['', Validators.required],
       endTime: ['', Validators.required],
@@ -132,8 +133,19 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         this.updateDarkTheme();
       });
 
-    // Cargar datos
-    this.loadOperatingDays();
+    // Obtener datos del resolver en lugar de cargar manualmente
+    const resolvedData = this.route.snapshot.data['data'];
+
+    if (resolvedData) {
+      console.log('Operating days loaded from resolver:', resolvedData.operatingDays);
+      this.operatingDays = resolvedData.operatingDays.operatingDays || [];
+      this.events = this.transformToCalendarEvents(this.operatingDays);
+      this.schoolName = resolvedData.operatingDays.schoolName;
+      this.loading = false;
+    } else {
+      console.error('No data found in resolver, falling back to manual load');
+      this.loadOperatingDays();
+    }
   }
 
   ngOnDestroy(): void {
@@ -166,7 +178,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
 
     console.log('Day clicked event:', event);
     console.log('Current view:', this.view);
-    console.log('Available operating days:', this.operatingDays.length);
+    console.log('Available operating days:', this.operatingDays?.length || 0);
     console.log('Event structure:', JSON.stringify(event, null, 2));
 
     let date: Date | null = null;
@@ -277,19 +289,19 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
 
     if (this.loading) return;
 
-    const operatingDay = event.meta as SiteOperatingDay;
+    const operatingDay = event.meta as SchoolOperatingDay;
     if (!operatingDay) {
       console.error('No operating day data found for event');
       return;
     }
 
     // Actualizar el evento con los nuevos horarios
-    const updatedOperatingDay: SiteOperatingDay = {
+    const updatedOperatingDay: SchoolOperatingDay = {
       ...operatingDay,
-      OperatingDate: newStart,
-      StartTime: this.formatTimeFromDate(newStart),
-      EndTime: this.formatTimeFromDate(newEnd),
-      UpdatedAt: new Date()
+      operatingDate: newStart,
+      startTime: this.formatTimeFromDate(newStart),
+      endTime: this.formatTimeFromDate(newEnd),
+      updatedAt: new Date()
     };
 
     console.log('Updated operating day:', updatedOperatingDay);
@@ -301,18 +313,18 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
 
     if (this.loading) return;
 
-    const operatingDay = event.meta as SiteOperatingDay;
+    const operatingDay = event.meta as SchoolOperatingDay;
     if (!operatingDay) {
       console.error('No operating day data found for event');
       return;
     }
 
     // Actualizar el evento con los nuevos horarios
-    const updatedOperatingDay: SiteOperatingDay = {
+    const updatedOperatingDay: SchoolOperatingDay = {
       ...operatingDay,
-      StartTime: this.formatTimeFromDate(newStart),
-      EndTime: this.formatTimeFromDate(newEnd),
-      UpdatedAt: new Date()
+      startTime: this.formatTimeFromDate(newStart),
+      endTime: this.formatTimeFromDate(newEnd),
+      updatedAt: new Date()
     };
 
     console.log('Updated operating day from resize:', updatedOperatingDay);
@@ -347,24 +359,24 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     console.log('Opening add day dialog for date:', date);
 
     // Crear un día vacío para el modal
-    const newDay: SiteOperatingDay = {
-      Id: 0,
-      SchoolId: this.currentSchoolId,
-      OperatingDate: date,
-      StartTime: '08:00',
-      EndTime: '16:00',
-      IsWeekendOverride: false,
-      IsExcluded: false,
-      Comment: '',
-      CreatedAt: new Date(),
-      UpdatedAt: new Date()
+    const newDay: SchoolOperatingDay = {
+      id: 0,
+      schoolId: this.currentSchoolId,
+      operatingDate: date,
+      startTime: '08:00',
+      endTime: '16:00',
+      isWeekendOverride: false,
+      isExcluded: false,
+      comment: '',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Preparar el formulario con valores por defecto
     this.editForm.patchValue({
       startTime: '08:00',
       endTime: '16:00',
-      comment: 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
+      comment: '',
       isWeekendOverride: false,
       isExcluded: false
     });
@@ -386,16 +398,16 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     });
   }
 
-  openEditDayDialog(date: Date, dayData: SiteOperatingDay) {
+  openEditDayDialog(date: Date, dayData: SchoolOperatingDay) {
     console.log('Opening edit day dialog for date:', date, 'with data:', dayData);
 
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
-      startTime: dayData.StartTime || '08:00',
-      endTime: dayData.EndTime || '16:00',
-      comment: dayData.Comment || 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
-      isWeekendOverride: dayData.IsWeekendOverride || false,
-      isExcluded: dayData.IsExcluded || false
+      startTime: dayData.startTime || '08:00',
+      endTime: dayData.endTime || '16:00',
+      comment: dayData.comment || '',
+      isWeekendOverride: dayData.isWeekendOverride || false,
+      isExcluded: dayData.isExcluded || false
     });
 
     const dialogRef = this.dialog.open(SchoolCalendarEditModalComponent, {
@@ -420,16 +432,16 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     });
   }
 
-  openEditEventDialog(event: CalendarEvent) {
-    const operatingDay = event.meta as SiteOperatingDay;
+  openEditEventDialog(event: CalendarEvent, fromTable: boolean = false) {
+    const operatingDay = event.meta as SchoolOperatingDay;
 
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
-      startTime: operatingDay.StartTime || '08:00',
-      endTime: operatingDay.EndTime || '16:00',
-      comment: operatingDay.Comment || 'Explicación de "Sobrescribir fin de semana"\n¿Para qué sirve?\nMarcar fines de semana que sí operan (excepción).\nDiferenciarlos de los fines de semana cerrados.\nPermitir horarios específicos en sábados/domingos.',
-      isWeekendOverride: operatingDay.IsWeekendOverride || false,
-      isExcluded: operatingDay.IsExcluded || false
+      startTime: operatingDay.startTime || '08:00',
+      endTime: operatingDay.endTime || '16:00',
+      comment: operatingDay.comment || '',
+      isWeekendOverride: operatingDay.isWeekendOverride || false,
+      isExcluded: operatingDay.isExcluded || false
     });
 
     const dialogRef = this.dialog.open(SchoolCalendarEditModalComponent, {
@@ -439,7 +451,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         form: this.editForm,
         event: event,
         operatingDay: operatingDay,
-        schoolId: this.currentSchoolId
+        schoolId: this.currentSchoolId,
+        fromTable: fromTable
       }
     });
 
@@ -448,60 +461,85 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         if (result.action === 'delete') {
           this.deleteOperatingDay(operatingDay);
         } else {
-          this.updateOperatingDay(operatingDay, result);
+          this.updateOperatingDay(operatingDay, result, fromTable);
         }
       }
     });
   }
 
-  private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+  // Método específico para editar desde la tabla
+  openEditEventDialogFromTable(event: CalendarEvent, id: any) {
+    const operatingDay = event.meta as SchoolOperatingDay;
+
+    // Preparar el formulario con los datos actuales
+    this.editForm.patchValue({
+      startTime: operatingDay.startTime || '08:00',
+      endTime: operatingDay.endTime || '16:00',
+      comment: operatingDay.comment || '',
+      isWeekendOverride: operatingDay.isWeekendOverride || false,
+      isExcluded: operatingDay.isExcluded || false
+    });
+
+    const dialogRef = this.dialog.open(SchoolCalendarEditModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        form: this.editForm,
+        event: event,
+        operatingDay: operatingDay,
+        schoolId: this.currentSchoolId,
+        fromTable: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.action === 'delete') {
+          this.deleteOperatingDayFromTable(operatingDay, id);
+        } else {
+          this.updateOperatingDayFromTable(operatingDay, result, id);
+        }
+      }
+    });
+  }
+
+  private updateOperatingDay(operatingDay: SchoolOperatingDay, formData: any, fromTable: boolean = false) {
     console.log('Updating operating day with form data:', formData);
     console.log('Original operating day:', operatingDay);
+    console.log('From table:', fromTable);
 
-    // Convertir DateTime objects a strings si es necesario
-    const startTime = this.formatTimeValue(formData.startTime);
-    const endTime = this.formatTimeValue(formData.endTime);
+    // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
+    const startTime = this.formatTimeForBackend(formData.startTime);
+    const endTime = this.formatTimeForBackend(formData.endTime);
 
-    // Para múltiples eventos, actualizar el evento específico
-    if (this.schoolCalendarService['mockData']) {
-      const mockData = this.schoolCalendarService['mockData'];
-      const eventIndex = mockData.OperatingDays.findIndex(day => day.Id === operatingDay.Id);
-      if (eventIndex !== -1) {
-        mockData.OperatingDays[eventIndex] = {
-          ...operatingDay,
-          StartTime: startTime,
-          EndTime: endTime,
-          IsWeekendOverride: formData.isWeekendOverride,
-          IsExcluded: formData.isExcluded,
-          Comment: formData.comment,
-          UpdatedAt: new Date()
-        };
-        console.log('Event updated in mock data:', mockData.OperatingDays[eventIndex]);
-        this.loadOperatingDays(); // Recargar datos
-        return;
-      }
-    }
 
-    const request: SiteOperatingDayRequest = {
-      SchoolId: this.currentSchoolId,
-      OperatingDate: new Date(operatingDay.OperatingDate),
-      StartTime: startTime,
-      EndTime: endTime,
-      IsWeekendOverride: formData.isWeekendOverride,
-      IsExcluded: formData.isExcluded,
-      Comment: formData.comment
+    const request: SchoolOperatingDayRequest = {
+      schoolId: this.currentSchoolId,
+      operatingDate: new Date(operatingDay.operatingDate),
+      startTime: formData.isExcluded ? null : startTime,
+      endTime: formData.isExcluded ? null : endTime,
+      isWeekendOverride: formData.isWeekendOverride,
+      isExcluded: formData.isExcluded,
+      comment: formData.comment
     };
 
     console.log('Request to send:', request);
 
     this.loading = true;
-    this.schoolCalendarService.toggleOperatingDay(request)
+    this.schoolCalendarService.toggleOperatingDay(request, { schoolId: this.schoolId })
       .subscribe({
         next: (response) => {
           console.log('Operating day updated successfully:', response);
           console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
-          this.refreshDayEventsTable(); // Actualizar tabla
+
+          // Si viene de la tabla, actualizar la tabla específicamente
+          if (fromTable && this.selectedDate) {
+            this.updateDayEventsTable(this.selectedDate);
+          } else {
+            this.refreshDayEventsTable(); // Actualizar tabla
+          }
+
           this.loading = false;
         },
         error: (error) => {
@@ -511,34 +549,98 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  private addOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+  // Método específico para actualizar desde la tabla
+  private updateOperatingDayFromTable(operatingDay: SchoolOperatingDay, formData: any, id: any) {
+    console.log('Updating operating day from table with form data:', formData);
+    console.log('Original operating day:', operatingDay);
+    console.log('Event ID:', id);
+
+    // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
+    const startTime = this.formatTimeForBackend(formData.startTime);
+    const endTime = this.formatTimeForBackend(formData.endTime);
+
+    const request: SchoolOperatingDayRequest = {
+      schoolId: this.currentSchoolId,
+      operatingDate: new Date(operatingDay.operatingDate),
+      startTime: startTime,
+      endTime: endTime,
+      isWeekendOverride: formData.isWeekendOverride,
+      isExcluded: formData.isExcluded,
+      comment: formData.comment
+    };
+
+    console.log('Request to send from table:', request);
+
+    this.loading = true;
+    this.schoolCalendarService.toggleOperatingDay(request, { schoolId: this.schoolId })
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day updated from table successfully:', response);
+          console.log('Reloading operating days...');
+
+          // Recargar datos y luego actualizar el modal
+          this.loadOperatingDaysAndUpdateModal();
+
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error updating operating day from table:', error);
+          this.loading = false;
+        }
+      });
+  }
+
+  // Método específico para eliminar desde la tabla
+  private deleteOperatingDayFromTable(operatingDay: SchoolOperatingDay, id: any) {
+    console.log('Deleting operating day from table:', operatingDay);
+    console.log('Event ID:', id);
+
+    this.loading = true;
+    this.schoolCalendarService.deleteOperatingDay({ id: operatingDay.id })
+      .subscribe({
+        next: (response) => {
+          console.log('Operating day deleted from table successfully:', response);
+          console.log('Reloading operating days...');
+
+          // Recargar datos y luego actualizar el modal
+          this.loadOperatingDaysAndUpdateModal();
+
+          this.loading = false;
+        },
+        error: (error) => {
+          console.error('Error deleting operating day from table:', error);
+          this.loading = false;
+        }
+      });
+  }
+
+  private addOperatingDay(operatingDay: SchoolOperatingDay, formData: any) {
     console.log('Adding new operating day with form data:', formData);
     console.log('New operating day:', operatingDay);
 
-    // Convertir DateTime objects a strings si es necesario
-    const startTime = this.formatTimeValue(formData.startTime);
-    const endTime = this.formatTimeValue(formData.endTime);
+    // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
+    const startTime = this.formatTimeForBackend(formData.startTime);
+    const endTime = this.formatTimeForBackend(formData.endTime);
 
-    const request: SiteOperatingDayRequest = {
-      SchoolId: this.currentSchoolId,
-      OperatingDate: new Date(operatingDay.OperatingDate),
-      StartTime: startTime,
-      EndTime: endTime,
-      IsWeekendOverride: formData.isWeekendOverride,
-      IsExcluded: formData.isExcluded,
-      Comment: formData.comment
+    const request: SchoolOperatingDayRequest = {
+      schoolId: this.currentSchoolId,
+      operatingDate: new Date(operatingDay.operatingDate),
+      startTime: formData.isExcluded ? null : startTime,
+      endTime: formData.isExcluded ? null : endTime,
+      isWeekendOverride: formData.isWeekendOverride,
+      isExcluded: formData.isExcluded,
+      comment: formData.comment
     };
 
     console.log('Request to send:', request);
 
     this.loading = true;
-    this.schoolCalendarService.toggleOperatingDay(request)
+    this.schoolCalendarService.toggleOperatingDay(request, { schoolId: this.schoolId })
       .subscribe({
         next: (response) => {
           console.log('Operating day added successfully:', response);
           console.log('Reloading operating days...');
           this.loadOperatingDays(); // Recargar datos
-          this.refreshDayEventsTable(); // Actualizar tabla
           this.loading = false;
         },
         error: (error) => {
@@ -548,11 +650,11 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  private deleteOperatingDay(operatingDay: SiteOperatingDay) {
+  private deleteOperatingDay(operatingDay: SchoolOperatingDay) {
     console.log('Deleting operating day:', operatingDay);
 
     this.loading = true;
-    this.schoolCalendarService.deleteOperatingDay(operatingDay.Id)
+    this.schoolCalendarService.deleteOperatingDay({ id: operatingDay.id })
       .subscribe({
         next: (response) => {
           console.log('Operating day deleted successfully:', response);
@@ -644,13 +746,12 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   private loadOperatingDays() {
     console.log('Loading operating days for schoolId:', this.currentSchoolId);
     this.loading = true;
-    this.schoolCalendarService.getOperatingDays(this.currentSchoolId)
+    this.schoolCalendarService.getOperatingDays({ schoolId: this.currentSchoolId })
       .subscribe({
         next: (response) => {
           console.log('Operating days loaded:', response);
-          this.operatingDays = response.OperatingDays;
-          this.events = this.transformToCalendarEvents(response.OperatingDays);
-          this.schoolName = response.SchoolName;
+          this.operatingDays = response.body.operatingDays || [];
+          this.events = this.transformToCalendarEvents(this.operatingDays);
           this.loading = false;
         },
         error: (error) => {
@@ -660,52 +761,54 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  private toggleOperatingDay(date: Date, isOperating: boolean) {
-    this.loading = true;
-
-    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
-    const request: SiteOperatingDayRequest = {
-      SchoolId: this.currentSchoolId,
-      OperatingDate: date,
-      StartTime: isOperating ? '08:00' : undefined,
-      EndTime: isOperating ? '16:00' : undefined,
-      IsWeekendOverride: isWeekend && isOperating,
-      IsExcluded: !isOperating,
-      Comment: isOperating ? 'Día de funcionamiento' : 'Día no operativo'
-    };
-
-    this.schoolCalendarService.toggleOperatingDay(request)
+  // Método para cargar datos y actualizar el modal de tabla
+  private loadOperatingDaysAndUpdateModal() {
+    console.log('Loading operating days and updating modal for schoolId:', this.currentSchoolId);
+    this.schoolCalendarService.getOperatingDays({ schoolId: this.currentSchoolId })
       .subscribe({
-        next: (success) => {
-          if (success) {
-            this.loadOperatingDays(); // Recargar datos
-            this.dayToggled.emit({ date, isOperating });
+        next: (response) => {
+          console.log('Operating days loaded for modal update:', response);
+          this.operatingDays = response.body.operatingDays || [];
+          this.events = this.transformToCalendarEvents(this.operatingDays);
+
+          // Actualizar la tabla del modal directamente si está abierto
+          if (this.currentTableModal && this.selectedDate) {
+            const newEvents = this.getDayEvents(this.selectedDate);
+            this.currentTableModal.updateTableData(newEvents);
+            console.log('Modal table updated with fresh data:', newEvents);
+          } else if (this.selectedDate) {
+            this.updateDayEventsTable(this.selectedDate);
           }
-          this.loading = false;
         },
         error: (error) => {
-          console.error('Error toggling operating day:', error);
-          this.loading = false;
+          console.error('Error loading operating days for modal update:', error);
         }
       });
   }
 
-  private transformToCalendarEvents(days: SiteOperatingDay[]): CalendarEvent[] {
+  private transformToCalendarEvents(days: SchoolOperatingDay[]): CalendarEvent[] {
     console.log('Transforming days to events:', days);
+
+    if (!days || !Array.isArray(days)) {
+      console.warn('No days provided or days is not an array:', days);
+      return [];
+    }
+
     const events = days
       .map(day => {
-        // Asegurar que OperatingDate sea un objeto Date
-        const operatingDate = day.OperatingDate instanceof Date ? day.OperatingDate : new Date(day.OperatingDate);
+        // Asegurar que operatingDate sea un objeto Date
+        const operatingDate = day.operatingDate instanceof Date ? day.operatingDate : new Date(day.operatingDate);
 
         // Crear fechas de inicio y fin
         const startDate = new Date(operatingDate);
         const endDate = new Date(operatingDate);
 
-        // Si hay horarios, usarlos; si no, usar horarios por defecto
-        if (day.StartTime && day.EndTime) {
-          const startTimeStr = this.formatTimeValue(day.StartTime);
-          const endTimeStr = this.formatTimeValue(day.EndTime);
+        // Formatear horarios para el título
+        const startTimeStr = this.formatTimeValue(day.startTime);
+        const endTimeStr = this.formatTimeValue(day.endTime);
 
+        // Si hay horarios, usarlos; si no, usar horarios por defecto
+        if (day.startTime && day.endTime) {
           if (startTimeStr && endTimeStr) {
             // Convertir formato 12h a 24h para Date
             const startTime = this.parseTime12To24(startTimeStr);
@@ -730,7 +833,9 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         return {
           start: startDate,
           end: endDate,
-          title: day.IsExcluded ? 'Día cerrado' : (day.Comment || `Horario ${day.StartTime}-${day.EndTime}`),
+          title: day.isExcluded ? 'Día cerrado' :
+                 day.isWeekendOverride ? 'Fin de semana operativo' :
+                 'Día operativo',
           color: this.getEventColor(day),
           draggable: draggable,
           resizable: resizable,
@@ -742,8 +847,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     return events;
   }
 
-  private getEventColor(day: SiteOperatingDay): any {
-    if (day.IsExcluded) {
+  private getEventColor(day: SchoolOperatingDay): any {
+    if (day.isExcluded) {
       return { primary: '#f44336', secondary: '#ffcdd2' }; // Rojo para días excluidos
     }
     // Explicación de "Sobrescribir fin de semana":
@@ -751,7 +856,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     // - Marcar fines de semana que sí operan (excepción)
     // - Diferenciarlos de los fines de semana cerrados
     // - Permitir horarios específicos en sábados/domingos
-    if (day.IsWeekendOverride) {
+    if (day.isWeekendOverride) {
       return { primary: '#ff9800', secondary: '#ffcc80' }; // Naranja para fines de semana
     }
     return { primary: '#4caf50', secondary: '#c8e6c9' }; // Verde para días normales
@@ -802,6 +907,45 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     }); // Formato 12h con AM/PM
   }
 
+  private formatTimeForBackend(timeValue: any): string {
+    if (!timeValue) return '';
+
+    // Si es un string en formato 12h (contiene AM/PM), convertir a 24h
+    if (typeof timeValue === 'string') {
+      if (timeValue.includes('AM') || timeValue.includes('PM')) {
+        const time12Match = timeValue.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+        if (time12Match) {
+          let hours = parseInt(time12Match[1]);
+          const minutes = time12Match[2];
+          const ampm = time12Match[3].toUpperCase();
+
+          if (ampm === 'PM' && hours !== 12) {
+            hours += 12;
+          } else if (ampm === 'AM' && hours === 12) {
+            hours = 0;
+          }
+
+          return `${hours.toString().padStart(2, '0')}:${minutes}:00`;
+        }
+      }
+      // Si ya está en formato 24h, agregar segundos
+      const time24Match = timeValue.match(/(\d{1,2}):(\d{2})/);
+      if (time24Match) {
+        return `${time24Match[1].padStart(2, '0')}:${time24Match[2]}:00`;
+      }
+      return timeValue;
+    }
+
+    // Si es un objeto Date, convertir a formato 24h con segundos
+    if (timeValue instanceof Date) {
+      const hours = timeValue.getHours().toString().padStart(2, '0');
+      const minutes = timeValue.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}:00`;
+    }
+
+    return String(timeValue);
+  }
+
   private convert24To12(hours24: number, minutes: string): string {
     let hours12 = hours24;
     let period = 'AM';
@@ -846,39 +990,25 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     return { hours, minutes };
   }
 
-  private updateOperatingDayFromDrag(operatingDay: SiteOperatingDay) {
+  private updateOperatingDayFromDrag(operatingDay: SchoolOperatingDay) {
     console.log('Updating operating day from drag/resize:', operatingDay);
 
-    // Para múltiples eventos, actualizar el evento específico
-    if (this.schoolCalendarService['mockData']) {
-      const mockData = this.schoolCalendarService['mockData'];
-      const eventIndex = mockData.OperatingDays.findIndex(day => day.Id === operatingDay.Id);
-      if (eventIndex !== -1) {
-        mockData.OperatingDays[eventIndex] = {
-          ...operatingDay,
-          UpdatedAt: new Date()
-        };
-        console.log('Event updated in mock data from drag/resize:', mockData.OperatingDays[eventIndex]);
-        this.loadOperatingDays(); // Recargar datos
-        return;
-      }
-    }
 
-    // Si no es mock data, enviar al backend
-    const request: SiteOperatingDayRequest = {
-      SchoolId: this.currentSchoolId,
-      OperatingDate: new Date(operatingDay.OperatingDate),
-      StartTime: operatingDay.StartTime,
-      EndTime: operatingDay.EndTime,
-      IsWeekendOverride: operatingDay.IsWeekendOverride,
-      IsExcluded: operatingDay.IsExcluded,
-      Comment: operatingDay.Comment
+    // Enviar al backend
+    const request: SchoolOperatingDayRequest = {
+      schoolId: this.currentSchoolId,
+      operatingDate: new Date(operatingDay.operatingDate),
+      startTime: operatingDay.startTime,
+      endTime: operatingDay.endTime,
+      isWeekendOverride: operatingDay.isWeekendOverride,
+      isExcluded: operatingDay.isExcluded,
+      comment: operatingDay.comment
     };
 
     console.log('Request to send for drag/resize:', request);
 
     this.loading = true;
-    this.schoolCalendarService.toggleOperatingDay(request)
+    this.schoolCalendarService.toggleOperatingDay(request, { schoolId: this.schoolId })
       .subscribe({
         next: (response) => {
           console.log('Operating day updated from drag/resize successfully:', response);
@@ -892,7 +1022,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  private findDayData(date: Date): SiteOperatingDay | undefined {
+  private findDayData(date: Date): SchoolOperatingDay | undefined {
     console.log('Searching for day data for date:', date);
     console.log('Operating days to search:', this.operatingDays);
 
@@ -903,15 +1033,15 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
     }
 
     const found = this.operatingDays.find(d => {
-      if (!d.OperatingDate) {
+      if (!d.operatingDate) {
         console.log('Day has no OperatingDate:', d);
         return false;
       }
 
       try {
-        const operatingDate = new Date(d.OperatingDate);
+        const operatingDate = new Date(d.operatingDate);
         if (!operatingDate || isNaN(operatingDate.getTime())) {
-          console.log('Invalid OperatingDate:', d.OperatingDate);
+          console.log('Invalid OperatingDate:', d.operatingDate);
           return false;
         }
 
@@ -919,7 +1049,7 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         console.log(`Comparing ${operatingDate.toDateString()} with ${date.toDateString()}: ${isMatch}`);
         return isMatch;
       } catch (error) {
-        console.error('Error processing OperatingDate:', d.OperatingDate, error);
+        console.error('Error processing OperatingDate:', d.operatingDate, error);
         return false;
       }
     });
@@ -953,24 +1083,27 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
 
     // Transformar CalendarEvent a formato de tabla
     const tableData = dayEvents.map(event => ({
-      id: event.meta?.Id,
+      id: event.meta?.id,
       title: event.title,
-      startTime: this.formatTimeValue(event.meta?.StartTime || ''),
-      endTime: this.formatTimeValue(event.meta?.EndTime || ''),
+      startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
+      endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventTypeLabel(event.meta),
-      comment: event.meta?.Comment || '',
+      comment: event.meta?.comment || '',
       meta: event.meta
     }));
 
-    this.tableConfig.dataSource = new MatTableDataSource(tableData);
+    // Actualizar el dataSource existente en lugar de crear uno nuevo
     this.tableConfig.dataSourceList = tableData;
+    this.tableConfig.dataSource.data = tableData;
+
+    console.log('Table updated with data:', tableData);
   }
 
-  getEventTypeLabel(operatingDay: SiteOperatingDay): string {
-    if (operatingDay.IsExcluded) {
+  getEventTypeLabel(operatingDay: SchoolOperatingDay): string {
+    if (operatingDay.isExcluded) {
       return 'Día cerrado';
     }
-    if (operatingDay.IsWeekendOverride) {
+    if (operatingDay.isWeekendOverride) {
       return 'Fin de semana';
     }
     return 'Día normal';
@@ -979,17 +1112,17 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
   // Implementación de OnGenericTableHandler
   onTableEdit(event: Event, id: any): void {
     // Encontrar el evento por ID y abrir modal de edición
-    const calendarEvent = this.events.find(e => e.meta?.Id === id);
+    const calendarEvent = this.events.find(e => e.meta?.id === id);
     if (calendarEvent) {
-      this.openEditEventDialog(calendarEvent);
+      this.openEditEventDialogFromTable(calendarEvent, id);
     }
   }
 
   onTableDelete(event: Event, id: any): void {
     // Encontrar el evento por ID y eliminarlo
-    const calendarEvent = this.events.find(e => e.meta?.Id === id);
+    const calendarEvent = this.events.find(e => e.meta?.id === id);
     if (calendarEvent) {
-      this.deleteOperatingDay(calendarEvent.meta.Id);
+      this.deleteOperatingDay(calendarEvent.meta.id);
     }
   }
 
@@ -1013,8 +1146,21 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
         schoolId: this.schoolId,
         onEventAdded: () => {
           // Callback para actualizar la tabla cuando se agrega un evento
-          this.loadOperatingDays();
+          // No recargar aquí para evitar llamadas duplicadas
+        },
+        onEventUpdated: () => {
+          // Callback para actualizar la tabla cuando se edita un evento
+          this.updateDayEventsTable(date);
         }
+      }
+    });
+
+    // Guardar referencia al modal para poder actualizarlo directamente
+    dialogRef.afterOpened().subscribe(() => {
+      const modalData = dialogRef.componentInstance.data;
+      if (modalData.modalComponent) {
+        // Guardar referencia al modal para actualizaciones directas
+        this.currentTableModal = modalData.modalComponent;
       }
     });
 
@@ -1022,6 +1168,8 @@ export class SchoolCalendarComponent implements OnInit, OnDestroy, OnGenericTabl
       if (result === 'refresh') {
         this.loadOperatingDays(); // Recargar datos si hubo cambios
       }
+      // Limpiar referencia al modal
+      this.currentTableModal = null;
       // Ya no necesitamos manejar 'add-event' aquí porque se maneja en el modal hijo
     });
   }

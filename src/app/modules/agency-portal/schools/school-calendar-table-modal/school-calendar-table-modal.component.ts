@@ -17,6 +17,8 @@ export interface SchoolCalendarTableModalData {
   handler: OnGenericTableHandler;
   schoolId: number;
   onEventAdded?: () => void; // Callback para actualizar la tabla
+  onEventUpdated?: () => void; // Callback para actualizar la tabla después de editar
+  modalComponent?: SchoolCalendarTableModalComponent; // Referencia al componente del modal
 }
 
 @Component({
@@ -44,6 +46,9 @@ export class SchoolCalendarTableModalComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('SchoolCalendarTableModal opened with data:', this.data);
+
+    // Asignar referencia al componente en los datos
+    this.data.modalComponent = this;
   }
 
   addEvent(): void {
@@ -58,16 +63,16 @@ export class SchoolCalendarTableModalComponent implements OnInit {
 
     // Crear un día vacío para el modal
     const newDay = {
-      Id: 0,
-      SchoolId: this.data.schoolId,
-      OperatingDate: this.data.date,
-      StartTime: '08:00',
-      EndTime: '16:00',
-      IsWeekendOverride: false,
-      IsExcluded: false,
-      Comment: '',
-      CreatedAt: new Date(),
-      UpdatedAt: new Date()
+      id: 0,
+      schoolId: this.data.schoolId,
+      operatingDate: this.data.date,
+      startTime: '08:00',
+      endTime: '16:00',
+      isWeekendOverride: false,
+      isExcluded: false,
+      comment: '',
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
 
     // Abrir modal hijo sin cerrar el padre
@@ -119,11 +124,11 @@ export class SchoolCalendarTableModalComponent implements OnInit {
       comment: formData.comment,
       meta: {
         ...operatingDay,
-        StartTime: formData.startTime,
-        EndTime: formData.endTime,
-        Comment: formData.comment,
-        IsWeekendOverride: formData.isWeekendOverride,
-        IsExcluded: formData.isExcluded
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        comment: formData.comment,
+        isWeekendOverride: formData.isWeekendOverride,
+        isExcluded: formData.isExcluded
       }
     };
 
@@ -147,6 +152,97 @@ export class SchoolCalendarTableModalComponent implements OnInit {
     return 'Día normal';
   }
 
+
+  // Método para actualizar la tabla después de editar un evento
+  updateTableAfterEdit(): void {
+    console.log('Updating table after edit...');
+
+    // Llamar callback para actualizar la tabla del modal padre
+    if (this.data.onEventUpdated) {
+      this.data.onEventUpdated();
+    }
+
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
+  }
+
+  // Método para actualizar la tabla con nuevos datos
+  updateTableData(newEvents: CalendarEvent[]): void {
+    console.log('Updating table data with new events:', newEvents);
+
+    // Transformar CalendarEvent a formato de tabla
+    const tableData = newEvents.map(event => ({
+      id: event.meta?.id,
+      title: event.title,
+      startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
+      endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
+      type: this.getEventType(event.meta),
+      comment: event.meta?.comment || '',
+      meta: event.meta
+    }));
+
+    // Actualizar el dataSource existente
+    this.data.tableConfig.dataSourceList = tableData;
+    this.data.tableConfig.dataSource.data = tableData;
+
+    // Forzar detección de cambios
+    this.cdr.detectChanges();
+
+    console.log('Table data updated:', tableData);
+  }
+
+  private formatTimeValue(timeValue: any): string {
+    if (!timeValue) return '';
+
+    // Si es un string, convertir de 24h a 12h si es necesario
+    if (typeof timeValue === 'string') {
+      // Si ya está en formato 12h (contiene AM/PM), devolverlo tal como está
+      if (timeValue.includes('AM') || timeValue.includes('PM')) {
+        return timeValue;
+      }
+      // Si está en formato 24h, convertir a 12h
+      const time24Match = timeValue.match(/(\d{1,2}):(\d{2})/);
+      if (time24Match) {
+        const hours = parseInt(time24Match[1]);
+        const minutes = time24Match[2];
+        return this.convert24To12(hours, minutes);
+      }
+      return timeValue;
+    }
+
+    // Si es un objeto DateTime (Luxon), convertir a string
+    if (timeValue && typeof timeValue === 'object' && timeValue.toFormat) {
+      return timeValue.toFormat('hh:mm a'); // Formato 12h con AM/PM
+    }
+
+    // Si es un objeto Date, convertir a string
+    if (timeValue instanceof Date) {
+      return timeValue.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true
+      }); // Formato 12h con AM/PM
+    }
+
+    // Fallback: convertir a string
+    return String(timeValue);
+  }
+
+  private convert24To12(hours24: number, minutes: string): string {
+    let hours12 = hours24;
+    let period = 'AM';
+
+    if (hours24 === 0) {
+      hours12 = 12;
+    } else if (hours24 === 12) {
+      period = 'PM';
+    } else if (hours24 > 12) {
+      hours12 = hours24 - 12;
+      period = 'PM';
+    }
+
+    return `${hours12}:${minutes} ${period}`;
+  }
 
   close(): void {
     this.dialogRef.close();
