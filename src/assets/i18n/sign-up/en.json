@@ -2,7 +2,7 @@
   "sign-up": {
     "title": "Intent to Participate",
     "program-name": {
-      "label": "Which program do you want to participate in?"
+      "label": "What program are you interested in sponsoring?"
     },
     "non-profit": {
       "label": "Is it a non-profit organization?",
@@ -56,8 +56,8 @@
     "sponsor-information": "Sponsor Information",
     "sponsor-information-description": "Here you can add the sponsor information",
     "agency": {
-      "label": "Name of the Sponsoring Agency",
-      "placeholder": "Enter the name of the sponsoring agency",
+      "label": "Name of the Sponsoring Entity",
+      "placeholder": "Enter the name of the sponsoring entity",
       "description": "Sponsor information"
     },
     "state-department-registration": {
@@ -156,7 +156,7 @@
       "message": "To participate in PDAM or PSAV programs, you must have Basic Education Registry granted or in progress"
     },
     "extended-hours-not-eligible": {
-      "message": "To participate in the PACNA program, you must be interested in participating in extended hours"
+      "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR § 226.19(b)(3)."
     },
     "error": {
       "creating-user": "Error creating user. Please try again"
@@ -168,6 +168,7 @@
       "message": "You are not eligible to participate in the PACNA program"
     },
     "program": {
+      "label": "What program are you interested in sponsoring?",
       "required": "You must select a program to continue",
       "required-close": "Close"
     },

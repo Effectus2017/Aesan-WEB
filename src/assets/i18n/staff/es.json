@@ -169,6 +169,22 @@
         "placeholder": "Ingrese el código de área",
         "required": "El código de área es requerido"
       },
+      "school-assignment": "Asignación de Escuela",
+      "school-assignment-description": "Especifique la escuela donde estará asignado el personal",
+      "school": {
+        "label": "Escuela Asignada",
+        "placeholder": "Seleccione la escuela (opcional)",
+        "hint": "Selecciona la escuela donde estará asignado el personal"
+      },
+      "assignmentType": {
+        "label": "Tipo de Asignación",
+        "placeholder": "Seleccione el tipo de asignación",
+        "hint": "Indica el rol específico del personal en la escuela"
+      },
+      "isPrimary": {
+        "label": "Empleado Principal",
+        "hint": "Marque esta opción si el personal será el empleado principal del sitio, como por ejemplo un director"
+      },
       "additional-information": "Información Adicional",
       "additional-information-description": "Información adicional del personal",
       "comments": {
@@ -304,7 +320,22 @@
       },
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional)"
+        "placeholder": "Ingrese comentarios adicionales (opcional):"
+      },
+      "school-assignment": "Asignación de Escuela",
+      "school-assignment-description": "Especifique la escuela donde estará asignado el personal",
+      "school": {
+        "label": "Escuela Asignada",
+        "placeholder": "Seleccione la escuela (opcional)"
+      },
+      "assignmentType": {
+        "label": "Tipo de Asignación",
+        "placeholder": "Seleccione el tipo de asignación",
+        "hint": "Indicate the specific role of the staff member in the school"
+      },
+      "isPrimary": {
+        "label": "Empleado Principal",
+        "hint": "Marque esta opción si el personal será el empleado principal del sitio, como por ejemplo un director"
       },
               "relationships": {
           "label": "Relaciones de Personal",

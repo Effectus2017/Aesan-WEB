@@ -169,6 +169,22 @@
         "placeholder": "Enter the area code",
         "required": "Area code is required"
       },
+      "school-assignment": "School Assignment",
+      "school-assignment-description": "Specify the school where the staff will be assigned",
+      "school": {
+        "label": "Assigned Schools",
+        "placeholder": "Select school (optional)",
+        "hint": "Select the school where the staff will be assigned"
+      },
+      "assignmentType": {
+        "label": "Assignment Type",
+        "placeholder": "Select assignment type",
+        "hint": "Indicates the specific role of the staff member in the school"
+      },
+      "isPrimary": {
+        "label": "Primary Employee",
+        "hint": "Check this option if the staff member will be the primary employee of the site, such as a director"
+      },
       "additional-information": "Additional Information",
       "additional-information-description": "Additional staff information",
       "comments": {
@@ -366,6 +382,21 @@
       "comments": {
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
+      },
+      "school-assignment": "School Assignment",
+      "school-assignment-description": "Specify the school where the staff will be assigned",
+      "school": {
+        "label": "Assigned School",
+        "placeholder": "Select school (optional)"
+      },
+      "assignmentType": {
+        "label": "Assignment Type",
+        "placeholder": "Select assignment type",
+        "hint": "Indicates the specific role of the staff member in the school"
+      },
+      "isPrimary": {
+        "label": "Primary Employee",
+        "hint": "Check this option if the staff member will be the primary employee of the site, such as a director"
       },
       "review": {
         "label": "Review",

@@ -26,12 +26,14 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject } from 'rxjs';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { ProgramService } from 'app/shared/services/program.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
@@ -61,6 +63,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     NgFor,
     MatDividerModule,
     MatSnackBarModule,
+    MatDialogModule,
     LanguagesComponent,
     MatTooltipModule,
     NumericOnlyDirective,
@@ -89,6 +92,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _userService = inject(UserService);
   private _programService = inject(ProgramService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _dialog = inject(MatDialog);
   private _snackBar = inject(MatSnackBar);
   private _optionSelectionService = inject(OptionSelectionService);
   private _translocoService = inject(TranslocoService);
@@ -219,8 +223,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Estatal (11), Federal (12)
       taxExemptionTypeId: [null, Validators.required],
 
-      // Service Time
-      serviceTime: [null, Validators.required],
+      // Service Time - TEMPORALMENTE HIDDEN Y NO REQUERIDO
+      // Campo oculto en HTML (comentado) y sin validación required por cambios en requerimientos
+      // Para restaurar: 1) Descomentar HTML del template, 2) Agregar Validators.required aquí
+      serviceTime: [null], // TEMPORALMENTE NO REQUERIDO - Para fácil restauración agregar Validators.required
 
       // Dirección
       address: [null, Validators.required],
@@ -274,7 +280,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Si (1) y No (2)
       nationalYouthProgram: [null],
 
-      // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+      // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
       // Are you a Day Care Homes? (Only for PACNA program)
       // Si (1) y No (2)
       isDayCareHome: [null],
@@ -675,7 +681,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // ¿Su Institución es un Programa Nacional de Juventud?
         // Si (1) y No (2)
         nationalYouthProgram: nationalYouthProgram,
-        // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+        // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
         // Are you a Day Care Homes? (Only for PACNA program)
         // Si (1) y No (2)
         isDayCareHome: isDayCareHome,
@@ -866,6 +872,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
+  // TEMPORALMENTE COMENTADO - Método de validación de serviceTime en intención de participación
+  // Para restaurar es necesario descomentar también el campo en el HTML y la validación required
+  /*
   checkServiceTime(): void {
     const serviceTime = this.signUpForm.value.serviceTime;
     if (serviceTime) {
@@ -894,6 +903,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       }
     }
   }
+  */
 
   // Check Type of Entity
   // Si es Gobierno, asignar automáticamente Socio-Económico (id: 1)
@@ -993,17 +1003,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if (basicEducationRegistry && isPACNAProgram(selectedProgram) && extendedHours !== null && extendedHours !== undefined && extendedHours === false) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.extended-hours-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.notification.title'),
+          message: this._translocoService.translate('sign-up.extended-hours-not-eligible.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-226/subpart-E/section-226.19',
+            text: '7 CFR 226.19 -- Outside-school-hours care center provisions'
+          }
         },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
       });
       return;
     }

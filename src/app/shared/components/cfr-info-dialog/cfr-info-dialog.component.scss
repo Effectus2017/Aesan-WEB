@@ -1,0 +1,9 @@
+.cfr-link {
+  color: #4f46e5 !important;
+  text-decoration: underline !important;
+  cursor: pointer;
+
+  &:hover {
+    color: #3730a3 !important;
+  }
+}

@@ -34,6 +34,8 @@ import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
+import { SchoolService } from 'app/shared/services/school.service';
+import { School } from 'app/shared/models/School';
 
 @Component({
   selector: 'app-add-staff',
@@ -74,6 +76,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
   private _activatedRoute = inject(ActivatedRoute);
+  private _schoolService = inject(SchoolService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -87,6 +90,10 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
+  // Lista de Escuelas
+  listSchools: School[] = [];
+  // Lista de Tipos de Asignación
+  listStaffAssignmentTypes: OptionSelection[] = [];
 
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
@@ -138,6 +145,10 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       areaCode: new FormControl('', [Validators.required]),
       // Comentarios
       comments: new FormControl(''),
+      // Escuela asignada
+      school: new FormControl('', [Validators.required]),
+      assignmentType: new FormControl(''),
+      isPrimary: new FormControl(false),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -217,6 +228,11 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
+
+        // Staff Assignment Types
+        this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
+          option.optionKey === 'staffAssignmentType' && option.isActive
+        );
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -323,6 +339,15 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       }
     });
 
+    // Schools - Cargar desde el resolver
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+    if (resolvedData && resolvedData.schools) {
+      this.listSchools = resolvedData.schools; // El backend ya devuelve solo activas con isList: true
+    }
+
+    // El código para cargar tipos de asignación ya está en la función existente arriba
+    // Solo necesitamos agregar el filtro siguiendo el mismo patrón
+
     // Suscribirse a cambios en el tipo de staff
     this.headerConfig.formGroup.get('staffType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((staffType: StaffType) => {
       this.onStaffTypeChange(staffType);
@@ -349,6 +374,24 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+
+  /**
+   * Muestra el mensaje de éxito después de crear el staff
+   */
+  private showSuccessMessage(): void {
+    const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
+    this._notificationService.showSuccessDialogWithCallback(
+      this._translocoService.translate(staffTypeKey),
+      (result) => {
+        if (result === 'confirmed') {
+          // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
+          const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+          this._customRouterService.navigate([targetRoute]);
+        }
+      }
+    );
   }
 
   onSubmit(): void {
@@ -412,6 +455,11 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Apellido Materno (para todos los tipos de staff)
     const motherLastName: string = formValues.motherLastName || '';
 
+    // Escuela asignada
+    const schoolId: number = formValues.school?.id || null;
+    const assignmentTypeId: number = formValues.assignmentType?.id || 1;
+    const isPrimary: boolean = formValues.isPrimary || false;
+
     // Loading
     this.isLoading = true;
 
@@ -447,6 +495,10 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
+      // Información de asignación de escuela
+      schoolId: schoolId,
+      assignmentTypeId: assignmentTypeId,
+      isPrimary: isPrimary,
     };
 
     // Agregar campos de contacto y ubicación solo si no es empleado
@@ -477,23 +529,13 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    // Crear staff
+    // Crear staff (el backend ahora maneja también la asociación con la escuela)
     this._staffService.insertStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {
           case true:
-            // Mensaje específico para staff usando traducciones
-            const staffTypeKey = this.isEmployee ? 'staff.add.success.employee' : 'staff.add.success.boardMember';
-            this._notificationService.showSuccessDialogWithCallback(
-              this._translocoService.translate(staffTypeKey),
-              (result) => {
-                if (result === 'confirmed') {
-                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
-                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
-                  this._customRouterService.navigate([targetRoute]);
-                }
-              }
-            );
+            // Mostrar mensaje de éxito
+            this.showSuccessMessage();
             break;
           default:
             this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));

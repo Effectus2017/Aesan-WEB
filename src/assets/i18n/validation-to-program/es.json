@@ -9,7 +9,7 @@
             "table": {
                 "columns": {
                     "programName": "Programa",
-                    "agencyName": "Nombre de la Agencia Auspiciadora",
+                    "agencyName": "Nombre de la Entidad Auspiciadora",
                     "stateDepartmentRegistration": "Registro Depto. Estado",
                     "address": "Dirección",
                     "city": "Municipio",
@@ -119,7 +119,7 @@
             },
             "sections": {
                 "sponsor-information": "Información del Auspiciador",
-                "sponsor-information-description": "Ingrese la información de la agencia auspiciadora",
+                "sponsor-information-description": "Ingrese la información de la entidad auspiciadora",
                 "address": "Información de Dirección",
                 "address-description": "Ingrese los detalles de la dirección física",
                 "postal-address": "Dirección Postal",

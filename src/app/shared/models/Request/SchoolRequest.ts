@@ -29,6 +29,7 @@ export interface SchoolRequest {
     // Información Administrativa
     organizationTypeId?: number;
     centerTypeId?: number;
+
     nonProfit?: boolean;
     startDate?: string;
     baseYear?: number;
@@ -36,6 +37,12 @@ export interface SchoolRequest {
     operatingFromDate?: string;
     operatingToDate?: string;
     operatingDaysCalculated?: number;
+
+    /**
+     * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
+     * How long has the school/site been providing services with an established enrollment)
+     */
+    serviceTime?: string;
 
     // Información Operacional
     kitchenTypeId?: number;

@@ -85,7 +85,7 @@ export interface AgencyRequest {
     // ¿Su Institución es un Programa Nacional de Juventud?
     // Si (1) y No (2)
     nationalYouthProgram?: boolean;
-    // ¿Es usted una Agencia Auspiciadora de Hogares? (Solo para programa PACNA)
+    // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
     // Are you a Day Care Homes? (Only for PACNA program)
     // Si (1) y No (2)
     isDayCareHome?: boolean;

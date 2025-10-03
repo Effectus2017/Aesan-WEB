@@ -9,7 +9,7 @@
             "table": {
                 "columns": {
                     "programName": "Program",
-                    "agencyName": "Name of the Sponsoring Agency",
+                    "agencyName": "Name of the Sponsoring Entity",
                     "stateDepartmentRegistration": "State Dept. Registration",
                     "address": "Address",
                     "city": "City",
@@ -119,7 +119,7 @@
             },
             "sections": {
                 "sponsor-information": "Sponsor Information",
-                "sponsor-information-description": "Enter the sponsor agency information",
+                "sponsor-information-description": "Enter the sponsor entity information",
                 "address": "Address Information",
                 "address-description": "Enter the physical address details",
                 "postal-address": "Postal Address",

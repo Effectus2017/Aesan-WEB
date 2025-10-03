@@ -2,10 +2,12 @@
   "sign-up": {
     "title": "Intención de Participación",
     "program-name": {
-      "label": "¿A qué programa desea participar?"
+      "label": "¿Qué programa le interesa auspiciar?"
     },
     "program": {
-      "label": "¿A qué programa desea participar?"
+      "label": "¿Qué programa le interesa auspiciar?",
+      "required": "Debe seleccionar un programa para continuar",
+      "required-close": "Cerrar"
     },
     "non-profit": {
       "label": "¿Es una organización sin fines de lucro?",
@@ -52,15 +54,15 @@
       "no": "No"
     },
     "is-day-care-home": {
-      "label": "¿Es usted una Agencia Auspiciadora de Hogares?",
+      "label": "¿Es usted una Entidad Auspiciadora de Hogares?",
       "yes": "Sí",
       "no": "No"
     },
     "sponsor-information": "Información del Auspiciador",
     "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
     "agency": {
-      "label": "Nombre de la Agencia Auspiciadora",
-      "placeholder": "Ingresa el nombre de la agencia auspiciadora",
+      "label": "Nombre de la Entidad Auspiciadora",
+      "placeholder": "Ingresa el nombre de la entidad auspiciadora",
       "description": "Información del auspiciador"
     },
     "state-department-registration": {
@@ -80,18 +82,18 @@
       "label": "Región",
       "placeholder": "Selecciona tu región"
     },
-          "zip-code": {
-        "label": "Código Postal",
-        "placeholder": "Ingresa el código postal"
-      },
-      "same-as-physical-address": {
-        "label": "¿Es la misma dirección física?"
-      },
-      "postal-address": {
-        "label": "Dirección Postal",
-        "placeholder": "Ingresa la dirección postal",
-        "description": "Información de la dirección postal"
-      },
+    "zip-code": {
+      "label": "Código Postal",
+      "placeholder": "Ingresa el código postal"
+    },
+    "same-as-physical-address": {
+      "label": "¿Es la misma dirección física?"
+    },
+    "postal-address": {
+      "label": "Dirección Postal",
+      "placeholder": "Ingresa la dirección postal",
+      "description": "Información de la dirección postal"
+    },
     "user-information": "Información del Usuario",
     "user-information-description": "Aquí puede agregar la información del usuario",
     "first-name": {
@@ -159,7 +161,7 @@
       "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
     },
     "extended-hours-not-eligible": {
-      "message": "Para participar en el programa PACNA debe estar interesado en participar de horario extendido"
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19(b)(3)."
     },
     "error": {
       "creating-user": "Error al crear el usuario. Por favor, intente nuevamente"
@@ -169,10 +171,6 @@
     },
     "pacna-not-eligible": {
       "message": "No es elegible para participar en el programa PACNA"
-    },
-    "program": {
-      "required": "Debe seleccionar un programa para continuar",
-      "required-close": "Cerrar"
     },
     "tax-exemption-status": {
       "label": "¿En qué estatus se encuentra su Exención Contributiva?"

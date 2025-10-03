@@ -1,0 +1,36 @@
+<div class="flex flex-col -m-6 w-max max-w-md max-h-screen">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex items-center text-lg font-medium text-white">
+      <mat-icon class="mr-2 text-white" svgIcon="heroicons_outline:exclamation-triangle"></mat-icon>
+      {{ data.title }}
+    </div>
+    <button mat-icon-button [mat-dialog-close]="undefined" [tabIndex]="-1">
+      <mat-icon class="text-white" svgIcon="heroicons_outline:x-mark"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <p class="mb-4">{{ data.message }}</p>
+    <p class="mb-6">
+      Para conocer más información puede acceder al siguiente enlace:
+      <a [href]="data.cfrLink.url"
+         target="_blank"
+         class="cfr-link">
+        {{ data.cfrLink.text }}
+      </a>
+    </p>
+
+    <!-- Actions -->
+    <div class="flex justify-end">
+      <button
+        mat-flat-button
+        type="button"
+        color="primary"
+        [mat-dialog-close]="'confirmed'">
+        {{ 'sign-up.notification.confirm' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

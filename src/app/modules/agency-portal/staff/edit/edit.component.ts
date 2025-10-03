@@ -48,6 +48,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { RoleMappingService } from '../../../../shared/services/role-mapping.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { SchoolService } from 'app/shared/services/school.service';
+import { School } from 'app/shared/models/School';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
+import { SchoolStaffRequest, UpdateSchoolStaffRequest } from 'app/shared/models/Request/SchoolStaffRequest';
 
 @Component({
   selector: 'app-edit-staff',
@@ -93,6 +97,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _matDialog = inject(MatDialog);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   public fieldVisibilityService = inject(FieldVisibilityService);
+  private _schoolService = inject(SchoolService);
+  private _schoolStaffService = inject(SchoolStaffService);
+  private _activatedRoute = inject(ActivatedRoute);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -106,6 +113,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
+  // Lista de Escuelas
+  listSchools: School[] = [];
+  // Lista de Tipos de Asignación
+  listStaffAssignmentTypes: OptionSelection[] = [];
   // Resultado de revisión / Review result
   // Review result
   reviewResult: OptionSelection[] = [];
@@ -198,6 +209,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       areaCode: new FormControl('', [Validators.required]),
       // Comments
       comments: new FormControl(''),
+      // School assignment
+      school: new FormControl(''),
+      assignmentType: new FormControl(''),
+      isPrimary: new FormControl(false),
       // Review result
       reviewResult: new FormControl(''),
       // Review date
@@ -323,6 +338,11 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
 
+        // Staff Assignment Types
+        this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
+          option.optionKey === 'staffAssignmentType' && option.isActive
+        );
+
         // Las posiciones se configurarán en onSetForm según el tipo de staff
         // No asignar aquí para evitar conflictos
 
@@ -358,6 +378,15 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.listRegions = result.body;
       }
     });
+
+    // Schools - Cargar desde el resolver
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+    if (resolvedData && resolvedData.schools) {
+      this.listSchools = resolvedData.schools;
+    }
+
+    // El código para cargar tipos de asignación ya está en la función existente arriba
+    // Solo necesitamos agregar el filtro siguiendo el mismo patrón
 
     // Suscribirse a cambios en la clasificación
     this.headerConfig.formGroup
@@ -466,6 +495,53 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Actualizar el estado inicial del botón de submit
     this.updateSubmitButtonState();
+
+    // Cargar escuela actualmente asignada al staff
+    this.loadCurrentSchoolAssignment(param.id);
+  }
+
+  /**
+   * Carga la escuela actualmente asignada al staff
+   */
+  private loadCurrentSchoolAssignment(staffId: number): void {
+    // Solo obtener la primera escuela asignada si existe
+    this._schoolStaffService.getSchoolsByStaff({ staffId }).subscribe({
+      next: (schoolStaffs) => {
+        if (schoolStaffs && schoolStaffs.length > 0) {
+          // Encontrar la asignación activa
+          const activeAssignment = schoolStaffs.find((assignment: any) => assignment.isActive);
+          if (activeAssignment) {
+            // Buscar el tipo de asignación correspondiente
+            const assignmentType = this.listStaffAssignmentTypes.find(type => type.id === activeAssignment.assignmentTypeId);
+
+            this.headerConfig.formGroup.patchValue({
+              school: { id: activeAssignment.schoolId, name: activeAssignment.schoolName },
+              assignmentType: assignmentType || null,
+              isPrimary: activeAssignment.isPrimary || false
+            });
+          }
+        }
+      },
+      error: (err) => {
+        console.error('Error loading school assignment:', err);
+      }
+    });
+  }
+
+  /**
+   * Muestra el mensaje de éxito después de actualizar el staff
+   */
+  private showEditSuccessMessage(): void {
+    const staffTypeKey = this.isEmployee ? 'staff.edit.success.employee' : 'staff.edit.success.boardMember';
+    this._notificationService.showSuccessDialogWithCallback(
+      this._translocoService.translate(staffTypeKey),
+      (result) => {
+        if (result === 'confirmed') {
+          const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+          this._customRouterService.navigate([targetRoute]);
+        }
+      }
+    );
   }
 
   onSubmit(): void {
@@ -529,6 +605,11 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Apellido Materno (para todos los tipos de staff)
     const motherLastName: string = formValues.motherLastName || '';
 
+    // Escuela asignada
+    const schoolId: number = formValues.school?.id || null;
+    const assignmentTypeId: number = formValues.assignmentType?.id || 1;
+    const isPrimary: boolean = formValues.isPrimary || false;
+
     // Loading
     this.isLoading = true;
 
@@ -582,6 +663,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
+      // Información de asignación de escuela
+      schoolId: schoolId,
+      assignmentTypeId: assignmentTypeId,
+      isPrimary: isPrimary,
     };
 
     // Agregar campos de contacto y ubicación solo si no es empleado
@@ -612,24 +697,13 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    // Crear staff
+    // Actualizar staff (el backend ahora maneja también la asociación con la escuela)
     this._staffService.updateStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {
           case true:
-            // Mensaje específico para staff usando traducciones
-            const staffTypeKey = this.isEmployee ? 'staff.edit.success.employee' : 'staff.edit.success.boardMember';
-
-            this._notificationService.showSuccessDialogWithCallback(
-              this._translocoService.translate(staffTypeKey),
-              (result) => {
-                if (result === 'confirmed') {
-                  // Usuario presionó Confirm, navegar a la lista correspondiente según el tipo de staff
-                  const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
-                  this._customRouterService.navigate([targetRoute]);
-                }
-              }
-            );
+            // Mostrar mensaje de éxito
+            this.showEditSuccessMessage();
             break;
           default:
             this._notificationService.showErrorDialog('staff.edit.error.general');

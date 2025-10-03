@@ -413,6 +413,25 @@
           </mat-form-field>
         </div>
 
+        <!-- ¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida? -->
+        <!-- Solo para programas PDAM y PACNA, no para PSAV -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM || isPACNA">
+          <mat-form-field data-cy="service-time-field">
+            <mat-label>{{ "schools.add.service-time.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [formControlName]="'serviceTime'"
+              [matDatepicker]="serviceTimePicker"
+              (dateChange)="checkServiceTime()"
+              placeholder="{{ 'schools.add.service-time.placeholder' | transloco }}"
+              data-cy="service-time-input"
+            />
+            <mat-datepicker-toggle matSuffix [for]="serviceTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #serviceTimePicker></mat-datepicker>
+            <mat-hint>{{ "schools.add.service-time.hint" | transloco }}</mat-hint>
+          </mat-form-field>
+        </div>
+
         <!-- TITULO -->
         <!-- Datos Operacionales -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowField()">

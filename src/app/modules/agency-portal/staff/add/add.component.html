@@ -233,6 +233,47 @@
           </mat-form-field>
         </div>
 
+        <!-- Asignación de Escuela -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">
+            {{ "staff.add.school-assignment" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staff.add.school-assignment-description" | transloco }}
+          </p>
+        </div>
+
+        <!-- Campos de Escuela y Tipo de Asignación -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+          <!-- Escuela -->
+          <mat-form-field data-cy="school-field">
+            <mat-label>{{ "staff.add.school.label" | transloco }}</mat-label>
+            <mat-select formControlName="school" [placeholder]="'staff.add.school.placeholder' | transloco" [compareWith]="compareById" data-cy="school-select">
+              <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="school-option">
+                {{ school.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Tipo de Asignación -->
+          <mat-form-field data-cy="assignment-type-field">
+            <mat-label>{{ "staff.add.assignmentType.label" | transloco }}</mat-label>
+            <mat-select formControlName="assignmentType" [placeholder]="'staff.add.assignmentType.placeholder' | transloco" [compareWith]="compareById" data-cy="assignment-type-select">
+              <mat-option *ngFor="let assignmentType of listStaffAssignmentTypes" [value]="assignmentType" data-cy="assignment-type-option">
+                {{ currentLang === 'es' ? assignmentType.name : assignmentType.nameEN }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Checkbox de Principal -->
+        <div class="grid grid-cols-1 col-span-12 gap-2 mb-3 sm:grid-cols-1 sm:col-span-8">
+          <mat-checkbox formControlName="isPrimary" data-cy="is-primary-checkbox" class="mt-0 -ml-3">
+            {{ "staff.add.isPrimary.label" | transloco }}
+          </mat-checkbox>
+          <p class="ml-0 text-sm text-secondary">{{ "staff.add.isPrimary.hint" | transloco }}</p>
+        </div>
+
         <!-- Información Adicional -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">

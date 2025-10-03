@@ -147,6 +147,13 @@
                 "placeholder": "Total calculated operating days",
                 "description": "Total days calculated automatically"
             },
+            "service-time": {
+              "label": "Since when has your Entity offered services with an established registration?",
+                "placeholder": "Select the date when your entity began operating (optional)",
+                "required": "This field is required",
+                "hint": "The entity must have at least one year of service to be eligible",
+                "not-eligible": "The entity must have at least one year of service to be eligible for any program."
+            },
             "operating-dates": {
                 "label": "Operating Days",
                 "description": "Days when the site will be operating"
@@ -841,11 +848,19 @@
             "operating-days-calculated": {
                 "label": "Total Operating Days",
                 "placeholder": "Total calculated operating days",
-                "description": "Total days calculated automatically"
+                "description": "Total days calculated automatically",
+                "hint": "This field is calculated automatically based on the configured operating dates"
             },
             "operating-dates": {
                 "label": "Operating Dates",
                 "description": "Site operating period"
+            },
+            "service-time": {
+              "label": "Since when has your Entity offered services with an established registration?",
+                "placeholder": "Select the date when your entity began operating (optional)",
+                "required": "This field is required",
+                "hint": "The entity must have at least one year of service to be eligible",
+                "not-eligible": "The entity must have at least one year of service to be eligible for any program."
             },
             "operational-information": {
                 "label": "Operational Data",
@@ -1228,6 +1243,10 @@
                     }
                 }
             }
+        },
+        "notification": {
+            "title": "Service Validation",
+            "confirm": "Understood"
         }
     }
 }

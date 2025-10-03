@@ -149,6 +149,13 @@
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente"
             },
+            "service-time": {
+              "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "required": "Este campo es requerido",
+                "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
+                "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."
+            },
             "operating-dates": {
                 "label": "Días de funcionamiento",
                 "description": "Días en el que el sitio estará funcionando"
@@ -775,11 +782,19 @@
             "operating-days-calculated": {
                 "label": "Total de Días de Funcionamiento",
                 "placeholder": "Total de días calculados de funcionamiento",
-                "description": "Total de días calculados automáticamente"
+                "description": "Total de días calculados automáticamente",
+                "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
             },
             "operating-dates": {
                 "label": "Fechas de Funcionamiento",
                 "description": "Período de funcionamiento del sitio"
+            },
+            "service-time": {
+              "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "required": "Este campo es requerido",
+                "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
+                "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."
             },
             "operational-information": {
                 "label": "Datos Operacionales",
@@ -1103,6 +1118,10 @@
                     }
                 }
             }
+        },
+        "notification": {
+            "title": "Validación de Servicio",
+            "confirm": "Entendido"
         }
     }
 }

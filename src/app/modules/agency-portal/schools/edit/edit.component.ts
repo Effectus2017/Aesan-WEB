@@ -17,6 +17,7 @@ import { NgForOf, NgIf, NgClass } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { City } from 'app/shared/models/City';
@@ -115,6 +116,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
+  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Catálogos
   // Catalogs
@@ -384,6 +386,10 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       operatingFromDate: [null],
       operatingToDate: [null],
       operatingDaysCalculated: [{value: null, disabled: true}],
+
+      // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
+      // How long has the school/site been providing services with an established enrollment?
+      serviceTime: [null],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
@@ -840,6 +846,33 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
+  /**
+   * Valida si el sitio tiene al menos un año de servicio
+   * Validates if the site has at least one year of service
+   */
+  checkServiceTime(): void {
+    const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
+    if (serviceTime) {
+      const today = new Date();
+      const serviceDate = new Date(serviceTime);
+      const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
+
+      if (diffInMonths < 12) {
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('schools.notification.title'),
+          message: this._translocoService.translate('schools.edit.service-time.not-eligible'),
+          actions: {
+            confirm: {
+              label: this._translocoService.translate('schools.notification.confirm'),
+            },
+            cancel: {
+              show: false,
+            },
+          },
+        });
+      }
+    }
+  }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
@@ -1020,6 +1053,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       operatingFromDate: param.operatingFromDate,
       operatingToDate: param.operatingToDate,
       operatingDaysCalculated: param.operatingDaysCalculated,
+      serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
       startDate: param.startDate,

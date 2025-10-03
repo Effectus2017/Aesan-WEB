@@ -92,7 +92,7 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
       await page.waitForTimeout(1000);
     }
 
-    // 1.1. Llenar campo de Agencia Auspiciadora de Hogares (solo visible para programa PACNA)
+    // 1.1. Llenar campo de Entidad Auspiciadora de Hogares (solo visible para programa PACNA)
     const isDayCareHomeSelect = page.locator('[data-cy=is-day-care-home-input]');
     if (await isDayCareHomeSelect.isVisible()) {
       await isDayCareHomeSelect.click();
@@ -102,7 +102,7 @@ test.describe('Sponsor Registration - PACNA Program Tests', () => {
 
       // Esperar un momento para que se procese la selección
       await page.waitForTimeout(500);
-      console.log('Campo Agencia Auspiciadora de Hogares llenado');
+      console.log('Campo Entidad Auspiciadora de Hogares llenado');
     }
 
     // 2. Llenar información de la agencia

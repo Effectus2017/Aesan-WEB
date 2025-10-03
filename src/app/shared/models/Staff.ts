@@ -42,6 +42,11 @@ export interface Staff {
   reviewResultId?: number;
   reviewDate?: string;
   reviewJustification?: string;
+
+  // Datos de la relación SchoolStaff
+  schoolId?: number;
+  assignmentTypeId?: number;
+  isPrimary?: boolean;
   //
   city?: City;
   // Region
