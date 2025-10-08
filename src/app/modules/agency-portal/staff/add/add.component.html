@@ -256,23 +256,23 @@
           </mat-form-field>
 
           <!-- Tipo de Asignación -->
-          <mat-form-field data-cy="assignment-type-field">
+          <!-- <mat-form-field data-cy="assignment-type-field">
             <mat-label>{{ "staff.add.assignmentType.label" | transloco }}</mat-label>
             <mat-select formControlName="assignmentType" [placeholder]="'staff.add.assignmentType.placeholder' | transloco" [compareWith]="compareById" data-cy="assignment-type-select">
               <mat-option *ngFor="let assignmentType of listStaffAssignmentTypes" [value]="assignmentType" data-cy="assignment-type-option">
                 {{ currentLang === 'es' ? assignmentType.name : assignmentType.nameEN }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
+          </mat-form-field> -->
         </div>
 
         <!-- Checkbox de Principal -->
-        <div class="grid grid-cols-1 col-span-12 gap-2 mb-3 sm:grid-cols-1 sm:col-span-8">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-2 mb-3 sm:grid-cols-1 sm:col-span-8">
           <mat-checkbox formControlName="isPrimary" data-cy="is-primary-checkbox" class="mt-0 -ml-3">
             {{ "staff.add.isPrimary.label" | transloco }}
           </mat-checkbox>
           <p class="ml-0 text-sm text-secondary">{{ "staff.add.isPrimary.hint" | transloco }}</p>
-        </div>
+        </div> -->
 
         <!-- Información Adicional -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">

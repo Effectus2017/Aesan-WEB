@@ -71,79 +71,6 @@
             </mat-form-field>
           </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
-            <!-- ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años? -->
-            <!-- Have you been denied or disqualified from state funds in the last seven years? -->
-            <!-- Si (1) y No (2) -->
-            <mat-form-field data-cy="state-funds-denied-field">
-              <mat-label>{{ "sign-up.state-funds-denied.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'stateFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="state-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{
-                  currentLang === "en" ? option.nameEN : option.name
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <!-- ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años? -->
-            <!-- Have you been denied or disqualified from federal funds in the last seven years? -->
-            <!-- Si (1) y No (2) -->
-            <mat-form-field data-cy="federal-funds-denied-field">
-              <mat-label>{{ "sign-up.federal-funds-denied.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFundsEligibility()" data-cy="federal-funds-denied-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{
-                  currentLang === "en" ? option.nameEN : option.name
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <!-- Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?* *  -->
-            <!-- Si (1) y No (2) -->
-            <mat-form-field data-cy="organized-athletic-programs-field">
-              <mat-label matTooltip="{{ 'sign-up.organized-athletic-programs.label' | transloco }}">{{ "sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">{{
-                  currentLang === "en" ? option.nameEN : option.name
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-
-            <!-- ¿Está interesado en participar en el servicio de merienda y cena en riesgo? -->
-            <!-- Is the Sponsor interested in participating in the at-risk snack and dinner service? -->
-            <!-- Si (1) y No (2) -->
-            <mat-form-field *ngIf="signUpForm && signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
-              <mat-label>{{ "sign-up.at-risk-service.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{
-                  currentLang === "en" ? option.nameEN : option.name
-                }}</mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <!-- ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida? -->
-          <!-- How long has the organization or institution been providing services with an established enrollment? -->
-          <!-- TEMPORALMENTE OCULTO - Comentado para fácil restauración -->
-          <!--
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-            <mat-form-field data-cy="service-time-field">
-              <mat-label>{{ "sign-up.service-time.label" | transloco }}</mat-label>
-              <input
-                matInput
-                [formControlName]="'serviceTime'"
-                [matDatepicker]="servicePicker"
-                (dateChange)="checkServiceTime()"
-                placeholder="{{ 'sign-up.service-time.placeholder' | transloco }}"
-                data-cy="service-time-input"
-              />
-              <mat-datepicker-toggle matIconSuffix [for]="servicePicker"></mat-datepicker-toggle>
-              <mat-datepicker #servicePicker></mat-datepicker>
-              <mat-hint>{{ "sign-up.service-time.hint" | transloco }}</mat-hint>
-            </mat-form-field>
-          </div>
-          -->
-
           <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
           <!-- In what status is your Tax Exemption? -->
           <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
@@ -175,6 +102,114 @@
               </mat-select>
             </mat-form-field>
           </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+            <!-- ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años? -->
+            <!-- Have you been denied or disqualified from state funds in the last seven years? -->
+            <!-- Si (1) y No (2) -->
+            <mat-form-field data-cy="state-funds-denied-field">
+              <mat-label>{{ "sign-up.state-funds-denied.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'stateFundsDenied'" (selectionChange)="checkStateFundsDenied()" data-cy="state-funds-denied-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años? -->
+            <!-- Have you been denied or disqualified from federal funds in the last seven years? -->
+            <!-- Si (1) y No (2) -->
+            <mat-form-field data-cy="federal-funds-denied-field">
+              <mat-label>{{ "sign-up.federal-funds-denied.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFederalFundsDenied()" data-cy="federal-funds-denied-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" appDynamicGrid="2">
+            <!-- ¿Razón por la cuál fue descalificado o denegado de fondos estatales? -->
+            <!-- Reason why the sponsor was disqualified or denied state funds? -->
+            <mat-form-field *ngIf="signUpForm && signUpForm.get('stateFundsDenied')?.value === true" data-cy="state-funds-denied-reason-field">
+              <mat-label>{{ "sign-up.state-funds-denied-reason.label" | transloco }}</mat-label>
+              <textarea
+                matInput
+                [formControlName]="'stateFundsDeniedReason'"
+                [placeholder]="'sign-up.state-funds-denied-reason.placeholder' | transloco"
+                rows="3"
+                data-cy="state-funds-denied-reason-input"
+              >
+              </textarea>
+              <mat-error *ngIf="signUpForm.get('stateFundsDeniedReason')?.hasError('required')">
+                {{ "sign-up.state-funds-denied-reason.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- ¿Razón por la cuál fue descalificado o denegado de fondos federales? -->
+            <!-- Reason why the sponsor was disqualified or denied federal funds? -->
+            <mat-form-field *ngIf="signUpForm && signUpForm.get('federalFundsDenied')?.value === true" data-cy="federal-funds-denied-reason-field">
+              <mat-label>{{ "sign-up.federal-funds-denied-reason.label" | transloco }}</mat-label>
+              <textarea
+                matInput
+                [formControlName]="'federalFundsDeniedReason'"
+                [placeholder]="'sign-up.federal-funds-denied-reason.placeholder' | transloco"
+                rows="3"
+                data-cy="federal-funds-denied-reason-input">
+              </textarea>
+              <mat-error *ngIf="signUpForm.get('federalFundsDeniedReason')?.hasError('required')">
+                {{ "sign-up.federal-funds-denied-reason.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela -->
+          <!--
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <mat-form-field data-cy="organized-athletic-programs-field">
+              <mat-label matTooltip="{{ 'sign-up.organized-athletic-programs.label' | transloco }}">{{ "sign-up.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkOrganizedAthleticPrograms()" data-cy="organized-athletic-programs-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="signUpForm && signUpForm.get('organizedAthleticPrograms')?.value === true" data-cy="at-risk-service-field">
+              <mat-label>{{ "sign-up.at-risk-service.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkAtRiskService()" data-cy="at-risk-service-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">{{
+                  currentLang === "en" ? option.nameEN : option.name
+                }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          -->
+
+          <!-- ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida? -->
+          <!-- How long has the organization or institution been providing services with an established enrollment? -->
+          <!-- TEMPORALMENTE OCULTO - Comentado para fácil restauración -->
+          <!--
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <mat-form-field data-cy="service-time-field">
+              <mat-label>{{ "sign-up.service-time.label" | transloco }}</mat-label>
+              <input
+                matInput
+                [formControlName]="'serviceTime'"
+                [matDatepicker]="servicePicker"
+                (dateChange)="checkServiceTime()"
+                placeholder="{{ 'sign-up.service-time.placeholder' | transloco }}"
+                data-cy="service-time-input"
+              />
+              <mat-datepicker-toggle matIconSuffix [for]="servicePicker"></mat-datepicker-toggle>
+              <mat-datepicker #servicePicker></mat-datepicker>
+              <mat-hint>{{ "sign-up.service-time.hint" | transloco }}</mat-hint>
+            </mat-form-field>
+          </div>
+          -->
+
+
 
           <!-- Tipo de Entidad -->
           <!-- Type of Entity -->

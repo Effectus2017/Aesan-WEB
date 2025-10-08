@@ -362,11 +362,53 @@
               placeholder="{{ 'schools.edit.general-enrollment.placeholder' | transloco }}"
               data-cy="general-enrollment-input"
             />
-            <mat-error *ngIf="headerConfig.formGroup.get('generalEnrollment').hasError('required')">{{
-              "schools.edit.general-enrollment.required" | transloco
-            }}</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('generalEnrollment').hasError('required')">{{ "schools.edit.general-enrollment.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
+
+
+          <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+            <mat-form-field data-cy="organized-athletic-programs-field">
+              <mat-label>{{ "schools.edit.pacna-fields.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkPACNAValidation()" data-cy="organized-athletic-programs-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">
+                    {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('organizedAthleticPrograms').hasError('required')">
+                {{ "schools.edit.pacna-fields.organized-athletic-programs.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo? -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+            <mat-form-field data-cy="at-risk-service-field">
+              <mat-label>{{ "schools.edit.pacna-fields.at-risk-service.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkPACNAValidation()" data-cy="at-risk-service-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('atRiskService').hasError('required')">
+                {{ "schools.edit.pacna-fields.at-risk-service.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Mensaje de validación PACNA -->
+          <div *ngIf="pacnaValidationMessage" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+            <div class="flex items-center p-3 text-red-800 bg-red-50 rounded-md" *ngIf="pacnaValidationMessage.type === 'error'">
+              <mat-icon class="mr-2 text-red-500">error</mat-icon>
+              <span>{{ pacnaValidationMessage.message | transloco }}</span>
+            </div>
+            <div class="flex items-center p-3 text-yellow-800 bg-yellow-50 rounded-md" *ngIf="pacnaValidationMessage.type === 'warning'">
+              <mat-icon class="mr-2 text-yellow-500">warning</mat-icon>
+              <span>{{ pacnaValidationMessage.message | transloco }}</span>
+            </div>
+          </div>
+
 
         <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Niveles educativos (selección múltiple) -->
@@ -374,7 +416,7 @@
           <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.edit.education-levels.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
-              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('educationLevels').hasError('required')">{{ "schools.edit.education-levels.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -845,7 +887,13 @@
           </mat-form-field>
           <mat-form-field data-cy="lunch-to-field">
             <mat-label>{{ "schools.edit.lunch-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'schools.edit.lunch-to.placeholder' | transloco }}" formControlName="lunchTo" [matTimepicker]="pickerLunchTo" data-cy="lunch-to-input" />
+            <input
+              matInput
+              placeholder="{{ 'schools.edit.lunch-to.placeholder' | transloco }}"
+              formControlName="lunchTo"
+              [matTimepicker]="pickerLunchTo"
+              data-cy="lunch-to-input"
+            />
             <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
             <mat-timepicker #pickerLunchTo />
           </mat-form-field>
@@ -969,7 +1017,7 @@
         <!-- Merienda nocturna / Night Snack -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" >
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "schools.edit.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select" [compareWith]="compareById">
@@ -1259,7 +1307,6 @@
         >
           <app-generic-table [config]="satellitesTableConfig" [handler]="this" #satellitesTable></app-generic-table>
         </div>
-
       </div>
     </form>
   </div>

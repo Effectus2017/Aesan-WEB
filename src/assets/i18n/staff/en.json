@@ -169,12 +169,12 @@
         "placeholder": "Enter the area code",
         "required": "Area code is required"
       },
-      "school-assignment": "School Assignment",
-      "school-assignment-description": "Specify the school where the staff will be assigned",
+      "school-assignment": "Site Assignment",
+      "school-assignment-description": "Specify the site where the staff will be assigned",
       "school": {
-        "label": "Assigned Schools",
-        "placeholder": "Select school (optional)",
-        "hint": "Select the school where the staff will be assigned"
+        "label": "Assigned Sites",
+        "placeholder": "Select site (optional)",
+        "hint": "Select the site where the staff will be assigned"
       },
       "assignmentType": {
         "label": "Assignment Type",
@@ -383,10 +383,10 @@
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)"
       },
-      "school-assignment": "School Assignment",
-      "school-assignment-description": "Specify the school where the staff will be assigned",
+      "school-assignment": "Site Assignment",
+      "school-assignment-description": "Specify the site where the staff will be assigned",
       "school": {
-        "label": "Assigned School",
+        "label": "Assigned Site",
         "placeholder": "Select school (optional)"
       },
       "assignmentType": {

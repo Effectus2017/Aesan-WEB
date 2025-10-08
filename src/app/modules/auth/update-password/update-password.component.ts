@@ -12,6 +12,7 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
+import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 
 @Component({
     selector: 'auth-update-password',
@@ -29,6 +30,7 @@ import { UsersService } from 'app/shared/services/users.service';
         MatProgressSpinnerModule,
         FuseAlertComponent,
         TranslocoModule,
+        LanguagesComponent,
     ]
 })
 export class UpdatePasswordComponent implements OnInit {
@@ -52,7 +54,7 @@ export class UpdatePasswordComponent implements OnInit {
     this.resetPasswordForm = this._formBuilder.group(
       {
         tempPassword: ['', Validators.required],
-        newPassword: ['', Validators.required],
+        newPassword: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', Validators.required],
       },
       {
@@ -93,7 +95,7 @@ export class UpdatePasswordComponent implements OnInit {
           this.resetPasswordForm.enable();
           this.alert = {
             type: 'error',
-            message: this._translocoService.translate('auth.reset-password.error.invalid-temp-password'),
+            message: this._translocoService.translate('update-password.error.invalid-temp-password'),
           };
           this.showAlert = true;
           return;
@@ -102,11 +104,14 @@ export class UpdatePasswordComponent implements OnInit {
         // Si la respuesta es exitosa
         this.alert = {
           type: 'success',
-          message: this._translocoService.translate('auth.reset-password.success.password-updated'),
+          message: this._translocoService.translate('update-password.success.password-updated'),
         };
         this.showAlert = true;
 
-        // Redireccionar al login después de 2 segundos
+        // Reset the form
+        this.updatePasswordNgForm.resetForm();
+
+        // Redirect to login after 3 seconds
         setTimeout(() => {
           this._router.navigate(['/sign-in'], {
             queryParams: { email: requestParameters.email },
@@ -117,12 +122,12 @@ export class UpdatePasswordComponent implements OnInit {
         this.resetPasswordForm.enable();
 
         // Determinar el tipo de error basado en la respuesta
-        let errorMessage = 'auth.reset-password.error.server-error';
+        let errorMessage = 'update-password.error.server-error';
 
         if (error.error && error.error.message === 'Not updated') {
-          errorMessage = 'auth.reset-password.error.not-updated';
+          errorMessage = 'update-password.error.not-updated';
         } else if (error.status === 400) {
-          errorMessage = 'auth.reset-password.error.invalid-temp-password';
+          errorMessage = 'update-password.error.invalid-temp-password';
         }
 
         this.alert = {

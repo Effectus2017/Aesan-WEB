@@ -116,7 +116,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Lista de Escuelas
   listSchools: School[] = [];
   // Lista de Tipos de Asignación
-  listStaffAssignmentTypes: OptionSelection[] = [];
+//   listStaffAssignmentTypes: OptionSelection[] = [];
   // Resultado de revisión / Review result
   // Review result
   reviewResult: OptionSelection[] = [];
@@ -211,7 +211,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       comments: new FormControl(''),
       // School assignment
       school: new FormControl(''),
-      assignmentType: new FormControl(''),
+    //   assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
       // Review result
       reviewResult: new FormControl(''),
@@ -339,9 +339,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
 
         // Staff Assignment Types
-        this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
-          option.optionKey === 'staffAssignmentType' && option.isActive
-        );
+        // this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
+        //   option.optionKey === 'staffAssignmentType' && option.isActive
+        // );
 
         // Las posiciones se configurarán en onSetForm según el tipo de staff
         // No asignar aquí para evitar conflictos
@@ -479,6 +479,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       //reviewResult: this.reviewResult.find((o) => o.id === staff.reviewResultId),
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
+
+      school: param.school,
+    //   assignmentType: param.assignmentType,
+      isPrimary: param.isPrimary,
     });
 
     // Actualizar validaciones
@@ -512,11 +516,11 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           const activeAssignment = schoolStaffs.find((assignment: any) => assignment.isActive);
           if (activeAssignment) {
             // Buscar el tipo de asignación correspondiente
-            const assignmentType = this.listStaffAssignmentTypes.find(type => type.id === activeAssignment.assignmentTypeId);
+            // const assignmentType = this.listStaffAssignmentTypes.find(type => type.id === activeAssignment.assignmentTypeId);
 
             this.headerConfig.formGroup.patchValue({
               school: { id: activeAssignment.schoolId, name: activeAssignment.schoolName },
-              assignmentType: assignmentType || null,
+            //   assignmentType: assignmentType || null,
               isPrimary: activeAssignment.isPrimary || false
             });
           }
@@ -607,7 +611,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Escuela asignada
     const schoolId: number = formValues.school?.id || null;
-    const assignmentTypeId: number = formValues.assignmentType?.id || 1;
+    //const assignmentTypeId: number = formValues.assignmentType?.id || 1;
     const isPrimary: boolean = formValues.isPrimary || false;
 
     // Loading
@@ -665,7 +669,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       motherLastName: motherLastName,
       // Información de asignación de escuela
       schoolId: schoolId,
-      assignmentTypeId: assignmentTypeId,
+    //   assignmentTypeId: assignmentTypeId,
       isPrimary: isPrimary,
     };
 

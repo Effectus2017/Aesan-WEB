@@ -93,7 +93,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Lista de Escuelas
   listSchools: School[] = [];
   // Lista de Tipos de Asignación
-  listStaffAssignmentTypes: OptionSelection[] = [];
+//   listStaffAssignmentTypes: OptionSelection[] = [];
 
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
@@ -147,7 +147,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       comments: new FormControl(''),
       // Escuela asignada
       school: new FormControl('', [Validators.required]),
-      assignmentType: new FormControl(''),
+      //assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
     }),
     // Cancel button
@@ -230,9 +230,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
 
         // Staff Assignment Types
-        this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
-          option.optionKey === 'staffAssignmentType' && option.isActive
-        );
+        // this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
+        //   option.optionKey === 'staffAssignmentType' && option.isActive
+        // );
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -457,7 +457,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     // Escuela asignada
     const schoolId: number = formValues.school?.id || null;
-    const assignmentTypeId: number = formValues.assignmentType?.id || 1;
+    // const assignmentTypeId: number = formValues.assignmentType?.id || 1;
     const isPrimary: boolean = formValues.isPrimary || false;
 
     // Loading
@@ -497,7 +497,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       motherLastName: motherLastName,
       // Información de asignación de escuela
       schoolId: schoolId,
-      assignmentTypeId: assignmentTypeId,
+    //   assignmentTypeId: assignmentTypeId,
       isPrimary: isPrimary,
     };
 

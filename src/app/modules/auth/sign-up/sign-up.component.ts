@@ -198,20 +198,30 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Si (1) y No (2)
       stateFundsDenied: [null, Validators.required],
 
+      // ¿Razón por la cuál fue descalificado o denegado de fondos estatales?
+      // Reason why the sponsor was disqualified or denied state funds?
+      // Se activa cuando stateFundsDenied = true
+      stateFundsDeniedReason: [null],
+
       // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
       // Have you been denied or disqualified from federal funds in the last seven years?
       // Si (1) y No (2)
       federalFundsDenied: [null, Validators.required],
+    // ¿Razón por la cuál fue descalificado o denegado de fondos federales?
+    // Reason why the sponsor was disqualified or denied federal funds?
+    // Se activa cuando federalFundsDenied = true
+    federalFundsDeniedReason: [null],
 
+      // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
       // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
       // Si (1) y No (2)
-      organizedAthleticPrograms: [null, Validators.required],
+      // organizedAthleticPrograms: [null, Validators.required],
 
       // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the Sponsor interested in participating in the at-risk snack and dinner service?
       // Si (1) y No (2)
-      atRiskService: [{ value: null, disabled: true }],
+      // atRiskService: [{ value: null, disabled: true }],
 
       // ¿En qué estatus se encuentra su Exención Contributiva?"
       // In what status is your Tax Exemption?
@@ -587,9 +597,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const nonProfit = formValues.nonProfit;
     const basicEducationRegistry = formValues.basicEducationRegistry == null ? false : formValues.basicEducationRegistry;
     const federalFundsDenied = formValues.federalFundsDenied == null ? false : formValues.federalFundsDenied;
+    const federalFundsDeniedReason = formValues.federalFundsDeniedReason; // Nuevo
     const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
-    const organizedAthleticPrograms = formValues.organizedAthleticPrograms;
-    const atRiskService = formValues.atRiskService == null ? false : formValues.atRiskService;
+    const stateFundsDeniedReason = formValues.stateFundsDeniedReason;
+    // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
+    // const organizedAthleticPrograms = formValues.organizedAthleticPrograms;
+    // const atRiskService = formValues.atRiskService == null ? false : formValues.atRiskService;
     const taxExemptionStatusId = formValues.taxExemptionStatusId;
     const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? false : formValues.taxExemptionTypeId;
     const typeOfEntityId = formValues.typeOfEntityId;
@@ -644,19 +657,25 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Have you been denied or disqualified from federal funds in the last seven years?
         // Si (1) y No (2)
         federalFundsDenied: federalFundsDenied,
+        federalFundsDeniedReason: federalFundsDeniedReason, // Nuevo
         // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
         // Have you been denied or disqualified from state funds in the last seven years?
         // Si (1) y No (2)
         stateFundsDenied: stateFundsDenied,
+        // ¿Razón por la cuál fue descalificado o denegado de fondos estatales?
+        // Reason why the sponsor was disqualified or denied state funds?
+        // Se activa cuando stateFundsDenied = true
+        stateFundsDeniedReason: stateFundsDeniedReason,
+        // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
         // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
         // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
         // Si (1) y No (2)
-        organizedAthleticPrograms: organizedAthleticPrograms,
+        // organizedAthleticPrograms: organizedAthleticPrograms,
         // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
         // Is the Sponsor interested in participating in the at-risk snack and dinner service?
         // Si (1) y No (2)
         // At Risk Service
-        atRiskService: atRiskService,
+        // atRiskService: atRiskService,
         // ¿En qué estatus se encuentra su Exención Contributiva?
         // In what status is your Tax Exemption?
         // En Proceso (3), Otorgado (4), Denegado (5)
@@ -804,8 +823,44 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Si el programa es PACNA y el campo Organized Athletic Programs es true, deshabilitar el formulario
-  // Si el programa no es PACNA o el campo Organized Athletic Programs es false, habilitar el formulario
+  // Manejar el cambio en el campo stateFundsDenied
+  checkStateFundsDenied(): void {
+    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === true;
+    const stateFundsDeniedReasonControl = this.signUpForm.get('stateFundsDeniedReason');
+
+    if (stateFundsDenied) {
+      // Si se selecciona "Sí", hacer el campo requerido
+      stateFundsDeniedReasonControl?.setValidators([Validators.required]);
+    } else {
+      // Si se selecciona "No", limpiar validaciones y valor
+      stateFundsDeniedReasonControl?.clearValidators();
+      stateFundsDeniedReasonControl?.setValue(null);
+    }
+
+    // Actualizar el estado de validación
+    stateFundsDeniedReasonControl?.updateValueAndValidity();
+  }
+
+  // Manejar el cambio en el campo federalFundsDenied
+  checkFederalFundsDenied(): void {
+    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === true;
+    const federalFundsDeniedReasonControl = this.signUpForm.get('federalFundsDeniedReason');
+
+    if (federalFundsDenied) {
+      // Si se selecciona "Sí", hacer el campo requerido
+      federalFundsDeniedReasonControl?.setValidators([Validators.required]);
+    } else {
+      // Si se selecciona "No", limpiar validaciones y valor
+      federalFundsDeniedReasonControl?.clearValidators();
+      federalFundsDeniedReasonControl?.setValue(null);
+    }
+
+    // Actualizar el estado de validación
+    federalFundsDeniedReasonControl?.updateValueAndValidity();
+  }
+
+  // DESHABILITADO: Ahora se maneja a nivel de escuela
+  /*
   checkOrganizedAthleticPrograms(): void {
     const selectedProgram = this.signUpForm.value.program;
     const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
@@ -844,7 +899,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       enableAllControls(this.signUpForm);
     }
   }
+  */
 
+  // DESHABILITADO: Ahora se maneja a nivel de escuela
+  /*
   checkAtRiskService(): void {
     const selectedProgram = this.signUpForm.value.program;
     const atRiskService = this.signUpForm.value.atRiskService === true;
@@ -871,6 +929,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       enableAllControls(this.signUpForm); // Habilitar controles
     }
   }
+  */
 
   // TEMPORALMENTE COMENTADO - Método de validación de serviceTime en intención de participación
   // Para restaurar es necesario descomentar también el campo en el HTML y la validación required

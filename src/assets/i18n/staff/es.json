@@ -169,12 +169,12 @@
         "placeholder": "Ingrese el código de área",
         "required": "El código de área es requerido"
       },
-      "school-assignment": "Asignación de Escuela",
-      "school-assignment-description": "Especifique la escuela donde estará asignado el personal",
+      "school-assignment": "Asignación de Sitio",
+      "school-assignment-description": "Especifique el sitio donde estará asignado el personal",
       "school": {
-        "label": "Escuela Asignada",
-        "placeholder": "Seleccione la escuela (opcional)",
-        "hint": "Selecciona la escuela donde estará asignado el personal"
+        "label": "Sitio Asignado",
+        "placeholder": "Seleccione el sitio (opcional)",
+        "hint": "Selecciona el sitio donde estará asignado el personal"
       },
       "assignmentType": {
         "label": "Tipo de Asignación",
@@ -322,10 +322,10 @@
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional):"
       },
-      "school-assignment": "Asignación de Escuela",
-      "school-assignment-description": "Especifique la escuela donde estará asignado el personal",
+      "school-assignment": "Asignación de Sitio",
+      "school-assignment-description": "Especifique el sitio donde estará asignado el personal",
       "school": {
-        "label": "Escuela Asignada",
+        "label": "Sitio Asignado",
         "placeholder": "Seleccione la escuela (opcional)"
       },
       "assignmentType": {

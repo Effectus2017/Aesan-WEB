@@ -198,6 +198,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Lenguaje actual
   currentLang: string = 'es';
 
+  // ===== PROPIEDADES PARA VALIDACIÓN PACNA =====
+  pacnaValidationMessage: { type: 'error' | 'warning' | null; message: string | null } = { type: null, message: null };
+
   // Header config and reactive form
   // Configuración del header y formulario reactivo
   // Header config and reactive form
@@ -475,6 +478,16 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+
+      // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
+
+      // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+      // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
+      organizedAthleticPrograms: [null],
+
+      // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
+      // Is the site interested in participating in the at-risk snack and dinner service?
+      atRiskService: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -1097,6 +1110,16 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Matrícula General
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
+
+      // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
+
+      // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+      // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
+      organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,
+
+      // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
+      // Is the site interested in participating in the at-risk snack and dinner service?
+      atRiskService: formValues.atRiskService ?? null,
     };
 
     // ===== CREAR SCHOOL SERVICE REQUEST =====
@@ -1761,6 +1784,42 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
   }
 
+  // ===== MÉTODOS DE VALIDACIÓN PACNA =====
+
+  /**
+   * Valida los campos específicos de PACNA
+   */
+  checkPACNAValidation(): void {
+    if (!this.isPACNA) {
+      this.pacnaValidationMessage = { type: null, message: null };
+      return;
+    }
+
+    const formValues = this.headerConfig.formGroup.value;
+    const organizedAthleticPrograms = formValues.organizedAthleticPrograms === true;
+    const atRiskService = formValues.atRiskService === true;
+
+    // Caso 1: Ambos campos = true = No elegible
+    if (organizedAthleticPrograms && atRiskService) {
+      this.pacnaValidationMessage = {
+        type: 'error',
+        message: 'schools.add.pacna-fields.validation.both-true-error'
+      };
+      return;
+    }
+
+    // Caso 2: Solo uno de los campos = true = Advertencia
+    if (organizedAthleticPrograms || atRiskService) {
+      this.pacnaValidationMessage = {
+        type: 'warning',
+        message: 'schools.add.pacna-fields.validation.one-true-warning'
+      };
+      return;
+    }
+
+    // Caso 3: Ambos campos = false = Sin restricciones
+    this.pacnaValidationMessage = { type: null, message: null };
+  }
 
   /**
    * Limpia el campo de la escuela principal

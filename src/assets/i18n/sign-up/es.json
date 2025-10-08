@@ -25,6 +25,16 @@
       "yes": "Sí",
       "no": "No"
     },
+  "state-funds-denied-reason": {
+    "label": "Razón por la cuál fue descalificado o denegado de fondos estatales",
+    "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos estatales",
+    "required": "Este campo es requerido cuando ha sido descalificado de fondos estatales"
+  },
+  "federal-funds-denied-reason": {
+    "label": "Razón por la cuál fue descalificado o denegado de fondos federales",
+    "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos federales",
+    "required": "Este campo es requerido cuando ha sido descalificado de fondos federales"
+  },
     "federal-funds-denied": {
       "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
       "yes": "Sí",
@@ -176,7 +186,7 @@
       "label": "¿En qué estatus se encuentra su Exención Contributiva?"
     },
     "tax-exemption-type": {
-      "label": "¿Qué tipo de Exención Contributiva tiene?"
+      "label": "Tipo de Exención"
     },
     "type-of-entity": {
       "label": "Tipo de Entidad"

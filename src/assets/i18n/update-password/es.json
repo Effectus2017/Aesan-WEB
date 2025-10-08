@@ -1,0 +1,37 @@
+{
+  "update-password": {
+    "title": "Actualizar Contraseña",
+    "temp-password": {
+      "label": "Contraseña Temporal",
+      "placeholder": "Ingrese su contraseña temporal",
+      "required": "La contraseña temporal es requerida"
+    },
+    "new-password": {
+      "label": "Nueva Contraseña",
+      "placeholder": "Ingrese su nueva contraseña",
+      "required": "La nueva contraseña es requerida",
+      "minlength": "La contraseña debe tener al menos 8 caracteres"
+    },
+    "confirm-password": {
+      "label": "Confirmar Contraseña",
+      "placeholder": "Confirme su nueva contraseña",
+      "required": "La confirmación de contraseña es requerida"
+    },
+    "submit": "Actualizar Contraseña",
+    "passwords-must-match": "Las contraseñas deben coincidir",
+    "success": {
+      "password-updated": "Tu contraseña ha sido actualizada exitosamente"
+    },
+    "error": {
+      "invalid-temp-password": "Contraseña temporal inválida",
+      "not-updated": "No se pudo actualizar la contraseña",
+      "server-error": "Error del servidor. Por favor intente más tarde",
+      "invalid-token": "El enlace de restablecimiento no es válido o ha expirado",
+      "reset-error": "Ha ocurrido un error al actualizar la contraseña"
+    },
+    "password-visibility": {
+      "show": "Mostrar contraseña",
+      "hide": "Ocultar contraseña"
+    }
+  }
+}

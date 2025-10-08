@@ -88,10 +88,10 @@
       "minRoleLevel": 1
     },
     "birthDate": {
-      "showFor": ["board-member", "other"],
-      "hideFor": ["employee"],
+      "showFor": ["employee", "board-member", "other"],
+      "hideFor": [],
       "requiredFor": ["board-member", "other"],
-      "optionalFor": [],
+      "optionalFor": ["employee"],
       "roles": [],
       "permissions": [],
       "minRoleLevel": 2

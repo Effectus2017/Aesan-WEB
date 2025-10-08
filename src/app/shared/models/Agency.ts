@@ -68,6 +68,7 @@ class InscriptionResponse {
     comments?: string | null;
     deadlineToCompleteRegistration?: string | null;
     federalFundsDenied?: boolean;
+    federalFundsDeniedReason?: string | null;
     id?: number;
     isDayCareHome?: boolean;
     nationalYouthProgram?: boolean;
@@ -78,6 +79,7 @@ class InscriptionResponse {
     rejectionJustification?: string | null;
     serviceTime?: string | null;
     stateFundsDenied?: boolean;
+    stateFundsDeniedReason?: string | null;
     taxExemptionStatus?: OptionSelection | null;
     taxExemptionStatusId?: number | null;
     taxExemptionType?: OptionSelection | null;

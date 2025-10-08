@@ -48,5 +48,7 @@
   "./assets/i18n/sign-up/es.json",
   "./assets/i18n/sign-up/en.json",
   "./assets/i18n/sign-in/es.json",
-  "./assets/i18n/sign-in/en.json"
+  "./assets/i18n/sign-in/en.json",
+  "./assets/i18n/update-password/es.json",
+  "./assets/i18n/update-password/en.json"
 ]

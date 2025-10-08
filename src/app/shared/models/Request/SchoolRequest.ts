@@ -91,6 +91,22 @@ export interface SchoolRequest {
     // Número de Sitio
     siteNumber?: number;
 
+    // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
+
+    /**
+     * ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
+     * Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
+     * Solo para programa PACNA
+     */
+    organizedAthleticPrograms?: boolean;
+
+    /**
+     * ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
+     * Is the site interested in participating in the at-risk snack and dinner service?
+     * Solo para programa PACNA
+     */
+    atRiskService?: boolean;
+
     // ===== RELACIONES CON MODELOS REQUEST =====
     services?: SchoolServiceRequest[];
     dayCareHome?: SchoolDayCareHomeRequest;

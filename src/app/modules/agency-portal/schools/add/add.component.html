@@ -309,13 +309,46 @@
           </mat-form-field>
         </div>
 
+
+
+          <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && shouldShowField()">
+            <mat-form-field data-cy="organized-athletic-programs-field">
+              <mat-label>{{ "schools.add.pacna-fields.organized-athletic-programs.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkPACNAValidation()" data-cy="organized-athletic-programs-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('organizedAthleticPrograms').hasError('required')">
+                {{ "schools.add.pacna-fields.organized-athletic-programs.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo? -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && shouldShowField()">
+            <mat-form-field data-cy="at-risk-service-field">
+              <mat-label>{{ "schools.add.pacna-fields.at-risk-service.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkPACNAValidation()" data-cy="at-risk-service-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('atRiskService').hasError('required')">
+                {{ "schools.add.pacna-fields.at-risk-service.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+
         <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Niveles educativos (selección múltiple) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
           <mat-form-field data-cy="education-levels-field" *ngIf="isPDAM">
             <mat-label>{{ "schools.add.education-levels.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'educationLevels'" data-cy="education-levels-select" [compareWith]="compareById" multiple>
-              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of educationLevels" [value]="option" data-cy="education-level-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('educationLevels').hasError('required')">{{ "schools.add.education-levels.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -354,7 +387,7 @@
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "schools.add.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">{{ option.name }}</mat-option>
+              <mat-option *ngFor="let option of typeOfResidential" [value]="option" data-cy="residential-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

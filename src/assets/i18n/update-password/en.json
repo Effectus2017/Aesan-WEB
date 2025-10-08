@@ -1,0 +1,37 @@
+{
+  "update-password": {
+    "title": "Update Password",
+    "temp-password": {
+      "label": "Temporary Password",
+      "placeholder": "Enter your temporary password",
+      "required": "Temporary password is required"
+    },
+    "new-password": {
+      "label": "New Password",
+      "placeholder": "Enter your new password",
+      "required": "New password is required",
+      "minlength": "Password must be at least 8 characters long"
+    },
+    "confirm-password": {
+      "label": "Confirm Password",
+      "placeholder": "Confirm your new password",
+      "required": "Password confirmation is required"
+    },
+    "submit": "Update Password",
+    "passwords-must-match": "Passwords must match",
+    "success": {
+      "password-updated": "Your password has been updated successfully"
+    },
+    "error": {
+      "invalid-temp-password": "Invalid temporary password",
+      "not-updated": "Password could not be updated",
+      "server-error": "Server error. Please try again later",
+      "invalid-token": "The reset link is not valid or has expired",
+      "reset-error": "An error occurred while updating the password"
+    },
+    "password-visibility": {
+      "show": "Show password",
+      "hide": "Hide password"
+    }
+  }
+}

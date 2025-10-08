@@ -378,6 +378,25 @@
             },
             "satellites": {
                 "label": "Satellite Sites",
+            "pacna-fields": {
+                "title": "PACNA Specific Fields",
+                "description": "Specific information for PACNA program",
+                "organized-athletic-programs": {
+                    "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
+                "at-risk-service": {
+                    "label": "Is the site interested in participating in the at-risk snack and dinner service?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
+                    "one-true-warning": "This site may have additional restrictions in PACNA"
+                }
+            },
+
                 "description": "List of satellite sites associated with this main site"
             },
             "activate-deactivate": {
@@ -1014,6 +1033,25 @@
             },
             "dinner-from": {
                 "label": "Dinner From",
+            "pacna-fields": {
+                "title": "PACNA Specific Fields",
+                "description": "Specific information for PACNA program",
+                "organized-athletic-programs": {
+                    "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
+                "at-risk-service": {
+                    "label": "Is the site interested in participating in the at-risk snack and dinner service?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
+                    "one-true-warning": "This site may have additional restrictions in PACNA"
+                }
+            },
+
                 "placeholder": "Dinner from"
             },
             "dinner-to": {

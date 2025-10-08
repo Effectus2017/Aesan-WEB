@@ -378,6 +378,25 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "pacna-fields": {
+                "title": "Campos Específicos para PACNA",
+                "description": "Información específica para el programa PACNA",
+                "organized-athletic-programs": {
+                    "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "at-risk-service": {
+                    "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
+                    "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
+                }
+            },
+
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -1014,6 +1033,25 @@
                 "label": "Hasta",
                 "placeholder": "Hasta"
             },
+            "pacna-fields": {
+                "title": "Campos Específicos para PACNA",
+                "description": "Información específica para el programa PACNA",
+                "organized-athletic-programs": {
+                    "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "at-risk-service": {
+                    "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
+                    "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
+                }
+            },
+
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"

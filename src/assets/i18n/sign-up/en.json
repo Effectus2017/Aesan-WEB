@@ -20,6 +20,16 @@
       "yes": "Yes",
       "no": "No"
     },
+  "state-funds-denied-reason": {
+    "label": "Reason why the sponsor was disqualified or denied state funds",
+    "placeholder": "Enter the reason why you were disqualified or denied state funds",
+    "required": "This field is required when you have been disqualified from state funds"
+  },
+  "federal-funds-denied-reason": {
+    "label": "Reason why the sponsor was disqualified or denied federal funds",
+    "placeholder": "Enter the reason why you were disqualified or denied federal funds",
+    "required": "This field is required when you have been disqualified from federal funds"
+  },
     "federal-funds-denied": {
       "label": "Have you been denied or disqualified from federal funds in the last seven years?",
       "yes": "Yes",
@@ -176,7 +186,7 @@
       "label": "What is the status of your Tax Exemption?"
     },
     "tax-exemption-type": {
-      "label": "What type of Tax Exemption do you have?"
+      "label": "Type of Exemption"
     },
     "type-of-entity": {
       "label": "Type of Entity"

@@ -3,6 +3,7 @@ import { OptionSelection } from "./OptionSelection";
 import { Region } from "./Region";
 import { StaffClassification } from "./StaffClassification";
 import { StaffType } from "./StaffType";
+import { SchoolListItem } from "./SchoolListItem";
 
 export interface Staff {
   id: number;
@@ -59,6 +60,10 @@ export interface Staff {
   staffType?: StaffType;
   // Staff classification
   staffClassification?: StaffClassification;
+  // School (objeto completo)
+  school?: SchoolListItem;
+  // Assignment type (objeto completo)
+  assignmentType?: OptionSelection;
 }
 
 export interface StaffList {
