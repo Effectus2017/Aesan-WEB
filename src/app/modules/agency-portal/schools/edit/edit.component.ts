@@ -26,6 +26,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
+import { SchoolEducationLevelRequest } from 'app/shared/models/Request/SchoolEducationLevelRequest';
 import { SchoolChildGroupRequest } from 'app/shared/models/Request/SchoolChildGroupRequest';
 import { SchoolDayCareHomeRequest } from 'app/shared/models/Request/SchoolDayCareHomeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -60,6 +61,7 @@ import { FieldVisibilityService } from 'app/shared/services/field-visibility.ser
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
+import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { environment } from 'environments/environment';
 
@@ -174,7 +176,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
   // Política de funcionamiento
   // Operating policies
-  operatingPolicies: OptionSelection[] = [];
+  operatingPolicies: OperatingPolicy[] = [];
 
   // Tipo de cocina
   // Type of kitchen
@@ -248,7 +250,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   servicesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,
-    displayedColumns: SERVICES_COLUMNS_SCHEMA.map(col => col.key as string),
+    displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
     addButtonShow: true,
     addButtonIcon: 'add',
     addButtonLabel: 'schools.add.services.add-service',
@@ -301,8 +303,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
   currentLang: string = 'es';
 
-  // ===== PROPIEDADES PARA VALIDACIÓN PACNA =====
-  pacnaValidationMessage: { type: 'error' | 'warning' | null; message: string | null } = { type: null, message: null };
 
   // Tipo de área
   // Type of area
@@ -388,7 +388,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Operating dates - Dates from and to when the school operates
       operatingFromDate: [null],
       operatingToDate: [null],
-      operatingDaysCalculated: [{value: null, disabled: true}],
+      operatingDaysCalculated: [{ value: null, disabled: true }],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the school/site been providing services with an established enrollment?
@@ -601,9 +601,9 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Tipo de Hogar
       // Home Type
       homeType: [null],
-       // Participantes (selección múltiple)
-       // Participants (multiple selection)
-       participantTypes: [[]],
+      // Participantes (selección múltiple)
+      // Participants (multiple selection)
+      participantTypes: [[]],
       // ¿Ofrece servicio a diferentes grupos de niños?
       // Does it offer service to different groups of children?
       offersServiceToDifferentGroups: [null],
@@ -629,7 +629,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
-
   };
 
   // Agregar esta propiedad
@@ -690,8 +689,8 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
       // Estatus
       this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      // Política de operación
-      this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
+      // Política de operación - NO USAR ESTA LÍNEA, se usa la de abajo desde operatingPolicies
+      // this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
@@ -719,7 +718,13 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.siteLocations = resolvedData.siteLocations || [];
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
-      this.operatingPolicies = resolvedData.operatingPolicies;
+
+      // Filtrar operating policies según si la agencia es recurrente
+      this.operatingPolicies = this.filterOperatingPolicies(
+        resolvedData.operatingPolicies,
+        this.agency?.isRecurrent || false
+      );
+
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
@@ -756,7 +761,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       this.currentLang = lang;
     });
 
-
     this.setupFormListeners();
   }
 
@@ -778,21 +782,24 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     });
 
     // Suscribirse a cambios en el control isActive para manejar campos de inactivación
-    this.headerConfig.formGroup.get('isActive')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((isActive: boolean) => {
-      const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+    this.headerConfig.formGroup
+      .get('isActive')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((isActive: boolean) => {
+        const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
 
-      if (isActive === false) {
-        // Si la escuela está inactiva, requerir justificación
-        inactiveJustificationControl?.setValidators([Validators.required]);
-      } else {
-        // Si la escuela está activa, limpiar validadores y valores
-        inactiveJustificationControl?.clearValidators();
-        inactiveJustificationControl?.setValue('');
-        this.headerConfig.formGroup.get('inactiveDate')?.setValue(null);
-      }
+        if (isActive === false) {
+          // Si la escuela está inactiva, requerir justificación
+          inactiveJustificationControl?.setValidators([Validators.required]);
+        } else {
+          // Si la escuela está activa, limpiar validadores y valores
+          inactiveJustificationControl?.clearValidators();
+          inactiveJustificationControl?.setValue('');
+          this.headerConfig.formGroup.get('inactiveDate')?.setValue(null);
+        }
 
-      inactiveJustificationControl?.updateValueAndValidity();
-    });
+        inactiveJustificationControl?.updateValueAndValidity();
+      });
   }
 
   private calculateOperatingDays(): void {
@@ -894,12 +901,12 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
   }
 
   private determineVisibleFields(programs: any[]): void {
-    this.isPDAM = programs.some(p => p.id === PROGRAM_IDS.PDAM);
-    this.isPSAV = programs.some(p => p.id === PROGRAM_IDS.PSAV);
-    this.isPACNA = programs.some(p => p.id === PROGRAM_IDS.PACNA);
-    this.isPFHF = programs.some(p => p.id === PROGRAM_IDS.PFHF);
-    this.isPDFE = programs.some(p => p.id === PROGRAM_IDS.PDFE);
-    this.isAESAN = programs.some(p => p.id === PROGRAM_IDS.AESAN);
+    this.isPDAM = programs.some((p) => p.id === PROGRAM_IDS.PDAM);
+    this.isPSAV = programs.some((p) => p.id === PROGRAM_IDS.PSAV);
+    this.isPACNA = programs.some((p) => p.id === PROGRAM_IDS.PACNA);
+    this.isPFHF = programs.some((p) => p.id === PROGRAM_IDS.PFHF);
+    this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
+    this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
 
     this.updateValidations();
     this._changeDetectorRef.detectChanges();
@@ -1109,11 +1116,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       snackAtRisk: schoolService?.snackAtRisk || false,
       snackAtRiskFrom: snackAtRiskFrom,
       snackAtRiskTo: snackAtRiskTo,
-      community: this.community.find(o => o.id === communityId),
-      walkers: this.walkers.find(o => o.id === walkersId),
-      siteType: this.siteType.find(o => o.id === siteTypeId),
-      experience: this.experience.find(o => o.id === experienceId),
-      reviewResult: this.reviewResult.find(o => o.id === reviewResultId),
+      community: this.community.find((o) => o.id === communityId),
+      walkers: this.walkers.find((o) => o.id === walkersId),
+      siteType: this.siteType.find((o) => o.id === siteTypeId),
+      experience: this.experience.find((o) => o.id === experienceId),
+      reviewResult: this.reviewResult.find((o) => o.id === reviewResultId),
       reviewDate: reviewDate,
       reviewJustification: reviewJustification,
       isActive: param.isActive,
@@ -1283,21 +1290,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       sitePhone: formValues.sitePhone ?? null,
       extension: formValues.extension ?? null,
       mobilePhone: formValues.mobilePhone ?? null,
-      //breakfast: breakfast ?? null,
-      //breakfastFrom: breakfastFrom ?? null,
-      //breakfastTo: breakfastTo ?? null,
-      //lunch: lunch ?? null,
-      //lunchFrom: lunchFrom ?? null,
-      //lunchTo: lunchTo ?? null,
-      //snack: snack ?? null,
-      //snackFrom: snackFrom ?? null,
-      //snackTo: snackTo ?? null,
-      //dinner: dinner ?? null,
-      //dinnerFrom: dinnerFrom ?? null,
-      //dinnerTo: dinnerTo ?? null,
-      //snackNight: snackNight ?? null,
-      //snackNightFrom: snackNightFrom ?? null,
-      //snackNightTo: snackNightTo ?? null,
       communityId: communityId ?? null,
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,
@@ -1310,17 +1302,30 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
-
-      // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
-
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
       organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,
-
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
       atRiskService: formValues.atRiskService ?? null,
+
+      // Indica si la agencia es Day Care Home
+      // Indicates if the agency is Day Care Home
+      isDayCareHome: this.isDayCareHome,
     };
+
+    // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====
+    // Crear SchoolEducationLevelRequest para cada nivel educativo seleccionado
+    if (educationLevelIds.length > 0) {
+      schoolRequest.educationLevels = educationLevelIds.map((id) => {
+        const educationLevelRequest: SchoolEducationLevelRequest = {
+          schoolId: this.param.id, // ID de la escuela existente
+          educationLevelId: id,
+          isActive: true,
+        };
+        return educationLevelRequest;
+      });
+    }
 
     // ===== CREAR SCHOOL SERVICE REQUEST =====
     // Constantes para servicios básicos
@@ -1381,11 +1386,80 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
       snackAtRisk: snackAtRiskService,
       snackAtRiskFrom: snackAtRiskFrom ?? null,
-      snackAtRiskTo: snackAtRiskTo ?? null
+      snackAtRiskTo: snackAtRiskTo ?? null,
     };
 
     // Agregar servicios al SchoolRequest
-    schoolRequest.services = [schoolServiceRequest]; // Array con un solo elemento
+    if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
+      // Si ofrece servicios a diferentes grupos, crear múltiples servicios (uno por grupo)
+      schoolRequest.services = this.servicesByGroups.map((serviceData) => {
+        const serviceRequest: SchoolServiceRequest = {
+          schoolId: this.param.id, // ID de la escuela existente
+          childGroupId: null, // Se asignará cuando se cree el grupo
+          // Servicios básicos
+          breakfast: serviceData.breakfast || false,
+          breakfastFrom: serviceData.breakfastFrom || null,
+          breakfastTo: serviceData.breakfastTo || null,
+          lunch: serviceData.lunch || false,
+          lunchFrom: serviceData.lunchFrom || null,
+          lunchTo: serviceData.lunchTo || null,
+          snackAM: serviceData.snackAM || false,
+          snackAMFrom: serviceData.snackAMFrom || null,
+          snackAMTo: serviceData.snackAMTo || null,
+          dinner: serviceData.dinner || false,
+          dinnerFrom: serviceData.dinnerFrom || null,
+          dinnerTo: serviceData.dinnerTo || null,
+          snackPM: serviceData.snackPM || false,
+          snackPMFrom: serviceData.snackPMFrom || null,
+          snackPMTo: serviceData.snackPMTo || null,
+          snackNight: serviceData.snackNight || false,
+          snackNightFrom: serviceData.snackNightFrom || null,
+          snackNightTo: serviceData.snackNightTo || null,
+          // Servicios PACNA
+          dinnerExtended: serviceData.dinnerExtended || false,
+          dinnerExtendedFrom: serviceData.dinnerExtendedFrom || null,
+          dinnerExtendedTo: serviceData.dinnerExtendedTo || null,
+          dinnerAtRisk: serviceData.dinnerAtRisk || false,
+          dinnerAtRiskFrom: serviceData.dinnerAtRiskFrom || null,
+          dinnerAtRiskTo: serviceData.dinnerAtRiskTo || null,
+          snackExtended: serviceData.snackExtended || false,
+          snackExtendedFrom: serviceData.snackExtendedFrom || null,
+          snackExtendedTo: serviceData.snackExtendedTo || null,
+          snackAtRisk: serviceData.snackAtRisk || false,
+          snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
+          snackAtRiskTo: serviceData.snackAtRiskTo || null,
+        };
+        return serviceRequest;
+      });
+    } else {
+      // Servicio general (sin grupos específicos)
+      schoolRequest.services = [schoolServiceRequest];
+    }
+
+    // Agregar grupos de niños si OffersServiceToDifferentGroups = true
+    if (formValues.offersServiceToDifferentGroups && this.childGroups.length > 0) {
+      schoolRequest.childGroups = this.childGroups;
+    }
+
+    // Agregar información de Day Care Home
+    if (this.isDayCareHome) {
+      schoolRequest.dayCareHome = {
+        schoolId: this.param.id, // ID de la escuela existente
+        isAuthorizedToOperate: formValues.isAuthorizedToOperate ?? null,
+        hasFamilyDepartmentLicense: formValues.hasFamilyDepartmentLicense ?? null,
+        numberOfEnrolledChildren: formValues.numberOfEnrolledChildren ?? null,
+        numberOfProviderChildren: formValues.numberOfProviderChildren ?? null,
+        numberOfParticipantsWithBloodTies: formValues.numberOfParticipantsWithBloodTies ?? null,
+        numberOfParticipantsWithoutBloodTies: formValues.numberOfParticipantsWithoutBloodTies ?? null,
+        minorsLiveWithProvider: formValues.minorsLiveWithProvider ?? null,
+        relationshipTypeId: formValues.relationshipType?.id ?? null,
+        offersServiceToImmigrantChildren: formValues.offersServiceToImmigrantChildren ?? null,
+        homeTypeId: formValues.homeType?.id ?? null,
+        administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
+        administratorBirthDate: formValues.administratorBirthDate ?? null,
+        offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups ?? null,
+      };
+    }
 
     this.isLoading = true;
     this.headerConfig.formGroup.disable();
@@ -1510,9 +1584,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
           // Si NO es "Comedor" ni "Satélite", auto-seleccionar "N/A"
           if (!isComedor && !isSatelite) {
-            const naKitchenType = this.kitchenTypes.find(kt =>
-              kt.name === 'N/A' || kt.nameEN === 'N/A'
-            );
+            const naKitchenType = this.kitchenTypes.find((kt) => kt.name === 'N/A' || kt.nameEN === 'N/A');
 
             if (naKitchenType) {
               this.headerConfig.formGroup.patchValue({ kitchenType: naKitchenType });
@@ -1612,13 +1684,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
    * Handles the change in the active/inactive status field
    */
   onIsActiveChange(event: any): void {
-
     const isActive = event;
     const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
     const inactiveDateControl = this.headerConfig.formGroup.get('inactiveDate');
 
     if (isActive === false) {
-
       // Limpiar validadores primero
       inactiveJustificationControl.clearValidators();
       inactiveDateControl.clearValidators();
@@ -1634,7 +1704,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       // Establecer validadores
       inactiveJustificationControl.setValidators([Validators.required]);
       inactiveDateControl.setValidators([Validators.required]);
-
     } else {
       // Limpiar validadores
       inactiveJustificationControl.clearValidators();
@@ -1674,17 +1743,17 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       width: '500px',
       data: {
         deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN
-      }
+        deliveryTypeNameEN: deliveryType.nameEN,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === 'yes') {
         this.showPermissionRequestFormDialog(deliveryType);
       } else if (result === 'no') {
         // Si el usuario dice "No", deseleccionar el tipo de entrega
         this.headerConfig.formGroup.patchValue({
-          deliveryType: null
+          deliveryType: null,
         });
       }
     });
@@ -1698,11 +1767,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       width: '600px',
       data: {
         deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN
-      }
+        deliveryTypeNameEN: deliveryType.nameEN,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result && result.action === 'submit') {
         // Aquí se implementaría la lógica para enviar la solicitud de permiso
         // Por ahora, solo mostramos un mensaje de confirmación
@@ -1713,7 +1782,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
       } else if (result && result.action === 'cancel') {
         // Si el usuario cancela, deseleccionar el tipo de entrega
         this.headerConfig.formGroup.patchValue({
-          deliveryType: null
+          deliveryType: null,
         });
       }
     });
@@ -1817,9 +1886,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
       if (result) {
         // Generar ID único para el servicio
-        const newId = this.servicesByGroups.length > 0
-          ? Math.max(...this.servicesByGroups.map(s => s.id || 0)) + 1
-          : 1;
+        const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
 
         result.id = newId;
         this.servicesByGroups.push(result);
@@ -1832,7 +1899,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
    * Maneja el evento de editar servicio desde la tabla
    */
   onTableEdit(event: Event, id: number): void {
-    const serviceToEdit = this.servicesByGroups.find(s => s.id === id);
+    const serviceToEdit = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToEdit) {
       this._notificationService.showError('schools.add.services.error.service-not-found');
       return;
@@ -1853,7 +1920,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
       if (result) {
-        const index = this.servicesByGroups.findIndex(s => s.id === id);
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups[index] = result;
           this.updateServicesTableDataSource();
@@ -1866,7 +1933,7 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
    * Maneja el evento de eliminar servicio desde la tabla
    */
   onTableDelete(event: Event, id: number): void {
-    const serviceToDelete = this.servicesByGroups.find(s => s.id === id);
+    const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToDelete) {
       this._notificationService.showError('schools.add.services.error.service-not-found');
       return;
@@ -1874,11 +1941,11 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
 
     // Confirmar eliminación
     const confirmMessage = this._translocoService.translate('schools.add.services.confirm-delete', {
-      groupName: serviceToDelete.groupName
+      groupName: serviceToDelete.groupName,
     });
 
     if (confirm(confirmMessage)) {
-      const index = this.servicesByGroups.findIndex(s => s.id === id);
+      const index = this.servicesByGroups.findIndex((s) => s.id === id);
       if (index !== -1) {
         this.servicesByGroups.splice(index, 1);
         this.updateServicesTableDataSource();
@@ -1979,42 +2046,6 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     this.updateDevPrograms();
   }
 
-  // ===== MÉTODOS DE VALIDACIÓN PACNA =====
-
-  /**
-   * Valida los campos específicos de PACNA
-   */
-  checkPACNAValidation(): void {
-    if (!this.isPACNA) {
-      this.pacnaValidationMessage = { type: null, message: null };
-      return;
-    }
-
-    const formValues = this.headerConfig.formGroup.value;
-    const organizedAthleticPrograms = formValues.organizedAthleticPrograms === true;
-    const atRiskService = formValues.atRiskService === true;
-
-    // Caso 1: Ambos campos = true = No elegible
-    if (organizedAthleticPrograms && atRiskService) {
-      this.pacnaValidationMessage = {
-        type: 'error',
-        message: 'schools.edit.pacna-fields.validation.both-true-error'
-      };
-      return;
-    }
-
-    // Caso 2: Solo uno de los campos = true = Advertencia
-    if (organizedAthleticPrograms || atRiskService) {
-      this.pacnaValidationMessage = {
-        type: 'warning',
-        message: 'schools.edit.pacna-fields.validation.one-true-warning'
-      };
-      return;
-    }
-
-    // Caso 3: Ambos campos = false = Sin restricciones
-    this.pacnaValidationMessage = { type: null, message: null };
-  }
 
   /**
    * Maneja el cambio de estado de Day Care Home para desarrollo
@@ -2031,5 +2062,17 @@ export class EditSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHa
     // Actualizar validaciones y campos visibles
     this.updateValidations();
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
+   * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
+   */
+  private filterOperatingPolicies(policies: OperatingPolicy[], isRecurrent: boolean): OperatingPolicy[] {
+    if (isRecurrent) {
+      return policies; // Mostrar todas las políticas
+    }
+    // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
+    return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
   }
 }

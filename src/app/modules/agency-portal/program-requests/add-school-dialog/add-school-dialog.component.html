@@ -26,12 +26,12 @@
         <!-- Nivel Educativo -->
         <mat-form-field>
           <mat-label>{{ "global.dialogs.schools.add.level.label" | transloco }}</mat-label>
-          <mat-select formControlName="EducationLevelId">
+          <mat-select formControlName="EducationLevelIds" multiple>
             <mat-option *ngFor="let level of educationLevels" [value]="level.id">
               {{ level.name }}
             </mat-option>
           </mat-select>
-          <mat-error *ngIf="form.get('EducationLevelId').hasError('required')">
+          <mat-error *ngIf="form.get('EducationLevelIds').hasError('required')">
             {{ "global.dialogs.schools.add.level.required" | transloco }}
           </mat-error>
         </mat-form-field>

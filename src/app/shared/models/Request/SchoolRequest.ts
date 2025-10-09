@@ -107,6 +107,13 @@ export interface SchoolRequest {
      */
     atRiskService?: boolean;
 
+    /**
+     * Indica si la agencia es Day Care Home
+     * Indicates if the agency is Day Care Home
+     * Se obtiene de la inscripción de la agencia
+     */
+    isDayCareHome?: boolean;
+
     // ===== RELACIONES CON MODELOS REQUEST =====
     services?: SchoolServiceRequest[];
     dayCareHome?: SchoolDayCareHomeRequest;

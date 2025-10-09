@@ -39,6 +39,7 @@ export interface Agency {
     // Status
     isActive?: boolean;
     isListable?: boolean;
+    isRecurrent?: boolean;
 
     // Status
     status?: AgencyStatus;

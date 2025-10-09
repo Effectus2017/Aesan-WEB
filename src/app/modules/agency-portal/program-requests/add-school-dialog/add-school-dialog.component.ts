@@ -94,7 +94,7 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.form = this._formBuilder.group({
       Name: ['', [Validators.required, Validators.maxLength(50)]],
-      EducationLevelId: ['', [Validators.required]],
+      EducationLevelIds: [[], [Validators.required]], // Changed to support multiple education levels
       OperatingPeriodId: ['', [Validators.required]],
       Address: ['', [Validators.required]],
       CityId: ['', [Validators.required]],
@@ -153,7 +153,7 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
 
       const schoolRequest: SchoolRequest = {
         name: this.form.get('Name').value,
-       // educationLevelId: this.form.get('EducationLevelId').value,
+        educationLevels: this.form.get('EducationLevelIds').value.map((id: number) => ({ educationLevelId: id })), // Updated to use new structure
        //operatingPeriodId: this.form.get('OperatingPeriodId').value,
         address: this.form.get('Address').value,
         cityId: this.form.get('CityId').value,

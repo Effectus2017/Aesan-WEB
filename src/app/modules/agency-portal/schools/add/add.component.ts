@@ -19,6 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { School } from 'app/shared/models/School';
 import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
@@ -28,6 +29,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
 import { SchoolServiceRequest } from 'app/shared/models/Request/SchoolServiceRequest';
+import { SchoolEducationLevelRequest } from 'app/shared/models/Request/SchoolEducationLevelRequest';
 import { SchoolChildGroupRequest } from 'app/shared/models/Request/SchoolChildGroupRequest';
 import { SchoolDayCareHomeRequest } from 'app/shared/models/Request/SchoolDayCareHomeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -153,7 +155,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Política de funcionamiento
   // Operating policies
-  operatingPolicies: OptionSelection[] = [];
+  operatingPolicies: OperatingPolicy[] = [];
 
   // Tipo de cocina
   // Type of kitchen
@@ -469,9 +471,9 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tipo de Hogar
       // Home Type
       homeType: [null],
-       // Participantes (selección múltiple)
-       // Participants (multiple selection)
-       participantTypes: [[]],
+      // Participantes (selección múltiple)
+      // Participants (multiple selection)
+      participantTypes: [[]],
       // ¿Ofrece servicio a diferentes grupos de niños?
       // Does it offer service to different groups of children?
       offersServiceToDifferentGroups: [null],
@@ -505,7 +507,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   comparePostal = comparePostal;
   compareById = compareById;
 
-
   isLoading = false;
 
   // Agencia Id
@@ -523,8 +524,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   isPDFE: boolean = false;
   isAESAN: boolean = false;
 
-
-
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
   showDifferentGroupsFields: boolean = false;
@@ -540,7 +539,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   servicesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,
-    displayedColumns: SERVICES_COLUMNS_SCHEMA.map(col => col.key as string),
+    displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
     addButtonShow: true,
     addButtonIcon: 'add',
     addButtonLabel: 'schools.add.services.add-service',
@@ -627,7 +626,13 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.kitchenTypes = resolvedData.kitchenTypes;
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
-      this.operatingPolicies = resolvedData.operatingPolicies;
+
+      // Filtrar operating policies según si la agencia es recurrente
+      this.operatingPolicies = this.filterOperatingPolicies(
+        resolvedData.operatingPolicies,
+        this.agency?.isRecurrent || false
+      );
+
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
@@ -999,10 +1004,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Longitud - Campo requerido para ubicación
       // Longitude - Required field for location
       longitude: formValues.longitude ?? null,
-      // Información Administrativa / Administrative Information
-      // Niveles educativos - Campo requerido para tipo de escuela (MÚLTIPLE SELECCIÓN)
-      // Education levels - Required field for school type (MULTIPLE SELECTION)
-      //educationLevelIds: educationLevelIds,
       // Tipo de organización - Campo requerido para clasificación de la escuela
       // Organization type - Required field for school classification
       organizationTypeId: organizationTypeId,
@@ -1064,7 +1065,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Tiene comedor - Indicador de infraestructura
       // Has dining room - Infrastructure indicator
       hasDiningRoom: formValues.hasDiningRoom ?? null,
-
       // Información de Contacto / Contact Information
       // Nombre del administrador autorizado - Campo para contacto
       // Authorized administrator name - Contact field
@@ -1120,6 +1120,10 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
       atRiskService: formValues.atRiskService ?? null,
+
+      // Indica si la agencia es Day Care Home
+      // Indicates if the agency is Day Care Home
+      isDayCareHome: this.isDayCareHome,
     };
 
     // ===== CREAR SCHOOL SERVICE REQUEST =====
@@ -1181,13 +1185,26 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
       snackAtRisk: snackAtRisk,
       snackAtRiskFrom: snackAtRiskFrom ?? null,
-      snackAtRiskTo: snackAtRiskTo ?? null
+      snackAtRiskTo: snackAtRiskTo ?? null,
     };
+
+    // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====
+    // Crear SchoolEducationLevelRequest para cada nivel educativo seleccionado
+    if (educationLevelIds.length > 0) {
+      schoolRequest.educationLevels = educationLevelIds.map((id) => {
+        const educationLevelRequest: SchoolEducationLevelRequest = {
+          schoolId: 0, // Se asignará cuando se cree la escuela
+          educationLevelId: id,
+          isActive: true,
+        };
+        return educationLevelRequest;
+      });
+    }
 
     // Agregar servicios al SchoolRequest
     if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
       // Si ofrece servicios a diferentes grupos, crear múltiples servicios (uno por grupo)
-      schoolRequest.services = this.servicesByGroups.map(serviceData => {
+      schoolRequest.services = this.servicesByGroups.map((serviceData) => {
         const serviceRequest: SchoolServiceRequest = {
           schoolId: 0, // Se asignará cuando se cree la escuela
           childGroupId: null, // Se asignará cuando se cree el grupo
@@ -1222,7 +1239,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           snackExtendedTo: serviceData.snackExtendedTo || null,
           snackAtRisk: serviceData.snackAtRisk || false,
           snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
-          snackAtRiskTo: serviceData.snackAtRiskTo || null
+          snackAtRiskTo: serviceData.snackAtRiskTo || null,
         };
         return serviceRequest;
       });
@@ -1240,19 +1257,19 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (this.isDayCareHome) {
       schoolRequest.dayCareHome = {
         schoolId: 0, // Se asignará cuando se cree la escuela
-        isAuthorizedToOperate: null,
-        hasFamilyDepartmentLicense: null,
-        numberOfEnrolledChildren: null,
-        numberOfProviderChildren: null,
-        numberOfParticipantsWithBloodTies: null,
-        numberOfParticipantsWithoutBloodTies: null,
-        minorsLiveWithProvider: null,
-        relationshipTypeId: null,
-        offersServiceToImmigrantChildren: null,
-        homeTypeId: null,
-        administratorAuthorizedName: null,
-        administratorBirthDate: null,
-        offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups
+        isAuthorizedToOperate: formValues.isAuthorizedToOperate ?? null,
+        hasFamilyDepartmentLicense: formValues.hasFamilyDepartmentLicense ?? null,
+        numberOfEnrolledChildren: formValues.numberOfEnrolledChildren ?? null,
+        numberOfProviderChildren: formValues.numberOfProviderChildren ?? null,
+        numberOfParticipantsWithBloodTies: formValues.numberOfParticipantsWithBloodTies ?? null,
+        numberOfParticipantsWithoutBloodTies: formValues.numberOfParticipantsWithoutBloodTies ?? null,
+        minorsLiveWithProvider: formValues.minorsLiveWithProvider ?? null,
+        relationshipTypeId: formValues.relationshipType?.id ?? null,
+        offersServiceToImmigrantChildren: formValues.offersServiceToImmigrantChildren ?? null,
+        homeTypeId: formValues.homeType?.id ?? null,
+        administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
+        administratorBirthDate: formValues.administratorBirthDate ?? null,
+        offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups ?? null,
       };
     }
 
@@ -1349,7 +1366,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     });
   }
 
-
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
   getAreaTypeByCity(city: City): void {
@@ -1378,7 +1394,6 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Método para obtener tipos de centro según el programa seleccionado
   // Get center types by program
-
 
   // Método para obtener todas las regiones según el ID de la ciudad
   // Get all regions by city ID
@@ -1469,17 +1484,17 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       width: '500px',
       data: {
         deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN
-      }
+        deliveryTypeNameEN: deliveryType.nameEN,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result === 'yes') {
         this.showPermissionRequestFormDialog(deliveryType);
       } else if (result === 'no') {
         // Si el usuario dice "No", deseleccionar el tipo de entrega
         this.headerConfig.formGroup.patchValue({
-          deliveryType: null
+          deliveryType: null,
         });
       }
     });
@@ -1493,11 +1508,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       width: '600px',
       data: {
         deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN
-      }
+        deliveryTypeNameEN: deliveryType.nameEN,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result && result.action === 'submit') {
         // Aquí se implementaría la lógica para enviar la solicitud de permiso
         // Por ahora, solo mostramos un mensaje de confirmación
@@ -1508,7 +1523,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       } else if (result && result.action === 'cancel') {
         // Si el usuario cancela, deseleccionar el tipo de entrega
         this.headerConfig.formGroup.patchValue({
-          deliveryType: null
+          deliveryType: null,
         });
       }
     });
@@ -1707,9 +1722,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
       if (result) {
         // Generar ID único para el servicio
-        const newId = this.servicesByGroups.length > 0
-          ? Math.max(...this.servicesByGroups.map(s => s.id || 0)) + 1
-          : 1;
+        const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
 
         result.id = newId;
         this.servicesByGroups.push(result);
@@ -1722,7 +1735,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    * Maneja el evento de editar servicio desde la tabla
    */
   onTableEdit(event: Event, id: number): void {
-    const serviceToEdit = this.servicesByGroups.find(s => s.id === id);
+    const serviceToEdit = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToEdit) {
       this._notificationService.showError('schools.add.services.error.service-not-found');
       return;
@@ -1743,7 +1756,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
       if (result) {
-        const index = this.servicesByGroups.findIndex(s => s.id === id);
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups[index] = result;
           this.updateServicesTableDataSource();
@@ -1756,7 +1769,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    * Maneja el evento de eliminar servicio desde la tabla
    */
   onTableDelete(event: Event, id: number): void {
-    const serviceToDelete = this.servicesByGroups.find(s => s.id === id);
+    const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToDelete) {
       this._notificationService.showError('schools.add.services.error.service-not-found');
       return;
@@ -1764,11 +1777,11 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Confirmar eliminación
     const confirmMessage = this._translocoService.translate('schools.add.services.confirm-delete', {
-      groupName: serviceToDelete.groupName
+      groupName: serviceToDelete.groupName,
     });
 
     if (confirm(confirmMessage)) {
-      const index = this.servicesByGroups.findIndex(s => s.id === id);
+      const index = this.servicesByGroups.findIndex((s) => s.id === id);
       if (index !== -1) {
         this.servicesByGroups.splice(index, 1);
         this.updateServicesTableDataSource();
@@ -1803,7 +1816,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (organizedAthleticPrograms && atRiskService) {
       this.pacnaValidationMessage = {
         type: 'error',
-        message: 'schools.add.pacna-fields.validation.both-true-error'
+        message: 'schools.add.pacna-fields.validation.both-true-error',
       };
       return;
     }
@@ -1812,7 +1825,7 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (organizedAthleticPrograms || atRiskService) {
       this.pacnaValidationMessage = {
         type: 'warning',
-        message: 'schools.add.pacna-fields.validation.one-true-warning'
+        message: 'schools.add.pacna-fields.validation.one-true-warning',
       };
       return;
     }
@@ -1836,5 +1849,17 @@ export class AddSchoolComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Actualizar validaciones y campos visibles
     this.updateValidations();
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
+   * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
+   */
+  private filterOperatingPolicies(policies: OperatingPolicy[], isRecurrent: boolean): OperatingPolicy[] {
+    if (isRecurrent) {
+      return policies; // Mostrar todas las políticas
+    }
+    // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
+    return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
   }
 }

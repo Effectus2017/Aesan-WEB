@@ -368,10 +368,10 @@
 
 
           <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && shouldShowField()">
             <mat-form-field data-cy="organized-athletic-programs-field">
               <mat-label>{{ "schools.edit.pacna-fields.organized-athletic-programs.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'organizedAthleticPrograms'" (selectionChange)="checkPACNAValidation()" data-cy="organized-athletic-programs-select">
+              <mat-select [formControlName]="'organizedAthleticPrograms'" data-cy="organized-athletic-programs-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">
                     {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
@@ -383,10 +383,10 @@
           </div>
 
           <!-- ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo? -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && shouldShowField()">
             <mat-form-field data-cy="at-risk-service-field">
               <mat-label>{{ "schools.edit.pacna-fields.at-risk-service.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'atRiskService'" (selectionChange)="checkPACNAValidation()" data-cy="at-risk-service-select">
+              <mat-select [formControlName]="'atRiskService'" data-cy="at-risk-service-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
@@ -397,17 +397,6 @@
             </mat-form-field>
           </div>
 
-          <!-- Mensaje de validación PACNA -->
-          <div *ngIf="pacnaValidationMessage" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-            <div class="flex items-center p-3 text-red-800 bg-red-50 rounded-md" *ngIf="pacnaValidationMessage.type === 'error'">
-              <mat-icon class="mr-2 text-red-500">error</mat-icon>
-              <span>{{ pacnaValidationMessage.message | transloco }}</span>
-            </div>
-            <div class="flex items-center p-3 text-yellow-800 bg-yellow-50 rounded-md" *ngIf="pacnaValidationMessage.type === 'warning'">
-              <mat-icon class="mr-2 text-yellow-500">warning</mat-icon>
-              <span>{{ pacnaValidationMessage.message | transloco }}</span>
-            </div>
-          </div>
 
 
         <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
