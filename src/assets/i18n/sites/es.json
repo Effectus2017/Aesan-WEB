@@ -1,0 +1,1250 @@
+{
+    "sites": {
+        "title": "Sitios",
+        "list": {
+            "title": "Lista de Sitios",
+            "table": {
+                "columns": {
+                    "id": "Id",
+                    "name": "Nombre",
+                    "address": "Dirección",
+                    "city": "Municipio",
+                    "region": "Región",
+                    "isMainSite": "Es sitio principal?",
+                    "mainSchool": "Sitio Principal",
+                    "siteCode": "Código de Sitio",
+                    "actions": "Acciones",
+                    "satelliteSiteName": "Nombre del Sitio Satélite",
+                    "assignmentDate": "Fecha de Asignación",
+                    "comment": "Comentario"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "calendar": "Calendario",
+                    "satellites": "Satélites"
+                }
+            },
+            "search": {
+                "placeholder": "Buscar por nombre"
+            }
+        },
+        "satellites": {
+            "modal": {
+                "title": "Sitios Satélites",
+                "siteName": "Sitio Principal",
+                "totalSatellites": "Total de Satélites",
+                "totalCount": "Total",
+                "search": {
+                    "label": "Buscar sitios satélites",
+                    "placeholder": "Buscar por nombre, comentario o fecha..."
+                }
+            }
+        },
+        "add": {
+            "title": "Agregar Sitio",
+            "information": "Información",
+            "information-description": "Información del sitio",
+            "name": {
+                "label": "Nombre del sitio",
+                "placeholder": "Nombre del sitio",
+                "required": "El nombre del sitio es requerido"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Dirección del sitio",
+                "required": "La dirección del sitio es requerida"
+            },
+            "address.description": "Datos de la dirección física del sitio",
+            "city": {
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio",
+                "required": "El municipio es requerido"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Región del sitio",
+                "required": "La región es requerida"
+            },
+            "zip-code": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio",
+                "required": "El código postal es requerido"
+            },
+            "latitude": {
+                "label": "Latitud",
+                "placeholder": "Latitud del sitio",
+                "required": "La latitud es requerida"
+            },
+            "longitude": {
+                "label": "Longitud",
+                "placeholder": "Longitud del sitio",
+                "required": "La longitud es requerida"
+            },
+            "gps-coordinates": {
+                "tooltip": "Abrir herramienta de coordenadas GPS"
+            },
+            "postal-address": {
+                "label": "Dirección postal",
+                "placeholder": "Dirección postal del sitio",
+                "required": "La dirección postal es requerida"
+            },
+            "postal-address.description": "Datos de la dirección postal del sitio",
+            "same-as-physical-address": {
+                "label": "Igual que la dirección física"
+            },
+            "postalCity": {
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio"
+            },
+            "postalRegion": {
+                "label": "Región",
+                "placeholder": "Región del sitio"
+            },
+            "postalZipCode": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio"
+            },
+            "administrative-information": {
+                "label": "Información Administrativa",
+                "description": "Información administrativa del sitio"
+            },
+            "organization-type": {
+                "label": "Tipo de organización",
+                "placeholder": "Tipo de organización del sitio",
+                "required": "El campo es requerido"
+            },
+            "center": {
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
+            },
+            "non-profit": {
+                "label": "¿Es una organización sin fines de lucro?",
+                "required": "Este campo es requerido"
+            },
+            "start-date": {
+                "label": "Fecha de Inicio de la Provisión",
+                "placeholder": "Seleccione la fecha de inicio de la provisión",
+                "required": "La fecha de inicio de la provisión es requerida"
+            },
+            "base-year": {
+                "label": "Año base",
+                "placeholder": "Año base del sitio",
+                "required": "El año base es requerido"
+            },
+            "renewal-year": {
+                "label": "Año de renovación",
+                "placeholder": "Próximo año de renovación",
+                "required": "El año de renovación es requerido"
+            },
+            "organizationType": {
+                "label": "Tipo de organización"
+            },
+            "education-levels": {
+                "label": "Niveles educativos",
+                "placeholder": "Niveles educativos del sitio",
+                "required": "Los niveles educativos son requeridos"
+            },
+            "operating-from-date": {
+                "label": "Fecha Desde",
+                "placeholder": "Fecha desde cuando funciona",
+                "required": "La fecha desde es requerida",
+                "description": "Fecha desde cuando inicia el funcionamiento del sitio"
+            },
+            "operating-to-date": {
+                "label": "Fecha Hasta",
+                "placeholder": "Fecha hasta cuando funciona",
+                "required": "La fecha hasta es requerida",
+                "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
+            },
+            "operating-days-calculated": {
+                "label": "Total de Días de Funcionamiento",
+                "placeholder": "Total de días calculados de funcionamiento",
+                "description": "Total de días calculados automáticamente"
+            },
+            "service-time": {
+              "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "required": "Este campo es requerido",
+                "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
+                "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."
+            },
+            "operating-dates": {
+                "label": "Días de funcionamiento",
+                "description": "Días en el que el sitio estará funcionando"
+            },
+            "operational-information": {
+                "label": "Datos Operacionales",
+                "description": "Información operacional del sitio"
+            },
+            "kitchen-type": {
+                "label": "Tipo de Cocina",
+                "placeholder": "Tipo de cocina del sitio",
+                "required": "El tipo de cocina es requerido"
+            },
+            "group-type": {
+                "label": "Tipo de Grupo",
+                "placeholder": "Tipo de grupo del sitio",
+                "required": "El tipo de grupo es requerido"
+            },
+            "site-location": {
+                "label": "Ubicación del Sitio",
+                "hint": "Se determina automáticamente según el Tipo de Grupo"
+            },
+            "delivery-type": {
+                "label": "Tipo de Entrega",
+                "placeholder": "Tipo de entrega del sitio",
+                "required": "El tipo de entrega es requerido"
+            },
+            "sponsor-type": {
+                "label": "Tipo de Auspiciador",
+                "placeholder": "Tipo de auspiciador del sitio",
+                "required": "El tipo de auspiciador es requerido"
+            },
+            "applicant-type": {
+                "label": "Tipo de Solicitante",
+                "placeholder": "Tipo de solicitante del sitio",
+                "required": "El tipo de solicitante es requerido"
+            },
+            "center-type": {
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
+            },
+            "residential-type": {
+                "label": "Tipo de Institución Residencial",
+                "placeholder": "Tipo de institución residencial del sitio",
+                "required": "El tipo de institución residencial es requerido"
+            },
+            "operating-policy": {
+                "label": "Política de Funcionamiento",
+                "placeholder": "Política de funcionamiento del sitio",
+                "required": "La política de funcionamiento es requerida"
+            },
+            "has-warehouse": {
+                "label": "¿Cuenta con un Almacén?",
+                "placeholder": "¿Cuenta con un Almacén?",
+                "required": "¿Cuenta con un Almacén?"
+            },
+            "has-dining-room": {
+                "label": "¿Cuenta con un Salón Comedor?",
+                "placeholder": "¿Cuenta con un Salón Comedor?",
+                "required": "¿Cuenta con un Salón Comedor?"
+            },
+            "administrator-authorized": {
+                "label": "Administrador/Representante Autorizado",
+                "description": "Información del administrador/representante autorizado"
+            },
+            "administrator-authorized-name": {
+                "label": "Nombre Completo del Administrador o Representante",
+                "placeholder": "Nombre completo del administrador o representante",
+                "required": "El nombre completo del administrador o representante es requerido"
+            },
+            "administrator-birth-date": {
+                "label": "Fecha de Nacimiento del Administrador",
+                "placeholder": "Seleccione la fecha de nacimiento del administrador",
+                "required": "La fecha de nacimiento del administrador es requerida"
+            },
+            "site-phone": {
+                "label": "Teléfono del Sitio",
+                "placeholder": "Teléfono del sitio",
+                "required": "El teléfono del sitio es requerido"
+            },
+            "extension": {
+                "label": "Extensión",
+                "placeholder": "Extensión",
+                "required": "La extensión es requerida"
+            },
+            "mobile-phone": {
+                "label": "Teléfono Móvil",
+                "placeholder": "Teléfono móvil",
+                "required": "El teléfono móvil es requerido"
+            },
+            "services-and-schedule": {
+                "label": "Servicios que operará y horario",
+                "description": "Información de los servicios que operará y horario"
+            },
+            "breakfast": {
+                "label": "Desayuno",
+                "placeholder": "Desayuno"
+            },
+            "breakfast-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "breakfast-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "lunch": {
+                "label": "Almuerzo",
+                "placeholder": "Almuerzo"
+            },
+            "lunch-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "lunch-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack": {
+                "label": "Merienda",
+                "placeholder": "Merienda"
+            },
+            "snack-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-am": {
+                "label": "Merienda AM",
+                "placeholder": "Merienda AM"
+            },
+            "snack-am-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-am-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-pm": {
+                "label": "Merienda PM",
+                "placeholder": "Merienda PM"
+            },
+            "snack-pm-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-pm-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner": {
+                "label": "Cena",
+                "placeholder": "Cena"
+            },
+            "dinner-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-night": {
+                "label": "Merienda nocturna",
+                "placeholder": "Merienda nocturna"
+            },
+            "snack-night-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-night-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-extended": {
+                "label": "Cena Horario Extendido",
+                "placeholder": "Cena Horario Extendido"
+            },
+            "dinner-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-at-risk": {
+                "label": "Cena en Riesgo",
+                "placeholder": "Cena en Riesgo"
+            },
+            "dinner-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-extended": {
+                "label": "Merienda Horario Extendido",
+                "placeholder": "Merienda Horario Extendido"
+            },
+            "snack-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-at-risk": {
+                "label": "Merienda en Riesgo",
+                "placeholder": "Merienda en Riesgo"
+            },
+            "snack-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "pacna-fields": {
+                "title": "Campos Específicos para PACNA",
+                "description": "Información específica para el programa PACNA",
+                "organized-athletic-programs": {
+                    "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "at-risk-service": {
+                    "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
+                    "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
+                }
+            },
+
+            "satellites": {
+                "label": "Sitios Satélites",
+                "description": "Lista de sitios satélites asociados a este sitio principal"
+            },
+            "activate-deactivate": {
+                "label": "Activar/Desactivar",
+                "description": "Configuración del estado activo del sitio"
+            },
+            "is-active": {
+                "label": "Estado",
+                "placeholder": "Seleccione el estado del sitio"
+            },
+            "inactive-justification": {
+                "label": "Justificación de Inactivación",
+                "placeholder": "Ingrese la justificación para inactivar el sitio",
+                "required": "La justificación de inactivación es requerida"
+            },
+            "inactive-date": {
+                "label": "Fecha de Inactivación",
+                "placeholder": "Seleccione la fecha de inactivación"
+            },
+            "type-of-area": {
+                "label": "Tipo de Área",
+                "placeholder": "Tipo de área"
+            },
+            "location-type": {
+                "label": "Localización",
+                "placeholder": "Seleccione la localización",
+                "required": "La localización es requerida"
+            },
+            "new-fields": {
+                "label": "Información Adicional",
+                "description": "Información adicional del sitio"
+            },
+            "community": {
+                "label": "Comunidad",
+                "placeholder": "Seleccione el tipo de comunidad"
+            },
+            "walkers": {
+                "label": "Caminantes",
+                "placeholder": "Seleccione el tipo de caminantes"
+            },
+            "services-field": {
+                "label": "Servicios",
+                "placeholder": "Seleccione los servicios"
+            },
+            "distribution-type": {
+                "label": "Tipo de Distribución",
+                "placeholder": "Seleccione el tipo de distribución",
+                "required": "El tipo de distribución es requerido"
+            },
+            "site-type": {
+                "label": "Tipo de Sitio",
+                "placeholder": "Seleccione el tipo de sitio"
+            },
+            "experience": {
+                "label": "Experiencia",
+                "placeholder": "Seleccione la experiencia"
+            },
+            "buttons": {
+                "save": "Guardar",
+                "cancel": "Cancelar",
+                "submit": "Enviar"
+            },
+            "daycare-home-fields": {
+                "title": "Hogar de Cuidado Diurno",
+                "description": "Información específica para hogares de cuidado diurno del programa PACNA"
+            },
+            "is-authorized-to-operate": {
+                "label": "¿Este hogar está autorizado a funcionar?",
+                "required": "Este campo es requerido"
+            },
+            "has-family-department-license": {
+                "label": "¿Cuenta con la licencia del Departamento de la Familia?",
+                "required": "Este campo es requerido"
+            },
+            "number-of-enrolled-children": {
+                "label": "Número de Niños Matriculados",
+                "placeholder": "Ingrese el número de niños matriculados",
+                "required": "Este campo es requerido"
+            },
+            "number-of-provider-children": {
+                "label": "¿Cuántos son hijos del proveedor?",
+                "placeholder": "Ingrese el número de hijos del proveedor",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-with-blood-ties": {
+                "label": "¿Con cuántos de los participantes tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes con lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-without-blood-ties": {
+                "label": "¿Con cuántos de los participantes no tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes sin lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "minors-live-with-provider": {
+                "label": "¿Los menores viven con usted?",
+                "required": "Este campo es requerido"
+            },
+            "relationship-type": {
+                "label": "Parentesco",
+                "placeholder": "Seleccione el parentesco",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-immigrant-children": {
+                "label": "¿Ofrece el servicio a niños inmigrantes?",
+                "required": "Este campo es requerido"
+            },
+            "home-type": {
+                "label": "Tipo de Hogar",
+                "placeholder": "Seleccione el tipo de hogar",
+                "required": "Este campo es requerido"
+            },
+            "participant-types": {
+                "label": "Participantes",
+                "placeholder": "Seleccione los tipos de participantes",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-different-groups": {
+                "label": "¿Ofrece servicio a diferentes grupos de niños?",
+                "required": "Este campo es requerido"
+            },
+            "general-enrollment": {
+                "label": "Matrícula General",
+                "placeholder": "Matrícula General"
+            },
+            "site-number": {
+                "label": "Número de Sitio",
+                "description": "Código único del sitio generado automáticamente"
+            },
+            "dev-section": {
+                "title": "Herramientas de Desarrollo - Selección de Programas",
+                "disclaimer": "⚠️ ADVERTENCIA: Esta sección es SOLO para pruebas de desarrollo. Permite cambiar manualmente entre programas para probar diferentes configuraciones de campos. NO usar en producción.",
+                "pdam": "PDAM",
+                "psav": "PSAV",
+                "pacna": "PACNA",
+                "pfhf": "PFHF",
+                "pdfe": "PDFE",
+                "aesan": "AESAN",
+                "daycare-home": "Day Care Home"
+            },
+            "child-groups": {
+                "title": "Grupos de Niños Específicos",
+                "description": "Configure los grupos específicos de niños para este sitio",
+                "add-group": "Agregar Grupo",
+                "group-name": {
+                    "label": "Nombre del Grupo",
+                    "placeholder": "Ej: Grupo 1, Grupo 2"
+                },
+                "number-of-children": {
+                    "label": "Cantidad de Niños",
+                    "placeholder": "Ingrese la cantidad de niños"
+                },
+                "no-groups": "No hay grupos configurados"
+            },
+            "services": {
+                "add-service": "Agregar Servicio",
+                "modal": {
+                    "title": "Configurar Servicio por Grupo",
+                     "group": {
+                         "label": "Nombre del Grupo",
+                         "placeholder": "Ingrese el nombre del grupo",
+                         "required": "El grupo es requerido"
+                     },
+                    "number-of-children": {
+                        "label": "Cantidad de Niños",
+                        "required": "La cantidad de niños es requerida",
+                        "min": "Debe ser al menos 1"
+                    },
+                    "basic-services": {
+                        "title": "Servicios Básicos"
+                    },
+                    "pacna-services": {
+                        "title": "Servicios PACNA"
+                    },
+                    "breakfast": {
+                        "label": "Desayuno"
+                    },
+                    "lunch": {
+                        "label": "Almuerzo"
+                    },
+                    "snack-am": {
+                        "label": "Merienda AM"
+                    },
+                    "dinner": {
+                        "label": "Cena"
+                    },
+                    "snack-pm": {
+                        "label": "Merienda PM"
+                    },
+                    "snack-night": {
+                        "label": "Merienda Nocturna"
+                    },
+                    "dinner-extended": {
+                        "label": "Cena Horario Extendido"
+                    },
+                    "dinner-at-risk": {
+                        "label": "Cena en Riesgo"
+                    },
+                    "snack-extended": {
+                        "label": "Merienda Horario Extendido"
+                    },
+                    "snack-at-risk": {
+                        "label": "Merienda en Riesgo"
+                    },
+                    "from": {
+                        "label": "Desde"
+                    },
+                    "to": {
+                        "label": "Hasta"
+                    }
+                },
+                "table": {
+                    "title": "Servicios por Grupos",
+                    "description": "Configure los horarios de servicios específicos para cada grupo de niños",
+                    "filter-placeholder": "Filtrar servicios...",
+                    "no-data": "No hay servicios configurados",
+                    "loading": "Cargando servicios...",
+                    "error": "Error al cargar servicios",
+                    "group-name": "Grupo",
+                    "number-of-children": "Niños",
+                    "breakfast": "Desayuno",
+                    "breakfast-from": "Desayuno Desde",
+                    "breakfast-to": "Desayuno Hasta",
+                    "lunch": "Almuerzo",
+                    "lunch-from": "Almuerzo Desde",
+                    "lunch-to": "Almuerzo Hasta",
+                    "snack-am": "Merienda AM",
+                    "snack-am-from": "Merienda AM Desde",
+                    "snack-am-to": "Merienda AM Hasta",
+                    "dinner": "Cena",
+                    "dinner-from": "Cena Desde",
+                    "dinner-to": "Cena Hasta",
+                    "snack-pm": "Merienda PM",
+                    "snack-pm-from": "Merienda PM Desde",
+                    "snack-pm-to": "Merienda PM Hasta",
+                    "snack-night": "Merienda Nocturna",
+                    "snack-night-from": "Merienda Nocturna Desde",
+                    "snack-night-to": "Merienda Nocturna Hasta",
+                    "dinner-extended": "Cena Extendida",
+                    "dinner-extended-from": "Cena Extendida Desde",
+                    "dinner-extended-to": "Cena Extendida Hasta",
+                    "dinner-at-risk": "Cena en Riesgo",
+                    "dinner-at-risk-from": "Cena en Riesgo Desde",
+                    "dinner-at-risk-to": "Cena en Riesgo Hasta",
+                    "snack-extended": "Merienda Extendida",
+                    "snack-extended-from": "Merienda Extendida Desde",
+                    "snack-extended-to": "Merienda Extendida Hasta",
+                    "snack-at-risk": "Merienda en Riesgo",
+                    "snack-at-risk-from": "Merienda en Riesgo Desde",
+                    "snack-at-risk-to": "Merienda en Riesgo Hasta"
+                },
+                "confirm-delete": "¿Está seguro de que desea eliminar el servicio para el grupo '{{groupName}}'?",
+                "success": {
+                    "deleted": "Servicio eliminado correctamente"
+                },
+                "error": {
+                    "service-not-found": "Servicio no encontrado"
+                }
+            },
+            "main-site": {
+                "label": "Sitio Principal",
+                "description": "Seleccione el sitio principal al que pertenece este sitio. Deje en blanco si este es un sitio independiente.",
+                "clear": "Limpiar selección",
+                "is-main-site": "Este sitio está configurado como sitio principal",
+                "required": "El sitio principal es requerido"
+            }
+        },
+        "edit": {
+            "title": "Editar Sitio",
+            "information": "Información",
+            "information-description": "Información del sitio",
+            "dev-section": {
+                "title": "Herramientas de Desarrollo - Selección de Programas",
+                "disclaimer": "⚠️ ADVERTENCIA: Esta sección es SOLO para pruebas de desarrollo. Permite cambiar manualmente entre programas para probar diferentes configuraciones de campos. NO usar en producción.",
+                "pdam": "PDAM",
+                "psav": "PSAV",
+                "pacna": "PACNA",
+                "pfhf": "PFHF",
+                "pdfe": "PDFE",
+                "aesan": "AESAN",
+                "daycare-home": "Day Care Home"
+            },
+            "main-site": {
+                "label": "Sitio Principal",
+                "description": "Seleccione el sitio principal al que pertenece este sitio. Deje en blanco si este es un sitio independiente.",
+                "clear": "Limpiar selección",
+                "is-main-site": "Este sitio está configurado como sitio principal",
+                "required": "El sitio principal es requerido"
+            },
+            "name": {
+                "label": "Nombre del sitio",
+                "placeholder": "Nombre del sitio",
+                "required": "El nombre del sitio es requerido"
+            },
+            "address": {
+                "label": "Dirección",
+                "placeholder": "Dirección del sitio",
+                "required": "La dirección del sitio es requerida"
+            },
+            "address.description": "Datos de la dirección física del sitio",
+            "city": {
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio",
+                "required": "El municipio es requerido"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Región del sitio",
+                "required": "La región es requerida"
+            },
+            "zip-code": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio",
+                "required": "El código postal es requerido"
+            },
+            "latitude": {
+                "label": "Latitud",
+                "placeholder": "Latitud del sitio",
+                "required": "La latitud es requerida"
+            },
+            "longitude": {
+                "label": "Longitud",
+                "placeholder": "Longitud del sitio",
+                "required": "La longitud es requerida"
+            },
+            "gps-coordinates": {
+                "tooltip": "Abrir herramienta de coordenadas GPS"
+            },
+            "postal-address": {
+                "label": "Dirección postal",
+                "placeholder": "Dirección postal del sitio",
+                "required": "La dirección postal es requerida"
+            },
+            "postal-address.description": "Datos de la dirección postal del sitio",
+            "same-as-physical-address": {
+                "label": "Igual que la dirección física"
+            },
+            "postalCity": {
+                "label": "Municipio",
+                "placeholder": "Municipio del sitio"
+            },
+            "postalRegion": {
+                "label": "Región",
+                "placeholder": "Región del sitio"
+            },
+            "postalZipCode": {
+                "label": "Código postal",
+                "placeholder": "Código postal del sitio"
+            },
+            "administrative-information": {
+                "label": "Información Administrativa",
+                "description": "Información administrativa del sitio"
+            },
+            "organization-type": {
+                "label": "Tipo de organización",
+                "placeholder": "Tipo de organización del sitio",
+                "required": "El campo es requerido"
+            },
+            "center": {
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
+            },
+            "non-profit": {
+                "label": "¿Es una organización sin fines de lucro?",
+                "required": "Este campo es requerido"
+            },
+            "start-date": {
+                "label": "Fecha de Inicio de la Provisión",
+                "placeholder": "Seleccione la fecha de inicio de la provisión",
+                "required": "La fecha de inicio de la provisión es requerida"
+            },
+            "base-year": {
+                "label": "Año base",
+                "placeholder": "Año base del sitio",
+                "required": "El año base es requerido"
+            },
+            "renewal-year": {
+                "label": "Año de renovación",
+                "placeholder": "Próximo año de renovación",
+                "required": "El año de renovación es requerido"
+            },
+            "organizationType": {
+                "label": "Tipo de organización"
+            },
+            "education-levels": {
+                "label": "Niveles educativos",
+                "placeholder": "Niveles educativos del sitio",
+                "required": "Los niveles educativos son requeridos"
+            },
+            "operating-from-date": {
+                "label": "Fecha Desde",
+                "placeholder": "Fecha desde cuando funciona",
+                "required": "La fecha desde es requerida",
+                "description": "Fecha desde cuando inicia el funcionamiento del sitio"
+            },
+            "operating-to-date": {
+                "label": "Fecha Hasta",
+                "placeholder": "Fecha hasta cuando funciona",
+                "required": "La fecha hasta es requerida",
+                "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
+            },
+            "operating-days-calculated": {
+                "label": "Total de Días de Funcionamiento",
+                "placeholder": "Total de días calculados de funcionamiento",
+                "description": "Total de días calculados automáticamente",
+                "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
+            },
+            "operating-dates": {
+                "label": "Fechas de Funcionamiento",
+                "description": "Período de funcionamiento del sitio"
+            },
+            "service-time": {
+              "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "required": "Este campo es requerido",
+                "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
+                "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."
+            },
+            "operational-information": {
+                "label": "Datos Operacionales",
+                "description": "Información operacional del sitio"
+            },
+            "kitchen-type": {
+                "label": "Tipo de Cocina",
+                "placeholder": "Tipo de cocina del sitio",
+                "required": "El tipo de cocina es requerido"
+            },
+            "group-type": {
+                "label": "Tipo de Grupo",
+                "placeholder": "Tipo de grupo del sitio",
+                "required": "El tipo de grupo es requerido"
+            },
+            "site-location": {
+                "label": "Ubicación del Sitio",
+                "hint": "Se determina automáticamente según el Tipo de Grupo"
+            },
+            "delivery-type": {
+                "label": "Tipo de Entrega",
+                "placeholder": "Tipo de entrega del sitio",
+                "required": "El tipo de entrega es requerido"
+            },
+            "sponsor-type": {
+                "label": "Tipo de Auspiciador",
+                "placeholder": "Tipo de auspiciador del sitio",
+                "required": "El tipo de auspiciador es requerido"
+            },
+            "applicant-type": {
+                "label": "Tipo de Solicitante",
+                "placeholder": "Tipo de solicitante del sitio",
+                "required": "El tipo de solicitante es requerido"
+            },
+            "center-type": {
+                "label": "Tipo de Centro",
+                "placeholder": "Tipo de centro del sitio",
+                "required": "El tipo de centro es requerido"
+            },
+            "residential-type": {
+                "label": "Tipo de Institución Residencial",
+                "placeholder": "Tipo de institución residencial del sitio",
+                "required": "El tipo de institución residencial es requerido"
+            },
+            "operating-policy": {
+                "label": "Política de Funcionamiento",
+                "placeholder": "Política de funcionamiento del sitio",
+                "required": "La política de funcionamiento es requerida"
+            },
+            "has-warehouse": {
+                "label": "¿Cuenta con un Almacén?",
+                "placeholder": "¿Cuenta con un Almacén?",
+                "required": "¿Cuenta con un Almacén?"
+            },
+            "has-dining-room": {
+                "label": "¿Cuenta con un Salón Comedor?",
+                "placeholder": "¿Cuenta con un Salón Comedor?",
+                "required": "¿Cuenta con un Salón Comedor?"
+            },
+            "administrator-authorized": {
+                "label": "Administrador/Representante Autorizado",
+                "description": "Información del administrador/representante autorizado"
+            },
+            "administrator-authorized-name": {
+                "label": "Nombre Completo del Administrador o Representante",
+                "placeholder": "Nombre completo del administrador o representante",
+                "required": "El nombre completo del administrador o representante es requerido"
+            },
+            "administrator-birth-date": {
+                "label": "Fecha de Nacimiento del Administrador",
+                "placeholder": "Seleccione la fecha de nacimiento del administrador",
+                "required": "La fecha de nacimiento del administrador es requerida"
+            },
+            "site-phone": {
+                "label": "Teléfono del Sitio",
+                "placeholder": "Teléfono del sitio",
+                "required": "El teléfono del sitio es requerido"
+            },
+            "extension": {
+                "label": "Extensión",
+                "placeholder": "Extensión",
+                "required": "La extensión es requerida"
+            },
+            "mobile-phone": {
+                "label": "Teléfono Móvil",
+                "placeholder": "Teléfono móvil",
+                "required": "El teléfono móvil es requerido"
+            },
+            "services-and-schedule": {
+                "label": "Servicios que operará y horario",
+                "description": "Información de los servicios que operará y horario"
+            },
+            "breakfast": {
+                "label": "Desayuno",
+                "placeholder": "Desayuno"
+            },
+            "breakfast-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "breakfast-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "lunch": {
+                "label": "Almuerzo",
+                "placeholder": "Almuerzo"
+            },
+            "lunch-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "lunch-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack": {
+                "label": "Merienda",
+                "placeholder": "Merienda"
+            },
+            "snack-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-am": {
+                "label": "Merienda AM",
+                "placeholder": "Merienda AM"
+            },
+            "snack-am-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-am-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-pm": {
+                "label": "Merienda PM",
+                "placeholder": "Merienda PM"
+            },
+            "snack-pm-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-pm-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner": {
+                "label": "Cena",
+                "placeholder": "Cena"
+            },
+            "dinner-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-night": {
+                "label": "Merienda nocturna",
+                "placeholder": "Merienda nocturna"
+            },
+            "snack-night-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-night-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-extended": {
+                "label": "Cena Horario Extendido",
+                "placeholder": "Cena Horario Extendido"
+            },
+            "dinner-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "dinner-at-risk": {
+                "label": "Cena en Riesgo",
+                "placeholder": "Cena en Riesgo"
+            },
+            "dinner-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "dinner-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-extended": {
+                "label": "Merienda Horario Extendido",
+                "placeholder": "Merienda Horario Extendido"
+            },
+            "snack-extended-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-extended-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "snack-at-risk": {
+                "label": "Merienda en Riesgo",
+                "placeholder": "Merienda en Riesgo"
+            },
+            "snack-at-risk-from": {
+                "label": "Desde",
+                "placeholder": "Desde"
+            },
+            "snack-at-risk-to": {
+                "label": "Hasta",
+                "placeholder": "Hasta"
+            },
+            "pacna-fields": {
+                "title": "Campos Específicos para PACNA",
+                "description": "Información específica para el programa PACNA",
+                "organized-athletic-programs": {
+                    "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "at-risk-service": {
+                    "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "validation": {
+                    "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
+                    "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
+                }
+            },
+
+            "satellites": {
+                "label": "Sitios Satélites",
+                "description": "Lista de sitios satélites asociados a este sitio principal"
+            },
+            "activate-deactivate": {
+                "label": "Activar/Desactivar",
+                "description": "Configuración del estado activo del sitio"
+            },
+            "is-active": {
+                "label": "Estatus",
+                "placeholder": "Seleccione el estatus del sitio"
+            },
+            "inactive-justification": {
+                "label": "Justificación de Inactivación",
+                "placeholder": "Ingrese la justificación para inactivar el sitio",
+                "required": "La justificación de inactivación es requerida"
+            },
+            "inactive-date": {
+                "label": "Fecha de Inactivación",
+                "placeholder": "Seleccione la fecha de inactivación"
+            },
+            "type-of-area": {
+                "label": "Tipo de Área",
+                "placeholder": "Tipo de área"
+            },
+            "community": {
+                "label": "Comunidad",
+                "placeholder": "Seleccione el tipo de comunidad"
+            },
+            "walkers": {
+                "label": "Caminantes",
+                "placeholder": "Seleccione el tipo de caminantes"
+            },
+            "distribution-type": {
+                "label": "Tipo de Distribución",
+                "placeholder": "Seleccione el tipo de distribución",
+                "required": "El tipo de distribución es requerido"
+            },
+            "site-type": {
+                "label": "Tipo de Sitio",
+                "placeholder": "Seleccione el tipo de sitio"
+            },
+            "experience": {
+                "label": "Experiencia",
+                "placeholder": "Seleccione la experiencia"
+            },
+            "review": {
+                "label": "Revisión",
+                "description": "Información sobre la revisión del sitio"
+            },
+            "review-result": {
+                "label": "Resultado de Revisión",
+                "placeholder": "Seleccione el resultado de la revisión"
+            },
+            "review-date": {
+                "label": "Fecha de Revisión",
+                "placeholder": "Seleccione la fecha de revisión"
+            },
+            "review-justification": {
+                "label": "Justificación de Revisión",
+                "placeholder": "Ingrese la justificación de la revisión realizada"
+            },
+            "general-enrollment": {
+                "label": "Matrícula General",
+                "placeholder": "Matrícula General"
+            },
+            "site-number": {
+                "label": "Número de Sitio",
+                "description": "Código único del sitio generado automáticamente"
+            },
+            "location-type": {
+                "label": "Localización",
+                "placeholder": "Seleccione la localización",
+                "required": "La localización es requerida"
+            },
+            "daycare-home-fields": {
+                "title": "Hogar de Cuidado Diurno",
+                "description": "Información específica para hogares de cuidado diurno del programa PACNA"
+            },
+            "is-authorized-to-operate": {
+                "label": "¿Este hogar está autorizado a funcionar?",
+                "required": "Este campo es requerido"
+            },
+            "has-family-department-license": {
+                "label": "¿Cuenta con la licencia del Departamento de la Familia?",
+                "required": "Este campo es requerido"
+            },
+            "number-of-enrolled-children": {
+                "label": "Número de Niños Matriculados",
+                "placeholder": "Ingrese el número de niños matriculados",
+                "required": "Este campo es requerido"
+            },
+            "number-of-provider-children": {
+                "label": "¿Cuántos son hijos del proveedor?",
+                "placeholder": "Ingrese el número de hijos del proveedor",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-with-blood-ties": {
+                "label": "¿Con cuántos de los participantes tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes con lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "number-of-participants-without-blood-ties": {
+                "label": "¿Con cuántos de los participantes no tiene lazos sanguíneos?",
+                "placeholder": "Ingrese el número de participantes sin lazos sanguíneos",
+                "required": "Este campo es requerido"
+            },
+            "minors-live-with-provider": {
+                "label": "¿Los menores viven con usted?",
+                "required": "Este campo es requerido"
+            },
+            "relationship-type": {
+                "label": "Parentesco",
+                "placeholder": "Seleccione el parentesco",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-immigrant-children": {
+                "label": "¿Ofrece el servicio a niños inmigrantes?",
+                "required": "Este campo es requerido"
+            },
+            "home-type": {
+                "label": "Tipo de Hogar",
+                "placeholder": "Seleccione el tipo de hogar",
+                "required": "Este campo es requerido"
+            },
+            "participant-types": {
+                "label": "Participantes",
+                "placeholder": "Seleccione los tipos de participantes",
+                "required": "Este campo es requerido"
+            },
+            "offers-service-to-different-groups": {
+                "label": "¿Ofrece servicio a diferentes grupos de niños?",
+                "required": "Este campo es requerido"
+            },
+            "buttons": {
+                "save": "Guardar",
+                "cancel": "Cancelar",
+                "submit": "Enviar"
+            }
+        },
+        "calendar": {
+            "title": "Calendario de Funcionamiento",
+            "legend": {
+                "normal": "Días normales",
+                "weekend": "Fines de semana",
+                "excluded": "Días excluidos"
+            },
+            "day-events": {
+                "table": {
+                    "columns": {
+                        "title": "Título",
+                        "startTime": "Hora Inicio",
+                        "endTime": "Hora Fin",
+                        "type": "Tipo",
+                        "comment": "Comentario",
+                        "actions": "Acciones"
+                    },
+                    "buttons": {
+                        "edit": "Editar",
+                        "delete": "Eliminar"
+                    }
+                }
+            }
+        },
+        "notification": {
+            "title": "Validación de Servicio",
+            "confirm": "Entendido"
+        }
+    }
+}

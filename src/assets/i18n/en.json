@@ -15,6 +15,7 @@
             "delete": "Delete element",
             "download": "Download element",
             "noPermission": "You don't have permissions to perform this action",
+            "noAccessPermission": "You don't have permissions to access this section",
             "header": {
                 "clear": "Clear form",
                 "search": "Search elements",

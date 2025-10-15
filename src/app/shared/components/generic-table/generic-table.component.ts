@@ -142,6 +142,11 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableCalendar(event, element.id);
         }
         break;
+      case 'satellites':
+        if (this.handler?.onTableSatellites) {
+          this.handler.onTableSatellites(event, element.id);
+        }
+        break;
     }
   }
 
@@ -296,23 +301,14 @@ export class GenericTableComponent implements OnInit {
     return '#757575';
   }
 
-  getFileTypeDisplayText(element: any, col: any): string {
-    const contentType = element.contentType?.toLowerCase();
-    if (!contentType) {
-      return 'Archivo';
+  /**
+   * Maneja el evento de satélites de un elemento
+   * @param event El evento de satélites
+   * @param id El ID del elemento
+   */
+  onSatellites(event: Event, id: number): void {
+    if (this.handler && this.handler.onTableSatellites) {
+      this.handler.onTableSatellites(event, id);
     }
-    // Buscamos la configuración en la primera columna (fileIcon)
-    const fileTypeConfig = this.config.columnsSchema.find(col => col.key === 'fileIcon')?.fileTypeConfig;
-    if (!fileTypeConfig?.iconMap) {
-      return 'Archivo';
-    }
-    // Primero intentamos con el tipo MIME completo
-    let iconConfig = fileTypeConfig.iconMap[contentType];
-    if (!iconConfig) {
-      // Si no encontramos, intentamos con la extensión
-      const extension = contentType.split('/')[1];
-      iconConfig = fileTypeConfig.iconMap[extension] || fileTypeConfig.iconMap['default'];
-    }
-    return iconConfig?.displayText || 'Archivo';
   }
 }

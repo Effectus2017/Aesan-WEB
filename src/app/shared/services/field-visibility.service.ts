@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import fieldConfig from '../../modules/agency-portal/staff/edit/field-visibility-config.json';
-import schoolsFieldConfig from '../../modules/agency-portal/schools/field-visibility-config.json';
+import sitesFieldConfig from '../../modules/agency-portal/sites/field-visibility-config.json';
 import {
   isPSAVProgram,
   isPDAMProgram,
@@ -80,7 +80,7 @@ export class FieldVisibilityService {
 
     // Cargar las configuraciones por defecto
     this.loadConfig('staff', fieldConfig);
-    this.loadConfig('schools', schoolsFieldConfig);
+    this.loadConfig('sites', sitesFieldConfig);
     //console.log('🔧 Configuración cargada, fieldConfigs size:', this.fieldConfigs.size);
   }
 

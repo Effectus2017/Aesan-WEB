@@ -124,15 +124,31 @@
         @if (button.key === 'calendar') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
+            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
             (click)="onCalendar($event, element.id)"
-            [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
+            [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
           >
-            <span class="sr-only">{{ "schools.list.table.buttons." + button.key | transloco }}</span>
+            <span class="sr-only">{{ "sites.list.table.buttons." + button.key | transloco }}</span>
             <mat-icon [svgIcon]="button.icon || 'heroicons_outline:calendar'" [attr.aria-hidden]="true" style="color: orange;"></mat-icon>
+          </button>
+        </div>
+        }
+
+        @if (button.key === 'satellites') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onSatellites($event, element.id)"
+            [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "sites.list.table.buttons." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:building-office-2'" [attr.aria-hidden]="true" style="color: purple;"></mat-icon>
           </button>
         </div>
         }
@@ -254,6 +270,38 @@
                   [attr.aria-label]="'users.list.actions.download' | transloco"
               >
                   Descargar
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'calendar') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onCalendar($event, element.id)"
+                  [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
+              >
+                  {{ 'sites.list.table.buttons.' + button.key | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'satellites') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onSatellites($event, element.id)"
+                  [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
+              >
+                  {{ 'sites.list.table.buttons.' + button.key | transloco }}
               </button>
             </div>
             }

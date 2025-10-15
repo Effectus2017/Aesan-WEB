@@ -34,8 +34,8 @@ import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
-import { SchoolService } from 'app/shared/services/school.service';
-import { School } from 'app/shared/models/School';
+import { SiteService } from 'app/shared/services/site.service';
+import { Site } from 'app/shared/models/Site';
 
 @Component({
   selector: 'app-add-staff',
@@ -76,7 +76,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
   private _activatedRoute = inject(ActivatedRoute);
-  private _schoolService = inject(SchoolService);
+  private _siteService = inject(SiteService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -91,7 +91,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Lista de Regiones
   listRegions: Region[] = [];
   // Lista de Escuelas
-  listSchools: School[] = [];
+  listSites: Site[] = [];
   // Lista de Tipos de Asignación
 //   listStaffAssignmentTypes: OptionSelection[] = [];
 
@@ -146,7 +146,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Comentarios
       comments: new FormControl(''),
       // Escuela asignada
-      school: new FormControl('', [Validators.required]),
+      site: new FormControl('', [Validators.required]),
       //assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
     }),
@@ -339,10 +339,10 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       }
     });
 
-    // Schools - Cargar desde el resolver
+    // Sites - Cargar desde el resolver
     const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.schools) {
-      this.listSchools = resolvedData.schools; // El backend ya devuelve solo activas con isList: true
+    if (resolvedData && resolvedData.sites) {
+      this.listSites = resolvedData.sites; // El backend ya devuelve solo activas con isList: true
     }
 
     // El código para cargar tipos de asignación ya está en la función existente arriba

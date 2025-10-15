@@ -185,7 +185,7 @@
           <!-- Postal Address -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "staff.add.postalAddress.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" [placeholder]="'staff.add.postalAddress.placeholder' | transloco" data-cy="postalAddress-input" />
+            <input title="postalAddress" matInput formControlName="postalAddress" [placeholder]="'staff.add.postalAddress.placeholder' | transloco" data-cy="postalAddress-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('postalAddress')?.hasError('required')">
               {{ "staff.add.postalAddress.required" | transloco }}
             </mat-error>
@@ -236,21 +236,21 @@
         <!-- Asignación de Escuela -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
-            {{ "staff.add.school-assignment" | transloco }}
+            {{ "staff.add.site-assignment" | transloco }}
           </p>
           <p class="mb-6 text-secondary">
-            {{ "staff.add.school-assignment-description" | transloco }}
+            {{ "staff.add.site-assignment-description" | transloco }}
           </p>
         </div>
 
-        <!-- Campos de Escuela y Tipo de Asignación -->
+        <!-- Campos de Sitio y Tipo de Asignación -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- Escuela -->
-          <mat-form-field data-cy="school-field">
-            <mat-label>{{ "staff.add.school.label" | transloco }}</mat-label>
-            <mat-select formControlName="school" [placeholder]="'staff.add.school.placeholder' | transloco" [compareWith]="compareById" data-cy="school-select">
-              <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="school-option">
-                {{ school.name }}
+          <!-- Sitio -->
+          <mat-form-field data-cy="site-field">
+            <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
+            <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
+              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
+                {{ site.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -288,7 +288,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="comments-field">
             <mat-label>{{ commentsLabel }}</mat-label>
-            <textarea matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
+            <textarea title="comments" matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
           </mat-form-field>
         </div>
       </div>

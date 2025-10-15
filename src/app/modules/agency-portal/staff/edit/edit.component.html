@@ -336,14 +336,14 @@
           </p>
         </div>
 
-        <!-- Campos de Escuela y Tipo de Asignación -->
+        <!-- Campos de Sitio y Tipo de Asignación -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <!-- Escuela -->
-          <mat-form-field data-cy="school-field">
-            <mat-label>{{ "staff.edit.school.label" | transloco }}</mat-label>
-            <mat-select formControlName="school" [placeholder]="'staff.edit.school.placeholder' | transloco" [compareWith]="compareById" data-cy="school-select">
-              <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="school-option">
-                {{ school.name }}
+          <!-- Sitio -->
+          <mat-form-field data-cy="site-field">
+            <mat-label>{{ "staff.edit.site.label" | transloco }}</mat-label>
+            <mat-select formControlName="site" [placeholder]="'staff.edit.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
+              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
+                {{ site.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -389,6 +389,7 @@
               title="{{ 'staff.edit.comments.label' | transloco }}"
               [attr.aria-label]="'staff.edit.comments.label' | transloco"
               rows="4"
+              title="comments"
               data-cy="comments-input"
             ></textarea>
           </mat-form-field>
@@ -443,6 +444,7 @@
               [formControlName]="'reviewDate'"
               [required]="fieldVisibilityService.isFieldRequired('reviewDate', currentStaffType)"
               placeholder="{{ 'staff.edit.review-date.placeholder' | transloco }}"
+              title="reviewDate"
               [matDatepicker]="pickerReviewDate"
               data-cy="review-date-input"
             />
@@ -460,6 +462,7 @@
               [formControlName]="'reviewJustification'"
               [required]="fieldVisibilityService.isFieldRequired('reviewJustification', currentStaffType)"
               placeholder="{{ 'staff.edit.review-justification.placeholder' | transloco }}"
+              title="reviewJustification"
               data-cy="review-justification-input"
               rows="3"
             ></textarea>

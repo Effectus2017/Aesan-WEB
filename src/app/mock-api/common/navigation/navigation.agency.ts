@@ -57,13 +57,13 @@ export const agencyNavigation: FuseNavigationItem[] = [
     permissions: ['DocumentView'],
   },
   {
-    id: 'schools',
-    title: 'navigation.schools',
+    id: 'sites',
+    title: 'navigation.sites',
     type: 'basic',
     icon: 'heroicons_outline:academic-cap',
-    link: '/schools',
+    link: '/sites',
     roles: ['Agency-Administrator'],
-    permissions: ['school.view'],
+    permissions: ['site.view'],
   },
   {
     id: 'forms.agency',

@@ -60,7 +60,7 @@ export const appRoutes: Route[] = [
     children: [
       { path: 'home', loadChildren: () => import('app/modules/landing/home/home.routes') },
       // Demo del árbol de escuelas
-      { path: 'demo/schools-tree', loadChildren: () => import('app/shared/components/schools-tree/schools-tree-demo.routes') },
+      { path: 'demo/sites-tree', loadChildren: () => import('app/shared/components/sites-tree/sites-tree-demo.routes') },
     ],
   },
 
@@ -147,8 +147,8 @@ export const appRoutes: Route[] = [
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents-files/documents.routes') },
       // Forms, listado de formularios para solicitar programas (Role: Agency)
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
-      // Schools, listado de escuelas (Role: Agency)
-      { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes') },
+      // Sites, listado de sitios (Role: Agency)
+      { path: 'sites', loadChildren: () => import('app/modules/agency-portal/sites/sites.routes') },
       // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)

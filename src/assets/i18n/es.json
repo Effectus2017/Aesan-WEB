@@ -15,6 +15,7 @@
             "delete": "Eliminar elemento",
             "download": "Descargar elemento",
             "noPermission": "No tiene permisos para realizar esta acción",
+            "noAccessPermission": "No tiene permisos para acceder a esta sección",
             "header": {
                 "clear": "Limpiar formulario",
                 "search": "Buscar elementos",

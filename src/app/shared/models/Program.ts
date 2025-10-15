@@ -3,7 +3,7 @@ import { AlternativeCommunication } from "./AlternativeCommunication";
 import { FederalFundingCertification } from "./FederalFundingCertification";
 import { FoodAuthority } from "./FoodAuthority";
 import { OperatingPolicy } from "./OperatingPolicy";
-import { School } from "./School";
+import { Site } from "./Site";
 
 export interface Program {
     id: number;
@@ -41,7 +41,7 @@ export interface ProgramInscription {
     date: Date;
     createdAt: Date;
     updatedAt: Date;
-    schools: School[];
+    sites: Site[];
     federalFundingSources: any[];//FederalFundingSource[];
     requiredDocuments: any[];//RequiredDocument[];
 }

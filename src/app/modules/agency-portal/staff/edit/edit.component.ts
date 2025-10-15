@@ -38,20 +38,16 @@ import { StaffType } from 'app/shared/models/StaffType';
 import { Staff } from 'app/shared/models/Staff';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
-import { PermissionService } from 'app/shared/services/permission.service';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
-import { DTOStaffRelationship } from 'app/shared/models/StaffRelationship';
 import { MatDialog } from '@angular/material/dialog';
 import { AddRelationshipModalComponent } from '../add-relationship-modal/add-relationship-modal.component';
 import { EditRelationshipModalComponent } from '../edit-relationship-modal/edit-relationship-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
-import { RoleMappingService } from '../../../../shared/services/role-mapping.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { SchoolService } from 'app/shared/services/school.service';
-import { School } from 'app/shared/models/School';
-import { SchoolStaffService } from 'app/shared/services/school-staff.service';
-import { SchoolStaffRequest, UpdateSchoolStaffRequest } from 'app/shared/models/Request/SchoolStaffRequest';
+import { SiteService } from 'app/shared/services/site.service';
+import { SiteStaffService } from 'app/shared/services/site-staff.service';
+import { Site } from 'app/shared/models/Site';
 
 @Component({
   selector: 'app-edit-staff',
@@ -97,8 +93,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _matDialog = inject(MatDialog);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   public fieldVisibilityService = inject(FieldVisibilityService);
-  private _schoolService = inject(SchoolService);
-  private _schoolStaffService = inject(SchoolStaffService);
+  private _siteService = inject(SiteService);
+  private _siteStaffService = inject(SiteStaffService);
   private _activatedRoute = inject(ActivatedRoute);
 
   // Lista de Status
@@ -114,9 +110,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Lista de Regiones
   listRegions: Region[] = [];
   // Lista de Escuelas
-  listSchools: School[] = [];
+  listSites: Site[] = [];
   // Lista de Tipos de Asignación
-//   listStaffAssignmentTypes: OptionSelection[] = [];
+  //   listStaffAssignmentTypes: OptionSelection[] = [];
   // Resultado de revisión / Review result
   // Review result
   reviewResult: OptionSelection[] = [];
@@ -211,7 +207,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       comments: new FormControl(''),
       // School assignment
       school: new FormControl(''),
-    //   assignmentType: new FormControl(''),
+      //   assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
       // Review result
       reviewResult: new FormControl(''),
@@ -379,10 +375,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       }
     });
 
-    // Schools - Cargar desde el resolver
+    // Sites - Cargar desde el resolver
     const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.schools) {
-      this.listSchools = resolvedData.schools;
+    if (resolvedData && resolvedData.sites) {
+      this.listSites = resolvedData.sites;
     }
 
     // El código para cargar tipos de asignación ya está en la función existente arriba
@@ -481,7 +477,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       reviewJustification: param.reviewJustification,
 
       school: param.school,
-    //   assignmentType: param.assignmentType,
+      //   assignmentType: param.assignmentType,
       isPrimary: param.isPrimary,
     });
 
@@ -500,35 +496,35 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Actualizar el estado inicial del botón de submit
     this.updateSubmitButtonState();
 
-    // Cargar escuela actualmente asignada al staff
-    this.loadCurrentSchoolAssignment(param.id);
+    // Cargar sitio actualmente asignada al staff
+    this.loadCurrentSiteAssignment(param.id);
   }
 
   /**
-   * Carga la escuela actualmente asignada al staff
+   * Carga el sitio actualmente asignada al staff
    */
-  private loadCurrentSchoolAssignment(staffId: number): void {
+  private loadCurrentSiteAssignment(staffId: number): void {
     // Solo obtener la primera escuela asignada si existe
-    this._schoolStaffService.getSchoolsByStaff({ staffId }).subscribe({
-      next: (schoolStaffs) => {
-        if (schoolStaffs && schoolStaffs.length > 0) {
+    this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
+      next: (siteStaffs) => {
+        if (siteStaffs && siteStaffs.length > 0) {
           // Encontrar la asignación activa
-          const activeAssignment = schoolStaffs.find((assignment: any) => assignment.isActive);
+          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
           if (activeAssignment) {
             // Buscar el tipo de asignación correspondiente
             // const assignmentType = this.listStaffAssignmentTypes.find(type => type.id === activeAssignment.assignmentTypeId);
 
             this.headerConfig.formGroup.patchValue({
-              school: { id: activeAssignment.schoolId, name: activeAssignment.schoolName },
-            //   assignmentType: assignmentType || null,
-              isPrimary: activeAssignment.isPrimary || false
+              site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
+              //   assignmentType: assignmentType || null,
+              isPrimary: activeAssignment.isPrimary || false,
             });
           }
         }
       },
       error: (err) => {
-        console.error('Error loading school assignment:', err);
-      }
+        console.error('Error loading site assignment:', err);
+      },
     });
   }
 
@@ -537,15 +533,12 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    */
   private showEditSuccessMessage(): void {
     const staffTypeKey = this.isEmployee ? 'staff.edit.success.employee' : 'staff.edit.success.boardMember';
-    this._notificationService.showSuccessDialogWithCallback(
-      this._translocoService.translate(staffTypeKey),
-      (result) => {
-        if (result === 'confirmed') {
-          const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
-          this._customRouterService.navigate([targetRoute]);
-        }
+    this._notificationService.showSuccessDialogWithCallback(this._translocoService.translate(staffTypeKey), (result) => {
+      if (result === 'confirmed') {
+        const targetRoute = this.isBoardMember ? 'staff/board-members' : 'staff/employees';
+        this._customRouterService.navigate([targetRoute]);
       }
-    );
+    });
   }
 
   onSubmit(): void {
@@ -609,8 +602,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Apellido Materno (para todos los tipos de staff)
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Escuela asignada
-    const schoolId: number = formValues.school?.id || null;
+    // Sitio asignada
+    const siteId: number = formValues.site?.id || null;
     //const assignmentTypeId: number = formValues.assignmentType?.id || 1;
     const isPrimary: boolean = formValues.isPrimary || false;
 
@@ -667,9 +660,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      // Información de asignación de escuela
-      schoolId: schoolId,
-    //   assignmentTypeId: assignmentTypeId,
+      // Información de asignación de sitio
+      siteId: siteId,
+      // assignmentTypeId: assignmentTypeId,
       isPrimary: isPrimary,
     };
 
@@ -1154,7 +1147,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.onAddRelationship();
   }
 
-
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
@@ -1164,7 +1156,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     if (relationship) {
       // Abrir modal de edición
-    const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
+      const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
         width: '500px',
         maxWidth: '90vw',
         data: {
