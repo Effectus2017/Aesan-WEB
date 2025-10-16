@@ -1,0 +1,15 @@
+
+export interface SchoolStaffList {
+    id: number;
+    schoolId: number;
+    staffId: number;
+    assignmentDate: Date;
+    assignmentTypeId: number;
+    isPrimary: boolean;
+    startDate?: Date;
+    endDate?: Date;
+    comments?: string;
+    isActive: boolean;
+    createdAt: Date;
+    updatedAt?: Date;
+}

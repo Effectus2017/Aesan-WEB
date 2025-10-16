@@ -1,4 +1,4 @@
-import { SchoolRequest } from './SchoolRequest';
+import { SiteRequest } from './SiteRequest';
 import { FederalFundingSourceRequest } from './FederalFundingSourceRequest';
 
 export interface ProgramInscriptionRequest {
@@ -6,7 +6,7 @@ export interface ProgramInscriptionRequest {
   programId: number;
   applicationNumber: string;
   isPublic: boolean;
-  totalNumberSchools: number;
+  totalNumberSites: number;
   hasBasicEducationCertification: boolean;
   isAeaMenuCreated: boolean;
   exemptionRequirement: string;
@@ -26,7 +26,7 @@ export interface ProgramInscriptionRequest {
   snackPercentage?: number;
   reducedSnackPercentage?: number;
   federalFundingCertificationId?: number;
-  schools?: SchoolRequest[];
+  sites?: SiteRequest[];
   federalFundingSources?: FederalFundingSourceRequest[];
   requiredDocumentIds?: number[];
 }

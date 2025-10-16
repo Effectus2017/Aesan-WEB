@@ -23,7 +23,7 @@ import { Region } from 'app/shared/models/Region';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { Facility } from 'app/shared/models/Facility';
 import { MealType } from 'app/shared/models/MealType';
-import { SchoolRequest } from 'app/shared/models/Request/SchoolRequest';
+import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -151,7 +151,7 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
     if (this.form.valid) {
       this.form.disable();
 
-      const schoolRequest: SchoolRequest = {
+      const siteRequest: SiteRequest = {
         name: this.form.get('Name').value,
         educationLevels: this.form.get('EducationLevelIds').value.map((id: number) => ({ educationLevelId: id })), // Updated to use new structure
        //operatingPeriodId: this.form.get('OperatingPeriodId').value,
@@ -165,7 +165,7 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
       };
 
       if (this.data.isTemporary) {
-        this.matDialogRef.close(schoolRequest);
+        this.matDialogRef.close(siteRequest);
       }
     }
   }

@@ -169,9 +169,9 @@
         "placeholder": "Ingrese el código de área",
         "required": "El código de área es requerido"
       },
-      "school-assignment": "Asignación de Sitio",
-      "school-assignment-description": "Especifique el sitio donde estará asignado el personal",
-      "school": {
+      "site-assignment": "Asignación de Sitio",
+      "site-assignment-description": "Especifique el sitio donde estará asignado el personal",
+      "site": {
         "label": "Sitio Asignado",
         "placeholder": "Seleccione el sitio (opcional)",
         "hint": "Selecciona el sitio donde estará asignado el personal"
@@ -322,11 +322,11 @@
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional):"
       },
-      "school-assignment": "Asignación de Sitio",
-      "school-assignment-description": "Especifique el sitio donde estará asignado el personal",
-      "school": {
+      "site-assignment": "Asignación de Sitio",
+      "site-assignment-description": "Especifique el sitio donde estará asignado el personal",
+      "site": {
         "label": "Sitio Asignado",
-        "placeholder": "Seleccione la escuela (opcional)"
+        "placeholder": "Seleccione el sitio (opcional)"
       },
       "assignmentType": {
         "label": "Tipo de Asignación",

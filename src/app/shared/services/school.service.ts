@@ -1,11 +1,11 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { School } from '../models/School';
-import { SchoolRequest } from '../models/Request/SchoolRequest';
+import { SchoolRequest } from "../models/Request/SchoolRequest";
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,6 @@ import { SchoolRequest } from '../models/Request/SchoolRequest';
 export class SchoolService {
   private _schools: BehaviorSubject<School[] | null> = new BehaviorSubject(null);
   private _school: BehaviorSubject<School | null> = new BehaviorSubject(null);
-  private _hasMainSchool: BehaviorSubject<boolean | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/school`;
   private _httpClient = inject(HttpClient);
@@ -37,84 +36,61 @@ export class SchoolService {
   }
 
   /**
-   * Obtiene el estado de la escuela principal
-   * @returns Observable<boolean> True si existe una escuela principal, false en caso contrario
+   * Obtiene todas las escuelas desde la base de datos
+   * @param queryParameters Los parámetros de consulta
+   * @returns Observable con la respuesta
    */
-  get hasMainSchool$(): Observable<boolean | null> {
-    return this._hasMainSchool.asObservable();
+  getAllSchoolsFromDb(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-all-schools`, getHttpOptions(queryParameters))
+      .pipe(tap((response: any) => this._schools.next(response)));
   }
 
   /**
    * Obtiene una escuela por su ID
-   * @param queryParameters Los parámetros de consulta
-   * @returns La escuela
+   * @param queryParameters Los parámetros de consulta que incluyen el ID
+   * @returns Observable con la escuela
    */
   getSchoolById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient
-      .get(`${this.apiUrl}/get-school-by-id`, getHttpOptions(queryParameters))
+    return this._httpClient.get(`${this.apiUrl}/get-school-by-id`, getHttpOptions(queryParameters))
       .pipe(tap((response: any) => this._school.next(response)));
   }
 
   /**
-   * Obtiene todas las escuelas de la base de datos
-   * @param queryParameters Los parámetros de consulta
-   * @returns Las escuelas
+   * Obtiene escuelas por ID de agencia
+   * @param queryParameters Los parámetros de consulta que incluyen el agencyId
+   * @returns Observable con las escuelas
    */
-  getAllSchoolsFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient
-      .get(`${this.apiUrl}/get-all-schools-from-db`, getHttpOptions(queryParameters))
+  getSchoolsByAgencyId(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-schools-by-agency`, getHttpOptions(queryParameters))
       .pipe(tap((response: any) => this._schools.next(response)));
   }
 
   /**
    * Inserta una escuela
-   * @param school La escuela
+   * @param schoolRequest La escuela
    * @param queryParameters Los parámetros de consulta
    * @returns La escuela insertada
    */
-  insertSchool(school: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/insert-school`, school, getHttpOptions(queryParameters));
+  insertSchool(schoolRequest: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/insert-school`, schoolRequest, getHttpOptions(queryParameters));
   }
 
   /**
    * Actualiza una escuela
-   * @param school La escuela
+   * @param schoolRequest La escuela
    * @param queryParameters Los parámetros de consulta
    * @returns La escuela actualizada
    */
-  updateSchool(school: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/update-school`, school, getHttpOptions(queryParameters));
+  updateSchool(schoolRequest: SchoolRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-school`, schoolRequest, getHttpOptions(queryParameters));
   }
 
   /**
-   * Elimina una escuela
-   * @param queryParameters Los parámetros de consulta
-   * @returns True si se eliminó correctamente
+   * Elimina una escuela (baja lógica)
+   * @param queryParameters Los parámetros de consulta que incluyen el ID de la escuela
+   * @returns Observable con la respuesta
    */
   deleteSchool(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-school`, getHttpOptions(queryParameters));
   }
-
-  /**
-   * Verifica si existe una escuela principal en la base de datos
-   * @returns Observable<boolean> True si existe una escuela principal, false en caso contrario
-   */
-  hasMainSchool(): Observable<boolean> {
-    return this._httpClient.get<boolean>(`${this.apiUrl}/has-main-school`)
-      .pipe(
-        tap((response: any) => {
-          this._hasMainSchool.next(response.body);
-        })
-      );
-  }
-
-  /**
-   * Actualiza el estado activo/inactivo de una escuela
-   * @param queryParameters Los parámetros de consulta
-   * @returns True si se actualizó correctamente
-   */
-  updateSchoolActiveStatus(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/update-active-status`, queryParameters, getHttpOptions(queryParameters));
-  }
 }
-

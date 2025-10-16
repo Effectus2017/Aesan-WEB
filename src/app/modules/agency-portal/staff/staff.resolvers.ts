@@ -9,7 +9,7 @@ import { StaffClassificationService } from 'app/shared/services/staff-classifica
 import { forkJoin, switchMap, of, map } from 'rxjs';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { SchoolService } from 'app/shared/services/school.service';
+import { SiteService } from 'app/shared/services/site.service';
 
 // Resolver para la lista de staff
 // Resolver for staff list
@@ -78,9 +78,9 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
   // Staff classification service
   // Servicio para clasificaciones de staff
   const staffClassificationService = inject(StaffClassificationService);
-  // School service
+  // Site service
   // Servicio para operaciones de escuelas
-  const schoolService = inject(SchoolService);
+  const siteService = inject(SiteService);
   // Auth service para obtener agency ID
   const authService = inject(AuthService);
 
@@ -92,12 +92,15 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
   };
 
   const agencyId = authService.getAgencyId();
-  const schoolsRequestParameters: QueryParameters = {
+
+  // Request parameters for sites
+  // Parámetros de la solicitud para sitios
+  const sitesRequestParameters: QueryParameters = {
     take: 100,
     skip : 0,
     alls: true,
     agencyId: agencyId,
-    isList: true, // Para lista de escuelas
+    isList: true, // Para lista de sitios
   };
 
   return forkJoin([
@@ -121,17 +124,17 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     // Staff classification service
     // Servicio para clasificaciones de staff
     staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
-    // Schools service
+    // Sites service
     // Servicio para operaciones de escuelas
-    schoolService.getAllSchoolsFromDb(schoolsRequestParameters),
+    siteService.getAllSitesFromDb(sitesRequestParameters),
   ]).pipe(
-    map(([cities, regions, options, staffTypes, staffClassifications, schools]) => ({
+    map(([cities, regions, options, staffTypes, staffClassifications, sites]) => ({
       cities: cities.body,
       regions: regions.body,
       options: options.body,
       staffTypes: staffTypes.body,
       staffClassifications: staffClassifications.body,
-      schools: schools.body,
+      sites: sites.body,
     }))
   );
 };
@@ -161,9 +164,9 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   // Staff relationships service
   // Servicio para relaciones de staff
   const staffRelationshipService = inject(StaffRelationshipService);
-  // School service
+  // Site service
   // Servicio para operaciones de escuelas
-  const schoolService = inject(SchoolService);
+  const siteService = inject(SiteService);
   // Auth service para obtener agency ID
   const authService = inject(AuthService);
 
@@ -181,12 +184,15 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   };
 
   const agencyId = authService.getAgencyId();
-  const schoolsRequestParameters: QueryParameters = {
+
+  // Request parameters for sites
+  // Parámetros de la solicitud para sitios
+  const sitesRequestParameters: QueryParameters = {
     take: 100,
     skip : 0,
     alls: true,
     agencyId: agencyId,
-    isList: true, // Para lista de escuelas
+    isList: true, // Para lista de sitios
   };
 
   // Primero obtener los datos del staff para determinar si es empleado
@@ -215,19 +221,20 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           staffTypeService.getAllStaffTypesFromDb(requestParameters),
           // Staff classification service
           staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
-          // Schools service
-          schoolService.getAllSchoolsFromDb(schoolsRequestParameters),
+          // Sites service
+          // Servicio para operaciones de sitios
+          siteService.getAllSitesFromDb(sitesRequestParameters),
           // NO cargar relaciones para empleados
           of(null),
         ]).pipe(
-          map(([staff, cities, regions, options, staffTypes, staffClassifications, schools, relationships]) => ({
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, relationships]) => ({
             staff: staff.body,
             cities: cities.body,
             regions: regions.body,
             options: options.body,
             staffTypes: staffTypes.body,
             staffClassifications: staffClassifications.body,
-            schools: schools.body,
+            sites: sites.body,
             relationships: relationships, // null para empleados
           }))
         );
@@ -249,19 +256,20 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           staffTypeService.getAllStaffTypesFromDb(requestParameters),
           // Staff classification service
           staffClassificationService.getAllStaffClassificationsFromDb(requestParameters),
-          // Schools service
-          schoolService.getAllSchoolsFromDb(schoolsRequestParameters),
+          // Sites service
+          // Servicio para operaciones de sitios
+          siteService.getAllSitesFromDb(sitesRequestParameters),
           // Staff relationships service (solo para no empleados)
           staffRelationshipService.getRelationshipsByStaffId(requestParametersId),
         ]).pipe(
-          map(([staff, cities, regions, options, staffTypes, staffClassifications, schools, relationships]) => ({
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, relationships]) => ({
             staff: staff.body,
             cities: cities.body,
             regions: regions.body,
             options: options.body,
             staffTypes: staffTypes.body,
             staffClassifications: staffClassifications.body,
-            schools: schools.body,
+            sites: sites.body,
             relationships: relationships.body,
           }))
         );

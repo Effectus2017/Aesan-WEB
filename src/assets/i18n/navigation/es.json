@@ -37,7 +37,8 @@
         "dashboard": "Gráficas",
         "reports": "Reportes",
         "agency-status": "Estados de Agencia",
-        "schools": "Sitios",
+        "sites": "Sitios",
+        "schools": "Escuelas",
         "administration": {
             "title": "Administración",
             "agency-status": "Estados de Agencia",

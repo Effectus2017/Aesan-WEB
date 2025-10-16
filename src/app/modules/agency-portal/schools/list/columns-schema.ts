@@ -3,39 +3,24 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 // Esquema de columnas para el listado de escuelas
 export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
+    key: 'schoolCode',
+    type: 'text',
+    label: 'schools.list.table.columns.schoolCode',
+  },
+  {
     key: 'name',
     type: 'text',
     label: 'schools.list.table.columns.name',
   },
   {
-    key: 'address',
-    type: 'text',
-    label: 'schools.list.table.columns.address',
+    key: 'createdAt',
+    type: 'date',
+    label: 'schools.list.table.columns.createdAt',
   },
   {
-    key: 'cityName',
-    type: 'text',
-    label: 'schools.list.table.columns.city',
-  },
-  {
-    key: 'regionName',
-    type: 'text',
-    label: 'schools.list.table.columns.region',
-  },
-  {
-    key: 'isMainSchool',
+    key: 'isActive',
     type: 'boolean',
-    label: 'schools.list.table.columns.isMainSchool',
-  },
-  {
-    key: 'mainSchoolName',
-    type: 'text',
-    label: 'schools.list.table.columns.mainSchool',
-  },
-  {
-    key: 'siteCode',
-    type: 'text',
-    label: 'schools.list.table.columns.siteCode',
+    label: 'schools.list.table.columns.isActive',
   },
   {
     key: 'actions',
@@ -47,11 +32,10 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
         label: 'schools.list.table.buttons.edit',
       },
       {
-        key: 'calendar',
-        label: 'schools.list.table.buttons.calendar',
-        icon: 'heroicons_outline:calendar',
+        key: 'sites',
+        label: 'schools.list.table.buttons.sites',
+        icon: 'heroicons_outline:building-office-2',
       },
     ],
   },
 ];
-

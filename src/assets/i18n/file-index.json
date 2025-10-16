@@ -7,6 +7,8 @@
   "./assets/i18n/navigation/en.json",
   "./assets/i18n/staff/es.json",
   "./assets/i18n/staff/en.json",
+  "./assets/i18n/sites/es.json",
+  "./assets/i18n/sites/en.json",
   "./assets/i18n/schools/es.json",
   "./assets/i18n/schools/en.json",
   "./assets/i18n/users/es.json",

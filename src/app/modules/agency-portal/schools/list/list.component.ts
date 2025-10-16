@@ -8,6 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
@@ -22,6 +23,9 @@ import { GenericTableConfig } from 'app/shared/components/generic-table/generic-
 import { SchoolService } from 'app/shared/services/school.service';
 import { School } from 'app/shared/models/School';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AddSchoolModalComponent } from '../add-modal/add-school-modal.component';
+import { SitesModalComponent } from '../sites-modal/sites-modal.component';
+import { SiteService } from 'app/shared/services/site.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -47,10 +51,12 @@ import { AuthService } from 'app/core/auth/auth.service';
 export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
+  private _siteService = inject(SiteService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
+  private _dialog = inject(MatDialog);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -61,7 +67,11 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     searchFieldShow: true,
     searchInputPlaceholder: 'schools.list.search.placeholder',
     submitButtonText: 'schools.list.buttons.save',
-    goToAddButtonShow: true,
+    customButtonShow: true,
+    customButtonClass: 'bg-[#F39B1A] text-white',
+    customButtonIcon: 'add',
+    customButtonIconEnabled: true,
+    customButtonPermission: 'school.create',
   };
 
   tableConfig: GenericTableConfig = {
@@ -104,15 +114,29 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   getAll(index: number, form: any) {
     const name = form.name || null;
     const pageSize = this.tableConfig.pageSize;
+    const agencyId = this._authService.getAgencyId();
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
       name: name,
       alls: false,
+      agencyId: agencyId,
     };
 
-    this._schoolService.getAllSchoolsFromDb(requestParameters).subscribe();
+    this._schoolService.getSchoolsByAgencyId(requestParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: any) => {
+          this.tableConfig.dataSource.data = response.body.data;
+          this.tableConfig.length = response.body.count;
+          this.tableConfig.dataSourceList = response.body.data;
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error) => {
+          console.error('Error loading schools:', error);
+        }
+      });
   }
 
   getPaginator(event?: PageEvent) {
@@ -129,19 +153,51 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     this.getAll(0, this.headerConfig.formGroup.value);
   }
 
-  onTableEdit(event: Event, id: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouterService.navigate([`schools/edit/${id}`]);
+  onCustom() {
+    this.openAddSchoolModal();
   }
 
-  onTableCalendar(event: Event, id: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouterService.navigate([`schools/calendar/${id}`]);
+  private openAddSchoolModal(): void {
+    const dialogRef = this._dialog.open(AddSchoolModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        // Puedes pasar datos adicionales si es necesario
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Si se creó una escuela exitosamente, recargar la lista
+        this.getAll(0, this.headerConfig.formGroup.value);
+        this._changeDetectorRef.markForCheck();
+      }
+    });
   }
 
-  onAdd() {
-    this._customRouterService.navigate(['schools/add']);
+  onTableSites(event: Event, schoolId: number) {
+    event.stopPropagation();
+    event.preventDefault();
+    this.openSitesModal(schoolId);
+  }
+
+  private openSitesModal(schoolId: number): void {
+    // Obtener el nombre de la escuela desde la tabla
+    const school = this.tableConfig.dataSource.data.find(s => s.id === schoolId);
+    const schoolName = school?.name || 'Escuela';
+
+    // Abrir el modal - ahora el SitesModalComponent maneja la carga de datos internamente
+    const dialogRef = this._dialog.open(SitesModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        schoolId: schoolId,
+        schoolName: schoolName
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // No hay acciones adicionales necesarias al cerrar el modal
+    });
   }
 }
