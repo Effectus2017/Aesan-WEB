@@ -30,6 +30,10 @@
         },
         "search": {
             "placeholder": "Search..."
+        },
+        "validation": {
+            "required": "This field is required",
+            "minLength": "Minimum length not met"
         }
     },
     "side-menu": {

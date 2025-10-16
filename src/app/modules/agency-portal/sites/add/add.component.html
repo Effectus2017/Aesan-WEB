@@ -56,6 +56,18 @@
           </mat-form-field>
         </div>
 
+        <!-- Información de Escuela Asociada -->
+        <div *ngIf="selectedSchool" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div class="flex gap-2 items-center">
+              <mat-icon class="text-blue-600">school</mat-icon>
+              <span class="text-sm font-medium text-blue-800">
+                {{ "sites.add.school.associated" | transloco }}: {{ selectedSchool.name }} ({{ selectedSchool.schoolCode }})
+              </span>
+            </div>
+          </div>
+        </div>
+
         <!-- Seleccionar sitio principal -->
         <div *ngIf="!isMainSite" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.add.main-site.label" | transloco }}</p>

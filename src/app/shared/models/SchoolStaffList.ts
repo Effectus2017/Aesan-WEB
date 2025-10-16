@@ -1,4 +1,5 @@
-export interface SchoolStaff {
+
+export interface SchoolStaffList {
     id: number;
     schoolId: number;
     staffId: number;
@@ -12,5 +13,3 @@ export interface SchoolStaff {
     createdAt: Date;
     updatedAt?: Date;
 }
-
-

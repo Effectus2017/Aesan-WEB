@@ -14,7 +14,6 @@ import { SiteSatelliteResponse } from '../models/Response/SiteSatelliteResponse'
 export class SiteService {
   private _sites: BehaviorSubject<Site[] | null> = new BehaviorSubject(null);
   private _site: BehaviorSubject<Site | null> = new BehaviorSubject(null);
-  private _hasMainSite: BehaviorSubject<boolean | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/site`;
   private _httpClient = inject(HttpClient);
@@ -37,13 +36,6 @@ export class SiteService {
     return this._site.asObservable();
   }
 
-  /**
-   * Obtiene el estado del sitio principal
-   * @returns Observable<boolean> True si existe un sitio principal, false en caso contrario
-   */
-  get hasMainSite$(): Observable<boolean | null> {
-    return this._hasMainSite.asObservable();
-  }
 
   /**
    * Obtiene un sitio por su ID
@@ -96,18 +88,6 @@ export class SiteService {
     return this._httpClient.delete(`${this.apiUrl}/delete-site`, getHttpOptions(queryParameters));
   }
 
-  /**
-   * Verifica si existe un sitio principal en la base de datos
-   * @returns Observable<boolean> True si existe un sitio principal, false en caso contrario
-   */
-  hasMainSite(): Observable<boolean> {
-    return this._httpClient.get<boolean>(`${this.apiUrl}/has-main-site`)
-      .pipe(
-        tap((response: any) => {
-          this._hasMainSite.next(response.body);
-        })
-      );
-  }
 
   /**
    * Actualiza el estado activo/inactivo de un sitio

@@ -147,6 +147,11 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableSatellites(event, element.id);
         }
         break;
+      case 'sites':
+        if (this.handler?.onTableSites) {
+          this.handler.onTableSites(event, element.id);
+        }
+        break;
     }
   }
 
@@ -309,6 +314,12 @@ export class GenericTableComponent implements OnInit {
   onSatellites(event: Event, id: number): void {
     if (this.handler && this.handler.onTableSatellites) {
       this.handler.onTableSatellites(event, id);
+    }
+  }
+
+  onSites(event: Event, id: number): void {
+    if (this.handler && this.handler.onTableSites) {
+      this.handler.onTableSites(event, id);
     }
   }
 }

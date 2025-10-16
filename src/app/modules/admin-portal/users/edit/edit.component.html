@@ -27,7 +27,7 @@
     </div>
 
     <div class="grid grid-cols-12 gap-2 p-8 pb-4">
-      <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-8">
+      <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-12">
         <div formGroupName="datosPersonales">
           <!-- Personal Information -->
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
@@ -86,7 +86,7 @@
             </mat-form-field>
           </div>
           <!-- Access Information -->
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
               <input
@@ -260,7 +260,6 @@
               </mat-error>
             </mat-form-field>
           </div>
-
           } @else if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {
           <!-- Si el usuario es administrador, se muestra el formulario de cambio de contraseña -->
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">

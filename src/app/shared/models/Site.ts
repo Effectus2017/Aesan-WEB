@@ -13,6 +13,7 @@ import { SiteDayCareHomeResponse } from './Response/SiteDayCareHomeResponse';
 import { SiteParticipantResponse } from './Response/SiteParticipantResponse';
 import { SiteLocation } from './SiteLocation';
 import { OptionSelection } from './OptionSelection';
+import { SiteSatellite } from './SiteSatellite';
 
 export interface Site {
   id: number;
@@ -152,19 +153,4 @@ export interface Site {
   atRiskService?: boolean;
 }
 
-export interface SiteList {
-  id: number;
-  name: string;
-}
 
-export interface SiteSatellite {
-  id: number;
-  mainSiteId: number;
-  satelliteSiteId: number;
-  satelliteSiteName: string;
-  assignmentDate: string;
-  comment: string;
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-}

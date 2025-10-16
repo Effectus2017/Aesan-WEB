@@ -1,0 +1,41 @@
+{
+    "schools": {
+        "title": "Schools",
+        "list": {
+            "title": "Schools List",
+            "table": {
+                "columns": {
+                    "name": "Name",
+                    "schoolCode": "School Code",
+                    "schoolNumber": "School Number",
+                    "isActive": "Active",
+                    "createdAt": "Created Date",
+                    "actions": "Actions"
+                },
+                "buttons": {
+                    "edit": "Edit",
+                    "sites": "Sites"
+                }
+            },
+            "search": {
+                "placeholder": "Search by name"
+            },
+            "buttons": {
+                "add": "Add School",
+                "save": "Save"
+            }
+        },
+        "modal": {
+            "create": "Create School",
+            "name": "School Name"
+        },
+        "sites": {
+            "modal": {
+                "title": "School Sites",
+                "search": {
+                    "placeholder": "Search sites..."
+                }
+            }
+        }
+    }
+}

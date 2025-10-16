@@ -6,7 +6,7 @@ import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 
 import { SiteStaffRequest, UpdateSiteStaffRequest } from '../models/Request/SiteStaffRequest';
-import { SiteStaff } from '../models/SiteStaff';
+import { SiteStaff } from "../models/SiteStaff.1";
 
 @Injectable({
   providedIn: 'root',

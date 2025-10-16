@@ -10,8 +10,9 @@
                     "address": "Address",
                     "city": "City",
                     "region": "Region",
-                    "isMainSite": "Is main site?",
-                    "mainSchool": "Main Site",
+                    "isActive": "Active",
+                    "groupTypeName": "Group Type",
+                    "generalEnrollment": "General Enrollment",
                     "siteCode": "Site Code",
                     "actions": "Actions",
                     "satelliteSiteName": "Satellite Site Name",
@@ -1301,6 +1302,12 @@
         "notification": {
             "title": "Service Validation",
             "confirm": "Understood"
+        }
+    },
+    "schools": {
+        "modal": {
+            "create": "Create School",
+            "name": "School Name"
         }
     }
 }

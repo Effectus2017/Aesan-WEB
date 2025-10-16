@@ -20,10 +20,12 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
-import { SiteService } from 'app/shared/services/site.service';
-import { SiteTableResponse } from 'app/shared/models/Response/SiteTableResponse';
+import { SchoolService } from 'app/shared/services/school.service';
+import { School } from 'app/shared/models/School';
 import { AuthService } from 'app/core/auth/auth.service';
-import { SiteSatellitesModalComponent } from '../site-satellites-modal/site-satellites-modal.component';
+import { AddSchoolModalComponent } from '../add-modal/add-school-modal.component';
+import { SitesModalComponent } from '../sites-modal/sites-modal.component';
+import { SiteService } from 'app/shared/services/site.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -48,6 +50,7 @@ import { SiteSatellitesModalComponent } from '../site-satellites-modal/site-sate
 })
 export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
+  private _schoolService = inject(SchoolService);
   private _siteService = inject(SiteService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -57,19 +60,22 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
-    title: 'sites.list.title',
+    title: 'schools.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'sites.list.search.placeholder',
-    submitButtonText: 'sites.list.buttons.save',
-    goToAddButtonShow: true,
-    goToAddButtonPermission: 'site.create',
+    searchInputPlaceholder: 'schools.list.search.placeholder',
+    submitButtonText: 'schools.list.buttons.save',
+    customButtonShow: true,
+    customButtonClass: 'bg-[#F39B1A] text-white',
+    customButtonIcon: 'add',
+    customButtonIconEnabled: true,
+    customButtonPermission: 'school.create',
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<SiteTableResponse>(),
+    dataSource: new MatTableDataSource<School>(),
     columnsSchema: SCHOOLS_COLUMNS_SCHEMA,
     displayedColumns: SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -86,9 +92,9 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      this.tableConfig.dataSource.data = resolvedData.sites.data;
-      this.tableConfig.length = resolvedData.sites.count;
-      this.tableConfig.dataSourceList = resolvedData.sites.data;
+      this.tableConfig.dataSource.data = resolvedData.schools.data;
+      this.tableConfig.length = resolvedData.schools.count;
+      this.tableConfig.dataSourceList = resolvedData.schools.data;
       this._changeDetectorRef.markForCheck();
     }
   }
@@ -108,15 +114,29 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   getAll(index: number, form: any) {
     const name = form.name || null;
     const pageSize = this.tableConfig.pageSize;
+    const agencyId = this._authService.getAgencyId();
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
       name: name,
       alls: false,
+      agencyId: agencyId,
     };
 
-    this._siteService.getAllSitesFromDb(requestParameters).subscribe();
+    this._schoolService.getSchoolsByAgencyId(requestParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: any) => {
+          this.tableConfig.dataSource.data = response.body.data;
+          this.tableConfig.length = response.body.count;
+          this.tableConfig.dataSourceList = response.body.data;
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error) => {
+          console.error('Error loading schools:', error);
+        }
+      });
   }
 
   getPaginator(event?: PageEvent) {
@@ -133,57 +153,51 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     this.getAll(0, this.headerConfig.formGroup.value);
   }
 
-  onTableEdit(event: Event, id: number) {
+  onCustom() {
+    this.openAddSchoolModal();
+  }
+
+  private openAddSchoolModal(): void {
+    const dialogRef = this._dialog.open(AddSchoolModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        // Puedes pasar datos adicionales si es necesario
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Si se creó una escuela exitosamente, recargar la lista
+        this.getAll(0, this.headerConfig.formGroup.value);
+        this._changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
+  onTableSites(event: Event, schoolId: number) {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`sites/edit/${id}`]);
+    this.openSitesModal(schoolId);
   }
 
-  onTableCalendar(event: Event, id: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouterService.navigate([`sites/calendar/${id}`]);
-  }
+  private openSitesModal(schoolId: number): void {
+    // Obtener el nombre de la escuela desde la tabla
+    const school = this.tableConfig.dataSource.data.find(s => s.id === schoolId);
+    const schoolName = school?.name || 'Escuela';
 
-  onTableSatellites(event: Event, id: number) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.openSatellitesModal(id);
-  }
+    // Abrir el modal - ahora el SitesModalComponent maneja la carga de datos internamente
+    const dialogRef = this._dialog.open(SitesModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        schoolId: schoolId,
+        schoolName: schoolName
+      }
+    });
 
-  onAdd() {
-    this._customRouterService.navigate(['sites/add']);
-  }
-
-  private openSatellitesModal(siteId: number): void {
-    // Obtener el nombre del sitio desde la tabla
-    const site = this.tableConfig.dataSource.data.find(s => s.id === siteId);
-    const siteName = site?.name || 'Sitio';
-
-    // Obtener los sitios satélites
-    this._siteService.getSiteSatellitesByMainSiteId(siteId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response: any) => {
-          const dialogRef = this._dialog.open(SiteSatellitesModalComponent, {
-            width: '80%',
-            maxWidth: '1200px',
-            data: {
-              siteId: siteId,
-              siteName: siteName,
-              data: response.body.data,
-              totalCount: response.body.count
-            }
-          });
-
-          dialogRef.afterClosed().subscribe(result => {
-            // No hay acciones adicionales necesarias al cerrar el modal
-          });
-        },
-        error: (error) => {
-          console.error('Error al obtener sitios satélites:', error);
-
-        }
-      });
+    dialogRef.afterClosed().subscribe(result => {
+      // No hay acciones adicionales necesarias al cerrar el modal
+    });
   }
 }

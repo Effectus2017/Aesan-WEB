@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
+import { SchoolService } from 'app/shared/services/school.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +29,7 @@ import { Region } from 'app/shared/models/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
+import { School } from 'app/shared/models/School';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
@@ -86,6 +88,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
+  private _schoolService = inject(SchoolService);
   private _geoService = inject(GeoService);
   private _notificationService = inject(NotificationService);
   private _customRouter = inject(CustomRouterService);
@@ -107,6 +110,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
   listSites: Site[] = [];
+  listSchools: School[] = [];
+
+  // School-related properties
+  selectedSchoolId: number | null = null;
+  selectedSchool: School | null = null;
 
   // Yes No Options (1, 2)
   // Si (1) y No (2)
@@ -592,6 +600,14 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // Verificar si hay schoolId en query parameters
+    this._route.queryParams.subscribe(params => {
+      if (params['schoolId']) {
+        this.selectedSchoolId = +params['schoolId'];
+        this.loadSchoolData();
+      }
+    });
+
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
 
@@ -630,6 +646,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.listSites = resolvedData.sites;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar escuelas de la agencia
+      this.loadSchools();
 
       // Verificar sitio principal
       //this.isMainSite = !resolvedData.hasMainSite;
@@ -955,6 +974,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     const siteRequest: SiteRequest = {
       // Agencia Id
       agencyId: this.agencyId,
+      // School Id - ID de la escuela asociada (si viene del modal)
+      schoolId: this.selectedSchoolId,
       // Información General / General Information
       // Nombre del sitio - Campo requerido para identificar el sitio
       // Site name - Required field for identifying the site
@@ -1831,6 +1852,41 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
    */
   onClearMainSite() {
     this.headerConfig.formGroup.get('mainSite').setValue(null);
+  }
+
+  /**
+   * Carga las escuelas de la agencia
+   * Loads schools from the agency
+   */
+  private loadSchools(): void {
+    const queryParameters: QueryParameters = {};
+
+    this._schoolService.getAllSchoolsFromDb(queryParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response) => {
+          this.listSchools = response.data || [];
+          this._changeDetectorRef.markForCheck();
+        },
+        error: (error) => {
+          console.error('Error loading schools:', error);
+          this._notificationService.showError('Error al cargar las escuelas');
+        }
+      });
+  }
+
+  /**
+   * Carga los datos de la escuela seleccionada
+   * Loads data for the selected school
+   */
+  private loadSchoolData(): void {
+    if (this.selectedSchoolId) {
+      const school = this.listSchools.find(s => s.id === this.selectedSchoolId);
+      if (school) {
+        this.selectedSchool = school;
+        this._changeDetectorRef.markForCheck();
+      }
+    }
   }
 
   /**

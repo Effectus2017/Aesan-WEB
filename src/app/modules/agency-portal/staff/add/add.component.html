@@ -14,7 +14,7 @@
             {{ "staff.add.information-description" | transloco }}
           </p>
         </div>
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Staff Type -->
           <mat-form-field data-cy="staffType-field">
             <mat-label>{{ "staff.add.staffType.label" | transloco }}</mat-label>
@@ -30,7 +30,7 @@
         </div>
 
         <!-- Clasificación de Staff (solo para empleados) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8" *ngIf="isEmployee">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isEmployee">
           <mat-form-field data-cy="staff-classification-field">
             <mat-label>{{ "staff.add.staffClassification.label" | transloco }}</mat-label>
             <mat-select
@@ -50,7 +50,7 @@
         </div>
 
         <!-- Campos de Nombre -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
           <!-- First Name -->
           <mat-form-field class="w-full" data-cy="firstName-field">
             <mat-label>{{ "staff.add.firstName.label" | transloco }}</mat-label>
@@ -89,7 +89,7 @@
         </div>
 
         <!-- Campos de Estado, Cargo y Tipo de Staff -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Status -->
           <mat-form-field data-cy="status-field">
             <mat-label>{{ "staff.add.status.label" | transloco }}</mat-label>
@@ -121,7 +121,7 @@
         </div>
 
         <!-- Campos de Fecha de Nacimiento y Email -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Birth Date (solo para miembros de junta) -->
           <mat-form-field data-cy="birth-date-field" *ngIf="isBoardMember">
             <mat-label>{{ "staff.add.birthDate.label" | transloco }}</mat-label>
@@ -150,7 +150,7 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!isBoardMember">
           <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.add.contractStartDate.label" | transloco }}</mat-label>
@@ -181,7 +181,7 @@
         </div>
 
         <!-- Ciudad y Región -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isEmployee">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!isEmployee">
           <!-- Postal Address -->
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "staff.add.postalAddress.label" | transloco }}</mat-label>
@@ -244,7 +244,7 @@
         </div>
 
         <!-- Campos de Sitio y Tipo de Asignación -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Sitio -->
           <mat-form-field data-cy="site-field">
             <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
@@ -267,7 +267,7 @@
         </div>
 
         <!-- Checkbox de Principal -->
-        <!-- <div class="grid grid-cols-1 col-span-12 gap-2 mb-3 sm:grid-cols-1 sm:col-span-8">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-2 mb-3 sm:grid-cols-1 sm:col-span-12">
           <mat-checkbox formControlName="isPrimary" data-cy="is-primary-checkbox" class="mt-0 -ml-3">
             {{ "staff.add.isPrimary.label" | transloco }}
           </mat-checkbox>
@@ -285,7 +285,7 @@
         </div>
 
         <!-- Comentarios -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="comments-field">
             <mat-label>{{ commentsLabel }}</mat-label>
             <textarea title="comments" matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>

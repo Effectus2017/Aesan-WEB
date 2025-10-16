@@ -8,6 +8,7 @@ export interface SiteRequest {
     // ===== CAMPOS PRINCIPALES DE SITE =====
     id?: number;
     agencyId?: number;
+    schoolId?: number;
     mainSiteId?: number;
     name?: string;
 

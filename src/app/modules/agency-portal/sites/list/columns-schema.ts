@@ -1,6 +1,6 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-// Esquema de columnas para el listado de escuelas
+// Esquema de columnas para el listado de sitios
 export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
@@ -23,9 +23,19 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.list.table.columns.region',
   },
   {
-    key: 'isMainSite',
+    key: 'isActive',
     type: 'boolean',
-    label: 'sites.list.table.columns.isMainSite',
+    label: 'sites.list.table.columns.isActive',
+  },
+  {
+    key: 'groupTypeName',
+    type: 'text',
+    label: 'sites.list.table.columns.groupTypeName',
+  },
+  {
+    key: 'generalEnrollment',
+    type: 'text',
+    label: 'sites.list.table.columns.generalEnrollment',
   },
   {
     key: 'siteCode',

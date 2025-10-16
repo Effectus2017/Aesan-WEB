@@ -149,6 +149,8 @@ export const appRoutes: Route[] = [
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
       // Sites, listado de sitios (Role: Agency)
       { path: 'sites', loadChildren: () => import('app/modules/agency-portal/sites/sites.routes') },
+      // Schools, listado de escuelas (Role: Agency)
+      { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes') },
       // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)

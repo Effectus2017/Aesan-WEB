@@ -10,8 +10,9 @@
                     "address": "Dirección",
                     "city": "Municipio",
                     "region": "Región",
-                    "isMainSite": "Es sitio principal?",
-                    "mainSchool": "Sitio Principal",
+                    "isActive": "Activo",
+                    "groupTypeName": "Tipo de Grupo",
+                    "generalEnrollment": "Matrícula General",
                     "siteCode": "Código de Sitio",
                     "actions": "Acciones",
                     "satelliteSiteName": "Nombre del Sitio Satélite",
@@ -1245,6 +1246,12 @@
         "notification": {
             "title": "Validación de Servicio",
             "confirm": "Entendido"
+        }
+    },
+    "schools": {
+        "modal": {
+            "create": "Crear Escuela",
+            "name": "Nombre de la Escuela"
         }
     }
 }

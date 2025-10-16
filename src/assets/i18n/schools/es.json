@@ -1,0 +1,41 @@
+{
+    "schools": {
+        "title": "Escuelas",
+        "list": {
+            "title": "Organización de Sitios",
+            "table": {
+                "columns": {
+                    "name": "Nombre",
+                    "schoolCode": "Código de Escuela",
+                    "schoolNumber": "Número de Escuela",
+                    "isActive": "Activo",
+                    "createdAt": "Fecha de Creación",
+                    "actions": "Acciones"
+                },
+                "buttons": {
+                    "edit": "Editar",
+                    "sites": "Sitios"
+                }
+            },
+            "search": {
+                "placeholder": "Buscar por nombre"
+            },
+            "buttons": {
+                "add": "Agregar Escuela",
+                "save": "Guardar"
+            }
+        },
+        "modal": {
+            "create": "Crear Escuela",
+            "name": "Nombre de la Escuela"
+        },
+        "sites": {
+            "modal": {
+                "title": "Sitios de la Escuela",
+                "search": {
+                    "placeholder": "Buscar sitios..."
+                }
+            }
+        }
+    }
+}
