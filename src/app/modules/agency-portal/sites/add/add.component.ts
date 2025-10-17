@@ -496,11 +496,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: [null],
+      organizedAthleticPrograms: [false],
 
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: [null],
+      atRiskService: [false],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -1127,11 +1127,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,
+      organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? false,
 
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: formValues.atRiskService ?? null,
+      atRiskService: formValues.atRiskService ?? false,
 
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home

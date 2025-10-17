@@ -10,13 +10,15 @@ import { GenericTableComponent } from '../../../../shared/components/generic-tab
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { Site } from '../../../../shared/models/Site';
-import { SchoolSiteResponse } from '../../../../shared/models/Response/SchoolSiteResponse';
+import { SchoolSiteTableResponse } from '../../../../shared/models/Response/SchoolSiteTableResponse';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { CustomRouterService } from '../../../../shared/services/custom-router.service';
 import { SchoolSiteService } from '../../../../shared/services/school-site.service';
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
+import { PageEvent } from '@angular/material/paginator';
+import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils';
 
 @Component({
   selector: 'app-sites-modal',
@@ -44,12 +46,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   // Formulario para el buscador
   searchForm: FormGroup;
 
-  // Datos originales y filtrados
-  originalSites: SchoolSiteResponse[] = [];
-  filteredSites: SchoolSiteResponse[] = [];
-
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<SchoolSiteResponse>([]),
+    dataSource: new MatTableDataSource<SchoolSiteTableResponse>([]),
     dataSourceList: [],
     columnsSchema: SITES_COLUMNS_SCHEMA,
     displayedColumns: SITES_COLUMNS_SCHEMA.map(col =>
@@ -57,6 +55,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     ),
     handler: this,
     showPaginator: true,
+    pageSize: 15,
+    pageSizeOptions: [5, 10, 15, 25],
     addButtonShow: false,
     length: 0
   };
@@ -71,7 +71,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   ngOnInit(): void {
-    this.loadSites();
+    this.getAll(0, this.searchForm.value);
     this.setupSearchSubscription();
   }
 
@@ -80,28 +80,30 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     this._unsubscribeAll.complete();
   }
 
-  private loadSites(): void {
-    // Usar el servicio para obtener sitios por schoolId
+  getAll(index: number, form: any): void {
     const queryParameters: QueryParameters = {
       schoolId: this.data.schoolId,
-      take: 100,
-      skip: 0
+      take: this.tableConfig.pageSize,
+      skip: index,
+      name: form.search || null
     };
 
     this._schoolSiteService.getSitesBySchoolId(queryParameters)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (response: any) => {
-          this.originalSites = response.body || [];
-          this.filteredSites = [...this.originalSites];
-          this.updateTableData();
+          this.tableConfig.dataSource.data = response.body.data || [];
+          this.tableConfig.length = response.body.count || 0;
+          this.tableConfig.dataSourceList = response.body.data || [];
+          this._changeDetectorRef.markForCheck();
         },
         error: (error) => {
           console.error('Error al obtener sitios de la escuela:', error);
           // Fallback a datos pasados por el modal si hay error
-          this.originalSites = [...(this.data.data || [])];
-          this.filteredSites = [...this.originalSites];
-          this.updateTableData();
+          this.tableConfig.dataSource.data = this.data.data || [];
+          this.tableConfig.length = this.data.data?.length || 0;
+          this.tableConfig.dataSourceList = this.data.data || [];
+          this._changeDetectorRef.markForCheck();
         }
       });
   }
@@ -109,37 +111,15 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   private setupSearchSubscription(): void {
     this.searchForm.get('search')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(searchTerm => {
-        this.filterSites(searchTerm);
+      .subscribe(() => {
+        this.getAll(0, this.searchForm.value);
       });
   }
 
-  private filterSites(searchTerm: string): void {
-    if (!searchTerm || searchTerm.trim() === '') {
-      this.filteredSites = [...this.originalSites];
-    } else {
-      const term = searchTerm.toLowerCase().trim();
-      this.filteredSites = this.originalSites.filter(schoolSite =>
-        schoolSite.siteName?.toLowerCase().includes(term) ||
-        schoolSite.site?.address?.toLowerCase().includes(term) ||
-        schoolSite.site?.city?.name?.toLowerCase().includes(term) ||
-        schoolSite.site?.region?.name?.toLowerCase().includes(term) ||
-        schoolSite.site?.siteCode?.toLowerCase().includes(term)
-      );
-    }
-    this.updateTableData();
-  }
-
-  private updateTableData(): void {
-    // Asignar datos correctamente como en otros componentes
-    this.tableConfig.dataSource.data = this.filteredSites;
-    this.tableConfig.dataSourceList = this.filteredSites;
-    this.tableConfig.length = this.filteredSites.length;
-    this._changeDetectorRef.markForCheck();
-  }
-
-  onClearSearch(): void {
-    this.searchForm.get('search')?.setValue('');
+  getPaginator(event?: PageEvent): void {
+    const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event?.pageSize || this.tableConfig.pageSize;
+    this.getAll(index * this.tableConfig.pageSize, this.searchForm.value);
   }
 
   // Implementación de OnGenericTableHandler
@@ -158,8 +138,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   onTableRefresh(): void {
-    // Recargar datos si es necesario
-    this.loadSites();
+    this.getAll(0, this.searchForm.value);
   }
 
   onAddButtonClick(event?: Event): void {
