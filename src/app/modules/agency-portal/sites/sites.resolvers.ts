@@ -142,9 +142,6 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
     // Types of sponsor
     // Tipos de auspiciador
     sponsorTypeService.getAllSponsorTypesFromDb(requestParameters),
-    // School service
-    // Servicio para operaciones de escuelas
-    siteService.getAllSitesFromDb(requestParameters),
     // Geographic service
     // Servicio para operaciones geográficas
     geoService.getCitiesFromDb(requestParameters),
@@ -179,7 +176,6 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
         kitchenTypes,
         groupTypes,
         sponsorTypes,
-        sites,
         cities,
         regions,
         organizationTypes,
@@ -201,7 +197,6 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                 siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
                 groupTypes: groupTypes.body,
                 sponsorTypes: sponsorTypes.body,
-                sites: sites.body,
                 cities: cities.body,
                 regions: regions.body,
                 organizationTypes: organizationTypes.body,
@@ -224,7 +219,6 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                   kitchenTypes: kitchenTypes.body,
                   groupTypes: groupTypes.body,
                   sponsorTypes: sponsorTypes.body,
-                  sites: sites.body,
                   cities: cities.body,
                   regions: regions.body,
                   organizationTypes: organizationTypes.body,
@@ -248,7 +242,6 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
           siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
           groupTypes: groupTypes.body,
           sponsorTypes: sponsorTypes.body,
-          sites: sites.body,
           cities: cities.body,
           regions: regions.body,
           organizationTypes: organizationTypes.body,
@@ -336,8 +329,6 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
     // School service
     // Servicio para operaciones de escuelas
     siteService.getSiteById({ id: id }),
-    // Obtenemos todas las escuelas para el select de la escuela principal
-    siteService.getAllSitesFromDb(requestParameters),
     // Selection options service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
@@ -384,7 +375,6 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
     switchMap(
       ([
         site,
-        sites,
         options,
         kitchenTypes,
         groupTypes,
@@ -406,7 +396,6 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
             return centerTypeService.getCenterTypesByProgram({ programId: pdamProgram.id }).pipe(
               map((filteredCenterTypes) => ({
                 site: site.body,
-                sites: sites.body,
                 options: options.body,
                 kitchenTypes: kitchenTypes.body,
                 siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
@@ -431,7 +420,6 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
               return centerTypeService.getCenterTypesByProgram({ programId: pacnaProgram.id }).pipe(
                 map((filteredCenterTypes) => ({
                   site: site.body,
-                  sites: sites.body,
                   options: options.body,
                   kitchenTypes: kitchenTypes.body,
                   groupTypes: groupTypes.body,
@@ -455,7 +443,6 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
         // Si no tiene PDAM ni PACNA, devolver array vacío para tipos de centro
         return of({
           site: site.body,
-          sites: sites.body,
           options: options.body,
           kitchenTypes: kitchenTypes.body,
           siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),

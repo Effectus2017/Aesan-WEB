@@ -219,7 +219,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Lista de sitios
   // List of sites
-  listSites: SiteList[] = [];
 
   // Si el sitio actual es el principal
   // If the current site is the main site
@@ -723,7 +722,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.listPostalRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
-      this.listSites = resolvedData.sites;
 
       // Verificar sitio principal - se establecerá en onSetForm con el valor correcto
       // this.isMainSite = !resolvedData.hasMainSite; // Comentado: lógica incorrecta
