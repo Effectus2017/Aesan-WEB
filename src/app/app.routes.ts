@@ -108,7 +108,7 @@ export const appRoutes: Route[] = [
 
   // Monitor (Role: Monitor) routes
   {
-    path: 'monitor-portal',
+    path: 'aesan-portal',
     canActivate: [AuthGuard],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
@@ -119,7 +119,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'pre-operational', loadChildren: () => import('app/modules/monitor-portal/preoperational-visit/preoperational-visit.routes') },
+      { path: 'pre-operational', loadChildren: () => import('app/modules/aesan-portal/preoperational-visit/preoperational-visit.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
     ],
   },

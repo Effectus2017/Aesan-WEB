@@ -1,6 +1,6 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 
-export const monitorNavigation: FuseNavigationItem[] = [
+export const aesanNavigation: FuseNavigationItem[] = [
   {
     id: 'home',
     title: 'navigation.home',

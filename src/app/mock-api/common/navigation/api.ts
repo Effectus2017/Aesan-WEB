@@ -3,7 +3,7 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 import { FuseMockApiService } from '@fuse/lib/mock-api';
 import { adminNavigation } from './navigation.admin';
 import { agencyNavigation } from './navigation.agency';
-import { monitorNavigation } from './navigation.monitor';
+import { aesanNavigation } from './navigation.aesan';
 import { sharedNavigation } from './navigation.shared';
 import { cloneDeep } from 'lodash-es';
 
@@ -11,7 +11,7 @@ import { cloneDeep } from 'lodash-es';
 export class NavigationMockApi {
   private readonly _adminNavigation: FuseNavigationItem[] = adminNavigation;
   private readonly _agencyNavigation: FuseNavigationItem[] = agencyNavigation;
-  private readonly _monitorNavigation: FuseNavigationItem[] = monitorNavigation;
+  private readonly _aesanNavigation: FuseNavigationItem[] = aesanNavigation;
   private readonly _sharedNavigation: FuseNavigationItem[] = sharedNavigation;
 
   /**
@@ -39,7 +39,7 @@ export class NavigationMockApi {
         {
           admin: cloneDeep(this._adminNavigation),
           agency: cloneDeep(this._agencyNavigation),
-          monitor: cloneDeep(this._monitorNavigation),
+          aesan: cloneDeep(this._aesanNavigation),
           shared: cloneDeep(this._sharedNavigation),
         },
       ];

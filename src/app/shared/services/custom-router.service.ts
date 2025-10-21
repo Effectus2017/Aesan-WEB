@@ -27,7 +27,7 @@ export class CustomRouterService {
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       prefix = '/agency-portal/';
     } else if (userRole === 'Monitor') {
-      prefix = '/monitor-portal/';
+      prefix = '/aesan-portal/';
     } else {
       switch (userPrograms) {
         case PROGRAM_CODES.PDAM:

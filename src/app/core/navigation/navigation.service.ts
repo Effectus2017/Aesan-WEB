@@ -109,7 +109,7 @@ export class NavigationService implements OnDestroy {
     } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       nav = navigation.agency ?? [];
     } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
-      nav = navigation.monitor ?? [];
+      nav = navigation.aesan ?? [];
     }
     // Agrega los ítems compartidos si existen
     if (navigation.shared && navigation.shared.length > 0) {
@@ -144,14 +144,14 @@ export class NavigationService implements OnDestroy {
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       return '/agency-portal';
     } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
-      return '/monitor-portal';
+      return '/aesan-portal';
     }
     return '/admin-portal';
   }
 
   private cleanRoute(route: string): string {
     // Eliminar prefijos existentes
-    const prefixes = ['/admin-portal', '/agency-portal', '/monitor-portal'];
+    const prefixes = ['/admin-portal', '/agency-portal', '/aesan-portal'];
     let cleanRoute = route;
 
     for (const prefix of prefixes) {

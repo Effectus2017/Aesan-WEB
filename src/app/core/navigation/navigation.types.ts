@@ -3,7 +3,7 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 export interface Navigation {
     admin?: FuseNavigationItem[];
     agency?: FuseNavigationItem[];
-    monitor?: FuseNavigationItem[];
+    aesan?: FuseNavigationItem[];
     shared?: FuseNavigationItem[];
     // Compatibilidad con layouts antiguos
     compact?: FuseNavigationItem[];

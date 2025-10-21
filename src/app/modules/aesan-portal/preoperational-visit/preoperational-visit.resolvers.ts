@@ -8,7 +8,7 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { forkJoin, Observable, map } from 'rxjs';
 
-export const initialMonitorPreoperationalVisitResolver = () => {
+export const initialAesanPreoperationalVisitResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
   const _geoService: GeoService = inject(GeoService);
   const _authService: AuthService = inject(AuthService);
@@ -35,7 +35,7 @@ export const initialMonitorPreoperationalVisitResolver = () => {
 @Injectable({
   providedIn: 'root',
 })
-export class editMonitorPreoperationalVisitResolver implements Resolve<any> {
+export class editAesanPreoperationalVisitResolver implements Resolve<any> {
   private _agencyService: AgencyService = inject(AgencyService);
   private _agencyStatusService: AgencyStatusService = inject(AgencyStatusService);
   private _geoService: GeoService = inject(GeoService);

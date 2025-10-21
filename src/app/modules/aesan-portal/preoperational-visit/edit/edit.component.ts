@@ -43,7 +43,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-    selector: 'app-monitor-preoperational-visit-edit',
+    selector: 'app-aesan-preoperational-visit-edit',
     templateUrl: './edit.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -70,7 +70,7 @@ import { ActivatedRoute } from '@angular/router';
         MatDatepickerModule,
     ]
 })
-export class EditMonitorPreoperationalVisitComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
+export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
