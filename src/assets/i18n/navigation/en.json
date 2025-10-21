@@ -35,6 +35,8 @@
             "rations-form": "Rations Form"
         },
         "dashboard": "Charts",
+        "evaluation": "Evaluation",
+        "sponsorEvaluation": "Sponsor Evaluation",
         "reports": "Reports",
         "agency-status": "Agency Status",
         "sites": "Sites",

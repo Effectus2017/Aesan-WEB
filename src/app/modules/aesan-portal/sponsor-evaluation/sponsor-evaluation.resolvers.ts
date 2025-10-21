@@ -8,7 +8,7 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { forkJoin, Observable, map } from 'rxjs';
 
-export const initialAesanPreoperationalVisitResolver = () => {
+export const initialAesanSponsorEvaluationResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
   const _geoService: GeoService = inject(GeoService);
   const _authService: AuthService = inject(AuthService);
@@ -18,8 +18,14 @@ export const initialAesanPreoperationalVisitResolver = () => {
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
+    name: null,
+    regionId: null,
+    cityId: null,
+    programId: null,
+    statusId: null,
+    isPropietary: null,
     userId: userId,
-    programId: 1,
+    alls: false,
   };
 
   return forkJoin([
@@ -35,7 +41,7 @@ export const initialAesanPreoperationalVisitResolver = () => {
 @Injectable({
   providedIn: 'root',
 })
-export class editAesanPreoperationalVisitResolver implements Resolve<any> {
+export class editAesanSponsorEvaluationResolver implements Resolve<any> {
   private _agencyService: AgencyService = inject(AgencyService);
   private _agencyStatusService: AgencyStatusService = inject(AgencyStatusService);
   private _geoService: GeoService = inject(GeoService);
@@ -53,10 +59,10 @@ export class editAesanPreoperationalVisitResolver implements Resolve<any> {
     };
     return forkJoin([
       this._agencyService.getAgencyByIdAndUserId(requestParameters),
-      this._agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true }),
-      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true }),
-      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true }),
-      this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false }),
+      this._agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+      this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
     ]).pipe(
       map(([agency, agencyStatuses, cities, regions, programs]) => ({
         agency: agency.body,

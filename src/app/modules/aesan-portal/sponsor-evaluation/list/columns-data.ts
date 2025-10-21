@@ -1,4 +1,4 @@
-export const preoperationalVisitColumnsData = [
+export const sponsorEvaluationColumnsData = [
     {
         id: '1',
         uie: '983112398031290',

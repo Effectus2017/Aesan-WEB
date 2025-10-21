@@ -12,7 +12,7 @@
     </div>
   </div>
 
-  <form [formGroup]="config.formGroup" class="flex gap-3 items-center mt-6 shrink-0 sm:mt-0">
+  <form [formGroup]="config.formGroup" class="flex gap-3 items-center mt-6 shrink-0 sm:mt-0" *ngIf="config.formGroup">
     <!-- Botón Clear -->
     @if (config.clearVisible) {
     <div class="animated-box" [@fadeInRight]="config.clearVisible" [@fadeOutRight]="config.clearVisible">

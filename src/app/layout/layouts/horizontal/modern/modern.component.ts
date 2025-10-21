@@ -162,19 +162,20 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
   private checkBannerVisibility(): void {
     console.log('Modern Layout - checkBannerVisibility called');
 
-    // Verificar si el usuario es administrador
+    // Verificar si el usuario es administrador o monitor
     const userRole = this._authService.getUserRole();
     const isAdmin = userRole === 'Administrator' || userRole === 'Admin';
+    const isMonitor = userRole === 'Monitor';
 
-    console.log('Modern Layout - User role:', userRole, 'Is admin:', isAdmin);
+    console.log('Modern Layout - User role:', userRole, 'Is admin:', isAdmin, 'Is monitor:', isMonitor);
 
-    // Si es administrador, ocultar todos los banners
-    if (isAdmin) {
-      console.log('Modern Layout - Hiding all banners for admin user');
+    // Si es administrador o monitor, ocultar todos los banners
+    if (isAdmin || isMonitor) {
+      console.log('Modern Layout - Hiding all banners for admin/monitor user');
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;
-      console.log('Modern Layout - Banner visibility after admin check:', {
+      console.log('Modern Layout - Banner visibility after admin/monitor check:', {
         showCurrentProgramBanner: this.showCurrentProgramBanner,
         showAgencyStatusBanner: this.showAgencyStatusBanner,
         showDeadlineBanner: this.showDeadlineBanner

@@ -35,6 +35,8 @@
             "rations-form": "Formulario de Raciones"
         },
         "dashboard": "Gráficas",
+        "evaluation": "Evaluación",
+        "sponsorEvaluation": "Evaluación de Auspiciadores",
         "reports": "Reportes",
         "agency-status": "Estados de Agencia",
         "sites": "Sitios",

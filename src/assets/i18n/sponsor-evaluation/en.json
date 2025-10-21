@@ -1,0 +1,121 @@
+{
+  "sponsorEvaluation": {
+    "list": {
+      "title": "Sponsor Evaluation",
+      "search": {
+        "placeholder": "Search..."
+      },
+      "table": {
+        "columns": {
+          "agencyName": "Agency Name",
+          "uieNumber": "UIE Number",
+          "einNumber": "EIN Number",
+          "ssPatronal": "Social Security Patronal",
+          "createdBy": "Created by",
+          "status": "Status",
+          "createdAt": "Created At",
+          "assignedTo": "Assigned to",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit"
+        }
+      },
+      "buttons": {
+        "save": "Save"
+      }
+    },
+    "edit": {
+      "title": "Edit Sponsor Evaluation",
+      "sections": {
+        "sponsorInformation": "Sponsor Information",
+        "sponsorInformationDescription": "Basic data of the sponsoring agency",
+        "address": "Address",
+        "addressDescription": "Agency location information",
+        "userInformation": "User Information",
+        "userInformationDescription": "Contact information of the responsible person"
+      },
+      "fields": {
+        "program": {
+          "label": "Program",
+          "placeholder": "Select the program"
+        },
+        "status": {
+          "label": "Status",
+          "placeholder": "Select the status"
+        },
+        "agency": {
+          "label": "Agency",
+          "placeholder": "Agency name"
+        },
+        "uieNumber": {
+          "label": "UIE Number",
+          "placeholder": "Agency UIE number"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Select the city"
+        },
+        "region": {
+          "label": "Region",
+          "placeholder": "Select the region"
+        },
+        "address": {
+          "label": "Address",
+          "placeholder": "Complete address"
+        },
+        "zipCode": {
+          "label": "Zip Code",
+          "placeholder": "Zip code"
+        },
+        "firstName": {
+          "label": "First Name",
+          "placeholder": "First name"
+        },
+        "middleName": {
+          "label": "Middle Name",
+          "placeholder": "Middle name"
+        },
+        "fatherLastName": {
+          "label": "Father's Last Name",
+          "placeholder": "Father's last name"
+        },
+        "motherLastName": {
+          "label": "Mother's Last Name",
+          "placeholder": "Mother's last name"
+        },
+        "email": {
+          "label": "Email",
+          "placeholder": "email@example.com"
+        },
+        "phone": {
+          "label": "Phone",
+          "placeholder": "Phone number"
+        },
+        "appointmentCoordinated": {
+          "label": "Appointment Coordinated",
+          "placeholder": "Select if appointment was coordinated"
+        },
+        "appointmentDate": {
+          "label": "Appointment Date",
+          "placeholder": "Select the date",
+          "hint": "MM/DD/YYYY"
+        },
+        "comments": {
+          "label": "Comments",
+          "placeholder": "Additional comments about the evaluation"
+        }
+      },
+      "options": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "messages": {
+        "noProgramsAssigned": "This agency does not have programs assigned that match the user.",
+        "invalidForm": "The form is invalid. Please complete all required fields.",
+        "success": "Evaluation saved successfully",
+        "error": "Error saving evaluation"
+      }
+    }
+  }
+}

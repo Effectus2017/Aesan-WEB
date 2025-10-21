@@ -1,0 +1,96 @@
+<div class="flex overflow-hidden absolute inset-0 flex-col min-w-0">
+  <!-- Header con título -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <!-- Main -->
+  <div class="overflow-y-auto flex-auto" cdkScrollable>
+    <div class="p-6 sm:p-10">
+      <!-- Contenido principal del dashboard -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-3" *ngIf="dashboardMetrics">
+
+        <!-- Columna izquierda - Evaluación de Auspiciadores -->
+        <div class="lg:col-span-2">
+          <h2 class="mb-4 text-xl font-bold text-teal-800">
+            {{ 'aesan.dashboard.sections.evaluation' | transloco }}
+          </h2>
+
+          <!-- Grid 2x2 para métricas de evaluación -->
+          <div class="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2">
+            <!-- Pendientes a evaluar -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow cursor-pointer hover:shadow-md"
+                 (click)="onCardClick({id: 'pending', title: 'aesan.dashboard.metrics.pending'})">
+              <div class="mb-2 text-4xl font-bold text-red-500">
+                {{ dashboardMetrics?.agencyStatusCounts?.pendingValidationCount || 0 }}
+              </div>
+              <div class="text-gray-600">{{ 'aesan.dashboard.metrics.pending' | transloco }}</div>
+            </div>
+
+            <!-- En orientación -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow cursor-pointer hover:shadow-md"
+                 (click)="onCardClick({id: 'orientation', title: 'aesan.dashboard.metrics.orientation'})">
+              <div class="mb-2 text-4xl font-bold text-green-500">
+                {{ dashboardMetrics?.agencyStatusCounts?.orientationCount || 0 }}
+              </div>
+              <div class="text-gray-600">{{ 'aesan.dashboard.metrics.orientation' | transloco }}</div>
+            </div>
+
+            <!-- Aprobados -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow cursor-pointer hover:shadow-md"
+                 (click)="onCardClick({id: 'approved', title: 'aesan.dashboard.metrics.approved'})">
+              <div class="mb-2 text-4xl font-bold text-green-500">
+                {{ dashboardMetrics?.agencyStatusCounts?.approvedCount || 0 }}
+              </div>
+              <div class="text-gray-600">{{ 'aesan.dashboard.metrics.approved' | transloco }}</div>
+            </div>
+
+            <!-- Denegados -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow cursor-pointer hover:shadow-md"
+                 (click)="onCardClick({id: 'denied', title: 'aesan.dashboard.metrics.denied'})">
+              <div class="mb-2 text-4xl font-bold text-red-500">
+                {{ dashboardMetrics?.agencyStatusCounts?.rejectedCount || 0 }}
+              </div>
+              <div class="text-gray-600">{{ 'aesan.dashboard.metrics.denied' | transloco }}</div>
+            </div>
+          </div>
+
+          <!-- Sección Auspiciadores -->
+          <h2 class="mb-4 text-xl font-bold text-teal-800">
+            {{ 'aesan.dashboard.sections.sponsors' | transloco }}
+          </h2>
+
+          <!-- Grid 1x2 para métricas de auspiciadores -->
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <!-- Total de auspiciadores -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow cursor-pointer hover:shadow-md">
+              <div class="mb-2 text-4xl font-bold text-green-500">
+                {{ dashboardMetrics?.totalAgencies || 0 }}
+              </div>
+              <div class="text-gray-600">{{ 'aesan.dashboard.metrics.totalSponsors' | transloco }}</div>
+            </div>
+
+            <!-- Placeholder -->
+            <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm opacity-50">
+              <div class="py-8 text-center text-gray-400">
+                {{ 'aesan.dashboard.placeholder' | transloco }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Columna derecha - Otros Dashboards -->
+        <div class="lg:col-span-1">
+          <h2 class="mb-4 text-xl font-bold text-teal-800">
+            {{ 'aesan.dashboard.sections.otherDashboards' | transloco }}
+          </h2>
+
+          <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+            <div class="py-8 text-center text-gray-400">
+              {{ 'aesan.dashboard.otherDashboards.placeholder' | transloco }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

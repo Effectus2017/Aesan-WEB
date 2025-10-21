@@ -119,7 +119,8 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      { path: 'pre-operational', loadChildren: () => import('app/modules/aesan-portal/preoperational-visit/preoperational-visit.routes') },
+      { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes') },
+        { path: 'sponsor-evaluation', loadChildren: () => import('app/modules/aesan-portal/sponsor-evaluation/sponsor-evaluation.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
     ],
   },

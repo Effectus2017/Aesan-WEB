@@ -6,7 +6,15 @@ export const aesanNavigation: FuseNavigationItem[] = [
     title: 'navigation.home',
     type: 'basic',
     icon: 'heroicons_solid:home',
-    link: '/pre-operational',
+    link: '/dashboard',
+    roles: ['Monitor'],
+  },
+  {
+    id: 'evaluation',
+    title: 'navigation.sponsorEvaluation',
+    type: 'basic',
+    icon: 'heroicons_solid:clipboard-document-check',
+    link: '/sponsor-evaluation',
     roles: ['Monitor'],
   },
 ];

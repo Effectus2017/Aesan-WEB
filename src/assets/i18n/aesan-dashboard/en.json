@@ -1,0 +1,24 @@
+{
+  "aesan": {
+    "dashboard": {
+      "title": "AESAN Dashboard",
+      "welcome": "Welcome",
+      "sections": {
+        "evaluation": "Sponsor Evaluation",
+        "sponsors": "Sponsors",
+        "otherDashboards": "Other Dashboards"
+      },
+      "metrics": {
+        "pending": "Pending Evaluation",
+        "orientation": "Sponsors in orientation",
+        "approved": "Approved Sponsors",
+        "denied": "Denied Sponsors",
+        "totalSponsors": "Total Sponsors"
+      },
+      "placeholder": "Placeholder",
+      "otherDashboards": {
+        "placeholder": "Area for other dashboards"
+      }
+    }
+  }
+}

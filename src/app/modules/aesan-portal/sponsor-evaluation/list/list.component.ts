@@ -15,22 +15,23 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { FormControl, UntypedFormBuilder } from '@angular/forms';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { PREOPERATIONAL_VISIT_COLUMNS_SCHEMA } from './columns-schema';
-import { preoperationalVisitColumnsData } from './columns-data';
+import { SPONSOR_EVALUATION_COLUMNS_SCHEMA } from './columns-schema';
+import { sponsorEvaluationColumnsData } from './columns-data';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
+import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({
-    selector: 'aesan-preoperational-visit-list',
+    selector: 'aesan-sponsor-evaluation-list',
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent]
 })
-export class AesanPreoperationalVisitListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatTable) table: MatTable<ProgramRequest>;
@@ -45,21 +46,22 @@ export class AesanPreoperationalVisitListComponent implements OnInit, OnDestroy,
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
-    title: 'preoperational-visit.list.title',
+    title: 'sponsorEvaluation.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'preoperational-visit.list.search.placeholder',
-    submitButtonText: 'preoperational-visit.list.buttons.save',
+    searchInputPlaceholder: 'sponsorEvaluation.list.search.placeholder',
+    submitButtonText: 'sponsorEvaluation.list.buttons.save',
     goToAddButtonShow: true,
   };
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<ProgramRequest>(),
-    columnsSchema: PREOPERATIONAL_VISIT_COLUMNS_SCHEMA,
-    displayedColumns: PREOPERATIONAL_VISIT_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    dataSourceList: [],
+    columnsSchema: SPONSOR_EVALUATION_COLUMNS_SCHEMA,
+    displayedColumns: SPONSOR_EVALUATION_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 25,
@@ -68,19 +70,21 @@ export class AesanPreoperationalVisitListComponent implements OnInit, OnDestroy,
   };
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private id: number;
+
 
   constructor() {
-    this.id = Number(this._route.snapshot.paramMap.get('id'));
+
   }
 
   ngOnInit(): void {
-    // Obtener datos del resolver en lugar de suscribirse
+    // Obtener datos del resolver
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
       this.tableConfig.dataSource.data = resolvedData.agencies.data;
       this.tableConfig.length = resolvedData.agencies.count;
+      // Lista de datos
+      this.tableConfig.dataSourceList = resolvedData.agencies.data;
       this._changeDetectorRef.markForCheck();
     }
   }
@@ -90,8 +94,54 @@ export class AesanPreoperationalVisitListComponent implements OnInit, OnDestroy,
     this._unsubscribeAll.complete();
   }
 
+  onSearch() {
+    if (this.headerConfig.formGroup.valid) {
+      this.getAll(0, this.headerConfig.formGroup.value);
+      this.headerConfig.clearVisible = true;
+    }
+  }
+
+  // Métodos para obtener datos
+  getAll(index: number, form: any) {
+    const userId = this._authService.getUserId();
+    const requestParameters: QueryParameters = {
+      take: this.tableConfig.pageSize,
+      skip: index,
+      name: form.name || null,
+      alls: false,
+      isList: false,
+      userId: userId,
+      isPropietary: false,
+      regionId: null,
+      cityId: null,
+      programId: null,
+      statusId: null,
+    };
+
+    this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe((result: any) => {
+      this.tableConfig.dataSource.data = result.body.data;
+      this.tableConfig.length = result.body.count;
+      this.tableConfig.dataSourceList = result.body.data;
+      this._changeDetectorRef.markForCheck();
+    });
+  }
+
   getPaginator(event?: PageEvent) {
     // Paginado de tabla
+    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event.pageSize;
+    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+  }
+
+  onClean(event: Event) {
+    event.stopPropagation();
+    event.preventDefault();
+    // quita el botón de limpiar
+    this.headerConfig.clearVisible = false;
+    // resetea el formulario
+    this.headerConfig.formGroup.reset();
+    // obtiene todos los datos
+    this.getAll(0, this.headerConfig.formGroup.value);
   }
 
   onAdd(): void {}
@@ -99,37 +149,11 @@ export class AesanPreoperationalVisitListComponent implements OnInit, OnDestroy,
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`pre-operational/edit/${id}`]);
+    this._customRouterService.navigate([`sponsor-evaluation/edit/${id}`]);
   }
 
   onTableDelete(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-  }
-
-  onSearch(): void {
-    const searchTerm = this.headerConfig.formGroup.get('name').value;
-
-    const userId = this._authService.getUserId();
-
-    const requestParameters: QueryParameters = {
-      agencyId: this.id,
-      userId: userId,
-      name: searchTerm,
-    };
-
-    this._agencyService.getAgencyByIdAndUserId(requestParameters).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
-      // Lista de datos
-      this.tableConfig.dataSource.data = result.body.data;
-    });
-
-    // Filtrar la lista existente
-    const filteredData = this.tableConfig.dataSource.data.filter(item =>
-      item.name?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    this.tableConfig.dataSource.data = filteredData;
   }
 }

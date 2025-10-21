@@ -110,8 +110,8 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   onSearch() {
     if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
+      //this.getAll(0, this.headerConfig.formGroup.value);
+      //this.headerConfig.clearVisible = true;
     }
   }
 

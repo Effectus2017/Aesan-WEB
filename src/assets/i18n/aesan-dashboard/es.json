@@ -1,0 +1,24 @@
+{
+  "aesan": {
+    "dashboard": {
+      "title": "Dashboard AESAN",
+      "welcome": "Bienvenida",
+      "sections": {
+        "evaluation": "Evaluación de Auspiciadores",
+        "sponsors": "Auspiciadores",
+        "otherDashboards": "Otros Dashboards"
+      },
+      "metrics": {
+        "pending": "Pendientes a Evaluar",
+        "orientation": "Auspiciadores en orientación",
+        "approved": "Auspiciadores Aprobados",
+        "denied": "Auspiciadores Denegados",
+        "totalSponsors": "Cantidad de Auspiciadores"
+      },
+      "placeholder": "Placeholder",
+      "otherDashboards": {
+        "placeholder": "Área para otros dashboards"
+      }
+    }
+  }
+}

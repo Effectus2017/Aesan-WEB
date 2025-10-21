@@ -43,7 +43,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-    selector: 'app-aesan-preoperational-visit-edit',
+    selector: 'app-aesan-sponsor-evaluation-edit',
     templateUrl: './edit.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
@@ -70,7 +70,7 @@ import { ActivatedRoute } from '@angular/router';
         MatDatepickerModule,
     ]
 })
-export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
+export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
@@ -94,8 +94,8 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
   listRegions: Region[] = [];
 
   listAppointmentCoordinated = [
-    { id: 1, name: 'Si', value: true },
-    { id: 2, name: 'No', value: false },
+    { id: 1, name: 'sponsorEvaluation.edit.options.yes', value: true },
+    { id: 2, name: 'sponsorEvaluation.edit.options.no', value: false },
   ];
 
   param: Agency;
@@ -104,7 +104,7 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
-    title: 'monitor-preoperational-visit.title',
+    title: 'sponsorEvaluation.edit.title',
     formGroup: this._formBuilder.group({
       program: [{ value: null, disabled: true }],
       name: [{ value: null, disabled: true }],
@@ -189,8 +189,8 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
     this.param = param;
 
     if (isNullOrUndefinedEmptyStringNullArray(param.programs)) {
-      this._notificationService.showError('Esta agencia no tiene programas asignados que coincidan con el usuario.');
-      this._customRouterService.navigate(['pre-operational']); // Cambia 'pre-operational' por la ruta correcta si es necesario
+      this._notificationService.showError(this._translocoService.translate('sponsorEvaluation.edit.messages.noProgramsAssigned'));
+      this._customRouterService.navigate(['sponsor-evaluation']);
       return;
     }
 
@@ -227,7 +227,7 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
    */
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
-      this._notificationService.showError('El formulario es inválido. Por favor, complete todos los campos requeridos.');
+      this._notificationService.showError(this._translocoService.translate('sponsorEvaluation.edit.messages.invalidForm'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -265,7 +265,7 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
         this._notificationService.showErrorDialog();
       },
       complete: () => {
-        this._customRouterService.navigate([`pre-operational/list`]);
+        this._customRouterService.navigate([`sponsor-evaluation/list`]);
       },
     });
   }
@@ -289,7 +289,7 @@ export class EditAesanPreoperationalVisitComponent implements OnInit, OnDestroy,
         this._notificationService.showErrorDialog();
       },
       complete: () => {
-        this._customRouterService.navigate([`pre-operational/list`]);
+        this._customRouterService.navigate([`sponsor-evaluation/list`]);
       },
     });
   }

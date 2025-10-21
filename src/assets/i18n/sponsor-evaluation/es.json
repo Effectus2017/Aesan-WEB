@@ -1,0 +1,121 @@
+{
+  "sponsorEvaluation": {
+    "list": {
+      "title": "Evaluación de Auspiciadores",
+      "search": {
+        "placeholder": "Buscar..."
+      },
+      "table": {
+        "columns": {
+          "agencyName": "Nombre de Agencia",
+          "uieNumber": "Número UIE",
+          "einNumber": "Número EIN",
+          "ssPatronal": "Seguro Social Patronal",
+          "createdBy": "Creado por",
+          "status": "Estado",
+          "createdAt": "Fecha de Creación",
+          "assignedTo": "Asignado a",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar"
+        }
+      },
+      "buttons": {
+        "save": "Guardar"
+      }
+    },
+    "edit": {
+      "title": "Editar Evaluación de Auspiciador",
+      "sections": {
+        "sponsorInformation": "Información del Auspiciador",
+        "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
+        "address": "Dirección",
+        "addressDescription": "Información de ubicación de la agencia",
+        "userInformation": "Información del Usuario",
+        "userInformationDescription": "Datos de contacto del responsable"
+      },
+      "fields": {
+        "program": {
+          "label": "Programa",
+          "placeholder": "Seleccione el programa"
+        },
+        "status": {
+          "label": "Estado",
+          "placeholder": "Seleccione el estado"
+        },
+        "agency": {
+          "label": "Agencia",
+          "placeholder": "Nombre de la agencia"
+        },
+        "uieNumber": {
+          "label": "Número UIE",
+          "placeholder": "Número UIE de la agencia"
+        },
+        "city": {
+          "label": "Ciudad",
+          "placeholder": "Seleccione la ciudad"
+        },
+        "region": {
+          "label": "Región",
+          "placeholder": "Seleccione la región"
+        },
+        "address": {
+          "label": "Dirección",
+          "placeholder": "Dirección completa"
+        },
+        "zipCode": {
+          "label": "Código Postal",
+          "placeholder": "Código postal"
+        },
+        "firstName": {
+          "label": "Primer Nombre",
+          "placeholder": "Primer nombre"
+        },
+        "middleName": {
+          "label": "Segundo Nombre",
+          "placeholder": "Segundo nombre"
+        },
+        "fatherLastName": {
+          "label": "Apellido Paterno",
+          "placeholder": "Apellido paterno"
+        },
+        "motherLastName": {
+          "label": "Apellido Materno",
+          "placeholder": "Apellido materno"
+        },
+        "email": {
+          "label": "Correo Electrónico",
+          "placeholder": "correo@ejemplo.com"
+        },
+        "phone": {
+          "label": "Teléfono",
+          "placeholder": "Número de teléfono"
+        },
+        "appointmentCoordinated": {
+          "label": "Cita Coordinada",
+          "placeholder": "Seleccione si se coordinó cita"
+        },
+        "appointmentDate": {
+          "label": "Fecha de Cita",
+          "placeholder": "Seleccione la fecha",
+          "hint": "MM/DD/AAAA"
+        },
+        "comments": {
+          "label": "Comentarios",
+          "placeholder": "Comentarios adicionales sobre la evaluación"
+        }
+      },
+      "options": {
+        "yes": "Sí",
+        "no": "No"
+      },
+      "messages": {
+        "noProgramsAssigned": "Esta agencia no tiene programas asignados que coincidan con el usuario.",
+        "invalidForm": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
+        "success": "Evaluación guardada exitosamente",
+        "error": "Error al guardar la evaluación"
+      }
+    }
+  }
+}
