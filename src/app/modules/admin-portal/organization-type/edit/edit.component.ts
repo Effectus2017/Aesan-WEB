@@ -50,6 +50,7 @@ export class OrganizationTypeEditComponent implements OnInit, OnGenericHeaderHan
       nameEN: [null, Validators.required],
       isActive: [true],
       displayOrder: [0, Validators.required],
+      requiresCenterType: [false],
     }),
     saveButtonShow: true,
     saveButtonText: 'global.buttons.save',
@@ -75,6 +76,7 @@ export class OrganizationTypeEditComponent implements OnInit, OnGenericHeaderHan
       nameEN: param.nameEN,
       isActive: param.isActive,
       displayOrder: param.displayOrder,
+      requiresCenterType: param.requiresCenterType,
     });
   }
 
@@ -91,6 +93,7 @@ export class OrganizationTypeEditComponent implements OnInit, OnGenericHeaderHan
       nameEN: formValues.nameEN,
       isActive: formValues.isActive,
       displayOrder: formValues.displayOrder,
+      requiresCenterType: formValues.requiresCenterType,
     };
     this._organizationTypeService.updateOrganizationType(organizationTypeRequest, {}).subscribe({
       next: () => {

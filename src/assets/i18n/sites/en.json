@@ -231,13 +231,13 @@
                 "required": "Has Dining Room?"
             },
             "administrator-authorized": {
-                "label": "Authorized Administrator/Representative",
-                "description": "Authorized administrator/representative information"
+                "label": "Person in Charge",
+                "description": "Person in charge information"
             },
             "administrator-authorized-name": {
-                "label": "Full Name of Administrator or Representative",
-                "placeholder": "Full name of administrator or representative",
-                "required": "Full name of administrator or representative is required"
+                "label": "Full Name of Person in Charge",
+                "placeholder": "Full name of person in charge",
+                "required": "Full name of person in charge is required"
             },
             "site-phone": {
                 "label": "Site Phone",
@@ -744,13 +744,6 @@
                 "error": {
                     "service-not-found": "Service not found"
                 }
-            },
-            "main-site": {
-                "label": "Main Site",
-                "description": "Select the main site to which this site belongs. Leave blank if this is an independent site.",
-                "clear": "Clear selection",
-                "is-main-site": "This site is configured as a main site",
-                "required": "Main site is required"
             }
         },
         "edit": {
@@ -767,13 +760,6 @@
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
                 "daycare-home": "Day Care Home"
-            },
-            "main-site": {
-                "label": "Main Site",
-                "description": "Select the main site to which this site belongs. Leave blank if this is an independent site.",
-                "clear": "Clear selection",
-                "is-main-site": "This site is configured as a main site",
-                "required": "Main site is required"
             },
             "name": {
                 "label": "Name",
@@ -957,13 +943,13 @@
                 "required": "Has Dining Room?"
             },
             "administrator-authorized": {
-                "label": "Authorized Administrator/Representative",
-                "description": "Authorized administrator/representative information"
+                "label": "Person in Charge",
+                "description": "Person in charge information"
             },
             "administrator-authorized-name": {
-                "label": "Full Name of Administrator or Representative",
-                "placeholder": "Full name of administrator or representative",
-                "required": "Full name of administrator or representative is required"
+                "label": "Full Name of Person in Charge",
+                "placeholder": "Full name of person in charge",
+                "required": "Full name of person in charge is required"
             },
             "site-phone": {
                 "label": "Site Phone",

@@ -52,6 +52,7 @@ export class OrganizationTypeAddComponent implements OnInit, OnGenericHeaderHand
       nameEN: [null, Validators.required],
       isActive: [true],
       position: [1, Validators.required],
+      requiresCenterType: [false],
     }),
     saveButtonShow: true,
     saveButtonText: 'global.buttons.save',
@@ -95,6 +96,7 @@ export class OrganizationTypeAddComponent implements OnInit, OnGenericHeaderHand
       nameEN: this.headerConfig.formGroup.get('nameEN').value,
       isActive: this.headerConfig.formGroup.get('isActive').value,
       displayOrder,
+      requiresCenterType: this.headerConfig.formGroup.get('requiresCenterType')?.value || false,
     };
     this._organizationTypeService.insertOrganizationType(newType, {}).subscribe({
       next: () => {

@@ -4,4 +4,5 @@ export interface OrganizationType {
     nameEN: string;
     isActive: boolean;
     displayOrder: number;
+    requiresCenterType: boolean;
 }

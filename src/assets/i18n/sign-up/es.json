@@ -26,35 +26,17 @@
       "no": "No"
     },
   "state-funds-denied-reason": {
-    "label": "Razón por la cuál fue descalificado o denegado de fondos estatales",
+    "label": "Razón por la cual fue descalificado o denegado de fondos estatales",
     "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos estatales",
     "required": "Este campo es requerido cuando ha sido descalificado de fondos estatales"
   },
   "federal-funds-denied-reason": {
-    "label": "Razón por la cuál fue descalificado o denegado de fondos federales",
+    "label": "Razón por la cual fue descalificado o denegado de fondos federales",
     "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos federales",
     "required": "Este campo es requerido cuando ha sido descalificado de fondos federales"
   },
     "federal-funds-denied": {
       "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
-      "yes": "Sí",
-      "no": "No"
-    },
-    "organized-athletic-programs": {
-      "label": "¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interestelares o a nivel comunitario?",
-      "yes": "Sí",
-      "no": "No"
-    },
-    "service-time": {
-      "label": " ¿Cuánto tiempo lleva la organización o institución ofreciendo servicios con una matrícula establecida?",
-      "placeholder": "Seleccione la fecha en que comenzó a operar la organización",
-      "hint": "Seleccione la fecha en que comenzará a ofrecer el servicio"
-    },
-    "service-time-not-eligible": {
-      "message": "La organización debe tener al menos un año de servicio para ser elegible para cualquier programa."
-    },
-    "at-risk-service": {
-      "label": "¿Está interesado en participar en el servicio de merienda y cena en riesgo?",
       "yes": "Sí",
       "no": "No"
     },
@@ -155,7 +137,6 @@
     },
     "close": "Cerrar",
     "submit": "Aplicar al Programa",
-    "select-program-first": "Por favor, seleccione al menos un programa para continuar con el registro",
     "form-invalid": {
       "message": "Por favor, complete todos los campos requeridos",
       "close": "Cerrar"

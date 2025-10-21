@@ -110,8 +110,8 @@
                 "description": "Información administrativa del sitio"
             },
             "organization-type": {
-                "label": "Tipo de organización",
-                "placeholder": "Tipo de organización del sitio",
+                "label": "Tipo de Organización",
+                "placeholder": "Tipo de Organización del sitio",
                 "required": "El campo es requerido"
             },
             "center": {
@@ -139,7 +139,7 @@
                 "required": "El año de renovación es requerido"
             },
             "organizationType": {
-                "label": "Tipo de organización"
+                "label": "Tipo de Organización"
             },
             "education-levels": {
                 "label": "Niveles educativos",
@@ -233,13 +233,13 @@
                 "required": "¿Cuenta con un Salón Comedor?"
             },
             "administrator-authorized": {
-                "label": "Administrador/Representante Autorizado",
-                "description": "Información del administrador/representante autorizado"
+                "label": "Persona a Cargo",
+                "description": "Información de la persona a cargo del sitio"
             },
             "administrator-authorized-name": {
-                "label": "Nombre Completo del Administrador o Representante",
-                "placeholder": "Nombre completo del administrador o representante",
-                "required": "El nombre completo del administrador o representante es requerido"
+                "label": "Nombre Completo de la Persona a Cargo",
+                "placeholder": "Nombre completo de la persona a cargo",
+                "required": "El nombre completo de la persona a cargo es requerido"
             },
             "administrator-birth-date": {
                 "label": "Fecha de Nacimiento del Administrador",
@@ -676,13 +676,6 @@
                 "error": {
                     "service-not-found": "Servicio no encontrado"
                 }
-            },
-            "main-site": {
-                "label": "Sitio Principal",
-                "description": "Seleccione el sitio principal al que pertenece este sitio. Deje en blanco si este es un sitio independiente.",
-                "clear": "Limpiar selección",
-                "is-main-site": "Este sitio está configurado como sitio principal",
-                "required": "El sitio principal es requerido"
             }
         },
         "edit": {
@@ -699,13 +692,6 @@
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
                 "daycare-home": "Day Care Home"
-            },
-            "main-site": {
-                "label": "Sitio Principal",
-                "description": "Seleccione el sitio principal al que pertenece este sitio. Deje en blanco si este es un sitio independiente.",
-                "clear": "Limpiar selección",
-                "is-main-site": "Este sitio está configurado como sitio principal",
-                "required": "El sitio principal es requerido"
             },
             "name": {
                 "label": "Nombre del sitio",
@@ -772,8 +758,8 @@
                 "description": "Información administrativa del sitio"
             },
             "organization-type": {
-                "label": "Tipo de organización",
-                "placeholder": "Tipo de organización del sitio",
+                "label": "Tipo de Organización",
+                "placeholder": "Tipo de Organización del sitio",
                 "required": "El campo es requerido"
             },
             "center": {
@@ -801,7 +787,7 @@
                 "required": "El año de renovación es requerido"
             },
             "organizationType": {
-                "label": "Tipo de organización"
+                "label": "Tipo de Organización"
             },
             "education-levels": {
                 "label": "Niveles educativos",
@@ -896,13 +882,13 @@
                 "required": "¿Cuenta con un Salón Comedor?"
             },
             "administrator-authorized": {
-                "label": "Administrador/Representante Autorizado",
-                "description": "Información del administrador/representante autorizado"
+                "label": "Persona a Cargo",
+                "description": "Información de la persona a cargo del sitio"
             },
             "administrator-authorized-name": {
-                "label": "Nombre Completo del Administrador o Representante",
-                "placeholder": "Nombre completo del administrador o representante",
-                "required": "El nombre completo del administrador o representante es requerido"
+                "label": "Nombre Completo de la Persona a Cargo",
+                "placeholder": "Nombre completo de la persona a cargo",
+                "required": "El nombre completo de la persona a cargo es requerido"
             },
             "administrator-birth-date": {
                 "label": "Fecha de Nacimiento del Administrador",

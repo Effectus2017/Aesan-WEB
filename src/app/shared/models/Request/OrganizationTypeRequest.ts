@@ -3,4 +3,5 @@ export interface OrganizationTypeRequest {
   nameEN: string;
   isActive: boolean;
   displayOrder: number;
+  requiresCenterType: boolean;
 }

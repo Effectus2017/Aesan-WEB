@@ -49,26 +49,17 @@ export interface AgencyRequest {
     // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
     // Si (1) y No (2)
     stateFundsDenied?: boolean;
-    // ¿Razón por la cuál fue descalificado o denegado de fondos estatales?
+    // ¿Razón por la cual fue descalificado o denegado de fondos estatales?
     // Reason why the sponsor was disqualified or denied state funds?
     // Se activa cuando stateFundsDenied = true
     stateFundsDeniedReason?: string;
     // ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?
     // Si (1) y No (2)
     federalFundsDenied?: boolean;
-  // ¿Razón por la cuál fue descalificado o denegado de fondos federales?
+  // ¿Razón por la cual fue descalificado o denegado de fondos federales?
   // Reason why the sponsor was disqualified or denied federal funds?
   // Se activa cuando federalFundsDenied = true
   federalFundsDeniedReason?: string;
-    // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interestelares o a nivel comunitario?
-    // Si (1) y No (2)
-    organizedAthleticPrograms?: boolean;
-    // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
-    // Is the Sponsor interested in participating in the at-risk snack and dinner service?
-    // Si (1) y No (2)
-    atRiskService?: boolean;
-    // Service Time
-    serviceTime?: Date;
     // ¿En qué estatus se encuentra su Exención Contributiva?
     // In what status is your Tax Exemption?
     // En Proceso (3), Otorgado (4), Denegado (5)

@@ -198,7 +198,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Si (1) y No (2)
       stateFundsDenied: [null, Validators.required],
 
-      // ¿Razón por la cuál fue descalificado o denegado de fondos estatales?
+      // ¿Razón por la cual fue descalificado o denegado de fondos estatales?
       // Reason why the sponsor was disqualified or denied state funds?
       // Se activa cuando stateFundsDenied = true
       stateFundsDeniedReason: [null],
@@ -207,21 +207,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Have you been denied or disqualified from federal funds in the last seven years?
       // Si (1) y No (2)
       federalFundsDenied: [null, Validators.required],
-    // ¿Razón por la cuál fue descalificado o denegado de fondos federales?
+    // ¿Razón por la cual fue descalificado o denegado de fondos federales?
     // Reason why the sponsor was disqualified or denied federal funds?
     // Se activa cuando federalFundsDenied = true
     federalFundsDeniedReason: [null],
-
-      // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
-      // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-      // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
-      // Si (1) y No (2)
-      // organizedAthleticPrograms: [null, Validators.required],
-
-      // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
-      // Is the Sponsor interested in participating in the at-risk snack and dinner service?
-      // Si (1) y No (2)
-      // atRiskService: [{ value: null, disabled: true }],
 
       // ¿En qué estatus se encuentra su Exención Contributiva?"
       // In what status is your Tax Exemption?
@@ -232,11 +221,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // What type of Tax Exemption does it have?
       // Estatal (11), Federal (12)
       taxExemptionTypeId: [null, Validators.required],
-
-      // Service Time - TEMPORALMENTE HIDDEN Y NO REQUERIDO
-      // Campo oculto en HTML (comentado) y sin validación required por cambios en requerimientos
-      // Para restaurar: 1) Descomentar HTML del template, 2) Agregar Validators.required aquí
-      serviceTime: [null], // TEMPORALMENTE NO REQUERIDO - Para fácil restauración agregar Validators.required
 
       // Dirección
       address: [null, Validators.required],
@@ -375,14 +359,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         // Restablecer el estado de elegibilidad
         this.isEligible = true;
-
-        // Restablecer el control de atRiskService
-        const atRiskControl = this.signUpForm.get('atRiskService');
-
-        if (atRiskControl) {
-          atRiskControl.disable();
-          atRiskControl.setValue(null);
-        }
 
         // --- Lógica para nationalYouthProgram ---
         const nationalYouthProgramControl = this.signUpForm.get('nationalYouthProgram');
@@ -590,7 +566,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const postalAddress: string = formValues.postalAddress;
     const postalZipCode: string = formValues.postalZipCode;
 
-    const serviceTime = formValues.serviceTime;
     const email = formValues.email;
     const phone = formValues.phone;
 
@@ -600,9 +575,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const federalFundsDeniedReason = formValues.federalFundsDeniedReason; // Nuevo
     const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
     const stateFundsDeniedReason = formValues.stateFundsDeniedReason;
-    // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
-    // const organizedAthleticPrograms = formValues.organizedAthleticPrograms;
-    // const atRiskService = formValues.atRiskService == null ? false : formValues.atRiskService;
     const taxExemptionStatusId = formValues.taxExemptionStatusId;
     const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? false : formValues.taxExemptionTypeId;
     const typeOfEntityId = formValues.typeOfEntityId;
@@ -637,8 +609,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         postalZipCode: postalZipCode,
         postalCityId: postalCityId,
         postalRegionId: postalRegionId,
-        // Service Time
-        serviceTime: serviceTime,
         // Programas
         programs: [programId],
         // Datos del Correo Electrónico
@@ -662,20 +632,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Have you been denied or disqualified from state funds in the last seven years?
         // Si (1) y No (2)
         stateFundsDenied: stateFundsDenied,
-        // ¿Razón por la cuál fue descalificado o denegado de fondos estatales?
+        // ¿Razón por la cual fue descalificado o denegado de fondos estatales?
         // Reason why the sponsor was disqualified or denied state funds?
         // Se activa cuando stateFundsDenied = true
         stateFundsDeniedReason: stateFundsDeniedReason,
-        // DESHABILITADO: Campos PACNA ahora se manejan a nivel de escuela
-        // ¿El Auspiciador ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-        // Does the Sponsor offer any organized athletic programs engaged in interscholastic or community level competitive sports?
-        // Si (1) y No (2)
-        // organizedAthleticPrograms: organizedAthleticPrograms,
-        // ¿Está interesado en participar en el servicio de merienda y cena en riesgo?
-        // Is the Sponsor interested in participating in the at-risk snack and dinner service?
-        // Si (1) y No (2)
-        // At Risk Service
-        // atRiskService: atRiskService,
         // ¿En qué estatus se encuentra su Exención Contributiva?
         // In what status is your Tax Exemption?
         // En Proceso (3), Otorgado (4), Denegado (5)
@@ -790,39 +750,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     }
   }
 
-  // deprecated, deshabilitar este método
-  // Si la agencia no acepta fondos estatales o federales, deshabilitar el formulario
-  // Si la agencia acepta fondos estatales o federales, habilitar el formulario
-  checkFundsEligibility(): void {
-    // TODO: deshabilitar este método
-    return;
-
-    const selectedProgram = this.signUpForm.value.program?.name;
-    const stateFundsDenied = this.signUpForm.value.stateFundsDenied === true;
-    const federalFundsDenied = this.signUpForm.value.federalFundsDenied === true;
-
-    // Verificar elegibilidad para PACNA
-    if ((stateFundsDenied || federalFundsDenied) && selectedProgram === 'PACNA') {
-      this.isEligible = false;
-      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
-    } else {
-      this.isEligible = true;
-      enableAllControls(this.signUpForm); // Habilitar controles
-    }
-  }
-
   // Manejar el cambio en el campo stateFundsDenied
   checkStateFundsDenied(): void {
     const stateFundsDenied = this.signUpForm.value.stateFundsDenied === true;
@@ -858,111 +785,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Actualizar el estado de validación
     federalFundsDeniedReasonControl?.updateValueAndValidity();
   }
-
-  // DESHABILITADO: Ahora se maneja a nivel de escuela
-  /*
-  checkOrganizedAthleticPrograms(): void {
-    const selectedProgram = this.signUpForm.value.program;
-    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
-
-    // Habilitar/deshabilitar atRiskService basado en la selección
-    const atRiskServiceControl = this.signUpForm.get('atRiskService');
-    if (organizedAthleticPrograms) {
-      atRiskServiceControl.enable();
-      atRiskServiceControl.setValidators([Validators.required]);
-    } else {
-      atRiskServiceControl.disable();
-      atRiskServiceControl.clearValidators();
-      atRiskServiceControl.setValue(null);
-    }
-    atRiskServiceControl.updateValueAndValidity();
-
-    // Verificar elegibilidad para PACNA solo si también quiere participar en merienda y cena en riesgo
-    const atRiskService = this.signUpForm.value.atRiskService === true;
-    if (organizedAthleticPrograms && atRiskService && isPACNAProgram(selectedProgram)) {
-      this.isEligible = false;
-      disableAllControlsExcept(this.signUpForm, 'program');
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
-    } else {
-      this.isEligible = true;
-      enableAllControls(this.signUpForm);
-    }
-  }
-  */
-
-  // DESHABILITADO: Ahora se maneja a nivel de escuela
-  /*
-  checkAtRiskService(): void {
-    const selectedProgram = this.signUpForm.value.program;
-    const atRiskService = this.signUpForm.value.atRiskService === true;
-    const organizedAthleticPrograms = this.signUpForm.value.organizedAthleticPrograms === true;
-
-    // Verificar elegibilidad para PACNA solo si también ofrece programas atléticos
-    if (atRiskService && organizedAthleticPrograms && isPACNAProgram(selectedProgram)) {
-      this.isEligible = false;
-      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.pacna-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
-        },
-      });
-    } else {
-      this.isEligible = true;
-      enableAllControls(this.signUpForm); // Habilitar controles
-    }
-  }
-  */
-
-  // TEMPORALMENTE COMENTADO - Método de validación de serviceTime en intención de participación
-  // Para restaurar es necesario descomentar también el campo en el HTML y la validación required
-  /*
-  checkServiceTime(): void {
-    const serviceTime = this.signUpForm.value.serviceTime;
-    if (serviceTime) {
-      const today = new Date();
-      const serviceDate = new Date(serviceTime);
-      const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-
-      if (diffInMonths < 12) {
-        this.isEligible = false;
-        disableAllControlsExcept(this.signUpForm, 'program');
-        this._fuseConfirmationService.open({
-          title: this._translocoService.translate('sign-up.notification.title'),
-          message: this._translocoService.translate('sign-up.service-time-not-eligible.message'),
-          actions: {
-            confirm: {
-              label: this._translocoService.translate('sign-up.notification.confirm'),
-            },
-            cancel: {
-              show: false,
-            },
-          },
-        });
-      } else {
-        this.isEligible = true;
-        enableAllControls(this.signUpForm);
-      }
-    }
-  }
-  */
 
   // Check Type of Entity
   // Si es Gobierno, asignar automáticamente Socio-Económico (id: 1)
@@ -1036,26 +858,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       });
       return;
     }
-
-    // Verificar elegibilidad para PACNA cuando no tiene registro de educación básica (false = No)
-    // REMOVED: PACNA validation for basic education registry - no longer shows message when "No" is selected
-    // if (!basicEducationRegistry && isPACNAProgram(selectedProgram)) {
-    //   this.isEligible = false;
-    //   disableAllControlsExcept(this.signUpForm, 'program');
-    //   this._fuseConfirmationService.open({
-    //     title: this._translocoService.translate('sign-up.notification.title'),
-    //     message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
-    //     actions: {
-    //       confirm: {
-    //         label: this._translocoService.translate('sign-up.notification.confirm'),
-    //       },
-    //       cancel: {
-    //         show: false,
-    //       },
-    //     },
-    //   });
-    //   return;
-    // }
 
     // Verificar elegibilidad para PACNA cuando no está interesado en horario extendido (false = No)
     const extendedHours = this.signUpForm.get('extendedHours')?.value;

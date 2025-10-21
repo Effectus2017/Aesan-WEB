@@ -143,7 +143,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Opciones de Tipo de Participantes
   participantTypeOptions: OptionSelection[] = [];
 
-  // Tipo de Organización Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
+  // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for site classification
   organizationTypes: OrganizationType[] = [];
 
@@ -220,9 +220,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Lista de sitios
   // List of sites
 
-  // Si el sitio actual es el principal
-  // If the current site is the main site
-  isMainSite: boolean = false;
 
   // Propiedades para controlar visibilidad según programa
   isPDAM: boolean = false;
@@ -231,6 +228,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   isPFHF: boolean = false;
   isPDFE: boolean = false;
   isAESAN: boolean = false;
+
+  // Propiedad para controlar visibilidad del campo Tipo de Centro
+  showCenterTypeField: boolean = false;
 
   // ViewChild para el contenedor del grid
   @ViewChild('gridContainer') gridContainer!: ElementRef;
@@ -313,9 +313,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Nombre del sitio - Campo requerido para identificar el sitio
       // Site name - Required field for identifying the site
       name: ['', Validators.required],
-      // Sitio principal - Campo requerido para seleccionar el sitio principal (solo si no es sitio principal)
-      // Main site - Required field for selecting the main site (only if not main site)
-      mainSite: [null],
       // Dirección física - Campo requerido para la ubicación del sitio
       // Physical address - Required field for site location
       address: ['', Validators.required],
@@ -425,16 +422,16 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       hasDiningRoom: [false],
       // Nombre del autorizado - Campo requerido para indicar el nombre del autorizado del sitio
       // Administrator authorized name - Required field indicating the name of the authorized of the site
-      administratorAuthorizedName: [''],
+      administratorAuthorizedName: ['', Validators.required],
       // Teléfono del sitio - Campo requerido para indicar el teléfono del sitio
       // Site phone - Required field indicating the site phone
-      sitePhone: [''],
+      sitePhone: ['', Validators.required],
       // Extensión - Campo requerido para indicar la extensión del teléfono del sitio
       // Extension - Required field indicating the extension of the site phone
       extension: [''],
       // Teléfono móvil - Campo requerido para indicar el teléfono móvil del sitio
       // Mobile phone - Required field indicating the mobile phone of the site
-      mobilePhone: [''],
+      mobilePhone: ['', Validators.required],
       // Desayuno - Campo requerido para indicar si el sitio tiene desayuno
       // Breakfast - Required field indicating if the site has breakfast
       breakfast: [false],
@@ -446,7 +443,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       breakfastTo: [null],
       // Almuerzo - Campo requerido para indicar si el sitio tiene almuerzo
       // Lunch - Required field indicating if the site has lunch
-      lunch: [false],
+      lunch: [null],
       // Almuerzo desde - Campo requerido para indicar la hora de inicio del almuerzo
       // Lunch from - Required field indicating the start time of lunch
       lunchFrom: [null],
@@ -455,7 +452,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       lunchTo: [null],
       // Merienda AM - Campo requerido para indicar si el sitio tiene merienda AM
       // Snack AM - Required field indicating if the site has snack AM
-      snackAM: [false],
+      snackAM: [null],
       // Merienda AM desde - Campo requerido para indicar la hora de inicio de la merienda AM
       // Snack AM from - Required field indicating the start time of snack AM
       snackAMFrom: [null],
@@ -464,7 +461,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackAMTo: [null],
       // Merienda PM - Campo requerido para indicar si el sitio tiene merienda PM
       // Snack PM - Required field indicating if the site has snack PM
-      snackPM: [false],
+      snackPM: [null],
       // Merienda PM desde - Campo requerido para indicar la hora de inicio de la merienda PM
       // Snack PM from - Required field indicating the start time of snack PM
       snackPMFrom: [null],
@@ -473,7 +470,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackPMTo: [null],
       // Cena - Campo requerido para indicar si el sitio tiene cena
       // Dinner - Required field indicating if the site has dinner
-      dinner: [false],
+      dinner: [null],
       // Cena desde - Campo requerido para indicar la hora de inicio de la cena
       // Dinner from - Required field indicating the start time of dinner
       dinnerFrom: [null],
@@ -482,7 +479,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       dinnerTo: [null],
       // Merienda nocturna - Campo requerido para indicar si el sitio tiene merienda nocturna
       // Snack night - Required field indicating if the site has snack night
-      snackNight: [false],
+      snackNight: [null],
       // Merienda nocturna desde - Campo requerido para indicar la hora de inicio de la merienda nocturna
       // Snack night from - Required field indicating the start time of snack night
       snackNightFrom: [null],
@@ -491,7 +488,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackNightTo: [null],
       // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
       // Cena Horario Extendido (si, no)
-      dinnerExtended: [false],
+      dinnerExtended: [null],
       // Horario desde para la cena horario extendido
       dinnerExtendedFrom: [null],
       // Horario hasta para la cena horario extendido
@@ -723,8 +720,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
-      // Verificar sitio principal - se establecerá en onSetForm con el valor correcto
-      // this.isMainSite = !resolvedData.hasMainSite; // Comentado: lógica incorrecta
 
       // Usar la sitio del resolver
       // Use site from resolver
@@ -773,6 +768,12 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      this._changeDetectorRef.detectChanges();
+    });
+
+    // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
+    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
+      this.updateCenterTypeFieldVisibility(organizationType);
       this._changeDetectorRef.detectChanges();
     });
 
@@ -989,21 +990,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   onSetForm(param: Site): void {
     this.param = param;
-    // this.isMainSite = param.isMainSite || false; // TODO: Add to Site model
-
-    const mainSiteControl = this.headerConfig.formGroup.get('mainSite');
-
-    // Si este sitio es el principal, no debería poder seleccionar un sitio principal
-    if (this.isMainSite) {
-      mainSiteControl.disable();
-      mainSiteControl.clearValidators();
-      mainSiteControl.setValue(null);
-    } else {
-      mainSiteControl.enable();
-      //mainSiteControl.setValidators([Validators.required]);
-    }
-
-    mainSiteControl.updateValueAndValidity();
 
     // Obtener las ciudades y regiones
     // Get cities and regions
@@ -1039,7 +1025,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const snackPMFrom: Date | null = siteService ? toTimeDate(siteService.snackPMFrom) : null;
     const snackPMTo: Date | null = siteService ? toTimeDate(siteService.snackPMTo) : null;
 
-    // const mainSite = param.mainSite; // TODO: Add to Site model
 
     // Campos adicionales
     const dinnerFrom: Date | null = siteService ? toTimeDate(siteService.dinnerFrom) : null;
@@ -1071,7 +1056,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     this.headerConfig.formGroup.patchValue({
       name: param.name,
-      // mainSite: mainSite, // TODO: Add to Site model
       address: param.address || null,
       city: city,
       region: region,
@@ -1279,14 +1263,12 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const reviewDate = formValues.reviewDate;
     const reviewJustification = formValues.reviewJustification;
 
-    const mainSiteId = formValues.mainSite?.id;
 
     // Construir el objeto de actualización
     // Build the update object
     const siteRequest: SiteRequest = {
       id: this.param.id,
       agencyId: this.agencyId,
-      // mainSiteId: mainSiteId, // TODO: Add to SiteRequest model
       name: formValues.name,
       address: formValues.address,
       cityId: cityId,
@@ -1333,7 +1315,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       reviewDate: reviewDate ?? null,
       reviewJustification: reviewJustification ?? null,
       // Campos requeridos por el stored procedure 104_UpdateSite
-      isMainSite: this.isMainSite ?? false,
       serviceTime: formValues.serviceTime ?? null,
       isActive: formValues.isActive ?? true,
       inactiveJustification: formValues.inactiveJustification ?? null,
@@ -1718,13 +1699,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
   }
 
-  /**
-   * Limpia el campo de la escuela principal
-   * Clears the main school field
-   */
-  onClearMainSite() {
-    this.headerConfig.formGroup.get('mainSite').setValue(null);
-  }
 
   /**
    * Edita un elemento de la tabla
@@ -1882,6 +1856,22 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
 
     distributionTypeControl?.updateValueAndValidity();
+  }
+
+  /**
+   * Actualiza la visibilidad del campo Tipo de Centro basado en el tipo de organización seleccionado
+   */
+  private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
+    if (organizationType) {
+      this.showCenterTypeField = organizationType.requiresCenterType;
+
+      // Si no requiere tipo de centro, limpiar el valor del campo
+      if (!organizationType.requiresCenterType) {
+        this.headerConfig.formGroup.get('centerType')?.setValue(null);
+      }
+    } else {
+      this.showCenterTypeField = false;
+    }
   }
 
   /**

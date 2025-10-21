@@ -56,28 +56,6 @@
           </mat-form-field>
         </div>
 
-        <!-- Mostramos la lista de sitios Para seleccionar el sitio principal -->
-        <div *ngIf="!isMainSite" class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <div class="flex gap-2 justify-center items-center">
-            <mat-form-field class="w-full" data-cy="main-site-field" [subscriptSizing]="'dynamic'">
-              <mat-select [formControlName]="'mainSite'" data-cy="main-site-select" [compareWith]="compareById">
-                <mat-option *ngFor="let site of listSites" [value]="site" data-cy="main-site-option">{{ site.name }}</mat-option>
-              </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('mainSite').hasError('required')">{{ "sites.add.main-site.required" | transloco }}</mat-error>
-            </mat-form-field>
-            <button
-              mat-icon-button
-              type="button"
-              (click)="onClearMainSite()"
-              matTooltip="{{ 'sites.add.main-site.clear' | transloco }}"
-              data-cy="clear-main-site-button"
-              aria-label="Limpiar selección de sitio principal"
-            >
-              <mat-icon class="icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
-            </button>
-          </div>
-        </div>
-
         <!-- ✅ VERIFICADO: Dirección física - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Datos de la dirección física del sitio / Site physical address data -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
@@ -150,7 +128,7 @@
               (click)="window.open('https://www.gps-coordinates.net/', '_blank')"
               data-cy="gps-coordinates-button"
             >
-              <mat-icon class="text-hint">info</mat-icon>
+              <mat-icon class="text-hint">language</mat-icon>
             </button>
           </div>
         </div>
@@ -231,7 +209,9 @@
 
         <!-- ✅ VERIFICADO: Es una organización sin fines de lucro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Es una organización sin fines de lucro? / Is it a non-profit organization? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <!-- ✅ VERIFICADO: Matrícula General - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Matrícula General / General Enrollment -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "sites.add.non-profit.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'nonProfit'" data-cy="non-profit-select">
@@ -240,6 +220,20 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('nonProfit').hasError('required')">{{ "sites.add.non-profit.required" | transloco }}</mat-error>
+          </mat-form-field>
+          <mat-form-field data-cy="general-enrollment-field">
+            <mat-label>{{ "sites.add.general-enrollment.label" | transloco }}</mat-label>
+            <input
+              matInput
+              type="number"
+              min="0"
+              [formControlName]="'generalEnrollment'"
+              placeholder="{{ 'sites.add.general-enrollment.placeholder' | transloco }}"
+              data-cy="general-enrollment-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('generalEnrollment').hasError('pattern')">
+              {{ "validation.numeric" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -287,7 +281,7 @@
 
         <!-- ✅ VERIFICADO: Matrícula General - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Matrícula General / General Enrollment -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
           <mat-form-field data-cy="general-enrollment-field">
             <mat-label>{{ "sites.add.general-enrollment.label" | transloco }}</mat-label>
             <input
@@ -302,7 +296,7 @@
               {{ "validation.numeric" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && !shouldShowDayCareFields()">
@@ -365,7 +359,7 @@
 
         <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ Day Care Home ❌ -->
         <!-- Tipo de Centro / Center Type -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM && showCenterTypeField">
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "sites.add.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
@@ -393,6 +387,13 @@
           <p class="text-lg font-medium">{{ "sites.add.operating-dates.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.add.operating-dates.description" | transloco }}</p>
         </div> -->
+
+        <!-- TITULO -->
+        <!-- Días de Funcionamiento -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">
+          <p class="text-lg font-medium">{{ "sites.add.operating-dates.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sites.add.operating-dates.description" | transloco }}</p>
+        </div>
 
         <!-- Dias de funcionamiento desde -->
         <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ Day Care Home ❌ -->
@@ -841,39 +842,6 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
-        <!-- Almuerzo / Lunch -->
-        <!-- Horario desde para el almuerzo -->
-        <!-- Horario hasta para el almuerzo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="lunch-field">
-            <mat-label>{{ "sites.add.lunch.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="lunch-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="lunch-from-field">
-            <mat-label>{{ "sites.add.lunch-from.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.lunch-from.placeholder' | transloco }}"
-              formControlName="lunchFrom"
-              [matTimepicker]="pickerLunchFrom"
-              data-cy="lunch-from-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
-            <mat-timepicker #pickerLunchFrom />
-          </mat-form-field>
-          <mat-form-field data-cy="lunch-to-field">
-            <mat-label>{{ "sites.add.lunch-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'sites.add.lunch-to.placeholder' | transloco }}" formControlName="lunchTo" [matTimepicker]="pickerLunchTo" data-cy="lunch-to-input" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
-            <mat-timepicker #pickerLunchTo />
-          </mat-form-field>
-        </div>
-
         <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda AM / Snack AM -->
         <!-- Horario desde para la merienda AM -->
@@ -910,6 +878,39 @@
             />
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
             <mat-timepicker #pickerSnackAMTo />
+          </mat-form-field>
+        </div>
+
+        <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- Almuerzo / Lunch -->
+        <!-- Horario desde para el almuerzo -->
+        <!-- Horario hasta para el almuerzo -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
+          <mat-form-field data-cy="lunch-field">
+            <mat-label>{{ "sites.add.lunch.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="lunch-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field data-cy="lunch-from-field">
+            <mat-label>{{ "sites.add.lunch-from.label" | transloco }}</mat-label>
+            <input
+              matInput
+              placeholder="{{ 'sites.add.lunch-from.placeholder' | transloco }}"
+              formControlName="lunchFrom"
+              [matTimepicker]="pickerLunchFrom"
+              data-cy="lunch-from-input"
+            />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
+            <mat-timepicker #pickerLunchFrom />
+          </mat-form-field>
+          <mat-form-field data-cy="lunch-to-field">
+            <mat-label>{{ "sites.add.lunch-to.label" | transloco }}</mat-label>
+            <input matInput placeholder="{{ 'sites.add.lunch-to.placeholder' | transloco }}" formControlName="lunchTo" [matTimepicker]="pickerLunchTo" data-cy="lunch-to-input" />
+            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
+            <mat-timepicker #pickerLunchTo />
           </mat-form-field>
         </div>
 
@@ -1187,29 +1188,33 @@
         </div>
 
         <!-- TITULO -->
-        <!-- Administrador/Representante Autorizado -->
+        <!-- Persona a Cargo -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.add.administrator-authorized.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.add.administrator-authorized.description" | transloco }}</p>
         </div>
 
-        <!-- ✅ VERIFICADO: Nombre Completo del Administrador o Representante - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Nombre Completo de la Persona a Cargo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ✅ VERIFICADO: Teléfono del Sitio - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ✅ VERIFICADO: Extensión - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ✅ VERIFICADO: Teléfono Móvil - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
-          <mat-form-field data-cy="administrator-authorized-name-field">
+          <mat-form-field data-cy="person-in-charge-name-field">
             <mat-label>{{ "sites.add.administrator-authorized-name.label" | transloco }}</mat-label>
             <input
               matInput
               [formControlName]="'administratorAuthorizedName'"
-              placeholder="{{ 'sites.add.administrator-authorized-name.placeholder' | transloco }}"
-              data-cy="administrator-authorized-name-input"
+              placeholder="{{ 'sites.add.person-in-charge-name.placeholder' | transloco }}"
+              data-cy="person-in-charge-name-input"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('administratorAuthorizedName').hasError('required')">{{
+              "sites.add.administrator-authorized-name.required" | transloco
+            }}</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="site-phone-field">
             <mat-label>{{ "sites.add.site-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" data-cy="site-phone-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('sitePhone').hasError('required')">{{ "sites.add.site-phone.required" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="extension-field">
             <mat-label>{{ "sites.add.extension.label" | transloco }}</mat-label>
@@ -1218,22 +1223,26 @@
           <mat-form-field data-cy="mobile-phone-field">
             <mat-label>{{ "sites.add.mobile-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" data-cy="mobile-phone-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('mobilePhone').hasError('required')">{{ "sites.add.mobile-phone.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Nombre Completo del Administrador o Representante (Nombre de Proveedor) (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
+        <!-- ✅ VERIFICADO: Nombre Completo de la Persona a Cargo (Nombre de Proveedor) (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <!-- Fecha de Nacimiento del Proveedor / Provider Birth Date -->
         <!-- ✅ VERIFICADO: Teléfono del Sitio (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <!-- ✅ VERIFICADO: Teléfono Móvil (Day Care Home) - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="administrator-authorized-name-field">
+          <mat-form-field data-cy="person-in-charge-name-field">
             <mat-label>{{ "sites.add.administrator-authorized-name.label" | transloco }}</mat-label>
             <input
               matInput
               [formControlName]="'administratorAuthorizedName'"
-              placeholder="{{ 'sites.add.administrator-authorized-name.placeholder' | transloco }}"
-              data-cy="administrator-authorized-name-input"
+              placeholder="{{ 'sites.add.person-in-charge-name.placeholder' | transloco }}"
+              data-cy="person-in-charge-name-input"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('administratorAuthorizedName').hasError('required')">{{
+              "sites.add.administrator-authorized-name.required" | transloco
+            }}</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="administrator-birth-date-field">
             <mat-label>{{ "sites.add.administrator-birth-date.label" | transloco }}</mat-label>
@@ -1251,10 +1260,12 @@
           <mat-form-field data-cy="site-phone-field">
             <mat-label>{{ "sites.add.site-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" data-cy="site-phone-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('sitePhone').hasError('required')">{{ "sites.add.site-phone.required" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="mobile-phone-field">
             <mat-label>{{ "sites.add.mobile-phone.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" data-cy="mobile-phone-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('mobilePhone').hasError('required')">{{ "sites.add.mobile-phone.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
       </div>

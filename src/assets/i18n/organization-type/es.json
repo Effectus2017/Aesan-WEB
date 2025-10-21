@@ -1,8 +1,8 @@
 {
   "list": {
-    "title": "Tipos de organización",
+    "title": "Tipos de Organización",
     "search": {
-      "placeholder": "Buscar tipo de organización"
+      "placeholder": "Buscar tipo de Organización"
     },
     "table": {
       "columns": {
@@ -18,12 +18,12 @@
       }
     },
     "buttons": {
-      "add": "Agregar tipo de organización",
+      "add": "Agregar tipo de Organización",
       "save": "Guardar"
     }
   },
   "add": {
-    "title": "Agregar tipo de organización",
+    "title": "Agregar tipo de Organización",
     "name": "Nombre",
     "name-placeholder": "Ingrese el nombre",
     "name-error": "El nombre es obligatorio",
@@ -39,7 +39,7 @@
     }
   },
   "edit": {
-    "title": "Editar tipo de organización",
+    "title": "Editar tipo de Organización",
     "name": "Nombre",
     "name-placeholder": "Ingrese el nombre",
     "name-error": "El nombre es obligatorio",

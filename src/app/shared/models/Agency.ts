@@ -63,7 +63,6 @@ export interface Agency {
 class InscriptionResponse {
     appointmentCoordinated?: boolean;
     appointmentDate?: string | null;
-    atRiskService?: boolean;
     basicEducationRegistry?: boolean | null;
     extendedHours?: boolean | null;
     comments?: string | null;
@@ -74,11 +73,9 @@ class InscriptionResponse {
     isDayCareHome?: boolean;
     nationalYouthProgram?: boolean;
     nonProfit?: boolean;
-    organizedAthleticPrograms?: boolean;
     publicAllianceContract?: OptionSelection | null;
     publicAllianceContractId?: number | null;
     rejectionJustification?: string | null;
-    serviceTime?: string | null;
     stateFundsDenied?: boolean;
     stateFundsDeniedReason?: string | null;
     taxExemptionStatus?: OptionSelection | null;

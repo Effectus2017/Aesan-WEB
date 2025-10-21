@@ -123,7 +123,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Opciones de Tipo de Participantes
   participantTypeOptions: OptionSelection[] = [];
 
-  // Tipo de Organización Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
+  // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for site classification
   organizationTypes: OrganizationType[] = [];
 
@@ -212,9 +212,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Nombre del sitio - Campo requerido para identificar el sitio
       // Site name - Required field for identifying the site
       name: ['', Validators.required],
-      // Sitio principal - Campo para seleccionar el sitio principal (solo si no es sitio principal)
-      // Main site - Field for selecting the main site (only if not main site)
-      mainSite: [null],
       // Dirección física - Campo requerido para la ubicación del sitio
       // Physical address - Required field for site location
       address: ['', Validators.required],
@@ -325,27 +322,27 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       operatingPolicy: [null],
       // Disponibilidad de almacén - Indica si el sitio tiene instalaciones de almacenamiento
       // Warehouse availability - Indicates if site has storage facilities
-      hasWarehouse: [false],
+      hasWarehouse: [null],
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
-      hasDiningRoom: [false],
+      hasDiningRoom: [null],
       // Administrador/Representante Autorizado
       // Administrator/Authorized Representative
       // Nombre Completo del Administrador o Representante
       // Full name of the administrator or representative
-      administratorAuthorizedName: [''],
+      administratorAuthorizedName: ['', Validators.required],
       // Teléfono del Sitio
       // Site phone
-      sitePhone: [''],
+      sitePhone: ['', Validators.required],
       // Extensión
       // Extension
       extension: [''],
       // Teléfono Móvil
       // Mobile phone
-      mobilePhone: [''],
+      mobilePhone: ['', Validators.required],
       // Desayuno (si, no)
       // Breakfast (yes, no)
-      breakfast: [false],
+      breakfast: [null],
       // Horario desde para el desayuno
       // Breakfast schedule from
       breakfastFrom: [null],
@@ -354,7 +351,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       breakfastTo: [null],
       // Almuerzo (si, no)
       // Lunch (yes, no)
-      lunch: [false],
+      lunch: [null],
       // Horario desde para el almuerzo
       // Lunch schedule from
       lunchFrom: [null],
@@ -363,7 +360,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       lunchTo: [null],
       // Merienda AM (si, no)
       // Snack AM (yes, no)
-      snackAM: [false],
+      snackAM: [null],
       // Horario desde para la merienda AM
       // Snack AM schedule from
       snackAMFrom: [null],
@@ -372,7 +369,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       snackAMTo: [null],
       // Merienda PM (si, no)
       // Snack PM (yes, no)
-      snackPM: [false],
+      snackPM: [null],
       // Horario desde para la merienda PM
       // Snack PM schedule from
       snackPMFrom: [null],
@@ -393,7 +390,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       experience: [null],
       // Cena (si, no)
       // Dinner (yes, no)
-      dinner: [false],
+      dinner: [null],
       // Horario desde para la cena
       // Dinner schedule from
       dinnerFrom: [null],
@@ -402,7 +399,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       dinnerTo: [null],
       // Merienda nocturna (si, no)
       // Snack night (yes, no)
-      snackNight: [false],
+      snackNight: [null],
       // Horario desde para la merienda nocturna
       // Snack night schedule from
       snackNightFrom: [null],
@@ -412,28 +409,28 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
       // Cena Horario Extendido (si, no)
-      dinnerExtended: [false],
+      dinnerExtended: [null],
       // Horario desde para la cena horario extendido
       dinnerExtendedFrom: [null],
       // Horario hasta para la cena horario extendido
       dinnerExtendedTo: [null],
 
       // Cena en Riesgo (si, no)
-      dinnerAtRisk: [false],
+      dinnerAtRisk: [null],
       // Horario desde para la cena en riesgo
       dinnerAtRiskFrom: [null],
       // Horario hasta para la cena en riesgo
       dinnerAtRiskTo: [null],
 
       // Merienda Horario Extendido (si, no)
-      snackExtended: [false],
+      snackExtended: [null],
       // Horario desde para la merienda horario extendido
       snackExtendedFrom: [null],
       // Horario hasta para la merienda horario extendido
       snackExtendedTo: [null],
 
       // Merienda en Riesgo (si, no)
-      snackAtRisk: [false],
+      snackAtRisk: [null],
       // Horario desde para la merienda en riesgo
       snackAtRiskFrom: [null],
       // Horario hasta para la merienda en riesgo
@@ -487,11 +484,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: [false],
+      organizedAthleticPrograms: [null],
 
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: [false],
+      atRiskService: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -515,8 +512,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   agencyId: number = 0;
   agency: Agency = null;
 
-  // Si el sitio es el principal
-  isMainSite: boolean = true;
 
   // Propiedades para controlar visibilidad según programa
   isPDAM: boolean = false;
@@ -525,6 +520,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   isPFHF: boolean = false;
   isPDFE: boolean = false;
   isAESAN: boolean = false;
+
+  // Propiedad para controlar visibilidad del campo Tipo de Centro
+  showCenterTypeField: boolean = false;
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
@@ -637,8 +635,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
 
-      // Verificar sitio principal
-      //this.isMainSite = !resolvedData.hasMainSite;
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
@@ -679,6 +675,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
       this.calculateOperatingDays();
     });
+
+    // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
+    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
+      this.updateCenterTypeFieldVisibility(organizationType);
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   private calculateOperatingDays(): void {
@@ -702,6 +704,22 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.headerConfig.formGroup.patchValue({
         operatingDaysCalculated: null,
       });
+    }
+  }
+
+  /**
+   * Actualiza la visibilidad del campo Tipo de Centro basado en el tipo de organización seleccionado
+   */
+  private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
+    if (organizationType) {
+      this.showCenterTypeField = organizationType.requiresCenterType;
+
+      // Si no requiere tipo de centro, limpiar el valor del campo
+      if (!organizationType.requiresCenterType) {
+        this.headerConfig.formGroup.get('centerType')?.setValue(null);
+      }
+    } else {
+      this.showCenterTypeField = false;
     }
   }
 
@@ -1099,12 +1117,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Review justification
       reviewJustification: formValues.reviewJustification ?? null,
 
-      // Si el sitio es el principal
-      // If the site is the main site
-      // isMainSite: this.isMainSite, // TODO: Add to SiteRequest model
-      // ID del sitio principal (si no es sitio principal)
-      // Main site ID (if not main site)
-      // mainSiteId: formValues.mainSite?.id ?? null, // TODO: Add to SiteRequest model
 
       // Matrícula General
       // General Enrollment
@@ -1833,13 +1845,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.pacnaValidationMessage = { type: null, message: null };
   }
 
-  /**
-   * Limpia el campo del sitio principal
-   * Clears the main site field
-   */
-  onClearMainSite() {
-    this.headerConfig.formGroup.get('mainSite').setValue(null);
-  }
 
 
   /**
