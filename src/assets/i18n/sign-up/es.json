@@ -10,12 +10,12 @@
       "required-close": "Cerrar"
     },
     "non-profit": {
-      "label": "¿Es una organización sin fines de lucro?",
+      "label": "¿Su entidad es una organización sin fines de lucro?",
       "yes": "Sí",
       "no": "No"
     },
     "basic-education-registry": {
-      "label": "¿Posee Certificación de Registro de Educación Básica?"
+      "label": "¿Posee Certificación de Registro de Educación Básica vigente?"
     },
     "extended-hours": {
       "label": "¿Está interesado en participar de horario extendido?"

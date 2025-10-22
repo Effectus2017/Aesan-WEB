@@ -881,19 +881,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const commentsControl = this.headerConfig.formGroup.get('comments');
 
     if (this.isEmployee) {
-      // Para empleados: clasificación requerida, fecha de nacimiento no requerida
+      // Para empleados: clasificación requerida, fecha de nacimiento requerida
       staffClassificationControl?.setValidators([Validators.required]);
-      birthDateControl?.clearValidators();
-
-            // IMPORTANTE: Resetear el valor del campo birthDate cuando no es requerido
-      if (birthDateControl?.value) {
-        birthDateControl.setValue(null, { emitEvent: false });
-      }
-
-      // Limpiar completamente el estado de validación del campo birthDate
-      birthDateControl?.markAsUntouched();
-      birthDateControl?.markAsPristine();
-      birthDateControl?.setErrors(null);
+      birthDateControl?.setValidators([Validators.required]);
 
       // Los campos de nombre SÍ son requeridos para empleados también
       firstNameControl?.setValidators([Validators.required]);
@@ -927,6 +917,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Forzar actualización inmediata del estado de validez después de limpiar
       firstNameControl?.updateValueAndValidity({ emitEvent: false });
       fatherLastNameControl?.updateValueAndValidity({ emitEvent: false });
+      birthDateControl?.updateValueAndValidity({ emitEvent: false });
       motherLastNameControl?.updateValueAndValidity({ emitEvent: false });
       birthDateControl?.updateValueAndValidity({ emitEvent: false });
       emailControl?.updateValueAndValidity({ emitEvent: false });

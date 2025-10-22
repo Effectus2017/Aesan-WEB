@@ -339,7 +339,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       extension: [''],
       // Teléfono Móvil
       // Mobile phone
-      mobilePhone: ['', Validators.required],
+      mobilePhone: [''],
       // Desayuno (si, no)
       // Breakfast (yes, no)
       breakfast: [null],

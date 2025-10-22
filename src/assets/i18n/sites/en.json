@@ -118,7 +118,7 @@
                 "required": "Centers are required"
             },
             "non-profit": {
-                "label": "Is it a non-profit organization?",
+                "label": "Is your entity a non-profit organization?",
                 "required": "This field is required"
             },
             "start-date": {
@@ -235,7 +235,7 @@
                 "description": "Person in charge information"
             },
             "administrator-authorized-name": {
-                "label": "Full Name of Person in Charge",
+                "label": "Person in Charge",
                 "placeholder": "Full name of person in charge",
                 "required": "Full name of person in charge is required"
             },
@@ -829,7 +829,7 @@
                 "required": "Organization type is required"
             },
             "non-profit": {
-                "label": "Is it a non-profit organization?",
+                "label": "Is your entity a non-profit organization?",
                 "required": "This field is required"
             },
             "start-date": {
@@ -874,7 +874,7 @@
                 "hint": "This field is calculated automatically based on the configured operating dates"
             },
             "operating-dates": {
-                "label": "Operating Dates",
+                "label": "Operating Days",
                 "description": "Site operating period"
             },
             "service-time": {
@@ -947,7 +947,7 @@
                 "description": "Person in charge information"
             },
             "administrator-authorized-name": {
-                "label": "Full Name of Person in Charge",
+                "label": "Person in Charge",
                 "placeholder": "Full name of person in charge",
                 "required": "Full name of person in charge is required"
             },

@@ -431,7 +431,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       extension: [''],
       // Teléfono móvil - Campo requerido para indicar el teléfono móvil del sitio
       // Mobile phone - Required field indicating the mobile phone of the site
-      mobilePhone: ['', Validators.required],
+      mobilePhone: [''],
       // Desayuno - Campo requerido para indicar si el sitio tiene desayuno
       // Breakfast - Required field indicating if the site has breakfast
       breakfast: [false],

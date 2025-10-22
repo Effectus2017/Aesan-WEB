@@ -113,8 +113,8 @@
 
         <!-- Campos de Fecha de Nacimiento y Email -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <!-- Birth Date (solo para miembros de junta) -->
-          <mat-form-field data-cy="birth-date-field" *ngIf="isBoardMember">
+          <!-- Birth Date (para miembros de junta y empleados) -->
+          <mat-form-field data-cy="birth-date-field" *ngIf="isBoardMember || isEmployee">
             <mat-label>{{ "staff.add.birthDate.label" | transloco }}</mat-label>
             <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" [placeholder]="'staff.add.birthDate.placeholder' | transloco" data-cy="birthDate-input" />
             <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
@@ -128,7 +128,7 @@
           </mat-form-field>
 
           <!-- Email -->
-          <mat-form-field data-cy="email-field" [class.sm:col-span-2]="!isBoardMember" *ngIf="!isEmployee">
+          <mat-form-field data-cy="email-field" [class.sm:col-span-2]="!isBoardMember && !isEmployee" *ngIf="!isEmployee">
             <mat-label>{{ "staff.add.email.label" | transloco }}</mat-label>
             <input matInput formControlName="email" type="email" [placeholder]="'staff.add.email.placeholder' | transloco" data-cy="email-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">

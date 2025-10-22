@@ -892,9 +892,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const commentsControl = this.headerConfig.formGroup.get('comments');
 
     if (this.isEmployee) {
-      // Para empleados: clasificación requerida, fecha de nacimiento no requerida
+      // Para empleados: clasificación requerida, fecha de nacimiento requerida
       staffClassificationControl?.setValidators([Validators.required]);
-      birthDateControl?.clearValidators();
+      birthDateControl?.setValidators([Validators.required]);
       // Los campos de nombre SÍ son requeridos para empleados también
       firstNameControl?.setValidators([Validators.required]);
       fatherLastNameControl?.setValidators([Validators.required]);

@@ -90,8 +90,8 @@
     "birthDate": {
       "showFor": ["employee", "board-member", "other"],
       "hideFor": [],
-      "requiredFor": ["board-member", "other"],
-      "optionalFor": ["employee"],
+      "requiredFor": ["employee", "board-member", "other"],
+      "optionalFor": [],
       "roles": [],
       "permissions": [],
       "minRoleLevel": 2

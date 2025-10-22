@@ -5,12 +5,12 @@
       "label": "What program are you interested in sponsoring?"
     },
     "non-profit": {
-      "label": "Is it a non-profit organization?",
+      "label": "Is your entity a non-profit organization?",
       "yes": "Yes",
       "no": "No"
     },
     "basic-education-registry": {
-      "label": "Do you have Basic Education Registry Certification?"
+      "label": "Do you have valid Basic Education Registry Certification?"
     },
     "extended-hours": {
       "label": "Are you interested in participating in extended hours?"
