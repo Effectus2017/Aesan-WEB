@@ -23,20 +23,22 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, compareItems, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
+import { Region } from 'app/shared/models/Region';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NgClass } from '@angular/common';
 import { FuseConfigService } from '@fuse/services/config';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
-import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { AgencyStatus } from 'app/shared/models/AgencyStatus';
 import { NotificationService } from 'app/shared/services/notification.service';
@@ -68,6 +70,7 @@ import { ActivatedRoute } from '@angular/router';
         MatSnackBarModule,
         MatDialogModule,
         MatDatepickerModule,
+        MatTooltipModule,
     ]
 })
 export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -84,6 +87,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _translocoService = inject(TranslocoService);
   private _notificationService = inject(NotificationService);
   private _dialog = inject(MatDialog);
+  private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfigService = inject(FuseConfigService);
   private _route = inject(ActivatedRoute);
@@ -92,32 +96,39 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   listPrograms: Program[] = [];
   listCities: City[] = [];
   listRegions: Region[] = [];
+  listPostalRegions: Region[] = [];
+  listUsers: any[] = [];
+  yesNoOptions: OptionSelection[] = [];
+  exceptionStatusOptions: OptionSelection[] = [];
+  taxExemptionTypeOptions: OptionSelection[] = [];
+  // Campos de la cuarta fila
+  typeOfEntityOptions: OptionSelection[] = [];
+  typeOfApplicantOptions: OptionSelection[] = [];
+  publicAllianceContractOptions: OptionSelection[] = [];
 
   listAppointmentCoordinated = [
-    { id: 1, name: 'sponsorEvaluation.edit.options.yes', value: true },
-    { id: 2, name: 'sponsorEvaluation.edit.options.no', value: false },
+    { id: 1, name: 'sponsor-evaluation.edit.options.yes', value: true },
+    { id: 2, name: 'sponsor-evaluation.edit.options.no', value: false },
   ];
 
   param: Agency;
 
-  compareItems = compareItems
+  compareItems = compareItems;
+  compareMonitors = compareMonitors;
+  comparePostal = comparePostal;
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
-    title: 'sponsorEvaluation.edit.title',
+    title: 'sponsor-evaluation.edit.title',
     formGroup: this._formBuilder.group({
-      program: [{ value: null, disabled: true }],
+      // program: [{ value: null, disabled: true }], // Comentado temporalmente
       name: [{ value: null, disabled: true }],
       status: [null, Validators.required],
-      // Datos de la UIe
+      // Datos de la IUE
       uieNumber: [{ value: null, disabled: true }],
-      // Datos de la ciudad y región
-      city: [{ value: null, disabled: true }],
-      region: [{ value: null, disabled: true }],
-      // Dirección y Coordenadas
-      address: [{ value: null, disabled: true }],
-      phone: [{ value: null, disabled: true }],
-      zipCode: [{ value: null, disabled: true }],
+      // Datos adicionales de la agencia
+      sdrNumber: [{ value: null, disabled: true }],
+      einNumber: [{ value: null, disabled: true }],
       // Datos del Contacto
       firstName: [{ value: null, disabled: true }],
       middleName: [{ value: null, disabled: true }],
@@ -134,6 +145,35 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       rejectionJustification: [null],
       // Comentarios
       comments: [null],
+      // Monitor/Asignado a
+      monitor: [null],
+      // Campos de la tercera fila
+      basicEducationRegistry: [null],
+      taxExemptionStatusId: [null],
+      taxExemptionTypeId: [null],
+      // Campos de la cuarta fila
+      typeOfEntityId: [null],
+      typeOfApplicantId: [null],
+      publicAllianceContractId: [null],
+      // Campos de fondos denegados
+      stateFundsDenied: [null],
+      federalFundsDenied: [null],
+      stateFundsDeniedReason: [null],
+      federalFundsDeniedReason: [null],
+      // Campos de dirección física
+      address: [null, Validators.required],
+      zipCode: [null, [Validators.required]],
+      city: [null, Validators.required],
+      region: [null, Validators.required],
+      latitude: [null, Validators.required],
+      longitude: [null, Validators.required],
+      // Copiar Dirección Física
+      sameAsPhysicalAddress: [false],
+      // Campos de dirección postal
+      postalAddress: [null, Validators.required],
+      postalZipCode: [null, Validators.required],
+      postalCity: [null, Validators.required],
+      postalRegion: [null, Validators.required],
     }),
     saveButtonText: 'global.buttons.save',
     saveButtonShow: true,
@@ -152,6 +192,14 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.listRegions = resolvedData.regions;
       this.listPrograms = resolvedData.programs;
       this.listAgencyStatus = resolvedData.agencyStatuses;
+      this.listUsers = resolvedData.users;
+      this.yesNoOptions = resolvedData.yesNoOptions;
+      this.exceptionStatusOptions = resolvedData.exceptionStatusOptions;
+      this.taxExemptionTypeOptions = resolvedData.taxExemptionTypeOptions;
+      // Campos de la cuarta fila
+      this.typeOfEntityOptions = resolvedData.typeOfEntityOptions;
+      this.typeOfApplicantOptions = resolvedData.typeOfApplicantOptions;
+      this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
       this.onSetForm(resolvedData.agency);
       this._changeDetectorRef.detectChanges();
     }
@@ -189,23 +237,20 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     this.param = param;
 
     if (isNullOrUndefinedEmptyStringNullArray(param.programs)) {
-      this._notificationService.showError(this._translocoService.translate('sponsorEvaluation.edit.messages.noProgramsAssigned'));
+      this._notificationService.showError(this._translocoService.translate('sponsor-evaluation.edit.messages.noProgramsAssigned'));
       this._customRouterService.navigate(['sponsor-evaluation']);
       return;
     }
 
     this.headerConfig.formGroup.patchValue({
-      program: param.programs || null,
+      // program: param.programs || null, // Comentado temporalmente
       status: param.status,
       // Datos de la agencia
       name: param.name || null,
       uieNumber: param.uieNumber || null,
-      // Datos de la dirección
-      address: param.address || null,
-      zipCode: param.zipCode || null,
-      // Datos de la ciudad y región
-      city: param.city || null,
-      region: param.region || null,
+      // Datos adicionales de la agencia
+      sdrNumber: param.sdrNumber || null,
+      einNumber: param.einNumber || null,
       // Datos del Contacto
       firstName: param.user.firstName || null,
       middleName: param.user.middleName || null,
@@ -219,6 +264,35 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       appointmentDate: param.appointmentDate,
       // Justificación de Rechazo
       rejectionJustification: param.rejectionJustification,
+      // Monitor/Asignado a
+      monitor: param.monitor || null,
+      // Campos de la tercera fila
+      basicEducationRegistry: param.inscription?.basicEducationRegistry || null,
+      taxExemptionStatusId: param.inscription?.taxExemptionStatusId || null,
+      taxExemptionTypeId: param.inscription?.taxExemptionTypeId || null,
+      // Campos de la cuarta fila
+      typeOfEntityId: param.inscription?.typeOfEntityId || null,
+      typeOfApplicantId: param.inscription?.typeOfApplicantId || null,
+      publicAllianceContractId: param.inscription?.publicAllianceContractId || null,
+      // Campos de fondos denegados
+      stateFundsDenied: param.inscription?.stateFundsDenied || null,
+      federalFundsDenied: param.inscription?.federalFundsDenied || null,
+      stateFundsDeniedReason: param.inscription?.stateFundsDeniedReason || null,
+      federalFundsDeniedReason: param.inscription?.federalFundsDeniedReason || null,
+      // Campos de dirección física
+      address: param.address || null,
+      zipCode: param.zipCode || null,
+      city: param.city || null,
+      region: param.region || null,
+      latitude: param.latitude || null,
+      longitude: param.longitude || null,
+      // Copiar Dirección Física
+      sameAsPhysicalAddress: false,
+      // Campos de dirección postal
+      postalAddress: param.postalAddress || null,
+      postalZipCode: param.postalZipCode || null,
+      postalCity: param.postalCity || null,
+      postalRegion: param.postalRegion || null,
     });
   }
 
@@ -227,7 +301,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
    */
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
-      this._notificationService.showError(this._translocoService.translate('sponsorEvaluation.edit.messages.invalidForm'));
+      this._notificationService.showError(this._translocoService.translate('sponsor-evaluation.edit.messages.invalidForm'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -270,6 +344,118 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     });
   }
 
+  // Método para obtener todas las ciudades según el ID de la región
+  getCitiesByRegionId(region: Region): void {
+    const queryParams: QueryParameters = {
+      regionId: region.id,
+      alls: true,
+    };
+
+    this._geoService.getCitiesByRegionId(queryParams).subscribe({
+      next: (response: HttpResponse<any>) => {
+        this.listCities = response.body;
+      },
+      error: (error) => {
+        console.error('Error al cargar las ciudades:', error);
+      },
+      complete: () => {
+        // Complete callback
+      },
+    });
+  }
+
+  // Método para obtener todas las regiones según el ID de la ciudad
+  getRegionsByCityId(city: City, target: string): void {
+    if (!city) return;
+
+    const queryParameters: QueryParameters = {
+      cityId: city.id,
+    };
+
+    this._geoService.getRegionsByCityId(queryParameters).subscribe({
+      next: (response) => {
+        if (response?.body?.data) {
+          if (target === 'region') {
+            this.listRegions = response.body.data;
+            const regionControl = this.headerConfig.formGroup.get('region');
+
+            if (regionControl) {
+              if (this.listRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Física
+                this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          } else if (target === 'postalRegion') {
+            this.listPostalRegions = response.body.data;
+            const regionControl = this.headerConfig.formGroup.get('postalRegion');
+
+            if (regionControl) {
+              if (this.listPostalRegions.length === 1) {
+                // Asignar automáticamente la única región encontrada para Dirección Postal
+                this.headerConfig.formGroup.patchValue({ postalRegion: this.listPostalRegions[0] });
+              } else {
+                regionControl.setValue(null);
+              }
+            }
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar las regiones:', error);
+      },
+    });
+  }
+
+  // Copiar Dirección Física
+  // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
+  // Si el checkbox no está marcado, limpiar los campos de la dirección postal
+  onCheckboxChange(event: any): void {
+    if (event.checked) {
+      // Primero asignamos los valores básicos
+      this.headerConfig.formGroup.patchValue({
+        postalAddress: this.headerConfig.formGroup.value.address,
+        postalCity: this.headerConfig.formGroup.value.city,
+        postalZipCode: this.headerConfig.formGroup.value.zipCode,
+      });
+
+      // Si hay una ciudad seleccionada, obtenemos sus regiones
+      if (this.headerConfig.formGroup.value.city) {
+        this.getRegionsByCityId(this.headerConfig.formGroup.value.city, 'postalRegion');
+      }
+
+      this.headerConfig.formGroup.updateValueAndValidity();
+    } else {
+      this.headerConfig.formGroup.patchValue({
+        postalAddress: '',
+        postalCity: '',
+        postalRegion: '',
+        postalZipCode: '',
+      });
+    }
+  }
+
+  // Método para obtener la ubicación actual usando GPS
+  getCurrentLocation(): void {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          this.headerConfig.formGroup.patchValue({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+        },
+        (error) => {
+          console.error('Error getting location:', error);
+          this._snackBar.open('Error al obtener la ubicación GPS', 'Cerrar', { duration: 3000 });
+        }
+      );
+    } else {
+      this._snackBar.open('Geolocalización no soportada por este navegador', 'Cerrar', { duration: 3000 });
+    }
+  }
+
   /**
    * Guarda los cambios en la agencia
    */
@@ -298,27 +484,6 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
    * Rechaza la agencia
    */
   onReject() {}
-
-  // Método para obtener todas las regiones según el ID de la ciudad
-  getRegionsByCityId(city: City): void {
-    const queryParams: QueryParameters = {
-      cityId: city.id,
-      alls: true,
-      isList: true,
-    };
-
-    this._geoService.getRegionsByCityId(queryParams).subscribe({
-      next: (response: HttpResponse<any>) => {
-        this.listRegions = response.body;
-      },
-      error: (error) => {
-        console.error('Error al cargar las regiones', error);
-      },
-      complete: () => {
-        console.log('Regiones cargadas con éxito');
-      },
-    });
-  }
 
   compareItemPrograms<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);

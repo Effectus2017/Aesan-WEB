@@ -96,8 +96,8 @@
       "placeholder": "Enter the administrator title"
     },
     "uie": {
-      "label": "# UIE",
-      "placeholder": "Enter the UIE number"
+      "label": "Unique Entity Identifier (UEI)",
+      "placeholder": "Enter the Unique Entity Identifier (UEI)"
     },
     "ein": {
       "label": "Employer Identification Number (EIN)",

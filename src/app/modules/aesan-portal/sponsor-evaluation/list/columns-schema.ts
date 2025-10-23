@@ -4,47 +4,47 @@ export const SPONSOR_EVALUATION_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
-    label: 'sponsorEvaluation.list.table.columns.agencyName'
+    label: 'sponsor-evaluation.list.table.columns.agencyName'
   },
   {
     key: 'uieNumber',
     type: 'text',
-    label: 'sponsorEvaluation.list.table.columns.uieNumber'
+    label: 'sponsor-evaluation.list.table.columns.uieNumber'
   },
   {
     key: 'einNumber',
     type: 'text',
-    label: 'sponsorEvaluation.list.table.columns.einNumber'
+    label: 'sponsor-evaluation.list.table.columns.einNumber'
   },
   {
     key: 'sdrNumber',
     type: 'text',
-    label: 'sponsorEvaluation.list.table.columns.ssPatronal'
+    label: 'sponsor-evaluation.list.table.columns.ssPatronal'
   },
   {
     key: ['user.firstName', 'user.fatherLastName'],
     type: 'combined-text',
     keys: ['user.firstName', 'user.fatherLastName'],
-    label: 'sponsorEvaluation.list.table.columns.createdBy'
+    label: 'sponsor-evaluation.list.table.columns.createdBy'
   },
   {
     key: 'status.name',
     type: 'text',
-    label: 'sponsorEvaluation.list.table.columns.status'
+    label: 'sponsor-evaluation.list.table.columns.status'
   },
   {
     key: 'createdAt',
     type: 'date-time',
-    label: 'sponsorEvaluation.list.table.columns.createdAt'
+    label: 'sponsor-evaluation.list.table.columns.createdAt'
   },
   {
     key: 'actions',
     type: 'button',
-    label: 'sponsorEvaluation.list.table.columns.actions',
+    label: 'sponsor-evaluation.list.table.columns.actions',
     buttons: [
       {
         key: 'edit',
-        label: 'sponsorEvaluation.list.table.buttons.edit'
+        label: 'sponsor-evaluation.list.table.buttons.edit'
       },
     ]
   }

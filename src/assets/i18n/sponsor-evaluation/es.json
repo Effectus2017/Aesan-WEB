@@ -1,5 +1,5 @@
 {
-  "sponsorEvaluation": {
+  "sponsor-evaluation": {
     "list": {
       "title": "Evaluación de Auspiciadores",
       "search": {
@@ -8,7 +8,7 @@
       "table": {
         "columns": {
           "agencyName": "Nombre de Agencia",
-          "uieNumber": "Número UIE",
+          "uieNumber": "Identificador Único de Entidad (IUE)",
           "einNumber": "Número EIN",
           "ssPatronal": "Seguro Social Patronal",
           "createdBy": "Creado por",
@@ -32,6 +32,8 @@
         "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
         "address": "Dirección",
         "addressDescription": "Información de ubicación de la agencia",
+        "postalAddress": "Dirección Postal",
+        "postalAddressDescription": "Información de la dirección postal",
         "userInformation": "Información del Usuario",
         "userInformationDescription": "Datos de contacto del responsable"
       },
@@ -41,32 +43,106 @@
           "placeholder": "Seleccione el programa"
         },
         "status": {
-          "label": "Estado",
-          "placeholder": "Seleccione el estado"
+          "label": "Estatus",
+          "placeholder": "Seleccione el estatus"
+        },
+        "assigned-to": {
+          "label": "Asignado a",
+          "placeholder": "Seleccione el usuario asignado"
         },
         "agency": {
           "label": "Agencia",
           "placeholder": "Nombre de la agencia"
         },
         "uieNumber": {
-          "label": "Número UIE",
-          "placeholder": "Número UIE de la agencia"
+          "label": "Identificador Único de Entidad (IUE)",
+          "placeholder": "Identificador Único de Entidad (IUE) de la agencia"
         },
-        "city": {
-          "label": "Ciudad",
-          "placeholder": "Seleccione la ciudad"
+        "stateDepartmentRegistration": {
+          "label": "Número de Registro del Departamento de Estado",
+          "placeholder": "Ingrese el número de registro del departamento de estado"
         },
-        "region": {
-          "label": "Región",
-          "placeholder": "Seleccione la región"
+        "einNumber": {
+          "label": "Número de Seguro Social Patronal",
+          "placeholder": "Ingrese el número de seguro social patronal"
+        },
+        "basicEducationRegistry": {
+          "label": "¿Su entidad posee certificación de Registro de Educación Básica vigente?",
+          "placeholder": "Seleccione si posee certificación de registro de educación básica"
+        },
+        "taxExemptionStatus": {
+          "label": "¿En qué estatus se encuentra su Exención Contributiva?",
+          "placeholder": "Seleccione el estatus de su exención contributiva"
+        },
+        "taxExemptionType": {
+          "label": "¿Qué tipo de Exención Contributiva tiene?",
+          "placeholder": "Seleccione el tipo de exención contributiva"
+        },
+        "typeOfEntity": {
+          "label": "Tipo de Entidad",
+          "placeholder": "Seleccione el tipo de entidad"
+        },
+        "typeOfApplicant": {
+          "label": "Tipo de Solicitante",
+          "placeholder": "Seleccione el tipo de solicitante"
+        },
+        "publicAllianceContract": {
+          "label": "¿De poseer un contrato Público Alianza especifique su modalidad?",
+          "placeholder": "Seleccione el tipo de contrato público alianza"
+        },
+        "stateFundsDenied": {
+          "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
+          "placeholder": "Seleccione si ha sido denegado de fondos estatales"
+        },
+        "federalFundsDenied": {
+          "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
+          "placeholder": "Seleccione si ha sido denegado de fondos federales"
+        },
+        "stateFundsDeniedReason": {
+          "label": "Razón por la cual fue descalificado o denegado de fondos estatales",
+          "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos estatales"
+        },
+        "federalFundsDeniedReason": {
+          "label": "Razón por la cual fue descalificado o denegado de fondos federales",
+          "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos federales"
         },
         "address": {
           "label": "Dirección",
-          "placeholder": "Dirección completa"
+          "placeholder": "Ingresa la dirección"
+        },
+        "city": {
+          "label": "Municipio",
+          "placeholder": "Selecciona tu municipio"
+        },
+        "region": {
+          "label": "Región",
+          "placeholder": "Selecciona tu región"
         },
         "zipCode": {
           "label": "Código Postal",
-          "placeholder": "Código postal"
+          "placeholder": "Ingresa el código postal"
+        },
+        "latitude": {
+          "label": "Latitud",
+          "placeholder": "Ingresa la latitud"
+        },
+        "longitude": {
+          "label": "Longitud",
+          "placeholder": "Ingresa la longitud"
+        },
+        "postalAddress": {
+          "label": "Dirección Postal",
+          "placeholder": "Ingresa la dirección postal"
+        },
+        "postalZipCode": {
+          "label": "Código Postal",
+          "placeholder": "Ingresa el código postal"
+        },
+        "sameAsPhysicalAddress": {
+          "label": "¿Es la misma dirección física?"
+        },
+        "gps-coordinates": {
+          "tooltip": "Haz clic para obtener las coordenadas GPS"
         },
         "firstName": {
           "label": "Primer Nombre",

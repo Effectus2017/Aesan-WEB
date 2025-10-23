@@ -19,7 +19,7 @@
                     "fatherLastName": "Father's Last Name",
                     "adminTitle": "Admin Title",
                     "nonProfit": "Non Profit",
-                    "uieNumber": "# UIE",
+                    "uieNumber": "Unique Entity Identifier (UEI)",
                     "einNumber": "Employer Identification Number (EIN)",
                     "ssPatronal": "State Department Registration Number",
                     "latitude": "Latitude",
@@ -68,8 +68,8 @@
                 "placeholder": "Enter state department registration number"
             },
             "uieNumber": {
-                "label": "UIE Number",
-                "placeholder": "Enter UIE number"
+                "label": "Unique Entity Identifier (UEI)",
+                "placeholder": "Enter Unique Entity Identifier (UEI)"
             },
             "einNumber": {
                 "label": "EIN Number",

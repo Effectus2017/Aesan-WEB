@@ -1,5 +1,5 @@
 {
-  "sponsorEvaluation": {
+  "sponsor-evaluation": {
     "list": {
       "title": "Sponsor Evaluation",
       "search": {
@@ -8,7 +8,7 @@
       "table": {
         "columns": {
           "agencyName": "Agency Name",
-          "uieNumber": "UIE Number",
+          "uieNumber": "Unique Entity Identifier (UEI)",
           "einNumber": "EIN Number",
           "ssPatronal": "Social Security Patronal",
           "createdBy": "Created by",
@@ -32,6 +32,8 @@
         "sponsorInformationDescription": "Basic data of the sponsoring agency",
         "address": "Address",
         "addressDescription": "Agency location information",
+        "postalAddress": "Postal Address",
+        "postalAddressDescription": "Postal address information",
         "userInformation": "User Information",
         "userInformationDescription": "Contact information of the responsible person"
       },
@@ -44,29 +46,103 @@
           "label": "Status",
           "placeholder": "Select the status"
         },
+        "assigned-to": {
+          "label": "Assigned to",
+          "placeholder": "Select the assigned user"
+        },
         "agency": {
           "label": "Agency",
           "placeholder": "Agency name"
         },
         "uieNumber": {
-          "label": "UIE Number",
-          "placeholder": "Agency UIE number"
+          "label": "Unique Entity Identifier (UEI)",
+          "placeholder": "Agency Unique Entity Identifier (UEI)"
         },
-        "city": {
-          "label": "City",
-          "placeholder": "Select the city"
+        "stateDepartmentRegistration": {
+          "label": "State Department Registration Number",
+          "placeholder": "Enter state department registration number"
         },
-        "region": {
-          "label": "Region",
-          "placeholder": "Select the region"
+        "einNumber": {
+          "label": "Employer Identification Number (EIN)",
+          "placeholder": "Enter EIN number"
+        },
+        "basicEducationRegistry": {
+          "label": "Basic Education Registry Certification",
+          "placeholder": "Select if you have basic education registry certification"
+        },
+        "taxExemptionStatus": {
+          "label": "Tax Exemption Status",
+          "placeholder": "Select tax exemption status"
+        },
+        "taxExemptionType": {
+          "label": "Tax Exemption Type",
+          "placeholder": "Select tax exemption type"
+        },
+        "typeOfEntity": {
+          "label": "Type of Entity",
+          "placeholder": "Select type of entity"
+        },
+        "typeOfApplicant": {
+          "label": "Type of Applicant",
+          "placeholder": "Select type of applicant"
+        },
+        "publicAllianceContract": {
+          "label": "If you have a Public Alliance contract, please specify the type of contract",
+          "placeholder": "Select public alliance contract type"
+        },
+        "stateFundsDenied": {
+          "label": "Have you been denied or disqualified from state funds in the last seven years?",
+          "placeholder": "Select if you have been denied state funds"
+        },
+        "federalFundsDenied": {
+          "label": "Have you been denied or disqualified from federal funds in the last seven years?",
+          "placeholder": "Select if you have been denied federal funds"
+        },
+        "stateFundsDeniedReason": {
+          "label": "Reason why the sponsor was disqualified or denied state funds",
+          "placeholder": "Enter the reason why you were disqualified or denied state funds"
+        },
+        "federalFundsDeniedReason": {
+          "label": "Reason why the sponsor was disqualified or denied federal funds",
+          "placeholder": "Enter the reason why you were disqualified or denied federal funds"
         },
         "address": {
           "label": "Address",
-          "placeholder": "Complete address"
+          "placeholder": "Enter the address"
+        },
+        "city": {
+          "label": "City",
+          "placeholder": "Select your city"
+        },
+        "region": {
+          "label": "Region",
+          "placeholder": "Select your region"
         },
         "zipCode": {
-          "label": "Zip Code",
-          "placeholder": "Zip code"
+          "label": "Postal Code",
+          "placeholder": "Enter the postal code"
+        },
+        "latitude": {
+          "label": "Latitude",
+          "placeholder": "Enter the latitude"
+        },
+        "longitude": {
+          "label": "Longitude",
+          "placeholder": "Enter the longitude"
+        },
+        "postalAddress": {
+          "label": "Postal Address",
+          "placeholder": "Enter the postal address"
+        },
+        "postalZipCode": {
+          "label": "Postal Code",
+          "placeholder": "Enter the postal code"
+        },
+        "sameAsPhysicalAddress": {
+          "label": "Is it the same as physical address?"
+        },
+        "gps-coordinates": {
+          "tooltip": "Click to get GPS coordinates"
         },
         "firstName": {
           "label": "First Name",

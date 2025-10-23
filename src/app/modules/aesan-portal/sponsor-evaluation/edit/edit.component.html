@@ -7,138 +7,317 @@
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- Sponsor Information Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">{{ "sponsorEvaluation.edit.sections.sponsorInformation" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "sponsorEvaluation.edit.sections.sponsorInformationDescription" | transloco }}</p>
+          <p class="text-lg font-medium">{{ "sponsor-evaluation.edit.sections.sponsorInformation" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.sponsorInformationDescription" | transloco }}</p>
         </div>
 
-        <!-- Program and Status Selection -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <mat-form-field data-cy="program-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.program.label" | transloco }}</mat-label>
-            <mat-select formControlName="program" [compareWith]="compareItemPrograms" data-cy="program-select" multiple [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
-              <mat-option *ngFor="let program of listPrograms" [value]="program" >{{ program.name }}</mat-option>
-            </mat-select>
+        <!-- Nombre de Agencia, Estatus y Asignado a -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <!-- Nombre de Agencia -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.agency.label" | transloco }}</mat-label>
+            <input matInput formControlName="name" [placeholder]="'sponsor-evaluation.edit.fields.agency.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
           </mat-form-field>
 
+          <!-- Estatus -->
           <mat-form-field data-cy="status-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.status.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.status.label" | transloco }}</mat-label>
             <mat-select formControlName="status" [compareWith]="compareItems" data-cy="status-select" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+
+          <!-- Asignado a -->
+          <mat-form-field data-cy="monitor-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.assigned-to.label" | transloco }}</mat-label>
+            <mat-select formControlName="monitor" [compareWith]="compareMonitors" data-cy="monitor-select" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + " " + monitor.fatherLastName }}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
-        <!-- Agency Information -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!-- Segunda Fila: Identificadores de la Agencia -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <!-- Identificador Único de Entidad (IUE) -->
           <mat-form-field>
-            <mat-label>{{ "sponsorEvaluation.edit.fields.agency.label" | transloco }}</mat-label>
-            <input matInput formControlName="name" [placeholder]="'sponsorEvaluation.edit.fields.agency.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sponsorEvaluation.edit.fields.uieNumber.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.uieNumber.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="uieNumber"
-              [placeholder]="'sponsorEvaluation.edit.fields.uieNumber.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.uieNumber.placeholder' | transloco"
               type="number"
+              [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
+            />
+          </mat-form-field>
+
+          <!-- Número de Registro del Departamento de Estado -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.stateDepartmentRegistration.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="sdrNumber"
+              [placeholder]="'sponsor-evaluation.edit.fields.stateDepartmentRegistration.placeholder' | transloco"
+              type="text"
+              [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
+            />
+          </mat-form-field>
+
+          <!-- Número de Seguro Social Patronal -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.einNumber.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="einNumber"
+              [placeholder]="'sponsor-evaluation.edit.fields.einNumber.placeholder' | transloco"
+              type="text"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
         </div>
 
+        <!-- Tercera Fila: Información adicional del Auspiciador -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <!-- ¿Su entidad posee certificación de Registro de Educación Básica vigente? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.basicEducationRegistry.label" | transloco }}</mat-label>
+            <mat-select formControlName="basicEducationRegistry" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionStatus.label" | transloco }}</mat-label>
+            <mat-select formControlName="taxExemptionStatusId" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let status of exceptionStatusOptions" [value]="status">{{ status.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- ¿Qué tipo de Exención Contributiva tiene? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionType.label" | transloco }}</mat-label>
+            <mat-select formControlName="taxExemptionTypeId" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let type of taxExemptionTypeOptions" [value]="type">{{ type.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Cuarta Fila: Información adicional del Auspiciador -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <!-- Tipo de Entidad -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfEntity.label" | transloco }}</mat-label>
+            <mat-select formControlName="typeOfEntityId" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let entity of typeOfEntityOptions" [value]="entity">{{ entity.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Tipo de Solicitante -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfApplicant.label" | transloco }}</mat-label>
+            <mat-select formControlName="typeOfApplicantId" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let applicant of typeOfApplicantOptions" [value]="applicant">{{ applicant.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- ¿De poseer un contrato Público Alianza especifique su modalidad? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.publicAllianceContract.label" | transloco }}</mat-label>
+            <mat-select formControlName="publicAllianceContractId" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let contract of publicAllianceContractOptions" [value]="contract">{{ contract.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Quinta Fila: Fondos Denegados - Preguntas -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+          <!-- ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDenied.label" | transloco }}</mat-label>
+            <mat-select formControlName="stateFundsDenied" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años? -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDenied.label" | transloco }}</mat-label>
+            <mat-select formControlName="federalFundsDenied" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Sexta Fila: Fondos Denegados - Razones -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+          <!-- Razón por la cual fue descalificado o denegado de fondos estatales -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDeniedReason.label" | transloco }}</mat-label>
+            <textarea matInput formControlName="stateFundsDeniedReason" [placeholder]="'sponsor-evaluation.edit.fields.stateFundsDeniedReason.placeholder' | transloco" rows="3" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"></textarea>
+          </mat-form-field>
+
+          <!-- Razón por la cual fue descalificado o denegado de fondos federales -->
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDeniedReason.label" | transloco }}</mat-label>
+            <textarea matInput formControlName="federalFundsDeniedReason" [placeholder]="'sponsor-evaluation.edit.fields.federalFundsDeniedReason.placeholder' | transloco" rows="3" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"></textarea>
+          </mat-form-field>
+        </div>
+
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">{{ "sponsorEvaluation.edit.sections.address" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "sponsorEvaluation.edit.sections.addressDescription" | transloco }}</p>
+          <p class="text-lg font-medium">{{ "sponsor-evaluation.edit.sections.address" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.addressDescription" | transloco }}</p>
         </div>
 
         <!-- Address -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <!-- City *  -->
+        <!-- Region *  -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
+          <!-- Address *  -->
+          <mat-form-field data-cy="address-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.address.label" | transloco }}</mat-label>
+            <input matInput formControlName="address" [placeholder]="'sponsor-evaluation.edit.fields.address.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+          </mat-form-field>
+
           <!-- City *  -->
           <mat-form-field data-cy="city-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.city.label" | transloco }}</mat-label>
-            <mat-select
-              formControlName="city"
-              [compareWith]="compareItems"
-              (valueChange)="getRegionsByCityId($event)"
-              data-cy="city-select"
-              [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
-            >
-              <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.city.label" | transloco }}</mat-label>
+            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">
+                {{ city.name }}
+              </mat-option>
             </mat-select>
           </mat-form-field>
+
           <!-- Region *  -->
           <mat-form-field data-cy="region-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.region.label" | transloco }}</mat-label>
-            <mat-select formControlName="region" [compareWith]="compareItems" data-cy="region-select" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
-              <mat-option *ngFor="let region of listRegions" [value]="region">{{ region.name }}</mat-option>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.region.label" | transloco }}</mat-label>
+            <mat-select formControlName="region" data-cy="region-select" [compareWith]="compareItems" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
 
-        <!-- Additional Location Details -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <!-- Address *  -->
-          <mat-form-field data-cy="address-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.address.label" | transloco }}</mat-label>
-            <input matInput formControlName="address" [placeholder]="'sponsorEvaluation.edit.fields.address.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
-          </mat-form-field>
+        <!-- Zip Code *  -->
+        <!-- Latitude *  -->
+        <!-- Longitude *  -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
           <!-- Zip Code *  -->
-          <mat-form-field>
-            <mat-label>{{ "sponsorEvaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
-            <input
-              matInput
-              formControlName="zipCode"
-              [placeholder]="'sponsorEvaluation.edit.fields.zipCode.placeholder' | transloco"
-              type="number"
+          <mat-form-field data-cy="zip-code-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
+            <input matInput formControlName="zipCode" [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+          </mat-form-field>
+          <!-- Latitude *  -->
+          <mat-form-field data-cy="latitude-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.latitude.label" | transloco }}</mat-label>
+            <input matInput formControlName="latitude" [placeholder]="'sponsor-evaluation.edit.fields.latitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+          </mat-form-field>
+          <!-- Longitude *  -->
+          <div class="flex gap-2 items-center">
+            <mat-form-field data-cy="longitude-field" class="flex-grow">
+              <mat-label>{{ "sponsor-evaluation.edit.fields.longitude.label" | transloco }}</mat-label>
+              <input matInput formControlName="longitude" [placeholder]="'sponsor-evaluation.edit.fields.longitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            </mat-form-field>
+            <button
+              mat-icon-button
+              type="button"
+              class="mt-2"
+              matTooltipPosition="above"
+              matTooltip="{{ 'sponsor-evaluation.edit.fields.gps-coordinates.tooltip' | transloco }}"
+              (click)="getCurrentLocation()"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
-            />
+            >
+              <mat-icon class="text-hint">language</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">{{ "sponsor-evaluation.edit.sections.postalAddress" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.postalAddressDescription" | transloco }}</p>
+        </div>
+
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4">
+          <mat-checkbox data-cy="same-as-physical-address-checkbox" formControlName="sameAsPhysicalAddress" (change)="onCheckboxChange($event)" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">{{
+            "sponsor-evaluation.edit.fields.sameAsPhysicalAddress.label" | transloco
+          }}</mat-checkbox>
+        </div>
+
+        <!-- Postal Address *  -->
+        <!-- Postal City *  -->
+        <!-- Postal Region *  -->
+        <!-- Postal Zip Code *  -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
+          <!-- cambiar texto a address unicamente -->
+          <mat-form-field data-cy="postal-address-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.postalAddress.label" | transloco }}</mat-label>
+            <input matInput formControlName="postalAddress" [placeholder]="'sponsor-evaluation.edit.fields.postalAddress.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+          </mat-form-field>
+
+          <mat-form-field data-cy="postal-city-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.city.label" | transloco }}</mat-label>
+            <mat-select formControlName="postalCity" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field data-cy="postal-region-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.region.label" | transloco }}</mat-label>
+            <mat-select formControlName="postalRegion" data-cy="postal-region-select" [compareWith]="comparePostal" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
+              <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Postal Zip Code *  -->
+          <mat-form-field data-cy="postal-zip-code-field">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
+            <input matInput formControlName="postalZipCode" [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
           </mat-form-field>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">{{ "sponsorEvaluation.edit.sections.userInformation" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "sponsorEvaluation.edit.sections.userInformationDescription" | transloco }}</p>
+          <p class="text-lg font-medium">{{ "sponsor-evaluation.edit.sections.userInformation" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.userInformationDescription" | transloco }}</p>
         </div>
 
         <!-- Personal Information -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
           <!-- First Name *  -->
           <mat-form-field data-cy="first-name-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.firstName.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.firstName.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="firstName"
-              [placeholder]="'sponsorEvaluation.edit.fields.firstName.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.firstName.placeholder' | transloco"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
           <!-- Middle Name *  -->
           <mat-form-field data-cy="middle-name-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.middleName.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.middleName.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="middleName"
-              [placeholder]="'sponsorEvaluation.edit.fields.middleName.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.middleName.placeholder' | transloco"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
           <!-- Father Last Name *  -->
           <mat-form-field data-cy="father-last-name-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.fatherLastName.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.fatherLastName.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="fatherLastName"
-              [placeholder]="'sponsorEvaluation.edit.fields.fatherLastName.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.fatherLastName.placeholder' | transloco"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
           <!-- Mother Last Name *  -->
           <mat-form-field data-cy="mother-last-name-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.motherLastName.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.motherLastName.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="motherLastName"
-              [placeholder]="'sponsorEvaluation.edit.fields.motherLastName.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.motherLastName.placeholder' | transloco"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
@@ -148,45 +327,45 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Email *  -->
           <mat-form-field data-cy="email-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.email.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.email.label" | transloco }}</mat-label>
             <input
               matInput
               formControlName="email"
-              [placeholder]="'sponsorEvaluation.edit.fields.email.placeholder' | transloco"
+              [placeholder]="'sponsor-evaluation.edit.fields.email.placeholder' | transloco"
               type="email"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
             />
           </mat-form-field>
           <!-- Phone *  -->
           <mat-form-field data-cy="phone-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.phone.label" | transloco }}</mat-label>
-            <input matInput formControlName="phone" [placeholder]="'sponsorEvaluation.edit.fields.phone.placeholder' | transloco" type="tel" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <mat-label>{{ "sponsor-evaluation.edit.fields.phone.label" | transloco }}</mat-label>
+            <input matInput formControlName="phone" [placeholder]="'sponsor-evaluation.edit.fields.phone.placeholder' | transloco" type="tel" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
           </mat-form-field>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="status-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.appointmentCoordinated.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.appointmentCoordinated.label" | transloco }}</mat-label>
             <mat-select formControlName="appointmentCoordinated" data-cy="appointment-coordinated-select" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}">
               <mat-option *ngFor="let appointmentCoordinated of listAppointmentCoordinated" [value]="appointmentCoordinated.value">{{ appointmentCoordinated.name | transloco }}</mat-option>
             </mat-select>
           </mat-form-field>
 
           <mat-form-field data-cy="status-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.appointmentDate.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.appointmentDate.label" | transloco }}</mat-label>
             <input matInput [matDatepicker]="picker" formControlName="appointmentDate" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
-            <mat-hint>{{ "sponsorEvaluation.edit.fields.appointmentDate.hint" | transloco }}</mat-hint>
+            <mat-hint>{{ "sponsor-evaluation.edit.fields.appointmentDate.hint" | transloco }}</mat-hint>
             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="comments-field">
-            <mat-label>{{ "sponsorEvaluation.edit.fields.comments.label" | transloco }}</mat-label>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.comments.label" | transloco }}</mat-label>
             <textarea
               matInput
               formControlName="rejectionJustification"
-              placeholder="{{ 'sponsorEvaluation.edit.fields.comments.placeholder' | transloco }}"
+              placeholder="{{ 'sponsor-evaluation.edit.fields.comments.placeholder' | transloco }}"
               [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}"
               rows="4"
             ></textarea>

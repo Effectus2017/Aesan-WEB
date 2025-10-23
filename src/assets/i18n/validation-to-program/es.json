@@ -19,7 +19,7 @@
                     "fatherLastName": "Primer Apellido",
                     "adminTitle": "Título Admin.",
                     "nonProfit": "Sin Fines de Lucro",
-                    "uieNumber": "# UIE",
+                    "uieNumber": "Identificador Único de Entidad (IUE)",
                     "einNumber": "Número de Seguro Social Patronal (EIN)",
                     "ssPatronal": "Número de Registro del Departamento de Estado",
                     "latitude": "Latitud",
@@ -68,8 +68,8 @@
                 "placeholder": "Ingrese el número de registro"
             },
             "uieNumber": {
-                "label": "UIE #",
-                "placeholder": "Ingrese el número UIE"
+                "label": "Identificador Único de Entidad (IUE)",
+                "placeholder": "Ingrese el Identificador Único de Entidad (IUE)"
             },
             "einNumber": {
                 "label": "EIN #",

@@ -101,8 +101,8 @@
       "placeholder": "Ingresa el título del administrador"
     },
     "uie": {
-      "label": "# UIE",
-      "placeholder": "Ingresa el número de UIE"
+      "label": "Identificador Único de Entidad (IUE)",
+      "placeholder": "Ingresa el Identificador Único de Entidad (IUE)"
     },
     "ein": {
       "label": "Número de Seguro Social Patronal (EIN)",

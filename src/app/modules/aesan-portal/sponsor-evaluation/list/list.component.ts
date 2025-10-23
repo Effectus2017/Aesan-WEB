@@ -46,13 +46,13 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
-    title: 'sponsorEvaluation.list.title',
+    title: 'sponsor-evaluation.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
     searchFieldShow: true,
-    searchInputPlaceholder: 'sponsorEvaluation.list.search.placeholder',
-    submitButtonText: 'sponsorEvaluation.list.buttons.save',
+    searchInputPlaceholder: 'sponsor-evaluation.list.search.placeholder',
+    submitButtonText: 'sponsor-evaluation.list.buttons.save',
     goToAddButtonShow: true,
   };
 
