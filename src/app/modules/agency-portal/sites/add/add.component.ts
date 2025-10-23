@@ -41,7 +41,7 @@ import { CenterType } from 'app/shared/models/CenterType';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { SponsorType } from 'app/shared/models/SponsorType';
-import { EducationLevel } from 'app/shared/models/EducationLevel';
+import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
@@ -129,7 +129,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   // Nivel educativo - Campo requerido para tipo de sitio (MÚLTIPLE SELECCIÓN)
   // Education level - Required field for site type (MULTIPLE SELECTION)
-  educationLevels: EducationLevel[] = [];
+  educationLevels: EducationLevelResponse[] = [];
 
   // Centro - Campo requerido para clasificación del sitio
   // Center - Required field for site classification

@@ -443,6 +443,13 @@
           </mat-form-field>
         </div>
 
+        <!-- TITULO -->
+        <!-- Datos Operacionales -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">
+          <p class="text-lg font-medium">{{ "sites.add.operational-information.label" | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ "sites.add.operational-information.description" | transloco }}</p>
+        </div>
+
         <!-- ¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida? -->
         <!-- Solo para programas PDAM y PACNA (NO Day Care Home), no para PSAV -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM || (isPACNA && !shouldShowDayCareFields())">
@@ -460,13 +467,6 @@
             <mat-datepicker #serviceTimePicker></mat-datepicker>
             <mat-hint>{{ "sites.add.service-time.hint" | transloco }}</mat-hint>
           </mat-form-field>
-        </div>
-
-        <!-- TITULO -->
-        <!-- Datos Operacionales -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">
-          <p class="text-lg font-medium">{{ "sites.add.operational-information.label" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "sites.add.operational-information.description" | transloco }}</p>
         </div>
 
         <!-- ✅ VERIFICADO: Tipo de Auspiciador - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ -->

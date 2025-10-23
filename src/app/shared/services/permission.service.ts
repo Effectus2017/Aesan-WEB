@@ -13,7 +13,6 @@ import { PermissionRequest } from '../models/Request/PermissionRequest';
 export class PermissionService {
   private _permissions: BehaviorSubject<Permission[] | null> = new BehaviorSubject(null);
   private _permissionsUser: BehaviorSubject<Permission[] | null> = new BehaviorSubject(null);
-  private _permissionsRole: BehaviorSubject<Permission[] | null> = new BehaviorSubject(null);
   private _permission: BehaviorSubject<Permission | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/permission`;
@@ -29,10 +28,6 @@ export class PermissionService {
 
   get permissionsUser$(): Observable<Permission[] | null> {
     return this._permissionsUser.asObservable();
-  }
-
-  get permissionsRole$(): Observable<Permission[] | null> {
-    return this._permissionsRole.asObservable();
   }
 
   /**
@@ -140,12 +135,4 @@ export class PermissionService {
     return this._httpClient.get(`${this.apiUrl}/get-user-permissions`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._permissionsUser.next(response)));
   }
 
-  /**
-   * Obtiene los permisos de un rol
-   * @param queryParameters Parámetros de consulta
-   * @returns Observable con los permisos del rol
-   */
-  getRolePermissions(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-role-permissions`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._permissionsRole.next(response)));
-  }
 }

@@ -37,7 +37,7 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { EducationLevel } from 'app/shared/models/EducationLevel';
+import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
@@ -149,7 +149,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Nivel educativo - Campo requerido para tipo de sitio
   // Education level - Required field for site type
-  educationLevels: EducationLevel[] = [];
+  educationLevels: EducationLevelResponse[] = [];
 
   // Centro - Campo requerido para clasificación del sitio
   // Center - Required field for site classification
@@ -231,6 +231,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Propiedad para controlar visibilidad del campo Tipo de Centro
   showCenterTypeField: boolean = false;
+
+  // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
+  showResidentialTypeField: boolean = false;
 
   // ViewChild para el contenedor del grid
   @ViewChild('gridContainer') gridContainer!: ElementRef;
@@ -1131,7 +1134,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       groupType: groupType,
       deliveryType: deliveryType,
       sponsorType: sponsorType,
-      applicantType: applicantType,
+        applicantType: applicantType,
+        applicantTypeId: applicantType?.id,
+        typeOfApplicant: applicantType,
       residentialType: residentialType,
       operatingPolicy: operatingPolicy,
       areaType: areaType,
@@ -1139,8 +1144,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       generalEnrollment: param.generalEnrollment,
       administratorBirthDate: param.dayCareHome?.administratorBirthDate,
       siteCode: param.siteCode || '',
-
-      typeOfApplicant: param.typeOfApplicant,
       relationshipType: param.relationshipType,
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
@@ -1170,7 +1173,27 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Satélites
     this.satellitesTableConfig.dataSource.data = param.satellites || [];
     this.satellitesTableConfig.length = param.satellites?.length || 0;
+
+    // Calcular días operativos automáticamente si es necesario
+    this.calculateOperatingDaysIfNeeded();
+
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Calcula los días operativos automáticamente si es necesario
+   * Calculates operating days automatically if needed
+   */
+  private calculateOperatingDaysIfNeeded(): void {
+    const operatingDaysCalculated = this.headerConfig.formGroup.get('operatingDaysCalculated')?.value;
+    const operatingFromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
+    const operatingToDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
+
+    // Si operatingDaysCalculated es null, 0 o undefined, pero existen las fechas, calcular automáticamente
+    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) &&
+        operatingFromDate && operatingToDate) {
+      this.calculateOperatingDays();
+    }
   }
 
   /**
@@ -1859,7 +1882,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   }
 
   /**
-   * Actualiza la visibilidad del campo Tipo de Centro basado en el tipo de organización seleccionado
+   * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
    */
   private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
     if (organizationType) {
@@ -1869,8 +1892,17 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       if (!organizationType.requiresCenterType) {
         this.headerConfig.formGroup.get('centerType')?.setValue(null);
       }
+
+      // Habilitar Tipo de Institución Residencial cuando el tipo de organización es "Institución Residencial"
+      this.showResidentialTypeField = organizationType.name === 'Institución Residencial' || organizationType.nameEN === 'Residential Institution';
+
+      // Si no es Institución Residencial, limpiar el valor del campo
+      if (!this.showResidentialTypeField) {
+        this.headerConfig.formGroup.get('typeOfResidential')?.setValue(null);
+      }
     } else {
       this.showCenterTypeField = false;
+      this.showResidentialTypeField = false;
     }
   }
 

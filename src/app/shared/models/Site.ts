@@ -1,6 +1,6 @@
 import { City } from './City';
 import { Region } from './Region';
-import { EducationLevel } from './EducationLevel';
+import { EducationLevelResponse } from './Response/EducationLevelResponse';
 import { OrganizationType } from './OrganizationType';
 import { KitchenType } from './KitchenType';
 import { GroupType } from './GroupType';
@@ -50,8 +50,8 @@ export interface Site {
   startDate?: string;
   baseYear?: number;
   renewalYear?: number;
-  educationLevel?: EducationLevel; // DEPRECATED - usar educationLevels
-  educationLevels?: EducationLevel[]; // Nueva propiedad para múltiples niveles
+  educationLevel?: EducationLevelResponse; // DEPRECATED - usar educationLevels
+  educationLevels?: EducationLevelResponse[]; // Nueva propiedad para múltiples niveles
   operatingFromDate?: string;
   operatingToDate?: string;
   operatingDaysCalculated?: number;
