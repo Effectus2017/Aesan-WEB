@@ -8,6 +8,9 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { UsersService } from 'app/shared/services/users.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { SchoolService } from 'app/shared/services/school.service';
+import { SiteService } from 'app/shared/services/site.service';
+import { StaffService } from 'app/shared/services/staff.service';
 import { forkJoin, Observable, map } from 'rxjs';
 
 export const initialAesanSponsorEvaluationResolver = () => {
@@ -51,6 +54,9 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
   private _programService: ProgramService = inject(ProgramService);
   private _usersService: UsersService = inject(UsersService);
   private _optionSelectionService: OptionSelectionService = inject(OptionSelectionService);
+  private _schoolService: SchoolService = inject(SchoolService);
+  private _siteService: SiteService = inject(SiteService);
+  private _staffService: StaffService = inject(StaffService);
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
     const id = route.paramMap.get('id');
@@ -69,8 +75,11 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
       this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
       this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, roles: ['Monitor'] }),
       this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract' }),
+      this._schoolService.getSchoolsByAgencyId({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true }),
+      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true }),
+      this._staffService.getStaffByAgency({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true })
     ]).pipe(
-      map(([agency, agencyStatuses, cities, regions, programs, users, allOptions]) => {
+      map(([agency, agencyStatuses, cities, regions, programs, users, allOptions, schools, sites, staff]) => {
         // Filtrar las opciones por optionKey como en sign-up
         // Las opciones están en allOptions.body.data, no directamente en body
         const optionsData = allOptions.body.data || allOptions.body;
@@ -94,6 +103,9 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
           typeOfEntityOptions: typeOfEntityOptions,
           typeOfApplicantOptions: typeOfApplicantOptions,
           publicAllianceContractOptions: publicAllianceContractOptions,
+          schools: schools.body,
+          sites: sites.body,
+          staff: staff.body,
         };
       })
     );

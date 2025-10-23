@@ -27,16 +27,74 @@
     },
     "edit": {
       "title": "Editar Evaluación de Auspiciador",
-      "sections": {
-        "sponsorInformation": "Información del Auspiciador",
-        "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
-        "address": "Dirección",
-        "addressDescription": "Información de ubicación de la agencia",
-        "postalAddress": "Dirección Postal",
-        "postalAddressDescription": "Información de la dirección postal",
-        "userInformation": "Información del Usuario",
-        "userInformationDescription": "Datos de contacto del responsable"
-      },
+    "sections": {
+      "sponsorInformation": "Información del Auspiciador",
+      "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
+      "address": "Dirección",
+      "addressDescription": "Información de ubicación de la agencia",
+      "postalAddress": "Dirección Postal",
+      "postalAddressDescription": "Información de la dirección postal",
+      "userInformation": "Información del Usuario",
+      "userInformationDescription": "Datos de contacto del responsable"
+    },
+    "schools": {
+      "title": "Escuelas Relacionadas",
+      "description": "Lista de escuelas asociadas a esta agencia",
+      "table": {
+        "columns": {
+          "schoolCode": "Código de Escuela",
+          "name": "Nombre",
+          "schoolNumber": "Número de Escuela",
+          "createdAt": "Fecha de Creación",
+          "isActive": "Activa",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "view": "Ver",
+          "edit": "Editar"
+        }
+      }
+    },
+    "sites": {
+      "title": "Sitios Relacionados",
+      "description": "Lista de sitios asociados a esta agencia",
+      "table": {
+        "columns": {
+          "name": "Nombre",
+          "address": "Dirección",
+          "city": "Ciudad",
+          "region": "Región",
+          "siteCode": "Código de Sitio",
+          "generalEnrollment": "Matrícula General",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "view": "Ver",
+          "edit": "Editar"
+        }
+      }
+    },
+    "staff": {
+      "title": "Personal Relacionado",
+      "description": "Lista de personal asociado a esta agencia",
+      "table": {
+        "columns": {
+          "fullName": "Nombre Completo",
+          "staffType": "Tipo de Personal",
+          "position": "Posición",
+          "status": "Estado",
+          "email": "Correo Electrónico",
+          "city": "Ciudad",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "view": "Ver",
+          "edit": "Editar"
+        }
+      }
+    },
       "fields": {
         "program": {
           "label": "Programa",

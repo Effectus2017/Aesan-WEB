@@ -371,6 +371,45 @@
             ></textarea>
           </mat-form-field>
         </div>
+
+        <!-- Tabla de Escuelas Relacionadas -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="mb-4">
+            <h3 class="mb-2 text-lg font-medium">{{ "sponsor-evaluation.edit.schools.title" | transloco }}</h3>
+            <p class="mb-4 text-sm text-gray-600">{{ "sponsor-evaluation.edit.schools.description" | transloco }}</p>
+
+            <!-- Tabla de escuelas -->
+            <div class="rounded-lg shadow-md">
+              <app-generic-table [config]="schoolsTableConfig" [handler]="this" #schoolsTable></app-generic-table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Sitios Relacionados -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="mb-4">
+            <h3 class="mb-2 text-lg font-medium">{{ "sponsor-evaluation.edit.sites.title" | transloco }}</h3>
+            <p class="mb-4 text-sm text-gray-600">{{ "sponsor-evaluation.edit.sites.description" | transloco }}</p>
+
+            <!-- Tabla de sitios -->
+            <div class="rounded-lg shadow-md">
+              <app-generic-table [config]="sitesTableConfig" [handler]="this" #sitesTable></app-generic-table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla de Staff Relacionado -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="mb-4">
+            <h3 class="mb-2 text-lg font-medium">{{ "sponsor-evaluation.edit.staff.title" | transloco }}</h3>
+            <p class="mb-4 text-sm text-gray-600">{{ "sponsor-evaluation.edit.staff.description" | transloco }}</p>
+
+            <!-- Tabla de staff -->
+            <div class="rounded-lg shadow-md">
+              <app-generic-table [config]="staffTableConfig" [handler]="this" #staffTable></app-generic-table>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
   </div>

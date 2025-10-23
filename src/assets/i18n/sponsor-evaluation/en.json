@@ -27,16 +27,74 @@
     },
     "edit": {
       "title": "Edit Sponsor Evaluation",
-      "sections": {
-        "sponsorInformation": "Sponsor Information",
-        "sponsorInformationDescription": "Basic data of the sponsoring agency",
-        "address": "Address",
-        "addressDescription": "Agency location information",
-        "postalAddress": "Postal Address",
-        "postalAddressDescription": "Postal address information",
-        "userInformation": "User Information",
-        "userInformationDescription": "Contact information of the responsible person"
-      },
+    "sections": {
+      "sponsorInformation": "Sponsor Information",
+      "sponsorInformationDescription": "Basic data of the sponsoring agency",
+      "address": "Address",
+      "addressDescription": "Agency location information",
+      "postalAddress": "Postal Address",
+      "postalAddressDescription": "Postal address information",
+      "userInformation": "User Information",
+      "userInformationDescription": "Contact information of the responsible person"
+    },
+    "schools": {
+      "title": "Related Schools",
+      "description": "List of schools associated with this agency",
+      "table": {
+        "columns": {
+          "schoolCode": "School Code",
+          "name": "Name",
+          "schoolNumber": "School Number",
+          "createdAt": "Created Date",
+          "isActive": "Active",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "view": "View",
+          "edit": "Edit"
+        }
+      }
+    },
+    "sites": {
+      "title": "Related Sites",
+      "description": "List of sites associated with this agency",
+      "table": {
+        "columns": {
+          "name": "Name",
+          "address": "Address",
+          "city": "City",
+          "region": "Region",
+          "siteCode": "Site Code",
+          "generalEnrollment": "General Enrollment",
+          "isActive": "Active",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "view": "View",
+          "edit": "Edit"
+        }
+      }
+    },
+    "staff": {
+      "title": "Related Staff",
+      "description": "List of staff associated with this agency",
+      "table": {
+        "columns": {
+          "fullName": "Full Name",
+          "staffType": "Staff Type",
+          "position": "Position",
+          "status": "Status",
+          "email": "Email",
+          "city": "City",
+          "isActive": "Active",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "view": "View",
+          "edit": "Edit"
+        }
+      }
+    },
       "fields": {
         "program": {
           "label": "Program",

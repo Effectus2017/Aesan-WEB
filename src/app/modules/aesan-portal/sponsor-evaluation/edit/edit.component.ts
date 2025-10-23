@@ -16,6 +16,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { MatTableModule } from '@angular/material/table';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { MatTableDataSource } from '@angular/material/table';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
@@ -66,6 +69,7 @@ import { ActivatedRoute } from '@angular/router';
         MatTableModule,
         MatPaginatorModule,
         GenericHeaderComponent,
+        GenericTableComponent,
         TranslocoModule,
         MatSnackBarModule,
         MatDialogModule,
@@ -73,7 +77,7 @@ import { ActivatedRoute } from '@angular/router';
         MatTooltipModule,
     ]
 })
-export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
+export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
@@ -106,6 +110,188 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   typeOfApplicantOptions: OptionSelection[] = [];
   publicAllianceContractOptions: OptionSelection[] = [];
 
+  // Tabla de escuelas relacionadas a la agencia
+  schoolsTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: [
+      {
+        key: 'schoolCode',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.schools.table.columns.schoolCode',
+      },
+      {
+        key: 'name',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.schools.table.columns.name',
+      },
+      {
+        key: 'schoolNumber',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.schools.table.columns.schoolNumber',
+      },
+      {
+        key: 'createdAt',
+        type: 'date',
+        label: 'sponsor-evaluation.edit.schools.table.columns.createdAt',
+      },
+      {
+        key: 'isActive',
+        type: 'boolean',
+        label: 'sponsor-evaluation.edit.schools.table.columns.isActive',
+      },
+      {
+        key: 'actions',
+        type: 'button',
+        label: 'sponsor-evaluation.edit.schools.table.columns.actions',
+        buttons: [
+          {
+            key: 'view',
+            label: 'sponsor-evaluation.edit.schools.table.buttons.view',
+            icon: 'heroicons_outline:eye',
+          },
+          {
+            key: 'edit',
+            label: 'sponsor-evaluation.edit.schools.table.buttons.edit',
+          },
+        ],
+      },
+    ],
+    displayedColumns: ['schoolCode', 'name', 'schoolNumber', 'createdAt', 'isActive', 'actions'],
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25],
+    pageSize: 10,
+  };
+
+  // Tabla de sitios relacionados a la agencia
+  sitesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: [
+      {
+        key: 'name',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.name',
+      },
+      {
+        key: 'address',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.address',
+      },
+      {
+        key: 'cityName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.city',
+      },
+      {
+        key: 'regionName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.region',
+      },
+      {
+        key: 'siteCode',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.siteCode',
+      },
+      {
+        key: 'generalEnrollment',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.sites.table.columns.generalEnrollment',
+      },
+      {
+        key: 'isActive',
+        type: 'boolean',
+        label: 'sponsor-evaluation.edit.sites.table.columns.isActive',
+      },
+      {
+        key: 'actions',
+        type: 'button',
+        label: 'sponsor-evaluation.edit.sites.table.columns.actions',
+        buttons: [
+          {
+            key: 'view',
+            label: 'sponsor-evaluation.edit.sites.table.buttons.view',
+            icon: 'heroicons_outline:eye',
+          },
+          {
+            key: 'edit',
+            label: 'sponsor-evaluation.edit.sites.table.buttons.edit',
+          },
+        ],
+      },
+    ],
+    displayedColumns: ['name', 'address', 'cityName', 'regionName', 'siteCode', 'generalEnrollment', 'isActive', 'actions'],
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25],
+    pageSize: 10,
+  };
+
+  // Tabla de staff relacionados a la agencia
+  staffTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: [
+      {
+        key: ['firstName', 'middleName', 'fatherLastName', 'motherLastName'],
+        type: 'combined-text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.fullName',
+      },
+      {
+        key: 'staffTypeName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.staffType',
+      },
+      {
+        key: 'positionName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.position',
+      },
+      {
+        key: 'statusName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.status',
+      },
+      {
+        key: 'email',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.email',
+      },
+      {
+        key: 'cityName',
+        type: 'text',
+        label: 'sponsor-evaluation.edit.staff.table.columns.city',
+      },
+      {
+        key: 'isActive',
+        type: 'boolean',
+        label: 'sponsor-evaluation.edit.staff.table.columns.isActive',
+      },
+      {
+        key: 'actions',
+        type: 'button',
+        label: 'sponsor-evaluation.edit.staff.table.columns.actions',
+        buttons: [
+          {
+            key: 'view',
+            label: 'sponsor-evaluation.edit.staff.table.buttons.view',
+            icon: 'heroicons_outline:eye',
+          },
+          {
+            key: 'edit',
+            label: 'sponsor-evaluation.edit.staff.table.buttons.edit',
+          },
+        ],
+      },
+    ],
+    displayedColumns: ['firstName', 'staffTypeName', 'positionName', 'statusName', 'email', 'cityName', 'isActive', 'actions'],
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25],
+    pageSize: 10,
+  };
+
+  // Configuración de tabla requerida por OnGenericTableHandler
+  tableConfig: GenericTableConfig = this.schoolsTableConfig;
+
   listAppointmentCoordinated = [
     { id: 1, name: 'sponsor-evaluation.edit.options.yes', value: true },
     { id: 2, name: 'sponsor-evaluation.edit.options.no', value: false },
@@ -137,6 +323,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
 
       // Datos del Administrador
       email: [{ value: null, disabled: true }, Validators.email],
+      phone: [{ value: null, disabled: true }],
       // ¿Se coordinó cita con el auspiciador?
       appointmentCoordinated: [null, Validators.required],
       // Fecha de Cita
@@ -200,6 +387,25 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.typeOfEntityOptions = resolvedData.typeOfEntityOptions;
       this.typeOfApplicantOptions = resolvedData.typeOfApplicantOptions;
       this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
+
+      // Configurar tabla de escuelas
+      if (resolvedData.schools) {
+        this.schoolsTableConfig.dataSource.data = resolvedData.schools.data || resolvedData.schools;
+        this.schoolsTableConfig.length = resolvedData.schools.count || resolvedData.schools.length;
+      }
+
+      // Configurar tabla de sitios
+      if (resolvedData.sites) {
+        this.sitesTableConfig.dataSource.data = resolvedData.sites.data || resolvedData.sites;
+        this.sitesTableConfig.length = resolvedData.sites.count || resolvedData.sites.length;
+      }
+
+      // Configurar tabla de staff
+      if (resolvedData.staff) {
+        this.staffTableConfig.dataSource.data = resolvedData.staff.data || resolvedData.staff;
+        this.staffTableConfig.length = resolvedData.staff.count || resolvedData.staff.length;
+      }
+
       this.onSetForm(resolvedData.agency);
       this._changeDetectorRef.detectChanges();
     }
@@ -487,5 +693,58 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
 
   compareItemPrograms<T>(item1: T, item2: T): boolean {
     return compareByProperty(item1, item2, 'id' as keyof T);
+  }
+
+  // Métodos requeridos por OnGenericTableHandler
+  onTableAdd(event?: Event, tableId?: string): void {
+    // Implementar lógica para agregar nueva escuela si es necesario
+    console.log('Agregar escuela');
+  }
+
+  onTableEdit(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    // Implementar navegación a edición de escuela
+    this._customRouterService.navigate([`schools/edit/${id}`]);
+  }
+
+  onTableDelete(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    // Implementar lógica de eliminación si es necesario
+    console.log('Eliminar escuela', id);
+  }
+
+  onTableAction(event: Event, action: string, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Determinar qué tabla está activa basado en el evento del botón
+    const isSchoolsTable = this.tableConfig.dataSource === this.schoolsTableConfig.dataSource;
+    const isSitesTable = this.tableConfig.dataSource === this.sitesTableConfig.dataSource;
+    const isStaffTable = this.tableConfig.dataSource === this.staffTableConfig.dataSource;
+
+    switch (action) {
+      case 'view':
+        if (isSchoolsTable) {
+          this._customRouterService.navigate([`schools/view/${id}`]);
+        } else if (isSitesTable) {
+          this._customRouterService.navigate([`sites/view/${id}`]);
+        } else if (isStaffTable) {
+          this._customRouterService.navigate([`staff/view/${id}`]);
+        }
+        break;
+      case 'edit':
+        if (isSchoolsTable) {
+          this._customRouterService.navigate([`schools/edit/${id}`]);
+        } else if (isSitesTable) {
+          this._customRouterService.navigate([`sites/edit/${id}`]);
+        } else if (isStaffTable) {
+          this._customRouterService.navigate([`staff/edit/${id}`]);
+        }
+        break;
+      default:
+        console.log('Acción no implementada:', action);
+    }
   }
 }
