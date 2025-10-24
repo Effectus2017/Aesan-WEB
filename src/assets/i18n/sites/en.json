@@ -405,6 +405,11 @@
                     "placeholder": "Select an option",
                     "required": "This field is required for PACNA"
                 },
+                "public-alliance-contract": {
+                    "label": "If you have a Public Alliance contract, please specify the type of contract",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
                 "validation": {
                     "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
                     "one-true-warning": "This site may have additional restrictions in PACNA"
@@ -1046,6 +1051,11 @@
                 },
                 "at-risk-service": {
                     "label": "Is the site interested in participating in the at-risk snack and dinner service?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required for PACNA"
+                },
+                "public-alliance-contract": {
+                    "label": "If you have a Public Alliance contract, please specify the type of contract",
                     "placeholder": "Select an option",
                     "required": "This field is required for PACNA"
                 },

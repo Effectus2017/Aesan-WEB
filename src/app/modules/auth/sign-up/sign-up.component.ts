@@ -134,7 +134,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Laico (15), Base de fe (16)
   typeOfApplicant: OptionSelection[] = [];
 
-  // ¿De poseer un contrato Público Alianza especifique su modalidad?
+  // De poseer un contrato Público Alianza, especifique su modalidad
   // If you have a Public Alliance contract, please specify the type of contract
   // Socio-Económico (17), Híbrido (18)
   publicAllianceContract: OptionSelection[] = [];
@@ -264,7 +264,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Laico (15), Base de fe (16)
       typeOfApplicantId: [null, Validators.required],
 
-      // ¿De poseer un contrato Público Alianza especifique su modalidad?
+      // De poseer un contrato Público Alianza, especifique su modalidad
       // If you have a Public Alliance contract, please specify the type of contract
       // Socio-Económico (17), Híbrido (18)
       publicAllianceContractId: [null, Validators.required],
@@ -318,7 +318,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Laico (15), Base de fe (16)
       this.typeOfApplicant = allOptions.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
 
-      // ¿De poseer un contrato Público Alianza especifique su modalidad?
+      // De poseer un contrato Público Alianza, especifique su modalidad
       // If you have a Public Alliance contract, please specify the type of contract
       // Socio-Económico (17), Híbrido (18)
       this.publicAllianceContract = allOptions.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
@@ -652,7 +652,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Type of Applicant
         // Laico (15), Base de fe (16)
         typeOfApplicantId: typeOfApplicantId,
-        // ¿De poseer un contrato Público Alianza especifique su modalidad?
+        // De poseer un contrato Público Alianza, especifique su modalidad
         // If you have a Public Alliance contract, please specify the type of contract
         // Socio-Económico (17), Híbrido (18)
         publicAllianceContractId: publicAllianceContractId,

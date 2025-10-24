@@ -109,6 +109,13 @@ export interface SiteRequest {
     atRiskService?: boolean;
 
     /**
+     * De poseer un contrato Público Alianza, especifique su modalidad
+     * If you have a Public Alliance contract, please specify the type of contract
+     * Socio-Económico (17), Híbrido (18)
+     */
+    publicAllianceContractId?: number;
+
+    /**
      * Indica si la agencia es Day Care Home
      * Indicates if the agency is Day Care Home
      * Se obtiene de la inscripción de la agencia

@@ -410,6 +410,11 @@
                     "placeholder": "Seleccione una opción",
                     "required": "Este campo es requerido para PACNA"
                 },
+                "public-alliance-contract": {
+                    "label": "De poseer un contrato Público Alianza, especifique su modalidad",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
                 "validation": {
                     "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
                     "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
@@ -1056,6 +1061,11 @@
                 },
                 "at-risk-service": {
                     "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido para PACNA"
+                },
+                "public-alliance-contract": {
+                    "label": "De poseer un contrato Público Alianza, especifique su modalidad",
                     "placeholder": "Seleccione una opción",
                     "required": "Este campo es requerido para PACNA"
                 },

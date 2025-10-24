@@ -151,6 +151,14 @@ export interface Site {
    * Solo para programa PACNA
    */
   atRiskService?: boolean;
+
+  /**
+   * De poseer un contrato Público Alianza, especifique su modalidad
+   * If you have a Public Alliance contract, please specify the type of contract
+   * Socio-Económico (17), Híbrido (18)
+   */
+  publicAllianceContractId?: number;
+  publicAllianceContract?: OptionSelection;
 }
 
 

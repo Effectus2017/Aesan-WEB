@@ -145,7 +145,7 @@
           "placeholder": "Seleccione el tipo de solicitante"
         },
         "publicAllianceContract": {
-          "label": "¿De poseer un contrato Público Alianza especifique su modalidad?",
+          "label": "De poseer un contrato Público Alianza, especifique su modalidad",
           "placeholder": "Seleccione el tipo de contrato público alianza"
         },
         "stateFundsDenied": {

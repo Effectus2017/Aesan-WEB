@@ -143,6 +143,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Opciones de Tipo de Participantes
   participantTypeOptions: OptionSelection[] = [];
 
+  // Public Alliance Contract Options
+  // Opciones de Contrato de Alianza Pública
+  publicAllianceContractOptions: OptionSelection[] = [];
+
   // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for site classification
   organizationTypes: OrganizationType[] = [];
@@ -558,6 +562,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Is the site interested in participating in the at-risk snack and dinner service?
       atRiskService: [null],
 
+      // De poseer un contrato Público Alianza, especifique su modalidad
+      // If you have a Public Alliance contract, please specify the type of contract
+      publicAllianceContractId: [null],
+
       // Campos específicos para Day Care Home (PACNA)
       // ¿Este hogar está autorizado a funcionar?
       // Is this home authorized to operate?
@@ -678,6 +686,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
       this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
       this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
+      this.publicAllianceContractOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
       // Estatus
       this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Política de operación - NO USAR ESTA LÍNEA, se usa la de abajo desde operatingPolicies
@@ -1155,6 +1164,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
       atRiskService: param.atRiskService ?? null,
+
+      // De poseer un contrato Público Alianza, especifique su modalidad
+      // If you have a Public Alliance contract, please specify the type of contract
+      publicAllianceContractId: param.publicAllianceContractId ?? null,
     });
 
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
@@ -1349,6 +1362,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
       // Is the site interested in participating in the at-risk snack and dinner service?
       atRiskService: formValues.atRiskService ?? null,
+
+      // De poseer un contrato Público Alianza, especifique su modalidad
+      // If you have a Public Alliance contract, please specify the type of contract
+      publicAllianceContractId: formValues.publicAllianceContractId ?? null,
 
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home

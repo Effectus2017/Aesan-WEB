@@ -359,6 +359,21 @@
           </mat-form-field>
         </div>
 
+        <!-- De poseer un contrato Público Alianza, especifique su modalidad -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && !shouldShowDayCareFields()">
+          <mat-form-field data-cy="public-alliance-contract-field">
+            <mat-label>{{ "sites.edit.pacna-fields.public-alliance-contract.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'publicAllianceContractId'" data-cy="public-alliance-contract-select">
+              <mat-option *ngFor="let option of publicAllianceContractOptions" [value]="option.id" data-cy="public-alliance-contract-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('publicAllianceContractId').hasError('required')">
+              {{ "sites.edit.pacna-fields.public-alliance-contract.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Niveles educativos (selección múltiple) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM">
