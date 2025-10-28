@@ -205,8 +205,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       areaCode: new FormControl('', [Validators.required]),
       // Comments
       comments: new FormControl(''),
-      // School assignment
-      school: new FormControl(''),
+      // Sitio asignado
+      site: new FormControl(null),
       //   assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
       // Review result
@@ -476,7 +476,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
 
-      school: param.school,
+      site: param.school,
       //   assignmentType: param.assignmentType,
       isPrimary: param.isPrimary,
     });

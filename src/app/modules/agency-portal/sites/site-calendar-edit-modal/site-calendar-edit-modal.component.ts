@@ -7,17 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
-import { CalendarEvent } from 'angular-calendar';
-import { SiteOperatingDay } from '../site-calendar.service';
-
-export interface SiteCalendarEditModalData {
-  form: FormGroup;
-  event: CalendarEvent | null;
-  operatingDay: SiteOperatingDay;
-  siteId: number;
-}
+import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalendarEditModalData';
 
 @Component({
   selector: 'app-school-calendar-edit-modal',

@@ -177,8 +177,8 @@
           "placeholder": "Select your region"
         },
         "zipCode": {
-          "label": "Postal Code",
-          "placeholder": "Enter the postal code"
+          "label": "Zip Code",
+          "placeholder": "Enter the zip code"
         },
         "latitude": {
           "label": "Latitude",
@@ -193,8 +193,8 @@
           "placeholder": "Enter the postal address"
         },
         "postalZipCode": {
-          "label": "Postal Code",
-          "placeholder": "Enter the postal code"
+          "label": "Zip Code",
+          "placeholder": "Enter the zip code"
         },
         "sameAsPhysicalAddress": {
           "label": "Is it the same as physical address?"
@@ -211,12 +211,12 @@
           "placeholder": "Middle name"
         },
         "fatherLastName": {
-          "label": "Father's Last Name",
-          "placeholder": "Father's last name"
+          "label": "First Last Name",
+          "placeholder": "First last name"
         },
         "motherLastName": {
-          "label": "Mother's Last Name",
-          "placeholder": "Mother's last name"
+          "label": "Second Last Name",
+          "placeholder": "Second last name"
         },
         "email": {
           "label": "Email",

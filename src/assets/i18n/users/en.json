@@ -78,13 +78,13 @@
                 "placeholder": "Enter middle name"
             },
             "fatherLastName": {
-                "label": "Father's Last Name",
-                "placeholder": "Enter father's last name",
-                "required": "Father's last name is required"
+                "label": "First Last Name",
+                "placeholder": "Enter the first last name",
+                "required": "First last name is required"
             },
             "motherLastName": {
-                "label": "Mother's Last Name",
-                "placeholder": "Enter mother's last name"
+                "label": "Second Last Name",
+                "placeholder": "Enter the second last name"
             },
             "messages": {
                 "force-password": {
@@ -167,14 +167,14 @@
                 "placeholder": "Enter middle name"
             },
             "fatherLastName": {
-                "label": "Father's Last Name",
-                "placeholder": "Enter father's last name",
-                "required": "Father's last name is required"
+                "label": "First Last Name",
+                "placeholder": "Enter the first last name",
+                "required": "First last name is required"
             },
             "motherLastName": {
-                "label": "Mother's Last Name",
-                "placeholder": "Enter mother's last name",
-                "required": "Mother's last name is required"
+                "label": "Second Last Name",
+                "placeholder": "Enter the second last name",
+                "required": "Second last name is required"
             },
             "role": {
                 "label": "Role",

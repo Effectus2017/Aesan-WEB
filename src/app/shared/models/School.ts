@@ -7,6 +7,7 @@ export interface School {
   isActive: boolean;
   createdAt: string;
   updatedAt?: string;
+  sitesCount?: number;
 }
 
 

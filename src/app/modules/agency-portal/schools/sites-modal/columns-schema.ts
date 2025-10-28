@@ -31,6 +31,11 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit',
         label: 'sites.list.table.buttons.edit',
       },
+      {
+        key: 'calendar',
+        label: 'sites.list.table.buttons.calendar',
+        icon: 'heroicons_outline:calendar',
+      },
     ],
   },
 ];

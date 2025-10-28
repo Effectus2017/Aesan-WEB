@@ -46,6 +46,7 @@ import { Program } from 'app/shared/models/Program';
 import { AgencyStatus } from 'app/shared/models/AgencyStatus';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ActivatedRoute } from '@angular/router';
+import { isPSAVProgram, PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
@@ -303,6 +304,9 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   compareMonitors = compareMonitors;
   comparePostal = comparePostal;
 
+  // Propiedad para determinar si la agencia tiene programa PSAV
+  hasPSAVProgram: boolean = false;
+
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'sponsor-evaluation.edit.title',
@@ -447,6 +451,9 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this._customRouterService.navigate(['sponsor-evaluation']);
       return;
     }
+
+    // Verificar si la agencia tiene el programa PSAV
+    this.hasPSAVProgram = param.programs.some((program) => isPSAVProgram(program));
 
     this.headerConfig.formGroup.patchValue({
       // program: param.programs || null, // Comentado temporalmente

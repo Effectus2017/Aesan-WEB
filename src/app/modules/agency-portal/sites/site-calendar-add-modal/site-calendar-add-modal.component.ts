@@ -7,16 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
-import { SiteOperatingDay } from '../site-calendar.service';
-
-export interface SiteCalendarAddModalData {
-  form: FormGroup;
-  operatingDay?: SiteOperatingDay;
-  date?: Date;
-  siteId: number;
-}
+import { SiteCalendarAddModalData } from 'app/shared/models/Response/SiteCalendarAddModalData';
 
 @Component({
   selector: 'app-site-calendar-add-modal',

@@ -13,6 +13,11 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'schools.list.table.columns.name',
   },
   {
+    key: 'sitesCount',
+    type: 'text',
+    label: 'schools.list.table.columns.sites-count',
+  },
+  {
     key: 'createdAt',
     type: 'date',
     label: 'schools.list.table.columns.createdAt',
@@ -28,8 +33,9 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'schools.list.table.columns.actions',
     buttons: [
       {
-        key: 'edit',
+        key: 'edit-modal',
         label: 'schools.list.table.buttons.edit',
+        icon: 'mat_solid:edit',
       },
       {
         key: 'sites',

@@ -152,6 +152,11 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableSites(event, element.id);
         }
         break;
+      case 'edit-modal':
+        if (this.handler?.onTableEditModal) {
+          this.handler.onTableEditModal(event, element.id);
+        }
+        break;
     }
   }
 

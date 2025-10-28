@@ -31,7 +31,7 @@ export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: Activated
 
   return forkJoin([siteCalendarService.getOperatingDays(queryParameters), siteService.getSiteById({ id: siteId })]).pipe(
     map(([operatingDays, site]) => ({
-      operatingDays: operatingDays,
+      operatingDays: operatingDays.body,
       site: site.body,
     }))
   );

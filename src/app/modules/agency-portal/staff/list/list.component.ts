@@ -55,8 +55,6 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-
-
   headerConfig: GenericHeaderConfig = {
     title: 'staff.boardMembers.list.title',
     formGroup: this._formBuilder.group({
@@ -84,7 +82,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   ngOnInit(): void {
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
-    
+
     if (resolvedData) {
       this.tableConfig.dataSource.data = resolvedData.staff.data;
       this.tableConfig.length = resolvedData.staff.count;

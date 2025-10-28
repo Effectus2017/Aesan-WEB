@@ -18,8 +18,10 @@ import {
   DateAdapter
 } from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SiteCalendarService, SiteOperatingDay, SiteOperatingDayRequest } from '../site-calendar.service';
-import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
+import { SiteCalendarService, SiteOperatingDayRequest } from '../site-calendar.service';
+import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
+import { OperatingDayApiResponse } from 'app/shared/models/Response/OperatingDayApiResponse';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
 import { Subject, takeUntil } from 'rxjs';
@@ -52,11 +54,16 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   private siteCalendarService: SiteCalendarService = inject(SiteCalendarService);
   private route: ActivatedRoute = inject(ActivatedRoute);
-  private router: Router = inject(Router);
   private translocoService: TranslocoService = inject(TranslocoService);
   private fuseConfigService: FuseConfigService = inject(FuseConfigService);
   private dialog: MatDialog = inject(MatDialog);
   private fb: FormBuilder = inject(FormBuilder);
+
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private document = inject<Document>(DOCUMENT);
+  private readonly darkThemeClass = 'dark-theme';
+  private currentTableModal: any = null; // Referencia al modal de tabla actual
+
 
   // Exponer CalendarView para uso en template
   CalendarView = CalendarView;
@@ -71,7 +78,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   selectedDate: Date | null = null;
   currentLanguage: string = 'es';
   isDarkMode: boolean = false;
-  editForm: FormGroup;
+  editForm: FormGroup = this.fb.group({
+    startTime: ['', Validators.required],
+    endTime: ['', Validators.required],
+    comment: [''],
+    isWeekendOverride: [false],
+    isExcluded: [false]
+  });
 
   // Configuración de la tabla de eventos del día
   tableConfig: GenericTableConfig = {
@@ -83,25 +96,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     ),
     handler: this,
     showPaginator: false,
-    addButtonShow: false // Deshabilitar botón agregar de la tabla
+    addButtonShow: false
   };
-
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private document = inject<Document>(DOCUMENT);
-  private readonly darkThemeClass = 'dark-theme';
-  private currentTableModal: any = null; // Referencia al modal de tabla actual
-
-  private dateAdapter = inject(DateAdapter);
-
-  constructor() {
-    this.editForm = this.fb.group({
-      startTime: ['', Validators.required],
-      endTime: ['', Validators.required],
-      comment: [''],
-      isWeekendOverride: [false],
-      isExcluded: [false]
-    });
-  }
 
   ngOnInit() {
     // Obtener el ID de la escuela desde la ruta o input
@@ -112,7 +108,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       this.currentSiteId = 1;
     }
 
-    console.log('SiteCalendarComponent initialized with siteId:', this.currentSiteId);
 
     // Configurar el idioma del calendario
     this.setCalendarLanguage();
@@ -137,13 +132,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const resolvedData = this.route.snapshot.data['data'];
 
     if (resolvedData) {
-      console.log('Operating days loaded from resolver:', resolvedData.operatingDays);
-      this.operatingDays = resolvedData.operatingDays.operatingDays || [];
+      const apiDays = resolvedData.operatingDays?.operatingDays || [];
+      this.operatingDays = this.mapApiResponseToOperatingDays(apiDays);
       this.events = this.transformToCalendarEvents(this.operatingDays);
       this.siteName = resolvedData.operatingDays.siteName;
       this.loading = false;
     } else {
-      console.error('No data found in resolver, falling back to manual load');
       this.loadOperatingDays();
     }
   }
@@ -176,39 +170,29 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   onDayClick(event: any) {
     if (this.loading) return;
 
-    console.log('Day clicked event:', event);
-    console.log('Current view:', this.view);
-    console.log('Available operating days:', this.operatingDays?.length || 0);
-    console.log('Event structure:', JSON.stringify(event, null, 2));
-
     let date: Date | null = null;
 
     // Manejar diferentes estructuras de evento según la vista
     if (this.view === CalendarView.Month) {
       // En vista de mes: {day: {…}, sourceEvent: PointerEvent}
       date = event?.day || event?.date || event;
-      console.log('Month view - extracted date:', date);
+
     } else if (this.view === CalendarView.Week) {
       // En vista de semana: {date: Date, sourceEvent: PointerEvent}
       date = event?.date || event?.day || event;
-      console.log('Week view - extracted date:', date);
+
     } else if (this.view === CalendarView.Day) {
       // En vista de día: {date: Date, sourceEvent: PointerEvent}
       date = event?.date || event?.day || event;
-      console.log('Day view - extracted date:', date);
+
     }
 
     if (!date) {
-      console.error('Date parameter is undefined in onDayClick, event:', event);
       return;
     }
 
-    console.log('Raw date value:', date, 'Type:', typeof date);
-
     // Asegurar que date es un objeto Date válido
     if (!(date instanceof Date)) {
-      console.log('Converting date to Date object:', date);
-
       // Intentar diferentes formas de conversión
       if (typeof date === 'string') {
         // Si es string, intentar parsearlo
@@ -216,7 +200,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         if (!isNaN(parsedDate.getTime())) {
           date = parsedDate;
         } else {
-          console.error('Failed to parse date string:', date);
           return;
         }
       } else if (typeof date === 'number') {
@@ -233,22 +216,17 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         } else if ('getTime' in dateObj) {
           date = new Date(dateObj.getTime());
         } else {
-          console.error('Cannot convert object to date:', date);
+
           return;
         }
       } else {
-        console.error('Unknown date type:', typeof date, date);
         return;
       }
     }
 
     if (isNaN(date.getTime())) {
-      console.error('Invalid date after conversion:', date);
-      console.error('Original event:', event);
       return;
     }
-
-    console.log('Extracted date:', date);
 
     // Solo manejar clicks en la vista de mes
     if (this.view === CalendarView.Month) {
@@ -256,8 +234,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       const dayEvents = this.events.filter(event =>
         this.isSameDate(event.start, date)
       );
-
-      console.log('Events for this day:', dayEvents);
 
       if (dayEvents.length > 0) {
         // Si hay eventos, abrir modal con tabla
@@ -280,18 +256,15 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onEventClick({ event }: { event: CalendarEvent }) {
-    console.log('Event clicked:', event);
     this.openEditEventDialog(event);
   }
 
   onEventTimesChanged({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
-    console.log('Event times changed:', { event, newStart, newEnd });
-
     if (this.loading) return;
 
     const operatingDay = event.meta as SiteOperatingDay;
     if (!operatingDay) {
-      console.error('No operating day data found for event');
+
       return;
     }
 
@@ -303,19 +276,15 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: this.formatTimeFromDate(newEnd),
       updatedAt: new Date()
     };
-
-    console.log('Updated operating day:', updatedOperatingDay);
     this.updateOperatingDayFromDrag(updatedOperatingDay);
   }
 
   onEventResized({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
-    console.log('Event resized:', { event, newStart, newEnd });
-
     if (this.loading) return;
 
     const operatingDay = event.meta as SiteOperatingDay;
     if (!operatingDay) {
-      console.error('No operating day data found for event');
+
       return;
     }
 
@@ -326,37 +295,23 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: this.formatTimeFromDate(newEnd),
       updatedAt: new Date()
     };
-
-    console.log('Updated operating day from resize:', updatedOperatingDay);
     this.updateOperatingDayFromDrag(updatedOperatingDay);
   }
 
   onHourSegmentClicked(event: { date: Date }) {
     if (this.loading) return;
-
-    console.log('Hour segment clicked:', event);
-    console.log('Current view:', this.view);
-    console.log('Available operating days:', this.operatingDays.length);
-
     const date = event.date;
-    console.log('Extracted date from hour segment:', date);
-
     const dayData = this.findDayData(date);
-    console.log('Found day data:', dayData);
-
     if (dayData) {
       // Si el día ya tiene horario, permitir agregar otro evento
-      console.log('Day has existing data, but allowing to add another event');
       this.openAddDayDialog(date);
     } else {
       // Si el día no tiene horario, abrir modal para agregar
-      console.log('Day has no data, opening add dialog');
       this.openAddDayDialog(date);
     }
   }
 
   openAddDayDialog(date: Date) {
-    console.log('Opening add day dialog for date:', date);
 
     // Crear un día vacío para el modal
     const newDay: SiteOperatingDay = {
@@ -399,9 +354,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     });
   }
 
-  openEditDayDialog(date: Date, dayData: SiteOperatingDay) {
-    console.log('Opening edit day dialog for date:', date, 'with data:', dayData);
-
+  openEditDayDialog(dayData: SiteOperatingDay) {
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
       startTime: dayData.startTime || '08:00',
@@ -505,9 +458,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any, fromTable: boolean = false) {
-    console.log('Updating operating day with form data:', formData);
-    console.log('Original operating day:', operatingDay);
-    console.log('From table:', fromTable);
 
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
@@ -515,6 +465,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
 
     const request: SiteOperatingDayRequest = {
+      id: operatingDay.id,
       siteId: this.currentSiteId,
       date: operatingDay.date,
       startTime: formData.isExcluded ? null : startTime,
@@ -525,27 +476,21 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       comment: formData.comment
     };
 
-    console.log('Request to send:', request);
-
     this.loading = true;
     this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day updated successfully:', response);
-          console.log('Reloading operating days...');
+        next: () => {
           this.loadOperatingDays(); // Recargar datos
-
           // Si viene de la tabla, actualizar la tabla específicamente
           if (fromTable && this.selectedDate) {
             this.updateDayEventsTable(this.selectedDate);
           } else {
             this.refreshDayEventsTable(); // Actualizar tabla
           }
-
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error updating operating day:', error);
+        error: () => {
+
           this.loading = false;
         }
       });
@@ -553,15 +498,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método específico para actualizar desde la tabla
   private updateOperatingDayFromTable(operatingDay: SiteOperatingDay, formData: any, id: any) {
-    console.log('Updating operating day from table with form data:', formData);
-    console.log('Original operating day:', operatingDay);
-    console.log('Event ID:', id);
 
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
 
     const request: SiteOperatingDayRequest = {
+      id: operatingDay.id,
       siteId: this.currentSiteId,
       date: operatingDay.date,
       startTime: startTime,
@@ -572,22 +515,15 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       comment: formData.comment
     };
 
-    console.log('Request to send from table:', request);
-
     this.loading = true;
     this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day updated from table successfully:', response);
-          console.log('Reloading operating days...');
-
+        next: () => {
           // Recargar datos y luego actualizar el modal
           this.loadOperatingDaysAndUpdateModal();
-
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error updating operating day from table:', error);
+        error: () => {
           this.loading = false;
         }
       });
@@ -595,32 +531,21 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método específico para eliminar desde la tabla
   private deleteOperatingDayFromTable(operatingDay: SiteOperatingDay, id: any) {
-    console.log('Deleting operating day from table:', operatingDay);
-    console.log('Event ID:', id);
-
     this.loading = true;
     this.siteCalendarService.deleteOperatingDay({ id: operatingDay.id })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day deleted from table successfully:', response);
-          console.log('Reloading operating days...');
-
+        next: () => {
           // Recargar datos y luego actualizar el modal
           this.loadOperatingDaysAndUpdateModal();
-
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error deleting operating day from table:', error);
+        error: () => {
           this.loading = false;
         }
       });
   }
 
   private addOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
-    console.log('Adding new operating day with form data:', formData);
-    console.log('New operating day:', operatingDay);
-
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
@@ -635,40 +560,29 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isExcluded: formData.isExcluded,
       comment: formData.comment
     };
-
-    console.log('Request to send:', request);
-
     this.loading = true;
     this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day added successfully:', response);
-          console.log('Reloading operating days...');
+        next: () => {
           this.loadOperatingDays(); // Recargar datos
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error adding operating day:', error);
+        error: () => {
           this.loading = false;
         }
       });
   }
 
   private deleteOperatingDay(operatingDay: SiteOperatingDay) {
-    console.log('Deleting operating day:', operatingDay);
-
     this.loading = true;
     this.siteCalendarService.deleteOperatingDay({ id: operatingDay.id })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day deleted successfully:', response);
-          console.log('Reloading operating days...');
+        next: () => {
           this.loadOperatingDays(); // Recargar datos
           this.refreshDayEventsTable(); // Actualizar tabla
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error deleting operating day:', error);
+        error: () => {
           this.loading = false;
         }
       });
@@ -748,18 +662,24 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private loadOperatingDays() {
-    console.log('Loading operating days for siteId:', this.currentSiteId);
+
     this.loading = true;
-    this.siteCalendarService.getOperatingDays({ siteId: this.currentSiteId })
+
+    const queryParameters: QueryParameters = {
+      siteId: this.currentSiteId
+    };
+
+    this.siteCalendarService.getOperatingDays(queryParameters)
       .subscribe({
-        next: (response) => {
-          console.log('Operating days loaded:', response);
-          this.operatingDays = response.operatingDays || [];
+        next: (response: any) => {
+
+          const data = response?.body || response;
+          this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error loading operating days:', error);
+        error: () => {
+
           this.loading = false;
         }
       });
@@ -767,34 +687,35 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método para cargar datos y actualizar el modal de tabla
   private loadOperatingDaysAndUpdateModal() {
-    console.log('Loading operating days and updating modal for siteId:', this.currentSiteId);
-    this.siteCalendarService.getOperatingDays({ siteId: this.currentSiteId })
+    const queryParameters: QueryParameters = {
+      siteId: this.currentSiteId
+    };
+
+    this.siteCalendarService.getOperatingDays(queryParameters)
       .subscribe({
-        next: (response) => {
-          console.log('Operating days loaded for modal update:', response);
-          this.operatingDays = response.operatingDays || [];
+        next: (response: any) => {
+
+          const data = response?.body || response;
+          this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
 
           // Actualizar la tabla del modal directamente si está abierto
           if (this.currentTableModal && this.selectedDate) {
             const newEvents = this.getDayEvents(this.selectedDate);
             this.currentTableModal.updateTableData(newEvents);
-            console.log('Modal table updated with fresh data:', newEvents);
+
           } else if (this.selectedDate) {
             this.updateDayEventsTable(this.selectedDate);
           }
         },
-        error: (error) => {
-          console.error('Error loading operating days for modal update:', error);
+        error: () => {
+
         }
       });
   }
 
   private transformToCalendarEvents(days: SiteOperatingDay[]): CalendarEvent[] {
-    console.log('Transforming days to events:', days);
-
-    if (!days || !Array.isArray(days)) {
-      console.warn('No days provided or days is not an array:', days);
+    if (!days || !Array.isArray(days) || days.length === 0) {
       return [];
     }
 
@@ -847,7 +768,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         };
       });
 
-    console.log('Events created:', events);
     return events;
   }
 
@@ -995,11 +915,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private updateOperatingDayFromDrag(operatingDay: SiteOperatingDay) {
-    console.log('Updating operating day from drag/resize:', operatingDay);
-
-
     // Enviar al backend
     const request: SiteOperatingDayRequest = {
+      id: operatingDay.id,
       siteId: this.currentSiteId,
       date: operatingDay.date,
       startTime: operatingDay.startTime,
@@ -1010,56 +928,47 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       comment: operatingDay.comment
     };
 
-    console.log('Request to send for drag/resize:', request);
-
     this.loading = true;
     this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
       .subscribe({
-        next: (response) => {
-          console.log('Operating day updated from drag/resize successfully:', response);
+        next: () => {
+
           this.loadOperatingDays(); // Recargar datos
           this.loading = false;
         },
-        error: (error) => {
-          console.error('Error updating operating day from drag/resize:', error);
+        error: () => {
+
           this.loading = false;
         }
       });
   }
 
   private findDayData(date: Date): SiteOperatingDay | undefined {
-    console.log('Searching for day data for date:', date);
-    console.log('Operating days to search:', this.operatingDays);
-
     // Asegurar que date es un objeto Date válido
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
-      console.error('Invalid date parameter:', date);
       return undefined;
     }
 
     const found = this.operatingDays.find(d => {
       if (!d.date) {
-        console.log('Day has no OperatingDate:', d);
         return false;
       }
 
       try {
         const operatingDate = new Date(d.date);
         if (!operatingDate || isNaN(operatingDate.getTime())) {
-          console.log('Invalid OperatingDate:', d.date);
           return false;
         }
 
         const isMatch = this.isSameDate(operatingDate, date);
-        console.log(`Comparing ${operatingDate.toDateString()} with ${date.toDateString()}: ${isMatch}`);
+
         return isMatch;
       } catch (error) {
-          console.error('Error processing OperatingDate:', d.date, error);
         return false;
       }
     });
 
-    console.log('Found day data:', found);
+
     return found;
   }
 
@@ -1071,7 +980,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
              date1.getMonth() === date2.getMonth() &&
              date1.getDate() === date2.getDate();
     } catch (error) {
-      console.error('Error comparing dates:', error, { date1, date2 });
+
       return false;
     }
   }
@@ -1101,7 +1010,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     this.tableConfig.dataSourceList = tableData;
     this.tableConfig.dataSource.data = tableData;
 
-    console.log('Table updated with data:', tableData);
+
   }
 
   getEventTypeLabel(operatingDay: SiteOperatingDay): string {
@@ -1186,12 +1095,32 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     }
   }
 
-  // Métodos requeridos por OnGenericTableHandler (no utilizados)
-  onTableAdd?(event: Event, element: any): void {}
-  onTableEditElement?(event: Event, element: any): void {}
-  onTableDownload?(event: Event, id: any): void {}
-  onTableCalendar?(event: Event, id: any): void {}
-  onTableCheckChange?(event: any, element: any): void {}
-  getPaginator?(event?: any): void {}
-  getById?(id: number): void {}
+  /**
+   * Mapea la respuesta de la API a la interfaz del componente
+   */
+  private mapApiResponseToOperatingDays(apiDays: OperatingDayApiResponse[]): SiteOperatingDay[] {
+    if (!apiDays || !Array.isArray(apiDays)) {
+      return [];
+    }
+
+    // Aplanar el array si viene anidado (array de arrays)
+    const daysArray = apiDays.length > 0 && Array.isArray(apiDays[0])
+      ? apiDays.flat()
+      : apiDays;
+
+    return daysArray.map(day => ({
+      id: day.id,
+      siteId: day.siteId,
+      date: day.operatingDate ? new Date(day.operatingDate).toISOString().split('T')[0] : '',
+      startTime: day.startTime || '',
+      endTime: day.endTime || '',
+      isOperating: !day.isExcluded,
+      comment: day.comment || '',
+      isWeekendOverride: day.isWeekendOverride || false,
+      isExcluded: day.isExcluded || false,
+      createdAt: day.createdAt ? new Date(day.createdAt) : new Date(),
+      updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date()
+    }));
+  }
+
 }

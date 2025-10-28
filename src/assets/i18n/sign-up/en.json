@@ -70,8 +70,8 @@
       "placeholder": "Select your region"
     },
           "zip-code": {
-        "label": "Postal Code",
-        "placeholder": "Enter the postal code"
+        "label": "Zip Code",
+        "placeholder": "Enter the zip code"
       },
       "same-as-physical-address": {
         "label": "Is it the same as physical address?"
@@ -88,12 +88,12 @@
       "placeholder": "Enter the first name"
     },
     "father-last-name": {
-      "label": "Father's Last Name",
-      "placeholder": "Enter the father's last name"
+      "label": "First Last Name",
+      "placeholder": "Enter the first last name"
     },
     "admin-title": {
-      "label": "Administrator Title",
-      "placeholder": "Enter the administrator title"
+      "label": "Person in Charge",
+      "placeholder": "Enter the person in charge"
     },
     "uie": {
       "label": "Unique Entity Identifier (UEI)",
@@ -127,8 +127,8 @@
       "placeholder": "Enter the middle name"
     },
     "mother-last-name": {
-      "label": "Mother's Last Name",
-      "placeholder": "Enter the mother's last name"
+      "label": "Second Last Name",
+      "placeholder": "Enter the second last name"
     },
     "close": "Close",
     "submit": "Apply to Program",
@@ -141,14 +141,26 @@
       "confirm": "Accept"
     },
     "pdam-psav-not-eligible": {
-      "message": "You are not eligible to participate in PDAM or PSAV programs"
+      "title": "Eligibility Information",
+      "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR 225.2, 225.14(b).",
+      "cfr-link-text": "7 CFR 225.14 -- Requirements for sponsor participation"
     },
     "basic-education-not-eligible": {
       "message": "To participate in PDAM or PSAV programs, you must have Basic Education Registry granted or in progress"
     },
-    "extended-hours-not-eligible": {
-      "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR § 226.19(b)(3)."
-    },
+  "extended-hours-not-eligible": {
+    "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR § 226.19(b)(3)."
+  },
+  "state-funds-denied-dialog": {
+    "title": "State Funds Information",
+    "message": "The State agency shall not approve the application of any applicant sponsor identifiable through its organization or principals as a sponsor which has been determined to be seriously deficient as described in § 225.11(c). However, the State agency may approve the application of a sponsor which has been disapproved or terminated in prior years in accordance with this paragraph if the applicant demonstrates to the satisfaction of the State agency that it has taken appropriate corrective actions to prevent recurrence of the deficiencies.",
+    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications"
+  },
+  "federal-funds-denied-dialog": {
+    "title": "Federal Funds Information",
+    "message": "Information about denied or disqualified federal funds.",
+    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications"
+  },
     "error": {
       "creating-user": "Error creating user. Please try again"
     },

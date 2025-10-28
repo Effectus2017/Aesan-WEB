@@ -8,6 +8,7 @@ export interface SchoolResponse {
     isActive: boolean;
     createdAt: string;
     updatedAt?: string;
+    sitesCount?: number;
     agency?: {
         id: number;
         name: string;

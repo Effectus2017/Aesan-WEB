@@ -97,8 +97,8 @@
       "placeholder": "Ingresa el primer apellido"
     },
     "admin-title": {
-      "label": "Título del Administrador",
-      "placeholder": "Ingresa el título del administrador"
+      "label": "Persona a Cargo",
+      "placeholder": "Ingresa la persona a cargo"
     },
     "uie": {
       "label": "Identificador Único de Entidad (IUE)",
@@ -146,14 +146,26 @@
       "confirm": "Aceptar"
     },
     "pdam-psav-not-eligible": {
-      "message": "No es elegible para participar en los programas PDAM o PSAV"
+      "title": "Información sobre Elegibilidad",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 225.2, 225.14(b).",
+      "cfr-link-text": "7 CFR 225.14 -- Requirements for sponsor participation"
     },
     "basic-education-not-eligible": {
       "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
     },
-    "extended-hours-not-eligible": {
-      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19(b)(3)."
-    },
+  "extended-hours-not-eligible": {
+    "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19(b)(3)."
+  },
+  "state-funds-denied-dialog": {
+    "title": "Información sobre Fondos Estatales",
+    "message": "La Agencia Estatal no aprobará la solicitud de ningún auspiciador solicitante, identificado a través de su organización o directores como auspiciadores, que haya sido determinado como seriamente deficiente, según lo descrito en el § 225.11(c). Sin embargo, la Agencia Estatal podrá aprobar la solicitud de un auspiciador que haya sido desaprobado o cancelado en años anteriores, de conformidad con este párrafo, si el solicitante demuestra, a satisfacción de la Agencia Estatal, que ha tomado las medidas correctivas adecuadas para evitar la recurrencia de las deficiencias.",
+    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications"
+  },
+  "federal-funds-denied-dialog": {
+    "title": "Información sobre Fondos Federales",
+    "message": "Información sobre fondos federales denegados o descalificados.",
+    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications"
+  },
     "error": {
       "creating-user": "Error al crear el usuario. Por favor, intente nuevamente"
     },

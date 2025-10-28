@@ -9,7 +9,7 @@
           "firstName": "First Name",
           "middleName": "Middle Name",
           "fatherLastName": "Father's Last Name",
-          "motherLastName": "Mother's Last Name",
+          "motherLastName": "Second Last Name",
           "fullName": "Full Name",
           "status": "Status",
           "position": "Position",
@@ -118,13 +118,13 @@
         "placeholder": "Enter middle name (optional)"
       },
       "fatherLastName": {
-        "label": "Father's Last Name",
-        "placeholder": "Enter father's last name",
-        "required": "Father's last name is required"
+        "label": "First Last Name",
+        "placeholder": "Enter the first last name",
+        "required": "First last name is required"
       },
       "motherLastName": {
-        "label": "Mother's Last Name",
-        "placeholder": "Enter mother's last name (optional)"
+        "label": "Second Last Name",
+        "placeholder": "Enter the second last name (optional)"
       },
       "status": {
         "label": "Status",

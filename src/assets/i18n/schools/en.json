@@ -10,6 +10,7 @@
                     "schoolNumber": "School Number",
                     "isActive": "Active",
                     "createdAt": "Created Date",
+                    "sites-count": "Sites Count",
                     "actions": "Actions"
                 },
                 "buttons": {
@@ -27,6 +28,7 @@
         },
         "modal": {
             "create": "Create School",
+            "edit": "Edit School",
             "name": "School Name"
         },
         "sites": {

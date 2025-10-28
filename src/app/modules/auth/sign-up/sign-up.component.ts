@@ -272,7 +272,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // National Youth Program
       // ¿Su Institución es un Programa Nacional de Juventud?
       // Si (1) y No (2)
-      nationalYouthProgram: [null],
+      // COMENTADO: Este campo ya NO se debe mostrar para NINGÚN programa
+      // nationalYouthProgram: [null],
 
       // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
       // Are you a Day Care Homes? (Only for PACNA program)
@@ -361,16 +362,29 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         this.isEligible = true;
 
         // --- Lógica para nationalYouthProgram ---
+        // Este campo ya NO se muestra para NINGÚN programa (incluyendo PSAV)
+        // COMENTADO: El campo ya está oculto en el HTML, no se necesita lógica de validación
+        /*
         const nationalYouthProgramControl = this.signUpForm.get('nationalYouthProgram');
+        nationalYouthProgramControl.clearValidators();
+        nationalYouthProgramControl.setValue(null);
+        nationalYouthProgramControl.updateValueAndValidity();
+        */
+        // --- Fin lógica ---
+
+        // --- Lógica para publicAllianceContract ---
+        const publicAllianceContractControl = this.signUpForm.get('publicAllianceContractId');
 
         if (isPSAVProgram(currentProgram)) {
-          nationalYouthProgramControl.setValidators([Validators.required]);
+          // Para PSAV, quitar la validación requerida y limpiar el valor
+          publicAllianceContractControl.clearValidators();
+          publicAllianceContractControl.setValue(null);
         } else {
-          nationalYouthProgramControl.clearValidators();
-          nationalYouthProgramControl.setValue(null); // Limpiar si no es PSAV
+          // Para PDAM y PACNA, mantener la validación requerida
+          publicAllianceContractControl.setValidators([Validators.required]);
         }
 
-        nationalYouthProgramControl.updateValueAndValidity();
+        publicAllianceContractControl.updateValueAndValidity();
         // --- Fin lógica ---
 
         // --- Lógica para isDayCareHome ---
@@ -580,7 +594,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const typeOfEntityId = formValues.typeOfEntityId;
     const typeOfApplicantId = formValues.typeOfApplicantId == null ? false : formValues.typeOfApplicantId;
     const publicAllianceContractId = formValues.publicAllianceContractId == null ? false : formValues.publicAllianceContractId;
-    const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
+    // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
+    const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
     const isDayCareHome = formValues.isDayCareHome == null ? false : formValues.isDayCareHome;
 
     const firstName = formValues.firstName;
@@ -659,7 +674,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // National Youth Program
         // ¿Su Institución es un Programa Nacional de Juventud?
         // Si (1) y No (2)
-        nationalYouthProgram: nationalYouthProgram,
+        // COMENTADO: Este campo ya NO se debe enviar, siempre se envía como false
+        nationalYouthProgram: false,
         // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
         // Are you a Day Care Homes? (Only for PACNA program)
         // Si (1) y No (2)
@@ -728,21 +744,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const selectedProgram = this.signUpForm.value.program;
     const isNotNonProfit = this.signUpForm.value.nonProfit === false;
 
-    // Verificar elegibilidad para PDAM y PSAV
-    if (isNotNonProfit && isPDAMOrPSAVProgram(selectedProgram)) {
+    // Verificar elegibilidad para PSAV
+    if (isNotNonProfit && isPSAVProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
+          message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
+            text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
+          }
         },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
       });
     } else {
       this.isEligible = true;
@@ -882,5 +898,37 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Si no hay problemas de elegibilidad, habilitar el formulario
     this.isEligible = true;
     enableAllControls(this.signUpForm);
+  }
+
+  // Abrir dialog de información sobre fondos estatales
+  openStateFundsDeniedDialog(): void {
+    this._dialog.open(CfrInfoDialogComponent, {
+      data: {
+        title: this._translocoService.translate('sign-up.state-funds-denied-dialog.title'),
+        message: this._translocoService.translate('sign-up.state-funds-denied-dialog.message'),
+        cfrLink: {
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.6',
+          text: this._translocoService.translate('sign-up.state-funds-denied-dialog.cfr-link-text')
+        }
+      },
+      disableClose: false,
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+  }
+
+  // Abrir dialog de información sobre fondos federales
+  openFederalFundsDeniedDialog(): void {
+    this._dialog.open(CfrInfoDialogComponent, {
+      data: {
+        title: this._translocoService.translate('sign-up.federal-funds-denied-dialog.title'),
+        message: this._translocoService.translate('sign-up.federal-funds-denied-dialog.message'),
+        cfrLink: {
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.6',
+          text: this._translocoService.translate('sign-up.federal-funds-denied-dialog.cfr-link-text')
+        }
+      },
+      disableClose: false,
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
   }
 }

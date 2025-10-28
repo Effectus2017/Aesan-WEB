@@ -8,6 +8,7 @@ export interface QueryParameters {
   excludeRelated?: boolean;  // Nuevo parámetro para excluir staff ya relacionado
   id?: number;
   agencyId?: number;
+  siteId?: number;
   programId?: number;
   regionId?: number;
   cityId?: number;

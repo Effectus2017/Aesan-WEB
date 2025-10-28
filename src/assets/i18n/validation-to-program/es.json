@@ -17,7 +17,7 @@
                     "zipCode": "Código Postal",
                     "firstName": "Nombre",
                     "fatherLastName": "Primer Apellido",
-                    "adminTitle": "Título Admin.",
+                    "adminTitle": "Persona a Cargo",
                     "nonProfit": "Sin Fines de Lucro",
                     "uieNumber": "Identificador Único de Entidad (IUE)",
                     "einNumber": "Número de Seguro Social Patronal (EIN)",
@@ -114,8 +114,8 @@
                 "placeholder": "Ingrese el número de teléfono"
             },
             "administration-title": {
-                "label": "Título Administrador",
-                "placeholder": "Ingrese el título del administrador"
+                "label": "Persona a Cargo",
+                "placeholder": "Ingrese la persona a cargo"
             },
             "sections": {
                 "sponsor-information": "Información del Auspiciador",

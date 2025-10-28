@@ -24,6 +24,7 @@ import { SchoolService } from 'app/shared/services/school.service';
 import { School } from 'app/shared/models/School';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AddSchoolModalComponent } from '../add-modal/add-school-modal.component';
+import { EditSchoolModalComponent } from '../edit-modal/edit-school-modal.component';
 import { SitesModalComponent } from '../sites-modal/sites-modal.component';
 import { SiteService } from 'app/shared/services/site.service';
 
@@ -169,6 +170,32 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         // Si se creó una escuela exitosamente, recargar la lista
+        this.getAll(0, this.headerConfig.formGroup.value);
+        this._changeDetectorRef.markForCheck();
+      }
+    });
+  }
+
+  onTableEditModal(event: Event, schoolId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.openEditSchoolModal(schoolId);
+  }
+
+  private openEditSchoolModal(schoolId: number): void {
+    const school = this.tableConfig.dataSource.data.find(s => s.id === schoolId);
+
+    const dialogRef = this._dialog.open(EditSchoolModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        schoolId: schoolId,
+        schoolName: school?.name || ''
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
         this.getAll(0, this.headerConfig.formGroup.value);
         this._changeDetectorRef.markForCheck();
       }

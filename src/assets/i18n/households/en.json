@@ -14,7 +14,7 @@
     "apartment": "Apartment",
     "city": "City",
     "region": "Region",
-    "zipcode": "Postal Code",
+    "zipcode": "Zip Code",
     "phone": "Phone",
     "email": "Email",
     "completedBy": "Completed by",

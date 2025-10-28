@@ -168,6 +168,22 @@
           </button>
         </div>
         }
+
+        @if (button.key === 'edit-modal') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onButtonClick($event, button, element)"
+            [attr.aria-label]="'global.buttons.edit' | transloco"
+          >
+            <span class="sr-only">{{ "global.buttons.edit" | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon" [attr.aria-hidden]="true" style="color: #4CAF50;"></mat-icon>
+          </button>
+        </div>
+        }
         }
       </div>
       } @default {
@@ -334,6 +350,22 @@
                   [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
               >
                   {{ 'schools.list.table.buttons.' + button.key | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'edit-modal') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
+                  type="button"
+                  mat-icon-button
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onButtonClick($event, button, element)"
+                  [attr.aria-label]="'global.buttons.edit' | transloco"
+              >
+                  <span class="sr-only">{{ "global.buttons.edit" | transloco }}</span>
+                  <mat-icon [svgIcon]="button.icon" [attr.aria-hidden]="true" style="color: #4CAF50;"></mat-icon>
               </button>
             </div>
             }

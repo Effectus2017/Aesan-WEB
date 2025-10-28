@@ -124,8 +124,10 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
 
   // Implementación de OnGenericTableHandler
   onTableEdit(event: Event, id: number): void {
-    // Por ahora no implementamos edición desde el modal
-    console.log('Edit site:', id);
+    event.stopPropagation();
+    event.preventDefault();
+    this.dialogRef.close();
+    this._customRouterService.navigate([`sites/edit/${id}`]);
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -138,6 +140,18 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   onTableRefresh(): void {
+    this.getAll(0, this.searchForm.value);
+  }
+
+  onTableCalendar(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.dialogRef.close();
+    this._customRouterService.navigate([`sites/calendar/${id}`]);
+  }
+
+  onClearSearch(): void {
+    this.searchForm.get('search')?.setValue('');
     this.getAll(0, this.searchForm.value);
   }
 

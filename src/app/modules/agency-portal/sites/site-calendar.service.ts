@@ -2,37 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
-export interface SiteOperatingDay {
-  id: number;
-  siteId: number;
-  date: string;
-  startTime: string;
-  endTime: string;
-  isOperating: boolean;
-  comment: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface SiteOperatingDayRequest {
-  id?: number;
-  siteId: number;
-  date: string;
-  startTime: string;
-  endTime: string;
-  isOperating: boolean;
-  comment: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
-}
-
-export interface SiteCalendarResponse {
-  operatingDays: SiteOperatingDay[];
-  siteName: string;
-}
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { getHttpOptions } from 'app/shared/utils';
+import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -42,15 +14,17 @@ export class SiteCalendarService {
 
   constructor(private http: HttpClient) {}
 
-  getOperatingDays(params: { siteId: number }): Observable<SiteCalendarResponse> {
-    return this.http.get<SiteCalendarResponse>(`${this.apiUrl}/operating-days`, { params: params as any });
+  getOperatingDays(queryParameters: QueryParameters): Observable<any> {
+    return this.http.get(`${this.apiUrl}/get-operating-days`, getHttpOptions(queryParameters));
   }
 
-  toggleOperatingDay(request: SiteOperatingDayRequest, params: { siteId: number }): Observable<SiteOperatingDay> {
-    return this.http.post<SiteOperatingDay>(`${this.apiUrl}/toggle-operating-day`, request, { params: params as any });
+  toggleOperatingDay(request: SiteOperatingDayRequest, queryParameters: QueryParameters): Observable<any> {
+    return this.http.post(`${this.apiUrl}/toggle-operating-day`, request, getHttpOptions(queryParameters));
   }
 
-  deleteOperatingDay(params: { id: number }): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/operating-day`, { params: params as any });
+  deleteOperatingDay(queryParameters: QueryParameters): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/operating-day`, getHttpOptions(queryParameters));
   }
 }
+export { SiteOperatingDayRequest };
+

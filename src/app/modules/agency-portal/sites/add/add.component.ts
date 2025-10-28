@@ -776,29 +776,30 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   /**
    * Valida si el sitio tiene al menos un año de servicio
    * Validates if the site has at least one year of service
+   * NOTE: Validation disabled - commented out for future reference
    */
   checkServiceTime(): void {
-    const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    if (serviceTime) {
-      const today = new Date();
-      const serviceDate = new Date(serviceTime);
-      const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
+    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
+    // if (serviceTime) {
+    //   const today = new Date();
+    //   const serviceDate = new Date(serviceTime);
+    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
 
-      if (diffInMonths < 12) {
-        this._fuseConfirmationService.open({
-          title: this._translocoService.translate('sites.notification.title'),
-          message: this._translocoService.translate('sites.add.service-time.not-eligible'),
-          actions: {
-            confirm: {
-              label: this._translocoService.translate('sites.notification.confirm'),
-            },
-            cancel: {
-              show: false,
-            },
-          },
-        });
-      }
-    }
+    //   if (diffInMonths < 12) {
+    //     this._fuseConfirmationService.open({
+    //       title: this._translocoService.translate('sites.notification.title'),
+    //       message: this._translocoService.translate('sites.add.service-time.not-eligible'),
+    //       actions: {
+    //         confirm: {
+    //           label: this._translocoService.translate('sites.notification.confirm'),
+    //         },
+    //         cancel: {
+    //           show: false,
+    //         },
+    //       },
+    //     });
+    //   }
+    // }
   }
 
   ngOnDestroy(): void {
