@@ -29,6 +29,7 @@ import { FuseConfigService } from '@fuse/services/config';
 import { SiteCalendarEditModalComponent } from '../site-calendar-edit-modal/site-calendar-edit-modal.component';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
 import { SiteCalendarTableModalComponent } from '../site-calendar-table-modal/site-calendar-table-modal.component';
+import { SiteCalendarTableModalData } from '../site-calendar-table-modal/site-calendar-table-modal-data.interface';
 
 @Component({
   selector: 'app-site-calendar',
@@ -1049,24 +1050,26 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Abrir modal con tabla de eventos del día
   openDayEventsModal(date: Date): void {
-      const dialogRef = this.dialog.open(SiteCalendarTableModalComponent, {
+    const modalData: SiteCalendarTableModalData = {
+      date: date,
+      events: this.getDayEvents(date),
+      tableConfig: this.tableConfig,
+      handler: this,
+      siteId: this.currentSiteId,
+      onEventAdded: () => {
+        // Callback para actualizar la tabla cuando se agrega un evento
+        // No recargar aquí para evitar llamadas duplicadas
+      },
+      onEventUpdated: () => {
+        // Callback para actualizar la tabla cuando se edita un evento
+        this.updateDayEventsTable(date);
+      }
+    };
+
+    const dialogRef = this.dialog.open(SiteCalendarTableModalComponent, {
       width: '80%',
       maxWidth: '1200px',
-      data: {
-        date: date,
-        events: this.getDayEvents(date),
-        tableConfig: this.tableConfig,
-        handler: this,
-        siteId: this.siteId,
-        onEventAdded: () => {
-          // Callback para actualizar la tabla cuando se agrega un evento
-          // No recargar aquí para evitar llamadas duplicadas
-        },
-        onEventUpdated: () => {
-          // Callback para actualizar la tabla cuando se edita un evento
-          this.updateDayEventsTable(date);
-        }
-      }
+      data: modalData
     });
 
     // Guardar referencia al modal para poder actualizarlo directamente

@@ -56,5 +56,7 @@
   "./assets/i18n/aesan-dashboard/es.json",
   "./assets/i18n/aesan-dashboard/en.json",
   "./assets/i18n/sponsor-evaluation/es.json",
-  "./assets/i18n/sponsor-evaluation/en.json"
+  "./assets/i18n/sponsor-evaluation/en.json",
+  "./assets/i18n/cfr-info-dialog/es.json",
+  "./assets/i18n/cfr-info-dialog/en.json"
 ]

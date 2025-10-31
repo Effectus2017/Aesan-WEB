@@ -46,6 +46,8 @@ export interface AgencyRequest {
     // Are you interested in participating in extended hours? (Only for PACNA)
     // Si (1) y No (2)
     extendedHours?: boolean;
+    // ¿Desde cuándo su Entidad ofrece servicios? (Solo para PACNA)
+    servicesOfferedSince?: string; // ISO date (YYYY-MM-DD)
     // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
     // Si (1) y No (2)
     stateFundsDenied?: boolean;

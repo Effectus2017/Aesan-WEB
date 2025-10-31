@@ -15,6 +15,17 @@
     "extended-hours": {
       "label": "Are you interested in participating in extended hours?"
     },
+    "services-offered-since": {
+      "label": "Since when has your entity been offering services?",
+      "placeholder": "Select a date",
+      "required": "This field is required",
+      "future-date": "The date cannot be in the future",
+      "dialog": {
+        "title": "Compliance with performance standards",
+        "message": "Each new institution must submit information sufficient to document that it is financially viable, is administratively capable of operating the Program in accordance with this part, and has internal controls in effect to ensure accountability.",
+        "cfr-link-text": "7 CFR 226.6 -- State agency administrative responsibilities"
+      }
+    },
     "state-funds-denied": {
       "label": "Have you been denied or disqualified from state funds in the last seven years?",
       "yes": "Yes",
@@ -152,9 +163,13 @@
     "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR § 226.19(b)(3)."
   },
   "state-funds-denied-dialog": {
-    "title": "State Funds Information",
+    "title": "State and Federal Funds",
     "message": "The State agency shall not approve the application of any applicant sponsor identifiable through its organization or principals as a sponsor which has been determined to be seriously deficient as described in § 225.11(c). However, the State agency may approve the application of a sponsor which has been disapproved or terminated in prior years in accordance with this paragraph if the applicant demonstrates to the satisfaction of the State agency that it has taken appropriate corrective actions to prevent recurrence of the deficiencies.",
-    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications"
+    "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications",
+    "pacna": {
+      "message": "7 CFR 226.6(c)(iii)(c)(1)(i) Si la solicitud de una nueva institución no cumple con todos los requisitos del párrafo (b) de esta sección y de los §§ 226.15(b) y 226.16(b) , la agencia estatal deberá denegarla. Si, al revisar la solicitud de una nueva institución, la agencia estatal determina que esta ha cometido una o más deficiencias graves de las enumeradas en el párrafo (c)(1)(ii) de esta sección, deberá tomar medidas para:\nDenegar la solicitud de la nueva institución; y\nDescalificar a la nueva institución y a los directores y personas responsables (por ejemplo, la persona que firma la solicitud).\nPara conocer más información puede acceder al siguiente enlace: 7 CFR 226.6 -- State agency administrative responsibilities.\n \n7 CFR 226.6(c)(iii)(c)(1)(i) If a new institution's application does not meet all of the requirements in paragraph (b) of this section and in §§ 226.15(b) and 226.16(b), the State agency must deny the application. If, in reviewing a new institution's application, the State agency determines that the institution has committed one or more serious deficiency listed in paragraph (c)(1)(ii) of this section, the State agency must initiate action to:\nDeny the new institution's application; and\nDisqualify the new institution and the responsible principals and responsible individuals (e.g., the person who signs the application).\nFor more information, please visit the following link: 7 CFR 226.6 -- State agency administrative responsibilities.",
+      "cfr-link-text": "7 CFR 226.6 -- State agency administrative responsibilities."
+    }
   },
   "federal-funds-denied-dialog": {
     "title": "Federal Funds Information",

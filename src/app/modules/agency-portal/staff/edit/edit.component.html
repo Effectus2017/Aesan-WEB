@@ -163,8 +163,6 @@
 
         <!-- Campos de Fecha de Nacimiento y Email -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-
-
           <!-- Email -->
           <mat-form-field data-cy="email-field" *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
             <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
@@ -187,11 +185,15 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)">
-
-           <!-- Birth Date -->
-           <mat-form-field data-cy="birth-date-field" *ngIf="fieldVisibilityService.shouldShowField('birthDate', currentStaffType)">
+        <!-- Fecha de Nacimiento -->
+        <!-- Fechas de Inicio de Contrato -->
+        <!-- Fecha de finalización de contrato -->
+        <div
+          class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12"
+          *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)"
+          appDynamicGrid="3"
+        >
+          <mat-form-field data-cy="birth-date-field" *ngIf="fieldVisibilityService.shouldShowField('birthDate', currentStaffType)">
             <mat-label>{{ "staff.edit.birthDate.label" | transloco }}</mat-label>
             <input
               matInput
@@ -212,8 +214,6 @@
               {{ "staff.edit.birthDate.minimumAge" | transloco }}
             </mat-error>
           </mat-form-field>
-
-            <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>
             <input
@@ -229,8 +229,6 @@
             <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractStartDatePicker></mat-datepicker>
           </mat-form-field>
-
-          <!-- Contract End Date -->
           <mat-form-field data-cy="contract-end-date-field">
             <mat-label>{{ "staff.edit.contractEndDate.label" | transloco }}</mat-label>
             <input
@@ -347,7 +345,6 @@
               </mat-option>
             </mat-select>
           </mat-form-field>
-
         </div>
 
         <!-- Información Adicional -->

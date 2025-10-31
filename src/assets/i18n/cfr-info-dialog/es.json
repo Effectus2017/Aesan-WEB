@@ -1,0 +1,46 @@
+{
+  "cfr-info-dialog": {
+    "cfr-225-2": {
+      "title": "Información sobre Elegibilidad",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 225.2.",
+      "cfr-link-text": "7 CFR 225.2 -- Definiciones"
+    },
+    "cfr-225-6-b-9": {
+      "title": "Fondos Estatales y Federales",
+      "message": "La Agencia Estatal no aprobará la solicitud de ningún auspiciador solicitante, identificado a través de su organización o directores como auspiciadores, que haya sido determinado como seriamente deficiente, según lo descrito en el § 225.11(c). Sin embargo, la Agencia Estatal podrá aprobar la solicitud de un auspiciador que haya sido desaprobado o cancelado en años anteriores, de conformidad con este párrafo, si el solicitante demuestra, a satisfacción de la Agencia Estatal, que ha tomado las medidas correctivas adecuadas para evitar la recurrencia de las deficiencias.",
+      "cfr-link-text": "7 CFR § 225.6(b)(9) -- Disapproval of sponsor applications",
+      "cfr-link-url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.6"
+    },
+    "cfr-226-6": {
+        "title": "Cumplimiento de los estándares de desempeño",
+        "message": "7 CFR 226.6(c)(1)(iii)(C)(1)(i) Si la solicitud de una nueva institución no cumple con todos los requisitos del párrafo (b) de esta sección y de los §§ 226.15(b) y 226.16(b), la agencia estatal deberá denegarla. Si, al revisar la solicitud de una nueva institución, la agencia estatal determina que esta ha cometido una o más deficiencias graves de las enumeradas en el párrafo (c)(1)(ii) de esta sección, deberá tomar medidas para:\n\nDenegar la solicitud de la nueva institución; y\n\nDescalificar a la nueva institución y a los directores y personas responsables (por ejemplo, la persona que firma la solicitud).",
+        "cfr-link-text": "7 CFR 226.6 -- Responsabilidades administrativas de la agencia estatal",
+        "cfr-link-url": "https://www.ecfr.gov/current/title-7/part-226/section-226.6"
+      },
+    "cfr-226-6-b-1-xviii": {
+      "title": "Cumplimiento de los estándares de desempeño",
+      "message": "7 CFR 226.6(b)(1)(xviii): Cumplimiento de los estándares de desempeño: Cada institución nueva debe presentar información suficiente para demostrar su viabilidad financiera, su capacidad administrativa para operar el Programa de conformidad con esta parte y sus controles internos para garantizar la rendición de cuentas.",
+      "cfr-link-text": "7 CFR 226.6 -- Responsabilidades administrativas de la agencia estatal",
+      "cfr-link-url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-226/subpart-C/section-226.6#p-226.6(b)(1)(xviii)"
+    },
+    "cfr-226-15-a": {
+      "title": "Cumplimiento de disposiciones de la institución",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.15(a).",
+      "cfr-link-text": "7 CFR 226.15 -- Disposiciones de la institución",
+      "cfr-link-url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-226/subpart-E/section-226.15#p-226.15(a)"
+    },
+    "cfr-226-19": {
+      "title": "Horario extendido",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19.",
+      "cfr-link-text": "7 CFR 226.19 -- Disposiciones para centros fuera del horario escolar",
+      "cfr-link-url": "https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-226/subpart-E/section-226.19"
+    },
+    "cfr-226-19-b-3": {
+      "title": "Horario extendido",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19(b)(3).",
+      "cfr-link-text": "7 CFR 226.19 -- Disposiciones para centros fuera del horario escolar"
+    }
+  }
+}
+
+

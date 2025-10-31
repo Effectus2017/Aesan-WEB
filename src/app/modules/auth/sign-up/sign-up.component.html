@@ -69,19 +69,45 @@
             </mat-form-field>
           </div>
 
+          <!-- ¿Desde cuándo su Entidad ofrece servicios? (Solo para PACNA) -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPACNAProgram(signUpForm.get('program')?.value)">
+            <div class="flex gap-2 items-center">
+              <mat-form-field class="flex-grow" data-cy="services-offered-since-field">
+                <mat-label>{{ 'sign-up.services-offered-since.label' | transloco }}</mat-label>
+                <input
+                  matInput
+                  [formControlName]="'servicesOfferedSince'"
+                  [matDatepicker]="servicesSincePicker"
+                  placeholder="{{ 'sign-up.services-offered-since.placeholder' | transloco }}"
+                />
+                <mat-datepicker-toggle matSuffix [for]="servicesSincePicker"></mat-datepicker-toggle>
+                <mat-datepicker #servicesSincePicker></mat-datepicker>
+                <mat-error *ngIf="signUpForm.get('servicesOfferedSince')?.hasError('required')">
+                  {{ 'sign-up.services-offered-since.required' | transloco }}
+                </mat-error>
+                <mat-error *ngIf="signUpForm.get('servicesOfferedSince')?.hasError('futureDate')">
+                  {{ 'sign-up.services-offered-since.future-date' | transloco }}
+                </mat-error>
+              </mat-form-field>
+              <button title="button" id="services-offered-since-info-button" mat-icon-button type="button" class="mt-2" (click)="openCfrInfoByKey('cfr-info-dialog.cfr-226-6-b-1-xviii')" data-cy="services-offered-since-info-button">
+                <mat-icon class="text-hint" svgIcon="mat_outline:info"></mat-icon>
+              </button>
+            </div>
+          </div>
+
           <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
           <!-- In what status is your Tax Exemption? -->
           <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
           <!-- ¿Qué tipo de Exención Contributiva tiene? -->
           <!-- What type of Tax Exemption does it have? -->
           <!-- Estatal (11), Federal (12) -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2" *ngIf="shouldShowTaxExemption()">
             <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
             <!-- In what status is your Tax Exemption? -->
             <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
             <mat-form-field data-cy="tax-exemption-status-field">
               <mat-label>{{ "sign-up.tax-exemption-status.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'taxExemptionStatusId'" data-cy="tax-exemption-status-input">
+              <mat-select [formControlName]="'taxExemptionStatusId'" (selectionChange)="checkTaxExemptionStatus()" data-cy="tax-exemption-status-input">
                 <mat-option *ngFor="let option of exceptionStatus" [value]="option.id" data-cy="tax-exemption-status-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
@@ -126,8 +152,8 @@
                   }}</mat-option>
                 </mat-select>
               </mat-form-field>
-              <button mat-icon-button type="button" class="mt-2" (click)="openStateFundsDeniedDialog()" data-cy="state-funds-denied-info-button">
-                <mat-icon class="text-hint">info</mat-icon>
+              <button mat-icon-button type="button" class="mt-2" (click)="openCfrInfoByKey(getStateFundsDeniedKey())" data-cy="state-funds-denied-info-button">
+                <mat-icon class="text-hint" svgIcon="mat_outline:info"></mat-icon>
               </button>
             </div>
           </div>

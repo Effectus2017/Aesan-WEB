@@ -111,9 +111,9 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Fecha de Nacimiento y Email -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <!-- Birth Date (para miembros de junta y empleados) -->
+        <!-- Campos de Fecha de Nacimiento -->
+         <!-- Email -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" appDynamicGrid="2">
           <mat-form-field data-cy="birth-date-field" *ngIf="isBoardMember || isEmployee">
             <mat-label>{{ "staff.add.birthDate.label" | transloco }}</mat-label>
             <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" [placeholder]="'staff.add.birthDate.placeholder' | transloco" data-cy="birthDate-input" />
@@ -126,8 +126,6 @@
               {{ "staff.add.birthDate.minimumAge" | transloco }}
             </mat-error>
           </mat-form-field>
-
-          <!-- Email -->
           <mat-form-field data-cy="email-field" [class.sm:col-span-2]="!isBoardMember && !isEmployee" *ngIf="!isEmployee">
             <mat-label>{{ "staff.add.email.label" | transloco }}</mat-label>
             <input matInput formControlName="email" type="email" [placeholder]="'staff.add.email.placeholder' | transloco" data-cy="email-input" />
@@ -141,8 +139,8 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
+         <!-- Fechas de Inicio de Contrato -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!isBoardMember">
-          <!-- Contract Start Date -->
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.add.contractStartDate.label" | transloco }}</mat-label>
             <input
@@ -155,8 +153,6 @@
             <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractStartDatePicker></mat-datepicker>
           </mat-form-field>
-
-          <!-- Contract End Date -->
           <mat-form-field data-cy="contract-end-date-field">
             <mat-label>{{ "staff.add.contractEndDate.label" | transloco }}</mat-label>
             <input
@@ -234,27 +230,17 @@
           </p>
         </div>
 
-        <!-- Campos de Sitio y Tipo de Asignación -->
+        <!-- Lista de Sitios -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <!-- Sitio -->
           <mat-form-field data-cy="site-field">
             <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
             <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
               <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
-                {{ site.name }}
+                {{ site.siteCode }} - {{ site.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
 
-          <!-- Tipo de Asignación -->
-          <!-- <mat-form-field data-cy="assignment-type-field">
-            <mat-label>{{ "staff.add.assignmentType.label" | transloco }}</mat-label>
-            <mat-select formControlName="assignmentType" [placeholder]="'staff.add.assignmentType.placeholder' | transloco" [compareWith]="compareById" data-cy="assignment-type-select">
-              <mat-option *ngFor="let assignmentType of listStaffAssignmentTypes" [value]="assignmentType" data-cy="assignment-type-option">
-                {{ currentLang === 'es' ? assignmentType.name : assignmentType.nameEN }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field> -->
         </div>
 
         <!-- Información Adicional -->

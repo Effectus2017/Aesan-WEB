@@ -46,7 +46,6 @@ export interface Staff {
 
   // Datos de la relación SchoolStaff
   schoolId?: number;
-  assignmentTypeId?: number;
   isPrimary?: boolean;
   //
   city?: City;
@@ -62,8 +61,6 @@ export interface Staff {
   staffClassification?: StaffClassification;
   // School (objeto completo)
   school?: SiteListItem;
-  // Assignment type (objeto completo)
-  assignmentType?: OptionSelection;
 }
 
 export interface StaffList {

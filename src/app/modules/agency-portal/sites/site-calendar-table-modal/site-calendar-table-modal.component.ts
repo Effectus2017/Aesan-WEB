@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,43 +6,22 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
 import { CalendarEvent } from 'angular-calendar';
 import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
-import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-
-export interface SiteCalendarTableModalData {
-  date: Date;
-  events: CalendarEvent[];
-  tableConfig: GenericTableConfig;
-  handler: OnGenericTableHandler;
-  siteId: number;
-  onEventAdded?: () => void; // Callback para actualizar la tabla
-  onEventUpdated?: () => void; // Callback para actualizar la tabla después de editar
-  modalComponent?: SiteCalendarTableModalComponent; // Referencia al componente del modal
-}
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { SiteCalendarTableModalData } from './site-calendar-table-modal-data.interface';
 
 @Component({
   selector: 'app-school-calendar-table-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule,
-    TranslocoModule,
-    GenericTableComponent,
-    ReactiveFormsModule
-  ],
-  templateUrl: './site-calendar-table-modal.component.html'
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslocoModule, GenericTableComponent, ReactiveFormsModule],
+  templateUrl: './site-calendar-table-modal.component.html',
 })
 export class SiteCalendarTableModalComponent implements OnInit {
-  constructor(
-    public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData,
-    private dialog: MatDialog,
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef
-  ) {}
+  private dialog: MatDialog = inject(MatDialog);
+  private formBuilder: FormBuilder = inject(FormBuilder);
+  private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  constructor(public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>, @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData) {}
 
   ngOnInit(): void {
     console.log('SchoolCalendarTableModal opened with data:', this.data);
@@ -58,7 +37,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       endTime: ['16:00'],
       comment: [''],
       isWeekendOverride: [false],
-      isExcluded: [false]
+      isExcluded: [false],
     });
 
     // Crear un día vacío para el modal
@@ -72,22 +51,22 @@ export class SiteCalendarTableModalComponent implements OnInit {
       isExcluded: false,
       comment: '',
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     // Abrir modal hijo sin cerrar el padre
-      const addDialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
+    const addDialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
       data: {
         date: this.data.date,
         siteId: this.data.siteId,
         form: addForm,
-        operatingDay: newDay
+        operatingDay: newDay,
       },
       disableClose: true,
-      width: '600px'
+      width: '600px',
     });
 
-    addDialogRef.afterClosed().subscribe(result => {
+    addDialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('Event added, processing result:', result);
         // Procesar el resultado y agregar el evento usando el handler
@@ -128,8 +107,8 @@ export class SiteCalendarTableModalComponent implements OnInit {
         endTime: formData.endTime,
         comment: formData.comment,
         isWeekendOverride: formData.isWeekendOverride,
-        isExcluded: formData.isExcluded
-      }
+        isExcluded: formData.isExcluded,
+      },
     };
 
     // Agregar directamente a la tabla
@@ -152,7 +131,6 @@ export class SiteCalendarTableModalComponent implements OnInit {
     return 'Día normal';
   }
 
-
   // Método para actualizar la tabla después de editar un evento
   updateTableAfterEdit(): void {
     console.log('Updating table after edit...');
@@ -171,14 +149,14 @@ export class SiteCalendarTableModalComponent implements OnInit {
     console.log('Updating table data with new events:', newEvents);
 
     // Transformar CalendarEvent a formato de tabla
-    const tableData = newEvents.map(event => ({
+    const tableData = newEvents.map((event) => ({
       id: event.meta?.id,
       title: event.title,
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventType(event.meta),
       comment: event.meta?.comment || '',
-      meta: event.meta
+      meta: event.meta,
     }));
 
     // Actualizar el dataSource existente
@@ -220,7 +198,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       return timeValue.toLocaleTimeString('en-US', {
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true
+        hour12: true,
       }); // Formato 12h con AM/PM
     }
 

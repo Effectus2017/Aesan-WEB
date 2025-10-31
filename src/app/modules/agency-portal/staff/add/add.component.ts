@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { UntypedFormBuilder, FormControl, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
+import { UntypedFormBuilder, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { ViewEncapsulation } from '@angular/core';
@@ -7,7 +7,6 @@ import { StaffService } from 'app/shared/services/staff.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
 import { NgForOf, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -90,10 +89,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
-  // Lista de Escuelas
+  // Lista de Sitios
   listSites: Site[] = [];
-  // Lista de Tipos de Asignación
-//   listStaffAssignmentTypes: OptionSelection[] = [];
 
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
@@ -145,9 +142,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       areaCode: new FormControl('', [Validators.required]),
       // Comentarios
       comments: new FormControl(''),
-      // Escuela asignada
+      // Sitio asignado
       site: new FormControl('', [Validators.required]),
-      //assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
     }),
     // Cancel button
@@ -229,10 +225,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
 
-        // Staff Assignment Types
-        // this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
-        //   option.optionKey === 'staffAssignmentType' && option.isActive
-        // );
         this._changeDetectorRef.detectChanges();
       }
     });
@@ -455,9 +447,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Apellido Materno (para todos los tipos de staff)
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Escuela asignada
-    const schoolId: number = formValues.school?.id || null;
-    // const assignmentTypeId: number = formValues.assignmentType?.id || 1;
+    // Sitio asignado
+    const siteId: number = formValues.site?.id || null;
     const isPrimary: boolean = formValues.isPrimary || false;
 
     // Loading
@@ -495,9 +486,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      // Información de asignación de escuela
-      schoolId: schoolId,
-    //   assignmentTypeId: assignmentTypeId,
+      // Información de asignación de sitio
+      siteId: siteId,
       isPrimary: isPrimary,
     };
 
@@ -529,7 +519,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    // Crear staff (el backend ahora maneja también la asociación con la escuela)
+    // Crear staff (el backend ahora maneja también la asociación con el sitio)
     this._staffService.insertStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {

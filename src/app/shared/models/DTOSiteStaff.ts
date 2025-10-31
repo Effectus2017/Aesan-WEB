@@ -3,7 +3,6 @@ export interface DTOSchoolStaff {
     schoolId: number;
     staffId: number;
     assignmentDate: Date;
-    assignmentTypeId: number;
     isPrimary: boolean;
     startDate?: Date;
     endDate?: Date;
@@ -93,9 +92,6 @@ export interface DTOSchoolStaff {
     schoolCreatedAt: Date;
     schoolUpdatedAt?: Date;
 
-    // Información de la Asignación
-    assignmentTypeName: string;
-    assignmentTypeNameEn: string;
 
     // Información de la posición del staff
     staffPositionName: string;

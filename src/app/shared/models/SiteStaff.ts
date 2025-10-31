@@ -3,7 +3,6 @@ export interface SchoolStaff {
     schoolId: number;
     staffId: number;
     assignmentDate: Date;
-    assignmentTypeId: number;
     isPrimary: boolean;
     startDate?: Date;
     endDate?: Date;

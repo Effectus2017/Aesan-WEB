@@ -27,6 +27,7 @@
       },
       "submit": "Submit Request",
       "cancel": "Cancel"
-    }
+    },
+    "cfr-info-link-text": "For more information, you can access the following link:"
   }
 }

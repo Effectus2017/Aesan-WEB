@@ -23,6 +23,8 @@ export interface ProgramInscriptionRequest {
   needsFederalRelayServiceId: number;
   showEvidenceId: number;
   showEvidenceDescription?: string;
+  // ¿Desde cuándo su Entidad ofrece servicios? (PACNA)
+  servicesOfferedSince?: string; // ISO string (YYYY-MM-DD)
   snackPercentage?: number;
   reducedSnackPercentage?: number;
   federalFundingCertificationId?: number;

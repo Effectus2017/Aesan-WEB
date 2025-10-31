@@ -109,10 +109,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
-  // Lista de Escuelas
+  // Lista de Sitios
   listSites: Site[] = [];
-  // Lista de Tipos de Asignación
-  //   listStaffAssignmentTypes: OptionSelection[] = [];
   // Resultado de revisión / Review result
   // Review result
   reviewResult: OptionSelection[] = [];
@@ -139,8 +137,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Lista completa de opciones de selección
   allOptionSelections: OptionSelection[] = [];
 
-  // Parámetro de la escuela
-  // School parameter
+  // Parámetro del staff
+  // Staff parameter
   param: Staff | null;
 
   // Configuración de la tabla de relaciones
@@ -207,7 +205,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       comments: new FormControl(''),
       // Sitio asignado
       site: new FormControl(null),
-      //   assignmentType: new FormControl(''),
       isPrimary: new FormControl(false),
       // Review result
       reviewResult: new FormControl(''),
@@ -334,10 +331,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
 
-        // Staff Assignment Types
-        // this.listStaffAssignmentTypes = this.allOptionSelections.filter((option: OptionSelection) =>
-        //   option.optionKey === 'staffAssignmentType' && option.isActive
-        // );
 
         // Las posiciones se configurarán en onSetForm según el tipo de staff
         // No asignar aquí para evitar conflictos
@@ -477,7 +470,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       reviewJustification: param.reviewJustification,
 
       site: param.school,
-      //   assignmentType: param.assignmentType,
       isPrimary: param.isPrimary,
     });
 
@@ -496,27 +488,23 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Actualizar el estado inicial del botón de submit
     this.updateSubmitButtonState();
 
-    // Cargar sitio actualmente asignada al staff
+    // Cargar sitio actualmente asignado al staff
     this.loadCurrentSiteAssignment(param.id);
   }
 
   /**
-   * Carga el sitio actualmente asignada al staff
+   * Carga el sitio actualmente asignado al staff
    */
   private loadCurrentSiteAssignment(staffId: number): void {
-    // Solo obtener la primera escuela asignada si existe
+    // Solo obtener el primer sitio asignado si existe
     this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
       next: (siteStaffs) => {
         if (siteStaffs && siteStaffs.length > 0) {
           // Encontrar la asignación activa
           const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
           if (activeAssignment) {
-            // Buscar el tipo de asignación correspondiente
-            // const assignmentType = this.listStaffAssignmentTypes.find(type => type.id === activeAssignment.assignmentTypeId);
-
             this.headerConfig.formGroup.patchValue({
               site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
-              //   assignmentType: assignmentType || null,
               isPrimary: activeAssignment.isPrimary || false,
             });
           }
@@ -602,9 +590,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Apellido Materno (para todos los tipos de staff)
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignada
+    // Sitio asignado
     const siteId: number = formValues.site?.id || null;
-    //const assignmentTypeId: number = formValues.assignmentType?.id || 1;
     const isPrimary: boolean = formValues.isPrimary || false;
 
     // Loading
@@ -662,7 +649,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       motherLastName: motherLastName,
       // Información de asignación de sitio
       siteId: siteId,
-      // assignmentTypeId: assignmentTypeId,
       isPrimary: isPrimary,
     };
 
@@ -694,7 +680,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    // Actualizar staff (el backend ahora maneja también la asociación con la escuela)
+    // Actualizar staff (el backend ahora maneja también la asociación con el sitio)
     this._staffService.updateStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {

@@ -193,6 +193,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Si (1) y No (2)
       extendedHours: [null],
 
+      // ¿Desde cuándo su Entidad ofrece servicios? (Solo para PACNA)
+      servicesOfferedSince: [null],
+
       // ¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?
       // Have you been denied or disqualified from state funds in the last seven years?
       // Si (1) y No (2)
@@ -428,6 +431,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         if (basicEducationRegistry !== null && basicEducationRegistry !== undefined) {
           this.checkBasicEducationRegistry();
         }
+
+        // Actualizar validaciones de exención contributiva para PACNA tras cambio de programa
+        this.updateTaxExemptionValidatorsForPacna();
       }
     });
 
@@ -439,6 +445,39 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Suscribirse a cambios en el control extendedHours
     this.signUpForm.get('extendedHours').valueChanges.subscribe(() => {
       this.checkBasicEducationRegistry();
+    });
+
+    // Validación dinámica para servicesOfferedSince (PACNA + No futura)
+    this.signUpForm.get('program').valueChanges.subscribe((program) => {
+      const ctrl = this.signUpForm.get('servicesOfferedSince');
+      if (!ctrl) return;
+      if (isPACNAProgram(program)) {
+        ctrl.setValidators([Validators.required]);
+      } else {
+        ctrl.clearValidators();
+        ctrl.setValue(null);
+      }
+      ctrl.updateValueAndValidity();
+    });
+
+    this.signUpForm.get('servicesOfferedSince').valueChanges.subscribe((value) => {
+      const ctrl = this.signUpForm.get('servicesOfferedSince');
+      if (!ctrl) return;
+      if (!value) {
+        ctrl.setErrors(null);
+        return;
+      }
+      const selectedDate = new Date(value);
+      const today = new Date();
+      selectedDate.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+      if (selectedDate > today) {
+        ctrl.setErrors({ futureDate: true });
+      } else {
+        // preservar otros errores como required
+        const hasRequired = ctrl.hasError('required');
+        ctrl.setErrors(hasRequired ? { required: true } : null);
+      }
     });
 
     // Suscribirse a cambios en el control typeOfEntity
@@ -597,6 +636,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
     const isDayCareHome = formValues.isDayCareHome == null ? false : formValues.isDayCareHome;
+    const servicesOfferedSince: string | null = formValues.servicesOfferedSince
+      ? new Date(formValues.servicesOfferedSince).toISOString()
+      : null;
 
     const firstName = formValues.firstName;
     const middleName = formValues.middleName;
@@ -680,6 +722,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Are you a Day Care Homes? (Only for PACNA program)
         // Si (1) y No (2)
         isDayCareHome: isDayCareHome,
+        servicesOfferedSince: servicesOfferedSince ?? undefined,
       },
       staff: {
         // Datos del Contacto
@@ -746,24 +789,97 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Verificar elegibilidad para PSAV
     if (isNotNonProfit && isPSAVProgram(selectedProgram)) {
-      this.isEligible = false;
-      disableAllControlsExcept(this.signUpForm, 'program'); // Deshabilitar controles
-      this._dialog.open(CfrInfoDialogComponent, {
-        data: {
-          title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
-          message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
-          cfrLink: {
-            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
-            text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
-          }
-        },
-        disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
-      });
-    } else {
-      this.isEligible = true;
-      enableAllControls(this.signUpForm); // Habilitar controles
+      this.nonProfitChangePSAV();
+      return;
     }
+
+    // Verificar elegibilidad para PDAM
+    if (isNotNonProfit && isPDAMProgram(selectedProgram)) {
+      this.nonProfitChangePDAM();
+      return;
+    }
+
+    // Si no hay problemas de elegibilidad, habilitar el formulario
+    this.isEligible = true;
+    enableAllControls(this.signUpForm);
+
+    // Actualizar validaciones de exención contributiva para PACNA
+    this.updateTaxExemptionValidatorsForPacna();
+  }
+
+  // Actualiza validaciones y visibilidad (lógica) de exención contributiva para PACNA
+  private updateTaxExemptionValidatorsForPacna(): void {
+    const selectedProgram = this.signUpForm.get('program')?.value;
+    const isPacna = isPACNAProgram(selectedProgram);
+    const isNonProfit = this.signUpForm.get('nonProfit')?.value === true;
+
+    const taxExemptionStatusControl = this.signUpForm.get('taxExemptionStatusId');
+    const taxExemptionTypeControl = this.signUpForm.get('taxExemptionTypeId');
+
+    if (isPacna && !isNonProfit) {
+      // En PACNA y NO sin fines de lucro: ocultar y NO requerir
+      taxExemptionStatusControl?.clearValidators();
+      taxExemptionTypeControl?.clearValidators();
+      taxExemptionStatusControl?.setValue(null);
+      taxExemptionTypeControl?.setValue(null);
+    } else {
+      // En otros casos mantener requerido
+      taxExemptionStatusControl?.setValidators([Validators.required]);
+      taxExemptionTypeControl?.setValidators([Validators.required]);
+    }
+
+    taxExemptionStatusControl?.updateValueAndValidity({ emitEvent: false });
+    taxExemptionTypeControl?.updateValueAndValidity({ emitEvent: false });
+    this._changeDetectorRef.markForCheck();
+  }
+
+  // Indica si se deben mostrar los campos de exención contributiva en el template
+  shouldShowTaxExemption(): boolean {
+    const selectedProgram = this.signUpForm.get('program')?.value;
+    const isPacna = isPACNAProgram(selectedProgram);
+    const isNonProfit = this.signUpForm.get('nonProfit')?.value === true;
+
+    if (isPacna) {
+      return isNonProfit === true;
+    }
+
+    return true;
+  }
+
+  // Manejar cambio de non-profit para programa PSAV
+  nonProfitChangePSAV(): void {
+    this.isEligible = false;
+    disableAllControlsExcept(this.signUpForm, 'program');
+    this._dialog.open(CfrInfoDialogComponent, {
+      data: {
+        title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
+        message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
+        cfrLink: {
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
+          text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
+        }
+      },
+      disableClose: false,
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+  }
+
+  // Manejar cambio de non-profit para programa PDAM
+  nonProfitChangePDAM(): void {
+    this.isEligible = false;
+    disableAllControlsExcept(this.signUpForm, 'program');
+    this._dialog.open(CfrInfoDialogComponent, {
+      data: {
+        title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
+        message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
+        cfrLink: {
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
+          text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
+        }
+      },
+      disableClose: false,
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
   }
 
   // Manejar el cambio en el campo stateFundsDenied
@@ -902,33 +1018,52 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   // Abrir dialog de información sobre fondos estatales
   openStateFundsDeniedDialog(): void {
-    this._dialog.open(CfrInfoDialogComponent, {
-      data: {
-        title: this._translocoService.translate('sign-up.state-funds-denied-dialog.title'),
-        message: this._translocoService.translate('sign-up.state-funds-denied-dialog.message'),
-        cfrLink: {
-          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.6',
-          text: this._translocoService.translate('sign-up.state-funds-denied-dialog.cfr-link-text')
-        }
+    const program = this.signUpForm?.value?.program;
+    const isPacna = isPACNAProgram(program);
+    const baseKey = isPacna ? 'cfr-info-dialog.cfr-226-6' : 'cfr-info-dialog.cfr-225-6-b-9';
+    this.openCfrInfoByKey(baseKey);
+  }
+
+  // Clave base para fondos estatales según programa (para usar directo desde el HTML)
+  getStateFundsDeniedKey(): string {
+    const program = this.signUpForm?.value?.program;
+    return isPACNAProgram(program)
+      ? 'cfr-info-dialog.cfr-226-6'
+      : 'cfr-info-dialog.cfr-225-6-b-9';
+  }
+
+  // Función ÚNICA para abrir el diálogo CFR dado un key base (title/message/cfr-link-text/cfr-link-url)
+  openCfrInfoByKey(baseKey: string): void {
+    const data = {
+      title: this._translocoService.translate(`${baseKey}.title`),
+      message: this._translocoService.translate(`${baseKey}.message`),
+      cfrLink: {
+        url: this._translocoService.translate(`${baseKey}.cfr-link-url`),
+        text: this._translocoService.translate(`${baseKey}.cfr-link-text`),
       },
+    };
+    this._dialog.open(CfrInfoDialogComponent, {
+      data,
       disableClose: false,
       panelClass: ['mat-dialog-container', 'dialog-responsive']
     });
   }
 
-  // Abrir dialog de información sobre fondos federales
-  openFederalFundsDeniedDialog(): void {
-    this._dialog.open(CfrInfoDialogComponent, {
-      data: {
-        title: this._translocoService.translate('sign-up.federal-funds-denied-dialog.title'),
-        message: this._translocoService.translate('sign-up.federal-funds-denied-dialog.message'),
-        cfrLink: {
-          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.6',
-          text: this._translocoService.translate('sign-up.federal-funds-denied-dialog.cfr-link-text')
-        }
-      },
-      disableClose: false,
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
-    });
+  // Manejar cambio en Estatus de Exención Contributiva
+  checkTaxExemptionStatus(): void {
+    const selectedProgram = this.signUpForm?.value?.program;
+    const statusId = this.signUpForm?.value?.taxExemptionStatusId;
+
+    // En PACNA, si está "En Proceso" (id 3), bloquear y mostrar CFR info
+    if (isPACNAProgram(selectedProgram) && statusId === 3) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this.openCfrInfoByKey('cfr-info-dialog.cfr-226-15-a');
+      return;
+    }
+
+    // Caso contrario, re-habilitar el formulario
+    this.isEligible = true;
+    enableAllControls(this.signUpForm);
   }
 }

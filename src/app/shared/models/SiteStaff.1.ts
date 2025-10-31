@@ -4,7 +4,6 @@ export interface SiteStaff {
     siteId: number;
     staffId: number;
     assignmentDate: Date;
-    assignmentTypeId: number;
     isPrimary: boolean;
     startDate?: Date;
     endDate?: Date;

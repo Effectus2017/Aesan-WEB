@@ -1,7 +1,6 @@
 export interface SiteStaffRequest {
     siteId: number;
     staffId: number;
-    assignmentTypeId: number;
     isPrimary: boolean;
     startDate?: Date;
     endDate?: Date;
@@ -9,7 +8,6 @@ export interface SiteStaffRequest {
 }
 
 export interface UpdateSiteStaffRequest {
-    assignmentTypeId: number;
     isPrimary: boolean;
     startDate?: Date;
     endDate?: Date;
