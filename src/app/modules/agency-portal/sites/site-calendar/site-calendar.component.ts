@@ -857,9 +857,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       dayEvents.push({
         start: startDate,
         end: endDate,
-        title: day.isExcluded ? 'Día cerrado' :
-               day.isWeekendOverride ? 'Fin de semana operativo' :
-               'Día operativo',
+        title: day.isExcluded ? this.translocoService.translate('sites.calendar.day-events.day-types.closed') :
+               day.isWeekendOverride ? this.translocoService.translate('sites.calendar.day-events.day-types.weekend-operating') :
+               this.translocoService.translate('sites.calendar.day-events.day-types.operating-day'),
         color: this.getEventColor(day),
         draggable: draggable,
         resizable: resizable,
@@ -896,8 +896,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
           // Obtener nombre del servicio
           const serviceName = this.currentLanguage === 'es'
-            ? (service.serviceTypeName || 'Servicio')
-            : (service.serviceTypeNameEN || 'Service');
+            ? (service.serviceTypeName || this.translocoService.translate('sites.calendar.day-events.service-fallback'))
+            : (service.serviceTypeNameEN || this.translocoService.translate('sites.calendar.day-events.service-fallback'));
 
           serviceEvents.push({
             start: serviceStartDate,
@@ -1265,7 +1265,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   // Método para obtener el día de funcionamiento para una fecha específica
   getOperatingDayForDate(date: Date): SiteOperatingDay | undefined {
     return this.operatingDays.find(day => {
-      const dayDate = new Date(day.date);
+      const dayDate = this.parseDateSafe(day.date);
       return this.isSameDate(dayDate, date);
     });
   }
@@ -1283,11 +1283,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private getServiceTitle(service: any): string {
     // Usar el nombre del servicio según el idioma actual
     const serviceName = this.currentLanguage === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
-    return serviceName || 'Servicio';
+    return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
   }
 
   private getServiceTypeLabel(service: any): string {
-    return service.serviceTypeName || 'Servicio';
+    return service.serviceTypeName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
   }
 
   getEventTypeLabel(operatingDay: SiteOperatingDay): string {
@@ -1302,7 +1302,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
 
   private deleteService(serviceId: number): void {
-    if (!confirm('¿Estás seguro de que quieres eliminar este servicio?')) {
+    const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
+    if (!confirm(confirmMessage)) {
       return;
     }
 

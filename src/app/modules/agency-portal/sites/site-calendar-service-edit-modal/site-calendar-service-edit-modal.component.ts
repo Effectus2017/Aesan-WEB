@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarServiceEditModalData } from './site-calendar-service-edit-modal-data.interface';
 
 @Component({
@@ -37,7 +37,8 @@ export class SiteCalendarServiceEditModalComponent {
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceEditModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceEditModalData
+    @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceEditModalData,
+    private translocoService: TranslocoService
   ) {
     console.log('Service edit modal constructor - data:', this.data);
     this.initializeTimeConstraints();
@@ -206,7 +207,10 @@ export class SiteCalendarServiceEditModalComponent {
   }
 
   getServiceName(): string {
-    const serviceName = this.data.service.serviceTypeName || this.data.service.serviceTypeNameEN || 'Servicio';
+    const currentLang = this.translocoService.getActiveLang() || 'es';
+    const serviceName = currentLang === 'es' 
+      ? (this.data.service.serviceTypeName || this.translocoService.translate('sites.calendar.day-events.service-fallback'))
+      : (this.data.service.serviceTypeNameEN || this.translocoService.translate('sites.calendar.day-events.service-fallback'));
     const groupName = this.data.service.childGroupName ? ` (${this.data.service.childGroupName})` : '';
     return `${serviceName}${groupName}`;
   }
@@ -222,7 +226,8 @@ export class SiteCalendarServiceEditModalComponent {
   }
 
   onDelete(): void {
-    if (confirm('¿Estás seguro de que quieres eliminar este servicio?')) {
+    const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
+    if (confirm(confirmMessage)) {
       this.dialogRef.close({ action: 'delete' });
     }
   }

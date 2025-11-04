@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
-      Agregar Servicio
+      {{ 'sites.calendar.modals.add-service.title' | transloco }}
     </div>
     <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
       <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
@@ -15,60 +15,60 @@
       <!-- Información del día -->
       <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          <strong>Fecha:</strong> {{ data.operatingDay.date | date:'dd/MM/yyyy' }}
+          <strong>{{ 'sites.calendar.modals.add-service.date' | transloco }}:</strong> {{ displayDate | date:'dd/MM/yyyy' }}
         </p>
       </div>
 
       <!-- Tipo de Servicio -->
       <mat-form-field>
-        <mat-label>Tipo de Servicio</mat-label>
+        <mat-label>{{ 'sites.calendar.modals.add-service.serviceType.label' | transloco }}</mat-label>
         <mat-select formControlName="serviceTypeId" required>
           <mat-option *ngFor="let serviceType of filteredServiceTypes" [value]="serviceType.id">
             {{ currentLanguage === 'es' ? serviceType.name : serviceType.nameEN }}
           </mat-option>
         </mat-select>
         <mat-error *ngIf="data.form.get('serviceTypeId')?.hasError('required')">
-          El tipo de servicio es requerido
+          {{ 'sites.calendar.modals.add-service.serviceType.required' | transloco }}
         </mat-error>
       </mat-form-field>
 
       <!-- Horarios -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <mat-form-field>
-          <mat-label>Hora de Inicio</mat-label>
+          <mat-label>{{ 'sites.calendar.modals.add-service.startTime.label' | transloco }}</mat-label>
           <mat-select formControlName="startTime" required>
             <mat-option *ngFor="let time of startTimeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
-            La hora de inicio es requerida
+            {{ 'sites.calendar.modals.add-service.startTime.required' | transloco }}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>Hora de Fin</mat-label>
+          <mat-label>{{ 'sites.calendar.modals.add-service.endTime.label' | transloco }}</mat-label>
           <mat-select formControlName="endTime" required>
             <mat-option *ngFor="let time of endTimeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
-            La hora de fin es requerida
+            {{ 'sites.calendar.modals.add-service.endTime.required' | transloco }}
           </mat-error>
         </mat-form-field>
       </div>
 
       <!-- Comentario -->
       <mat-form-field>
-        <mat-label>Comentario</mat-label>
-        <textarea matInput formControlName="comment" rows="3" placeholder="Comentario del servicio..."></textarea>
+        <mat-label>{{ 'sites.calendar.modals.add-service.comment.label' | transloco }}</mat-label>
+        <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.add-service.comment.placeholder' | transloco"></textarea>
       </mat-form-field>
 
       <!-- Opciones -->
       <div class="flex flex-col gap-3">
         <mat-checkbox formControlName="isEnabled">
-          Servicio Habilitado
+          {{ 'sites.calendar.modals.add-service.enabled' | transloco }}
         </mat-checkbox>
       </div>
 
@@ -76,11 +76,11 @@
       <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
         <div class="flex gap-2">
           <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
-            Cancelar
+            {{ 'sites.calendar.modals.add-service.buttons.cancel' | transloco }}
           </button>
         </div>
         <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
-          Guardar
+          {{ 'sites.calendar.modals.add-service.buttons.save' | transloco }}
         </button>
       </div>
     </div>

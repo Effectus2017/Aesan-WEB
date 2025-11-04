@@ -1240,9 +1240,13 @@
                 "day-types": {
                     "closed": "Día cerrado",
                     "weekend": "Fin de semana",
-                    "normal": "Día normal"
+                    "normal": "Día normal",
+                    "weekend-operating": "Fin de semana operativo",
+                    "operating-day": "Día operativo"
                 },
-                "operating-day-title": "Día de funcionamiento"
+                "operating-day-title": "Día de funcionamiento",
+                "service-fallback": "Servicio",
+                "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?"
             },
             "modals": {
                 "edit-day": {
@@ -1297,6 +1301,31 @@
                         "placeholder": "Descripción del servicio..."
                     },
                     "enabled": "Habilitado"
+                },
+                "add-service": {
+                    "title": "Agregar Servicio",
+                    "date": "Fecha",
+                    "serviceType": {
+                        "label": "Tipo de Servicio",
+                        "required": "El tipo de servicio es requerido"
+                    },
+                    "startTime": {
+                        "label": "Hora de Inicio",
+                        "required": "La hora de inicio es requerida"
+                    },
+                    "endTime": {
+                        "label": "Hora de Fin",
+                        "required": "La hora de fin es requerida"
+                    },
+                    "comment": {
+                        "label": "Comentario",
+                        "placeholder": "Comentario del servicio..."
+                    },
+                    "enabled": "Servicio Habilitado",
+                    "buttons": {
+                        "cancel": "Cancelar",
+                        "save": "Guardar"
+                    }
                 },
                 "day-events": {
                     "title": "Eventos del día",

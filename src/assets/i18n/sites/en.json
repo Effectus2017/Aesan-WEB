@@ -1296,9 +1296,13 @@
                 "day-types": {
                     "closed": "Closed day",
                     "weekend": "Weekend",
-                    "normal": "Normal day"
+                    "normal": "Normal day",
+                    "weekend-operating": "Operating weekend",
+                    "operating-day": "Operating day"
                 },
-                "operating-day-title": "Operating day"
+                "operating-day-title": "Operating day",
+                "service-fallback": "Service",
+                "confirm-delete-service": "Are you sure you want to delete this service?"
             },
             "modals": {
                 "edit-day": {
@@ -1353,6 +1357,31 @@
                         "placeholder": "Service description..."
                     },
                     "enabled": "Enabled"
+                },
+                "add-service": {
+                    "title": "Add Service",
+                    "date": "Date",
+                    "serviceType": {
+                        "label": "Service Type",
+                        "required": "Service type is required"
+                    },
+                    "startTime": {
+                        "label": "Start Time",
+                        "required": "Start time is required"
+                    },
+                    "endTime": {
+                        "label": "End Time",
+                        "required": "End time is required"
+                    },
+                    "comment": {
+                        "label": "Comment",
+                        "placeholder": "Service comment..."
+                    },
+                    "enabled": "Service Enabled",
+                    "buttons": {
+                        "cancel": "Cancel",
+                        "save": "Save"
+                    }
                 },
                 "day-events": {
                     "title": "Day Events",

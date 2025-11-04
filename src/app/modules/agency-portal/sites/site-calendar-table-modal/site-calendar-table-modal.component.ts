@@ -253,12 +253,16 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
   private getServiceTitle(service: any): string {
     // Usar el nombre del servicio según el idioma actual
-    const serviceName = service.serviceTypeName || service.serviceTypeNameEN;
-    return serviceName || 'Servicio';
+    const currentLang = this.translocoService.getActiveLang() || 'es';
+    const serviceName = currentLang === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
+    return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
   }
 
   private getServiceTypeLabel(service: any): string {
-    return service.serviceTypeName || 'Servicio';
+    // Usar el nombre del servicio según el idioma actual
+    const currentLang = this.translocoService.getActiveLang() || 'es';
+    const serviceName = currentLang === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
+    return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
   }
 
   private formatTimeValue(timeValue: any): string {

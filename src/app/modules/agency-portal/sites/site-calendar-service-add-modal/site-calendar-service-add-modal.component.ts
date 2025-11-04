@@ -40,6 +40,7 @@ export class SiteCalendarServiceAddModalComponent {
   currentLanguage: string = 'es';
   dayStartTime: string = '';
   dayEndTime: string = '';
+  displayDate: Date;
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceAddModalComponent>,
@@ -51,6 +52,37 @@ export class SiteCalendarServiceAddModalComponent {
     this.filterServiceTypes();
     this.initializeTimeConstraints();
     this.generateTimeOptions();
+    
+    // Normalizar la fecha para evitar problemas de zona horaria
+    this.displayDate = this.parseDateSafe(this.data.operatingDay.date);
+  }
+
+  private parseDateSafe(dateString: string | Date): Date {
+    if (!dateString) {
+      return new Date();
+    }
+
+    // Si ya es un objeto Date, devolverlo
+    if (dateString instanceof Date) {
+      return new Date(dateString);
+    }
+
+    // Si es un string, parsearlo manualmente
+    if (typeof dateString === 'string') {
+      // Intentar parsear formato ISO "YYYY-MM-DD" o "YYYY-MM-DDTHH:mm:ss"
+      const dateMatch = dateString.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (dateMatch) {
+        const year = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10) - 1; // Los meses en Date son 0-indexed
+        const day = parseInt(dateMatch[3], 10);
+
+        // Crear fecha en hora local (medianoche local) para preservar el día
+        return new Date(year, month, day, 0, 0, 0, 0);
+      }
+    }
+
+    // Fallback: usar constructor de Date normal
+    return new Date(dateString);
   }
 
   private filterServiceTypes(): void {
