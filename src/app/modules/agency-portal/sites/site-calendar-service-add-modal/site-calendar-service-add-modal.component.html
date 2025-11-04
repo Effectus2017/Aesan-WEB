@@ -23,7 +23,7 @@
       <mat-form-field>
         <mat-label>Tipo de Servicio</mat-label>
         <mat-select formControlName="serviceTypeId" required>
-          <mat-option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+          <mat-option *ngFor="let serviceType of filteredServiceTypes" [value]="serviceType.id">
             {{ currentLanguage === 'es' ? serviceType.name : serviceType.nameEN }}
           </mat-option>
         </mat-select>

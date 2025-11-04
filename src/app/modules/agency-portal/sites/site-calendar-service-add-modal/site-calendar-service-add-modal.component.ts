@@ -10,8 +10,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { SiteCalendarServiceAddModalData } from './site-calendar-service-add-modal-data.interface';
-import { ServiceTypes } from 'app/shared/constants/service-type.constants';
+import { ServiceTypes, ServiceTypeOption } from 'app/shared/constants/service-type.constants';
 import { TranslocoService } from '@ngneat/transloco';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-site-calendar-service-add-modal',
@@ -34,7 +35,8 @@ export class SiteCalendarServiceAddModalComponent {
   timeOptions: { value: string; display: string }[] = [];
   startTimeOptions: { value: string; display: string }[] = [];
   endTimeOptions: { value: string; display: string }[] = [];
-  serviceTypes = ServiceTypes;
+  serviceTypes: ServiceTypeOption[] = [];
+  filteredServiceTypes: ServiceTypeOption[] = [];
   currentLanguage: string = 'es';
   dayStartTime: string = '';
   dayEndTime: string = '';
@@ -45,8 +47,66 @@ export class SiteCalendarServiceAddModalComponent {
     private translocoService: TranslocoService
   ) {
     this.currentLanguage = this.translocoService.getActiveLang() || 'es';
+    this.serviceTypes = ServiceTypes;
+    this.filterServiceTypes();
     this.initializeTimeConstraints();
     this.generateTimeOptions();
+  }
+
+  private filterServiceTypes(): void {
+    const programs = this.data.programs || [];
+    const isDayCareHome = this.data.isDayCareHome || false;
+    
+    // Obtener programas desde localStorage si no están en data
+    let agencyPrograms: number[] = programs;
+    if (!programs || programs.length === 0) {
+      const programsJson = localStorage.getItem('agencyPrograms');
+      if (programsJson) {
+        const parsedPrograms = JSON.parse(programsJson);
+        agencyPrograms = parsedPrograms.map((p: any) => p.id);
+      }
+    }
+
+    const hasPSAV = agencyPrograms.includes(PROGRAM_IDS.PSAV);
+    const hasPACNA = agencyPrograms.includes(PROGRAM_IDS.PACNA);
+    const hasPDAM = agencyPrograms.includes(PROGRAM_IDS.PDAM);
+
+    // Servicios básicos disponibles para todos los programas
+    const basicServices: number[] = [
+      1, // Breakfast
+      2, // Lunch
+      3, // SnackAM
+      5  // SnackPM
+    ];
+
+    // Servicios específicos de PSAV
+    const psavServices: number[] = [
+      4,  // Dinner
+      6,  // SnackNight
+      7,  // DinnerExtended
+      8,  // DinnerAtRisk
+      9,  // SnackExtended
+      10  // SnackAtRisk
+    ];
+
+    // Filtrar servicios según programa y day care
+    this.filteredServiceTypes = this.serviceTypes.filter(service => {
+      // Servicios básicos: disponibles para todos
+      if (basicServices.includes(service.id)) {
+        return true;
+      }
+
+      // Servicios PSAV: solo si tiene PSAV
+      if (psavServices.includes(service.id)) {
+        return hasPSAV;
+      }
+
+      // Por defecto, no mostrar servicios no reconocidos
+      return false;
+    });
+
+    // Ordenar por displayOrder
+    this.filteredServiceTypes.sort((a, b) => a.displayOrder - b.displayOrder);
   }
 
   private initializeTimeConstraints(): void {
@@ -134,7 +194,8 @@ export class SiteCalendarServiceAddModalComponent {
   }
 
   getServiceTypeName(serviceTypeId: number): string {
-    const serviceType = this.serviceTypes.find(st => st.id === serviceTypeId);
+    const serviceType = this.filteredServiceTypes.find(st => st.id === serviceTypeId) || 
+                       this.serviceTypes.find(st => st.id === serviceTypeId);
     if (!serviceType) return '';
     return this.currentLanguage === 'es' ? serviceType.name : serviceType.nameEN;
   }

@@ -262,6 +262,32 @@ export class SiteCalendarTableModalComponent implements OnInit {
     return String(timeValue);
   }
 
+  private getAgencyPrograms(): number[] {
+    try {
+      const programsJson = localStorage.getItem('agencyPrograms');
+      if (programsJson) {
+        const parsedPrograms = JSON.parse(programsJson);
+        return parsedPrograms.map((p: any) => p.id);
+      }
+    } catch (error) {
+      console.error('Error al obtener programas de la agencia:', error);
+    }
+    return [];
+  }
+
+  private getIsDayCareHome(): boolean {
+    try {
+      const agencyJson = localStorage.getItem('agency');
+      if (agencyJson) {
+        const agency = JSON.parse(agencyJson);
+        return agency?.inscription?.isDayCareHome || false;
+      }
+    } catch (error) {
+      console.error('Error al obtener información de day care home:', error);
+    }
+    return false;
+  }
+
   private convert24To12(hours24: number, minutes: string): string {
     let hours12 = hours24;
     let period = 'AM';
@@ -299,7 +325,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
           data: {
             form: serviceForm,
             operatingDay: operatingDay,
-            siteId: this.data.siteId
+            siteId: this.data.siteId,
+            // Obtener programas desde localStorage
+            programs: this.getAgencyPrograms(),
+            // Obtener isDayCareHome desde localStorage o desde la agencia
+            isDayCareHome: this.getIsDayCareHome()
           } as SiteCalendarServiceAddModalData
         });
 
