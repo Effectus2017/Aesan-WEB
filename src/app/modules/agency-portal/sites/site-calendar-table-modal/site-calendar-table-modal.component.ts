@@ -28,6 +28,8 @@ export class SiteCalendarTableModalComponent implements OnInit {
   private translocoService: TranslocoService = inject(TranslocoService);
   private notificationService: NotificationService = inject(NotificationService);
 
+  totalEvents: number = 0;
+
   constructor(public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>, @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData) {}
 
   ngOnInit(): void {
@@ -167,9 +169,20 @@ export class SiteCalendarTableModalComponent implements OnInit {
   updateTableData(newEvents: CalendarEvent[]): void {
     console.log('Updating table data with new events:', newEvents);
 
+    // Separar días de funcionamiento de servicios
+    const operatingDayEvents = newEvents.filter(event => !event.meta?.isService);
+    const serviceEvents = newEvents.filter(event => event.meta?.isService === true);
+
+    // Para días de funcionamiento, asegurarse de que solo haya uno por fecha
+    // Si hay múltiples eventos del mismo día, usar solo el primero (por ID)
+    const uniqueOperatingDayEvents = operatingDayEvents.filter((event, index, self) => {
+      const eventId = event.meta?.id;
+      return index === self.findIndex(e => e.meta?.id === eventId);
+    });
+
     // Transformar CalendarEvent a formato de tabla (días de funcionamiento)
-    // El día de funcionamiento siempre va primero
-    const dayTableData = newEvents.map((event) => ({
+    // Solo incluir días de funcionamiento, no servicios
+    const dayTableData = uniqueOperatingDayEvents.map((event) => ({
       id: event.meta?.id,
       title: this.getEventTitle(event.meta, this.data.date), // Usar fecha formateada
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
@@ -180,30 +193,53 @@ export class SiteCalendarTableModalComponent implements OnInit {
       isService: false // Identificar que es un día de funcionamiento
     }));
 
-    // Agregar servicios del día a la tabla (después del día)
-    const servicesTableData: any[] = [];
+    // Transformar servicios de eventos del calendario
+    const servicesTableDataFromEvents = serviceEvents.map(event => {
+      const service = event.meta as any;
+      return {
+        id: service.id,
+        title: this.getServiceTitle(service),
+        startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+        endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+        type: this.getServiceTypeLabel(service),
+        comment: service.comment || '',
+        meta: service,
+        isService: true, // Identificar que es un servicio
+        isEnabled: service.isEnabled
+      };
+    });
 
-    // Obtener servicios desde el handler si está disponible
+    // Agregar servicios del día a la tabla (después del día)
+    const servicesTableData: any[] = [...servicesTableDataFromEvents];
+
+    // Obtener servicios desde el handler si está disponible (para servicios que no están en eventos del calendario)
     if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
       const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
       if (operatingDay?.services && operatingDay.services.length > 0) {
-        const servicesData = operatingDay.services.map((service: any) => ({
-          id: service.id,
-          title: this.getServiceTitle(service),
-          startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
-          endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
-          type: this.getServiceTypeLabel(service),
-          comment: service.comment || '',
-          meta: service,
-          isService: true, // Identificar que es un servicio
-          isEnabled: service.isEnabled
-        }));
-        servicesTableData.push(...servicesData);
+        const existingServiceIds = new Set(servicesTableData.map(s => s.id));
+        operatingDay.services.forEach((service: any) => {
+          if (!existingServiceIds.has(service.id)) {
+            servicesTableData.push({
+              id: service.id,
+              title: this.getServiceTitle(service),
+              startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+              endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+              type: this.getServiceTypeLabel(service),
+              comment: service.comment || '',
+              meta: service,
+              isService: true, // Identificar que es un servicio
+              isEnabled: service.isEnabled
+            });
+          }
+        });
       }
     }
 
     // Combinar días de funcionamiento primero, luego servicios
     const tableData = [...dayTableData, ...servicesTableData];
+
+    // Actualizar el contador de eventos totales
+    this.totalEvents = tableData.length;
 
     // Actualizar el dataSource existente
     this.data.tableConfig.dataSourceList = tableData;

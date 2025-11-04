@@ -262,15 +262,30 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onEventClick({ event }: { event: CalendarEvent }) {
-    this.openEditEventDialog(event);
+    // Verificar si es un servicio o un día de funcionamiento
+    const isService = event.meta?.isService === true;
+    
+    if (isService) {
+      // Es un servicio, abrir modal de edición de servicio
+      const service = event.meta as SiteOperatingDayService;
+      this.openEditServiceDialog(service);
+    } else {
+      // Es un día de funcionamiento, abrir modal de edición de día
+      this.openEditEventDialog(event);
+    }
   }
 
   onEventTimesChanged({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
     if (this.loading) return;
 
+    // Solo permitir arrastrar días de funcionamiento, no servicios
+    const isService = event.meta?.isService === true;
+    if (isService) {
+      return;
+    }
+
     const operatingDay = event.meta as SiteOperatingDay;
     if (!operatingDay) {
-
       return;
     }
 
@@ -288,9 +303,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   onEventResized({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
     if (this.loading) return;
 
+    // Solo permitir redimensionar días de funcionamiento, no servicios
+    const isService = event.meta?.isService === true;
+    if (isService) {
+      return;
+    }
+
     const operatingDay = event.meta as SiteOperatingDay;
     if (!operatingDay) {
-
       return;
     }
 
@@ -796,56 +816,112 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       return [];
     }
 
-    const events = days
-      .map(day => {
-        // Asegurar que operatingDate sea un objeto Date
-        const operatingDate = new Date(day.date);
+    const dayEvents: CalendarEvent[] = [];
+    const serviceEvents: CalendarEvent[] = [];
 
-        // Crear fechas de inicio y fin
-        const startDate = new Date(operatingDate);
-        const endDate = new Date(operatingDate);
+    days.forEach(day => {
+      // Transformar día de funcionamiento en evento
+      const operatingDate = new Date(day.date);
+      const startDate = new Date(operatingDate);
+      const endDate = new Date(operatingDate);
 
-        // Formatear horarios para el título
-        const startTimeStr = this.formatTimeValue(day.startTime);
-        const endTimeStr = this.formatTimeValue(day.endTime);
+      // Formatear horarios para el título
+      const startTimeStr = this.formatTimeValue(day.startTime);
+      const endTimeStr = this.formatTimeValue(day.endTime);
 
-        // Si hay horarios, usarlos; si no, usar horarios por defecto
-        if (day.startTime && day.endTime) {
-          if (startTimeStr && endTimeStr) {
-            // Convertir formato 12h a 24h para Date
-            const startTime = this.parseTime12To24(startTimeStr);
-            const endTime = this.parseTime12To24(endTimeStr);
+      // Si hay horarios, usarlos; si no, usar horarios por defecto
+      if (day.startTime && day.endTime) {
+        if (startTimeStr && endTimeStr) {
+          // Convertir formato 12h a 24h para Date
+          const startTime = this.parseTime12To24(startTimeStr);
+          const endTime = this.parseTime12To24(endTimeStr);
 
-            startDate.setHours(startTime.hours, startTime.minutes, 0, 0);
-            endDate.setHours(endTime.hours, endTime.minutes, 0, 0);
-          } else {
-            // Horarios por defecto si no se pueden parsear
-            startDate.setHours(8, 0, 0, 0);
-            endDate.setHours(16, 0, 0, 0);
-          }
+          startDate.setHours(startTime.hours, startTime.minutes, 0, 0);
+          endDate.setHours(endTime.hours, endTime.minutes, 0, 0);
         } else {
-          // Horarios por defecto
+          // Horarios por defecto si no se pueden parsear
           startDate.setHours(8, 0, 0, 0);
           endDate.setHours(16, 0, 0, 0);
         }
+      } else {
+        // Horarios por defecto
+        startDate.setHours(8, 0, 0, 0);
+        endDate.setHours(16, 0, 0, 0);
+      }
 
-        const draggable = this.view === CalendarView.Week ? true : false;
-        const resizable = this.view === CalendarView.Week ? { beforeStart: true, afterEnd: true } : { beforeStart: false, afterEnd: false };
+      const draggable = this.view === CalendarView.Week ? true : false;
+      const resizable = this.view === CalendarView.Week ? { beforeStart: true, afterEnd: true } : { beforeStart: false, afterEnd: false };
 
-        return {
-          start: startDate,
-          end: endDate,
-          title: day.isExcluded ? 'Día cerrado' :
-                 day.isWeekendOverride ? 'Fin de semana operativo' :
-                 'Día operativo',
-          color: this.getEventColor(day),
-          draggable: draggable,
-          resizable: resizable,
-          meta: { ...day }
-        };
+      // Evento del día de funcionamiento
+      dayEvents.push({
+        start: startDate,
+        end: endDate,
+        title: day.isExcluded ? 'Día cerrado' :
+               day.isWeekendOverride ? 'Fin de semana operativo' :
+               'Día operativo',
+        color: this.getEventColor(day),
+        draggable: draggable,
+        resizable: resizable,
+        meta: { ...day, isService: false }
       });
 
-    return events;
+      // Transformar servicios del día en eventos
+      if (day.services && day.services.length > 0) {
+        day.services.forEach((service: SiteOperatingDayService) => {
+          if (!service.isEnabled) {
+            return; // No mostrar servicios deshabilitados
+          }
+
+          const serviceDate = new Date(day.date);
+          const serviceStartDate = new Date(serviceDate);
+          const serviceEndDate = new Date(serviceDate);
+
+          // Parsear horarios del servicio
+          const serviceStartTimeStr = this.formatTimeValue(service.startTime);
+          const serviceEndTimeStr = this.formatTimeValue(service.endTime);
+
+          if (serviceStartTimeStr && serviceEndTimeStr) {
+            const serviceStartTime = this.parseTime12To24(serviceStartTimeStr);
+            const serviceEndTime = this.parseTime12To24(serviceEndTimeStr);
+
+            serviceStartDate.setHours(serviceStartTime.hours, serviceStartTime.minutes, 0, 0);
+            serviceEndDate.setHours(serviceEndTime.hours, serviceEndTime.minutes, 0, 0);
+          } else {
+            // Usar horarios del día si el servicio no tiene horarios específicos
+            serviceStartDate.setHours(startDate.getHours(), startDate.getMinutes(), 0, 0);
+            serviceEndDate.setHours(endDate.getHours(), endDate.getMinutes(), 0, 0);
+          }
+
+          // Obtener nombre del servicio
+          const serviceName = this.currentLanguage === 'es' 
+            ? (service.serviceTypeName || 'Servicio')
+            : (service.serviceTypeNameEN || 'Service');
+
+          serviceEvents.push({
+            start: serviceStartDate,
+            end: serviceEndDate,
+            title: serviceName,
+            color: this.getServiceEventColor(service),
+            draggable: false, // Los servicios no son arrastrables
+            resizable: { beforeStart: false, afterEnd: false }, // Los servicios no son redimensionables
+            meta: { 
+              ...service, 
+              isService: true,
+              operatingDayId: day.id,
+              operatingDate: day.date
+            }
+          });
+        });
+      }
+    });
+
+    // Combinar eventos: días primero, luego servicios
+    return [...dayEvents, ...serviceEvents];
+  }
+
+  private getServiceEventColor(service: SiteOperatingDayService): any {
+    // Color azul para servicios
+    return { primary: '#2196f3', secondary: '#bbdefb' };
   }
 
   private getEventColor(day: SiteOperatingDay): any {
@@ -1072,9 +1148,20 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   updateDayEventsTable(date: Date): void {
     const dayEvents = this.getDayEvents(date);
 
+    // Separar días de funcionamiento de servicios
+    const operatingDayEvents = dayEvents.filter(event => !event.meta?.isService);
+    const serviceEvents = dayEvents.filter(event => event.meta?.isService === true);
+
+    // Para días de funcionamiento, asegurarse de que solo haya uno por fecha
+    // Si hay múltiples eventos del mismo día, usar solo el primero
+    const uniqueOperatingDayEvents = operatingDayEvents.filter((event, index, self) => {
+      const eventId = event.meta?.id;
+      return index === self.findIndex(e => e.meta?.id === eventId);
+    });
+
     // Transformar CalendarEvent a formato de tabla (días de funcionamiento)
-    // El día de funcionamiento siempre va primero
-    const dayTableData = dayEvents.map(event => ({
+    // Solo incluir días de funcionamiento, no servicios
+    const dayTableData = uniqueOperatingDayEvents.map(event => ({
       id: event.meta?.id,
       title: this.getDayTitle(event.meta, date), // Usar fecha formateada
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
@@ -1085,18 +1172,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isService: false // Identificar que es un día de funcionamiento
     }));
 
-    // Agregar servicios del día a la tabla (después del día)
-    const servicesTableData: any[] = [];
-    
-    // Buscar el día de funcionamiento para esta fecha
-    const operatingDay = this.operatingDays.find(day => {
-      const dayDate = new Date(day.date);
-      return this.isSameDate(dayDate, date);
-    });
-
-    // Si el día tiene servicios, agregarlos a la tabla
-    if (operatingDay?.services && operatingDay.services.length > 0) {
-      const servicesData = operatingDay.services.map(service => ({
+    // Transformar servicios de eventos del calendario
+    const servicesTableData = serviceEvents.map(event => {
+      const service = event.meta as SiteOperatingDayService;
+      return {
         id: service.id,
         title: this.getServiceTitle(service),
         startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
@@ -1106,8 +1185,33 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         meta: service,
         isService: true, // Identificar que es un servicio
         isEnabled: service.isEnabled
-      }));
-      servicesTableData.push(...servicesData);
+      };
+    });
+
+    // También agregar servicios desde operatingDays por si no están en los eventos del calendario
+    const operatingDay = this.operatingDays.find(day => {
+      const dayDate = new Date(day.date);
+      return this.isSameDate(dayDate, date);
+    });
+
+    // Si el día tiene servicios que no están en los eventos del calendario, agregarlos
+    if (operatingDay?.services && operatingDay.services.length > 0) {
+      const existingServiceIds = new Set(servicesTableData.map(s => s.id));
+      operatingDay.services.forEach(service => {
+        if (!existingServiceIds.has(service.id)) {
+          servicesTableData.push({
+            id: service.id,
+            title: this.getServiceTitle(service),
+            startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+            endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+            type: this.getServiceTypeLabel(service),
+            comment: service.comment || '',
+            meta: service,
+            isService: true,
+            isEnabled: service.isEnabled
+          });
+        }
+      });
     }
 
     // Combinar días de funcionamiento primero, luego servicios
