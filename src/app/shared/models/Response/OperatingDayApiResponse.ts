@@ -1,3 +1,5 @@
+import { SiteOperatingDayService } from '../SiteOperatingDayService';
+
 export interface OperatingDayApiResponse {
   id: number;
   siteId: number;
@@ -9,5 +11,6 @@ export interface OperatingDayApiResponse {
   isExcluded: boolean;
   createdAt: string;
   updatedAt: string;
+  services?: SiteOperatingDayService[];
 }
 

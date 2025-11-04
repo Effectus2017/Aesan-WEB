@@ -1,3 +1,5 @@
+import { SiteOperatingDayService } from './SiteOperatingDayService';
+
 export interface SiteOperatingDay {
   id: number;
   siteId: number;
@@ -10,5 +12,6 @@ export interface SiteOperatingDay {
   isExcluded: boolean;
   createdAt: Date;
   updatedAt: Date;
+  services?: SiteOperatingDayService[];
 }
 

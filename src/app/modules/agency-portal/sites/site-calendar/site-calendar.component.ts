@@ -996,22 +996,60 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   updateDayEventsTable(date: Date): void {
     const dayEvents = this.getDayEvents(date);
 
-    // Transformar CalendarEvent a formato de tabla
-    const tableData = dayEvents.map(event => ({
+    // Transformar CalendarEvent a formato de tabla (días de funcionamiento)
+    const dayTableData = dayEvents.map(event => ({
       id: event.meta?.id,
       title: event.title,
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventTypeLabel(event.meta),
       comment: event.meta?.comment || '',
-      meta: event.meta
+      meta: event.meta,
+      isService: false // Identificar que es un día de funcionamiento
     }));
+
+    // Agregar servicios del día a la tabla
+    const servicesTableData: any[] = [];
+    
+    // Buscar el día de funcionamiento para este fecha
+    const operatingDay = this.operatingDays.find(day => {
+      const dayDate = new Date(day.date);
+      return this.isSameDate(dayDate, date);
+    });
+
+    // Si el día tiene servicios, agregarlos a la tabla
+    if (operatingDay?.services && operatingDay.services.length > 0) {
+      const servicesData = operatingDay.services.map(service => ({
+        id: service.id,
+        title: this.getServiceTitle(service),
+        startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+        endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+        type: this.getServiceTypeLabel(service),
+        comment: service.comment || '',
+        meta: service,
+        isService: true, // Identificar que es un servicio
+        isEnabled: service.isEnabled
+      }));
+      servicesTableData.push(...servicesData);
+    }
+
+    // Combinar días de funcionamiento y servicios
+    const tableData = [...dayTableData, ...servicesTableData];
 
     // Actualizar el dataSource existente en lugar de crear uno nuevo
     this.tableConfig.dataSourceList = tableData;
     this.tableConfig.dataSource.data = tableData;
+  }
 
+  private getServiceTitle(service: any): string {
+    const serviceName = this.currentLanguage === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
+    const groupName = service.childGroupName ? ` (${service.childGroupName})` : '';
+    const enabledStatus = service.isEnabled ? '' : ' [Deshabilitado]';
+    return `${serviceName || 'Servicio'}${groupName}${enabledStatus}`;
+  }
 
+  private getServiceTypeLabel(service: any): string {
+    return service.serviceTypeName || 'Servicio';
   }
 
   getEventTypeLabel(operatingDay: SiteOperatingDay): string {
@@ -1122,7 +1160,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isWeekendOverride: day.isWeekendOverride || false,
       isExcluded: day.isExcluded || false,
       createdAt: day.createdAt ? new Date(day.createdAt) : new Date(),
-      updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date()
+      updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date(),
+      services: day.services || []
     }));
   }
 

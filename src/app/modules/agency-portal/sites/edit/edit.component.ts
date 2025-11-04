@@ -988,7 +988,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       postalCity: [Validators.required],
       nonProfit: [Validators.required],
       organizationType: [Validators.required],
-      centerType: [Validators.required],
       educationLevels: [Validators.required],
     };
 
@@ -999,6 +998,18 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         control.updateValueAndValidity();
       }
     });
+
+    // Restaurar validación de centerType solo si el organizationType actual lo requiere
+    const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
+    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+    if (centerTypeControl) {
+      if (organizationType?.requiresCenterType) {
+        centerTypeControl.setValidators([Validators.required]);
+      } else {
+        centerTypeControl.clearValidators();
+      }
+      centerTypeControl.updateValueAndValidity();
+    }
   }
 
   onSetForm(param: Site): void {
@@ -1903,12 +1914,20 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
    */
   private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
+    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+    
     if (organizationType) {
       this.showCenterTypeField = organizationType.requiresCenterType;
 
-      // Si no requiere tipo de centro, limpiar el valor del campo
+      // Si no requiere tipo de centro, limpiar el valor y remover validación requerida
       if (!organizationType.requiresCenterType) {
-        this.headerConfig.formGroup.get('centerType')?.setValue(null);
+        centerTypeControl?.setValue(null);
+        centerTypeControl?.clearValidators();
+        centerTypeControl?.updateValueAndValidity();
+      } else {
+        // Si requiere tipo de centro, agregar validación requerida
+        centerTypeControl?.setValidators([Validators.required]);
+        centerTypeControl?.updateValueAndValidity();
       }
 
       // Habilitar Tipo de Institución Residencial cuando el tipo de organización es "Institución Residencial"
@@ -1921,6 +1940,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     } else {
       this.showCenterTypeField = false;
       this.showResidentialTypeField = false;
+      centerTypeControl?.clearValidators();
+      centerTypeControl?.updateValueAndValidity();
     }
   }
 

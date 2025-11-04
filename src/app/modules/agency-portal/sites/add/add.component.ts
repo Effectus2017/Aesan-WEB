@@ -720,15 +720,25 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
    * Actualiza la visibilidad del campo Tipo de Centro basado en el tipo de organización seleccionado
    */
   private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
+    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+
     if (organizationType) {
       this.showCenterTypeField = organizationType.requiresCenterType;
 
-      // Si no requiere tipo de centro, limpiar el valor del campo
+      // Si no requiere tipo de centro, limpiar el valor y remover validación requerida
       if (!organizationType.requiresCenterType) {
-        this.headerConfig.formGroup.get('centerType')?.setValue(null);
+        centerTypeControl?.setValue(null);
+        centerTypeControl?.clearValidators();
+        centerTypeControl?.updateValueAndValidity();
+      } else {
+        // Si requiere tipo de centro, agregar validación requerida
+        centerTypeControl?.setValidators([Validators.required]);
+        centerTypeControl?.updateValueAndValidity();
       }
     } else {
       this.showCenterTypeField = false;
+      centerTypeControl?.clearValidators();
+      centerTypeControl?.updateValueAndValidity();
     }
   }
 
@@ -885,7 +895,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       postalCity: [Validators.required],
       nonProfit: [Validators.required],
       organizationType: [Validators.required],
-      centerType: [Validators.required],
       educationLevels: [Validators.required],
       locationType: [Validators.required],
     };
@@ -897,6 +906,18 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         control.updateValueAndValidity();
       }
     });
+
+    // Restaurar validación de centerType solo si el organizationType actual lo requiere
+    const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
+    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+    if (centerTypeControl) {
+      if (organizationType?.requiresCenterType) {
+        centerTypeControl.setValidators([Validators.required]);
+      } else {
+        centerTypeControl.clearValidators();
+      }
+      centerTypeControl.updateValueAndValidity();
+    }
   }
 
   // Método para enviar el formulario
