@@ -32,32 +32,98 @@ import { TranslocoService } from '@ngneat/transloco';
 })
 export class SiteCalendarServiceAddModalComponent {
   timeOptions: { value: string; display: string }[] = [];
+  startTimeOptions: { value: string; display: string }[] = [];
+  endTimeOptions: { value: string; display: string }[] = [];
   serviceTypes = ServiceTypes;
   currentLanguage: string = 'es';
+  dayStartTime: string = '';
+  dayEndTime: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceAddModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceAddModalData,
     private translocoService: TranslocoService
   ) {
-    this.generateTimeOptions();
     this.currentLanguage = this.translocoService.getActiveLang() || 'es';
+    this.initializeTimeConstraints();
+    this.generateTimeOptions();
+  }
+
+  private initializeTimeConstraints(): void {
+    // Obtener los horarios del día de funcionamiento
+    this.dayStartTime = this.data.operatingDay.startTime || '00:00';
+    this.dayEndTime = this.data.operatingDay.endTime || '23:59';
+    
+    // Normalizar formato (remover segundos si existen)
+    this.dayStartTime = this.normalizeTime(this.dayStartTime);
+    this.dayEndTime = this.normalizeTime(this.dayEndTime);
+  }
+
+  private normalizeTime(time: string): string {
+    if (!time) return '00:00';
+    // Si tiene formato HH:mm:ss, remover los segundos
+    const parts = time.split(':');
+    if (parts.length >= 2) {
+      return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
+    }
+    return time;
+  }
+
+  private timeToMinutes(time: string): number {
+    const parts = time.split(':');
+    if (parts.length < 2) return 0;
+    const hours = parseInt(parts[0]) || 0;
+    const minutes = parseInt(parts[1]) || 0;
+    return hours * 60 + minutes;
   }
 
   private generateTimeOptions(): void {
-    const options: { value: string; display: string }[] = [];
+    const allOptions: { value: string; display: string }[] = [];
+    const dayStartMinutes = this.timeToMinutes(this.dayStartTime);
+    const dayEndMinutes = this.timeToMinutes(this.dayEndTime);
 
+    // Generar todas las opciones de tiempo (cada 30 minutos)
     for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         const time12 = this.convert24To12(hour, minute);
-        options.push({
-          value: time24,
-          display: time12
-        });
+        const timeMinutes = hour * 60 + minute;
+        
+        // Solo incluir horarios dentro del rango del día de funcionamiento
+        if (timeMinutes >= dayStartMinutes && timeMinutes <= dayEndMinutes) {
+          allOptions.push({
+            value: time24,
+            display: time12
+          });
+        }
       }
     }
-    this.timeOptions = options;
+
+    this.timeOptions = allOptions;
+    this.startTimeOptions = allOptions;
+    // Para endTime, solo mostrar opciones mayores o iguales a la hora de inicio seleccionada
+    this.updateEndTimeOptions();
+    
+    // Suscribirse a cambios en startTime para actualizar las opciones de endTime
+    this.data.form.get('startTime')?.valueChanges.subscribe(() => {
+      this.updateEndTimeOptions();
+    });
+  }
+
+  private updateEndTimeOptions(): void {
+    const selectedStartTime = this.data.form.get('startTime')?.value;
+    if (!selectedStartTime) {
+      this.endTimeOptions = this.timeOptions;
+      return;
+    }
+
+    const startMinutes = this.timeToMinutes(selectedStartTime);
+    const dayEndMinutes = this.timeToMinutes(this.dayEndTime);
+
+    this.endTimeOptions = this.timeOptions.filter(option => {
+      const optionMinutes = this.timeToMinutes(option.value);
+      return optionMinutes > startMinutes && optionMinutes <= dayEndMinutes;
+    });
   }
 
   private convert24To12(hour: number, minute: number): string {

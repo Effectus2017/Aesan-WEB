@@ -1190,13 +1190,32 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isEnabled: [service.isEnabled !== undefined ? service.isEnabled : true]
     });
 
+    // Obtener el operatingDay para tener los horarios del día
+    let operatingDay: SiteOperatingDay | undefined;
+    
+    // Intentar obtenerlo desde diferentes fuentes
+    if (service.operatingDate) {
+      const serviceDate = new Date(service.operatingDate);
+      operatingDay = this.getOperatingDayForDate(serviceDate);
+    } else if (this.selectedDate) {
+      operatingDay = this.getOperatingDayForDate(this.selectedDate);
+    }
+    
+    // También verificar si el servicio tiene dayStartTime y dayEndTime directamente
+    // Si no hay operatingDay pero el servicio tiene los horarios del día, crear un objeto temporal
+    if (!operatingDay && service.dayStartTime && service.dayEndTime) {
+      // Los horarios ya están en el servicio, no necesitamos el operatingDay completo
+      operatingDay = undefined; // Ya tenemos los horarios en el servicio
+    }
+
     const dialogRef = this.dialog.open(SiteCalendarServiceEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
         form: serviceForm,
         service: service,
-        siteId: this.currentSiteId
+        siteId: this.currentSiteId,
+        operatingDay: operatingDay
       } as SiteCalendarServiceEditModalData
     });
 
@@ -1205,7 +1224,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         if (result.action === 'delete') {
           this.deleteService(service.id);
         } else {
-          this.updateService(service.id, result);
+          // Incluir el serviceTypeId del servicio original en el formData
+          this.updateService(service.id, { ...result, serviceTypeId: service.serviceTypeId });
         }
       }
     });
@@ -1219,15 +1239,20 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         const startTime = this.formatTimeForBackend(formData.startTime);
         const endTime = this.formatTimeForBackend(formData.endTime);
 
+        // Usar serviceTypeId del formData si está disponible, si no del servicio actual
+        const serviceTypeId = formData.serviceTypeId || currentService.serviceTypeId;
+
         const request = {
           operatingDayId: currentService.operatingDayId,
-          serviceTypeId: currentService.serviceTypeId,
+          serviceTypeId: serviceTypeId,
           childGroupId: currentService.childGroupId,
           startTime: startTime,
           endTime: endTime,
           isEnabled: formData.isEnabled !== undefined ? formData.isEnabled : true,
           comment: formData.comment || ''
         };
+
+        console.log('Updating service with request:', request);
 
         this.loading = true;
         this.siteOperatingDayServiceService.updateService(serviceId, request).subscribe({
@@ -1278,7 +1303,21 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const tableData = this.tableConfig.dataSourceList.find(item => item.id === id);
     if (tableData?.isService) {
       // Es un servicio, abrir modal de edición de servicio
-      this.openEditServiceDialog(tableData.meta);
+      const service = tableData.meta as SiteOperatingDayService;
+      
+      // Obtener el operatingDay para tener los horarios del día
+      let operatingDay: SiteOperatingDay | undefined;
+      if (service.operatingDate) {
+        const serviceDate = new Date(service.operatingDate);
+        operatingDay = this.getOperatingDayForDate(serviceDate);
+      } else if (this.selectedDate) {
+        // Si no hay operatingDate en el servicio, usar la fecha seleccionada
+        operatingDay = this.getOperatingDayForDate(this.selectedDate);
+      }
+      
+      // Crear servicio con operatingDay si está disponible
+      const serviceWithDay = operatingDay ? { ...service, operatingDay } : service;
+      this.openEditServiceDialog(serviceWithDay as SiteOperatingDayService);
     } else {
       // Es un día de funcionamiento, abrir modal de edición
       const calendarEvent = this.events.find(e => e.meta?.id === id);

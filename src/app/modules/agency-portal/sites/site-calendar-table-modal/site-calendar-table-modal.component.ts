@@ -344,14 +344,28 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
             this.siteOperatingDayServiceService.createService(request).subscribe({
               next: () => {
-                // Recargar datos en el handler padre
-                if (this.data.handler && typeof (this.data.handler as any).loadOperatingDays === 'function') {
-                  (this.data.handler as any).loadOperatingDays();
+                // Usar loadOperatingDaysAndUpdateModal si está disponible (actualiza el modal automáticamente)
+                if (this.data.handler && typeof (this.data.handler as any).loadOperatingDaysAndUpdateModal === 'function') {
+                  (this.data.handler as any).loadOperatingDaysAndUpdateModal();
                 }
-                // Actualizar tabla local
+                // Si no está disponible, usar loadOperatingDays y luego actualizar manualmente
+                else if (this.data.handler && typeof (this.data.handler as any).loadOperatingDays === 'function') {
+                  (this.data.handler as any).loadOperatingDays();
+                  // Actualizar tabla local después de un pequeño delay para asegurar que los datos se hayan cargado
+                  setTimeout(() => {
+                    this.refreshTableData();
+                  }, 300);
+                }
+                // Si no hay handler, actualizar directamente
+                else {
+                  this.refreshTableData();
+                }
+
+                // Llamar callback para actualizar la tabla del modal padre
                 if (this.data.onEventUpdated) {
                   this.data.onEventUpdated();
                 }
+
                 this.notificationService.showSuccess('Servicio agregado correctamente');
               },
               error: (error) => {
@@ -400,5 +414,31 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  /**
+   * Verifica si ya existe un día de funcionamiento para la fecha actual
+   */
+  hasOperatingDay(): boolean {
+    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
+      const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
+      return operatingDay != null && operatingDay.id != null && operatingDay.id > 0;
+    }
+    // También verificar si hay eventos en los datos que no sean servicios
+    if (this.data.events && this.data.events.length > 0) {
+      return this.data.events.some(event => event.meta && event.meta.id && !event.meta.isService);
+    }
+    return false;
+  }
+
+  /**
+   * Refresca los datos de la tabla obteniendo los servicios actualizados del handler
+   */
+  refreshTableData(): void {
+    // Obtener los eventos actuales (días de funcionamiento)
+    const currentEvents = this.data.events || [];
+
+    // Actualizar la tabla con los eventos actuales y los servicios actualizados del handler
+    this.updateTableData(currentEvents);
   }
 }

@@ -41,15 +41,14 @@
             type="button"
             [color]="'primary'"
             (click)="addService()">
-            <mat-icon [svgIcon]="'heroicons_outline:plus'" class="mr-2"></mat-icon>
             {{ 'sites.calendar.modals.day-events.addService' | transloco }}
           </button>
           <button
+            *ngIf="!hasOperatingDay()"
             mat-flat-button
             type="button"
             [color]="'primary'"
             (click)="addEvent()">
-            <mat-icon [svgIcon]="'heroicons_outline:plus'" class="mr-2"></mat-icon>
             {{ 'sites.calendar.modals.day-events.addEvent' | transloco }}
           </button>
         </div>

@@ -24,7 +24,7 @@
         <mat-form-field>
           <mat-label>{{ 'sites.calendar.modals.edit-service.startTime.label' | transloco }}</mat-label>
           <mat-select formControlName="startTime" required>
-            <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+            <mat-option *ngFor="let time of startTimeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
@@ -36,7 +36,7 @@
         <mat-form-field>
           <mat-label>{{ 'sites.calendar.modals.edit-service.endTime.label' | transloco }}</mat-label>
           <mat-select formControlName="endTime" required>
-            <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+            <mat-option *ngFor="let time of endTimeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
