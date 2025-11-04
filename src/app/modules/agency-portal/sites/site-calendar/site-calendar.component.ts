@@ -264,7 +264,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   onEventClick({ event }: { event: CalendarEvent }) {
     // Verificar si es un servicio o un día de funcionamiento
     const isService = event.meta?.isService === true;
-    
+
     if (isService) {
       // Es un servicio, abrir modal de edición de servicio
       const service = event.meta as SiteOperatingDayService;
@@ -626,7 +626,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const newDate = new Date(this.viewDate);
     const oldMonth = this.viewDate.getMonth();
     const oldYear = this.viewDate.getFullYear();
-    
+
     if (this.view === CalendarView.Month) {
       newDate.setMonth(newDate.getMonth() - 1);
     } else if (this.view === CalendarView.Week) {
@@ -635,7 +635,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       newDate.setDate(newDate.getDate() - 1);
     }
     this.viewDate = newDate;
-    
+
     // Recargar datos si cambió el mes o año (solo para vista de mes)
     if (this.view === CalendarView.Month) {
       const newMonth = this.viewDate.getMonth();
@@ -650,7 +650,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const newDate = new Date(this.viewDate);
     const oldMonth = this.viewDate.getMonth();
     const oldYear = this.viewDate.getFullYear();
-    
+
     if (this.view === CalendarView.Month) {
       newDate.setMonth(newDate.getMonth() + 1);
     } else if (this.view === CalendarView.Week) {
@@ -659,7 +659,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       newDate.setDate(newDate.getDate() + 1);
     }
     this.viewDate = newDate;
-    
+
     // Recargar datos si cambió el mes o año (solo para vista de mes)
     if (this.view === CalendarView.Month) {
       const newMonth = this.viewDate.getMonth();
@@ -673,9 +673,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   today() {
     const oldMonth = this.viewDate.getMonth();
     const oldYear = this.viewDate.getFullYear();
-    
+
     this.viewDate = new Date();
-    
+
     // Recargar datos si cambió el mes o año (solo para vista de mes)
     if (this.view === CalendarView.Month) {
       const newMonth = this.viewDate.getMonth();
@@ -692,13 +692,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
    */
   onViewDateChange(event: Date) {
     if (!event) return;
-    
+
     const oldMonth = this.viewDate.getMonth();
     const oldYear = this.viewDate.getFullYear();
-    
+
     // Actualizar viewDate
     this.viewDate = new Date(event);
-    
+
     // Recargar datos si cambió el mes o año (solo para vista de mes)
     if (this.view === CalendarView.Month) {
       const newMonth = this.viewDate.getMonth();
@@ -821,7 +821,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     days.forEach(day => {
       // Transformar día de funcionamiento en evento
-      const operatingDate = new Date(day.date);
+      // Crear fecha de manera segura para evitar problemas de zona horaria
+      const operatingDate = this.parseDateSafe(day.date);
       const startDate = new Date(operatingDate);
       const endDate = new Date(operatingDate);
 
@@ -872,7 +873,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
             return; // No mostrar servicios deshabilitados
           }
 
-          const serviceDate = new Date(day.date);
+          // Usar la misma fecha del día de funcionamiento para evitar problemas de zona horaria
+          const serviceDate = new Date(operatingDate);
           const serviceStartDate = new Date(serviceDate);
           const serviceEndDate = new Date(serviceDate);
 
@@ -893,7 +895,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           }
 
           // Obtener nombre del servicio
-          const serviceName = this.currentLanguage === 'es' 
+          const serviceName = this.currentLanguage === 'es'
             ? (service.serviceTypeName || 'Servicio')
             : (service.serviceTypeNameEN || 'Service');
 
@@ -904,8 +906,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
             color: this.getServiceEventColor(service),
             draggable: false, // Los servicios no son arrastrables
             resizable: { beforeStart: false, afterEnd: false }, // Los servicios no son redimensionables
-            meta: { 
-              ...service, 
+            meta: {
+              ...service,
               isService: true,
               operatingDayId: day.id,
               operatingDate: day.date
@@ -917,6 +919,39 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     // Combinar eventos: días primero, luego servicios
     return [...dayEvents, ...serviceEvents];
+  }
+
+  /**
+   * Parsea una fecha de manera segura, evitando problemas de zona horaria
+   * Si la fecha viene como string "YYYY-MM-DD" o "YYYY-MM-DDTHH:mm:ss",
+   * la parsea manualmente para preservar el día exacto
+   */
+  private parseDateSafe(dateString: string | Date): Date {
+    if (!dateString) {
+      return new Date();
+    }
+
+    // Si ya es un objeto Date, devolverlo
+    if (dateString instanceof Date) {
+      return new Date(dateString);
+    }
+
+    // Si es un string, parsearlo manualmente
+    if (typeof dateString === 'string') {
+      // Intentar parsear formato ISO "YYYY-MM-DD" o "YYYY-MM-DDTHH:mm:ss"
+      const dateMatch = dateString.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (dateMatch) {
+        const year = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10) - 1; // Los meses en Date son 0-indexed
+        const day = parseInt(dateMatch[3], 10);
+
+        // Crear fecha en hora local (medianoche local) para preservar el día
+        return new Date(year, month, day, 0, 0, 0, 0);
+      }
+    }
+
+    // Fallback: usar constructor de Date normal
+    return new Date(dateString);
   }
 
   private getServiceEventColor(service: SiteOperatingDayService): any {
@@ -1296,7 +1331,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     // Obtener el operatingDay para tener los horarios del día
     let operatingDay: SiteOperatingDay | undefined;
-    
+
     // Intentar obtenerlo desde diferentes fuentes
     if (service.operatingDate) {
       const serviceDate = new Date(service.operatingDate);
@@ -1304,7 +1339,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     } else if (this.selectedDate) {
       operatingDay = this.getOperatingDayForDate(this.selectedDate);
     }
-    
+
     // También verificar si el servicio tiene dayStartTime y dayEndTime directamente
     // Si no hay operatingDay pero el servicio tiene los horarios del día, crear un objeto temporal
     if (!operatingDay && service.dayStartTime && service.dayEndTime) {
@@ -1408,7 +1443,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     if (tableData?.isService) {
       // Es un servicio, abrir modal de edición de servicio
       const service = tableData.meta as SiteOperatingDayService;
-      
+
       // Obtener el operatingDay para tener los horarios del día
       let operatingDay: SiteOperatingDay | undefined;
       if (service.operatingDate) {
@@ -1418,7 +1453,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         // Si no hay operatingDate en el servicio, usar la fecha seleccionada
         operatingDay = this.getOperatingDayForDate(this.selectedDate);
       }
-      
+
       // Crear servicio con operatingDay si está disponible
       const serviceWithDay = operatingDay ? { ...service, operatingDay } : service;
       this.openEditServiceDialog(serviceWithDay as SiteOperatingDayService);
