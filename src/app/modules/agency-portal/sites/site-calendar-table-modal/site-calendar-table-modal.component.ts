@@ -3,12 +3,16 @@ import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CalendarEvent } from 'angular-calendar';
 import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
-import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { SiteCalendarServiceAddModalComponent } from '../site-calendar-service-add-modal/site-calendar-service-add-modal.component';
+import { SiteCalendarServiceAddModalData } from '../site-calendar-service-add-modal/site-calendar-service-add-modal-data.interface';
+import { SiteOperatingDayServiceService } from 'app/shared/services/site-operating-day-service.service';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SiteCalendarTableModalData } from './site-calendar-table-modal-data.interface';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'app-school-calendar-table-modal',
@@ -20,6 +24,9 @@ export class SiteCalendarTableModalComponent implements OnInit {
   private dialog: MatDialog = inject(MatDialog);
   private formBuilder: FormBuilder = inject(FormBuilder);
   private cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private siteOperatingDayServiceService: SiteOperatingDayServiceService = inject(SiteOperatingDayServiceService);
+  private translocoService: TranslocoService = inject(TranslocoService);
+  private notificationService: NotificationService = inject(NotificationService);
 
   constructor(public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>, @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData) {}
 
@@ -28,13 +35,21 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
     // Asignar referencia al componente en los datos
     this.data.modalComponent = this;
+
+    // Inicializar la tabla con los eventos del día (días y servicios)
+    if (this.data.events && this.data.events.length > 0) {
+      this.updateTableData(this.data.events);
+    } else {
+      // Si no hay eventos, inicializar la tabla vacía pero asegurar que los servicios se muestren si existen
+      this.updateTableData([]);
+    }
   }
 
   addEvent(): void {
     // Crear formulario para el modal de agregar
     const addForm = this.formBuilder.group({
       startTime: ['08:00'],
-      endTime: ['16:00'],
+      endTime: ['19:00'],
       comment: [''],
       isWeekendOverride: [false],
       isExcluded: [false],
@@ -46,7 +61,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       siteId: this.data.siteId,
       date: this.data.date.toISOString().split('T')[0],
       startTime: '08:00',
-      endTime: '16:00',
+      endTime: '19:00',
       isWeekendOverride: false,
       isExcluded: false,
       comment: '',
@@ -96,7 +111,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
     // Crear el nuevo evento para la tabla
     const newEvent = {
       id: Date.now(),
-      title: this.getEventTitle(formData),
+      title: this.getEventTitle(formData, this.data.date), // Usar fecha del día
       startTime: formData.startTime,
       endTime: formData.endTime,
       type: this.getEventType(formData),
@@ -109,26 +124,30 @@ export class SiteCalendarTableModalComponent implements OnInit {
         isWeekendOverride: formData.isWeekendOverride,
         isExcluded: formData.isExcluded,
       },
+      isService: false // Identificar que es un día de funcionamiento
     };
 
-    // Agregar directamente a la tabla
-    this.data.tableConfig.dataSourceList.push(newEvent);
+    // Agregar directamente a la tabla al inicio (los días van primero)
+    this.data.tableConfig.dataSourceList.unshift(newEvent);
     this.data.tableConfig.dataSource.data = this.data.tableConfig.dataSourceList;
 
     // Forzar detección de cambios
     this.cdr.detectChanges();
   }
 
-  private getEventTitle(formData: any): string {
-    if (formData.isExcluded) return 'Día cerrado';
-    if (formData.isWeekendOverride) return 'Fin de semana';
-    return 'Día normal';
+  private getEventTitle(formData: any, date: Date): string {
+    // Usar la traducción para el título del día de funcionamiento
+    return this.translocoService.translate('sites.calendar.day-events.operating-day-title');
   }
 
   private getEventType(formData: any): string {
-    if (formData.isExcluded) return 'Día cerrado';
-    if (formData.isWeekendOverride) return 'Fin de semana';
-    return 'Día normal';
+    if (formData.isExcluded) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.closed');
+    }
+    if (formData.isWeekendOverride) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.weekend');
+    }
+    return this.translocoService.translate('sites.calendar.day-events.day-types.normal');
   }
 
   // Método para actualizar la tabla después de editar un evento
@@ -148,16 +167,43 @@ export class SiteCalendarTableModalComponent implements OnInit {
   updateTableData(newEvents: CalendarEvent[]): void {
     console.log('Updating table data with new events:', newEvents);
 
-    // Transformar CalendarEvent a formato de tabla
-    const tableData = newEvents.map((event) => ({
+    // Transformar CalendarEvent a formato de tabla (días de funcionamiento)
+    // El día de funcionamiento siempre va primero
+    const dayTableData = newEvents.map((event) => ({
       id: event.meta?.id,
-      title: event.title,
+      title: this.getEventTitle(event.meta, this.data.date), // Usar fecha formateada
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventType(event.meta),
       comment: event.meta?.comment || '',
       meta: event.meta,
+      isService: false // Identificar que es un día de funcionamiento
     }));
+
+    // Agregar servicios del día a la tabla (después del día)
+    const servicesTableData: any[] = [];
+
+    // Obtener servicios desde el handler si está disponible
+    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
+      const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
+      if (operatingDay?.services && operatingDay.services.length > 0) {
+        const servicesData = operatingDay.services.map((service: any) => ({
+          id: service.id,
+          title: this.getServiceTitle(service),
+          startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+          endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+          type: this.getServiceTypeLabel(service),
+          comment: service.comment || '',
+          meta: service,
+          isService: true, // Identificar que es un servicio
+          isEnabled: service.isEnabled
+        }));
+        servicesTableData.push(...servicesData);
+      }
+    }
+
+    // Combinar días de funcionamiento primero, luego servicios
+    const tableData = [...dayTableData, ...servicesTableData];
 
     // Actualizar el dataSource existente
     this.data.tableConfig.dataSourceList = tableData;
@@ -167,6 +213,16 @@ export class SiteCalendarTableModalComponent implements OnInit {
     this.cdr.detectChanges();
 
     console.log('Table data updated:', tableData);
+  }
+
+  private getServiceTitle(service: any): string {
+    // Usar el nombre del servicio según el idioma actual
+    const serviceName = service.serviceTypeName || service.serviceTypeNameEN;
+    return serviceName || 'Servicio';
+  }
+
+  private getServiceTypeLabel(service: any): string {
+    return service.serviceTypeName || 'Servicio';
   }
 
   private formatTimeValue(timeValue: any): string {
@@ -220,6 +276,126 @@ export class SiteCalendarTableModalComponent implements OnInit {
     }
 
     return `${hours12}:${minutes} ${period}`;
+  }
+
+  addService(): void {
+    // Obtener el operatingDay desde el handler del componente padre
+    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
+      const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
+
+      if (operatingDay) {
+        // Crear formulario para agregar servicio
+        const serviceForm = this.formBuilder.group({
+          serviceTypeId: ['', Validators.required],
+          startTime: ['', Validators.required],
+          endTime: ['', Validators.required],
+          comment: [''],
+          isEnabled: [true]
+        });
+
+        const dialogRef = this.dialog.open(SiteCalendarServiceAddModalComponent, {
+          width: '600px',
+          maxWidth: '90vw',
+          data: {
+            form: serviceForm,
+            operatingDay: operatingDay,
+            siteId: this.data.siteId
+          } as SiteCalendarServiceAddModalData
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result) {
+            // Convertir formato de tiempo de HH:mm a HH:mm:ss para que ASP.NET Core pueda parsearlo como TimeSpan
+            const formatTimeForApi = (time: string): string => {
+              if (!time) return '00:00:00';
+
+              // Si ya tiene formato HH:mm:ss, devolverlo tal cual
+              const parts = time.split(':');
+              if (parts.length === 3) {
+                // Asegurar formato correcto con padding
+                const hours = parts[0].padStart(2, '0');
+                const minutes = parts[1].padStart(2, '0');
+                const seconds = parts[2].padStart(2, '0');
+                return `${hours}:${minutes}:${seconds}`;
+              }
+
+              // Si tiene formato HH:mm, agregar :00
+              if (parts.length === 2) {
+                const hours = parts[0].padStart(2, '0');
+                const minutes = parts[1].padStart(2, '0');
+                return `${hours}:${minutes}:00`;
+              }
+
+              // Fallback: devolver formato estándar
+              return '00:00:00';
+            };
+
+            // Crear el servicio
+            const request = {
+              operatingDayId: operatingDay.id,
+              serviceTypeId: result.serviceTypeId,
+              startTime: formatTimeForApi(result.startTime),
+              endTime: formatTimeForApi(result.endTime),
+              comment: result.comment || '',
+              isEnabled: result.isEnabled !== undefined ? result.isEnabled : true
+            };
+
+            console.log('Request being sent:', request);
+
+            this.siteOperatingDayServiceService.createService(request).subscribe({
+              next: () => {
+                // Recargar datos en el handler padre
+                if (this.data.handler && typeof (this.data.handler as any).loadOperatingDays === 'function') {
+                  (this.data.handler as any).loadOperatingDays();
+                }
+                // Actualizar tabla local
+                if (this.data.onEventUpdated) {
+                  this.data.onEventUpdated();
+                }
+                this.notificationService.showSuccess('Servicio agregado correctamente');
+              },
+              error: (error) => {
+                console.error('Error al crear servicio:', error);
+
+                // Extraer mensaje de error del response
+                let errorMessage = 'Error al crear el servicio';
+
+                if (error?.error) {
+                  // Si el error viene como string directo (BadRequest con mensaje)
+                  if (typeof error.error === 'string') {
+                    errorMessage = error.error;
+                  }
+                  // Si el error viene como objeto con mensaje
+                  else if (error.error.message) {
+                    errorMessage = error.error.message;
+                  }
+                  // Si el error viene como objeto con múltiples mensajes (ModelState)
+                  else if (error.error.errors) {
+                    const errorMessages = Object.values(error.error.errors).flat();
+                    errorMessage = Array.isArray(errorMessages) ? errorMessages.join(', ') : String(errorMessages);
+                  }
+                  // Si el error viene directamente en el body
+                  else if (error.error.body) {
+                    errorMessage = error.error.body;
+                  }
+                }
+
+                // Si el error es un string directamente (algunos casos de HTTP)
+                if (typeof error === 'string') {
+                  errorMessage = error;
+                }
+
+                this.notificationService.showError(errorMessage);
+              }
+            });
+          }
+        });
+      } else {
+        console.warn('No se encontró el día de funcionamiento para esta fecha');
+      }
+    } else {
+      console.warn('No se puede abrir modal de servicios: handler no disponible');
+    }
   }
 
   close(): void {

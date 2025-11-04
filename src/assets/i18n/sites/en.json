@@ -1292,6 +1292,73 @@
                         "edit": "Edit",
                         "delete": "Delete"
                     }
+                },
+                "day-types": {
+                    "closed": "Closed day",
+                    "weekend": "Weekend",
+                    "normal": "Normal day"
+                },
+                "operating-day-title": "Operating day"
+            },
+            "modals": {
+                "edit-day": {
+                    "title": "Edit Operating Day",
+                    "date": "Date",
+                    "startTime": {
+                        "label": "Start Time",
+                        "required": "Start time is required"
+                    },
+                    "endTime": {
+                        "label": "End Time",
+                        "required": "End time is required"
+                    },
+                    "comment": {
+                        "label": "Comment",
+                        "placeholder": "Operating day description..."
+                    },
+                    "weekendOverride": "Weekend",
+                    "excludeDay": "Exclude day (non-operational)"
+                },
+                "add-day": {
+                    "title": "Add Operating Day",
+                    "date": "Date",
+                    "startTime": {
+                        "label": "Start Time",
+                        "required": "Start time is required"
+                    },
+                    "endTime": {
+                        "label": "End Time",
+                        "required": "End time is required"
+                    },
+                    "comment": {
+                        "label": "Comment",
+                        "placeholder": "Operating day description..."
+                    },
+                    "weekendOverride": "Weekend",
+                    "excludeDay": "Exclude day (non-operational)"
+                },
+                "edit-service": {
+                    "title": "Edit Service",
+                    "service": "Service",
+                    "startTime": {
+                        "label": "Start Time",
+                        "required": "Start time is required"
+                    },
+                    "endTime": {
+                        "label": "End Time",
+                        "required": "End time is required"
+                    },
+                    "comment": {
+                        "label": "Comment",
+                        "placeholder": "Service description..."
+                    },
+                    "enabled": "Enabled"
+                },
+                "day-events": {
+                    "title": "Day Events",
+                    "totalEvents": "Total events",
+                    "addService": "Add Service",
+                    "addEvent": "Add Event"
                 }
             }
         },

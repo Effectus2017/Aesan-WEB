@@ -1236,6 +1236,73 @@
                         "edit": "Editar",
                         "delete": "Eliminar"
                     }
+                },
+                "day-types": {
+                    "closed": "Día cerrado",
+                    "weekend": "Fin de semana",
+                    "normal": "Día normal"
+                },
+                "operating-day-title": "Día de funcionamiento"
+            },
+            "modals": {
+                "edit-day": {
+                    "title": "Editar Día de Funcionamiento",
+                    "date": "Fecha",
+                    "startTime": {
+                        "label": "Hora de Inicio",
+                        "required": "La hora de inicio es requerida"
+                    },
+                    "endTime": {
+                        "label": "Hora de Fin",
+                        "required": "La hora de fin es requerida"
+                    },
+                    "comment": {
+                        "label": "Comentario",
+                        "placeholder": "Descripción del día de funcionamiento..."
+                    },
+                    "weekendOverride": "Fin de semana",
+                    "excludeDay": "Excluir día (no operativo)"
+                },
+                "add-day": {
+                    "title": "Agregar Día de Funcionamiento",
+                    "date": "Fecha",
+                    "startTime": {
+                        "label": "Hora de Inicio",
+                        "required": "La hora de inicio es requerida"
+                    },
+                    "endTime": {
+                        "label": "Hora de Fin",
+                        "required": "La hora de fin es requerida"
+                    },
+                    "comment": {
+                        "label": "Comentario",
+                        "placeholder": "Descripción del día de funcionamiento..."
+                    },
+                    "weekendOverride": "Fin de semana",
+                    "excludeDay": "Excluir día (no operativo)"
+                },
+                "edit-service": {
+                    "title": "Editar Servicio",
+                    "service": "Servicio",
+                    "startTime": {
+                        "label": "Hora de Inicio",
+                        "required": "La hora de inicio es requerida"
+                    },
+                    "endTime": {
+                        "label": "Hora de Fin",
+                        "required": "La hora de fin es requerida"
+                    },
+                    "comment": {
+                        "label": "Comentario",
+                        "placeholder": "Descripción del servicio..."
+                    },
+                    "enabled": "Habilitado"
+                },
+                "day-events": {
+                    "title": "Eventos del día",
+                    "totalEvents": "Total de eventos",
+                    "addService": "Agregar Servicio",
+                    "addEvent": "Agregar Evento"
                 }
             }
         },

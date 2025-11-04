@@ -30,6 +30,10 @@ import { SiteCalendarEditModalComponent } from '../site-calendar-edit-modal/site
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
 import { SiteCalendarTableModalComponent } from '../site-calendar-table-modal/site-calendar-table-modal.component';
 import { SiteCalendarTableModalData } from '../site-calendar-table-modal/site-calendar-table-modal-data.interface';
+import { SiteOperatingDayServiceService } from 'app/shared/services/site-operating-day-service.service';
+import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
+import { SiteCalendarServiceEditModalComponent } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal.component';
+import { SiteCalendarServiceEditModalData } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal-data.interface';
 
 @Component({
   selector: 'app-site-calendar',
@@ -54,6 +58,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
 
   private siteCalendarService: SiteCalendarService = inject(SiteCalendarService);
+  private siteOperatingDayServiceService: SiteOperatingDayServiceService = inject(SiteOperatingDayServiceService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private translocoService: TranslocoService = inject(TranslocoService);
   private fuseConfigService: FuseConfigService = inject(FuseConfigService);
@@ -599,6 +604,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   previous() {
     const newDate = new Date(this.viewDate);
+    const oldMonth = this.viewDate.getMonth();
+    const oldYear = this.viewDate.getFullYear();
+    
     if (this.view === CalendarView.Month) {
       newDate.setMonth(newDate.getMonth() - 1);
     } else if (this.view === CalendarView.Week) {
@@ -607,10 +615,22 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       newDate.setDate(newDate.getDate() - 1);
     }
     this.viewDate = newDate;
+    
+    // Recargar datos si cambió el mes o año (solo para vista de mes)
+    if (this.view === CalendarView.Month) {
+      const newMonth = this.viewDate.getMonth();
+      const newYear = this.viewDate.getFullYear();
+      if (oldMonth !== newMonth || oldYear !== newYear) {
+        this.loadOperatingDays();
+      }
+    }
   }
 
   next() {
     const newDate = new Date(this.viewDate);
+    const oldMonth = this.viewDate.getMonth();
+    const oldYear = this.viewDate.getFullYear();
+    
     if (this.view === CalendarView.Month) {
       newDate.setMonth(newDate.getMonth() + 1);
     } else if (this.view === CalendarView.Week) {
@@ -619,10 +639,54 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       newDate.setDate(newDate.getDate() + 1);
     }
     this.viewDate = newDate;
+    
+    // Recargar datos si cambió el mes o año (solo para vista de mes)
+    if (this.view === CalendarView.Month) {
+      const newMonth = this.viewDate.getMonth();
+      const newYear = this.viewDate.getFullYear();
+      if (oldMonth !== newMonth || oldYear !== newYear) {
+        this.loadOperatingDays();
+      }
+    }
   }
 
   today() {
+    const oldMonth = this.viewDate.getMonth();
+    const oldYear = this.viewDate.getFullYear();
+    
     this.viewDate = new Date();
+    
+    // Recargar datos si cambió el mes o año (solo para vista de mes)
+    if (this.view === CalendarView.Month) {
+      const newMonth = this.viewDate.getMonth();
+      const newYear = this.viewDate.getFullYear();
+      if (oldMonth !== newMonth || oldYear !== newYear) {
+        this.loadOperatingDays();
+      }
+    }
+  }
+
+  /**
+   * Maneja el evento cuando cambia la fecha de visualización del calendario
+   * Se dispara cuando el usuario interactúa directamente con el calendario
+   */
+  onViewDateChange(event: Date) {
+    if (!event) return;
+    
+    const oldMonth = this.viewDate.getMonth();
+    const oldYear = this.viewDate.getFullYear();
+    
+    // Actualizar viewDate
+    this.viewDate = new Date(event);
+    
+    // Recargar datos si cambió el mes o año (solo para vista de mes)
+    if (this.view === CalendarView.Month) {
+      const newMonth = this.viewDate.getMonth();
+      const newYear = this.viewDate.getFullYear();
+      if (oldMonth !== newMonth || oldYear !== newYear) {
+        this.loadOperatingDays();
+      }
+    }
   }
 
   getCurrentDateLabel(): string {
@@ -666,8 +730,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     this.loading = true;
 
+    // Obtener mes y año del viewDate actual
+    const month = this.viewDate.getMonth() + 1; // getMonth() retorna 0-11, necesitamos 1-12
+    const year = this.viewDate.getFullYear();
+
     const queryParameters: QueryParameters = {
-      siteId: this.currentSiteId
+      siteId: this.currentSiteId,
+      month: month,
+      year: year
     };
 
     this.siteCalendarService.getOperatingDays(queryParameters)
@@ -688,8 +758,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método para cargar datos y actualizar el modal de tabla
   private loadOperatingDaysAndUpdateModal() {
+    // Obtener mes y año del viewDate actual
+    const month = this.viewDate.getMonth() + 1; // getMonth() retorna 0-11, necesitamos 1-12
+    const year = this.viewDate.getFullYear();
+
     const queryParameters: QueryParameters = {
-      siteId: this.currentSiteId
+      siteId: this.currentSiteId,
+      month: month,
+      year: year
     };
 
     this.siteCalendarService.getOperatingDays(queryParameters)
@@ -997,9 +1073,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const dayEvents = this.getDayEvents(date);
 
     // Transformar CalendarEvent a formato de tabla (días de funcionamiento)
+    // El día de funcionamiento siempre va primero
     const dayTableData = dayEvents.map(event => ({
       id: event.meta?.id,
-      title: event.title,
+      title: this.getDayTitle(event.meta, date), // Usar fecha formateada
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventTypeLabel(event.meta),
@@ -1008,10 +1085,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isService: false // Identificar que es un día de funcionamiento
     }));
 
-    // Agregar servicios del día a la tabla
+    // Agregar servicios del día a la tabla (después del día)
     const servicesTableData: any[] = [];
     
-    // Buscar el día de funcionamiento para este fecha
+    // Buscar el día de funcionamiento para esta fecha
     const operatingDay = this.operatingDays.find(day => {
       const dayDate = new Date(day.date);
       return this.isSameDate(dayDate, date);
@@ -1033,7 +1110,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       servicesTableData.push(...servicesData);
     }
 
-    // Combinar días de funcionamiento y servicios
+    // Combinar días de funcionamiento primero, luego servicios
     const tableData = [...dayTableData, ...servicesTableData];
 
     // Actualizar el dataSource existente en lugar de crear uno nuevo
@@ -1041,11 +1118,33 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     this.tableConfig.dataSource.data = tableData;
   }
 
+  private getDayTitle(operatingDay: any, date: Date): string {
+    // Usar la traducción para el título del día de funcionamiento
+    return this.translocoService.translate('sites.calendar.day-events.operating-day-title');
+  }
+
+  // Método para obtener el día de funcionamiento para una fecha específica
+  getOperatingDayForDate(date: Date): SiteOperatingDay | undefined {
+    return this.operatingDays.find(day => {
+      const dayDate = new Date(day.date);
+      return this.isSameDate(dayDate, date);
+    });
+  }
+
+  // Método para abrir modal de servicios desde la tabla (ya no se usa, los servicios se muestran en la tabla principal)
+  openServicesModalFromTable(date: Date): void {
+    const operatingDay = this.operatingDays.find(day => {
+      const dayDate = new Date(day.date);
+      return this.isSameDate(dayDate, date);
+    });
+    // Ya no se abre el modal de servicios porque los servicios se muestran en la tabla principal
+    // Este método se mantiene por compatibilidad pero no hace nada
+  }
+
   private getServiceTitle(service: any): string {
+    // Usar el nombre del servicio según el idioma actual
     const serviceName = this.currentLanguage === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
-    const groupName = service.childGroupName ? ` (${service.childGroupName})` : '';
-    const enabledStatus = service.isEnabled ? '' : ' [Deshabilitado]';
-    return `${serviceName || 'Servicio'}${groupName}${enabledStatus}`;
+    return serviceName || 'Servicio';
   }
 
   private getServiceTypeLabel(service: any): string {
@@ -1054,28 +1153,166 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   getEventTypeLabel(operatingDay: SiteOperatingDay): string {
     if (operatingDay.isExcluded) {
-      return 'Día cerrado';
+      return this.translocoService.translate('sites.calendar.day-events.day-types.closed');
     }
     if (operatingDay.isWeekendOverride) {
-      return 'Fin de semana';
+      return this.translocoService.translate('sites.calendar.day-events.day-types.weekend');
     }
-    return 'Día normal';
+    return this.translocoService.translate('sites.calendar.day-events.day-types.normal');
+  }
+
+
+  private deleteService(serviceId: number): void {
+    if (!confirm('¿Estás seguro de que quieres eliminar este servicio?')) {
+      return;
+    }
+
+    this.siteOperatingDayServiceService.deleteService(serviceId).subscribe({
+      next: () => {
+        this.loadOperatingDays();
+        if (this.selectedDate) {
+          this.updateDayEventsTable(this.selectedDate);
+        }
+      },
+      error: (error) => {
+        console.error('Error al eliminar servicio:', error);
+      }
+    });
+  }
+
+  // Método para abrir modal de edición de servicio
+  openEditServiceDialog(service: SiteOperatingDayService): void {
+    // Preparar el formulario con los datos actuales del servicio
+    const serviceForm = this.fb.group({
+      startTime: [service.startTime || '', Validators.required],
+      endTime: [service.endTime || '', Validators.required],
+      comment: [service.comment || ''],
+      isEnabled: [service.isEnabled !== undefined ? service.isEnabled : true]
+    });
+
+    const dialogRef = this.dialog.open(SiteCalendarServiceEditModalComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        form: serviceForm,
+        service: service,
+        siteId: this.currentSiteId
+      } as SiteCalendarServiceEditModalData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.action === 'delete') {
+          this.deleteService(service.id);
+        } else {
+          this.updateService(service.id, result);
+        }
+      }
+    });
+  }
+
+  private updateService(serviceId: number, formData: any): void {
+    // Obtener el servicio actual para mantener los campos que no se editan
+    this.siteOperatingDayServiceService.getServiceById(serviceId).subscribe({
+      next: (currentService: SiteOperatingDayService) => {
+        // Convertir horarios a formato 24h con segundos para el backend
+        const startTime = this.formatTimeForBackend(formData.startTime);
+        const endTime = this.formatTimeForBackend(formData.endTime);
+
+        const request = {
+          operatingDayId: currentService.operatingDayId,
+          serviceTypeId: currentService.serviceTypeId,
+          childGroupId: currentService.childGroupId,
+          startTime: startTime,
+          endTime: endTime,
+          isEnabled: formData.isEnabled !== undefined ? formData.isEnabled : true,
+          comment: formData.comment || ''
+        };
+
+        this.loading = true;
+        this.siteOperatingDayServiceService.updateService(serviceId, request).subscribe({
+          next: () => {
+            this.loadOperatingDaysAndUpdateModal();
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('Error al actualizar servicio:', error);
+            this.loading = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al obtener servicio:', error);
+      }
+    });
+  }
+
+  private toggleService(serviceId: number): void {
+    // Obtener el servicio actual para conocer su estado actual
+    this.siteOperatingDayServiceService.getServiceById(serviceId).subscribe({
+      next: (currentService: SiteOperatingDayService) => {
+        // Cambiar el estado al opuesto
+        const newState = !currentService.isEnabled;
+
+        this.loading = true;
+        this.siteOperatingDayServiceService.toggleService(serviceId, newState).subscribe({
+          next: () => {
+            this.loadOperatingDaysAndUpdateModal();
+            this.loading = false;
+          },
+          error: (error) => {
+            console.error('Error al cambiar estado del servicio:', error);
+            this.loading = false;
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al obtener servicio:', error);
+      }
+    });
   }
 
   // Implementación de OnGenericTableHandler
   onTableEdit(event: Event, id: any): void {
-    // Encontrar el evento por ID y abrir modal de edición
-    const calendarEvent = this.events.find(e => e.meta?.id === id);
-    if (calendarEvent) {
-      this.openEditEventDialogFromTable(calendarEvent, id);
+    // Verificar si es un servicio o un día de funcionamiento
+    const tableData = this.tableConfig.dataSourceList.find(item => item.id === id);
+    if (tableData?.isService) {
+      // Es un servicio, abrir modal de edición de servicio
+      this.openEditServiceDialog(tableData.meta);
+    } else {
+      // Es un día de funcionamiento, abrir modal de edición
+      const calendarEvent = this.events.find(e => e.meta?.id === id);
+      if (calendarEvent) {
+        this.openEditEventDialogFromTable(calendarEvent, id);
+      }
     }
   }
 
   onTableDelete(event: Event, id: any): void {
-    // Encontrar el evento por ID y eliminarlo
-    const calendarEvent = this.events.find(e => e.meta?.id === id);
-    if (calendarEvent) {
-      this.deleteOperatingDay(calendarEvent.meta.id);
+    // Verificar si es un servicio o un día de funcionamiento
+    const tableData = this.tableConfig.dataSourceList.find(item => item.id === id);
+    if (tableData?.isService) {
+      // Es un servicio, eliminarlo
+      this.deleteService(id);
+    } else {
+      // Es un día de funcionamiento, eliminarlo
+      const calendarEvent = this.events.find(e => e.meta?.id === id);
+      if (calendarEvent) {
+        this.deleteOperatingDay(calendarEvent.meta.id);
+      }
+    }
+  }
+
+  onTableAction(event: Event, action: string, id: any): void {
+    const tableData = this.tableConfig.dataSourceList.find(item => item.id === id);
+    if (tableData?.isService) {
+      if (action === 'toggle') {
+        this.toggleService(id);
+      } else if (action === 'edit') {
+        this.onTableEdit(event, id);
+      } else if (action === 'delete') {
+        this.onTableDelete(event, id);
+      }
     }
   }
 

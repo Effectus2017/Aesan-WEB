@@ -71,5 +71,10 @@ export interface QueryParameters {
 
   // Campos para No traer agencias propietarias
   isPropietary?: boolean;
+
+  // Campos para filtrar días de funcionamiento por mes y año
+  month?: number; // Mes (1-12)
+  year?: number;  // Año
+  operatingDayId?: number; // ID del día de funcionamiento
 }
 

@@ -105,6 +105,7 @@
         [activeDayIsOpen]="activeDayIsOpen"
         (dayClicked)="onDayClick($event)"
         (eventClicked)="onEventClick($event)"
+        (viewDateChange)="onViewDateChange($event)"
         class="h-full">
       </mwl-calendar-month-view>
 
@@ -119,6 +120,7 @@
         (eventClicked)="onEventClick($event)"
         (eventTimesChanged)="onEventTimesChanged($event)"
         (eventResized)="onEventResized($event)"
+        (viewDateChange)="onViewDateChange($event)"
         class="h-full">
       </mwl-calendar-week-view>
 
@@ -131,6 +133,7 @@
         (dayClicked)="onDayClick($event)"
         (hourSegmentClicked)="onHourSegmentClicked($event)"
         (eventClicked)="onEventClick($event)"
+        (viewDateChange)="onViewDateChange($event)"
         class="h-full">
       </mwl-calendar-day-view>
     </div>

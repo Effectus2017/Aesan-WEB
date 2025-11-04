@@ -23,8 +23,8 @@ export class SiteOperatingDayServiceService {
    */
   getServicesByOperatingDay(operatingDayId: number): Observable<SiteOperatingDayService[]> {
     return this._httpClient.get<SiteOperatingDayService[]>(
-      `${this.apiUrl}/${operatingDayId}`,
-      getHttpOptions()
+      `${this.apiUrl}`,
+      getHttpOptions({ operatingDayId })
     );
   }
 
@@ -35,8 +35,8 @@ export class SiteOperatingDayServiceService {
    */
   getServiceById(id: number): Observable<SiteOperatingDayService> {
     return this._httpClient.get<SiteOperatingDayService>(
-      `${this.apiUrl}/by-id/${id}`,
-      getHttpOptions()
+      `${this.apiUrl}/get-service-by-id`,
+      getHttpOptions({ id })
     );
   }
 
@@ -49,7 +49,7 @@ export class SiteOperatingDayServiceService {
     return this._httpClient.post<{ id: number }>(
       this.apiUrl,
       request,
-      getHttpOptions()
+      getHttpOptions({})
     );
   }
 
@@ -61,9 +61,9 @@ export class SiteOperatingDayServiceService {
    */
   updateService(id: number, request: SiteOperatingDayServiceRequest): Observable<boolean> {
     return this._httpClient.put<boolean>(
-      `${this.apiUrl}/${id}`,
+      `${this.apiUrl}/update-service`,
       request,
-      getHttpOptions()
+      getHttpOptions({ id })
     );
   }
 
@@ -74,8 +74,8 @@ export class SiteOperatingDayServiceService {
    */
   deleteService(id: number): Observable<boolean> {
     return this._httpClient.delete<boolean>(
-      `${this.apiUrl}/${id}`,
-      getHttpOptions()
+      `${this.apiUrl}/delete-service`,
+      getHttpOptions({ id })
     );
   }
 
@@ -87,9 +87,9 @@ export class SiteOperatingDayServiceService {
    */
   toggleService(id: number, isEnabled: boolean): Observable<boolean> {
     return this._httpClient.post<boolean>(
-      `${this.apiUrl}/${id}/toggle`,
+      `${this.apiUrl}/toggle-service`,
       isEnabled,
-      getHttpOptions()
+      getHttpOptions({ id })
     );
   }
 }

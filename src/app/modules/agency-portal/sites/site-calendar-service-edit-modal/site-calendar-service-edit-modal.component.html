@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
-      {{ 'sites.calendar.modals.edit-day.title' | transloco }}
+      {{ 'sites.calendar.modals.edit-service.title' | transloco }}
     </div>
     <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
       <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
@@ -12,59 +12,50 @@
   <!-- Form -->
   <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="data.form" (ngSubmit)="onSave()">
     <div class="flex flex-col gap-6">
-      <!-- Información del día -->
+      <!-- Información del servicio -->
       <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          <strong>{{ 'sites.calendar.modals.edit-day.date' | transloco }}:</strong> {{ getFormattedDate() }}
+          <strong>{{ 'sites.calendar.modals.edit-service.service' | transloco }}:</strong> {{ getServiceName() }}
         </p>
       </div>
 
       <!-- Horarios -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-day.startTime.label' | transloco }}</mat-label>
+          <mat-label>{{ 'sites.calendar.modals.edit-service.startTime.label' | transloco }}</mat-label>
           <mat-select formControlName="startTime" required>
             <mat-option *ngFor="let time of timeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-day.startTime.required' | transloco }}
+            {{ 'sites.calendar.modals.edit-service.startTime.required' | transloco }}
           </mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-day.endTime.label' | transloco }}</mat-label>
+          <mat-label>{{ 'sites.calendar.modals.edit-service.endTime.label' | transloco }}</mat-label>
           <mat-select formControlName="endTime" required>
             <mat-option *ngFor="let time of timeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-day.endTime.required' | transloco }}
+            {{ 'sites.calendar.modals.edit-service.endTime.required' | transloco }}
           </mat-error>
         </mat-form-field>
       </div>
 
       <!-- Comentario -->
       <mat-form-field>
-        <mat-label>{{ 'sites.calendar.modals.edit-day.comment.label' | transloco }}</mat-label>
-        <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.edit-day.comment.placeholder' | transloco" [attr.aria-label]="'sites.calendar.modals.edit-day.comment.label' | transloco"></textarea>
+        <mat-label>{{ 'sites.calendar.modals.edit-service.comment.label' | transloco }}</mat-label>
+        <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.edit-service.comment.placeholder' | transloco"></textarea>
       </mat-form-field>
 
       <!-- Opciones -->
       <div class="flex flex-col gap-3">
-        <!-- Explicación de "Sobrescribir fin de semana":
-             ¿Para qué sirve?
-             - Marcar fines de semana que sí operan (excepción)
-             - Diferenciarlos de los fines de semana cerrados
-             - Permitir horarios específicos en sábados/domingos -->
-        <mat-checkbox formControlName="isWeekendOverride">
-          {{ 'sites.calendar.modals.edit-day.weekendOverride' | transloco }}
-        </mat-checkbox>
-
-        <mat-checkbox formControlName="isExcluded">
-          {{ 'sites.calendar.modals.edit-day.excludeDay' | transloco }}
+        <mat-checkbox formControlName="isEnabled">
+          {{ 'sites.calendar.modals.edit-service.enabled' | transloco }}
         </mat-checkbox>
       </div>
 

@@ -25,8 +25,15 @@ export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: Activated
   const siteCalendarService = inject(SiteCalendarService);
   const siteService = inject(SiteService);
 
+  // Obtener mes y año actual
+  const currentDate = new Date();
+  const month = currentDate.getMonth() + 1; // getMonth() retorna 0-11, necesitamos 1-12
+  const year = currentDate.getFullYear();
+
   const queryParameters = {
     siteId: siteId,
+    month: month,
+    year: year
   };
 
   return forkJoin([siteCalendarService.getOperatingDays(queryParameters), siteService.getSiteById({ id: siteId })]).pipe(

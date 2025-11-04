@@ -2,7 +2,7 @@
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
-      {{ 'sites.calendar.modals.edit-day.title' | transloco }}
+      Agregar Servicio
     </div>
     <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
       <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
@@ -15,56 +15,60 @@
       <!-- Información del día -->
       <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">
-          <strong>{{ 'sites.calendar.modals.edit-day.date' | transloco }}:</strong> {{ getFormattedDate() }}
+          <strong>Fecha:</strong> {{ data.operatingDay.date | date:'dd/MM/yyyy' }}
         </p>
       </div>
+
+      <!-- Tipo de Servicio -->
+      <mat-form-field>
+        <mat-label>Tipo de Servicio</mat-label>
+        <mat-select formControlName="serviceTypeId" required>
+          <mat-option *ngFor="let serviceType of serviceTypes" [value]="serviceType.id">
+            {{ currentLanguage === 'es' ? serviceType.name : serviceType.nameEN }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="data.form.get('serviceTypeId')?.hasError('required')">
+          El tipo de servicio es requerido
+        </mat-error>
+      </mat-form-field>
 
       <!-- Horarios -->
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-day.startTime.label' | transloco }}</mat-label>
+          <mat-label>Hora de Inicio</mat-label>
           <mat-select formControlName="startTime" required>
             <mat-option *ngFor="let time of timeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-day.startTime.required' | transloco }}
+            La hora de inicio es requerida
           </mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-day.endTime.label' | transloco }}</mat-label>
+          <mat-label>Hora de Fin</mat-label>
           <mat-select formControlName="endTime" required>
             <mat-option *ngFor="let time of timeOptions" [value]="time.value">
               {{ time.display }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-day.endTime.required' | transloco }}
+            La hora de fin es requerida
           </mat-error>
         </mat-form-field>
       </div>
 
       <!-- Comentario -->
       <mat-form-field>
-        <mat-label>{{ 'sites.calendar.modals.edit-day.comment.label' | transloco }}</mat-label>
-        <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.edit-day.comment.placeholder' | transloco" [attr.aria-label]="'sites.calendar.modals.edit-day.comment.label' | transloco"></textarea>
+        <mat-label>Comentario</mat-label>
+        <textarea matInput formControlName="comment" rows="3" placeholder="Comentario del servicio..."></textarea>
       </mat-form-field>
 
       <!-- Opciones -->
       <div class="flex flex-col gap-3">
-        <!-- Explicación de "Sobrescribir fin de semana":
-             ¿Para qué sirve?
-             - Marcar fines de semana que sí operan (excepción)
-             - Diferenciarlos de los fines de semana cerrados
-             - Permitir horarios específicos en sábados/domingos -->
-        <mat-checkbox formControlName="isWeekendOverride">
-          {{ 'sites.calendar.modals.edit-day.weekendOverride' | transloco }}
-        </mat-checkbox>
-
-        <mat-checkbox formControlName="isExcluded">
-          {{ 'sites.calendar.modals.edit-day.excludeDay' | transloco }}
+        <mat-checkbox formControlName="isEnabled">
+          Servicio Habilitado
         </mat-checkbox>
       </div>
 
@@ -72,21 +76,14 @@
       <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
         <div class="flex gap-2">
           <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
-            {{ 'global.buttons.cancel' | transloco }}
-          </button>
-          <button
-            mat-flat-button
-            type="button"
-            [color]="'warn'"
-            (click)="onDelete()"
-            class="bg-red-600 hover:bg-red-700">
-            {{ 'global.buttons.delete' | transloco }}
+            Cancelar
           </button>
         </div>
         <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
-          {{ 'global.buttons.save' | transloco }}
+          Guardar
         </button>
       </div>
     </div>
   </form>
 </div>
+
