@@ -4,4 +4,7 @@ export interface SponsorType {
   nameEN: string;
   isActive: boolean;
   displayOrder: number;
+  selectionNotification?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }

@@ -54,4 +54,8 @@ export class DeliveryTypeService {
   update(data: Partial<DeliveryType>) {
     return this._httpClient.put(this.apiUrl, data);
   }
+
+  getDeliveryTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-delivery-types-by-program`, getHttpOptions(queryParameters));
+  }
 }

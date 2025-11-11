@@ -73,4 +73,13 @@ export class SponsorTypeService {
   deleteSponsorType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-sponsor-type`, getHttpOptions(queryParameters));
   }
+
+  /**
+   * Obtiene los tipos de patrocinador válidos para un programa específico
+   * @param queryParameters Los parámetros de consulta que incluyen el ID del programa
+   * @returns Los tipos de patrocinador válidos para el programa
+   */
+  getSponsorTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-sponsor-types-by-program`, getHttpOptions(queryParameters));
+  }
 }
