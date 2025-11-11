@@ -1177,6 +1177,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home
       isDayCareHome: this.isDayCareHome,
+
+      // IDs de programas de la agencia para determinar lógica de días de funcionamiento
+      // Agency program IDs to determine operating days logic
+      programIds: this.agency?.programs?.map((p: any) => p.id) || [],
     };
 
     // ===== CREAR SITE SERVICE REQUEST =====

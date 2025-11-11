@@ -1,10 +1,10 @@
 <div class="flex flex-col flex-auto items-center min-w-0 sm:justify-center">
-  <!-- Theme Toggle and Languages -->
-  <div class="flex fixed top-8 right-14 z-50 gap-2 items-center">
-    <languages></languages>
-  </div>
   <div class="flex-auto p-6 w-full max-w-360 sm:p-6">
     <div class="px-4 py-8 w-full sm:w-auto sm:p-6 sm:rounded-2xl sm:shadow sm:bg-card">
+      <!-- Theme Toggle and Languages -->
+      <div class="flex gap-2 justify-end items-center mb-4">
+        <languages></languages>
+      </div>
       <div class="mt-2 text-4xl font-extrabold tracking-tight leading-tight text-center">{{ "sign-up.title" | transloco }}</div>
       <form class="mt-10" [formGroup]="signUpForm" #signUpNgForm="ngForm" data-cy="sign-up-form">
         <!-- Sponsor Information -->
@@ -41,9 +41,9 @@
             </mat-form-field>
           </div>
 
-            <!-- ¿Posee Certificación de Registro de Educación Básica? -->
-            <!-- Do you have Basic Education Registry Certification? -->
-            <!-- Si (1) y No (2) -->
+          <!-- ¿Posee Certificación de Registro de Educación Básica? -->
+          <!-- Do you have Basic Education Registry Certification? -->
+          <!-- Si (1) y No (2) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!isPSAVProgram(signUpForm.get('program')?.value)">
             <mat-form-field data-cy="basic-education-registry-field">
               <mat-label>{{ "sign-up.basic-education-registry.label" | transloco }}</mat-label>
@@ -55,7 +55,10 @@
             </mat-form-field>
           </div>
 
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPACNAProgram(signUpForm.get('program')?.value) && signUpForm.get('basicEducationRegistry')?.value === true">
+          <div
+            class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1"
+            *ngIf="isPACNAProgram(signUpForm.get('program')?.value) && signUpForm.get('basicEducationRegistry')?.value === true"
+          >
             <!-- ¿Está interesado en participar de horario extendido? (Solo para PACNA) -->
             <!-- Are you interested in participating in extended hours? (Only for PACNA) -->
             <!-- Si (1) y No (2) -->
@@ -73,7 +76,7 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPACNAProgram(signUpForm.get('program')?.value)">
             <div class="flex gap-2 items-center">
               <mat-form-field class="flex-grow" data-cy="services-offered-since-field">
-                <mat-label>{{ 'sign-up.services-offered-since.label' | transloco }}</mat-label>
+                <mat-label>{{ "sign-up.services-offered-since.label" | transloco }}</mat-label>
                 <input
                   matInput
                   [formControlName]="'servicesOfferedSince'"
@@ -83,13 +86,21 @@
                 <mat-datepicker-toggle matSuffix [for]="servicesSincePicker"></mat-datepicker-toggle>
                 <mat-datepicker #servicesSincePicker></mat-datepicker>
                 <mat-error *ngIf="signUpForm.get('servicesOfferedSince')?.hasError('required')">
-                  {{ 'sign-up.services-offered-since.required' | transloco }}
+                  {{ "sign-up.services-offered-since.required" | transloco }}
                 </mat-error>
                 <mat-error *ngIf="signUpForm.get('servicesOfferedSince')?.hasError('futureDate')">
-                  {{ 'sign-up.services-offered-since.future-date' | transloco }}
+                  {{ "sign-up.services-offered-since.future-date" | transloco }}
                 </mat-error>
               </mat-form-field>
-              <button title="button" id="services-offered-since-info-button" mat-icon-button type="button" class="mt-2" (click)="openCfrInfoByKey('cfr-info-dialog.cfr-226-6-b-1-xviii')" data-cy="services-offered-since-info-button">
+              <button
+                title="button"
+                id="services-offered-since-info-button"
+                mat-icon-button
+                type="button"
+                class="mt-2"
+                (click)="openCfrInfoByKey('cfr-info-dialog.cfr-226-6-b-1-xviii')"
+                data-cy="services-offered-since-info-button"
+              >
                 <mat-icon class="text-hint" svgIcon="mat_outline:info"></mat-icon>
               </button>
             </div>
@@ -271,11 +282,12 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <mat-form-field data-cy="participates-in-head-start-program-field" *ngIf="signUpForm && isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.participates-in-head-start-program.label" | transloco }}</mat-label>
-              <mat-select 
-                [formControlName]="'participatesInHeadStartProgramId'" 
+              <mat-select
+                [formControlName]="'participatesInHeadStartProgramId'"
                 (selectionChange)="checkParticipatesInHeadStartProgram()"
-                [compareWith]="compareItems" 
-                data-cy="participates-in-head-start-program-input">
+                [compareWith]="compareItems"
+                data-cy="participates-in-head-start-program-input"
+              >
                 <mat-option *ngFor="let option of participatesInHeadStartProgramOptions" [value]="option" data-cy="participates-in-head-start-program-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>

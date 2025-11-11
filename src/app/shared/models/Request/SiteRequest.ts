@@ -122,6 +122,13 @@ export interface SiteRequest {
      */
     isDayCareHome?: boolean;
 
+    /**
+     * IDs de programas de la agencia
+     * Agency program IDs
+     * Se obtiene desde el frontend para determinar la lógica de días de funcionamiento
+     */
+    programIds?: number[];
+
     // ===== RELACIONES CON MODELOS REQUEST =====
     services?: SiteServiceRequest[];
     dayCareHome?: SiteDayCareHomeRequest;

@@ -148,10 +148,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Does your Entity currently participate in any of the following programs? (Only for PSAV)
   // Early Head Start, Head Start, N/A
   participatesInHeadStartProgramOptions: OptionSelection[] = [];
-  
-  // IDs de opciones que bloquean el formulario (Early Head Start y Head Start)
-  private earlyHeadStartOptionId: number | null = null;
-  private headStartOptionId: number | null = null;
 
   // Posición del Staff
   // Staff Position
@@ -356,19 +352,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Does your Entity currently participate in any of the following programs? (Only for PSAV)
       // Early Head Start, Head Start, N/A
       this.participatesInHeadStartProgramOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'headStartProgram');
-      
-      // Identificar IDs de Early Head Start y Head Start basado en OptionKey y NameEN
-      // No usar nombres, usar OptionKey y comparar por NameEN para mayor seguridad
-      const headStartOptions = this.participatesInHeadStartProgramOptions;
-      const earlyHeadStartOption = headStartOptions.find(opt => opt.nameEN === 'Early Head Start');
-      const headStartOption = headStartOptions.find(opt => opt.nameEN === 'Head Start');
-      
-      if (earlyHeadStartOption) {
-        this.earlyHeadStartOptionId = earlyHeadStartOption.id;
-      }
-      if (headStartOption) {
-        this.headStartOptionId = headStartOption.id;
-      }
 
       // Posición del Staff
       // Staff Position
@@ -980,21 +963,38 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   }
 
   // Manejar el cambio en el campo participatesInHeadStartProgramId
-  // Bloquea el formulario si se selecciona Early Head Start o Head Start
+  // Bloquea el formulario si se selecciona una opción con booleanValue === true
   checkParticipatesInHeadStartProgram(): void {
-    const selectedOptionId = this.signUpForm.value.participatesInHeadStartProgramId;
-    
-    // Verificar si la opción seleccionada es Early Head Start o Head Start
-    // Comparar por ID, no por nombre
-    const isEarlyHeadStart = this.earlyHeadStartOptionId !== null && selectedOptionId === this.earlyHeadStartOptionId;
-    const isHeadStart = this.headStartOptionId !== null && selectedOptionId === this.headStartOptionId;
+    const selectedOption = this.signUpForm.value.participatesInHeadStartProgramId;
 
-    if (isEarlyHeadStart || isHeadStart) {
+    // Si no hay opción seleccionada, habilitar el formulario
+    if (!selectedOption) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Obtener la opción completa del array para verificar su booleanValue
+    // El valor puede ser un objeto OptionSelection o solo el ID
+    let selectedOptionObj: OptionSelection | null = null;
+
+    if (selectedOption && typeof selectedOption === 'object' && 'id' in selectedOption) {
+      // Si es un objeto OptionSelection completo
+      selectedOptionObj = selectedOption;
+    } else if (selectedOption && typeof selectedOption === 'number') {
+      // Si es solo el ID, buscar la opción en el array
+      selectedOptionObj = this.participatesInHeadStartProgramOptions.find(
+        opt => opt.id === selectedOption
+      ) || null;
+    }
+
+    // Verificar si la opción seleccionada tiene booleanValue === true
+    if (selectedOptionObj && selectedOptionObj.booleanValue === true) {
       // Bloquear el formulario
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, ['program', 'participatesInHeadStartProgramId']);
-      
-      // Mostrar diálogo con mensaje de no elegibilidad
+
+      // Mostrar diálogo con mensaje de no elegibilidad (similar a nonProfitChangePSAV)
       this._dialog.open(CfrInfoDialogComponent, {
         data: {
           title: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.title'),
@@ -1008,7 +1008,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         panelClass: ['mat-dialog-container', 'dialog-responsive']
       });
     } else {
-      // Si se selecciona N/A o se cambia a otra opción, habilitar el formulario
+      // Si se selecciona una opción con booleanValue === false o null, habilitar el formulario
       this.isEligible = true;
       enableAllControls(this.signUpForm);
     }
