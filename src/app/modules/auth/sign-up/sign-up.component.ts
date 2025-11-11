@@ -31,7 +31,7 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { ProgramService } from 'app/shared/services/program.service';
@@ -139,6 +139,20 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Socio-Económico (17), Híbrido (18)
   publicAllianceContract: OptionSelection[] = [];
 
+  // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
+  // Are you a Day Care Homes? (Only for PACNA program)
+  // No, Sí, Ambos - Ahora usa OptionSelection
+  isDayCareHomeOptions: OptionSelection[] = [];
+
+  // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+  // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+  // Early Head Start, Head Start, N/A
+  participatesInHeadStartProgramOptions: OptionSelection[] = [];
+  
+  // IDs de opciones que bloquean el formulario (Early Head Start y Head Start)
+  private earlyHeadStartOptionId: number | null = null;
+  private headStartOptionId: number | null = null;
+
   // Posición del Staff
   // Staff Position
   // Administrativo (19), Operativo (20), Miembro del Consejo (21)
@@ -153,6 +167,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Compare methods
   compare = compare;
   comparePostal = comparePostal;
+  compareItems = compareItems;
 
   // Program helper functions for template
   isPSAVProgram = isPSAVProgram;
@@ -280,8 +295,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
       // Are you a Day Care Homes? (Only for PACNA program)
-      // Si (1) y No (2)
-      isDayCareHome: [null],
+      // No, Sí, Ambos - Ahora usa OptionSelection
+      isDayCareHomeId: [null],
+
+      // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+      // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+      // Early Head Start, Head Start, N/A
+      participatesInHeadStartProgramId: [null],
     });
   }
 
@@ -326,6 +346,29 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // If you have a Public Alliance contract, please specify the type of contract
       // Socio-Económico (17), Híbrido (18)
       this.publicAllianceContract = allOptions.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
+
+      // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
+      // Are you a Day Care Homes? (Only for PACNA program)
+      // No, Sí, Ambos
+      this.isDayCareHomeOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'isDayCareHome');
+
+      // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+      // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+      // Early Head Start, Head Start, N/A
+      this.participatesInHeadStartProgramOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'headStartProgram');
+      
+      // Identificar IDs de Early Head Start y Head Start basado en OptionKey y NameEN
+      // No usar nombres, usar OptionKey y comparar por NameEN para mayor seguridad
+      const headStartOptions = this.participatesInHeadStartProgramOptions;
+      const earlyHeadStartOption = headStartOptions.find(opt => opt.nameEN === 'Early Head Start');
+      const headStartOption = headStartOptions.find(opt => opt.nameEN === 'Head Start');
+      
+      if (earlyHeadStartOption) {
+        this.earlyHeadStartOptionId = earlyHeadStartOption.id;
+      }
+      if (headStartOption) {
+        this.headStartOptionId = headStartOption.id;
+      }
 
       // Posición del Staff
       // Staff Position
@@ -390,8 +433,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         publicAllianceContractControl.updateValueAndValidity();
         // --- Fin lógica ---
 
-        // --- Lógica para isDayCareHome ---
-        const isDayCareHomeControl = this.signUpForm.get('isDayCareHome');
+        // --- Lógica para isDayCareHomeId ---
+        const isDayCareHomeControl = this.signUpForm.get('isDayCareHomeId');
 
         if (isPACNAProgram(currentProgram)) {
           isDayCareHomeControl.setValidators([Validators.required]);
@@ -401,6 +444,19 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         }
 
         isDayCareHomeControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // --- Lógica para participatesInHeadStartProgramId ---
+        const participatesInHeadStartProgramControl = this.signUpForm.get('participatesInHeadStartProgramId');
+
+        if (isPSAVProgram(currentProgram)) {
+          participatesInHeadStartProgramControl.setValidators([Validators.required]);
+        } else {
+          participatesInHeadStartProgramControl.clearValidators();
+          participatesInHeadStartProgramControl.setValue(null);
+        }
+
+        participatesInHeadStartProgramControl.updateValueAndValidity();
         // --- Fin lógica ---
 
         // --- Lógica para basicEducationRegistry ---
@@ -635,7 +691,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const publicAllianceContractId = formValues.publicAllianceContractId == null ? false : formValues.publicAllianceContractId;
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
-    const isDayCareHome = formValues.isDayCareHome == null ? false : formValues.isDayCareHome;
+    const isDayCareHomeId = formValues.isDayCareHomeId == null ? 0 : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
+    const participatesInHeadStartProgramId = formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
     const servicesOfferedSince: string | null = formValues.servicesOfferedSince
       ? new Date(formValues.servicesOfferedSince).toISOString()
       : null;
@@ -720,8 +777,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         nationalYouthProgram: false,
         // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
         // Are you a Day Care Homes? (Only for PACNA program)
-        // Si (1) y No (2)
-        isDayCareHome: isDayCareHome,
+        // No, Sí, Ambos - Ahora usa OptionSelection
+        isDayCareHomeId: isDayCareHomeId,
+        // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+        // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+        // Early Head Start, Head Start, N/A
+        participatesInHeadStartProgramId: participatesInHeadStartProgramId,
         servicesOfferedSince: servicesOfferedSince ?? undefined,
       },
       staff: {
@@ -916,6 +977,41 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     // Actualizar el estado de validación
     federalFundsDeniedReasonControl?.updateValueAndValidity();
+  }
+
+  // Manejar el cambio en el campo participatesInHeadStartProgramId
+  // Bloquea el formulario si se selecciona Early Head Start o Head Start
+  checkParticipatesInHeadStartProgram(): void {
+    const selectedOptionId = this.signUpForm.value.participatesInHeadStartProgramId;
+    
+    // Verificar si la opción seleccionada es Early Head Start o Head Start
+    // Comparar por ID, no por nombre
+    const isEarlyHeadStart = this.earlyHeadStartOptionId !== null && selectedOptionId === this.earlyHeadStartOptionId;
+    const isHeadStart = this.headStartOptionId !== null && selectedOptionId === this.headStartOptionId;
+
+    if (isEarlyHeadStart || isHeadStart) {
+      // Bloquear el formulario
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, ['program', 'participatesInHeadStartProgramId']);
+      
+      // Mostrar diálogo con mensaje de no elegibilidad
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.title'),
+          message: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.message'),
+          cfrLink: {
+            url: '', // Pendiente validar URL exacta
+            text: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.cfr-link-text')
+          }
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
+      });
+    } else {
+      // Si se selecciona N/A o se cambia a otra opción, habilitar el formulario
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+    }
   }
 
   // Check Type of Entity

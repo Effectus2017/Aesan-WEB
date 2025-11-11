@@ -253,12 +253,30 @@
 
           <!-- ¿Es usted una Entidad Auspiciadora de Hogares? -->
           <!-- Are you a Day Care Homes? -->
-          <!-- Si (1) y No (2) -->
+          <!-- No, Sí, Ambos - Ahora usa OptionSelection -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <mat-form-field data-cy="is-day-care-home-field" *ngIf="signUpForm && isPACNAProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.is-day-care-home.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'isDayCareHome'" data-cy="is-day-care-home-input">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-day-care-home-option">
+              <mat-select [formControlName]="'isDayCareHomeId'" [compareWith]="compareItems" data-cy="is-day-care-home-input">
+                <mat-option *ngFor="let option of isDayCareHomeOptions" [value]="option" data-cy="is-day-care-home-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <!-- ¿Su Entidad participa actualmente en alguno de los siguientes programas? -->
+          <!-- Does your Entity currently participate in any of the following programs? -->
+          <!-- Early Head Start, Head Start, N/A - Solo para PSAV -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+            <mat-form-field data-cy="participates-in-head-start-program-field" *ngIf="signUpForm && isPSAVProgram(signUpForm.get('program')?.value)">
+              <mat-label>{{ "sign-up.participates-in-head-start-program.label" | transloco }}</mat-label>
+              <mat-select 
+                [formControlName]="'participatesInHeadStartProgramId'" 
+                (selectionChange)="checkParticipatesInHeadStartProgram()"
+                [compareWith]="compareItems" 
+                data-cy="participates-in-head-start-program-input">
+                <mat-option *ngFor="let option of participatesInHeadStartProgramOptions" [value]="option" data-cy="participates-in-head-start-program-option">
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>

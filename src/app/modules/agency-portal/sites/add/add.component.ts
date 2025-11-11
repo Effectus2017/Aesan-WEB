@@ -657,7 +657,14 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         const programs = this.agency.programs || [];
 
         // Obtener el valor de isDayCareHome de la inscripción
-        this.isDayCareHome = this.agency?.inscription?.isDayCareHome || false;
+        // Convertir OptionSelection a boolean: 
+        // - Si booleanValue === true (Sí) → true
+        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
+        // - Si booleanValue === false (No) o no existe → false
+        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
+        this.isDayCareHome = isDayCareHomeOption 
+          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+          : false;
 
         // Determinar qué campos mostrar según los programas
         this.determineVisibleFields(programs);

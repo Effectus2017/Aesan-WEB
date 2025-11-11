@@ -1,81 +1,82 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
-import { Subject, takeUntil } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
-import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
-import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { MatTableDataSource } from '@angular/material/table';
-import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
-import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
-import { GeoService } from 'app/shared/services/geo.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
-import { HttpResponse } from '@angular/common/http';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { AuthService } from 'app/core/auth/auth.service';
-import { NgClass } from '@angular/common';
-import { FuseConfigService } from '@fuse/services/config';
-import { ProgramService } from 'app/shared/services/program.service';
-import { AgencyStatusService } from 'app/shared/services/agency-status.service';
-import { Program } from 'app/shared/models/Program';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
-import { NotificationService } from 'app/shared/services/notification.service';
 import { ActivatedRoute } from '@angular/router';
-import { isPSAVProgram, PROGRAM_IDS } from 'app/shared/const';
+import { HttpResponse } from '@angular/common/http';
+import { Subject, takeUntil } from 'rxjs';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { FuseConfigService } from '@fuse/services/config';
+import { AuthService } from 'app/core/auth/auth.service';
+import { isPSAVProgram } from 'app/shared/const';
+import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
+import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { Agency } from 'app/shared/models/Agency';
+import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { City } from 'app/shared/models/City';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { Program } from 'app/shared/models/Program';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { Region } from 'app/shared/models/Region';
+import { UpdateAgencyInscriptionRequest } from 'app/shared/models/Request/AgencyRequest';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { AgencyStatusService } from 'app/shared/services/agency-status.service';
+import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { GeoService } from 'app/shared/services/geo.service';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { ProgramService } from 'app/shared/services/program.service';
+import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { SCHOOLS_COLUMNS_SCHEMA, SITES_COLUMNS_SCHEMA, STAFF_COLUMNS_SCHEMA } from './columns-schema';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
     templateUrl: './edit.component.html',
     encapsulation: ViewEncapsulation.None,
+    standalone: true,
     imports: [
+        NgIf,
         NgFor,
         NgClass,
-        MatIconModule,
         ReactiveFormsModule,
         FormsModule,
+        TextFieldModule,
         MatFormFieldModule,
         MatInputModule,
-        TextFieldModule,
-        MatDividerModule,
-        MatCheckboxModule,
+        MatIconModule,
         MatButtonModule,
         MatSelectModule,
         MatOptionModule,
+        MatCheckboxModule,
         MatRadioModule,
         MatTableModule,
         MatPaginatorModule,
-        GenericHeaderComponent,
-        GenericTableComponent,
-        TranslocoModule,
+        MatDividerModule,
         MatSnackBarModule,
         MatDialogModule,
         MatDatepickerModule,
         MatTooltipModule,
+        GenericHeaderComponent,
+        GenericTableComponent,
+        TranslocoModule,
     ]
 })
 export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {
@@ -110,193 +111,43 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   typeOfEntityOptions: OptionSelection[] = [];
   typeOfApplicantOptions: OptionSelection[] = [];
   publicAllianceContractOptions: OptionSelection[] = [];
+  isDayCareHomeOptions: OptionSelection[] = [];
 
   // Tabla de escuelas relacionadas a la agencia
   schoolsTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: [
-      {
-        key: 'schoolCode',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.schools.table.columns.schoolCode',
-      },
-      {
-        key: 'name',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.schools.table.columns.name',
-      },
-      {
-        key: 'schoolNumber',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.schools.table.columns.schoolNumber',
-      },
-      {
-        key: 'createdAt',
-        type: 'date',
-        label: 'sponsor-evaluation.edit.schools.table.columns.createdAt',
-      },
-      {
-        key: 'isActive',
-        type: 'boolean',
-        label: 'sponsor-evaluation.edit.schools.table.columns.isActive',
-      },
-      {
-        key: 'actions',
-        type: 'button',
-        label: 'sponsor-evaluation.edit.schools.table.columns.actions',
-        buttons: [
-          {
-            key: 'view',
-            label: 'sponsor-evaluation.edit.schools.table.buttons.view',
-            icon: 'heroicons_outline:eye',
-          },
-          {
-            key: 'edit',
-            label: 'sponsor-evaluation.edit.schools.table.buttons.edit',
-          },
-        ],
-      },
-    ],
-    displayedColumns: ['schoolCode', 'name', 'schoolNumber', 'createdAt', 'isActive', 'actions'],
+    columnsSchema: SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
   };
 
   // Tabla de sitios relacionados a la agencia
   sitesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: [
-      {
-        key: 'name',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.name',
-      },
-      {
-        key: 'address',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.address',
-      },
-      {
-        key: 'cityName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.city',
-      },
-      {
-        key: 'regionName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.region',
-      },
-      {
-        key: 'siteCode',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.siteCode',
-      },
-      {
-        key: 'generalEnrollment',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.sites.table.columns.generalEnrollment',
-      },
-      {
-        key: 'isActive',
-        type: 'boolean',
-        label: 'sponsor-evaluation.edit.sites.table.columns.isActive',
-      },
-      {
-        key: 'actions',
-        type: 'button',
-        label: 'sponsor-evaluation.edit.sites.table.columns.actions',
-        buttons: [
-          {
-            key: 'view',
-            label: 'sponsor-evaluation.edit.sites.table.buttons.view',
-            icon: 'heroicons_outline:eye',
-          },
-          {
-            key: 'edit',
-            label: 'sponsor-evaluation.edit.sites.table.buttons.edit',
-          },
-        ],
-      },
-    ],
-    displayedColumns: ['name', 'address', 'cityName', 'regionName', 'siteCode', 'generalEnrollment', 'isActive', 'actions'],
+    columnsSchema: SITES_COLUMNS_SCHEMA,
+    displayedColumns: SITES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
   };
 
   // Tabla de staff relacionados a la agencia
   staffTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: [
-      {
-        key: ['firstName', 'middleName', 'fatherLastName', 'motherLastName'],
-        type: 'combined-text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.fullName',
-      },
-      {
-        key: 'staffTypeName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.staffType',
-      },
-      {
-        key: 'positionName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.position',
-      },
-      {
-        key: 'statusName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.status',
-      },
-      {
-        key: 'email',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.email',
-      },
-      {
-        key: 'cityName',
-        type: 'text',
-        label: 'sponsor-evaluation.edit.staff.table.columns.city',
-      },
-      {
-        key: 'isActive',
-        type: 'boolean',
-        label: 'sponsor-evaluation.edit.staff.table.columns.isActive',
-      },
-      {
-        key: 'actions',
-        type: 'button',
-        label: 'sponsor-evaluation.edit.staff.table.columns.actions',
-        buttons: [
-          {
-            key: 'view',
-            label: 'sponsor-evaluation.edit.staff.table.buttons.view',
-            icon: 'heroicons_outline:eye',
-          },
-          {
-            key: 'edit',
-            label: 'sponsor-evaluation.edit.staff.table.buttons.edit',
-          },
-        ],
-      },
-    ],
-    displayedColumns: ['firstName', 'staffTypeName', 'positionName', 'statusName', 'email', 'cityName', 'isActive', 'actions'],
+    columnsSchema: STAFF_COLUMNS_SCHEMA,
+    displayedColumns: STAFF_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
   };
 
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.schoolsTableConfig;
-
-  listAppointmentCoordinated = [
-    { id: 1, name: 'sponsor-evaluation.edit.options.yes', value: true },
-    { id: 2, name: 'sponsor-evaluation.edit.options.no', value: false },
-  ];
 
   param: Agency;
 
@@ -387,10 +238,12 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.yesNoOptions = resolvedData.yesNoOptions;
       this.exceptionStatusOptions = resolvedData.exceptionStatusOptions;
       this.taxExemptionTypeOptions = resolvedData.taxExemptionTypeOptions;
+      // AppointmentCoordinated options (usa yesNoOptions del backend)
       // Campos de la cuarta fila
       this.typeOfEntityOptions = resolvedData.typeOfEntityOptions;
       this.typeOfApplicantOptions = resolvedData.typeOfApplicantOptions;
       this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
+      this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
 
       // Configurar tabla de escuelas
       if (resolvedData.schools) {

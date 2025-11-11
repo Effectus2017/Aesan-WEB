@@ -61,6 +61,14 @@
       "yes": "Sí",
       "no": "No"
     },
+    "participates-in-head-start-program": {
+      "label": "¿Su Entidad participa actualmente en alguno de los siguientes programas?",
+      "not-eligible": {
+        "title": "Información sobre Elegibilidad",
+        "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 225.2.",
+        "cfr-link-text": "7 CFR 225.2"
+      }
+    },
     "sponsor-information": "Información del Auspiciador",
     "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
     "agency": {

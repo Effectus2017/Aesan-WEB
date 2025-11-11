@@ -70,7 +70,8 @@ class InscriptionResponse {
     federalFundsDenied?: boolean;
     federalFundsDeniedReason?: string | null;
     id?: number;
-    isDayCareHome?: boolean;
+    isDayCareHomeId?: number;
+    isDayCareHome?: OptionSelection | null;
     nationalYouthProgram?: boolean;
     nonProfit?: boolean;
     publicAllianceContract?: OptionSelection | null;
@@ -86,4 +87,9 @@ class InscriptionResponse {
     typeOfApplicantId?: number | null;
     typeOfEntity?: OptionSelection | null;
     typeOfEntityId?: number | null;
+    // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+    // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+    // Early Head Start, Head Start, N/A
+    participatesInHeadStartProgramId?: number | null;
+    participatesInHeadStartProgram?: OptionSelection | null;
 }

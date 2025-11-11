@@ -74,7 +74,7 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
       this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
       this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
       this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, roles: ['Monitor'] }),
-      this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract' }),
+      this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome' }),
       this._schoolService.getSchoolsByAgencyId({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true }),
       this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true }),
       this._staffService.getStaffByAgency({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true })
@@ -89,6 +89,7 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
         const typeOfEntityOptions = optionsData.filter((option: any) => option.optionKey === 'typeOfEntity');
         const typeOfApplicantOptions = optionsData.filter((option: any) => option.optionKey === 'typeOfApplicant');
         const publicAllianceContractOptions = optionsData.filter((option: any) => option.optionKey === 'publicAllianceContract');
+        const isDayCareHomeOptions = optionsData.filter((option: any) => option.optionKey === 'isDayCareHome');
 
         return {
           agency: agency.body,
@@ -103,6 +104,7 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
           typeOfEntityOptions: typeOfEntityOptions,
           typeOfApplicantOptions: typeOfApplicantOptions,
           publicAllianceContractOptions: publicAllianceContractOptions,
+          isDayCareHomeOptions: isDayCareHomeOptions,
           schools: schools.body,
           sites: sites.body,
           staff: staff.body,

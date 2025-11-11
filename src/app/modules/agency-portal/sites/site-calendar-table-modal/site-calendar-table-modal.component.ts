@@ -320,7 +320,14 @@ export class SiteCalendarTableModalComponent implements OnInit {
       const agencyJson = localStorage.getItem('agency');
       if (agencyJson) {
         const agency = JSON.parse(agencyJson);
-        return agency?.inscription?.isDayCareHome || false;
+        const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
+        // Convertir OptionSelection a boolean:
+        // - Si booleanValue === true (Sí) → true
+        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
+        // - Si booleanValue === false (No) o no existe → false
+        return isDayCareHomeOption
+          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+          : false;
       }
     } catch (error) {
       console.error('Error al obtener información de day care home:', error);

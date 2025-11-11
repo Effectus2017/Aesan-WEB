@@ -88,8 +88,12 @@ export interface AgencyRequest {
     nationalYouthProgram?: boolean;
     // ¿Es usted una Entidad Auspiciadora de Hogares? (Solo para programa PACNA)
     // Are you a Day Care Homes? (Only for PACNA program)
-    // Si (1) y No (2)
-    isDayCareHome?: boolean;
+    // No (ID), Sí (ID), Ambos (ID) - Ahora usa OptionSelection
+    isDayCareHomeId?: number;
+    // ¿Su Entidad participa actualmente en alguno de los siguientes programas? (Solo para PSAV)
+    // Does your Entity currently participate in any of the following programs? (Only for PSAV)
+    // Early Head Start, Head Start, N/A
+    participatesInHeadStartProgramId?: number | null;
 }
 
 export interface UpdateAgencyProgramRequest {

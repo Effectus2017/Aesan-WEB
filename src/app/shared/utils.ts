@@ -50,10 +50,22 @@ export function compareString(o1: any, o2: any): boolean {
  * @param o2 Elemento 2
  * @returns true si los elementos son iguales, false en caso contrario
  */
-export function comparePostal(o1: any, o2: any): boolean {
-  if (!isNullOrUndefinedEmptyStringNullArray(o2)) {
+export function comparePostal(o1: any | null | undefined, o2: any | null | undefined): boolean {
+  // Si ambos son null o undefined, son iguales
+  if ((o1 === null || o1 === undefined) && (o2 === null || o2 === undefined)) {
+    return true;
+  }
+  
+  // Si uno es null/undefined y el otro no, son diferentes
+  if (o1 === null || o1 === undefined || o2 === null || o2 === undefined) {
+    return false;
+  }
+  
+  // Ambos tienen valor, comparar por Id
+  if (o1.Id !== undefined && o2.Id !== undefined) {
     return o1.Id === o2.Id;
   }
+  
   return false;
 }
 
@@ -64,7 +76,18 @@ export function comparePostal(o1: any, o2: any): boolean {
  * @param property Propiedad a comparar
  * @returns true si los elementos son iguales, false en caso contrario
  */
-export function compareItems<T>(item1: T, item2: T): boolean {
+export function compareItems<T>(item1: T | null | undefined, item2: T | null | undefined): boolean {
+  // Si ambos son null o undefined, son iguales
+  if ((item1 === null || item1 === undefined) && (item2 === null || item2 === undefined)) {
+    return true;
+  }
+  
+  // Si uno es null/undefined y el otro no, son diferentes
+  if (item1 === null || item1 === undefined || item2 === null || item2 === undefined) {
+    return false;
+  }
+  
+  // Ambos tienen valor, comparar por id
   return compareByProperty(item1, item2, 'id' as keyof T);
 }
 
@@ -74,7 +97,17 @@ export function compareItems<T>(item1: T, item2: T): boolean {
  * @param monitor2 Monitor 2 (puede ser DTOUser o DTOStaff)
  * @returns true si los monitores son iguales, false en caso contrario
  */
-export function compareMonitors(monitor1: any, monitor2: any): boolean {
+export function compareMonitors(monitor1: any | null | undefined, monitor2: any | null | undefined): boolean {
+  // Si ambos son null o undefined, son iguales
+  if ((monitor1 === null || monitor1 === undefined) && (monitor2 === null || monitor2 === undefined)) {
+    return true;
+  }
+  
+  // Si uno es null/undefined y el otro no, son diferentes
+  if (monitor1 === null || monitor1 === undefined || monitor2 === null || monitor2 === undefined) {
+    return false;
+  }
+  
   // Comparar por StaffId si ambos lo tienen
   if (monitor1.staffId && monitor2.staffId) {
     return monitor1.staffId === monitor2.staffId;
@@ -91,7 +124,12 @@ export function compareMonitors(monitor1: any, monitor2: any): boolean {
   }
 
   // Fallback a comparación normal por id
-  return monitor1.id === monitor2.id;
+  if (monitor1.id && monitor2.id) {
+    return monitor1.id === monitor2.id;
+  }
+  
+  // Si no hay id en ninguno, comparar directamente
+  return false;
 }
 
 /**
@@ -101,7 +139,18 @@ export function compareMonitors(monitor1: any, monitor2: any): boolean {
  * @param property Propiedad a comparar
  * @returns true si los elementos son iguales, false en caso contrario
  */
-export function compareByProperty<T extends { [key: string]: any }>(item1: T, item2: T, property: keyof T): boolean {
+export function compareByProperty<T extends { [key: string]: any }>(item1: T | null | undefined, item2: T | null | undefined, property: keyof T): boolean {
+  // Si ambos son null o undefined, son iguales
+  if ((item1 === null || item1 === undefined) && (item2 === null || item2 === undefined)) {
+    return true;
+  }
+  
+  // Si uno es null/undefined y el otro no, son diferentes
+  if (item1 === null || item1 === undefined || item2 === null || item2 === undefined) {
+    return false;
+  }
+  
+  // Ambos tienen valor, comparar por la propiedad
   return item1[property] === item2[property];
 }
 
