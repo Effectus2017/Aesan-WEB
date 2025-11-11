@@ -44,6 +44,10 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ProgramService } from 'app/shared/services/program.service';
+import { SiteService } from 'app/shared/services/site.service';
+import { StaffService } from 'app/shared/services/staff.service';
+import { SiteEditModalComponent, SiteEditModalData } from './site-edit-modal/site-edit-modal.component';
+import { StaffEditModalComponent, StaffEditModalData } from './staff-edit-modal/staff-edit-modal.component';
 import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SCHOOLS_COLUMNS_SCHEMA, SITES_COLUMNS_SCHEMA, STAFF_COLUMNS_SCHEMA } from './columns-schema';
 
@@ -97,6 +101,8 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfigService = inject(FuseConfigService);
   private _route = inject(ActivatedRoute);
+  private _siteService = inject(SiteService);
+  private _staffService = inject(StaffService);
 
   listAgencyStatus: AgencyStatus[] = [];
   listPrograms: Program[] = [];
@@ -564,8 +570,20 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    // Implementar navegación a edición de escuela
-    this._customRouterService.navigate([`schools/edit/${id}`]);
+
+    // Determinar qué tabla está activa basado en el tableConfig actual
+    // El tableConfig se actualiza cuando se cambia de tabla
+    const isSchoolsTable = this.tableConfig === this.schoolsTableConfig;
+    const isSitesTable = this.tableConfig === this.sitesTableConfig;
+    const isStaffTable = this.tableConfig === this.staffTableConfig;
+
+    if (isSchoolsTable) {
+      this._customRouterService.navigate([`schools/edit/${id}`]);
+    } else if (isSitesTable) {
+      this.openSiteEditModal(id);
+    } else if (isStaffTable) {
+      this.openStaffEditModal(id);
+    }
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -573,6 +591,114 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     event.preventDefault();
     // Implementar lógica de eliminación si es necesario
     console.log('Eliminar escuela', id);
+  }
+
+  openSiteEditModal(siteId: number): void {
+    const queryParameters: QueryParameters = {
+      id: siteId,
+    };
+
+    this._siteService.getSiteById(queryParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          const site = response.body;
+          const modalData: SiteEditModalData = {
+            site: site,
+            agency: this.param,
+          };
+
+          const dialogRef = this._dialog.open(SiteEditModalComponent, {
+            width: '90vw',
+            maxWidth: '1200px',
+            data: modalData,
+          });
+
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+              // Refrescar tabla de sitios
+              this.refreshSitesTable();
+            }
+          });
+        }
+      },
+      error: (error) => {
+        this._notificationService.showError('Error al cargar el sitio');
+        console.error('Error loading site:', error);
+      },
+    });
+  }
+
+  openStaffEditModal(staffId: number): void {
+    const queryParameters: QueryParameters = {
+      id: staffId,
+      isList: false,
+      isActive: false,
+    };
+
+    this._staffService.getStaffById(queryParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          const staff = response.body;
+          const modalData: StaffEditModalData = {
+            staff: staff,
+            sites: this.sitesTableConfig.dataSource.data || [],
+          };
+
+          const dialogRef = this._dialog.open(StaffEditModalComponent, {
+            width: '90vw',
+            maxWidth: '1200px',
+            data: modalData,
+          });
+
+          dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+              // Refrescar tabla de staff
+              this.refreshStaffTable();
+            }
+          });
+        }
+      },
+      error: (error) => {
+        this._notificationService.showError('Error al cargar el personal');
+        console.error('Error loading staff:', error);
+      },
+    });
+  }
+
+  private refreshSitesTable(): void {
+    const queryParameters: QueryParameters = {
+      agencyId: this.param?.id || this._authService.getAgencyId(),
+    };
+    this._siteService.getAllSitesFromDb(queryParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          this.sitesTableConfig.dataSource.data = response.body.data || response.body;
+          this.sitesTableConfig.length = response.body.count || (response.body.data || response.body).length;
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error refreshing sites table:', error);
+      },
+    });
+  }
+
+  private refreshStaffTable(): void {
+    const queryParameters: QueryParameters = {
+      agencyId: this.param?.id || this._authService.getAgencyId(),
+    };
+    this._staffService.getAllStaffFromDb(queryParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          this.staffTableConfig.dataSource.data = response.body.data || response.body;
+          this.staffTableConfig.length = response.body.count || (response.body.data || response.body).length;
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error refreshing staff table:', error);
+      },
+    });
   }
 
   onTableAction(event: Event, action: string, id: number): void {
@@ -598,9 +724,9 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
         if (isSchoolsTable) {
           this._customRouterService.navigate([`schools/edit/${id}`]);
         } else if (isSitesTable) {
-          this._customRouterService.navigate([`sites/edit/${id}`]);
+          this.openSiteEditModal(id);
         } else if (isStaffTable) {
-          this._customRouterService.navigate([`staff/edit/${id}`]);
+          this.openStaffEditModal(id);
         }
         break;
       default:

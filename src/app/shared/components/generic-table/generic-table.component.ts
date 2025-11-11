@@ -167,6 +167,10 @@ export class GenericTableComponent implements OnInit {
    * @param id El ID del elemento a editar.
    */
   onEdit(event: Event, id: number): void {
+    // Actualizar tableConfig del handler antes de llamar a onTableEdit
+    if (this.handler && this.config) {
+      this.handler.tableConfig = this.config;
+    }
     this.handler.onTableEdit(event, id);
   }
 

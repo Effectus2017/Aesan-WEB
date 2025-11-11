@@ -73,6 +73,11 @@
           "view": "Ver",
           "edit": "Editar"
         }
+      },
+      "modal": {
+        "edit": {
+          "title": "Editar Sitio"
+        }
       }
     },
     "staff": {
@@ -92,6 +97,11 @@
         "buttons": {
           "view": "Ver",
           "edit": "Editar"
+        }
+      },
+      "modal": {
+        "edit": {
+          "title": "Editar Personal"
         }
       }
     },

@@ -1,0 +1,280 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">
+      {{ 'sponsor-evaluation.edit.staff.modal.edit.title' | transloco }}
+    </div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="flex flex-col gap-6">
+      <!-- Información General -->
+      <div>
+        <p class="text-lg font-medium mb-2">{{ 'staff.edit.information' | transloco }}</p>
+        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.information-description' | transloco }}</p>
+      </div>
+
+      <!-- Tipo de Staff (deshabilitado) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('staffType', currentStaffType)">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.staffType.label' | transloco }}</mat-label>
+          <mat-select formControlName="staffType" required [compareWith]="compareById" disabled>
+            <mat-option *ngFor="let staffType of listStaffTypes" [value]="staffType">
+              {{ currentLang === 'es' ? staffType.name : staffType.nameEn }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('staffType')?.hasError('required')">
+            {{ 'staff.edit.staffType.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Clasificación de Staff (solo empleados) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('staffClassification', currentStaffType)">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.staffClassification.label' | transloco }}</mat-label>
+          <mat-select formControlName="staffClassification" [required]="fieldVisibilityService.isFieldRequired('staffClassification', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let classification of listStaffClassifications" [value]="classification">
+              {{ currentLang === 'es' ? classification.name : classification.nameEn }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('staffClassification')?.hasError('required')">
+            {{ 'staff.edit.staffClassification.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Campos de Nombre -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('firstName', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.firstName.label' | transloco }}</mat-label>
+          <input matInput formControlName="firstName" [required]="fieldVisibilityService.isFieldRequired('firstName', currentStaffType)" />
+          <mat-error *ngIf="form.get('firstName')?.hasError('required')">
+            {{ 'staff.edit.firstName.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="fieldVisibilityService.shouldShowField('middleName', currentStaffType)">
+          <mat-label>{{ 'staff.edit.middleName.label' | transloco }}</mat-label>
+          <input matInput formControlName="middleName" />
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.fatherLastName.label' | transloco }}</mat-label>
+          <input matInput formControlName="fatherLastName" [required]="fieldVisibilityService.isFieldRequired('fatherLastName', currentStaffType)" />
+          <mat-error *ngIf="form.get('fatherLastName')?.hasError('required')">
+            {{ 'staff.edit.fatherLastName.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="fieldVisibilityService.shouldShowField('motherLastName', currentStaffType)">
+          <mat-label>{{ 'staff.edit.motherLastName.label' | transloco }}</mat-label>
+          <input matInput formControlName="motherLastName" />
+        </mat-form-field>
+      </div>
+
+      <!-- Estado y Posición -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('status', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.status.label' | transloco }}</mat-label>
+          <mat-select formControlName="status" [required]="fieldVisibilityService.isFieldRequired('status', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let status of listStatus" [value]="status">
+              {{ currentLang === 'es' ? status.name : status.nameEN }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('status')?.hasError('required')">
+            {{ 'staff.edit.status.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="fieldVisibilityService.shouldShowField('position', currentStaffType)">
+          <mat-label>{{ 'staff.edit.position.label' | transloco }}</mat-label>
+          <mat-select formControlName="position" [required]="fieldVisibilityService.isFieldRequired('position', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let position of listPositions" [value]="position">
+              {{ currentLang === 'es' ? position.name : position.nameEN }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('position')?.hasError('required')">
+            {{ 'staff.edit.position.required' | transloco }}
+          </mat-error>
+          <mat-hint *ngIf="isEmployee && listPositions.length === 0">
+            {{ 'staff.add.position.selectClassificationFirst' | transloco }}
+          </mat-hint>
+        </mat-form-field>
+      </div>
+
+      <!-- Email (solo miembros de junta y otros) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.email.label' | transloco }}</mat-label>
+          <input matInput type="email" formControlName="email" [required]="fieldVisibilityService.isFieldRequired('email', currentStaffType)" />
+          <mat-error *ngIf="form.get('email')?.hasError('required')">
+            {{ 'staff.edit.email.required' | transloco }}
+          </mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">
+            {{ 'staff.edit.email.invalid' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Fechas -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field *ngIf="fieldVisibilityService.shouldShowField('birthDate', currentStaffType)">
+          <mat-label>{{ 'staff.edit.birthDate.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" [required]="fieldVisibilityService.isFieldRequired('birthDate', currentStaffType)" />
+          <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #birthDatePicker></mat-datepicker>
+          <mat-error *ngIf="form.get('birthDate')?.hasError('required')">
+            {{ 'staff.edit.birthDate.required' | transloco }}
+          </mat-error>
+          <mat-error *ngIf="form.get('birthDate')?.hasError('minimumAge')">
+            {{ 'staff.edit.birthDate.minimumAge' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.contractStartDate.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate" />
+          <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #contractStartDatePicker></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.contractEndDate.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate" />
+          <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #contractEndDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Dirección Postal y Ciudad (solo miembros de junta y otros) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('city', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.postalAddress.label' | transloco }}</mat-label>
+          <input matInput formControlName="postalAddress" [required]="fieldVisibilityService.isFieldRequired('postalAddress', currentStaffType)" />
+          <mat-error *ngIf="form.get('postalAddress')?.hasError('required')">
+            {{ 'staff.edit.postalAddress.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.city.label' | transloco }}</mat-label>
+          <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event)" [required]="fieldVisibilityService.isFieldRequired('city', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let city of listCities" [value]="city">
+              {{ currentLang === 'es' ? city.name : city.nameEN }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('city')?.hasError('required')">
+            {{ 'staff.edit.city.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Región y Código de Área (solo miembros de junta y otros) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('areaCode', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.region.label' | transloco }}</mat-label>
+          <mat-select formControlName="region" [required]="fieldVisibilityService.isFieldRequired('region', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let region of listRegions" [value]="region">
+              {{ currentLang === 'es' ? region.name : region.nameEN }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('region')?.hasError('required')">
+            {{ 'staff.edit.region.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.areaCode.label' | transloco }}</mat-label>
+          <input matInput formControlName="areaCode" [required]="fieldVisibilityService.isFieldRequired('areaCode', currentStaffType)" />
+          <mat-error *ngIf="form.get('areaCode')?.hasError('required')">
+            {{ 'staff.edit.areaCode.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Asignación de Sitio -->
+      <div>
+        <p class="text-lg font-medium mb-2">{{ 'staff.edit.site-assignment' | transloco }}</p>
+        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.site-assignment-description' | transloco }}</p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.site.label' | transloco }}</mat-label>
+          <mat-select formControlName="site" [compareWith]="compareById">
+            <mat-option *ngFor="let site of listSites" [value]="site">
+              {{ site.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-checkbox formControlName="isPrimary">
+          {{ 'staff.edit.is-primary.label' | transloco }}
+        </mat-checkbox>
+      </div>
+
+      <!-- Comentarios -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('comments', currentStaffType)">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.comments.label' | transloco }}</mat-label>
+          <textarea matInput formControlName="comments" rows="4"></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- Campos de Revisión (solo administradores) -->
+      <div *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)">
+        <p class="text-lg font-medium mb-2">{{ 'staff.edit.review.label' | transloco }}</p>
+        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.review.description' | transloco }}</p>
+      </div>
+
+      <div *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.review-result.label' | transloco }}</mat-label>
+          <mat-select formControlName="reviewResult" [required]="fieldVisibilityService.isFieldRequired('reviewResult', currentStaffType)" [compareWith]="compareById">
+            <mat-option *ngFor="let option of reviewResult" [value]="option">
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field *ngIf="fieldVisibilityService.shouldShowField('reviewDate', currentStaffType)">
+          <mat-label>{{ 'staff.edit.review-date.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="reviewDatePicker" formControlName="reviewDate" [required]="fieldVisibilityService.isFieldRequired('reviewDate', currentStaffType)" />
+          <mat-datepicker-toggle matSuffix [for]="reviewDatePicker"></mat-datepicker-toggle>
+          <mat-datepicker #reviewDatePicker></mat-datepicker>
+          <mat-error *ngIf="form.get('reviewDate')?.hasError('required')">
+            {{ 'staff.edit.review-date.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div *ngIf="fieldVisibilityService.shouldShowField('reviewJustification', currentStaffType)">
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.review-justification.label' | transloco }}</mat-label>
+          <textarea matInput formControlName="reviewJustification" [required]="fieldVisibilityService.isFieldRequired('reviewJustification', currentStaffType)" rows="3"></textarea>
+          <mat-error *ngIf="form.get('reviewJustification')?.hasError('required')">
+            {{ 'staff.edit.review-justification.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <div class="flex gap-2">
+          <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null" [disabled]="isLoading">
+            {{ 'global.buttons.cancel' | transloco }}
+          </button>
+        </div>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
+          {{ 'global.buttons.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
