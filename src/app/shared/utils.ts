@@ -403,3 +403,47 @@ export function minimumAgeValidator(minAge: number): (control: AbstractControl) 
     return age >= minAge ? null : { minimumAge: { requiredAge: minAge, actualAge: age } };
   };
 }
+
+/**
+ * Custom validator to check maximum number of digits
+ * @param maxDigits Maximum number of digits allowed
+ * @returns Validator function that returns ValidationErrors or null
+ */
+export function maxDigitsValidator(maxDigits: number): (control: AbstractControl) => ValidationErrors | null {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) {
+      return null;
+    }
+
+    const value = control.value.toString();
+    const digitCount = value.replace(/\D/g, '').length;
+
+    return digitCount <= maxDigits ? null : { 
+      maxDigits: { 
+        requiredMaxDigits: maxDigits, 
+        actualDigits: digitCount 
+      } 
+    };
+  };
+}
+
+/**
+ * Custom validator to check alphanumeric pattern
+ * @returns Validator function that returns ValidationErrors or null
+ */
+export function alphanumericValidator(): (control: AbstractControl) => ValidationErrors | null {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) {
+      return null;
+    }
+
+    const value = control.value.toString();
+    const alphanumericPattern = /^[A-Za-z0-9]+$/;
+
+    return alphanumericPattern.test(value) ? null : { 
+      alphanumeric: { 
+        message: 'Solo se permiten letras y números' 
+      } 
+    };
+  };
+}

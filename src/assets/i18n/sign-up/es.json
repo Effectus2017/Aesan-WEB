@@ -144,7 +144,11 @@
     },
     "email": {
       "label": "Correo Electrónico",
-      "placeholder": "Ingresa el correo electrónico"
+      "placeholder": "Ingresa el correo electrónico",
+      "required": "El correo electrónico es requerido",
+      "invalid": "El formato del correo electrónico no es válido",
+      "exists": "Este correo electrónico ya está registrado en el sistema",
+      "exists-title": "Correo Electrónico Ya Registrado"
     },
     "middle-name": {
       "label": "Segundo Nombre",

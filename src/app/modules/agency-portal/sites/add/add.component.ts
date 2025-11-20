@@ -874,6 +874,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         'educationLevels',
         'areaType',
         'locationType',
+        // Campos específicos de PACNA
+        'organizedAthleticPrograms',
+        'atRiskService',
+        'publicAllianceContractId',
       ];
 
       fieldsToUpdate.forEach((fieldName) => {
@@ -902,7 +906,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       postalCity: [Validators.required],
       nonProfit: [Validators.required],
       organizationType: [Validators.required],
-      educationLevels: [Validators.required],
       locationType: [Validators.required],
     };
 
@@ -913,6 +916,44 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         control.updateValueAndValidity();
       }
     });
+
+    // educationLevels solo es requerido para PDAM
+    const educationLevelsControl = this.headerConfig.formGroup.get('educationLevels');
+    if (educationLevelsControl) {
+      if (this.isPDAM) {
+        educationLevelsControl.setValidators([Validators.required]);
+      } else {
+        educationLevelsControl.clearValidators();
+      }
+      educationLevelsControl.updateValueAndValidity();
+    }
+
+    // Campos específicos de PACNA - requeridos solo cuando es PACNA y no es Day Care Home
+    if (this.isPACNA && !this.isDayCareHome) {
+      const pacnaFields = {
+        organizedAthleticPrograms: [Validators.required],
+        atRiskService: [Validators.required],
+        publicAllianceContractId: [Validators.required],
+      };
+
+      Object.keys(pacnaFields).forEach((fieldName) => {
+        const control = this.headerConfig.formGroup.get(fieldName);
+        if (control) {
+          control.setValidators(pacnaFields[fieldName]);
+          control.updateValueAndValidity();
+        }
+      });
+    } else {
+      // Limpiar validadores de campos PACNA si no es PACNA o es Day Care Home
+      const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId'];
+      pacnaFieldsToClear.forEach((fieldName) => {
+        const control = this.headerConfig.formGroup.get(fieldName);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    }
 
     // Restaurar validación de centerType solo si el organizationType actual lo requiere
     const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;

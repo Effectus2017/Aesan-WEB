@@ -45,11 +45,10 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { StaffService } from 'app/shared/services/staff.service';
+import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { SiteEditModalComponent, SiteEditModalData } from './site-edit-modal/site-edit-modal.component';
-import { StaffEditModalComponent, StaffEditModalData } from './staff-edit-modal/staff-edit-modal.component';
 import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { SCHOOLS_COLUMNS_SCHEMA, SITES_COLUMNS_SCHEMA, STAFF_COLUMNS_SCHEMA } from './columns-schema';
+import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
@@ -102,7 +101,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _fuseConfigService = inject(FuseConfigService);
   private _route = inject(ActivatedRoute);
   private _siteService = inject(SiteService);
-  private _staffService = inject(StaffService);
+  private _siteStaffService = inject(SiteStaffService);
 
   listAgencyStatus: AgencyStatus[] = [];
   listPrograms: Program[] = [];
@@ -119,17 +118,6 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   publicAllianceContractOptions: OptionSelection[] = [];
   isDayCareHomeOptions: OptionSelection[] = [];
 
-  // Tabla de escuelas relacionadas a la agencia
-  schoolsTableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<any>(),
-    columnsSchema: SCHOOLS_COLUMNS_SCHEMA,
-    displayedColumns: SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
-    handler: this,
-    showPaginator: true,
-    pageSizeOptions: [25, 50, 100],
-    pageSize: 25,
-  };
-
   // Tabla de sitios relacionados a la agencia
   sitesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
@@ -141,19 +129,8 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     pageSize: 25,
   };
 
-  // Tabla de staff relacionados a la agencia
-  staffTableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<any>(),
-    columnsSchema: STAFF_COLUMNS_SCHEMA,
-    displayedColumns: STAFF_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
-    handler: this,
-    showPaginator: true,
-    pageSizeOptions: [25, 50, 100],
-    pageSize: 25,
-  };
-
   // Configuración de tabla requerida por OnGenericTableHandler
-  tableConfig: GenericTableConfig = this.schoolsTableConfig;
+  tableConfig: GenericTableConfig = this.sitesTableConfig;
 
   param: Agency;
 
@@ -251,22 +228,16 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
       this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
 
-      // Configurar tabla de escuelas
-      if (resolvedData.schools) {
-        this.schoolsTableConfig.dataSource.data = resolvedData.schools.data || resolvedData.schools;
-        this.schoolsTableConfig.length = resolvedData.schools.count || resolvedData.schools.length;
-      }
-
       // Configurar tabla de sitios
       if (resolvedData.sites) {
-        this.sitesTableConfig.dataSource.data = resolvedData.sites.data || resolvedData.sites;
-        this.sitesTableConfig.length = resolvedData.sites.count || resolvedData.sites.length;
-      }
-
-      // Configurar tabla de staff
-      if (resolvedData.staff) {
-        this.staffTableConfig.dataSource.data = resolvedData.staff.data || resolvedData.staff;
-        this.staffTableConfig.length = resolvedData.staff.count || resolvedData.staff.length;
+        const sitesData = resolvedData.sites.data || resolvedData.sites;
+        // Mapear sitios para incluir el nombre de la escuela
+        const sitesWithSchoolName = Array.isArray(sitesData) ? sitesData.map((site: any) => ({
+          ...site,
+          schoolName: site.school?.name || site.schoolName || '-'
+        })) : sitesData;
+        this.sitesTableConfig.dataSource.data = sitesWithSchoolName;
+        this.sitesTableConfig.length = resolvedData.sites.count || (Array.isArray(sitesData) ? sitesData.length : 0);
       }
 
       this.onSetForm(resolvedData.agency);
@@ -570,20 +541,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-
-    // Determinar qué tabla está activa basado en el tableConfig actual
-    // El tableConfig se actualiza cuando se cambia de tabla
-    const isSchoolsTable = this.tableConfig === this.schoolsTableConfig;
-    const isSitesTable = this.tableConfig === this.sitesTableConfig;
-    const isStaffTable = this.tableConfig === this.staffTableConfig;
-
-    if (isSchoolsTable) {
-      this._customRouterService.navigate([`schools/edit/${id}`]);
-    } else if (isSitesTable) {
-      this.openSiteEditModal(id);
-    } else if (isStaffTable) {
-      this.openStaffEditModal(id);
-    }
+    this.openSiteEditModal(id);
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -628,39 +586,31 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     });
   }
 
-  openStaffEditModal(staffId: number): void {
+  openStaffBySiteModal(siteId: number): void {
     const queryParameters: QueryParameters = {
-      id: staffId,
-      isList: false,
-      isActive: false,
+      siteId: siteId,
     };
 
-    this._staffService.getStaffById(queryParameters).subscribe({
+    this._siteStaffService.getStaffBySite(queryParameters).subscribe({
       next: (response: any) => {
         if (response?.body) {
-          const staff = response.body;
-          const modalData: StaffEditModalData = {
-            staff: staff,
-            sites: this.sitesTableConfig.dataSource.data || [],
-          };
-
-          const dialogRef = this._dialog.open(StaffEditModalComponent, {
-            width: '90vw',
-            maxWidth: '1200px',
-            data: modalData,
-          });
-
-          dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-              // Refrescar tabla de staff
-              this.refreshStaffTable();
-            }
+          const staffList = response.body.data || response.body;
+          // Importar dinámicamente el modal para evitar dependencia circular
+          import('./staff-by-site-modal/staff-by-site-modal.component').then((module) => {
+            this._dialog.open(module.StaffBySiteModalComponent, {
+              width: '90vw',
+              maxWidth: '1200px',
+              data: {
+                siteId: siteId,
+                staffList: staffList,
+              },
+            });
           });
         }
       },
       error: (error) => {
-        this._notificationService.showError('Error al cargar el personal');
-        console.error('Error loading staff:', error);
+        this._notificationService.showError('Error al cargar el personal del sitio');
+        console.error('Error loading staff by site:', error);
       },
     });
   }
@@ -672,8 +622,14 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     this._siteService.getAllSitesFromDb(queryParameters).subscribe({
       next: (response: any) => {
         if (response?.body) {
-          this.sitesTableConfig.dataSource.data = response.body.data || response.body;
-          this.sitesTableConfig.length = response.body.count || (response.body.data || response.body).length;
+          const sitesData = response.body.data || response.body;
+          // Mapear sitios para incluir el nombre de la escuela
+          const sitesWithSchoolName = Array.isArray(sitesData) ? sitesData.map((site: any) => ({
+            ...site,
+            schoolName: site.school?.name || site.schoolName || '-'
+          })) : sitesData;
+          this.sitesTableConfig.dataSource.data = sitesWithSchoolName;
+          this.sitesTableConfig.length = response.body.count || (Array.isArray(sitesData) ? sitesData.length : 0);
           this._changeDetectorRef.detectChanges();
         }
       },
@@ -683,51 +639,22 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     });
   }
 
-  private refreshStaffTable(): void {
-    const queryParameters: QueryParameters = {
-      agencyId: this.param?.id || this._authService.getAgencyId(),
-    };
-    this._staffService.getAllStaffFromDb(queryParameters).subscribe({
-      next: (response: any) => {
-        if (response?.body) {
-          this.staffTableConfig.dataSource.data = response.body.data || response.body;
-          this.staffTableConfig.length = response.body.count || (response.body.data || response.body).length;
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-      error: (error) => {
-        console.error('Error refreshing staff table:', error);
-      },
-    });
+  onTableViewStaff(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.openStaffBySiteModal(id);
   }
 
   onTableAction(event: Event, action: string, id: number): void {
     event.stopPropagation();
     event.preventDefault();
 
-    // Determinar qué tabla está activa basado en el evento del botón
-    const isSchoolsTable = this.tableConfig.dataSource === this.schoolsTableConfig.dataSource;
-    const isSitesTable = this.tableConfig.dataSource === this.sitesTableConfig.dataSource;
-    const isStaffTable = this.tableConfig.dataSource === this.staffTableConfig.dataSource;
-
     switch (action) {
       case 'view':
-        if (isSchoolsTable) {
-          this._customRouterService.navigate([`schools/view/${id}`]);
-        } else if (isSitesTable) {
-          this._customRouterService.navigate([`sites/view/${id}`]);
-        } else if (isStaffTable) {
-          this._customRouterService.navigate([`staff/view/${id}`]);
-        }
+        this._customRouterService.navigate([`sites/view/${id}`]);
         break;
       case 'edit':
-        if (isSchoolsTable) {
-          this._customRouterService.navigate([`schools/edit/${id}`]);
-        } else if (isSitesTable) {
-          this.openSiteEditModal(id);
-        } else if (isStaffTable) {
-          this.openStaffEditModal(id);
-        }
+        this.openSiteEditModal(id);
         break;
       default:
         console.log('Acción no implementada:', action);

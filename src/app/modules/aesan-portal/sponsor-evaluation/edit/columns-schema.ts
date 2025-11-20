@@ -87,6 +87,11 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sponsor-evaluation.edit.sites.table.columns.isActive',
   },
   {
+    key: 'schoolName',
+    type: 'text',
+    label: 'sponsor-evaluation.edit.sites.table.columns.schoolName',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'sponsor-evaluation.edit.sites.table.columns.actions',
@@ -99,6 +104,11 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
       {
         key: 'edit',
         label: 'sponsor-evaluation.edit.sites.table.buttons.edit',
+      },
+      {
+        key: 'viewStaff',
+        label: 'sponsor-evaluation.edit.sites.table.buttons.viewStaff',
+        icon: 'heroicons_outline:user-group',
       },
     ],
   },

@@ -43,14 +43,15 @@
         "request-orientation": "Solicitar Orientación",
         "notification": "Notificación",
         "orientation-request-sent": "Su solicitud de orientación fue enviada al Coordinador del Programa",
-        "accept": "Aceptar"
+        "accept": "Aceptar",
+        "close": "Cerrar"
     },
     "reset-password": {
         "title": "Restablecer Contraseña",
         "temp-password": {
-            "label": "Contraseña Temporal",
-            "placeholder": "Ingrese su contraseña temporal",
-            "required": "La contraseña temporal es requerida"
+            "label": "Contraseña Temporera",
+            "placeholder": "Ingrese su contraseña temporera",
+            "required": "La contraseña temporera es requerida"
         },
         "new-password": {
             "label": "Nueva Contraseña",
@@ -69,7 +70,7 @@
             "password-updated": "Su contraseña ha sido actualizada exitosamente"
         },
         "error": {
-            "invalid-temp-password": "Contraseña temporal inválida",
+            "invalid-temp-password": "Contraseña temporera inválida",
             "not-updated": "No se pudo actualizar la contraseña",
             "server-error": "Error del servidor. Por favor intente más tarde"
         }

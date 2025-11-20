@@ -144,11 +144,18 @@ export class AuthSignInComponent implements OnInit {
 
           // Show the alert
           this.showAlert = true;
+        } else if (response.status === 400 && response.error?.message?.includes('rol asignado')) {
+          // Error específico: usuario sin rol asignado
+          this.alert = {
+            type: 'error',
+            message: response.error.message,
+          };
+          this.showAlert = true;
         } else {
           // Set the alert for other errors
           this.alert = {
             type: 'error',
-            message: 'sign-in.error.server',
+            message: response.error?.message || 'sign-in.error.server',
           };
           this.showAlert = true;
         }

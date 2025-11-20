@@ -1,25 +1,26 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120">
-  <!-- Header -->
-  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+  <!-- Header - Fixed, outside scroll -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-shrink-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
       {{ 'sponsor-evaluation.edit.staff.modal.edit.title' | transloco }}
     </div>
     <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
-      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
     </button>
   </div>
 
-  <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSave()">
-    <div class="flex flex-col gap-6">
+  <!-- Form - Scrollable content area -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
       <!-- Información General -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'staff.edit.information' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.information-description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'staff.edit.information' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'staff.edit.information-description' | transloco }}</p>
       </div>
 
       <!-- Tipo de Staff (deshabilitado) -->
-      <div *ngIf="fieldVisibilityService.shouldShowField('staffType', currentStaffType)">
+      <div *ngIf="fieldVisibilityService.shouldShowField('staffType', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'staff.edit.staffType.label' | transloco }}</mat-label>
           <mat-select formControlName="staffType" required [compareWith]="compareById" disabled>
@@ -34,7 +35,7 @@
       </div>
 
       <!-- Clasificación de Staff (solo empleados) -->
-      <div *ngIf="fieldVisibilityService.shouldShowField('staffClassification', currentStaffType)">
+      <div *ngIf="fieldVisibilityService.shouldShowField('staffClassification', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'staff.edit.staffClassification.label' | transloco }}</mat-label>
           <mat-select formControlName="staffClassification" [required]="fieldVisibilityService.isFieldRequired('staffClassification', currentStaffType)" [compareWith]="compareById">
@@ -108,7 +109,7 @@
       </div>
 
       <!-- Email (solo miembros de junta y otros) -->
-      <div *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
+      <div *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'staff.edit.email.label' | transloco }}</mat-label>
           <input matInput type="email" formControlName="email" [required]="fieldVisibilityService.isFieldRequired('email', currentStaffType)" />
@@ -199,27 +200,21 @@
 
       <!-- Asignación de Sitio -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'staff.edit.site-assignment' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.site-assignment-description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'staff.edit.site-assignment' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'staff.edit.site-assignment-description' | transloco }}</p>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'staff.edit.site.label' | transloco }}</mat-label>
-          <mat-select formControlName="site" [compareWith]="compareById">
-            <mat-option *ngFor="let site of listSites" [value]="site">
-              {{ site.name }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-checkbox formControlName="isPrimary">
-          {{ 'staff.edit.is-primary.label' | transloco }}
-        </mat-checkbox>
-      </div>
+      <mat-form-field>
+        <mat-label>{{ 'staff.edit.site.label' | transloco }}</mat-label>
+        <mat-select formControlName="site" [compareWith]="compareById">
+          <mat-option *ngFor="let site of listSites" [value]="site">
+            {{ site.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
       <!-- Comentarios -->
-      <div *ngIf="fieldVisibilityService.shouldShowField('comments', currentStaffType)">
+      <div *ngIf="fieldVisibilityService.shouldShowField('comments', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'staff.edit.comments.label' | transloco }}</mat-label>
           <textarea matInput formControlName="comments" rows="4"></textarea>
@@ -228,8 +223,8 @@
 
       <!-- Campos de Revisión (solo administradores) -->
       <div *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)">
-        <p class="text-lg font-medium mb-2">{{ 'staff.edit.review.label' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'staff.edit.review.description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'staff.edit.review.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'staff.edit.review.description' | transloco }}</p>
       </div>
 
       <div *ngIf="fieldVisibilityService.shouldShowField('reviewResult', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -253,7 +248,7 @@
         </mat-form-field>
       </div>
 
-      <div *ngIf="fieldVisibilityService.shouldShowField('reviewJustification', currentStaffType)">
+      <div *ngIf="fieldVisibilityService.shouldShowField('reviewJustification', currentStaffType)" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'staff.edit.review-justification.label' | transloco }}</mat-label>
           <textarea matInput formControlName="reviewJustification" [required]="fieldVisibilityService.isFieldRequired('reviewJustification', currentStaffType)" rows="3"></textarea>
@@ -263,17 +258,19 @@
         </mat-form-field>
       </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null" [disabled]="isLoading">
-            {{ 'global.buttons.cancel' | transloco }}
-          </button>
-        </div>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
-          {{ 'global.buttons.save' | transloco }}
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null" [disabled]="isLoading">
+          {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
+        {{ 'global.buttons.save' | transloco }}
+      </button>
     </div>
   </form>
 </div>

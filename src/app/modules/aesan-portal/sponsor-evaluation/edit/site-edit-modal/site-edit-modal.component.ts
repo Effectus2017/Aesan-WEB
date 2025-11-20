@@ -32,6 +32,8 @@ import { SponsorType } from 'app/shared/models/SponsorType';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { AreaType } from 'app/shared/models/AreaType';
 import { Agency } from 'app/shared/models/Agency';
+import { KitchenType } from 'app/shared/models/KitchenType';
+import { GroupType } from 'app/shared/models/GroupType';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
@@ -45,6 +47,9 @@ import { OperatingPolicyService } from 'app/shared/services/operating-policy.ser
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { GroupTypeService } from 'app/shared/services/group-type.service';
+import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 export interface SiteEditModalData {
@@ -92,6 +97,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _optionSelectionService = inject(OptionSelectionService);
+  private _kitchenTypeService = inject(KitchenTypeService);
+  private _groupTypeService = inject(GroupTypeService);
+  private _fieldVisibilityService = inject(FieldVisibilityService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   // Form
@@ -165,9 +173,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   typeOfApplicant: OptionSelection[] = [];
   typeOfResidential: OptionSelection[] = [];
   operatingPolicies: OperatingPolicy[] = [];
-  kitchenTypes: OptionSelection[] = [];
+  kitchenTypes: KitchenType[] = [];
   siteLocations: OptionSelection[] = [];
-  groupTypes: OptionSelection[] = [];
+  groupTypes: GroupType[] = [];
   community: OptionSelection[] = [];
   walkers: OptionSelection[] = [];
   siteType: OptionSelection[] = [];
@@ -177,6 +185,11 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   areaTypes: AreaType[] = [];
   locationTypes: AreaType[] = [];
   isActive: OptionSelection[] = [];
+  // Day Care Home options
+  relationshipTypeOptions: OptionSelection[] = [];
+  homeTypeOptions: OptionSelection[] = [];
+  participantTypeOptions: OptionSelection[] = [];
+  distributionType: OptionSelection[] = [];
 
   // Program properties
   isPDAM: boolean = false;
@@ -205,6 +218,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Configurar FieldVisibilityService SOLO para distributionType
+    this._fieldVisibilityService.setActiveConfig('sites');
+    
     this.setupForm();
     this.loadLists();
     this.loadAgencyData();
@@ -216,10 +232,11 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   }
 
   private loadOptionSelections(): void {
-    const queryParameters: QueryParameters = {
-      agencyId: this.agencyId,
-    };
-    this._optionSelectionService.getAllOptionSelections(queryParameters).subscribe();
+    // Load options using getOptionSelectionByOptionKey like the original component
+    this._optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+      names: null,
+    }).subscribe();
   }
 
   ngOnDestroy(): void {
@@ -253,17 +270,22 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
 
     // Listen to isActive changes
     this.form.get('isActive')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value) => {
+      const inactiveJustificationControl = this.form.get('inactiveJustification');
+      
       if (value === false) {
         this.form.get('inactiveDate')?.enable();
-        this.form.get('inactiveJustification')?.enable();
-        this.form.get('inactiveJustification')?.setValidators([Validators.required]);
+        inactiveJustificationControl?.enable();
+        inactiveJustificationControl?.setValidators([Validators.required]);
       } else {
+        // Si el sitio está activo, limpiar validadores y valores
+        inactiveJustificationControl?.clearValidators();
+        inactiveJustificationControl?.setValue('');
+        this.form.get('inactiveDate')?.setValue(null);
         this.form.get('inactiveDate')?.disable();
-        this.form.get('inactiveJustification')?.disable();
-        this.form.get('inactiveJustification')?.clearValidators();
+        inactiveJustificationControl?.disable();
       }
       this.form.get('inactiveDate')?.updateValueAndValidity();
-      this.form.get('inactiveJustification')?.updateValueAndValidity();
+      inactiveJustificationControl?.updateValueAndValidity();
     });
 
     // Listen to city changes for regions
@@ -280,17 +302,49 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
         this.getRegionsByCityId(city, 'postalRegion');
       }
     });
+
+    // Listen to operating dates changes for calculating days
+    this.form.get('operatingFromDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.calculateOperatingDays();
+    });
+
+    this.form.get('operatingToDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.calculateOperatingDays();
+    });
+
+    // Listen to groupType changes for distributionType validation and siteLocation
+    this.form.get('groupType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((groupType) => {
+      this.updateDistributionTypeValidation();
+      this.getSiteLocationByGroupType(groupType);
+      this._changeDetectorRef.detectChanges();
+    });
+
+    // Listen to organizationType changes for centerType visibility
+    this.form.get('organizationType')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((organizationType: OrganizationType) => {
+      this.updateCenterTypeFieldVisibility(organizationType);
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   private loadLists(): void {
-    // Cities
+    // Request parameters like the original component
+    const requestParameters: QueryParameters = {
+      take: 25,
+      skip: 0,
+      alls: true,
+      isList: true,
+    };
+
+    // Cities - Load using getCitiesFromDb like the original component
+    this._geoService.getCitiesFromDb(requestParameters).subscribe();
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.listCities = result.body;
       }
     });
 
-    // Regions
+    // Regions - Load using getRegionsFromDb like the original component
+    this._geoService.getRegionsFromDb(requestParameters).subscribe();
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.listRegions = result.body;
@@ -298,72 +352,96 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       }
     });
 
-    // Organization Types
+    // Organization Types - Load using getAllOrganizationTypesFromDb like the original component
+    this._organizationTypeService.getAllOrganizationTypesFromDb(requestParameters).subscribe();
     this._organizationTypeService.organizationTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.organizationTypes = result.body;
       }
     });
 
-    // Education Levels
+    // Education Levels - Load using getAllEducationLevelsFromDb like the original component
+    this._educationLevelService.getAllEducationLevelsFromDb(requestParameters).subscribe();
     this._educationLevelService.educationLevels$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.educationLevels = result.body;
       }
     });
 
-    // Center Types
+    // Center Types - Load using getAllCenterTypesFromDb like the original component
+    this._centerTypeService.getAllCenterTypesFromDb(requestParameters).subscribe();
     this._centerTypeService.centerTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.centerTypes = result.body;
       }
     });
 
-    // Delivery Types
+    // Delivery Types - Load using getAllDeliveryTypesFromDb like the original component
+    this._deliveryTypeService.getAllDeliveryTypesFromDb(requestParameters).subscribe();
     this._deliveryTypeService.deliveryTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.deliveryTypes = result.body;
       }
     });
 
-    // Sponsor Types
+    // Sponsor Types - Load using getAllSponsorTypesFromDb like the original component
+    this._sponsorTypeService.getAllSponsorTypesFromDb(requestParameters).subscribe();
     this._sponsorTypeService.sponsorTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.sponsorType = result.body;
       }
     });
 
-    // Operating Policies
+    // Operating Policies - Load using getAllOperatingPoliciesFromDb like the original component
+    this._operatingPolicyService.getAllOperatingPoliciesFromDb(requestParameters).subscribe();
     this._operatingPolicyService.operatingPolicies$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.operatingPolicies = result.body;
       }
     });
 
-    // Area Types
+    // Area Types - Load using getAllAreaTypesFromDb like the original component
+    this._areaTypeService.getAllAreaTypesFromDb(requestParameters).subscribe();
     this._areaTypeService.areaTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.areaTypes = result.body;
+        this.locationTypes = result.body; // Location types are the same as area types
       }
     });
 
-    // Location Types (same as areaTypes)
-    this._areaTypeService.areaTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+    // Kitchen Types - Load using getAllKitchenTypesFromDb like the original component
+    this._kitchenTypeService.getAllKitchenTypesFromDb(requestParameters).subscribe();
+    this._kitchenTypeService.kitchenTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.locationTypes = result.body;
+        // Kitchen types come from service, but also filter from options
+        if (result.body && result.body.length > 0) {
+          this.kitchenTypes = result.body;
+        }
       }
     });
 
-    // Option Selections
+    // Group Types - Load using getAllGroupTypesFromDb like the original component
+    this._groupTypeService.getAllGroupTypesFromDb(requestParameters).subscribe();
+    this._groupTypeService.groupTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        // Group types come from service, but also filter from options
+        if (result.body && result.body.length > 0) {
+          this.groupTypes = result.body;
+        }
+      }
+    });
+
+    // Option Selections - Filter from options like the original component
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        const options = result.body?.data || result || [];
+        const options = result.body?.data || result.body || [];
         this.yesNoOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'yesNo');
         this.typeOfApplicant = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfApplicant');
         this.typeOfResidential = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfResidential');
-        this.kitchenTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'kitchenType');
+        // Kitchen types and group types come from services, not from options
+        // this.kitchenTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'kitchenType');
+        // this.groupTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'groupType');
         this.siteLocations = options.filter((opt: OptionSelection) => opt.optionKey === 'siteLocation');
-        this.groupTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'groupType');
         this.community = options.filter((opt: OptionSelection) => opt.optionKey === 'community');
         this.walkers = options.filter((opt: OptionSelection) => opt.optionKey === 'walkers');
         this.siteType = options.filter((opt: OptionSelection) => opt.optionKey === 'siteType');
@@ -371,6 +449,11 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
         this.reviewResult = options.filter((opt: OptionSelection) => opt.optionKey === 'reviewResult');
         this.publicAllianceContractOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'publicAllianceContract');
         this.isActive = options.filter((opt: OptionSelection) => opt.optionKey === 'isActive');
+        this.distributionType = options.filter((opt: OptionSelection) => opt.optionKey === 'distributionType');
+        // Day Care Home options
+        this.relationshipTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'relationshipType');
+        this.homeTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'homeType');
+        this.participantTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'participantType');
         
         // After loading options, update form values if site data exists
         if (this.data.site) {
@@ -418,6 +501,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       const programs = this.agency.programs || [];
       this.determineVisibleFields(programs);
       this.setIsDayCareHome();
+      // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
+      // para asegurar que las validaciones se apliquen correctamente
+      this.updateValidations();
     } else if (this.data.site?.agencyId) {
       // Load agency by ID
       const queryParameters: QueryParameters = {
@@ -430,6 +516,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
             const programs = this.agency.programs || [];
             this.determineVisibleFields(programs);
             this.setIsDayCareHome();
+            // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
+            // para asegurar que las validaciones se apliquen correctamente
+            this.updateValidations();
           }
         },
         error: (error) => {
@@ -444,6 +533,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
           const programs = this.agency?.programs || [];
           this.determineVisibleFields(programs);
           this.setIsDayCareHome();
+          // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
+          // para asegurar que las validaciones se apliquen correctamente
+          this.updateValidations();
         }
       });
     }
@@ -465,6 +557,119 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       this.isDayCareHome = isDayCareHomeOption
         ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
         : false;
+    }
+  }
+
+  private updateValidations(): void {
+    // Si es Day Care Home, remover todas las validaciones requeridas
+    if (this.isDayCareHome) {
+      // Remover validaciones requeridas de todos los campos
+      const fieldsToUpdate = [
+        'name',
+        'address',
+        'city',
+        'region',
+        'zipCode',
+        'latitude',
+        'longitude',
+        'postalCity',
+        'postalRegion',
+        'nonProfit',
+        'organizationType',
+        'centerType',
+        'educationLevels',
+        'areaType',
+        'locationType',
+        // Campos específicos de PACNA
+        'organizedAthleticPrograms',
+        'atRiskService',
+        'publicAllianceContractId',
+      ];
+
+      fieldsToUpdate.forEach((fieldName) => {
+        const control = this.form.get(fieldName);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    } else {
+      // Restaurar validaciones requeridas cuando no es Day Care Home
+      this.restoreRequiredValidations();
+    }
+  }
+
+  private restoreRequiredValidations(): void {
+    // Restaurar validaciones requeridas para campos básicos
+    const requiredFields = {
+      name: [Validators.required],
+      address: [Validators.required],
+      city: [Validators.required],
+      region: [Validators.required],
+      zipCode: [Validators.required],
+      latitude: [Validators.required],
+      longitude: [Validators.required],
+      postalCity: [Validators.required],
+      nonProfit: [Validators.required],
+      organizationType: [Validators.required],
+    };
+
+    Object.keys(requiredFields).forEach((fieldName) => {
+      const control = this.form.get(fieldName);
+      if (control) {
+        control.setValidators(requiredFields[fieldName]);
+        control.updateValueAndValidity();
+      }
+    });
+
+    // educationLevels solo es requerido para PDAM
+    const educationLevelsControl = this.form.get('educationLevels');
+    if (educationLevelsControl) {
+      if (this.isPDAM) {
+        educationLevelsControl.setValidators([Validators.required]);
+      } else {
+        educationLevelsControl.clearValidators();
+      }
+      educationLevelsControl.updateValueAndValidity();
+    }
+
+    // Campos específicos de PACNA - requeridos solo cuando es PACNA y no es Day Care Home
+    if (this.isPACNA && !this.isDayCareHome) {
+      const pacnaFields = {
+        organizedAthleticPrograms: [Validators.required],
+        atRiskService: [Validators.required],
+        publicAllianceContractId: [Validators.required],
+      };
+
+      Object.keys(pacnaFields).forEach((fieldName) => {
+        const control = this.form.get(fieldName);
+        if (control) {
+          control.setValidators(pacnaFields[fieldName]);
+          control.updateValueAndValidity();
+        }
+      });
+    } else {
+      // Limpiar validadores de campos PACNA si no es PACNA o es Day Care Home
+      const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId'];
+      pacnaFieldsToClear.forEach((fieldName) => {
+        const control = this.form.get(fieldName);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    }
+
+    // Restaurar validación de centerType solo si el organizationType actual lo requiere
+    const organizationType = this.form.get('organizationType')?.value as OrganizationType;
+    const centerTypeControl = this.form.get('centerType');
+    if (centerTypeControl) {
+      if (organizationType?.requiresCenterType) {
+        centerTypeControl.setValidators([Validators.required]);
+      } else {
+        centerTypeControl.clearValidators();
+      }
+      centerTypeControl.updateValueAndValidity();
     }
   }
 
@@ -504,6 +709,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       sponsorType: site.sponsorType || null,
       typeOfApplicant: site.typeOfApplicant || null,
       typeOfResidential: site.residentialType || null,
+      areaType: site.areaType || null,
       locationType: site.locationType || null,
       operatingPolicy: site.operatingPolicy || null,
       hasWarehouse: site.hasWarehouse || false,
@@ -535,6 +741,224 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       this.form.get('inactiveJustification')?.enable();
       this.form.get('inactiveJustification')?.setValidators([Validators.required]);
     }
+
+    // Si hay una ciudad, obtener el tipo de área automáticamente
+    if (site.city) {
+      this.getAreaTypeByCity(site.city);
+    }
+
+    // Asegurar que el campo areaType permanezca deshabilitado
+    this.form.get('areaType')?.disable();
+
+    // Actualizar validaciones dinámicas después de cargar los datos
+    const groupType = this.form.get('groupType')?.value;
+    if (groupType) {
+      this.updateDistributionTypeValidation();
+      this.getSiteLocationByGroupType(groupType);
+    }
+
+    const organizationType = this.form.get('organizationType')?.value as OrganizationType;
+    if (organizationType) {
+      this.updateCenterTypeFieldVisibility(organizationType);
+    }
+
+    // Calcular días operativos automáticamente si es necesario
+    this.calculateOperatingDaysIfNeeded();
+  }
+
+  private calculateOperatingDaysIfNeeded(): void {
+    const operatingDaysCalculated = this.form.get('operatingDaysCalculated')?.value;
+    const operatingFromDate = this.form.get('operatingFromDate')?.value;
+    const operatingToDate = this.form.get('operatingToDate')?.value;
+
+    // Si operatingDaysCalculated es null, 0 o undefined, pero existen las fechas, calcular automáticamente
+    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) &&
+        operatingFromDate && operatingToDate) {
+      this.calculateOperatingDays();
+    }
+  }
+
+  private calculateOperatingDays(): void {
+    const fromDateValue = this.form.get('operatingFromDate')?.value;
+    const toDateValue = this.form.get('operatingToDate')?.value;
+
+    if (fromDateValue && toDateValue) {
+      try {
+        // Convert form values to Date objects if they aren't already
+        const fromDate = fromDateValue instanceof Date ? fromDateValue : new Date(fromDateValue);
+        const toDate = toDateValue instanceof Date ? toDateValue : new Date(toDateValue);
+
+        // Validate that the conversion was successful
+        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
+          console.warn('Invalid date values provided for operating days calculation');
+          this.form.patchValue({
+            operatingDaysCalculated: null,
+          });
+          return;
+        }
+
+        const workingDays = this.calculateWorkingDays(fromDate, toDate);
+
+        this.form.patchValue({
+          operatingDaysCalculated: workingDays,
+        });
+      } catch (error) {
+        console.error('Error calculating working days:', error);
+        this.form.patchValue({
+          operatingDaysCalculated: null,
+        });
+      }
+    } else {
+      this.form.patchValue({
+        operatingDaysCalculated: null,
+      });
+    }
+  }
+
+  /**
+   * Calcula los días laborables entre dos fechas (excluyendo fines de semana)
+   * @param startDate Fecha de inicio
+   * @param endDate Fecha de fin
+   * @returns Número de días laborables
+   */
+  private calculateWorkingDays(startDate: Date, endDate: Date): number {
+    // Validar que los parámetros sean Date objects válidos
+    if (!startDate || !endDate || !(startDate instanceof Date) || !(endDate instanceof Date)) {
+      console.warn('Invalid Date objects provided to calculateWorkingDays');
+      return 0;
+    }
+
+    // Validar fechas
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      console.warn('Invalid date values provided to calculateWorkingDays');
+      return 0;
+    }
+
+    // Normalizar fechas a medianoche para evitar problemas de zona horaria
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+    // Asegurar que las fechas estén en el orden correcto
+    const [earlier, later] = start <= end ? [start, end] : [end, start];
+
+    // Calcular semanas completas para optimización
+    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const fullWeeks = Math.floor(totalDays / 7);
+    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
+
+    // Calcular días restantes
+    const remainingDays = totalDays % 7;
+    const startDayOfWeek = earlier.getDay();
+    let remainingWorkingDays = 0;
+
+    for (let i = 0; i < remainingDays; i++) {
+      const dayOfWeek = (startDayOfWeek + i) % 7;
+      // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
+      // Excluir sábado (6) y domingo (0)
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        remainingWorkingDays++;
+      }
+    }
+
+    return workingDaysInFullWeeks + remainingWorkingDays;
+  }
+
+  private updateDistributionTypeValidation(): void {
+    const groupType = this.form.get('groupType')?.value;
+    const distributionTypeControl = this.form.get('distributionType');
+
+    // Obtener el tipo de grupo como string para el servicio
+    const groupTypeKey = this.getGroupTypeKey(groupType);
+
+    const isRequired = this._fieldVisibilityService.isFieldRequired('distributionType', groupTypeKey);
+
+    if (isRequired) {
+      // Requerir distribución type
+      distributionTypeControl?.setValidators([Validators.required]);
+      distributionTypeControl?.enable();
+    } else {
+      // No requerir para otros tipos y deshabilitar el campo
+      distributionTypeControl?.clearValidators();
+      distributionTypeControl?.setValue(null); // Limpiar el valor
+      distributionTypeControl?.disable();
+      distributionTypeControl?.markAsUntouched(); // Limpiar estado de validación
+    }
+
+    distributionTypeControl?.updateValueAndValidity();
+  }
+
+  /**
+   * Convierte el objeto groupType a la clave usada en la configuración
+   */
+  private getGroupTypeKey(groupType: any): string {
+    if (!groupType) return '';
+
+    // Usar directamente el nombre del groupType
+    return groupType.name || groupType.nameEN || '';
+  }
+
+  /**
+   * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
+   */
+  private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
+    const centerTypeControl = this.form.get('centerType');
+
+    if (organizationType) {
+      this.showCenterTypeField = organizationType.requiresCenterType;
+
+      // Si no requiere tipo de centro, limpiar el valor y remover validación requerida
+      if (!organizationType.requiresCenterType) {
+        centerTypeControl?.setValue(null);
+        centerTypeControl?.clearValidators();
+        centerTypeControl?.updateValueAndValidity();
+      } else {
+        // Si requiere tipo de centro, agregar validación requerida
+        centerTypeControl?.setValidators([Validators.required]);
+        centerTypeControl?.updateValueAndValidity();
+      }
+
+      // Habilitar Tipo de Institución Residencial cuando el tipo de organización es "Institución Residencial"
+      this.showResidentialTypeField = organizationType.name === 'Institución Residencial' || organizationType.nameEN === 'Residential Institution';
+
+      // Si no es Institución Residencial, limpiar el valor del campo
+      if (!this.showResidentialTypeField) {
+        this.form.get('typeOfResidential')?.setValue(null);
+      }
+    } else {
+      this.showCenterTypeField = false;
+      this.showResidentialTypeField = false;
+      centerTypeControl?.clearValidators();
+      centerTypeControl?.updateValueAndValidity();
+    }
+  }
+
+  getSiteLocationByGroupType(groupType: GroupType): void {
+    if (!groupType) {
+      this.siteLocations = [];
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._groupTypeService.getSiteLocationByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response) {
+          this.siteLocations = response.body;
+
+          // Auto-seleccionar el Site Location obtenido (solo hay uno por Group Type)
+          if (this.siteLocations && this.siteLocations.length > 0) {
+            this.form.patchValue({ siteLocation: this.siteLocations[0] });
+          }
+
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar Site Location:', error);
+      },
+    });
   }
 
   getRegionsByCityId(city: City, fieldName: 'region' | 'postalRegion'): void {

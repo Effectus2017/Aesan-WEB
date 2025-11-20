@@ -152,9 +152,19 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableSites(event, element.id);
         }
         break;
+      case 'viewStaff':
+        if (this.handler?.onTableViewStaff) {
+          this.handler.onTableViewStaff(event, element.id);
+        }
+        break;
       case 'edit-modal':
         if (this.handler?.onTableEditModal) {
           this.handler.onTableEditModal(event, element.id);
+        }
+        break;
+      default:
+        if (this.handler?.onTableAction) {
+          this.handler.onTableAction(event, button.key, element.id);
         }
         break;
     }
@@ -329,6 +339,12 @@ export class GenericTableComponent implements OnInit {
   onSites(event: Event, id: number): void {
     if (this.handler && this.handler.onTableSites) {
       this.handler.onTableSites(event, id);
+    }
+  }
+
+  onViewStaff(event: Event, id: number): void {
+    if (this.handler && this.handler.onTableViewStaff) {
+      this.handler.onTableViewStaff(event, id);
     }
   }
 }

@@ -3,7 +3,7 @@ export interface AgencyRequest {
     statusId?: number;
     // Datos de la Agencia
     sdrNumber?: number;
-    uieNumber?: number;
+    uieNumber?: string;
     einNumber?: number;
     // Dirección Física
     address?: string;

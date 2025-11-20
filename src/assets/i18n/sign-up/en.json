@@ -139,7 +139,11 @@
     },
     "email": {
       "label": "Email",
-      "placeholder": "Enter the email"
+      "placeholder": "Enter the email",
+      "required": "Email is required",
+      "invalid": "The email format is not valid",
+      "exists": "This email address is already registered in the system",
+      "exists-title": "Email Already Registered"
     },
     "middle-name": {
       "label": "Middle Name",

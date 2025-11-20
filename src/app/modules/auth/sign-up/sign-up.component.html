@@ -311,11 +311,12 @@
                 matInput
                 [formControlName]="'uieNumber'"
                 placeholder="{{ 'sign-up.uie.placeholder' | transloco }}"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                numericOnly
+                maxlength="12"
                 data-cy="uie-input"
               />
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxlength')">
+                El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -339,7 +340,10 @@
             <!-- EIN *  -->
             <mat-form-field data-cy="ein-field">
               <mat-label>{{ "sign-up.ein.label" | transloco }}</mat-label>
-              <input matInput type="number" [formControlName]="'einNumber'" placeholder="{{ 'sign-up.ein.placeholder' | transloco }}" numericOnly data-cy="ein-input" />
+              <input matInput type="number" [formControlName]="'einNumber'" placeholder="{{ 'sign-up.ein.placeholder' | transloco }}" numericOnly maxlength="9" data-cy="ein-input" />
+              <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('maxDigits')">
+                El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -495,6 +499,15 @@
             <mat-form-field data-cy="email-field">
               <mat-label>{{ "sign-up.email.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'email'" placeholder="{{ 'sign-up.email.placeholder' | transloco }}" type="email" data-cy="email-input" />
+              <mat-error *ngIf="signUpForm.get('email')?.hasError('required') && (signUpForm.get('email')?.touched || signUpForm.get('email')?.dirty)">
+                {{ "sign-up.email.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('email')?.hasError('email') && (signUpForm.get('email')?.touched || signUpForm.get('email')?.dirty)">
+                {{ "sign-up.email.invalid" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('email')?.hasError('emailExists')">
+                {{ "sign-up.email.exists" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Phone *  -->
             <mat-form-field data-cy="phone-field">

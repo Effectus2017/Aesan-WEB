@@ -1,7 +1,7 @@
 import { NgFor, NgIf } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -31,13 +31,13 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems } from 'app/shared/utils';
+import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems, maxDigitsValidator, alphanumericValidator } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { ProgramService } from 'app/shared/services/program.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { takeUntil } from 'rxjs';
+import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -98,6 +98,67 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _route = inject(ActivatedRoute);
+
+  // Validador asíncrono para email como arrow function
+  private emailExistsValidatorFn: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
+    // Si no hay valor, retornar null (no hay error)
+    if (!control.value || typeof control.value !== 'string' || control.value.trim() === '') {
+      return of(null);
+    }
+
+    const email = control.value.trim();
+
+    // Validar formato básico de email antes de hacer la llamada
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return of(null); // Si el formato no es válido, no validar existencia
+    }
+
+    return of(email).pipe(
+      debounceTime(500),
+      switchMap((emailValue: string) => {
+        if (!emailValue || emailValue.trim() === '') {
+          return of(null);
+        }
+        return this._userService.checkEmailExists(emailValue).pipe(
+          first(), // Completar el Observable después de la primera emisión
+          map((response: any) => {
+            const exists = response?.body?.exists || response?.exists || false;
+            if (exists) {
+              // Establecer el error directamente en el control
+              setTimeout(() => {
+                // Combinar errores existentes con el nuevo error
+                const currentErrors = control.errors || {};
+                control.setErrors({ ...currentErrors, emailExists: true });
+                control.markAsTouched();
+                control.markAsDirty();
+                // Forzar que el formulario se marque como inválido
+                control.parent?.updateValueAndValidity({ emitEvent: false });
+                // Forzar detección de cambios para OnPush
+                this._changeDetectorRef.detectChanges();
+              }, 0);
+              return { emailExists: true };
+            } else {
+              // Limpiar el error si el email no existe
+              if (control.hasError('emailExists')) {
+                const errors = { ...control.errors };
+                delete errors['emailExists'];
+                const newErrors = Object.keys(errors).length > 0 ? errors : null;
+                control.setErrors(newErrors);
+                control.parent?.updateValueAndValidity({ emitEvent: false });
+                this._changeDetectorRef.detectChanges();
+              }
+              return null;
+            }
+          }),
+          catchError(() => {
+            // En caso de error de red, no bloquear (retornar null)
+            return of(null);
+          })
+        );
+      })
+    );
+  };
 
   listPrograms: Program[] = [];
   listCities: City[] = [];
@@ -184,8 +245,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos de la Agencia
       sdrNumber: [null, [Validators.required]],
-      uieNumber: [null, [Validators.required]],
-      einNumber: [null, [Validators.required]],
+      uieNumber: [null, [Validators.required, Validators.maxLength(12), alphanumericValidator()]],
+      einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
       // Datos de la Agencia
 
@@ -260,7 +321,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       motherLastName: [null],
 
       // Datos del Correo Electrónico y Cargo
-      email: [null, [Validators.required, Validators.email]],
+      email: [null, [Validators.required, Validators.email], [this.emailExistsValidatorFn]],
       phone: [null, [Validators.required]],
 
       // Posición del Staff
@@ -366,6 +427,18 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.currentLang = lang;
       this._changeDetectorRef.detectChanges();
     });
+
+    // Suscribirse a cambios en el campo email para validación asíncrona adicional
+    const emailControl = this.signUpForm.get('email');
+    if (emailControl) {
+      emailControl.statusChanges.pipe(
+        takeUntil(this._unsubscribeAll),
+        debounceTime(100)
+      ).subscribe(() => {
+        // Forzar detección de cambios cuando el estado del control cambia
+        this._changeDetectorRef.markForCheck();
+      });
+    }
 
     // Deshabilitar inicialmente todos los controles excepto program
     disableAllControlsExcept(this.signUpForm, 'program');
@@ -580,13 +653,26 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
             this.listPostalRegions = response.body.data;
             const regionControl = this.signUpForm.get('postalRegion');
+            const currentPostalRegion = this.signUpForm.get('postalRegion')?.value;
+            const physicalRegion = this.signUpForm.get('region')?.value;
 
             if (regionControl) {
               if (this.listPostalRegions.length === 1) {
                 // Asignar automáticamente la única región encontrada para Dirección Postal
                 this.signUpForm.patchValue({ postalRegion: this.listPostalRegions[0] });
               } else {
-                regionControl.setValue(null);
+                // Si hay una región física seleccionada y está en la lista de regiones de la ciudad postal, mantenerla
+                if (physicalRegion && this.listPostalRegions.some(r => r.id === physicalRegion.id)) {
+                  this.signUpForm.patchValue({ postalRegion: physicalRegion });
+                } 
+                // Si hay una región postal ya seleccionada y está en la lista, mantenerla
+                else if (currentPostalRegion && this.listPostalRegions.some(r => r.id === currentPostalRegion.id)) {
+                  // Ya está seleccionada, no hacer nada
+                } 
+                // Si no hay región válida, establecer a null
+                else {
+                  regionControl.setValue(null);
+                }
               }
             }
           }
@@ -601,6 +687,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
+
 
   signUp(): void {
     if (this.signUpForm.invalid) {
@@ -641,6 +728,58 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validar que el correo no exista antes de continuar
+    const email = formValues.email?.trim();
+    if (email) {
+      this._userService.checkEmailExists(email).subscribe({
+        next: (response: any) => {
+          const exists = response?.body?.exists || response?.exists || false;
+          if (exists) {
+            // El correo existe, mostrar error y no continuar
+            const emailControl = this.signUpForm.get('email');
+            if (emailControl) {
+              emailControl.setErrors({ emailExists: true });
+              emailControl.markAsTouched();
+            }
+            // Mostrar dialog en lugar de snackbar
+            this._dialog.open(CfrInfoDialogComponent, {
+              data: {
+                title: this._translocoService.translate('sign-up.email.exists-title'),
+                message: this._translocoService.translate('sign-up.email.exists'),
+                cfrLink: null // No hay link CFR para este mensaje
+              },
+              disableClose: false,
+              panelClass: ['mat-dialog-container', 'dialog-responsive']
+            });
+            this.signUpForm.enable();
+            return;
+          }
+          // El correo no existe, continuar con el registro
+          this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
+        },
+        error: (error) => {
+          // En caso de error de red, permitir continuar (no bloquear)
+          console.error('Error al verificar correo:', error);
+          this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
+        }
+      });
+    } else {
+      // Si no hay email, continuar normalmente (la validación del formulario ya lo maneja)
+      this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
+    }
+  }
+
+  /**
+   * Continúa con el proceso de registro después de validar el correo
+   */
+  private proceedWithRegistration(
+    formValues: any,
+    cityId: number,
+    regionId: number,
+    postalCityId: number,
+    postalRegionId: number,
+    programId: number
+  ): void {
     // Disable the form
     this.signUpForm.disable();
 
@@ -649,7 +788,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     const name = formValues.name;
     const sdrNumber: number = formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0;
-    const uieNumber: number = formValues.uieNumber ? parseInt(formValues.uieNumber) : 0;
+    const uieNumber: string = formValues.uieNumber ? formValues.uieNumber.toString() : '';
     const einNumber: number = formValues.einNumber ? parseInt(formValues.einNumber) : 0;
     const address: string = formValues.address;
     const zipCode: string = formValues.zipCode;

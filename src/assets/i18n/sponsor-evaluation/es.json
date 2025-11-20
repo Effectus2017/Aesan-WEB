@@ -37,24 +37,6 @@
       "userInformation": "Información del Usuario",
       "userInformationDescription": "Datos de contacto del responsable"
     },
-    "schools": {
-      "title": "Escuelas Relacionadas",
-      "description": "Lista de escuelas asociadas a esta agencia",
-      "table": {
-        "columns": {
-          "schoolCode": "Código de Escuela",
-          "name": "Nombre",
-          "schoolNumber": "Número de Escuela",
-          "createdAt": "Fecha de Creación",
-          "isActive": "Activa",
-          "actions": "Acciones"
-        },
-        "buttons": {
-          "view": "Ver",
-          "edit": "Editar"
-        }
-      }
-    },
     "sites": {
       "title": "Sitios Relacionados",
       "description": "Lista de sitios asociados a esta agencia",
@@ -67,11 +49,13 @@
           "siteCode": "Código de Sitio",
           "generalEnrollment": "Matrícula General",
           "isActive": "Activo",
+          "schoolName": "Escuela",
           "actions": "Acciones"
         },
         "buttons": {
           "view": "Ver",
-          "edit": "Editar"
+          "edit": "Editar",
+          "viewStaff": "Ver Personal"
         }
       },
       "modal": {
@@ -80,28 +64,17 @@
         }
       }
     },
-    "staff": {
-      "title": "Personal Relacionado",
-      "description": "Lista de personal asociado a esta agencia",
+    "staffBySite": {
+      "modal": {
+        "title": "Personal Relacionado al Sitio"
+      },
       "table": {
         "columns": {
           "fullName": "Nombre Completo",
-          "staffType": "Tipo de Personal",
-          "position": "Posición",
-          "status": "Estado",
           "email": "Correo Electrónico",
-          "city": "Ciudad",
-          "isActive": "Activo",
-          "actions": "Acciones"
-        },
-        "buttons": {
-          "view": "Ver",
-          "edit": "Editar"
-        }
-      },
-      "modal": {
-        "edit": {
-          "title": "Editar Personal"
+          "assignmentDate": "Fecha de Asignación",
+          "isPrimary": "Principal",
+          "isActive": "Activo"
         }
       }
     },

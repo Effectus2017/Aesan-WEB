@@ -162,7 +162,7 @@
         </div>
 
         <!-- Campos de Fecha de Nacimiento y Email -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <!-- Email -->
           <mat-form-field data-cy="email-field" *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
             <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
@@ -189,7 +189,7 @@
         <!-- Fechas de Inicio de Contrato -->
         <!-- Fecha de finalización de contrato -->
         <div
-          class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12"
+          class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12"
           *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)"
           appDynamicGrid="3"
         >
@@ -214,7 +214,7 @@
               {{ "staff.edit.birthDate.minimumAge" | transloco }}
             </mat-error>
           </mat-form-field>
-          <mat-form-field data-cy="contract-start-date-field">
+          <!-- <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>
             <input
               matInput
@@ -243,7 +243,7 @@
             />
             <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractEndDatePicker></mat-datepicker>
-          </mat-form-field>
+          </mat-form-field> -->
         </div>
 
         <!-- Ciudad y Región -->

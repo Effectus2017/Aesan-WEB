@@ -143,36 +143,34 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Set active config
     this.fieldVisibilityService.setActiveConfig('staff');
-    
+
     // Set current user for field visibility
     const userRole = this._authService.getUserRole();
     const userPermissions = this._authService.getUserPermissions() || [];
     if (userRole) {
       this.fieldVisibilityService.setCurrentUser(userRole, userPermissions);
     }
-    
+
     // Set default staff type to ensure fields show while loading
     this.currentStaffType = 'employee';
-    
+
     this.checkAdminPermissions();
     this.setupForm();
     this.loadLists();
     this.loadOptionSelections();
-    // Load data after a delay to ensure lists are loaded
-    setTimeout(() => {
-      this.loadData();
-    }, 100);
+
+    // Load data - use staff data from modal input directly (like original component uses resolver data)
+    // Wait a bit for lists to load, then set form values
+    if (this.data.staff) {
+      setTimeout(() => {
+        this.setFormValues(this.data.staff);
+      }, 200);
+    }
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
-  }
-
-  private loadData(): void {
-    if (this.data.staff) {
-      this.setFormValues(this.data.staff);
-    }
   }
 
   private setupForm(): void {
@@ -199,47 +197,43 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   }
 
   private loadLists(): void {
+    // Load cities and regions using getCitiesFromDb and getRegionsFromDb like the original component
+    const requestParameters: QueryParameters = {
+      take: 25,
+      skip: 0,
+      alls: true,
+      isList: true,
+    };
+
     // Cities
+    this._geoService.getCitiesFromDb(requestParameters).subscribe();
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.listCities = result.body;
-        // After loading cities, update form values if staff data exists
-        if (this.data.staff) {
-          this.updateFormValuesWithOptions();
-        }
       }
     });
 
     // Regions
+    this._geoService.getRegionsFromDb(requestParameters).subscribe();
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
         this.listRegions = result.body;
-        // After loading regions, update form values if staff data exists
-        if (this.data.staff) {
-          this.updateFormValuesWithOptions();
-        }
       }
     });
 
-    // Staff Types
+    // Staff Types - Load using getAllStaffTypesFromDb like the original component
+    this._staffTypeService.getAllStaffTypesFromDb(requestParameters).subscribe();
     this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listStaffTypes = result.body;
-        // After loading staff types, update form values if staff data exists
-        if (this.data.staff) {
-          this.updateFormValuesWithOptions();
-        }
       }
     });
 
-    // Staff Classifications
+    // Staff Classifications - Load using getAllStaffClassificationsFromDb like the original component
+    this._staffClassificationService.getAllStaffClassificationsFromDb(requestParameters).subscribe();
     this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.listStaffClassifications = result.body;
-        // After loading classifications, update form values if staff data exists
-        if (this.data.staff) {
-          this.updateFormValuesWithOptions();
-        }
       }
     });
 
@@ -260,24 +254,27 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   }
 
   private loadOptionSelections(): void {
-    const queryParameters: QueryParameters = {
-      agencyId: this.agencyId,
+    // Load options using getOptionSelectionByOptionKey like the original component
+    const requestParameters: QueryParameters = {
+      take: 25,
+      skip: 0,
+      alls: true,
+      isList: true,
     };
-    this._optionSelectionService.getAllOptionSelections(queryParameters).subscribe();
+
+    this._optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,reviewResult',
+      names: null,
+    }).subscribe();
 
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        const options = result.body?.data || result || [];
+        const options = result.body?.data || result.body || [];
         this.listStatus = options.filter((opt: OptionSelection) => opt.optionKey === 'isActive');
         this.listAdministrativePositions = options.filter((opt: OptionSelection) => opt.optionKey === 'administrativePosition');
         this.listOperationalPositions = options.filter((opt: OptionSelection) => opt.optionKey === 'operationalPosition');
         this.listBoardMemberTitles = options.filter((opt: OptionSelection) => opt.optionKey === 'boardMemberTitle');
         this.reviewResult = options.filter((opt: OptionSelection) => opt.optionKey === 'reviewResult');
-        
-        // After loading options, update form values if staff data exists
-        if (this.data.staff) {
-          this.updateFormValuesWithOptions();
-        }
       }
     });
   }
@@ -298,31 +295,14 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   }
 
   private setFormValues(staff: Staff): void {
-    // First, set basic values that don't depend on lists
-    this.form.patchValue({
-      id: staff.id,
-      firstName: staff.firstName,
-      middleName: staff.middleName,
-      fatherLastName: staff.fatherLastName,
-      motherLastName: staff.motherLastName,
-      contractStartDate: staff.contractStartDate,
-      contractEndDate: staff.contractEndDate,
-      birthDate: staff.birthDate,
-      email: staff.email,
-      postalAddress: staff.postalAddress,
-      areaCode: staff.areaCode,
-      comments: staff.comments,
-      reviewDate: staff.reviewDate,
-      reviewJustification: staff.reviewJustification,
-    });
-
-    // Determine staff type
-    const staffType = this.listStaffTypes.find((st) => st.id === staff.staffType?.id) || staff.staffType;
+    // Find staff type from list (like original component)
+    const staffType = this.listStaffTypes.find((st) => st.id === staff.staffType?.id);
 
     if (staffType) {
       this.isEmployee = staffType.name?.toLowerCase().includes('empleado') || staffType.nameEn?.toLowerCase().includes('employee') || staffType.id === 1;
       this.isBoardMember = staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member';
 
+      // Set current staff type for visibility service
       if (this.isEmployee) {
         this.currentStaffType = 'employee';
       } else if (this.isBoardMember) {
@@ -330,103 +310,66 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       } else {
         this.currentStaffType = 'other';
       }
-
-      // Set staff type in form
-      this.form.patchValue({
-        staffType: staffType,
-      });
     }
 
-    // Configure positions
+    // Find staff classification from list to ensure correct object reference
+    const staffClassification = staff.staffClassification
+      ? this.listStaffClassifications.find((sc) => sc.id === staff.staffClassification?.id) || staff.staffClassification
+      : null;
+
+    // Configure initial staff type state
     if (this.isEmployee) {
+      // For employees, positions will be loaded based on classification
       this.listPositions = [];
     } else {
+      // For board members, use specific list
       this.listPositions = this.listBoardMemberTitles;
     }
 
-    // Set status, position, classification, city, region, site, reviewResult using updateFormValuesWithOptions
-    this.updateFormValuesWithOptions();
+    this.onStaffTypeChange(staffType);
 
-    // Disable staffType after setting value
-    this.form.get('staffType')?.disable();
+    // Set form values using objects that come directly from staff (like original component)
+    this.form.patchValue({
+      id: staff.id,
+      firstName: staff.firstName,
+      middleName: staff.middleName,
+      fatherLastName: staff.fatherLastName,
+      motherLastName: staff.motherLastName,
+      status: staff.status,
+      position: staff.position,
+      staffType: staffType || staff.staffType,
+      staffClassification: staffClassification,
+      contractStartDate: staff.contractStartDate,
+      contractEndDate: staff.contractEndDate,
+      birthDate: staff.birthDate,
+      email: staff.email,
+      postalAddress: staff.postalAddress,
+      city: staff.city,
+      region: staff.region,
+      areaCode: staff.areaCode,
+      comments: staff.comments,
+      reviewDate: staff.reviewDate,
+      reviewJustification: staff.reviewJustification,
+      site: staff.school,
+      reviewResult: staff.reviewResultId ? this.reviewResult.find((r) => r.id === staff.reviewResultId) || null : null,
+    });
 
     // Update validations
     this.updateValidations();
 
     // If employee and has classification, load positions
-    if (this.isEmployee && staff.staffClassification) {
-      this.selectedClassification = staff.staffClassification;
+    if (this.isEmployee && staffClassification) {
+      this.selectedClassification = staffClassification;
       this.loadPositionsByClassification();
     }
+
+    // Disable staffType after setting value
+    this.form.get('staffType')?.disable();
 
     // Load current site assignment
     this.loadCurrentSiteAssignment(staff.id);
   }
 
-  private updateFormValuesWithOptions(): void {
-    const staff = this.data.staff;
-    if (!staff) return;
-
-    // Update form with option objects found by IDs
-    const updates: any = {};
-
-    // Status
-    if (staff.statusId && this.listStatus.length > 0) {
-      updates.status = this.listStatus.find((s) => s.id === staff.statusId) || null;
-    } else if (staff.status) {
-      updates.status = staff.status;
-    }
-
-    // Position
-    if (staff.positionId && this.listPositions.length > 0) {
-      updates.position = this.listPositions.find((p) => p.id === staff.positionId) || null;
-    } else if (staff.position) {
-      updates.position = staff.position;
-    }
-
-    // Staff Classification
-    if (staff.staffClassificationId && this.listStaffClassifications.length > 0) {
-      updates.staffClassification = this.listStaffClassifications.find((sc) => sc.id === staff.staffClassificationId) || null;
-    } else if (staff.staffClassification) {
-      updates.staffClassification = staff.staffClassification;
-    }
-
-    // City
-    if (staff.cityId && this.listCities.length > 0) {
-      updates.city = this.listCities.find((c) => c.id === staff.cityId) || null;
-      // If city is set, load regions
-      if (updates.city) {
-        this.getRegionsByCityId(updates.city);
-      }
-    } else if (staff.city) {
-      updates.city = staff.city;
-      if (updates.city) {
-        this.getRegionsByCityId(updates.city);
-      }
-    }
-
-    // Region
-    if (staff.regionId && this.listRegions.length > 0) {
-      updates.region = this.listRegions.find((r) => r.id === staff.regionId) || null;
-    } else if (staff.region) {
-      updates.region = staff.region;
-    }
-
-    // Site
-    if (staff.school) {
-      updates.site = staff.school;
-    }
-
-    // Review Result
-    if (staff.reviewResultId && this.reviewResult.length > 0) {
-      updates.reviewResult = this.reviewResult.find((r) => r.id === staff.reviewResultId) || null;
-    }
-
-    // Apply updates
-    if (Object.keys(updates).length > 0) {
-      this.form.patchValue(updates);
-    }
-  }
 
   private loadCurrentSiteAssignment(staffId: number): void {
     const queryParameters: QueryParameters = {

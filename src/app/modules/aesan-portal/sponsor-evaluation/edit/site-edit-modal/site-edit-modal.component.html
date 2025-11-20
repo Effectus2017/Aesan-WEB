@@ -1,21 +1,22 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120">
-  <!-- Header -->
-  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+  <!-- Header - Fixed, outside scroll -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-shrink-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
       {{ 'sponsor-evaluation.edit.sites.modal.edit.title' | transloco }}
     </div>
     <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
-      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
     </button>
   </div>
 
-  <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSave()">
-    <div class="flex flex-col gap-6">
+  <!-- Form - Scrollable content area -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
       <!-- Información General -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.information' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'sites.edit.information-description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.information' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.information-description' | transloco }}</p>
       </div>
 
       <!-- Código de Sitio (readonly) -->
@@ -64,8 +65,8 @@
 
       <!-- Dirección Física -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.address.label' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'sites.edit.address.description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.address.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.address.description' | transloco }}</p>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -130,8 +131,8 @@
 
       <!-- Dirección Postal -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.postal-address.label' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'sites.edit.postal-address.description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.postal-address.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.postal-address.description' | transloco }}</p>
       </div>
 
       <mat-checkbox formControlName="sameAsPhysicalAddress">
@@ -178,7 +179,7 @@
       <div *ngIf="!shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.type-of-area.label' | transloco }}</mat-label>
-          <mat-select formControlName="areaType" [compareWith]="compareById" disabled>
+          <mat-select formControlName="areaType" [compareWith]="compareById">
             <mat-option *ngFor="let option of areaTypes" [value]="option">
               {{ currentLang === 'en' ? option.nameEN : option.name }}
             </mat-option>
@@ -200,8 +201,8 @@
 
       <!-- Información Administrativa -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.administrative-information.label' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'sites.edit.administrative-information.description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrative-information.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.administrative-information.description' | transloco }}</p>
       </div>
 
       <div *ngIf="!shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -247,7 +248,7 @@
       </div>
 
       <!-- Política de funcionamiento (solo PDAM) -->
-      <div *ngIf="isPDAM">
+      <div *ngIf="isPDAM" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.operating-policy.label' | transloco }}</mat-label>
           <mat-select formControlName="operatingPolicy" [compareWith]="compareById">
@@ -259,7 +260,7 @@
       </div>
 
       <!-- Programas atléticos organizados (solo PACNA, no Day Care Home) -->
-      <div *ngIf="isPACNA && !shouldShowDayCareFields()">
+      <div *ngIf="isPACNA && !shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.pacna-fields.organized-athletic-programs.label' | transloco }}</mat-label>
           <mat-select formControlName="organizedAthleticPrograms">
@@ -271,7 +272,7 @@
       </div>
 
       <!-- Servicio en riesgo (solo PACNA, no Day Care Home) -->
-      <div *ngIf="isPACNA && !shouldShowDayCareFields()">
+      <div *ngIf="isPACNA && !shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.pacna-fields.at-risk-service.label' | transloco }}</mat-label>
           <mat-select formControlName="atRiskService">
@@ -283,7 +284,7 @@
       </div>
 
       <!-- Contrato Público Alianza (solo PACNA, no Day Care Home) -->
-      <div *ngIf="isPACNA && !shouldShowDayCareFields()">
+      <div *ngIf="isPACNA && !shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.pacna-fields.public-alliance-contract.label' | transloco }}</mat-label>
           <mat-select formControlName="publicAllianceContractId">
@@ -295,7 +296,7 @@
       </div>
 
       <!-- Niveles educativos (solo PDAM) -->
-      <div *ngIf="isPDAM">
+      <div *ngIf="isPDAM" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.education-levels.label' | transloco }}</mat-label>
           <mat-select formControlName="educationLevels" required multiple [compareWith]="compareById">
@@ -310,7 +311,7 @@
       </div>
 
       <!-- Tipo de organización (no Day Care Home) -->
-      <div *ngIf="!shouldShowDayCareFields()">
+      <div *ngIf="!shouldShowDayCareFields()" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.organization-type.label' | transloco }}</mat-label>
           <mat-select formControlName="organizationType" required [compareWith]="compareById">
@@ -325,7 +326,7 @@
       </div>
 
       <!-- Tipo de Centro (solo PDAM) -->
-      <div *ngIf="isPDAM && showCenterTypeField">
+      <div *ngIf="isPDAM && showCenterTypeField" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.center.label' | transloco }}</mat-label>
           <mat-select formControlName="centerType" required [compareWith]="compareById">
@@ -340,7 +341,7 @@
       </div>
 
       <!-- Tipo de Institución Residencial (solo PDAM) -->
-      <div *ngIf="isPDAM && showResidentialTypeField">
+      <div *ngIf="isPDAM && showResidentialTypeField" class="grid grid-cols-1 gap-4 sm:grid-cols-1">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.residential-type.label' | transloco }}</mat-label>
           <mat-select formControlName="typeOfResidential" [compareWith]="compareById">
@@ -353,8 +354,8 @@
 
       <!-- Días de Funcionamiento (no Day Care Home) -->
       <div *ngIf="!shouldShowDayCareFields()">
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.operating-dates.label' | transloco }}</p>
-        <p class="mb-4 text-secondary text-sm">{{ 'sites.edit.operating-dates.description' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operating-dates.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.operating-dates.description' | transloco }}</p>
 
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <mat-form-field>
@@ -380,7 +381,8 @@
 
       <!-- Datos Operativos -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.operational-data.label' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operational-information.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.operational-information.description' | transloco }}</p>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -455,7 +457,8 @@
 
       <!-- Administrador -->
       <div>
-        <p class="text-lg font-medium mb-2">{{ 'sites.edit.administrator.label' | transloco }}</p>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
+        <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.administrator-authorized.description' | transloco }}</p>
       </div>
 
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -553,17 +556,19 @@
         </mat-form-field>
       </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null" [disabled]="isLoading">
-            {{ 'global.buttons.cancel' | transloco }}
-          </button>
-        </div>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
-          {{ 'global.buttons.save' | transloco }}
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null" [disabled]="isLoading">
+          {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
+        {{ 'global.buttons.save' | transloco }}
+      </button>
     </div>
   </form>
 </div>

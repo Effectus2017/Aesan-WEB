@@ -24,7 +24,7 @@ import { Agency } from 'app/shared/models/Agency';
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareById, compareItems, compareMonitors, handleFormControls } from 'app/shared/utils';
+import { compareById, compareItems, compareMonitors, handleFormControls, maxDigitsValidator, alphanumericValidator } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -106,9 +106,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       status: [null, Validators.required],
 
       // Datos de la Agencia
-      uieNumber: [null, Validators.required],
+      uieNumber: [null, [Validators.required, Validators.maxLength(12), alphanumericValidator()]],
       sdrNumber: [null, Validators.required],
-      einNumber: [null, Validators.required],
+      einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
       // Datos de la Ciudad y Región
       city: [null, Validators.required],

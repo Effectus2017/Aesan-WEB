@@ -241,6 +241,9 @@
                 "placeholder": "Nombre completo de la persona a cargo",
                 "required": "El nombre completo de la persona a cargo es requerido"
             },
+            "person-in-charge-name": {
+                "placeholder": "Nombre completo de la persona a cargo"
+            },
             "administrator-birth-date": {
                 "label": "Fecha de Nacimiento del Administrador",
                 "placeholder": "Seleccione la fecha de nacimiento del administrador",

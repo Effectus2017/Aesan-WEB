@@ -43,6 +43,11 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.list.table.columns.siteCode',
   },
   {
+    key: 'schoolName',
+    type: 'text',
+    label: 'sites.list.table.columns.schoolName',
+  },
+  {
     key: 'actions',
     type: 'button',
     label: 'sites.list.table.columns.actions',

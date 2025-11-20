@@ -10,4 +10,6 @@ export interface SiteTableResponse {
   siteNumber: number;
   agencyCode?: string;
   siteCode?: string;
+  schoolName?: string;
+  schoolId?: number;
 }

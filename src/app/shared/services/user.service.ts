@@ -78,5 +78,21 @@ export class UserService {
       })
     );
   }
+
+  /**
+   * Verifica si un correo electrónico ya existe en el sistema.
+   * @param email El correo electrónico a verificar.
+   * @returns Un observable que emite un objeto con la propiedad exists (true/false).
+   */
+  checkEmailExists(email: string): Observable<{ exists: boolean }> {
+    const queryParameters: QueryParameters = {
+      email: email,
+    };
+    return this._httpClient.get<{ exists: boolean }>(`${this.apiUrl}/check-email-exists`, getHttpOptions(queryParameters)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
 }
 

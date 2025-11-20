@@ -49,7 +49,8 @@
         "request-orientation": "Request Orientation",
         "notification": "Notification",
         "orientation-request-sent": "Your orientation request has been sent to the Program Coordinator",
-        "accept": "Accept"
+        "accept": "Accept",
+        "close": "Close"
     },
     "reset-password": {
         "title": "Reset Password",

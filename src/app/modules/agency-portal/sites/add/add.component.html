@@ -372,9 +372,9 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ Day Care Home ❌ -->
+        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ✅ PACNA ❌ Day Care Home ❌ -->
         <!-- Tipo de Centro / Center Type -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM && showCenterTypeField">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM && showCenterTypeField || isPACNA && !shouldShowDayCareFields()">
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "sites.add.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">

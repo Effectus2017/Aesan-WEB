@@ -142,23 +142,20 @@
         </div>
 
         <!-- Campos de Fechas de Contrato -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
-          <!-- Contract Start Date -->
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8" *ngIf="!isBoardMember">
           <mat-form-field data-cy="contract-start-date-field">
             <mat-label>{{ "staff.edit.contractStartDate.label" | transloco }}</mat-label>
             <input matInput [matDatepicker]="contractStartDatePicker" formControlName="contractStartDate" placeholder="{{ 'staff.edit.contractStartDate.placeholder' | transloco }}" title="{{ 'staff.edit.contractStartDate.label' | transloco }}" [attr.aria-label]="'staff.edit.contractStartDate.label' | transloco" data-cy="contractStartDate-input" />
             <mat-datepicker-toggle matSuffix [for]="contractStartDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractStartDatePicker></mat-datepicker>
           </mat-form-field>
-
-          <!-- Contract End Date -->
           <mat-form-field data-cy="contract-end-date-field">
             <mat-label>{{ "staff.edit.contractEndDate.label" | transloco }}</mat-label>
             <input matInput [matDatepicker]="contractEndDatePicker" formControlName="contractEndDate" placeholder="{{ 'staff.edit.contractEndDate.placeholder' | transloco }}" title="{{ 'staff.edit.contractEndDate.label' | transloco }}" [attr.aria-label]="'staff.edit.contractEndDate.label' | transloco" data-cy="contractEndDate-input" />
             <mat-datepicker-toggle matSuffix [for]="contractEndDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #contractEndDatePicker></mat-datepicker>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- Ciudad y Región -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">

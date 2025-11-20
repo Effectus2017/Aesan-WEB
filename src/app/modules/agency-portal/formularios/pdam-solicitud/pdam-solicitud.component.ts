@@ -77,7 +77,7 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
   postalAddress: string;
   physicalAddress: string;
   phoneNumber: string;
-  uieNumber: number;
+  uieNumber: string;
   corporationNumber: number;
   employerNumber: number;
   latitude: number;

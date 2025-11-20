@@ -184,6 +184,22 @@
           </button>
         </div>
         }
+
+        @if (button.key === 'viewStaff') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || (button.label | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            (click)="onViewStaff($event, element.id)"
+            [attr.aria-label]="button.label | transloco"
+          >
+            <span class="sr-only">{{ button.label | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:users'" [attr.aria-hidden]="true"></mat-icon>
+          </button>
+        </div>
+        }
         }
       </div>
       } @default {
@@ -359,13 +375,29 @@
               <button
                   [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
                   type="button"
-                  mat-icon-button
+                  mat-flat-button
+                  color="primary"
                   [disabled]="isButtonDisabled(button)"
                   (click)="onButtonClick($event, button, element)"
                   [attr.aria-label]="'global.buttons.edit' | transloco"
               >
-                  <span class="sr-only">{{ "global.buttons.edit" | transloco }}</span>
-                  <mat-icon [svgIcon]="button.icon" [attr.aria-hidden]="true" style="color: #4CAF50;"></mat-icon>
+                  {{ 'global.buttons.edit' | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'viewStaff') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || (button.label | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  (click)="onViewStaff($event, element.id)"
+                  [attr.aria-label]="button.label | transloco"
+              >
+                  {{ button.label | transloco }}
               </button>
             </div>
             }

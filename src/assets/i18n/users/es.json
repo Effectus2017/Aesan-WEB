@@ -89,8 +89,8 @@
             "messages": {
                 "force-password": {
                     "title": "Cambio de Contraseña",
-                    "success": "Se ha generado una nueva contraseña temporal y se ha enviado por correo electrónico al usuario.",
-                    "error": "Ha ocurrido un error al generar la contraseña temporal."
+                    "success": "Se ha generado una nueva contraseña temporera y se ha enviado por correo electrónico al usuario.",
+                    "error": "Ha ocurrido un error al generar la contraseña temporera."
                 },
                 "avatar": {
                     "title": "Avatar",
@@ -107,7 +107,7 @@
                 "label": "Usuario Activo"
             },
             "isTemporalPasswordActived": {
-                "label": "Contraseña Temporal Activada"
+                "label": "Contraseña Temporera Activada"
             },
             "emailConfirmed": {
                 "label": "Correo Electrónico Confirmado"
@@ -146,7 +146,7 @@
                 "roles": "Roles",
                 "avatar": "Foto de Perfil",
                 "isActive": "Activo",
-                "isTemporalPasswordActived": "Contraseña Temporal Activada",
+                "isTemporalPasswordActived": "Contraseña Temporera Activada",
                 "emailConfirmed": "Correo Electrónico Confirmado"
             },
             "delete": {
@@ -226,7 +226,7 @@
                 "label": "Usuario Activo"
             },
             "isTemporalPasswordActived": {
-                "label": "Contraseña Temporal Activada"
+                "label": "Contraseña Temporera Activada"
             },
             "emailConfirmed": {
                 "label": "Correo Electrónico Confirmado"
