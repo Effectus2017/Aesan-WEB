@@ -534,6 +534,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
+  isDayCareHomeId: number | null = null;
   showDifferentGroupsFields: boolean = false;
 
   // Propiedad para controlar la visibilidad de la sección de desarrollo
@@ -599,10 +600,18 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.agencyId = this._authService.getAgencyId();
 
 
-    // Verificar si hay schoolId en query parameters
+    // Verificar si hay schoolId o isDayCareHomeId en query parameters
     this._route.queryParams.subscribe(params => {
       if (params['schoolId']) {
         this.schoolId = +params['schoolId'];
+      }
+      // Leer isDayCareHomeId de los query parameters
+      if (params['isDayCareHomeId']) {
+        const isDayCareHomeId = +params['isDayCareHomeId'];
+        // Determinar isDayCareHome basado en el ID
+        // Necesitamos obtener las opciones para comparar
+        // Por ahora, asumimos que si viene el parámetro, debemos determinar el valor
+        // Esto se ajustará cuando tengamos las opciones cargadas
       }
     });
     const resolvedData = this._route.snapshot.data['data'];
@@ -656,15 +665,42 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         this.agency = result.body;
         const programs = this.agency.programs || [];
 
-        // Obtener el valor de isDayCareHome de la inscripción
-        // Convertir OptionSelection a boolean: 
-        // - Si booleanValue === true (Sí) → true
-        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
-        // - Si booleanValue === false (No) o no existe → false
-        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
-        this.isDayCareHome = isDayCareHomeOption 
-          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-          : false;
+        // Leer isDayCareHomeId de los query parameters
+        const queryParams = this._route.snapshot.queryParams;
+        const isDayCareHomeIdFromQuery = queryParams['isDayCareHomeId'] 
+          ? parseInt(queryParams['isDayCareHomeId'], 10) 
+          : null;
+
+        // Si hay isDayCareHomeId en query params, usarlo directamente
+        if (isDayCareHomeIdFromQuery !== null && resolvedData) {
+          this.isDayCareHomeId = isDayCareHomeIdFromQuery;
+          
+          // Obtener las opciones de isDayCareHome del resolver para determinar isDayCareHome (bool)
+          const isDayCareHomeOptions = resolvedData.options?.data?.filter(
+            (option: OptionSelection) => option.optionKey === 'isDayCareHome'
+          ) || [];
+          
+          const selectedOption = isDayCareHomeOptions.find(
+            (opt: OptionSelection) => opt.id === isDayCareHomeIdFromQuery
+          );
+          
+          // Si el ID corresponde a "Sí" (booleanValue === true), entonces isDayCareHome = true
+          // Si el ID corresponde a "No" (booleanValue === false), entonces isDayCareHome = false
+          // Si el ID corresponde a "Ambos" (booleanValue === null), entonces isDayCareHome = true (para mostrar campos)
+          this.isDayCareHome = selectedOption 
+            ? (selectedOption.booleanValue === true || selectedOption.booleanValue == null)
+            : false;
+        } else {
+          // Si no hay query param, usar el valor de la agencia como antes (solo para nuevos sitios)
+          const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
+          if (isDayCareHomeOption) {
+            this.isDayCareHomeId = isDayCareHomeOption.id;
+            this.isDayCareHome = isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null;
+          } else {
+            this.isDayCareHomeId = null;
+            this.isDayCareHome = false;
+          }
+        }
 
         // Determinar qué campos mostrar según los programas
         this.determineVisibleFields(programs);
@@ -1215,9 +1251,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // If you have a Public Alliance contract, please specify the type of contract
       publicAllianceContractId: formValues.publicAllianceContractId ?? null,
 
-      // Indica si la agencia es Day Care Home
-      // Indicates if the agency is Day Care Home
-      isDayCareHome: this.isDayCareHome,
+      // ID que indica si el sitio es un Centro (No) o un Hogar (Sí)
+      // ID indicating if the site is a Center (No) or a Home (Yes)
+      isDayCareHomeId: this.isDayCareHomeId,
 
       // IDs de programas de la agencia para determinar lógica de días de funcionamiento
       // Agency program IDs to determine operating days logic

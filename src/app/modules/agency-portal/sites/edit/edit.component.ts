@@ -244,6 +244,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
+  isDayCareHomeId: number | null = null;
   showDifferentGroupsFields: boolean = false;
 
   // Propiedad para controlar la visibilidad de la sección de desarrollo
@@ -746,15 +747,25 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.agency = result.body;
         const programs = this.agency.programs || [];
 
-        // Obtener el valor de isDayCareHome de la inscripción
-        // Convertir OptionSelection a boolean:
-        // - Si booleanValue === true (Sí) → true
-        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
-        // - Si booleanValue === false (No) o no existe → false
-        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
-        this.isDayCareHome = isDayCareHomeOption
-          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-          : false;
+        // Obtener el valor de isDayCareHome de la inscripción o del sitio
+        // Si el sitio tiene isDayCareHomeId, usarlo; si no, usar el de la agencia
+        if (resolvedData?.site?.isDayCareHomeId) {
+          this.isDayCareHomeId = resolvedData.site.isDayCareHomeId;
+          const isDayCareHomeOption = resolvedData.site.isDayCareHome;
+          this.isDayCareHome = isDayCareHomeOption
+            ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+            : false;
+        } else {
+          // Convertir OptionSelection a boolean:
+          // - Si booleanValue === true (Sí) → true
+          // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
+          // - Si booleanValue === false (No) o no existe → false
+          const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
+          this.isDayCareHomeId = isDayCareHomeOption?.id || null;
+          this.isDayCareHome = isDayCareHomeOption
+            ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+            : false;
+        }
 
         // Determinar qué campos mostrar según los programas
         this.determineVisibleFields(programs);
@@ -1230,6 +1241,14 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       publicAllianceContractId: param.publicAllianceContractId ?? null,
     });
 
+    // Establecer isDayCareHomeId del sitio si existe
+    if (param.isDayCareHomeId) {
+      this.isDayCareHomeId = param.isDayCareHomeId;
+      if (param.isDayCareHome) {
+        this.isDayCareHome = param.isDayCareHome.booleanValue === true || param.isDayCareHome.booleanValue == null;
+      }
+    }
+
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
     if (!areaType && city) {
@@ -1429,7 +1448,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home
-      isDayCareHome: this.isDayCareHome,
+      isDayCareHomeId: this.isDayCareHomeId,
     };
 
     // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====

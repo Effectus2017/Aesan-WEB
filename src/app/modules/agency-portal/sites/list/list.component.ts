@@ -19,11 +19,13 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { ColumnSchema, GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteTableResponse } from 'app/shared/models/Response/SiteTableResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { SiteSatellitesModalComponent } from '../site-satellites-modal/site-satellites-modal.component';
+import { PROGRAM_IDS } from 'app/shared/const';
+import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -54,7 +56,13 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
+  private _optionSelectionService = inject(OptionSelectionService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  isPACNAAgency = false;
+  private _centerOptionId?: number;
+  private _homeOptionId?: number;
+  private _currentIsDayCareHomeId?: number;
 
   headerConfig: GenericHeaderConfig = {
     title: 'sites.list.title',
@@ -82,15 +90,33 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   constructor() {}
 
   ngOnInit() {
-    // Obtener datos del resolver en lugar de suscribirse
-    const resolvedData = this._route.snapshot.data['data'];
+    this.detectPACNAAgency();
+    this.applyColumnsSchema();
+    this.loadIsDayCareHomeOptions();
 
-    if (resolvedData) {
-      this.tableConfig.dataSource.data = resolvedData.sites.data;
-      this.tableConfig.length = resolvedData.sites.count;
-      this.tableConfig.dataSourceList = resolvedData.sites.data;
-      this._changeDetectorRef.markForCheck();
-    }
+    // Leer isDayCareHomeId de los query parameters
+    this._route.queryParams
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(params => {
+        const isDayCareHomeId = params['isDayCareHomeId'] ? parseInt(params['isDayCareHomeId'], 10) : undefined;
+        this._currentIsDayCareHomeId = isDayCareHomeId;
+        this.updateHeaderTitle(isDayCareHomeId);
+        
+        // Obtener datos del resolver en lugar de suscribirse
+        const resolvedData = this._route.snapshot.data['data'];
+
+        if (resolvedData) {
+          this.tableConfig.dataSource.data = resolvedData.sites.data;
+          this.tableConfig.length = resolvedData.sites.count;
+          this.tableConfig.dataSourceList = resolvedData.sites.data;
+          this._changeDetectorRef.markForCheck();
+        }
+
+        // Si hay isDayCareHomeId en query params, hacer una nueva búsqueda
+        if (isDayCareHomeId !== undefined) {
+          this.getAll(0, this.headerConfig.formGroup.value);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -108,15 +134,35 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   getAll(index: number, form: any) {
     const name = form.name || null;
     const pageSize = this.tableConfig.pageSize;
+    
+    // Leer isDayCareHomeId de los query parameters actuales
+    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'] 
+      ? parseInt(this._route.snapshot.queryParams['isDayCareHomeId'], 10) 
+      : undefined;
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
       name: name,
       alls: false,
+      isDayCareHomeId: isDayCareHomeId,
     };
 
-    this._siteService.getAllSitesFromDb(requestParameters).subscribe();
+    this._siteService.getAllSitesFromDb(requestParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: any) => {
+          if (response && response.body) {
+            this.tableConfig.dataSource.data = response.body.data || [];
+            this.tableConfig.length = response.body.count || 0;
+            this.tableConfig.dataSourceList = response.body.data || [];
+            this._changeDetectorRef.markForCheck();
+          }
+        },
+        error: (error) => {
+          console.error('Error al obtener sitios:', error);
+        }
+      });
   }
 
   getPaginator(event?: PageEvent) {
@@ -185,5 +231,90 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
 
         }
       });
+  }
+
+  private detectPACNAAgency(): void {
+    const programsRaw = localStorage.getItem('agencyPrograms');
+    if (!programsRaw) {
+      this.isPACNAAgency = false;
+      return;
+    }
+
+    try {
+      const programs: Array<{ id: number }> = JSON.parse(programsRaw);
+      this.isPACNAAgency = Array.isArray(programs) && programs.some((program) => program?.id === PROGRAM_IDS.PACNA);
+    } catch {
+      this.isPACNAAgency = false;
+    }
+  }
+
+  private loadIsDayCareHomeOptions(): void {
+    const params: QueryParameters = { optionKey: 'isDayCareHome' } as QueryParameters;
+    this._optionSelectionService
+      .getOptionSelectionByOptionKey(params)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: any) => {
+          const options = response?.body?.data || response?.body || [];
+          const centerOption = options.find((option: any) => option?.booleanValue === false);
+          const homeOption = options.find((option: any) => option?.booleanValue === true);
+          this._centerOptionId = centerOption?.id;
+          this._homeOptionId = homeOption?.id;
+          this.updateHeaderTitle(this._currentIsDayCareHomeId);
+        },
+        error: (error) => {
+          console.error('Error al obtener opciones de isDayCareHome:', error);
+        },
+      });
+  }
+
+  private applyColumnsSchema(): void {
+    const schema = this.buildColumnsSchema();
+    this.tableConfig.columnsSchema = schema;
+    this.tableConfig.displayedColumns = schema.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key));
+  }
+
+  private buildColumnsSchema(): ColumnSchema[] {
+    const schema = SCHOOLS_COLUMNS_SCHEMA.map((column) => ({
+      ...column,
+      buttons: column.buttons ? column.buttons.map((button) => ({ ...button })) : undefined,
+    }));
+
+    if (!this.isPACNAAgency) {
+      return schema;
+    }
+
+    return schema
+      .filter((column) => {
+        const columnKey = Array.isArray(column.key) ? column.key[0] : column.key;
+        return columnKey !== 'schoolName';
+      })
+      .map((column) => {
+        const columnKey = Array.isArray(column.key) ? column.key[0] : column.key;
+        if (columnKey === 'actions' && column.buttons) {
+          return {
+            ...column,
+            buttons: column.buttons.filter((button) => button.key !== 'satellites'),
+          };
+        }
+        return column;
+      });
+  }
+
+  private updateHeaderTitle(isDayCareHomeId?: number): void {
+    if (!this.isPACNAAgency) {
+      this.headerConfig.title = 'sites.list.title';
+      return;
+    }
+
+    if (this._centerOptionId && isDayCareHomeId === this._centerOptionId) {
+      this.headerConfig.title = 'sites.list.titleCenters';
+    } else if (this._homeOptionId && isDayCareHomeId === this._homeOptionId) {
+      this.headerConfig.title = 'sites.list.titleHomes';
+    } else {
+      this.headerConfig.title = 'sites.list.title';
+    }
+
+    this._changeDetectorRef.markForCheck();
   }
 }

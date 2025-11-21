@@ -93,14 +93,19 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
 
   const agencyId = authService.getAgencyId();
 
+  // Obtener isDayCareHomeId desde localStorage (guardado al inicio del portal)
+  const isDayCareHomeIdStr = localStorage.getItem('agencyIsDayCareHomeId');
+  const isDayCareHomeId = isDayCareHomeIdStr ? parseInt(isDayCareHomeIdStr, 10) : null;
+
   // Request parameters for sites
   // Parámetros de la solicitud para sitios
   const sitesRequestParameters: QueryParameters = {
     take: 100,
     skip : 0,
-    alls: true,
+    alls: false,
     agencyId: agencyId,
     isList: true, // Para lista de sitios
+    isDayCareHomeId: isDayCareHomeId,
   };
 
   return forkJoin([
@@ -185,14 +190,19 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
 
   const agencyId = authService.getAgencyId();
 
+  // Obtener isDayCareHomeId desde localStorage (guardado al inicio del portal)
+  const isDayCareHomeIdStr = localStorage.getItem('agencyIsDayCareHomeId');
+  const isDayCareHomeId = isDayCareHomeIdStr ? parseInt(isDayCareHomeIdStr, 10) : null;
+
   // Request parameters for sites
   // Parámetros de la solicitud para sitios
   const sitesRequestParameters: QueryParameters = {
     take: 100,
     skip : 0,
-    alls: true,
+    alls: false,
     agencyId: agencyId,
     isList: true, // Para lista de sitios
+    isDayCareHomeId: isDayCareHomeId,
   };
 
   // Primero obtener los datos del staff para determinar si es empleado

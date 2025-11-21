@@ -58,5 +58,7 @@
   "./assets/i18n/sponsor-evaluation/es.json",
   "./assets/i18n/sponsor-evaluation/en.json",
   "./assets/i18n/cfr-info-dialog/es.json",
-  "./assets/i18n/cfr-info-dialog/en.json"
+  "./assets/i18n/cfr-info-dialog/en.json",
+  "./assets/i18n/email-template/es.json",
+  "./assets/i18n/email-template/en.json"
 ]

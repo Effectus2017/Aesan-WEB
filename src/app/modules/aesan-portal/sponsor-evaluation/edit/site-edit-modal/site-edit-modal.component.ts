@@ -199,6 +199,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   isPDFE: boolean = false;
   isAESAN: boolean = false;
   isDayCareHome: boolean = false;
+  isDayCareHomeId: number | null = null;
   showCenterTypeField: boolean = false;
   showResidentialTypeField: boolean = false;
 
@@ -554,9 +555,13 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   private setIsDayCareHome(): void {
     if (this.agency?.inscription?.isDayCareHome) {
       const isDayCareHomeOption = this.agency.inscription.isDayCareHome;
+      this.isDayCareHomeId = isDayCareHomeOption?.id || null;
       this.isDayCareHome = isDayCareHomeOption
         ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
         : false;
+    } else {
+      this.isDayCareHomeId = null;
+      this.isDayCareHome = false;
     }
   }
 
@@ -678,6 +683,14 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   }
 
   private setFormValues(site: Site): void {
+    // Establecer isDayCareHomeId del sitio si existe
+    if (site.isDayCareHomeId) {
+      this.isDayCareHomeId = site.isDayCareHomeId;
+      if (site.isDayCareHome) {
+        this.isDayCareHome = site.isDayCareHome.booleanValue === true || site.isDayCareHome.booleanValue == null;
+      }
+    }
+    
     this.form.patchValue({
       name: site.name || '',
       address: site.address || '',
@@ -1076,7 +1089,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,
       atRiskService: formValues.atRiskService ?? null,
       publicAllianceContractId: formValues.publicAllianceContractId ?? null,
-      isDayCareHome: this.isDayCareHome,
+      isDayCareHomeId: this.isDayCareHomeId,
     };
 
     const queryParameters: QueryParameters = {

@@ -3,6 +3,8 @@
         "title": "Sites",
         "list": {
             "title": "Site List",
+            "titleCenters": "Centers List",
+            "titleHomes": "Homes List",
             "table": {
                 "columns": {
                     "id": "Id",

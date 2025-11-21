@@ -34,6 +34,8 @@ import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 
 
@@ -76,6 +78,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
   private _activatedRoute = inject(ActivatedRoute);
+  private _userService = inject(UserService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -129,7 +132,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService)]),
       // Dirección postal
       postalAddress: new FormControl('', [Validators.required]),
       // Ciudad

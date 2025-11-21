@@ -19,6 +19,7 @@ import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/d
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
+import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/custom-shortcuts.component';
 
 @Component({
     selector: 'compact-layout',
@@ -37,7 +38,8 @@ import { filter, Subject, takeUntil } from 'rxjs';
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
         AgencyStatusBannerComponent,
-        MessagesComponent
+        MessagesComponent,
+        CustomShortcutsComponent
     ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {

@@ -98,6 +98,9 @@
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('invalidEmailFormat')" data-cy="email-format-error">
                 {{ 'users.add.email.email' | transloco }}
               </mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('emailExists')" data-cy="email-exists-error">
+                {{ 'users.add.email.exists' | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto gt-xs:pr-3">
               <mat-label>{{ 'users.add.username.label' | transloco }}</mat-label>

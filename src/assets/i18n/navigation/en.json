@@ -39,7 +39,11 @@
         "sponsorEvaluation": "Sponsor Evaluation",
         "reports": "Reports",
         "agency-status": "Agency Status",
-        "sites": "Sites",
+        "sites": {
+            "title": "Sites",
+            "centers": "Centers",
+            "homes": "Homes"
+        },
         "schools": "Sites",
         "administration": {
             "title": "Administration",
@@ -97,7 +101,8 @@
             "staff-types": "Staff Types",
             "operating-policies": "Operating Policies",
             "center-types": "Center Types",
-            "residential-types": "Residential Types"
+            "residential-types": "Residential Types",
+            "email-templates": "Email Templates"
         }
     }
 }

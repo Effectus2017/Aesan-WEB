@@ -39,7 +39,11 @@
         "sponsorEvaluation": "Evaluación de Auspiciadores",
         "reports": "Reportes",
         "agency-status": "Estados de Agencia",
-        "sites": "Sitios",
+        "sites": {
+            "title": "Sitios",
+            "centers": "Centros",
+            "homes": "Hogares"
+        },
         "schools": "Sitios",
         "administration": {
             "title": "Administración",
@@ -52,7 +56,8 @@
             "operating-policies": "Políticas Operativas",
             "center-types": "Tipos de Centro",
             "staff-types": "Tipos de Personal",
-            "residential-types": "Tipos Residenciales"
+            "residential-types": "Tipos Residenciales",
+            "email-templates": "Templates de Email"
         },
         "household": "Hogares",
         "employees": "Empleados",

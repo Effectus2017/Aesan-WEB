@@ -51,7 +51,6 @@
             <languages></languages>
             <fuse-fullscreen class="hidden md:block"></fuse-fullscreen>
             <search [appearance]="'bar'"></search>
-            <shortcuts></shortcuts>
             <messages></messages>
             <button
                 class="lg:hidden"
@@ -59,6 +58,8 @@
                 (click)="quickChat.toggle()">
                 <mat-icon [svgIcon]="'heroicons_outline:chat-bubble-left-right'"></mat-icon>
             </button>
+            <shortcuts></shortcuts>
+            <user></user>
         </div>
     </div>
 

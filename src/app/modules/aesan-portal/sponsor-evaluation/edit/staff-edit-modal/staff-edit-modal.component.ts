@@ -35,6 +35,8 @@ import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 export interface StaffEditModalData {
   staff: Staff;
@@ -78,6 +80,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   private _changeDetectorRef = inject(ChangeDetectorRef);
   public fieldVisibilityService = inject(FieldVisibilityService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private _userService = inject(UserService);
 
   // Form
   form = this._formBuilder.group({
@@ -93,7 +96,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     contractStartDate: new FormControl(''),
     contractEndDate: new FormControl(''),
     birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
     postalAddress: new FormControl('', [Validators.required]),
     city: new FormControl('', [Validators.required]),
     region: new FormControl('', [Validators.required]),
@@ -118,6 +121,9 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   listAdministrativePositions: OptionSelection[] = [];
   listOperationalPositions: OptionSelection[] = [];
   listBoardMemberTitles: OptionSelection[] = [];
+
+  // Email original para excluir de la validación en edición
+  originalEmail: string = '';
 
   // Type properties
   isEmployee: boolean = false;
@@ -295,6 +301,9 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   }
 
   private setFormValues(staff: Staff): void {
+    // Guardar el email original para excluirlo de la validación
+    this.originalEmail = staff.email || '';
+
     // Find staff type from list (like original component)
     const staffType = this.listStaffTypes.find((st) => st.id === staff.staffType?.id);
 
@@ -353,6 +362,14 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       site: staff.school,
       reviewResult: staff.reviewResultId ? this.reviewResult.find((r) => r.id === staff.reviewResultId) || null : null,
     });
+
+    // Actualizar el validador de email con el email original
+    const emailControl = this.form.get('email');
+    if (emailControl) {
+      emailControl.clearAsyncValidators();
+      emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
+      emailControl.updateValueAndValidity();
+    }
 
     // Update validations
     this.updateValidations();
@@ -560,7 +577,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
 
   onSave(): void {
     if (this.form.invalid) {
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('staff.edit.error.incompleteFields'));
       this.form.markAllAsTouched();
       return;
     }
@@ -571,13 +588,13 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     // Validaciones específicas según el tipo de staff
     if (this.isEmployee) {
       if (!formValues.staffClassification?.id) {
-        this._notificationService.showError('La clasificación es requerida para empleados');
+        this._notificationService.showError(this._translocoService.translate('staff.edit.error.classificationRequired'));
         this.isLoading = false;
         return;
       }
     } else if (this.isBoardMember) {
       if (!formValues.email || !formValues.postalAddress || !formValues.city?.id || !formValues.region?.id || !formValues.areaCode) {
-        this._notificationService.showError('Los campos de contacto y ubicación son requeridos para miembros de junta');
+        this._notificationService.showError(this._translocoService.translate('staff.edit.error.contactLocationRequired'));
         this.isLoading = false;
         return;
       }
@@ -585,7 +602,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
 
     const staffTypeId = formValues.staffType?.id || this.data.staff.staffType?.id || 0;
     if (!staffTypeId) {
-      this._notificationService.showError('El tipo de personal es requerido');
+      this._notificationService.showError(this._translocoService.translate('staff.edit.staffType.required'));
       this.isLoading = false;
       return;
     }
@@ -636,12 +653,15 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     this._staffService.updateStaff(staffRequest, {}).subscribe({
       next: () => {
         this.isLoading = false;
-        this._notificationService.showSuccess('Personal actualizado exitosamente');
+        const successMessage = this.isEmployee 
+          ? this._translocoService.translate('staff.edit.success.employee')
+          : this._translocoService.translate('staff.edit.success.boardMember');
+        this._notificationService.showSuccess(successMessage);
         this.dialogRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;
-        this._notificationService.showError('Error al actualizar el personal');
+        this._notificationService.showError(this._translocoService.translate('staff.edit.error.general'));
         console.error('Error updating staff:', error);
       },
     });

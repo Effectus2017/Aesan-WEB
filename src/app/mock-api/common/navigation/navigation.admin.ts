@@ -88,6 +88,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:building-office',
         link: '/operating-policy',
       },
+      {
+        id: 'administration.email-templates',
+        title: 'navigation.administration.email-templates',
+        type: 'basic',
+        icon: 'heroicons_solid:envelope',
+        link: '/email-template',
+      },
     ],
     roles: ['Administrator'],
   },

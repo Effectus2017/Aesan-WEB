@@ -161,6 +161,14 @@ export interface Site {
   publicAllianceContractId?: number;
   publicAllianceContract?: OptionSelection;
 
+  /**
+   * ID que indica si el sitio es un Centro (No) o un Hogar (Sí)
+   * ID indicating if the site is a Center (No) or a Home (Yes)
+   * Solo para sitios de agencias con programa PACNA
+   */
+  isDayCareHomeId?: number;
+  isDayCareHome?: OptionSelection;
+
   // Escuela relacionada
   school?: SchoolResponse;
   schoolName?: string; // Propiedad de conveniencia para mostrar el nombre de la escuela

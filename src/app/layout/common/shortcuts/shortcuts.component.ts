@@ -77,6 +77,9 @@ export class ShortcutsComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        // Initialize shortcuts if not already loaded
+        this._shortcutsService.getAll().subscribe();
     }
 
     /**

@@ -1,0 +1,72 @@
+{
+  "email-template": {
+    "title": "Email Templates",
+    "list": {
+      "title": "Email Templates List",
+      "search": {
+        "placeholder": "Search by key or description"
+      },
+      "table": {
+        "columns": {
+          "templateKey": "Template Key",
+          "description": "Description",
+          "subjectES": "Subject (Spanish)",
+          "subjectEN": "Subject (English)",
+          "isActive": "Active",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit"
+        }
+      }
+    },
+    "edit": {
+      "title": "Edit Email Template",
+      "templateKey": {
+        "label": "Template Key",
+        "placeholder": "Template key"
+      },
+      "description": {
+        "label": "Description",
+        "placeholder": "Template description"
+      },
+      "subjectES": {
+        "label": "Subject (Spanish)",
+        "placeholder": "Email subject in Spanish",
+        "required": "Spanish subject is required"
+      },
+      "subjectEN": {
+        "label": "Subject (English)",
+        "placeholder": "Email subject in English",
+        "required": "English subject is required"
+      },
+      "bodyES": {
+        "label": "Email Body (Spanish)",
+        "placeholder": "Write the email content in Spanish...",
+        "required": "Spanish email body is required"
+      },
+      "bodyEN": {
+        "label": "Email Body (English)",
+        "placeholder": "Write the email content in English...",
+        "required": "English email body is required"
+      },
+      "isActive": {
+        "label": "Active",
+        "description": "Indicates if the template is active"
+      },
+      "tabs": {
+        "spanish": "Spanish",
+        "english": "English"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "formInvalid": "The form is invalid. Please complete all required fields.",
+        "close": "Close"
+      }
+    }
+  }
+}
+

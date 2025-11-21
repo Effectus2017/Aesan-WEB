@@ -12,6 +12,7 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { UserComponent } from 'app/layout/common/user/user.component';
+import { ShortcutsComponent } from 'app/layout/common/shortcuts/shortcuts.component';
 import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/deadline-banner.component';
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
@@ -32,6 +33,7 @@ import { MessagesComponent } from 'app/layout/common/messages/messages.component
         MatIconModule,
         LanguagesComponent,
         UserComponent,
+        ShortcutsComponent,
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
         AgencyStatusBannerComponent,

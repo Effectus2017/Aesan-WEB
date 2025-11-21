@@ -12,7 +12,7 @@
         <!-- Navigation header hook -->
         <ng-container fuseVerticalNavigationContentHeader>
             <!-- Logo -->
-            <div class="flex items-center justify-center h-20 mt-3 mb-4">
+            <div class="flex justify-center items-center mt-3 mb-4 h-20">
                 <img
                     class="w-14"
                     [src]="logoPath"
@@ -26,7 +26,7 @@
 <div class="flex flex-col flex-auto w-full min-w-0">
 
     <!-- Header -->
-    <div [class]="backgroundClass + ' dark print:hidden'" class="relative flex items-center w-full h-16 px-4 shadow flex-0 sm:h-20 md:px-6 z-49 dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
+    <div [class]="backgroundClass + ' dark print:hidden'" class="flex relative items-center px-4 w-full h-16 shadow flex-0 sm:h-20 md:px-6 z-49 dark:shadow-none dark:border-b bg-card dark:bg-transparent print:hidden">
         <ng-container *ngIf="!isScreenSmall">
             <!-- Logo -->
             <div class="flex items-center mx-2 lg:mr-2">
@@ -69,6 +69,7 @@
             <languages></languages>
             <!-- <theme-toggle></theme-toggle> -->
             <messages></messages>
+            <shortcuts></shortcuts>
             <user></user>
         </div>
     </div>
@@ -85,12 +86,12 @@
         <div class="flex items-center">
             <img src="assets/images/logo/aesan-logo-1x.png" alt="Logo" class="mr-2 h-14">
         </div>
-        <div class="flex flex-row ml-auto text-right text-white gap-9">
-            <div class="flex items-center gap-3">
+        <div class="flex flex-row gap-9 ml-auto text-right text-white">
+            <div class="flex gap-3 items-center">
                 <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:map-pin"></mat-icon>
                 <p class="ml-2 text-sm">P.O. Box 190759 San Juan, PR 00919-0759</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex gap-3 items-center">
                 <mat-icon class="text-[#f39B1A] icon-size-4" svgIcon="heroicons_solid:phone"></mat-icon>
                 <p class="ml-2 text-sm">(787) 759-2000 / Exts. 4055, 6292</p>
             </div>

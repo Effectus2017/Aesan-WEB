@@ -146,6 +146,9 @@
             <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('email')">
               {{ "staff.add.email.invalid" | transloco }}
             </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('emailExists')">
+              {{ "staff.add.email.exists" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 

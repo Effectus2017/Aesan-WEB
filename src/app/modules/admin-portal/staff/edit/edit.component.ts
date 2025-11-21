@@ -46,6 +46,8 @@ import { AdminAddRelationshipModalComponent } from '../add-relationship-modal/ad
 import { AdminEditRelationshipModalComponent } from '../edit-relationship-modal/edit-relationship-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-admin-edit-staff',
@@ -92,6 +94,10 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   private _staffRelationshipService = inject(StaffRelationshipService);
   private _matDialog = inject(MatDialog);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _userService = inject(UserService);
+
+  // Email original para excluir de la validación en edición
+  originalEmail: string = '';
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -174,7 +180,7 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       // Birth date
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
       // Postal address
       postalAddress: new FormControl('', [Validators.required]),
       // City
@@ -333,6 +339,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   onSetForm(param: Staff): void {
     this.param = param;
 
+    // Guardar el email original para excluirlo de la validación
+    this.originalEmail = param.email || '';
+
     const staffType = this.listStaffTypes.find((st) => st.id === param.staffType?.id);
 
     if (staffType) {
@@ -371,6 +380,14 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
     });
+
+    // Actualizar el validador de email con el email original
+    const emailControl = this.headerConfig.formGroup.get('email');
+    if (emailControl) {
+      emailControl.clearAsyncValidators();
+      emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
+      emailControl.updateValueAndValidity();
+    }
 
     // Actualizar validaciones
     this.updateValidations();

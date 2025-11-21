@@ -294,6 +294,21 @@
         "contactLocationRequired": "Contact and location fields are required for board members"
       }
     },
+    "relationship": {
+      "modal": {
+        "success": {
+          "createRelationship": "Relationship created successfully",
+          "updateRelationship": "Relationship updated successfully",
+          "deleteRelationship": "Relationship deleted successfully"
+        },
+        "error": {
+          "createRelationship": "Error creating relationship",
+          "updateRelationship": "Error updating relationship",
+          "deleteRelationship": "Error deleting relationship",
+          "loadingData": "Error loading data"
+        }
+      }
+    },
     "edit": {
       "title": "Edit Staff",
       "information": "General Information",

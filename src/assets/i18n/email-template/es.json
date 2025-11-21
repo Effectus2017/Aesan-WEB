@@ -1,0 +1,72 @@
+{
+  "email-template": {
+    "title": "Templates de Email",
+    "list": {
+      "title": "Lista de Templates de Email",
+      "search": {
+        "placeholder": "Buscar por clave o descripción"
+      },
+      "table": {
+        "columns": {
+          "templateKey": "Clave del Template",
+          "description": "Descripción",
+          "subjectES": "Asunto (Español)",
+          "subjectEN": "Asunto (Inglés)",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar"
+        }
+      }
+    },
+    "edit": {
+      "title": "Editar Template de Email",
+      "templateKey": {
+        "label": "Clave del Template",
+        "placeholder": "Clave del template"
+      },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Descripción del template"
+      },
+      "subjectES": {
+        "label": "Asunto (Español)",
+        "placeholder": "Asunto del correo en español",
+        "required": "El asunto en español es obligatorio"
+      },
+      "subjectEN": {
+        "label": "Asunto (Inglés)",
+        "placeholder": "Asunto del correo en inglés",
+        "required": "El asunto en inglés es obligatorio"
+      },
+      "bodyES": {
+        "label": "Cuerpo del Correo (Español)",
+        "placeholder": "Escriba el contenido del correo en español...",
+        "required": "El cuerpo del correo en español es obligatorio"
+      },
+      "bodyEN": {
+        "label": "Cuerpo del Correo (Inglés)",
+        "placeholder": "Escriba el contenido del correo en inglés...",
+        "required": "El cuerpo del correo en inglés es obligatorio"
+      },
+      "isActive": {
+        "label": "Activo",
+        "description": "Indica si el template está activo"
+      },
+      "tabs": {
+        "spanish": "Español",
+        "english": "Inglés"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "messages": {
+        "formInvalid": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
+        "close": "Cerrar"
+      }
+    }
+  }
+}
+

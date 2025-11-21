@@ -233,6 +233,21 @@
         "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta"
       }
     },
+    "relationship": {
+      "modal": {
+        "success": {
+          "createRelationship": "Relación creada exitosamente",
+          "updateRelationship": "Relación actualizada exitosamente",
+          "deleteRelationship": "Relación eliminada exitosamente"
+        },
+        "error": {
+          "createRelationship": "Error al crear la relación",
+          "updateRelationship": "Error al actualizar la relación",
+          "deleteRelationship": "Error al eliminar la relación",
+          "loadingData": "Error al cargar los datos"
+        }
+      }
+    },
     "edit": {
       "title": "Editar Personal",
       "information": "Información General",

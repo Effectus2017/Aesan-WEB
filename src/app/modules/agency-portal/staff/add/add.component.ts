@@ -35,6 +35,8 @@ import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
 import { SiteService } from 'app/shared/services/site.service';
 import { Site } from 'app/shared/models/Site';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-add-staff',
@@ -76,6 +78,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _staffClassificationService = inject(StaffClassificationService);
   private _activatedRoute = inject(ActivatedRoute);
   private _siteService = inject(SiteService);
+  private _userService = inject(UserService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -131,7 +134,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService)]),
       // Dirección postal
       postalAddress: new FormControl('', [Validators.required]),
       // Ciudad
@@ -389,6 +392,62 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   onSubmit(): void {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
+      // Log detallado de campos inválidos
+      console.group('🔴 Formulario Inválido - Campos con Errores');
+      console.log('Estado general del formulario:', {
+        invalid: this.headerConfig.formGroup.invalid,
+        touched: this.headerConfig.formGroup.touched,
+        dirty: this.headerConfig.formGroup.dirty
+      });
+
+      // Iterar sobre todos los controles y mostrar los que tienen errores
+      Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
+        const control = this.headerConfig.formGroup.get(key);
+        if (control && control.invalid) {
+          console.log(`❌ Campo: ${key}`);
+          console.log('Estado:', {
+            invalid: control.invalid,
+            touched: control.touched,
+            dirty: control.dirty,
+            value: control.value,
+            errors: control.errors
+          });
+
+          // Mostrar mensajes de error específicos
+          if (control.errors) {
+            const errorMessages: string[] = [];
+            if (control.errors['required']) {
+              errorMessages.push('⚠️ Campo requerido');
+            }
+            if (control.errors['email']) {
+              errorMessages.push('⚠️ Email inválido');
+            }
+            if (control.errors['minimumAge']) {
+              errorMessages.push(`⚠️ ${control.errors['minimumAge'].message || 'Edad mínima no cumplida'}`);
+            }
+            // Agregar otros tipos de errores si existen
+            Object.keys(control.errors).forEach(errorKey => {
+              if (!['required', 'email', 'minimumAge'].includes(errorKey)) {
+                errorMessages.push(`⚠️ Error: ${errorKey}`);
+              }
+            });
+            console.log('Errores:', errorMessages);
+          }
+          console.groupEnd();
+        }
+      });
+
+      // Resumen de campos inválidos
+      const invalidFields = Object.keys(this.headerConfig.formGroup.controls)
+        .filter(key => {
+          const control = this.headerConfig.formGroup.get(key);
+          return control && control.invalid;
+        });
+
+      console.log('📋 Resumen - Campos inválidos:', invalidFields);
+      console.log(`Total de campos inválidos: ${invalidFields.length}`);
+      console.groupEnd();
+
       this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
@@ -397,7 +456,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const formValues = this.headerConfig.formGroup.value;
 
     // Fecha de nacimiento (solo para miembros de junta)
-    const birthDate: string = this.isBoardMember ? formValues.birthDate : null;
+    const birthDate: string = formValues.birthDate || null;
 
     // Email (solo para no empleados)
     const email: string = this.isEmployee ? '' : (formValues.email || '');
@@ -489,6 +548,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Información de asignación de sitio
       siteId: siteId,
       isPrimary: isPrimary,
+      birthDate: birthDate,
     };
 
     // Agregar campos de contacto y ubicación solo si no es empleado
@@ -512,9 +572,9 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
 
     // Agregar fecha de nacimiento solo si es miembro de junta
-    if (this.isBoardMember) {
-      staffRequest.birthDate = birthDate;
-    }
+    // if (this.isBoardMember) {
+    //   staffRequest.birthDate = birthDate;
+    // }
 
     // Disable the form
     this.headerConfig.formGroup.disable();
@@ -880,6 +940,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       fatherLastNameControl?.setValidators([Validators.required]);
       // El segundo apellido no es requerido para ningún tipo de staff
       motherLastNameControl?.clearValidators();
+      // El campo position SÍ es requerido para empleados
+      positionControl?.setValidators([Validators.required]);
       // Los campos de contacto y ubicación NO son requeridos para empleados
       emailControl?.clearValidators();
       cityControl?.clearValidators();
@@ -1003,6 +1065,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       fatherLastNameControl?.setValidators([Validators.required]);
       // El segundo apellido no es requerido para ningún tipo de staff
       motherLastNameControl?.clearValidators();
+      // El campo position NO es requerido para miembros de junta
+      positionControl?.clearValidators();
       // Los campos de contacto y ubicación son requeridos para miembros de junta
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
@@ -1051,6 +1115,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     firstNameControl?.updateValueAndValidity();
     fatherLastNameControl?.updateValueAndValidity();
     motherLastNameControl?.updateValueAndValidity();
+    positionControl?.updateValueAndValidity();
     emailControl?.updateValueAndValidity();
     cityControl?.updateValueAndValidity();
     regionControl?.updateValueAndValidity();

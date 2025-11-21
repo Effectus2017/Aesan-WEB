@@ -76,5 +76,10 @@ export interface QueryParameters {
   month?: number; // Mes (1-12)
   year?: number;  // Año
   operatingDayId?: number; // ID del día de funcionamiento
-}
 
+  // Campo para filtrar sitios por IsDayCareHomeId (Sí, No, Ambos)
+  isDayCareHomeId?: number | null;
+
+  // Campo para filtrar templates de email por clave
+  templateKey?: string;
+}

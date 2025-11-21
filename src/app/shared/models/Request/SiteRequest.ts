@@ -116,11 +116,11 @@ export interface SiteRequest {
     publicAllianceContractId?: number;
 
     /**
-     * Indica si la agencia es Day Care Home
-     * Indicates if the agency is Day Care Home
-     * Se obtiene de la inscripción de la agencia
+     * ID que indica si el sitio es un Centro (No) o un Hogar (Sí)
+     * ID indicating if the site is a Center (No) or a Home (Yes)
+     * Solo para sitios de agencias con programa PACNA
      */
-    isDayCareHome?: boolean;
+    isDayCareHomeId?: number;
 
     /**
      * IDs de programas de la agencia

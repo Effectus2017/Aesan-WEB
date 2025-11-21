@@ -38,6 +38,7 @@ import { ProgramService } from 'app/shared/services/program.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -98,67 +99,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _route = inject(ActivatedRoute);
-
-  // Validador asíncrono para email como arrow function
-  private emailExistsValidatorFn: AsyncValidatorFn = (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
-    // Si no hay valor, retornar null (no hay error)
-    if (!control.value || typeof control.value !== 'string' || control.value.trim() === '') {
-      return of(null);
-    }
-
-    const email = control.value.trim();
-
-    // Validar formato básico de email antes de hacer la llamada
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return of(null); // Si el formato no es válido, no validar existencia
-    }
-
-    return of(email).pipe(
-      debounceTime(500),
-      switchMap((emailValue: string) => {
-        if (!emailValue || emailValue.trim() === '') {
-          return of(null);
-        }
-        return this._userService.checkEmailExists(emailValue).pipe(
-          first(), // Completar el Observable después de la primera emisión
-          map((response: any) => {
-            const exists = response?.body?.exists || response?.exists || false;
-            if (exists) {
-              // Establecer el error directamente en el control
-              setTimeout(() => {
-                // Combinar errores existentes con el nuevo error
-                const currentErrors = control.errors || {};
-                control.setErrors({ ...currentErrors, emailExists: true });
-                control.markAsTouched();
-                control.markAsDirty();
-                // Forzar que el formulario se marque como inválido
-                control.parent?.updateValueAndValidity({ emitEvent: false });
-                // Forzar detección de cambios para OnPush
-                this._changeDetectorRef.detectChanges();
-              }, 0);
-              return { emailExists: true };
-            } else {
-              // Limpiar el error si el email no existe
-              if (control.hasError('emailExists')) {
-                const errors = { ...control.errors };
-                delete errors['emailExists'];
-                const newErrors = Object.keys(errors).length > 0 ? errors : null;
-                control.setErrors(newErrors);
-                control.parent?.updateValueAndValidity({ emitEvent: false });
-                this._changeDetectorRef.detectChanges();
-              }
-              return null;
-            }
-          }),
-          catchError(() => {
-            // En caso de error de red, no bloquear (retornar null)
-            return of(null);
-          })
-        );
-      })
-    );
-  };
 
   listPrograms: Program[] = [];
   listCities: City[] = [];
@@ -321,7 +261,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       motherLastName: [null],
 
       // Datos del Correo Electrónico y Cargo
-      email: [null, [Validators.required, Validators.email], [this.emailExistsValidatorFn]],
+      email: [null, [Validators.required, Validators.email], [emailExistsValidator(this._userService)]],
       phone: [null, [Validators.required]],
 
       // Posición del Staff

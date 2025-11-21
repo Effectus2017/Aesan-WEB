@@ -4,6 +4,7 @@ import { Region } from "./Region";
 import { StaffClassification } from "./StaffClassification";
 import { StaffType } from "./StaffType";
 import { SiteListItem } from "./SiteListItem";
+import { Site } from "./Site";
 
 export interface Staff {
   id: number;
@@ -47,6 +48,8 @@ export interface Staff {
   // Datos de la relación SchoolStaff
   schoolId?: number;
   isPrimary?: boolean;
+  // Site
+  site?: Site;
   //
   city?: City;
   // Region

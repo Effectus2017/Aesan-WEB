@@ -36,6 +36,8 @@ import { PermissionService } from 'app/shared/services/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
 import { DeletePermissionModalComponent } from '../delete-permission-modal/delete-permission-modal.component';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-users-edit',
@@ -71,12 +73,16 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _translocoService = inject(TranslocoService);
   private _permissionsService: PermissionService = inject(PermissionService);
   private _matDialog: MatDialog = inject(MatDialog);
+  private _userService: UserService = inject(UserService);
+
+  // Email original para excluir de la validación en edición
+  originalEmail: string = '';
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
     formGroup: this._formBuilder.group({
       datosPersonales: this._formBuilder.group({
-        email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email]),
+        email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
         firstName: new FormControl(null, Validators.required),
         middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
@@ -197,6 +203,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.id = param.id;
     this.user = param;
 
+    // Guardar el email original para excluirlo de la validación
+    this.originalEmail = param.email || '';
+
     // Limpiar la URL de la imagen si contiene barras invertidas
     if (param.imageURL) {
       this.imageURL = this._uploadService.normalizeImageUrl(param.imageURL);
@@ -216,6 +225,14 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       role: this.user.role,
       agency: this.user.agency,
     });
+
+    // Actualizar el validador de email con el email original
+    const emailControl = this.headerConfig.formGroup.get('datosPersonales.email');
+    if (emailControl) {
+      emailControl.clearAsyncValidators();
+      emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
+      emailControl.updateValueAndValidity();
+    }
 
     this.disableEditableFormControls();
   }

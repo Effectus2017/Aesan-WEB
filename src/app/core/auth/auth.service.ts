@@ -81,6 +81,10 @@ export class AuthService {
     // Remove the access token from the local storage
     localStorage.removeItem('accessToken');
 
+    // Remove agency-related data from local storage
+    localStorage.removeItem('agencyPrograms');
+    localStorage.removeItem('agencyIsDayCareHomeId');
+
     // Set the authenticated flag to false
     this._authenticated = false;
 

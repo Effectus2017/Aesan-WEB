@@ -100,6 +100,12 @@
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('required')">
                 {{ "users.edit.email.required" | transloco }}
               </mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('email')">
+                {{ "users.edit.email.invalid" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('emailExists')">
+                {{ "users.edit.email.exists" | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>

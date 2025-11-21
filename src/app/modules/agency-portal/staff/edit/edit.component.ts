@@ -48,6 +48,8 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-edit-staff',
@@ -96,6 +98,10 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _siteService = inject(SiteService);
   private _siteStaffService = inject(SiteStaffService);
   private _activatedRoute = inject(ActivatedRoute);
+  private _userService = inject(UserService);
+
+  // Email original para excluir de la validación en edición
+  originalEmail: string = '';
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -188,7 +194,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       birthDate: new FormControl('', [Validators.required, minimumAgeValidator(18)]),
       // Email
       // Unicamente para miembros de junta
-      email: new FormControl('', [Validators.required, Validators.email]),
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
       // Postal address
       // Unicamente para miembros de junta
       postalAddress: new FormControl('', [Validators.required]),
@@ -418,6 +424,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   onSetForm(param: Staff): void {
     this.param = param;
 
+    // Guardar el email original para excluirlo de la validación
+    this.originalEmail = param.email || '';
+
     const staffType = this.listStaffTypes.find((st) => st.id === param.staffType?.id);
 
     if (staffType) {
@@ -469,9 +478,17 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
 
-      site: param.school,
+      site: param.site,
       isPrimary: param.isPrimary,
     });
+
+    // Actualizar el validador de email con el email original
+    const emailControl = this.headerConfig.formGroup.get('email');
+    if (emailControl) {
+      emailControl.clearAsyncValidators();
+      emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
+      emailControl.updateValueAndValidity();
+    }
 
     // Actualizar validaciones
     this.updateValidations();
@@ -539,8 +556,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     const formValues = this.headerConfig.formGroup.value;
 
-    // Fecha de nacimiento (solo para miembros de junta)
-    const birthDate: string = this.isBoardMember ? formValues.birthDate : null;
+    // Fecha de nacimiento
+    const birthDate: string = formValues.birthDate || null;
 
     // Email (solo para no empleados)
     const email: string = this.isEmployee ? '' : formValues.email || '';
@@ -650,6 +667,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Información de asignación de sitio
       siteId: siteId,
       isPrimary: isPrimary,
+      birthDate: birthDate,
     };
 
     // Agregar campos de contacto y ubicación solo si no es empleado
@@ -673,9 +691,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     }
 
     // Agregar fecha de nacimiento solo si es miembro de junta
-    if (this.isBoardMember) {
-      staffRequest.birthDate = birthDate;
-    }
+    // if (this.isBoardMember) {
+    //   staffRequest.birthDate = birthDate;
+    // }
 
     // Disable the form
     this.headerConfig.formGroup.disable();

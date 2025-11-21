@@ -37,6 +37,8 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-users-add',
@@ -68,16 +70,17 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _translocoService: TranslocoService = inject(TranslocoService);
   private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
   private _route: ActivatedRoute = inject(ActivatedRoute);
+  private _userService: UserService = inject(UserService);
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
     formGroup: this._formBuilder.group({
       datosPersonales: this._formBuilder.group(
         {
-          username: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email, this.emailValidator()]),
+          username: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email, this.emailValidator()], [emailExistsValidator(this._userService)]),
           currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
           newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()]),
+          email: new FormControl(null, [Validators.required, Validators.email, this.emailValidator()], [emailExistsValidator(this._userService)]),
           firstName: new FormControl(null, Validators.required),
           middleName: new FormControl(null),
           fatherLastName: new FormControl(null, Validators.required),
