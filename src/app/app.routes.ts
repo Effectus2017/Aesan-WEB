@@ -103,6 +103,8 @@ export const appRoutes: Route[] = [
       { path: 'option-selection', loadChildren: () => import('app/modules/admin-portal/option-selection/option-selection.routes') },
       // Email templates (Role: Admin)
       { path: 'email-template', loadChildren: () => import('app/modules/admin-portal/email-template/email-template.routes') },
+      // Message templates (Role: Admin)
+      { path: 'message-template', loadChildren: () => import('app/modules/admin-portal/message-template/message-template.routes') },
       // Organization types (Role: Admin)
       { path: 'organization-type', loadChildren: () => import('app/modules/admin-portal/organization-type/organization-type.routes') },
     ],

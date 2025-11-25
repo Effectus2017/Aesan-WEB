@@ -97,6 +97,15 @@ export class AgencyService {
   }
 
   /**
+   * Actualiza la fecha de registro completado de una agencia
+   * @param queryParameters Los parámetros de consulta (debe incluir AgencyId y CompletedRegistrationDate)
+   * @returns True si se actualizó correctamente
+   */
+  updateCompletedRegistrationDate(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-completed-registration-date`, null, getHttpOptions(queryParameters));
+  }
+
+  /**
    * Actualiza el logo de una agencia
    * @param model El modelo con la nueva URL de la imagen
    * @param queryParameters Los parámetros de consulta

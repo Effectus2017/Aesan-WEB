@@ -8,10 +8,8 @@
       },
       "table": {
         "columns": {
-          "templateKey": "Template Key",
           "description": "Description",
-          "subjectES": "Subject (Spanish)",
-          "subjectEN": "Subject (English)",
+          "subject": "Subject",
           "isActive": "Active",
           "actions": "Actions"
         },
@@ -27,8 +25,12 @@
         "placeholder": "Template key"
       },
       "description": {
-        "label": "Description",
-        "placeholder": "Template description"
+        "label": "Description (Spanish)",
+        "placeholder": "Template description in Spanish"
+      },
+      "descriptionEN": {
+        "label": "Description (English)",
+        "placeholder": "Template description in English"
       },
       "subjectES": {
         "label": "Subject (Spanish)",
@@ -57,6 +59,11 @@
       "tabs": {
         "spanish": "Spanish",
         "english": "English"
+      },
+      "table": {
+        "language": "Language",
+        "subject": "Subject",
+        "body": "Body"
       },
       "buttons": {
         "save": "Save",

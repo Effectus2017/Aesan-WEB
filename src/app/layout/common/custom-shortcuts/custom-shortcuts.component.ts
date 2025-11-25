@@ -1,18 +1,15 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-import { NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
-import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { MatButton, MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { RouterLink } from '@angular/router';
-import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service';
-import { Shortcut } from 'app/layout/common/shortcuts/shortcuts.types';
-import { Subject, takeUntil } from 'rxjs';
+import { TranslocoModule } from '@ngneat/transloco';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { AuthService } from 'app/core/auth/auth.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector       : 'custom-shortcuts',
@@ -21,16 +18,14 @@ import { Subject, takeUntil } from 'rxjs';
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs       : 'customShortcuts',
     standalone     : true,
-    imports        : [MatButtonModule, MatIconModule, NgIf, MatTooltipModule, NgFor, NgClass, NgTemplateOutlet, RouterLink, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule],
+    imports        : [MatButtonModule, MatIconModule, MatTooltipModule, TranslocoModule],
 })
 export class CustomShortcutsComponent implements OnInit, OnDestroy
 {
     @ViewChild('customShortcutsOrigin') private _customShortcutsOrigin: MatButton;
     @ViewChild('customShortcutsPanel') private _customShortcutsPanel: TemplateRef<any>;
 
-    mode: 'view' | 'modify' | 'add' | 'edit' = 'view';
-    shortcutForm: UntypedFormGroup;
-    shortcuts: Shortcut[];
+    sending: boolean = false;
     private _overlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -39,10 +34,11 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
      */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _formBuilder: UntypedFormBuilder,
-        private _shortcutsService: ShortcutsService,
         private _overlay: Overlay,
         private _viewContainerRef: ViewContainerRef,
+        private _agencyService: AgencyService,
+        private _notificationService: NotificationService,
+        private _authService: AuthService,
     )
     {
     }
@@ -56,30 +52,6 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        // Initialize the form
-        this.shortcutForm = this._formBuilder.group({
-            id         : [null],
-            label      : ['', Validators.required],
-            description: [''],
-            icon       : ['', Validators.required],
-            link       : ['', Validators.required],
-            useRouter  : ['', Validators.required],
-        });
-
-        // Get the shortcuts
-        this._shortcutsService.shortcuts$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((shortcuts: Shortcut[]) =>
-            {
-                // Load the shortcuts
-                this.shortcuts = shortcuts;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        // Initialize shortcuts if not already loaded
-        this._shortcutsService.getAll().subscribe();
     }
 
     /**
@@ -113,9 +85,6 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
             return;
         }
 
-        // Make sure to start in 'view' mode
-        this.mode = 'view';
-
         // Create the overlay if it doesn't exist
         if ( !this._overlayRef )
         {
@@ -135,85 +104,59 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
     }
 
     /**
-     * Change the mode
+     * Send test message using template
      */
-    changeMode(mode: 'view' | 'modify' | 'add' | 'edit'): void
+    sendTestMessage(): void
     {
-        // Change the mode
-        this.mode = mode;
-    }
+        if (this.sending) return;
 
-    /**
-     * Prepare for a new shortcut
-     */
-    newShortcut(): void
-    {
-        // Reset the form
-        this.shortcutForm.reset();
-
-        // Enter the add mode
-        this.mode = 'add';
-    }
-
-    /**
-     * Edit a shortcut
-     */
-    editShortcut(shortcut: Shortcut): void
-    {
-        // Reset the form with the shortcut
-        this.shortcutForm.reset(shortcut);
-
-        // Enter the edit mode
-        this.mode = 'edit';
-    }
-
-    /**
-     * Save shortcut
-     */
-    save(): void
-    {
-        // Get the data from the form
-        const shortcut = this.shortcutForm.value;
-
-        // If there is an id, update it...
-        if ( shortcut.id )
-        {
-            this._shortcutsService.update(shortcut.id, shortcut).subscribe();
-        }
-        // Otherwise, create a new shortcut...
-        else
-        {
-            this._shortcutsService.create(shortcut).subscribe();
+        // Obtener la agencia del usuario actual logueado
+        const agencyId = this._authService.getAgencyId();
+        
+        if (!agencyId) {
+            console.error('No se pudo obtener el AgencyId del usuario actual');
+            this._notificationService.showErrorDialog('dialog.error.messageSendError');
+            return;
         }
 
-        // Go back the modify mode
-        this.mode = 'modify';
-    }
+        console.log('[CustomShortcuts] AgencyId obtenido del usuario:', agencyId);
 
-    /**
-     * Delete shortcut
-     */
-    delete(): void
-    {
-        // Get the data from the form
-        const shortcut = this.shortcutForm.value;
+        this.sending = true;
+        this._changeDetectorRef.markForCheck();
 
-        // Delete
-        this._shortcutsService.delete(shortcut.id).subscribe();
+        // Llamar al endpoint que usa templates
+        // Usar formato ISO para la fecha (el backend lo parsea automáticamente)
+        const now = new Date();
+        const queryParameters: QueryParameters = {
+            AgencyId: agencyId,
+            CompletedRegistrationDate: now.toISOString()
+        };
 
-        // Go back the modify mode
-        this.mode = 'modify';
-    }
+        console.log('[CustomShortcuts] Enviando request con parámetros:', queryParameters);
+        console.log('[CustomShortcuts] URL completa será:', `/agency/update-completed-registration-date?AgencyId=${agencyId}&CompletedRegistrationDate=${now.toISOString()}`);
 
-    /**
-     * Track by function for ngFor loops
-     *
-     * @param index
-     * @param item
-     */
-    trackByFn(index: number, item: any): any
-    {
-        return item.id || index;
+        this._agencyService.updateCompletedRegistrationDate(queryParameters).subscribe({
+            next: (response) => {
+                console.log('[CustomShortcuts] Respuesta exitosa:', response);
+                this.sending = false;
+                this._changeDetectorRef.markForCheck();
+                this._notificationService.showSuccessDialog('dialog.success.messageSent');
+                this.closePanel(); // Cerrar el panel después de enviar
+            },
+            error: (error) => {
+                console.error('[CustomShortcuts] Error al completar registro:', error);
+                console.error('[CustomShortcuts] Error details:', {
+                    status: error.status,
+                    statusText: error.statusText,
+                    message: error.message,
+                    error: error.error
+                });
+                this.sending = false;
+                this._changeDetectorRef.markForCheck();
+                const errorMessage = error.error?.message || error.message || 'Error desconocido';
+                this._notificationService.showErrorDialog('dialog.error.messageSendError');
+            },
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -269,4 +212,3 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
         });
     }
 }
-

@@ -1,0 +1,156 @@
+{
+  "message-template": {
+    "title": "Templates de Mensajes",
+    "list": {
+      "title": "Lista de Templates de Mensajes",
+      "search": {
+        "placeholder": "Buscar por clave o propósito"
+      },
+      "table": {
+        "columns": {
+          "purpose": "Propósito",
+          "title": "Título",
+          "isActive": "Activo",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar"
+        }
+      }
+    },
+    "edit": {
+      "title": "Editar Template de Mensaje",
+      "templateKey": {
+        "label": "Clave del Template",
+        "placeholder": "Clave del template"
+      },
+      "purposeES": {
+        "label": "Propósito del Template (Español)",
+        "placeholder": "Propósito del template en español (solo para administración)"
+      },
+      "purposeEN": {
+        "label": "Propósito del Template (Inglés)",
+        "placeholder": "Propósito del template en inglés (solo para administración)"
+      },
+      "titleES": {
+        "label": "Título del Mensaje (Español)",
+        "placeholder": "Título del mensaje en español",
+        "required": "El título en español es obligatorio"
+      },
+      "titleEN": {
+        "label": "Título del Mensaje (Inglés)",
+        "placeholder": "Título del mensaje en inglés",
+        "required": "El título en inglés es obligatorio"
+      },
+      "bodyES": {
+        "label": "Contenido del Mensaje (Español)",
+        "placeholder": "Escriba el contenido del mensaje en español...",
+        "required": "El contenido del mensaje en español es obligatorio"
+      },
+      "bodyEN": {
+        "label": "Contenido del Mensaje (Inglés)",
+        "placeholder": "Escriba el contenido del mensaje en inglés...",
+        "required": "El contenido del mensaje en inglés es obligatorio"
+      },
+      "icon": {
+        "label": "Icono",
+        "placeholder": "Nombre del icono (ej: heroicons_outline:check-circle)"
+      },
+      "image": {
+        "label": "Imagen",
+        "placeholder": "URL de la imagen"
+      },
+      "link": {
+        "label": "Enlace",
+        "placeholder": "URL del enlace"
+      },
+      "useRouter": {
+        "label": "Usar Router de Angular"
+      },
+      "isActive": {
+        "label": "Activo",
+        "description": "Indica si el template está activo"
+      },
+      "tabs": {
+        "spanish": "Español",
+        "english": "Inglés"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "messages": {
+        "formInvalid": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
+        "close": "Cerrar"
+      }
+    },
+    "add": {
+      "title": "Agregar Template de Mensaje",
+      "templateKey": {
+        "label": "Clave del Template",
+        "placeholder": "Clave del template (ej: SponsorRegistrationCompleted)",
+        "required": "La clave del template es obligatoria"
+      },
+      "purposeES": {
+        "label": "Propósito del Template (Español)",
+        "placeholder": "Propósito del template en español (solo para administración)"
+      },
+      "purposeEN": {
+        "label": "Propósito del Template (Inglés)",
+        "placeholder": "Propósito del template en inglés (solo para administración)"
+      },
+      "titleES": {
+        "label": "Título del Mensaje (Español)",
+        "placeholder": "Título del mensaje en español",
+        "required": "El título en español es obligatorio"
+      },
+      "titleEN": {
+        "label": "Título del Mensaje (Inglés)",
+        "placeholder": "Título del mensaje en inglés",
+        "required": "El título en inglés es obligatorio"
+      },
+      "bodyES": {
+        "label": "Contenido del Mensaje (Español)",
+        "placeholder": "Escriba el contenido del mensaje en español...",
+        "required": "El contenido del mensaje en español es obligatorio"
+      },
+      "bodyEN": {
+        "label": "Contenido del Mensaje (Inglés)",
+        "placeholder": "Escriba el contenido del mensaje en inglés...",
+        "required": "El contenido del mensaje en inglés es obligatorio"
+      },
+      "icon": {
+        "label": "Icono",
+        "placeholder": "Nombre del icono (ej: heroicons_outline:check-circle)"
+      },
+      "image": {
+        "label": "Imagen",
+        "placeholder": "URL de la imagen"
+      },
+      "link": {
+        "label": "Enlace",
+        "placeholder": "URL del enlace"
+      },
+      "useRouter": {
+        "label": "Usar Router de Angular"
+      },
+      "isActive": {
+        "label": "Activo",
+        "description": "Indica si el template está activo"
+      },
+      "tabs": {
+        "spanish": "Español",
+        "english": "Inglés"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      },
+      "messages": {
+        "formInvalid": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
+        "close": "Cerrar"
+      }
+    }
+  }
+}
+

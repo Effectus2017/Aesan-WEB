@@ -21,7 +21,7 @@ export class GenericTableComponent implements OnInit {
   @Input() darkMode: boolean = false;
 
   private _authService = inject(AuthService);
-  private _translocoService = inject(TranslocoService);
+  public _translocoService = inject(TranslocoService);
 
   ngOnInit(): void {
 
@@ -245,6 +245,44 @@ export class GenericTableComponent implements OnInit {
     }
 
     if (Array.isArray(path)) {
+      // Si es un array de paths, determinar cuál mostrar según el idioma
+      const currentLang = this._translocoService.getActiveLang();
+      const isEnglish = currentLang === 'en';
+
+      // Si hay dos elementos en el array, asumimos que el primero es ES y el segundo EN
+      if (path.length === 2) {
+        const esPath = path[0];
+        const enPath = path[1];
+
+        // Obtener valores directamente del objeto
+        const esValue = this.getNestedValue(element, esPath);
+        const enValue = this.getNestedValue(element, enPath);
+
+        // Verificar si los valores fueron obtenidos (no undefined significa que el campo existe)
+        // Si getNestedValue devuelve undefined, el campo no existe en el objeto
+        const esExists = esValue !== undefined;
+        const enExists = enValue !== undefined;
+
+        // Si estamos en inglés, priorizar inglés
+        if (isEnglish) {
+          // Si descriptionEN existe y tiene un valor no vacío, usarlo
+          if (enExists && enValue !== null && enValue !== '') {
+            return enValue;
+          }
+          // Si descriptionEN no existe o está vacío/null, usar español como fallback
+          return esValue || '';
+        } else {
+          // Si estamos en español, priorizar español
+          // Si description existe y tiene un valor no vacío, usarlo
+          if (esExists && esValue !== null && esValue !== '') {
+            return esValue;
+          }
+          // Si description no existe o está vacío/null, usar inglés como fallback
+          return enValue || '';
+        }
+      }
+
+      // Si hay más de dos elementos, concatenar todos
       return path.map(p => this.getNestedValue(element, p)).join(' ');
     }
 
@@ -270,7 +308,11 @@ export class GenericTableComponent implements OnInit {
     if (!col || !col.key) {
       return '';
     }
-    return Array.isArray(col.key) ? col.key[0] : col.key;
+    // Si es un array, usar el primer elemento como identificador de columna
+    if (Array.isArray(col.key)) {
+      return col.key[0];
+    }
+    return col.key;
   }
 
   /**

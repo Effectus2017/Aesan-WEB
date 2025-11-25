@@ -8,6 +8,11 @@
     "empty": {
       "title": "No hay mensajes",
       "subtitle": "Cuando tengas mensajes, aparecerán aquí."
+    },
+    "detail": {
+      "noTitle": "Sin título",
+      "noDescription": "Sin descripción",
+      "viewDetails": "Ver detalles"
     }
   }
 }

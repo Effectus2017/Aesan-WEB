@@ -2,28 +2,18 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 
 export const COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: 'templateKey',
-    type: 'text',
-    label: 'email-template.list.table.columns.templateKey',
-  },
-  {
-    key: 'description',
+    key: ['description', 'descriptionEN'],
     type: 'text',
     label: 'email-template.list.table.columns.description',
   },
   {
-    key: 'subjectES',
+    key: ['subjectES', 'subjectEN'],
     type: 'text',
-    label: 'email-template.list.table.columns.subjectES',
-  },
-  {
-    key: 'subjectEN',
-    type: 'text',
-    label: 'email-template.list.table.columns.subjectEN',
+    label: 'email-template.list.table.columns.subject',
   },
   {
     key: 'isActive',
-    type: 'text',
+    type: 'boolean',
     label: 'email-template.list.table.columns.isActive',
   },
   {

@@ -8,10 +8,8 @@
       },
       "table": {
         "columns": {
-          "templateKey": "Clave del Template",
           "description": "Descripción",
-          "subjectES": "Asunto (Español)",
-          "subjectEN": "Asunto (Inglés)",
+          "subject": "Asunto",
           "isActive": "Activo",
           "actions": "Acciones"
         },
@@ -27,8 +25,12 @@
         "placeholder": "Clave del template"
       },
       "description": {
-        "label": "Descripción",
-        "placeholder": "Descripción del template"
+        "label": "Descripción (Español)",
+        "placeholder": "Descripción del template en español"
+      },
+      "descriptionEN": {
+        "label": "Descripción (Inglés)",
+        "placeholder": "Descripción del template en inglés"
       },
       "subjectES": {
         "label": "Asunto (Español)",
@@ -57,6 +59,11 @@
       "tabs": {
         "spanish": "Español",
         "english": "Inglés"
+      },
+      "table": {
+        "language": "Idioma",
+        "subject": "Asunto",
+        "body": "Cuerpo"
       },
       "buttons": {
         "save": "Guardar",

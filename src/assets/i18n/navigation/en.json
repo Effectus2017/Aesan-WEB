@@ -91,6 +91,7 @@
             "status": "Status: {{status}}",
             "tooltip": "Current status of the agency"
         },
+        "shortcuts": "Shortcuts",
         "administration": {
             "title": "Administration",
             "agency-status": "Agency Status",
@@ -102,7 +103,8 @@
             "operating-policies": "Operating Policies",
             "center-types": "Center Types",
             "residential-types": "Residential Types",
-            "email-templates": "Email Templates"
+            "email-templates": "Email Templates",
+            "message-templates": "Message Templates"
         }
     }
 }

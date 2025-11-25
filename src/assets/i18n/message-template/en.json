@@ -1,0 +1,156 @@
+{
+  "message-template": {
+    "title": "Message Templates",
+    "list": {
+      "title": "Message Templates List",
+      "search": {
+        "placeholder": "Search by key or purpose"
+      },
+      "table": {
+        "columns": {
+          "purpose": "Purpose",
+          "title": "Title",
+          "isActive": "Active",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit"
+        }
+      }
+    },
+    "edit": {
+      "title": "Edit Message Template",
+      "templateKey": {
+        "label": "Template Key",
+        "placeholder": "Template key"
+      },
+      "purposeES": {
+        "label": "Template Purpose (Spanish)",
+        "placeholder": "Template purpose in Spanish (administration only)"
+      },
+      "purposeEN": {
+        "label": "Template Purpose (English)",
+        "placeholder": "Template purpose in English (administration only)"
+      },
+      "titleES": {
+        "label": "Message Title (Spanish)",
+        "placeholder": "Message title in Spanish",
+        "required": "Spanish title is required"
+      },
+      "titleEN": {
+        "label": "Message Title (English)",
+        "placeholder": "Message title in English",
+        "required": "English title is required"
+      },
+      "bodyES": {
+        "label": "Message Content (Spanish)",
+        "placeholder": "Write the message content in Spanish...",
+        "required": "Spanish message content is required"
+      },
+      "bodyEN": {
+        "label": "Message Content (English)",
+        "placeholder": "Write the message content in English...",
+        "required": "English message content is required"
+      },
+      "icon": {
+        "label": "Icon",
+        "placeholder": "Icon name (e.g., heroicons_outline:check-circle)"
+      },
+      "image": {
+        "label": "Image",
+        "placeholder": "Image URL"
+      },
+      "link": {
+        "label": "Link",
+        "placeholder": "Link URL"
+      },
+      "useRouter": {
+        "label": "Use Angular Router"
+      },
+      "isActive": {
+        "label": "Active",
+        "description": "Indicates if the template is active"
+      },
+      "tabs": {
+        "spanish": "Spanish",
+        "english": "English"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "formInvalid": "The form is invalid. Please complete all required fields.",
+        "close": "Close"
+      }
+    },
+    "add": {
+      "title": "Add Message Template",
+      "templateKey": {
+        "label": "Template Key",
+        "placeholder": "Template key (e.g., SponsorRegistrationCompleted)",
+        "required": "Template key is required"
+      },
+      "purposeES": {
+        "label": "Template Purpose (Spanish)",
+        "placeholder": "Template purpose in Spanish (administration only)"
+      },
+      "purposeEN": {
+        "label": "Template Purpose (English)",
+        "placeholder": "Template purpose in English (administration only)"
+      },
+      "titleES": {
+        "label": "Message Title (Spanish)",
+        "placeholder": "Message title in Spanish",
+        "required": "Spanish title is required"
+      },
+      "titleEN": {
+        "label": "Message Title (English)",
+        "placeholder": "Message title in English",
+        "required": "English title is required"
+      },
+      "bodyES": {
+        "label": "Message Content (Spanish)",
+        "placeholder": "Write the message content in Spanish...",
+        "required": "Spanish message content is required"
+      },
+      "bodyEN": {
+        "label": "Message Content (English)",
+        "placeholder": "Write the message content in English...",
+        "required": "English message content is required"
+      },
+      "icon": {
+        "label": "Icon",
+        "placeholder": "Icon name (e.g., heroicons_outline:check-circle)"
+      },
+      "image": {
+        "label": "Image",
+        "placeholder": "Image URL"
+      },
+      "link": {
+        "label": "Link",
+        "placeholder": "Link URL"
+      },
+      "useRouter": {
+        "label": "Use Angular Router"
+      },
+      "isActive": {
+        "label": "Active",
+        "description": "Indicates if the template is active"
+      },
+      "tabs": {
+        "spanish": "Spanish",
+        "english": "English"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "formInvalid": "The form is invalid. Please complete all required fields.",
+        "close": "Close"
+      }
+    }
+  }
+}
+

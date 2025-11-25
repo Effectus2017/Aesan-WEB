@@ -82,4 +82,8 @@ export interface QueryParameters {
 
   // Campo para filtrar templates de email por clave
   templateKey?: string;
+
+  // Campos para actualizar fecha de registro completado
+  AgencyId?: number; // ID de la agencia (con mayúscula para coincidir con backend)
+  CompletedRegistrationDate?: string; // Fecha de registro completado en formato ISO
 }

@@ -6,6 +6,7 @@ import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { Message } from '../models/Message';
 import { MessagesRealtimeService } from './messages-realtime.service';
+import { BrowserNotificationService } from './browser-notification.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,6 +18,7 @@ export class MessagesService {
   private apiUrl = `${environment.baseHttpUrl}/messages`;
   private _httpClient = inject(HttpClient);
   private _realtime = inject(MessagesRealtimeService);
+  private _browserNotificationService = inject(BrowserNotificationService);
 
   constructor() {}
 
@@ -120,7 +122,7 @@ export class MessagesService {
    * @returns True si se marcó correctamente
    */
   markMessageAsRead(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/mark-as-read`, {}, getHttpOptions(queryParameters));
+    return this._httpClient.post(`${this.apiUrl}/mark-message-as-read`, {}, getHttpOptions(queryParameters));
   }
 
   /**
@@ -139,18 +141,41 @@ export class MessagesService {
   async init(userId?: string): Promise<void> {
     console.log('🚀 Inicializando servicio de mensajes...', { userId });
 
+    // Solicitar permisos de notificación automáticamente
+    this.requestNotificationPermission();
+
     try {
       // Crear parámetros solo si userId está definido
       const params = userId ? { userId } : {};
 
-      const [list, unread] = await Promise.all([
-        this._httpClient.get<Message[]>(`${this.apiUrl}/get-all-messages`, getHttpOptions(params)).toPromise(),
-        this._httpClient.get<number>(`${this.apiUrl}/get-unread-message-count`, getHttpOptions(params)).toPromise(),
+      const [listResponse, unreadResponse] = await Promise.all([
+        this._httpClient.get<any>(`${this.apiUrl}/get-all-messages`, getHttpOptions(params)).toPromise(),
+        this._httpClient.get<any>(`${this.apiUrl}/get-unread-message-count`, getHttpOptions(params)).toPromise(),
       ]);
+
+      // Extraer array de mensajes de la respuesta
+      const list = Array.isArray(listResponse)
+        ? listResponse
+        : Array.isArray(listResponse?.body?.data)
+        ? listResponse.body.data
+        : Array.isArray(listResponse?.body)
+        ? listResponse.body
+        : Array.isArray(listResponse?.data)
+        ? listResponse.data
+        : [];
+
+      // Extraer número de no leídos de la respuesta
+      const unread = typeof unreadResponse === 'number'
+        ? unreadResponse
+        : typeof unreadResponse?.body === 'number'
+        ? unreadResponse.body
+        : typeof unreadResponse?.data === 'number'
+        ? unreadResponse.data
+        : 0;
 
       console.log('📋 Mensajes iniciales cargados:', { count: list?.length || 0, unread: unread || 0 });
 
-      this._realtime.setInitialMessages(list ?? [], unread ?? 0);
+      this._realtime.setInitialMessages(list, unread);
 
       // Intentar conectar SignalR cuando la autenticación esté lista
       this.tryConnectSignalR();
@@ -190,5 +215,26 @@ export class MessagesService {
    */
   dispose(): void {
     this._realtime.disconnect();
+  }
+
+  /**
+   * Solicita permisos de notificación del navegador automáticamente
+   */
+  private async requestNotificationPermission(): Promise<void> {
+    if (this._browserNotificationService.isSupported()) {
+      // Esperar un poco para que el usuario haya interactuado con la página
+      setTimeout(async () => {
+        try {
+          const permission = await this._browserNotificationService.requestPermission();
+          if (permission === 'granted') {
+            console.log('✅ Permisos de notificación concedidos');
+          } else if (permission === 'denied') {
+            console.warn('⚠️ Permisos de notificación denegados por el usuario');
+          }
+        } catch (error) {
+          console.warn('⚠️ Error solicitando permisos de notificación:', error);
+        }
+      }, 2000); // Esperar 2 segundos después de la inicialización
+    }
   }
 }

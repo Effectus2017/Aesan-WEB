@@ -95,6 +95,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:envelope',
         link: '/email-template',
       },
+      {
+        id: 'administration.message-templates',
+        title: 'navigation.administration.message-templates',
+        type: 'basic',
+        icon: 'heroicons_solid:chat-bubble-left-right',
+        link: '/message-template',
+      },
     ],
     roles: ['Administrator'],
   },

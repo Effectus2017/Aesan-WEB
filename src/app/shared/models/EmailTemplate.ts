@@ -6,6 +6,7 @@ export interface EmailTemplate {
   bodyES: string;
   bodyEN: string;
   description?: string;
+  descriptionEN?: string;
   isActive: boolean;
   createdAt?: string;
   updatedAt?: string;

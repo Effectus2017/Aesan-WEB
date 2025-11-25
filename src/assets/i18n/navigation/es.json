@@ -57,7 +57,8 @@
             "center-types": "Tipos de Centro",
             "staff-types": "Tipos de Personal",
             "residential-types": "Tipos Residenciales",
-            "email-templates": "Templates de Email"
+            "email-templates": "Templates de Email",
+            "message-templates": "Templates de Mensajes"
         },
         "household": "Hogares",
         "employees": "Empleados",
@@ -92,6 +93,7 @@
         "agencyStatus": {
             "status": "Estado: {{status}}",
             "tooltip": "Estado actual de la agencia"
-        }
+        },
+        "shortcuts": "Atajos"
     }
 }

@@ -60,5 +60,7 @@
   "./assets/i18n/cfr-info-dialog/es.json",
   "./assets/i18n/cfr-info-dialog/en.json",
   "./assets/i18n/email-template/es.json",
-  "./assets/i18n/email-template/en.json"
+  "./assets/i18n/email-template/en.json",
+  "./assets/i18n/message-template/es.json",
+  "./assets/i18n/message-template/en.json"
 ]

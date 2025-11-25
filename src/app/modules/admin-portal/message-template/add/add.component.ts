@@ -4,20 +4,21 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { ActivatedRoute } from '@angular/router';
-import { EmailTemplateService } from 'app/shared/services/email-template.service';
+import { MessageTemplateService } from 'app/shared/services/message-template.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { EmailTemplate } from 'app/shared/models/EmailTemplate';
+import { MessageTemplate } from 'app/shared/models/MessageTemplate';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { QuillModule } from 'ngx-quill';
+import { Subject, takeUntil } from 'rxjs';
+
 @Component({
-    selector: 'app-edit-email-template',
-    templateUrl: './edit.component.html',
+    selector: 'app-add-message-template',
+    templateUrl: './add.component.html',
     encapsulation: ViewEncapsulation.None,
     imports: [
         FormsModule,
@@ -33,17 +34,15 @@ import { QuillModule } from 'ngx-quill';
         QuillModule,
     ]
 })
-export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class AddMessageTemplateComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
-  private _emailTemplateService = inject(EmailTemplateService);
-  private _route = inject(ActivatedRoute);
+  private _messageTemplateService = inject(MessageTemplateService);
   private _cdr = inject(ChangeDetectorRef);
   private _transloco = inject(TranslocoService);
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
-
-  emailTemplateId: number;
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   quillModules = {
     toolbar: [
@@ -65,15 +64,20 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
   };
 
   headerConfig: GenericHeaderConfig = {
-    title: 'email-template.edit.title',
+    title: 'message-template.add.title',
     formGroup: this._formBuilder.group({
-      templateKey: [{ value: null, disabled: true }, Validators.required],
-      description: [null],
-      descriptionEN: [null],
-      subjectES: [null, Validators.required],
-      subjectEN: [null, Validators.required],
+      templateKey: [null, Validators.required],
+      purposeES: [null],
+      purposeEN: [null],
+      purpose: [null], // Campo dinámico que muestra purposeES o purposeEN según el idioma
+      titleES: [null, Validators.required],
+      titleEN: [null, Validators.required],
       bodyES: [null, Validators.required],
       bodyEN: [null, Validators.required],
+      icon: [null],
+      image: [null],
+      link: [null],
+      useRouter: [false],
       isActive: [true],
     }),
     saveButtonShow: true,
@@ -86,38 +90,69 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
   constructor() {}
 
   ngOnInit(): void {
-    // Obtener datos del resolver
-    const resolvedData = this._route.snapshot.data['data'];
+    // Suscribirse a cambios de idioma para actualizar el campo purpose
+    this._transloco.langChanges$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.updatePurposeField();
+      });
 
-    if (resolvedData && resolvedData.emailTemplate) {
-      this.emailTemplateId = resolvedData.emailTemplate.id;
-      this.loadEmailTemplate(resolvedData.emailTemplate);
-    }
+    // Suscribirse a cambios en el campo purpose para guardar en el campo correcto
+    this.headerConfig.formGroup.get('purpose')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((value) => {
+        const currentLang = this._transloco.getActiveLang();
+        if (currentLang === 'en') {
+          this.headerConfig.formGroup.get('purposeEN')?.setValue(value, { emitEvent: false });
+        } else {
+          this.headerConfig.formGroup.get('purposeES')?.setValue(value, { emitEvent: false });
+        }
+      });
   }
 
   ngOnDestroy(): void {
-    // Quill no requiere destrucción explícita
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
 
-  loadEmailTemplate(data: EmailTemplate) {
-    this.headerConfig.formGroup.patchValue({
-      templateKey: data.templateKey,
-      description: data.description,
-      descriptionEN: data.descriptionEN,
-      subjectES: data.subjectES,
-      subjectEN: data.subjectEN,
-      bodyES: data.bodyES,
-      bodyEN: data.bodyEN,
-      isActive: data.isActive,
-    });
+  /**
+   * Actualiza el campo purpose con el valor correspondiente según el idioma activo
+   */
+  private updatePurposeField(): void {
+    const currentLang = this._transloco.getActiveLang();
+    const purposeValue = currentLang === 'en' 
+      ? this.headerConfig.formGroup.get('purposeEN')?.value
+      : this.headerConfig.formGroup.get('purposeES')?.value;
+    
+    this.headerConfig.formGroup.get('purpose')?.setValue(purposeValue || '', { emitEvent: false });
     this._cdr.markForCheck();
+  }
+
+  /**
+   * Getter para obtener el label del propósito según el idioma activo
+   */
+  get purposeLabel(): string {
+    const currentLang = this._transloco.getActiveLang();
+    return currentLang === 'en' 
+      ? this._transloco.translate('message-template.add.purposeEN.label')
+      : this._transloco.translate('message-template.add.purposeES.label');
+  }
+
+  /**
+   * Getter para obtener el placeholder del propósito según el idioma activo
+   */
+  get purposePlaceholder(): string {
+    const currentLang = this._transloco.getActiveLang();
+    return currentLang === 'en' 
+      ? this._transloco.translate('message-template.add.purposeEN.placeholder')
+      : this._transloco.translate('message-template.add.purposeES.placeholder');
   }
 
   onSave() {
     if (this.headerConfig.formGroup.invalid) {
       this._snackBar.open(
-        this._transloco.translate('email-template.edit.messages.formInvalid'),
-        this._transloco.translate('email-template.edit.messages.close'),
+        this._transloco.translate('message-template.add.messages.formInvalid'),
+        this._transloco.translate('message-template.add.messages.close'),
         { duration: 5000 }
       );
       this.headerConfig.formGroup.markAllAsTouched();
@@ -125,21 +160,23 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
     }
 
     const formValues = this.headerConfig.formGroup.getRawValue();
-    const templateKeyControl = this.headerConfig.formGroup.get('templateKey');
 
-    const emailTemplateRequest: Partial<EmailTemplate> = {
-      id: this.emailTemplateId,
-      templateKey: templateKeyControl?.value || formValues.templateKey,
-      description: formValues.description,
-      descriptionEN: formValues.descriptionEN,
-      subjectES: formValues.subjectES,
-      subjectEN: formValues.subjectEN,
+    const messageTemplateRequest: Omit<MessageTemplate, 'id' | 'createdAt' | 'updatedAt' | 'createdBy' | 'updatedBy'> = {
+      templateKey: formValues.templateKey,
+      titleES: formValues.titleES,
+      titleEN: formValues.titleEN,
       bodyES: formValues.bodyES,
       bodyEN: formValues.bodyEN,
-      isActive: formValues.isActive,
+      useRouter: formValues.useRouter || false,
+      isActive: formValues.isActive !== undefined ? formValues.isActive : true,
+      purposeES: formValues.purposeES || undefined,
+      purposeEN: formValues.purposeEN || undefined,
+      icon: formValues.icon || undefined,
+      image: formValues.image || undefined,
+      link: formValues.link || undefined,
     };
 
-    this._emailTemplateService.updateEmailTemplate(emailTemplateRequest).subscribe({
+    this._messageTemplateService.insertMessageTemplate(messageTemplateRequest).subscribe({
       next: (result: any) => {
         switch (result.body) {
           case true:
@@ -180,7 +217,7 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
         });
       },
       complete: () => {
-        this._customRouterService.navigate(['email-template']);
+        this._customRouterService.navigate(['message-template']);
       },
     });
   }
@@ -203,7 +240,7 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   onCancel() {
-    this._customRouterService.navigate(['email-template']);
+    this._customRouterService.navigate(['message-template']);
   }
 }
 

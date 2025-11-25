@@ -3,11 +3,13 @@
     "success": {
       "title": "Operación Exitosa",
       "message": "La operación se ha completado correctamente.",
+      "messageSent": "Mensaje enviado correctamente",
       "confirm": "Aceptar"
     },
     "error": {
       "title": "Error",
       "message": "Ha ocurrido un error durante la operación. Por favor, inténtelo de nuevo.",
+      "messageSendError": "Error al enviar el mensaje",
       "confirm": "Aceptar"
     },
     "permission-request": {

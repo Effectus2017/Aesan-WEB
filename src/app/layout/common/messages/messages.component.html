@@ -3,10 +3,10 @@
     mat-icon-button
     (click)="openPanel()"
     #messagesOrigin>
-    <ng-container *ngIf="unreadCount > 0">
+    <ng-container *ngIf="unreadCount() > 0">
         <span class="flex absolute top-0 right-0 left-0 justify-center items-center h-3">
             <span class="flex justify-center items-center px-1 mt-2.5 ml-4 h-4 text-xs font-medium text-indigo-50 bg-indigo-600 rounded-full shrink-0 min-w-4">
-                {{unreadCount}}
+                {{unreadCount()}}
             </span>
         </span>
     </ng-container>
@@ -34,7 +34,7 @@
                 <button
                     class="dark:text-white"
                     mat-icon-button
-                    [disabled]="unreadCount === 0"
+                    [disabled]="unreadCount() === 0"
                     [matTooltip]="'messages.markAllAsRead' | transloco"
                     (click)="markAllAsRead()">
                     <mat-icon
@@ -47,7 +47,7 @@
         <!-- Content -->
         <div class="flex overflow-y-auto relative flex-col flex-auto divide-y sm:max-h-120 bg-card">
             <!-- Messages -->
-            <ng-container *ngFor="let message of messages; trackBy: trackByFn">
+            <ng-container *ngFor="let message of messages(); trackBy: trackByFn">
                 <div
                     class="flex group hover:bg-gray-50 dark:hover:bg-black dark:hover:bg-opacity-5"
                     [ngClass]="{'unread': !message.read}">
@@ -58,23 +58,24 @@
                         <ng-container *ngIf="!message.useRouter">
                             <a
                                 class="flex flex-auto py-5 pl-6 cursor-pointer"
-                                [href]="message.link">
+                                [href]="message.link"
+                                (click)="openMessageDetail(message); $event.stopPropagation()">
                                 <ng-container *ngTemplateOutlet="messageContent"></ng-container>
                             </a>
                         </ng-container>
                         <!-- Router links -->
                         <ng-container *ngIf="message.useRouter">
-                            <a
+                            <div
                                 class="flex flex-auto py-5 pl-6 cursor-pointer"
-                                [routerLink]="message.link">
+                                (click)="openMessageDetail(message)">
                                 <ng-container *ngTemplateOutlet="messageContent"></ng-container>
-                            </a>
+                            </div>
                         </ng-container>
                     </ng-container>
 
                     <!-- Message without a link -->
                     <ng-container *ngIf="!message.link">
-                        <div class="flex flex-auto py-5 pl-6">
+                        <div class="flex flex-auto py-5 pl-6 cursor-pointer" (click)="openMessageDetail(message)">
                             <ng-container *ngTemplateOutlet="messageContent"></ng-container>
                         </div>
                     </ng-container>
@@ -107,15 +108,6 @@
 
                 <!-- Message content template -->
                 <ng-template #messageContent>
-                    <!-- Icon -->
-                    <ng-container *ngIf="message.icon && !message.image">
-                        <div class="flex justify-center items-center mr-4 w-8 h-8 bg-gray-100 rounded-full shrink-0 dark:bg-gray-700">
-                            <mat-icon
-                                class="icon-size-5"
-                                [svgIcon]="message.icon">
-                            </mat-icon>
-                        </div>
-                    </ng-container>
                     <!-- Image -->
                     <ng-container *ngIf="message.image">
                         <img
@@ -143,7 +135,7 @@
             </ng-container>
 
             <!-- No messages -->
-            <ng-container *ngIf="!messages || !messages.length">
+            <ng-container *ngIf="!messages() || !messages().length">
                 <div class="flex flex-col flex-auto justify-center items-center px-8 py-12 sm:justify-start">
                     <div class="flex justify-center items-center w-14 h-14 rounded-full flex-0 bg-primary-100 dark:bg-primary-600">
                         <mat-icon
