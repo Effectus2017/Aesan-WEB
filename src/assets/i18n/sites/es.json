@@ -526,6 +526,10 @@
                     "placeholder": "Seleccione el estatus",
                     "required": "El estatus es requerido"
                 },
+                "rations-service": {
+                    "label": "¿Brindó servicio de raciones durante su periodo de funcionamiento?",
+                    "required": "Esta pregunta es requerida"
+                },
                 "inactive-date": {
                     "label": "Fecha de Inactivación",
                     "placeholder": "Seleccione la fecha",
@@ -615,7 +619,8 @@
                 "pfhf": "PFHF",
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
-                "daycare-home": "Day Care Home"
+                "daycare-home": "Day Care Home",
+                "provision-fields": "Campos de Provisión"
             },
             "child-groups": {
                 "title": "Grupos de Niños Específicos",
@@ -770,7 +775,8 @@
                 "pfhf": "PFHF",
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
-                "daycare-home": "Day Care Home"
+                "daycare-home": "Day Care Home",
+                "provision-fields": "Campos de Provisión"
             },
             "name": {
                 "label": "Nombre del sitio",
@@ -1305,6 +1311,10 @@
                     "placeholder": "Seleccione el estatus",
                     "required": "El estatus es requerido"
                 },
+                "rations-service": {
+                    "label": "¿Brindó servicio de raciones durante su periodo de funcionamiento?",
+                    "required": "Esta pregunta es requerida"
+                },
                 "inactive-date": {
                     "label": "Fecha de Inactivación",
                     "placeholder": "Seleccione la fecha",
@@ -1319,7 +1329,10 @@
                 "save": "Guardar"
             },
             "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
-            "status-update-error": "Error al actualizar el estatus del sitio"
+            "status-update-error": "Error al actualizar el estatus del sitio",
+            "status-modal": {
+                "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento"
+            }
         },
         "calendar": {
             "title": "Calendario de Funcionamiento",

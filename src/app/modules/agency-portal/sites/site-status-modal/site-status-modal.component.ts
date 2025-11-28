@@ -23,6 +23,7 @@ export interface SiteStatusModalData {
   inactiveDate: Date | null;
   inactiveJustification: string | null;
   isActiveOptions: OptionSelection[];
+  yesNoOptions: OptionSelection[]; // Opciones para Sí/No de la pregunta de raciones
 }
 
 @Component({
@@ -49,6 +50,7 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isLoading: boolean = false;
   currentLang: string = 'es';
+  showInactivationFields: boolean = false; // Controla visibilidad de campos de inactivación
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _siteService = inject(SiteService);
   private _notificationService = inject(NotificationService);
@@ -63,6 +65,7 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     // Crear el formulario reactivo
     this.form = this.fb.group({
       isActive: [this.data.isActive, Validators.required],
+      providedRationsService: [null, Validators.required], // Nueva pregunta
       inactiveDate: [this.data.inactiveDate || null],
       inactiveJustification: [this.data.inactiveJustification || '']
     });
@@ -79,14 +82,42 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
         this.currentLang = lang;
       });
 
-    // Configurar validaciones condicionales
+    // Configurar validaciones condicionales iniciales
     this.setupConditionalValidations();
 
     // Suscribirse a cambios en isActive
     this.form.get('isActive')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
+        // Si cambia a activo, limpiar la pregunta de raciones
+        if (this.form.get('isActive')?.value === true) {
+          this.form.get('providedRationsService')?.setValue(null);
+          this.showInactivationFields = false;
+        }
         this.setupConditionalValidations();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Suscribirse a cambios en providedRationsService
+    this.form.get('providedRationsService')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((value) => {
+        if (value === false) {
+          // Si responde "No", mostrar campos de inactivación
+          this.showInactivationFields = true;
+          this.setupConditionalValidations();
+        } else if (value === true) {
+          // Si responde "Sí", ocultar campos
+          this.showInactivationFields = false;
+          // Limpiar validadores y valores de campos de inactivación
+          this.form.get('inactiveDate')?.clearValidators();
+          this.form.get('inactiveJustification')?.clearValidators();
+          this.form.get('inactiveDate')?.setValue(null);
+          this.form.get('inactiveJustification')?.setValue('');
+          this.form.get('inactiveDate')?.updateValueAndValidity({ emitEvent: false });
+          this.form.get('inactiveJustification')?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
       });
   }
 
@@ -97,19 +128,24 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
 
   private setupConditionalValidations(): void {
     const isActive = this.form.get('isActive')?.value;
+    const providedRationsService = this.form.get('providedRationsService')?.value;
     const inactiveDateControl = this.form.get('inactiveDate');
     const inactiveJustificationControl = this.form.get('inactiveJustification');
 
-    if (isActive === false) {
-      // Si está inactivo, requerir fecha y justificación
+    // Solo validar campos de inactivación si:
+    // 1. El estatus es inactivo (false)
+    // 2. Y respondió "No" a la pregunta de raciones (false)
+    if (isActive === false && providedRationsService === false) {
       inactiveDateControl?.setValidators([Validators.required]);
       inactiveJustificationControl?.setValidators([Validators.required]);
     } else {
-      // Si está activo, limpiar validadores y valores
+      // Si está activo o respondió "Sí", limpiar validadores y valores
       inactiveDateControl?.clearValidators();
       inactiveJustificationControl?.clearValidators();
-      inactiveDateControl?.setValue(null);
-      inactiveJustificationControl?.setValue('');
+      if (isActive === true || providedRationsService === true) {
+        inactiveDateControl?.setValue(null);
+        inactiveJustificationControl?.setValue('');
+      }
     }
 
     inactiveDateControl?.updateValueAndValidity({ emitEvent: false });
@@ -117,71 +153,107 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
   }
 
   get isFormValid(): boolean {
+    // Validar que providedRationsService esté respondido cuando isActive es false
+    const isActive = this.form.get('isActive')?.value;
+    const providedRationsService = this.form.get('providedRationsService')?.value;
+
+    if (isActive === false) {
+      if (providedRationsService === null || providedRationsService === undefined) {
+        return false;
+      }
+      // Si respondió "No", validar campos de inactivación
+      if (providedRationsService === false) {
+        return this.form.valid && !this.isLoading;
+      }
+      // Si respondió "Sí", el formulario es válido
+      return !this.isLoading;
+    }
+
+    // Si está activo, validar normalmente
     return this.form.valid && !this.isLoading;
   }
 
   onSubmit(): void {
-    if (this.form.valid && !this.isLoading) {
-      // Si no hay siteId, solo cerrar el modal con los datos (modo add)
-      if (!this.data.siteId) {
-        this.dialogRef.close({
-          action: 'submit',
-          isActive: this.form.get('isActive')?.value,
-          inactiveDate: this.form.get('inactiveDate')?.value,
-          inactiveJustification: this.form.get('inactiveJustification')?.value
-        });
-        return;
-      }
-
-      // Si hay siteId, llamar a la API (modo edit)
-      this.isLoading = true;
-      this._changeDetectorRef.detectChanges();
-
-      // Convertir la fecha a formato YYYY-MM-DD (solo fecha, sin hora) - patrón usado en el proyecto
-      const inactiveDateValue = this.form.get('inactiveDate')?.value;
-      const inactiveDateOnly = inactiveDateValue instanceof Date
-        ? inactiveDateValue.toISOString().split('T')[0]
-        : inactiveDateValue;
-
-      const queryParameters: QueryParameters = {
-        siteId: this.data.siteId,
-        isActive: this.form.get('isActive')?.value,
-        inactiveJustification: this.form.get('isActive')?.value === false
-          ? this.form.get('inactiveJustification')?.value
-          : null,
-        inactiveDate: this.form.get('isActive')?.value === false
-          ? inactiveDateOnly
-          : null
-      };
-
-      this._siteService.updateSiteActiveStatus(queryParameters)
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe({
-          next: (response) => {
-            this.isLoading = false;
-            this._changeDetectorRef.detectChanges();
-
-            // Mostrar notificación de éxito
-            this._notificationService.showSuccess('sites.edit.status-updated-successfully');
-
-            // Cerrar el modal con los datos actualizados
-            this.dialogRef.close({
-              action: 'submit',
-              isActive: this.form.get('isActive')?.value,
-              inactiveDate: this.form.get('inactiveDate')?.value,
-              inactiveJustification: this.form.get('inactiveJustification')?.value
-            });
-          },
-          error: (error) => {
-            this.isLoading = false;
-            this._changeDetectorRef.detectChanges();
-
-            // Mostrar notificación de error
-            this._notificationService.showError('sites.edit.status-update-error');
-            console.error('Error al actualizar el estatus del sitio:', error);
-          }
-        });
+    if (!this.isFormValid || this.isLoading) {
+      return;
     }
+
+    const providedRationsService = this.form.get('providedRationsService')?.value;
+    const isActive = this.form.get('isActive')?.value;
+
+    // Si el estatus es inactivo y respondió "Sí" a la pregunta de raciones
+    if (isActive === false && providedRationsService === true) {
+      // Mostrar notificación
+      this._notificationService.showInfo('sites.edit.status-modal.rations-service-notification');
+
+      // Cerrar con acción especial para redirección futura
+      this.dialogRef.close({
+        action: 'redirect-to-changes-form',
+        siteId: this.data.siteId,
+        // TODO: Agregar datos necesarios cuando se defina el formulario de cambios y cancelaciones
+      });
+      return;
+    }
+
+    // Si no hay siteId, solo cerrar el modal con los datos (modo add)
+    if (!this.data.siteId) {
+      this.dialogRef.close({
+        action: 'submit',
+        isActive: this.form.get('isActive')?.value,
+        inactiveDate: this.form.get('inactiveDate')?.value,
+        inactiveJustification: this.form.get('inactiveJustification')?.value
+      });
+      return;
+    }
+
+    // Si hay siteId, llamar a la API (modo edit)
+    this.isLoading = true;
+    this._changeDetectorRef.detectChanges();
+
+    // Convertir la fecha a formato YYYY-MM-DD (solo fecha, sin hora) - patrón usado en el proyecto
+    const inactiveDateValue = this.form.get('inactiveDate')?.value;
+    const inactiveDateOnly = inactiveDateValue instanceof Date
+      ? inactiveDateValue.toISOString().split('T')[0]
+      : inactiveDateValue;
+
+    const queryParameters: QueryParameters = {
+      siteId: this.data.siteId,
+      isActive: this.form.get('isActive')?.value,
+      inactiveJustification: this.form.get('isActive')?.value === false
+        ? this.form.get('inactiveJustification')?.value
+        : null,
+      inactiveDate: this.form.get('isActive')?.value === false
+        ? inactiveDateOnly
+        : null
+    };
+
+    this._siteService.updateSiteActiveStatus(queryParameters)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response) => {
+          this.isLoading = false;
+          this._changeDetectorRef.detectChanges();
+
+          // Mostrar notificación de éxito
+          this._notificationService.showSuccess('sites.edit.status-updated-successfully');
+
+          // Cerrar el modal con los datos actualizados
+          this.dialogRef.close({
+            action: 'submit',
+            isActive: this.form.get('isActive')?.value,
+            inactiveDate: this.form.get('inactiveDate')?.value,
+            inactiveJustification: this.form.get('inactiveJustification')?.value
+          });
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this._changeDetectorRef.detectChanges();
+
+          // Mostrar notificación de error
+          this._notificationService.showError('sites.edit.status-update-error');
+          console.error('Error al actualizar el estatus del sitio:', error);
+        }
+      });
   }
 
   onCancel(): void {

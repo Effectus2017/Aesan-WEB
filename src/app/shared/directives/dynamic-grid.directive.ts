@@ -11,7 +11,10 @@ export class DynamicGridDirective implements AfterViewInit, AfterContentChecked 
   constructor(private el: ElementRef) {}
 
   ngAfterViewInit(): void {
-    this.updateGridColumns();
+    // Usar setTimeout para asegurar que los elementos con *ngIf estén renderizados
+    setTimeout(() => {
+      this.updateGridColumns();
+    }, 0);
   }
 
   ngAfterContentChecked(): void {
@@ -23,19 +26,26 @@ export class DynamicGridDirective implements AfterViewInit, AfterContentChecked 
     const children = Array.from(this.el.nativeElement.children) as Element[];
     const directChildren = children.filter(child => {
       const computedStyle = window.getComputedStyle(child);
-      return computedStyle.display !== 'none' &&
-             computedStyle.visibility !== 'hidden' &&
-             (!child.hasAttribute('ng-reflect-ng-if') ||
-              child.getAttribute('ng-reflect-ng-if') !== 'false');
+      const isVisible = computedStyle.display !== 'none' &&
+                        computedStyle.visibility !== 'hidden';
+      
+      // Verificar *ngIf - puede estar en ng-reflect-ng-if o en el elemento mismo
+      const ngIfValue = child.getAttribute('ng-reflect-ng-if');
+      const hasNgIfFalse = ngIfValue === 'false';
+      
+      return isVisible && !hasNgIfFalse;
     });
 
     const visibleCount = directChildren.length;
 
-    // Remover clases existentes del breakpoint
-    const regex = new RegExp(`${this.breakpoint}:grid-cols-\\d+`, 'g');
-    this.el.nativeElement.className = this.el.nativeElement.className.replace(regex, '');
+    // Solo actualizar si hay elementos visibles
+    if (visibleCount > 0) {
+      // Remover clases existentes del breakpoint
+      const regex = new RegExp(`${this.breakpoint}:grid-cols-\\d+`, 'g');
+      this.el.nativeElement.className = this.el.nativeElement.className.replace(regex, '');
 
-    // Agregar nueva clase dinámica
-    this.el.nativeElement.classList.add(`${this.breakpoint}:grid-cols-${visibleCount}`);
+      // Agregar nueva clase dinámica
+      this.el.nativeElement.classList.add(`${this.breakpoint}:grid-cols-${visibleCount}`);
+    }
   }
 }

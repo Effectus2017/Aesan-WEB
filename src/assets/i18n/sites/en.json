@@ -532,6 +532,10 @@
                     "placeholder": "Select status",
                     "required": "Status is required"
                 },
+                "rations-service": {
+                    "label": "Did you provide meal service during your operating period?",
+                    "required": "This question is required"
+                },
                 "inactive-date": {
                     "label": "Inactivation Date",
                     "placeholder": "Select date",
@@ -621,7 +625,8 @@
                 "pfhf": "PFHF",
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
-                "daycare-home": "Day Care Home"
+                "daycare-home": "Day Care Home",
+                "provision-fields": "Provision Fields"
             },
             "daycare-home-fields": {
                 "title": "Day Care Home Specific Fields",
@@ -835,7 +840,8 @@
                 "pfhf": "PFHF",
                 "pdfe": "PDFE",
                 "aesan": "AESAN",
-                "daycare-home": "Day Care Home"
+                "daycare-home": "Day Care Home",
+                "provision-fields": "Provision Fields"
             },
             "name": {
                 "label": "Name",
@@ -1358,6 +1364,10 @@
                     "placeholder": "Select status",
                     "required": "Status is required"
                 },
+                "rations-service": {
+                    "label": "Did you provide meal service during your operating period?",
+                    "required": "This question is required"
+                },
                 "inactive-date": {
                     "label": "Inactivation Date",
                     "placeholder": "Select date",
@@ -1372,7 +1382,10 @@
                 "save": "Save"
             },
             "status-updated-successfully": "Site status updated successfully",
-            "status-update-error": "Error updating site status"
+            "status-update-error": "Error updating site status",
+            "status-modal": {
+                "rations-service-notification": "You must complete the changes and cancellations form with the new operating end date"
+            }
         },
         "calendar": {
             "title": "Operating Calendar",

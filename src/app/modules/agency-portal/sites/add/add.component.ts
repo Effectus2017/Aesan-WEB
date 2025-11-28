@@ -61,6 +61,7 @@ import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../ad
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 @Component({
   selector: 'app-sites-add',
@@ -85,6 +86,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
     MatTimepickerModule,
     MatIconModule,
     NumericOnlyDirective,
+    DynamicGridDirective,
   ],
 })
 export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -557,6 +559,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
 
+  // Propiedad para controlar visibilidad de campos de provisión en modo desarrollo
+  showProvisionFieldsDev: boolean = false;
+
   // School-related properties
   schoolId: number | null = null;
   childGroups: SiteChildGroupRequest[] = [];
@@ -753,6 +758,13 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this._changeDetectorRef.detectChanges();
     });
 
+    // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
+    this.headerConfig.formGroup.get('operatingPolicy')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._changeDetectorRef.detectChanges();
+      });
+
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -929,6 +941,15 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      // Si no es "Comedor", limpiar el valor de kitchenType
+      if (groupType) {
+        const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+        if (!isComedor) {
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          this.kitchenTypes = [];
+        }
+      }
+      this._changeDetectorRef.detectChanges();
       this._changeDetectorRef.detectChanges();
     });
 
@@ -1532,7 +1553,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         isActive: currentIsActive,
         inactiveDate: currentInactiveDate,
         inactiveJustification: currentInactiveJustification,
-        isActiveOptions: this.isActiveOptions
+        isActiveOptions: this.isActiveOptions,
+        yesNoOptions: this.yesNoOptions
       } as SiteStatusModalData,
       disableClose: false,
       width: '600px',
@@ -1582,7 +1604,18 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       return;
     }
 
-    // Habilitar el control para todos los tipos de grupo
+    // Verificar si es "Comedor" - solo cargar tipos de cocina para Comedor
+    const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+
+    if (!isComedor) {
+      // Si no es "Comedor", limpiar el valor y las opciones
+      this.kitchenTypes = [];
+      this.headerConfig.formGroup.patchValue({ kitchenType: null });
+      this._changeDetectorRef.detectChanges();
+      return;
+    }
+
+    // Habilitar el control solo para Comedor
     kitchenTypeControl?.enable();
 
     const queryParameters: QueryParameters = {
@@ -2091,6 +2124,28 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   }
 
   /**
+   * Verifica si se debe mostrar el campo de Tipo de Cocina
+   * Solo se muestra cuando:
+   * - El programa es PDAM
+   * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
+   */
+  get shouldShowKitchenTypeField(): boolean {
+    // Solo para PDAM
+    if (!this.isPDAM) {
+      return false;
+    }
+
+    // Verificar si el Tipo de Grupo seleccionado es "Comedor"
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+    if (groupType) {
+      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+      return isComedor;
+    }
+
+    return false;
+  }
+
+  /**
    * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
    * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
    */
@@ -2100,5 +2155,34 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     }
     // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
     return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
+  }
+
+  /**
+   * Verifica si se deben mostrar los campos de fecha de inicio de provisión
+   * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
+   * O si está en modo desarrollo y el checkbox está marcado
+   */
+  get shouldShowProvisionFields(): boolean {
+    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
+
+    // En modo desarrollo, si el checkbox está marcado, mostrar siempre
+    if (this.isDevelopmentMode && this.showProvisionFieldsDev) {
+      return true;
+    }
+
+    // Verificar si la política seleccionada es 3, 4 o 5
+    if (operatingPolicy && operatingPolicy.id) {
+      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
+    }
+
+    return false;
+  }
+
+  /**
+   * Maneja el cambio del checkbox de campos de provisión para desarrollo
+   */
+  onDevProvisionFieldsChange(checked: boolean): void {
+    this.showProvisionFieldsDev = checked;
+    this._changeDetectorRef.detectChanges();
   }
 }

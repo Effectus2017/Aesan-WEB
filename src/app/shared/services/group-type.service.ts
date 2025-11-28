@@ -82,4 +82,13 @@ export class GroupTypeService {
   getSiteLocationByGroupType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-site-location-by-group-type`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._groupTypes.next(response)));
   }
+
+  /**
+   * Get group types by program
+   * @param queryParameters - Query parameters that include the program ID
+   * @returns Observable<GroupType[]>
+   */
+  getGroupTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-group-types-by-program`, getHttpOptions(queryParameters));
+  }
 }

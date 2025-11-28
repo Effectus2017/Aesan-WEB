@@ -13,7 +13,7 @@ import { EducationLevelService } from 'app/shared/services/education-level.servi
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf, NgClass } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -28,8 +28,6 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { SiteDayCareHomeRequest } from 'app/shared/models/Request/SiteDayCareHomeRequest';
-import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
@@ -44,7 +42,6 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString } from 'app/shared/utils';
 import { Site } from 'app/shared/models/Site';
-import { SiteList } from 'app/shared/models/SiteList';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -69,7 +66,7 @@ import { environment } from 'environments/environment';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
-
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 @Component({
   selector: 'app-sites-edit',
   templateUrl: './edit.component.html',
@@ -92,6 +89,7 @@ import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-mo
     MatTimepickerModule,
     GenericTableComponent,
     NumericOnlyDirective,
+    DynamicGridDirective,
   ],
 })
 export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -254,6 +252,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
+
+  // Propiedad para controlar visibilidad de campos de provisión en modo desarrollo
+  showProvisionFieldsDev: boolean = false;
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SiteChildGroupRequest[] = [];
@@ -808,12 +809,27 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.calculateOperatingDays();
     });
 
-    // Listener para cambios en groupType que afectan distributionType y siteLocation
+    // Listener para cambios en groupType que afectan distributionType, siteLocation y kitchenType
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      // Si no es "Comedor", limpiar el valor de kitchenType
+      if (groupType) {
+        const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+        if (!isComedor) {
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          this.kitchenTypes = [];
+        }
+      }
       this._changeDetectorRef.detectChanges();
     });
+
+    // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
+    this.headerConfig.formGroup.get('operatingPolicy')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._changeDetectorRef.detectChanges();
+      });
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
@@ -1720,7 +1736,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         isActive: currentIsActive,
         inactiveDate: currentInactiveDate,
         inactiveJustification: currentInactiveJustification,
-        isActiveOptions: this.isActive
+        isActiveOptions: this.isActive,
+        yesNoOptions: this.yesNoOptions
       } as SiteStatusModalData,
       disableClose: false,
       width: '600px',
@@ -1816,11 +1833,22 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   getKitchenTypesByGroupType(groupType: OptionSelection): void {
     if (!groupType) {
       this.kitchenTypes = [];
-      this.isKitchenTypeDisabled = false; // Mantener habilitado
+      this.isKitchenTypeDisabled = false;
       return;
     }
 
-    // Para TODOS los tipos de grupo, usar la API para obtener los tipos de cocina válidos
+    // Verificar si es "Comedor" - solo cargar tipos de cocina para Comedor
+    const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+
+    if (!isComedor) {
+      // Si no es "Comedor", limpiar el valor y las opciones
+      this.kitchenTypes = [];
+      this.headerConfig.formGroup.patchValue({ kitchenType: null });
+      this._changeDetectorRef.detectChanges();
+      return;
+    }
+
+    // Para "Comedor", usar la API para obtener los tipos de cocina válidos
     this.isKitchenTypeDisabled = false;
 
     const queryParameters: QueryParameters = {
@@ -1832,21 +1860,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         if (response) {
           this.kitchenTypes = response.body;
 
-          // Determinar si el tipo de grupo es "Comedor" o "Satélite" dentro del callback
-          const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-          const isSatelite = groupType.name === 'Satélite' || groupType.nameEN === 'Satellite';
-
-          // Si NO es "Comedor" ni "Satélite", auto-seleccionar "N/A"
-          if (!isComedor && !isSatelite) {
-            const naKitchenType = this.kitchenTypes.find((kt) => kt.name === 'N/A' || kt.nameEN === 'N/A');
-
-            if (naKitchenType) {
-              this.headerConfig.formGroup.patchValue({ kitchenType: naKitchenType });
-            }
-          } else {
-            // Para "Comedor" y "Satélite", limpiar la selección para que el usuario elija
-            this.headerConfig.formGroup.patchValue({ kitchenType: null });
-          }
+          // Para "Comedor", limpiar la selección para que el usuario elija
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
 
           this._changeDetectorRef.detectChanges();
         }
@@ -1855,6 +1870,28 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         console.error('Error al cargar los tipos de cocina:', error);
       },
     });
+  }
+
+  /**
+   * Verifica si se debe mostrar el campo de Tipo de Cocina
+   * Solo se muestra cuando:
+   * - El programa es PDAM
+   * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
+   */
+  get shouldShowKitchenTypeField(): boolean {
+    // Solo para PDAM
+    if (!this.isPDAM) {
+      return false;
+    }
+
+    // Verificar si el Tipo de Grupo seleccionado es "Comedor"
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+    if (groupType) {
+      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+      return isComedor;
+    }
+
+    return false;
   }
 
   // Método para obtener el tipo de área según la ciudad seleccionada
@@ -2337,5 +2374,34 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
     // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
     return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
+  }
+
+  /**
+   * Verifica si se deben mostrar los campos de fecha de inicio de provisión
+   * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
+   * O si está en modo desarrollo y el checkbox está marcado
+   */
+  get shouldShowProvisionFields(): boolean {
+    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
+
+    // En modo desarrollo, si el checkbox está marcado, mostrar siempre
+    if (this.isDevelopmentMode && this.showProvisionFieldsDev) {
+      return true;
+    }
+
+    // Verificar si la política seleccionada es 3, 4 o 5
+    if (operatingPolicy && operatingPolicy.id) {
+      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
+    }
+
+    return false;
+  }
+
+  /**
+   * Maneja el cambio del checkbox de campos de provisión para desarrollo
+   */
+  onDevProvisionFieldsChange(checked: boolean): void {
+    this.showProvisionFieldsDev = checked;
+    this._changeDetectorRef.detectChanges();
   }
 }

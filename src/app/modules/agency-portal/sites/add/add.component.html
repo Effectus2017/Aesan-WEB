@@ -6,10 +6,10 @@
     <form [formGroup]="headerConfig.formGroup" #sitesAddForm="ngForm" data-cy="sites-add-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- DEVELOPMENT SECTION - Program Selection for Testing -->
-        <div *ngIf="isDevelopmentMode" class="grid grid-cols-1 col-span-12 gap-4 p-4 mb-6 bg-yellow-50 rounded-lg border border-yellow-200 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 p-4 mb-6 bg-yellow-50 rounded-lg border border-yellow-200 sm:grid-cols-1">
           <p class="mb-4 text-sm text-yellow-700">{{ "sites.add.dev-section.disclaimer" | transloco }}</p>
 
-          <div class="grid grid-cols-2 col-span-12 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div class="grid grid-cols-2 col-span-12 gap-4 sm:grid-cols-4">
             <mat-checkbox [checked]="isPDAM" (change)="onDevPDAMChange($event.checked)" data-cy="dev-pdam-checkbox" class="text-sm">
               {{ "sites.add.dev-section.pdam" | transloco }}
             </mat-checkbox>
@@ -36,6 +36,10 @@
 
             <mat-checkbox [checked]="isDayCareHome" (change)="onDevDayCareHomeChange($event.checked)" data-cy="dev-daycare-home-checkbox" class="text-sm">
               {{ "sites.add.dev-section.daycare-home" | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox [checked]="showProvisionFieldsDev" (change)="onDevProvisionFieldsChange($event.checked)" data-cy="dev-provision-fields-checkbox" class="text-sm">
+              {{ "sites.add.dev-section.provision-fields" | transloco }}
             </mat-checkbox>
           </div>
         </div>
@@ -238,10 +242,11 @@
         </div>
 
         <!-- ✅ VERIFICADO: Fecha de Inicio, Año base, Año de renovación - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
+        <!-- Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III) -->
         <!-- Fecha de Inicio de la provisión / Provision Start Date -->
         <!-- Año base / Base Year -->
         <!-- Año de renovación / Renewal Year -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM && shouldShowProvisionFields">
           <mat-form-field data-cy="start-date-field">
             <mat-label>{{ "sites.add.start-date.label" | transloco }}</mat-label>
             <input
@@ -504,7 +509,7 @@
         <!-- Tipo de Cocina / Kitchen Type -->
         <!-- ✅ VERIFICADO: Tipo de Solicitante - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Tipo de Solicitante / Type of Applicant -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4" *ngIf="!shouldShowDayCareFields()" appDynamicGrid="5">
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "sites.add.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" (valueChange)="getKitchenTypesByGroupType($event)" data-cy="group-type-select" [compareWith]="compareById">
@@ -526,7 +531,7 @@
               <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field data-cy="kitchen-type-field">
+          <mat-form-field data-cy="kitchen-type-field" *ngIf="shouldShowKitchenTypeField">
             <mat-label>{{ "sites.add.kitchen-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'kitchenType'" data-cy="kitchen-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>

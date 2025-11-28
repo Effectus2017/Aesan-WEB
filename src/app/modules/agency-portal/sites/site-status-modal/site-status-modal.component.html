@@ -27,8 +27,28 @@
         }
       </mat-form-field>
 
-      <!-- Campo Fecha de Inactivación (solo visible si isActive === false) -->
+      <!-- Pregunta sobre servicio de raciones (solo visible si isActive === false) -->
       @if (form.get('isActive')?.value === false) {
+      <mat-form-field>
+        <mat-label>{{ 'sites.add.status-modal.rations-service.label' | transloco }}</mat-label>
+        <mat-select formControlName="providedRationsService">
+          @for (option of data.yesNoOptions; track option.id) {
+          <mat-option [value]="option.booleanValue">
+            {{ currentLang === 'en' ? option.nameEN : option.name }}
+          </mat-option>
+          }
+        </mat-select>
+        @if (form.get('providedRationsService')?.hasError('required')) {
+        <mat-error>
+          {{ 'sites.add.status-modal.rations-service.required' | transloco }}
+        </mat-error>
+        }
+      </mat-form-field>
+      }
+
+      <!-- Campos de inactivación (solo visibles si isActive === false y providedRationsService === false) -->
+      @if (form.get('isActive')?.value === false && showInactivationFields) {
+      <!-- Campo Fecha de Inactivación -->
       <mat-form-field>
         <mat-label>{{ 'sites.add.status-modal.inactive-date.label' | transloco }}</mat-label>
         <input
@@ -45,10 +65,8 @@
         </mat-error>
         }
       </mat-form-field>
-      }
 
-      <!-- Campo Justificación de Inactivación (solo visible si isActive === false) -->
-      @if (form.get('isActive')?.value === false) {
+      <!-- Campo Justificación de Inactivación -->
       <mat-form-field>
         <mat-label>{{ 'sites.add.status-modal.inactive-justification.label' | transloco }}</mat-label>
         <textarea
