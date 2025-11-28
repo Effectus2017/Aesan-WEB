@@ -747,10 +747,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
     const stateFundsDeniedReason = formValues.stateFundsDeniedReason;
     const taxExemptionStatusId = formValues.taxExemptionStatusId;
-    const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? false : formValues.taxExemptionTypeId;
+    const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? 0 : formValues.taxExemptionTypeId;
     const typeOfEntityId = formValues.typeOfEntityId;
-    const typeOfApplicantId = formValues.typeOfApplicantId == null ? false : formValues.typeOfApplicantId;
-    const publicAllianceContractId = formValues.publicAllianceContractId == null ? false : formValues.publicAllianceContractId;
+    const typeOfApplicantId = formValues.typeOfApplicantId == null ? 0 : formValues.typeOfApplicantId;
+    const publicAllianceContractId = formValues.publicAllianceContractId == null ? null : formValues.publicAllianceContractId;
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
     const isDayCareHomeId = formValues.isDayCareHomeId == null ? 0 : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
