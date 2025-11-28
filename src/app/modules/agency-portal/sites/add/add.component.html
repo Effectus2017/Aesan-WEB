@@ -1265,8 +1265,9 @@
             <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
               <mat-form-field data-cy="site-phone-field">
                 <mat-label>{{ "sites.add.site-phone.label" | transloco }}</mat-label>
-                <input matInput formControlName="sitePhone" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="site-phone-input" />
+                <input matInput formControlName="sitePhone" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" phoneFormat data-cy="site-phone-input" />
                 <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('sitePhone')?.hasError('required')">{{ "sites.add.site-phone.required" | transloco }}</mat-error>
+                <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('sitePhone')?.hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
               </mat-form-field>
               <mat-form-field data-cy="extension-field">
                 <mat-label>{{ "sites.add.extension.label" | transloco }}</mat-label>
@@ -1274,7 +1275,8 @@
               </mat-form-field>
               <mat-form-field data-cy="mobile-phone-field">
                 <mat-label>{{ "sites.add.mobile-phone.label" | transloco }}</mat-label>
-                <input matInput formControlName="mobilePhone" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="mobile-phone-input" />
+                <input matInput formControlName="mobilePhone" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" phoneFormat data-cy="mobile-phone-input" />
+                <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('mobilePhone')?.hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -1312,13 +1314,15 @@
           </mat-form-field>
           <mat-form-field data-cy="site-phone-field">
             <mat-label>{{ "sites.add.site-phone.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="site-phone-input" />
+            <input matInput [formControlName]="'sitePhone'" placeholder="{{ 'sites.add.site-phone.placeholder' | transloco }}" phoneFormat data-cy="site-phone-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('sitePhone').hasError('required')">{{ "sites.add.site-phone.required" | transloco }}</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('sitePhone').hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="mobile-phone-field">
             <mat-label>{{ "sites.add.mobile-phone.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="mobile-phone-input" />
+            <input matInput [formControlName]="'mobilePhone'" placeholder="{{ 'sites.add.mobile-phone.placeholder' | transloco }}" phoneFormat data-cy="mobile-phone-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('mobilePhone').hasError('required')">{{ "sites.add.mobile-phone.required" | transloco }}</mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('mobilePhone').hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
           </mat-form-field>
         </div>
       </div>

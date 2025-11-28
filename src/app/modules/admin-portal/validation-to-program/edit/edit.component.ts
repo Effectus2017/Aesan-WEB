@@ -38,6 +38,8 @@ import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { ActivatedRoute } from '@angular/router';
 import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -64,6 +66,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
     MatSnackBarModule,
     MatDialogModule,
     NumericOnlyDirective,
+    PhoneFormatDirective,
   ],
 })
 export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -120,7 +123,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
       // Dirección y Coordenadas
       address: [null, Validators.required],
-      phone: [null, Validators.required],
+      phone: [null, [Validators.required, puertoRicoPhoneValidator()]],
       zipCode: [null, Validators.required],
 
       // Dirección Postal

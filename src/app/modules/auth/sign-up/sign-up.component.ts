@@ -39,9 +39,11 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 
 @Component({
   selector: 'auth-sign-up',
@@ -73,6 +75,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     MatInputModule,
     MatTooltipModule,
     DynamicGridDirective,
+    PhoneFormatDirective,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -184,7 +187,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       program: [null, Validators.required],
 
       // Datos de la Agencia
-      sdrNumber: [null, [Validators.required]],
+      sdrNumber: [null, [Validators.required, maxDigitsValidator(10)]],
       uieNumber: [null, [Validators.required, Validators.maxLength(12), alphanumericValidator()]],
       einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
@@ -262,7 +265,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos del Correo Electrónico y Cargo
       email: [null, [Validators.required, Validators.email], [emailExistsValidator(this._userService)]],
-      phone: [null, [Validators.required]],
+      phone: [null, [Validators.required, puertoRicoPhoneValidator()]],
 
       // Posición del Staff
       // Staff Position
@@ -601,18 +604,22 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                 // Asignar automáticamente la única región encontrada para Dirección Postal
                 this.signUpForm.patchValue({ postalRegion: this.listPostalRegions[0] });
               } else {
+                // PRIMERO verificar si hay una región postal ya seleccionada y está en la lista, mantenerla
+                if (currentPostalRegion && this.listPostalRegions.some(r => r.id === currentPostalRegion.id)) {
+                  // Ya está seleccionada y es válida, no hacer nada - preservar el valor
+                  return;
+                }
                 // Si hay una región física seleccionada y está en la lista de regiones de la ciudad postal, mantenerla
                 if (physicalRegion && this.listPostalRegions.some(r => r.id === physicalRegion.id)) {
-                  this.signUpForm.patchValue({ postalRegion: physicalRegion });
-                }
-                // Si hay una región postal ya seleccionada y está en la lista, mantenerla
-                else if (currentPostalRegion && this.listPostalRegions.some(r => r.id === currentPostalRegion.id)) {
-                  // Ya está seleccionada, no hacer nada
+                  // Buscar la región en la lista para usar la misma referencia
+                  const matchingRegion = this.listPostalRegions.find(r => r.id === physicalRegion.id);
+                  if (matchingRegion) {
+                    this.signUpForm.patchValue({ postalRegion: matchingRegion });
+                    return;
+                  }
                 }
                 // Si no hay región válida, establecer a null
-                else {
-                  regionControl.setValue(null);
-                }
+                regionControl.setValue(null);
               }
             }
           }
@@ -753,7 +760,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const publicAllianceContractId = formValues.publicAllianceContractId == null ? null : formValues.publicAllianceContractId;
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
-    const isDayCareHomeId = formValues.isDayCareHomeId == null ? 0 : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
+    const isDayCareHomeId = formValues.isDayCareHomeId == null ? null : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
     const participatesInHeadStartProgramId = formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
     const servicesOfferedSince: string | null = formValues.servicesOfferedSince
       ? new Date(formValues.servicesOfferedSince).toISOString()
@@ -1113,17 +1120,22 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si el checkbox no está marcado, limpiar los campos de la dirección postal
   onCheckboxChange(event: any): void {
     if (event.checked) {
-      // Primero asignamos los valores básicos
-      this.signUpForm.patchValue({
-        postalAddress: this.signUpForm.value.address,
-        postalCity: this.signUpForm.value.city,
-        postalZipCode: this.signUpForm.value.zipCode,
-      });
+      // Obtener los valores de la dirección física
+      const physicalAddress = this.signUpForm.value.address;
+      const physicalCity = this.signUpForm.value.city;
+      const physicalRegion = this.signUpForm.value.region;
+      const physicalZipCode = this.signUpForm.value.zipCode;
 
-      // Si hay una ciudad seleccionada, obtenemos sus regiones
-      if (this.signUpForm.value.city) {
-        this.getRegionsByCityId(this.signUpForm.value.city, 'postalRegion');
-      }
+      // Sincronizar listPostalRegions con listRegions (igual que la ciudad usa la misma lista)
+      this.listPostalRegions = [...this.listRegions];
+
+      // Copiar todos los valores de una vez, incluyendo la región (igual que la ciudad)
+      this.signUpForm.patchValue({
+        postalAddress: physicalAddress,
+        postalCity: physicalCity,
+        postalRegion: physicalRegion, // Copiar la región directamente, igual que la ciudad
+        postalZipCode: physicalZipCode,
+      });
 
       this.signUpForm.updateValueAndValidity();
     } else {

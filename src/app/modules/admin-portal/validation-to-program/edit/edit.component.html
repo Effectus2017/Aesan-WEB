@@ -300,12 +300,16 @@
               matInput
               formControlName="phone"
               [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              numericOnly
+              phoneFormat
               [attr.aria-label]="'validation-to-program.edit.phone.label' | transloco"
               [title]="'validation-to-program.edit.phone.label' | transloco"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('phone')?.hasError('required') && (headerConfig.formGroup.get('phone')?.touched || headerConfig.formGroup.get('phone')?.dirty)">
+              {{ "validation-to-program.edit.phone.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('phone')?.hasError('puertoRicoPhone') && (headerConfig.formGroup.get('phone')?.touched || headerConfig.formGroup.get('phone')?.dirty)">
+              El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939
+            </mat-error>
           </mat-form-field>
           <!-- Administration Title *  -->
           <mat-form-field data-cy="administration-title-field">

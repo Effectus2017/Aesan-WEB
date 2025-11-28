@@ -61,7 +61,9 @@ import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../ad
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 
 @Component({
   selector: 'app-sites-add',
@@ -86,6 +88,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     MatTimepickerModule,
     MatIconModule,
     NumericOnlyDirective,
+    PhoneFormatDirective,
     DynamicGridDirective,
   ],
 })
@@ -348,9 +351,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         middleName: [''],
         fatherLastName: ['', Validators.required],
         motherLastName: [''],
-        sitePhone: ['', Validators.required],
+        sitePhone: ['', [Validators.required, puertoRicoPhoneValidator()]],
         extension: [''],
-        mobilePhone: [''],
+        mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
       // Desayuno (si, no)
       // Breakfast (yes, no)
@@ -1700,10 +1703,19 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
             this.listPostalRegions = response.body.data;
             const regionControl = this.headerConfig.formGroup.get('postalRegion');
             if (regionControl) {
+              // Preservar el valor actual si ya está establecido y es válido
+              const currentPostalRegion = regionControl.value;
+              const isValidCurrentRegion = currentPostalRegion &&
+                this.listPostalRegions.some(r => r.id === currentPostalRegion.id);
+
               if (this.listPostalRegions.length === 1) {
                 // Asignar automáticamente la única región encontrada para Dirección Postal
                 this.headerConfig.formGroup.patchValue({ postalRegion: this.listPostalRegions[0] });
+              } else if (isValidCurrentRegion) {
+                // Mantener el valor actual si es válido
+                // No hacer nada, el valor ya está establecido
               } else {
+                // Solo limpiar si no hay un valor válido establecido
                 regionControl.setValue(null);
               }
             }
@@ -1722,16 +1734,38 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // If the checkbox is not checked, clear the postal address fields
   onCheckboxChange(event: any): void {
     if (event.checked) {
-      // Primero asignamos los valores básicos
-      this.headerConfig.formGroup.patchValue({
-        postalAddress: this.headerConfig.formGroup.value.address,
-        postalCity: this.headerConfig.formGroup.value.city,
-        postalZipCode: this.headerConfig.formGroup.value.zipCode,
-      });
+      // Obtener los valores de la dirección física
+      const physicalAddress = this.headerConfig.formGroup.value.address;
+      const physicalCity = this.headerConfig.formGroup.value.city;
+      const physicalRegion = this.headerConfig.formGroup.value.region;
+      const physicalZipCode = this.headerConfig.formGroup.value.zipCode;
 
-      // Si hay una ciudad seleccionada, obtenemos sus regiones
-      if (this.headerConfig.formGroup.value.city) {
-        this.getRegionsByCityId(this.headerConfig.formGroup.value.city, 'postalRegion');
+      // PRIMERO sincronizar la lista de regiones postales con las regiones físicas
+      // Esto debe hacerse ANTES de establecer los valores para que el select funcione
+      if (physicalCity && physicalRegion) {
+        this.listPostalRegions = [...this.listRegions];
+
+        // Buscar la región en la lista para asegurar que sea la misma referencia
+        const matchingRegion = this.listPostalRegions.find(r => r.id === physicalRegion.id);
+        const regionToSet = matchingRegion || physicalRegion;
+
+        // Establecer los valores después de sincronizar la lista
+        this.headerConfig.formGroup.patchValue({
+          postalAddress: physicalAddress,
+          postalCity: physicalCity,
+          postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
+          postalZipCode: physicalZipCode,
+        }, { emitEvent: false }); // emitEvent: false para evitar que se dispare valueChange en postalCity
+
+        // Forzar detección de cambios para actualizar la vista
+        this._changeDetectorRef.detectChanges();
+      } else {
+        // Si no hay ciudad o región, solo copiar lo que hay
+        this.headerConfig.formGroup.patchValue({
+          postalAddress: physicalAddress,
+          postalCity: physicalCity,
+          postalZipCode: physicalZipCode,
+        }, { emitEvent: false });
       }
 
       this.headerConfig.formGroup.updateValueAndValidity();

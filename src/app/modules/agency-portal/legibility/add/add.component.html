@@ -148,7 +148,8 @@
           <!-- Teléfono -->
           <mat-form-field>
             <mat-label>Teléfono</mat-label>
-            <input matInput formControlName="phone" inputmode="numeric" pattern="[0-9]*" numericOnly />
+            <input matInput formControlName="phone" phoneFormat />
+            <mat-error *ngIf="headerConfig.formGroup.get('phone')?.hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
           </mat-form-field>
 
           <!-- Email -->

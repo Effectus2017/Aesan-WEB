@@ -53,6 +53,8 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 
 export interface SiteEditModalData {
   site: Site;
@@ -79,6 +81,7 @@ export interface SiteEditModalData {
     NgForOf,
     MatTooltipModule,
     NumericOnlyDirective,
+    PhoneFormatDirective,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './site-edit-modal.component.html',
@@ -147,9 +150,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       middleName: [''],
       fatherLastName: ['', Validators.required],
       motherLastName: [''],
-      sitePhone: ['', Validators.required],
+      sitePhone: ['', [Validators.required, puertoRicoPhoneValidator()]],
       extension: [''],
-      mobilePhone: [''],
+      mobilePhone: ['', puertoRicoPhoneValidator()],
     }),
     community: [null],
     walkers: [null],

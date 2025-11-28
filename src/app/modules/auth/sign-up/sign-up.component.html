@@ -333,8 +333,12 @@
                 inputmode="numeric"
                 pattern="[0-9]*"
                 numericOnly
+                maxlength="10"
                 data-cy="sdr-input"
               />
+              <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('maxDigits')">
+                El número de registro del departamento de estado debe tener máximo 10 dígitos
+              </mat-error>
             </mat-form-field>
 
             <!-- EIN *  -->
@@ -447,7 +451,7 @@
             <!-- Region para Dirección Postal *  -->
             <mat-form-field data-cy="postal-region-field">
               <mat-label>{{ "sign-up.region.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="comparePostal">
+              <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compare">
                 <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -512,7 +516,19 @@
             <!-- Phone *  -->
             <mat-form-field data-cy="phone-field">
               <mat-label>{{ "sign-up.phone.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'phone'" placeholder="{{ 'sign-up.phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="phone-input" />
+              <input
+                matInput
+                [formControlName]="'phone'"
+                placeholder="{{ 'sign-up.phone.placeholder' | transloco }}"
+                phoneFormat
+                data-cy="phone-input"
+              />
+              <mat-error *ngIf="signUpForm.get('phone')?.hasError('required') && (signUpForm.get('phone')?.touched || signUpForm.get('phone')?.dirty)">
+                {{ "sign-up.phone.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('phone')?.hasError('puertoRicoPhone') && (signUpForm.get('phone')?.touched || signUpForm.get('phone')?.dirty)">
+                El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939
+              </mat-error>
             </mat-form-field>
             <!-- Admin Title *  -->
             <mat-form-field data-cy="admin-title-field">

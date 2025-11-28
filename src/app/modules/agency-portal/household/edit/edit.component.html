@@ -33,7 +33,8 @@
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>{{ 'households.fields.phone' | transloco }}</mat-label>
-            <input matInput formControlName="phone" placeholder="{{ 'households.fields.phone' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly />
+            <input matInput formControlName="phone" placeholder="{{ 'households.fields.phone' | transloco }}" phoneFormat />
+            <mat-error *ngIf="headerConfig.formGroup.get('phone')?.hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>{{ 'households.fields.email' | transloco }}</mat-label>

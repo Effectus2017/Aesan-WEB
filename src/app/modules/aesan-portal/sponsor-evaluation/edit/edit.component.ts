@@ -49,7 +49,7 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { SiteEditModalComponent, SiteEditModalData } from './site-edit-modal/site-edit-modal.component';
 import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SITES_COLUMNS_SCHEMA } from './columns-schema';
-import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
@@ -81,7 +81,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
         GenericHeaderComponent,
         GenericTableComponent,
         TranslocoModule,
-        NumericOnlyDirective,
+        PhoneFormatDirective,
     ]
 })
 export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {

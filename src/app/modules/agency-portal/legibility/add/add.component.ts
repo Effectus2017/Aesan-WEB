@@ -28,7 +28,8 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GeoService } from 'app/shared/services/geo.service';
 import { HouseholdRequest } from 'app/shared/models/Request/HouseholdRequest';
-import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 
 @Component({
     selector: 'agency-portal-readability-module-add',
@@ -49,7 +50,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        NumericOnlyDirective
+        PhoneFormatDirective
     ]
 })
 export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandlers {
@@ -79,7 +80,7 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
       city: [null, Validators.required],
       region: [null, Validators.required],
       zipCode: [null, Validators.required],
-      phone: [null],
+      phone: [null, puertoRicoPhoneValidator()],
       email: [null],
       completedBy: [null, Validators.required],
       completedDate: [null, Validators.required],

@@ -12,7 +12,8 @@ import { ActivatedRoute } from '@angular/router';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 
 @Component({
     selector: 'agency-portal-household-edit',
@@ -29,7 +30,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
         MatSnackBarModule,
         GenericHeaderComponent,
         TranslocoModule,
-        NumericOnlyDirective
+        PhoneFormatDirective
     ]
 })
 export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {
@@ -51,7 +52,7 @@ export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {
       city: [null, Validators.required],
       region: [null, Validators.required],
       zipcode: [null, Validators.required],
-      phone: [null],
+      phone: [null, puertoRicoPhoneValidator()],
       email: [null],
       completedBy: [null, Validators.required],
       completedDate: [null, Validators.required],
