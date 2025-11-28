@@ -50,4 +50,8 @@ export class OrganizationTypeService {
   deleteOrganizationType(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.delete(`${this.apiUrl}/delete-organization-type`, getHttpOptions(queryParameters));
   }
+
+  getOrganizationTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-organization-types-by-program`, getHttpOptions(queryParameters));
+  }
 }

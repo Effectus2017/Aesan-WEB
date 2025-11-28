@@ -40,7 +40,7 @@ import { EducationLevelResponse } from 'app/shared/models/Response/EducationLeve
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
-import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString } from 'app/shared/utils';
+import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString, logFormValidationErrors } from 'app/shared/utils';
 import { Site } from 'app/shared/models/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
@@ -69,6 +69,7 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 @Component({
   selector: 'app-sites-edit',
   templateUrl: './edit.component.html',
@@ -1356,11 +1357,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    */
   onSubmit() {
     if (this.headerConfig.formGroup.invalid) {
-      Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
-        const control = this.headerConfig.formGroup.get(key);
-        if (control && control.invalid) {
-        }
-      });
+      // Log detallado de campos inválidos usando función utilitaria
+      logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
 
       this._notificationService.showError('Por favor, complete todos los campos requeridos');
       this.headerConfig.formGroup.markAllAsTouched();
@@ -1593,6 +1591,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackAtRiskTo: snackAtRiskTo ?? null,
     };
 
+    // Validar y limpiar el servicio antes de agregarlo
+    const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
+
     // Agregar servicios al SiteRequest
     if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
       // Si ofrece servicios a diferentes grupos, crear múltiples servicios (uno por grupo)
@@ -1633,11 +1634,12 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
           snackAtRiskTo: serviceData.snackAtRiskTo || null,
         };
-        return serviceRequest;
+        // Validar y limpiar cada servicio
+        return validateAndCleanSiteService(serviceRequest);
       });
     } else {
       // Servicio general (sin grupos específicos)
-      siteRequest.services = [siteServiceRequest];
+      siteRequest.services = [cleanedServiceRequest];
     }
 
     // Agregar grupos de niños si OffersServiceToDifferentGroups = true

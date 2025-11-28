@@ -2,7 +2,7 @@ import { HttpParams } from '@angular/common/http';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
-import { UntypedFormGroup } from '@angular/forms';
+import { UntypedFormGroup, FormGroup } from '@angular/forms';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 
 /**
@@ -483,4 +483,104 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     console.error('Error al copiar al portapapeles:', err);
     return false;
   }
+}
+
+/**
+ * Logs detallado de campos inválidos en un formulario reactivo
+ * Incluye FormGroups anidados y muestra errores específicos por campo
+ * @param formGroup FormGroup a validar
+ * @param formName Nombre del formulario para el log (opcional)
+ */
+export function logFormValidationErrors(formGroup: UntypedFormGroup | FormGroup, formName: string = 'Formulario'): void {
+  if (!formGroup || !formGroup.invalid) {
+    return;
+  }
+
+  // Log detallado de campos inválidos
+  console.group(`🔴 ${formName} Inválido - Campos con Errores`);
+  console.log('Estado general del formulario:', {
+    invalid: formGroup.invalid,
+    touched: formGroup.touched,
+    dirty: formGroup.dirty
+  });
+
+  // Función recursiva para validar controles y FormGroups anidados
+  const getFormValidationErrors = (controls: any, path: string = ''): void => {
+    Object.keys(controls).forEach(key => {
+      const control = controls[key];
+      const currentPath = path ? `${path}.${key}` : key;
+
+      if (control instanceof UntypedFormGroup || control instanceof FormGroup) {
+        // Si es un FormGroup, validar recursivamente
+        getFormValidationErrors(control.controls, currentPath);
+      } else {
+        // Si es un FormControl, verificar si tiene errores
+        if (control && control.invalid) {
+          console.log(`❌ Campo: ${currentPath}`);
+          console.log('Estado:', {
+            invalid: control.invalid,
+            touched: control.touched,
+            dirty: control.dirty,
+            value: control.value,
+            errors: control.errors
+          });
+
+          // Mostrar mensajes de error específicos
+          if (control.errors) {
+            const errorMessages: string[] = [];
+            if (control.errors['required']) {
+              errorMessages.push('⚠️ Campo requerido');
+            }
+            if (control.errors['email']) {
+              errorMessages.push('⚠️ Email inválido');
+            }
+            if (control.errors['pattern']) {
+              errorMessages.push('⚠️ Formato inválido');
+            }
+            if (control.errors['puertoRicoPhone']) {
+              errorMessages.push('⚠️ Teléfono de Puerto Rico inválido');
+            }
+            if (control.errors['minimumAge']) {
+              errorMessages.push(`⚠️ ${control.errors['minimumAge'].message || 'Edad mínima no cumplida'}`);
+            }
+            if (control.errors['maxDigits']) {
+              errorMessages.push(`⚠️ Máximo ${control.errors['maxDigits'].requiredMaxDigits || 'N'} dígitos permitidos`);
+            }
+            if (control.errors['alphanumeric']) {
+              errorMessages.push('⚠️ Solo se permiten letras y números');
+            }
+            // Agregar otros tipos de errores si existen
+            Object.keys(control.errors).forEach(errorKey => {
+              if (!['required', 'email', 'pattern', 'puertoRicoPhone', 'minimumAge', 'maxDigits', 'alphanumeric'].includes(errorKey)) {
+                errorMessages.push(`⚠️ Error: ${errorKey}`);
+              }
+            });
+            console.log('Errores:', errorMessages);
+          }
+        }
+      }
+    });
+  };
+
+  // Iniciar validación recursiva
+  getFormValidationErrors(formGroup.controls);
+
+  // Resumen de campos inválidos
+  const invalidFields: string[] = [];
+  const getAllInvalidFields = (controls: any, path: string = ''): void => {
+    Object.keys(controls).forEach(key => {
+      const control = controls[key];
+      const currentPath = path ? `${path}.${key}` : key;
+
+      if (control instanceof UntypedFormGroup || control instanceof FormGroup) {
+        getAllInvalidFields(control.controls, currentPath);
+      } else if (control && control.invalid) {
+        invalidFields.push(currentPath);
+      }
+    });
+  };
+
+  getAllInvalidFields(formGroup.controls);
+  console.log('📋 Resumen - Campos inválidos:', invalidFields);
+  console.groupEnd();
 }

@@ -31,7 +31,7 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems, maxDigitsValidator, alphanumericValidator } from 'app/shared/utils';
+import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems, maxDigitsValidator, alphanumericValidator, logFormValidationErrors } from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { ProgramService } from 'app/shared/services/program.service';
@@ -638,6 +638,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   signUp(): void {
     if (this.signUpForm.invalid) {
+      // Log detallado de campos inválidos usando función utilitaria
+      logFormValidationErrors(this.signUpForm, 'Formulario de Registro');
+
       this._snackBar.open(this._translocoService.translate('sign-up.form-invalid.message'), this._translocoService.translate('sign-up.form-invalid.close'), {
         duration: 5000,
       });

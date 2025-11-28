@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -20,8 +20,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { Site } from 'app/shared/models/Site';
-import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
+import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString, logFormValidationErrors } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { Region } from 'app/shared/models/Region';
@@ -31,8 +30,6 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { SiteDayCareHomeRequest } from 'app/shared/models/Request/SiteDayCareHomeRequest';
-import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
@@ -64,6 +61,7 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 
 @Component({
   selector: 'app-sites-add',
@@ -999,6 +997,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
           control.updateValueAndValidity();
         }
       });
+
+      // Limpiar validaciones de personInCharge cuando es Day Care Home
+      this.updatePersonInChargeValidations();
     } else {
       // Restaurar validaciones requeridas cuando no es Day Care Home
       this.restoreRequiredValidations();
@@ -1040,6 +1041,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       educationLevelsControl.updateValueAndValidity();
     }
 
+    // personInCharge solo es requerido para PDAM
+    this.updatePersonInChargeValidations();
+
     // Campos específicos de PACNA - requeridos solo cuando es PACNA y no es Day Care Home
     if (this.isPACNA && !this.isDayCareHome) {
       const pacnaFields = {
@@ -1080,10 +1084,63 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     }
   }
 
+  /**
+   * Actualiza las validaciones de personInCharge según el programa
+   * Solo se valida cuando isPDAM es true
+   */
+  private updatePersonInChargeValidations(): void {
+    const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
+
+    if (!personInChargeGroup) {
+      return;
+    }
+
+    if (this.isPDAM) {
+      // Restaurar validaciones requeridas para PDAM
+      const firstNameControl = personInChargeGroup.get('firstName');
+      const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
+      const sitePhoneControl = personInChargeGroup.get('sitePhone');
+
+      if (firstNameControl) {
+        firstNameControl.setValidators([Validators.required]);
+        firstNameControl.updateValueAndValidity();
+      }
+
+      if (fatherLastNameControl) {
+        fatherLastNameControl.setValidators([Validators.required]);
+        fatherLastNameControl.updateValueAndValidity();
+      }
+
+      if (sitePhoneControl) {
+        sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+        sitePhoneControl.updateValueAndValidity();
+      }
+
+      // mobilePhone solo tiene validación de formato, no requerido
+      const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
+      if (mobilePhoneControl) {
+        mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
+        mobilePhoneControl.updateValueAndValidity();
+      }
+    } else {
+      // Limpiar todas las validaciones cuando no es PDAM
+      Object.keys(personInChargeGroup.controls).forEach(key => {
+        const control = personInChargeGroup.get(key);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    }
+  }
+
   // Método para enviar el formulario
   onSubmit() {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
+      // Log detallado de campos inválidos usando función utilitaria
+      logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
+
       this._notificationService.showError('Por favor, complete todos los campos requeridos');
       this.headerConfig.formGroup.markAllAsTouched();
       return;
@@ -1396,6 +1453,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       snackAtRiskTo: snackAtRiskTo ?? null,
     };
 
+    // Validar y limpiar el servicio antes de agregarlo
+    const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
+
     // ===== CREAR SITE EDUCATION LEVEL REQUEST =====
     // Crear SiteEducationLevelRequest para cada nivel educativo seleccionado
     if (educationLevelIds.length > 0) {
@@ -1449,11 +1509,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
           snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
           snackAtRiskTo: serviceData.snackAtRiskTo || null,
         };
-        return serviceRequest;
+        // Validar y limpiar cada servicio
+        return validateAndCleanSiteService(serviceRequest);
       });
     } else {
       // Servicio general (sin grupos específicos)
-      siteRequest.services = [siteServiceRequest];
+      siteRequest.services = [cleanedServiceRequest];
     }
 
     // Agregar grupos de niños si OffersServiceToDifferentGroups = true

@@ -229,8 +229,10 @@
             <mat-label>{{ "sites.add.general-enrollment.label" | transloco }}</mat-label>
             <input
               matInput
-              type="number"
-              min="0"
+              type="text"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              numericOnly
               [formControlName]="'generalEnrollment'"
               placeholder="{{ 'sites.add.general-enrollment.placeholder' | transloco }}"
               data-cy="general-enrollment-input"

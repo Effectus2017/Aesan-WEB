@@ -27,7 +27,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
-import { compare, compareById, compareItems, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
+import { compare, compareById, compareItems, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -549,6 +549,9 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   onSubmit(): void {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
+      // Log detallado de campos inválidos usando función utilitaria
+      logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Personal');
+
       this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;

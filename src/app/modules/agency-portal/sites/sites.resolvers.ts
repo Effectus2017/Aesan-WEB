@@ -201,8 +201,9 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
               deliveryTypeService.getDeliveryTypesByProgram({ programId: pdamProgram.id }),
               sponsorTypeService.getSponsorTypesByProgram({ programId: pdamProgram.id }),
               groupTypeService.getGroupTypesByProgram({ programId: pdamProgram.id }),
+              organizationTypeService.getOrganizationTypesByProgram({ programId: pdamProgram.id }),
             ]).pipe(
-              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes]) => ({
+              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
                 options: options.body,
                 kitchenTypes: kitchenTypes.body,
                 siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
@@ -210,7 +211,7 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                 sponsorTypes: filteredSponsorTypes.body,
                 cities: cities.body,
                 regions: regions.body,
-                organizationTypes: organizationTypes.body,
+                organizationTypes: filteredOrganizationTypes.body,
                 educationLevels: educationLevels.body,
                 operatingPeriods: operatingPeriods.body,
                 operatingPolicies: operatingPolicies.body,
@@ -227,8 +228,9 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
               return forkJoin([
                 groupTypeService.getGroupTypesByProgram({ programId: psavProgram.id }),
                 deliveryTypeService.getDeliveryTypesByProgram({ programId: psavProgram.id }),
+                organizationTypeService.getOrganizationTypesByProgram({ programId: psavProgram.id }),
               ]).pipe(
-                map(([filteredGroupTypes, filteredDeliveryTypes]) => ({
+                map(([filteredGroupTypes, filteredDeliveryTypes, filteredOrganizationTypes]) => ({
                   options: options.body,
                   kitchenTypes: kitchenTypes.body,
                   siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
@@ -236,7 +238,7 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                   sponsorTypes: [],
                   cities: cities.body,
                   regions: regions.body,
-                  organizationTypes: organizationTypes.body,
+                  organizationTypes: filteredOrganizationTypes.body,
                   educationLevels: educationLevels.body,
                   operatingPeriods: operatingPeriods.body,
                   operatingPolicies: operatingPolicies.body,
@@ -255,15 +257,16 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                   deliveryTypeService.getDeliveryTypesByProgram({ programId: pacnaProgram.id }),
                   sponsorTypeService.getSponsorTypesByProgram({ programId: pacnaProgram.id }),
                   groupTypeService.getGroupTypesByProgram({ programId: pacnaProgram.id }),
+                  organizationTypeService.getOrganizationTypesByProgram({ programId: pacnaProgram.id }),
                 ]).pipe(
-                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes]) => ({
+                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
                     options: options.body,
                     kitchenTypes: kitchenTypes.body,
                     groupTypes: filteredGroupTypes.body,
                     sponsorTypes: filteredSponsorTypes.body,
                     cities: cities.body,
                     regions: regions.body,
-                    organizationTypes: organizationTypes.body,
+                    organizationTypes: filteredOrganizationTypes.body,
                     educationLevels: educationLevels.body,
                     operatingPeriods: operatingPeriods.body,
                     operatingPolicies: operatingPolicies.body,
@@ -439,8 +442,9 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
               deliveryTypeService.getDeliveryTypesByProgram({ programId: pdamProgram.id }),
               sponsorTypeService.getSponsorTypesByProgram({ programId: pdamProgram.id }),
               groupTypeService.getGroupTypesByProgram({ programId: pdamProgram.id }),
+              organizationTypeService.getOrganizationTypesByProgram({ programId: pdamProgram.id }),
             ]).pipe(
-              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes]) => ({
+              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
                 site: site.body,
                 options: options.body,
                 kitchenTypes: kitchenTypes.body,
@@ -449,7 +453,7 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                 sponsorTypes: filteredSponsorTypes.body,
                 cities: cities.body,
                 regions: regions.body,
-                organizationTypes: organizationTypes.body,
+                organizationTypes: filteredOrganizationTypes.body,
                 educationLevels: educationLevels.body,
                 operatingPeriods: operatingPeriods.body,
                 operatingPolicies: operatingPolicies.body,
@@ -466,8 +470,9 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
               return forkJoin([
                 groupTypeService.getGroupTypesByProgram({ programId: psavProgram.id }),
                 deliveryTypeService.getDeliveryTypesByProgram({ programId: psavProgram.id }),
+                organizationTypeService.getOrganizationTypesByProgram({ programId: psavProgram.id }),
               ]).pipe(
-                map(([filteredGroupTypes, filteredDeliveryTypes]) => ({
+                map(([filteredGroupTypes, filteredDeliveryTypes, filteredOrganizationTypes]) => ({
                   site: site.body,
                   options: options.body,
                   kitchenTypes: kitchenTypes.body,
@@ -476,7 +481,7 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                   sponsorTypes: [],
                   cities: cities.body,
                   regions: regions.body,
-                  organizationTypes: organizationTypes.body,
+                  organizationTypes: filteredOrganizationTypes.body,
                   educationLevels: educationLevels.body,
                   operatingPeriods: operatingPeriods.body,
                   operatingPolicies: operatingPolicies.body,
@@ -495,8 +500,9 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                   deliveryTypeService.getDeliveryTypesByProgram({ programId: pacnaProgram.id }),
                   sponsorTypeService.getSponsorTypesByProgram({ programId: pacnaProgram.id }),
                   groupTypeService.getGroupTypesByProgram({ programId: pacnaProgram.id }),
+                  organizationTypeService.getOrganizationTypesByProgram({ programId: pacnaProgram.id }),
                 ]).pipe(
-                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes]) => ({
+                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
                     site: site.body,
                     options: options.body,
                     kitchenTypes: kitchenTypes.body,
@@ -504,7 +510,7 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                     sponsorTypes: filteredSponsorTypes.body,
                     cities: cities.body,
                     regions: regions.body,
-                    organizationTypes: organizationTypes.body,
+                    organizationTypes: filteredOrganizationTypes.body,
                     educationLevels: educationLevels.body,
                     operatingPeriods: operatingPeriods.body,
                     operatingPolicies: operatingPolicies.body,

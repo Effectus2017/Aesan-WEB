@@ -22,7 +22,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
+import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
@@ -392,61 +392,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   onSubmit(): void {
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
-      // Log detallado de campos inválidos
-      console.group('🔴 Formulario Inválido - Campos con Errores');
-      console.log('Estado general del formulario:', {
-        invalid: this.headerConfig.formGroup.invalid,
-        touched: this.headerConfig.formGroup.touched,
-        dirty: this.headerConfig.formGroup.dirty
-      });
-
-      // Iterar sobre todos los controles y mostrar los que tienen errores
-      Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
-        const control = this.headerConfig.formGroup.get(key);
-        if (control && control.invalid) {
-          console.log(`❌ Campo: ${key}`);
-          console.log('Estado:', {
-            invalid: control.invalid,
-            touched: control.touched,
-            dirty: control.dirty,
-            value: control.value,
-            errors: control.errors
-          });
-
-          // Mostrar mensajes de error específicos
-          if (control.errors) {
-            const errorMessages: string[] = [];
-            if (control.errors['required']) {
-              errorMessages.push('⚠️ Campo requerido');
-            }
-            if (control.errors['email']) {
-              errorMessages.push('⚠️ Email inválido');
-            }
-            if (control.errors['minimumAge']) {
-              errorMessages.push(`⚠️ ${control.errors['minimumAge'].message || 'Edad mínima no cumplida'}`);
-            }
-            // Agregar otros tipos de errores si existen
-            Object.keys(control.errors).forEach(errorKey => {
-              if (!['required', 'email', 'minimumAge'].includes(errorKey)) {
-                errorMessages.push(`⚠️ Error: ${errorKey}`);
-              }
-            });
-            console.log('Errores:', errorMessages);
-          }
-          console.groupEnd();
-        }
-      });
-
-      // Resumen de campos inválidos
-      const invalidFields = Object.keys(this.headerConfig.formGroup.controls)
-        .filter(key => {
-          const control = this.headerConfig.formGroup.get(key);
-          return control && control.invalid;
-        });
-
-      console.log('📋 Resumen - Campos inválidos:', invalidFields);
-      console.log(`Total de campos inválidos: ${invalidFields.length}`);
-      console.groupEnd();
+      // Log detallado de campos inválidos usando función utilitaria
+      logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Personal');
 
       this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
