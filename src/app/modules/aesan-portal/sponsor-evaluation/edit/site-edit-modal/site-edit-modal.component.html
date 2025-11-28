@@ -496,7 +496,7 @@
               {{ 'sites.edit.site-phone.required' | transloco }}
             </mat-error>
             <mat-error *ngIf="form.get('personInCharge')?.get('sitePhone')?.hasError('puertoRicoPhone')">
-              El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939
+              El teléfono debe tener 10 dígitos
             </mat-error>
           </mat-form-field>
 
@@ -509,7 +509,7 @@
             <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
             <input matInput formControlName="mobilePhone" phoneFormat />
             <mat-error *ngIf="form.get('personInCharge')?.get('mobilePhone')?.hasError('puertoRicoPhone')">
-              El teléfono debe tener 10 dígitos y comenzar con código de área 787 o 939
+              El teléfono debe tener 10 dígitos
             </mat-error>
           </mat-form-field>
         </div>
