@@ -821,25 +821,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this._changeDetectorRef.detectChanges();
     });
 
-    // Suscribirse a cambios en el control isActive para manejar campos de inactivación
-    this.headerConfig.formGroup
-      .get('isActive')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((isActive: boolean) => {
-        const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
-
-        if (isActive === false) {
-          // Si el sitio está inactivo, requerir justificación
-          inactiveJustificationControl?.setValidators([Validators.required]);
-        } else {
-          // Si el sitio está activo, limpiar validadores y valores
-          inactiveJustificationControl?.clearValidators();
-          inactiveJustificationControl?.setValue('');
-          this.headerConfig.formGroup.get('inactiveDate')?.setValue(null);
-        }
-
-        inactiveJustificationControl?.updateValueAndValidity();
-      });
+    // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
+    // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
 
   }
 
@@ -1967,49 +1950,13 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   /**
    * Maneja el cambio en el campo de estado activo/inactivo
    * Handles the change in the active/inactive status field
+   * NOTA: Este método ya no se usa ya que los campos se manejan desde el modal de Settings
+   * NOTE: This method is no longer used as fields are managed from the Settings modal
    */
-  onIsActiveChange(event: any): void {
-    const isActive = event;
-    const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
-    const inactiveDateControl = this.headerConfig.formGroup.get('inactiveDate');
-
-    if (isActive === false) {
-      // Limpiar validadores primero
-      inactiveJustificationControl.clearValidators();
-      inactiveDateControl.clearValidators();
-
-      // Habilitar controles
-      inactiveJustificationControl.enable({ emitEvent: false });
-      inactiveDateControl.enable({ emitEvent: false });
-
-      // Establecer valores
-      inactiveJustificationControl.setValue('');
-      inactiveDateControl.setValue(new Date());
-
-      // Establecer validadores
-      inactiveJustificationControl.setValidators([Validators.required]);
-      inactiveDateControl.setValidators([Validators.required]);
-    } else {
-      // Limpiar validadores
-      inactiveJustificationControl.clearValidators();
-      inactiveDateControl.clearValidators();
-
-      // Limpiar valores
-      inactiveJustificationControl.setValue('');
-      inactiveDateControl.setValue(null);
-
-      // Deshabilitar controles
-      inactiveJustificationControl.disable({ emitEvent: false });
-      inactiveDateControl.disable({ emitEvent: false });
-    }
-
-    // Forzar actualización de validación
-    inactiveJustificationControl.updateValueAndValidity({ emitEvent: false });
-    inactiveDateControl.updateValueAndValidity({ emitEvent: false });
-
-    // Forzar detección de cambios
-    this._changeDetectorRef.detectChanges();
-  }
+  // onIsActiveChange(event: any): void {
+  //   // Método eliminado - los campos isActive, inactiveDate e inactiveJustification
+  //   // ahora se manejan desde el modal de Settings
+  // }
 
   /**
    * Maneja la selección de tipo de entrega con notificación de permiso
