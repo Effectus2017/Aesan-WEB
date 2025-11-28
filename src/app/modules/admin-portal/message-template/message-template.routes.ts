@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MessageTemplateComponent } from './message-template.component';
 import { initialDataMessageTemplateListResolver, initialDataMessageTemplateAddResolver, initialDataMessageTemplateEditResolver } from './message-template.resolvers';
+import { initialDataTemplateVariablesResolver } from '../template-variables/template-variables.resolvers';
 
 export default [
     {
@@ -26,6 +27,13 @@ export default [
                 loadComponent: () => import('./edit/edit.component').then(c => c.EditMessageTemplateComponent),
                 resolve: {
                     data: initialDataMessageTemplateEditResolver
+                }
+            },
+            {
+                path: 'variables',
+                loadComponent: () => import('../template-variables/template-variables.component').then(c => c.TemplateVariablesComponent),
+                resolve: {
+                    data: initialDataTemplateVariablesResolver
                 }
             }
         ]

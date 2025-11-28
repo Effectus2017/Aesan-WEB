@@ -173,6 +173,11 @@
       "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 225.2, 225.14(b).",
       "cfr-link-text": "7 CFR 225.14 -- Requirements for sponsor participation"
     },
+    "pdam-not-eligible": {
+      "title": "Información sobre Elegibilidad",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 210.9(b).",
+      "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
+    },
     "basic-education-not-eligible": {
       "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
     },

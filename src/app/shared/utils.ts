@@ -447,3 +447,40 @@ export function alphanumericValidator(): (control: AbstractControl) => Validatio
     };
   };
 }
+
+/**
+ * Copia texto al portapapeles usando la Clipboard API del navegador
+ * @param text Texto a copiar
+ * @returns Promise que resuelve a true si se copió exitosamente, false en caso contrario
+ */
+export async function copyToClipboard(text: string): Promise<boolean> {
+  try {
+    // Verificar si el navegador soporta la Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } else {
+      // Fallback para navegadores que no soportan Clipboard API
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+        return successful;
+      } catch (err) {
+        document.body.removeChild(textArea);
+        return false;
+      }
+    }
+  } catch (err) {
+    console.error('Error al copiar al portapapeles:', err);
+    return false;
+  }
+}

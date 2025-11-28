@@ -4,6 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { MessageTemplateService } from 'app/shared/services/message-template.service';
 import { CommonModule } from '@angular/common';
@@ -16,6 +19,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { QuillModule } from 'ngx-quill';
 import { Subject, takeUntil } from 'rxjs';
+import { TemplateVariablesModalComponent, TemplateVariablesModalData } from 'app/shared/components/template-variables-modal/template-variables-modal.component';
 
 @Component({
     selector: 'app-edit-message-template',
@@ -28,6 +32,9 @@ import { Subject, takeUntil } from 'rxjs';
         MatInputModule,
         MatButtonModule,
         MatCheckboxModule,
+        MatDialogModule,
+        MatIconModule,
+        MatTooltipModule,
         CommonModule,
         MatSnackBarModule,
         GenericHeaderComponent,
@@ -44,6 +51,7 @@ export class EditMessageTemplateComponent implements OnInit, OnDestroy, OnGeneri
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _dialog = inject(MatDialog);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   messageTemplateId: number;
@@ -275,6 +283,15 @@ export class EditMessageTemplateComponent implements OnInit, OnDestroy, OnGeneri
 
   onCancel() {
     this._customRouterService.navigate(['message-template']);
+  }
+
+  openVariablesModal(): void {
+    this._dialog.open(TemplateVariablesModalComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {} as TemplateVariablesModalData,
+    });
   }
 }
 

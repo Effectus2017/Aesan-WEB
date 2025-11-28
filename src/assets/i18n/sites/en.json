@@ -47,6 +47,26 @@
             "title": "Add Site",
             "information": "Information",
             "information-description": "Site information",
+            "person-in-charge": {
+                "first-name": {
+                    "label": "First Name",
+                    "placeholder": "First Name",
+                    "required": "First name is required"
+                },
+                "middle-name": {
+                    "label": "Middle Name",
+                    "placeholder": "Middle Name"
+                },
+                "father-last-name": {
+                    "label": "Father Last Name",
+                    "placeholder": "Father Last Name",
+                    "required": "Father last name is required"
+                },
+                "mother-last-name": {
+                    "label": "Mother Last Name",
+                    "placeholder": "Mother Last Name"
+                }
+            },
             "name": {
                 "label": "Name",
                 "placeholder": "Site name",
@@ -122,6 +142,11 @@
             "non-profit": {
                 "label": "Is your entity a non-profit organization?",
                 "required": "This field is required"
+            },
+            "pdam-not-eligible": {
+                "title": "Eligibility Information",
+                "message": "This Site is not eligible to participate in the PDAM program because it does not comply with the following regulations: 7 CFR 210.9(b)(1).",
+                "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
             },
             "start-date": {
                 "label": "Provision Start Date",
@@ -757,6 +782,26 @@
             "title": "Edit Site",
             "information": "Information",
             "information-description": "Site information",
+            "person-in-charge": {
+                "first-name": {
+                    "label": "First Name",
+                    "placeholder": "First Name",
+                    "required": "First name is required"
+                },
+                "middle-name": {
+                    "label": "Middle Name",
+                    "placeholder": "Middle Name"
+                },
+                "father-last-name": {
+                    "label": "Father Last Name",
+                    "placeholder": "Father Last Name",
+                    "required": "Father last name is required"
+                },
+                "mother-last-name": {
+                    "label": "Mother Last Name",
+                    "placeholder": "Mother Last Name"
+                }
+            },
             "dev-section": {
                 "title": "Development Tools - Program Selection",
                 "disclaimer": "⚠️ WARNING: This section is ONLY for development testing. Allows manual program switching to test different field configurations. DO NOT use in production.",
@@ -838,6 +883,11 @@
             "non-profit": {
                 "label": "Is your entity a non-profit organization?",
                 "required": "This field is required"
+            },
+            "pdam-not-eligible": {
+                "title": "Eligibility Information",
+                "message": "This Site is not eligible to participate in the PDAM program because it does not comply with the following regulations: 7 CFR 210.9(b)(1).",
+                "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
             },
             "start-date": {
                 "label": "Provision Start Date",

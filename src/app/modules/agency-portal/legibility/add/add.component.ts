@@ -28,6 +28,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GeoService } from 'app/shared/services/geo.service';
 import { HouseholdRequest } from 'app/shared/models/Request/HouseholdRequest';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
     selector: 'agency-portal-readability-module-add',
@@ -47,7 +48,8 @@ import { HouseholdRequest } from 'app/shared/models/Request/HouseholdRequest';
         GenericTableComponent,
         MatSelectModule,
         MatDatepickerModule,
-        MatNativeDateModule
+        MatNativeDateModule,
+        NumericOnlyDirective
     ]
 })
 export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandlers {

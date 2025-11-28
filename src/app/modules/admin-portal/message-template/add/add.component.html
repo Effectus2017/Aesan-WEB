@@ -73,9 +73,20 @@
               </mat-form-field>
 
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-medium">
-                  {{ "message-template.add.bodyES.label" | transloco }} *
-                </label>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium">
+                    {{ "message-template.add.bodyES.label" | transloco }} *
+                  </label>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="openVariablesModal()"
+                    [matTooltip]="'message-template.add.viewVariables' | transloco"
+                    [attr.aria-label]="'message-template.add.viewVariables' | transloco"
+                    class="h-6 w-6">
+                    <mat-icon [svgIcon]="'heroicons_outline:information-circle'" class="icon-size-4 text-primary"></mat-icon>
+                  </button>
+                </div>
                 <quill-editor
                   formControlName="bodyES"
                   [modules]="quillModules"
@@ -108,9 +119,20 @@
               </mat-form-field>
 
               <div class="flex flex-col gap-2">
-                <label class="text-sm font-medium">
-                  {{ "message-template.add.bodyEN.label" | transloco }} *
-                </label>
+                <div class="flex items-center gap-2">
+                  <label class="text-sm font-medium">
+                    {{ "message-template.add.bodyEN.label" | transloco }} *
+                  </label>
+                  <button
+                    mat-icon-button
+                    type="button"
+                    (click)="openVariablesModal()"
+                    [matTooltip]="'message-template.add.viewVariables' | transloco"
+                    [attr.aria-label]="'message-template.add.viewVariables' | transloco"
+                    class="h-6 w-6">
+                    <mat-icon [svgIcon]="'heroicons_outline:information-circle'" class="icon-size-4 text-primary"></mat-icon>
+                  </button>
+                </div>
                 <quill-editor
                   formControlName="bodyEN"
                   [modules]="quillModules"

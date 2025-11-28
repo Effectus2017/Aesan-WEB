@@ -455,40 +455,58 @@
         </mat-checkbox>
       </div>
 
-      <!-- Administrador -->
-      <div>
+      <!-- Administrador (solo para PDAM) -->
+      <div *ngIf="isPDAM">
         <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
         <p class="mb-4 text-sm text-secondary">{{ 'sites.edit.administrator-authorized.description' | transloco }}</p>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.administrator-authorized-name.label' | transloco }}</mat-label>
-          <input matInput formControlName="administratorAuthorizedName" required />
-          <mat-error *ngIf="form.get('administratorAuthorizedName')?.hasError('required')">
-            {{ 'sites.edit.administrator-authorized-name.required' | transloco }}
-          </mat-error>
-        </mat-form-field>
+      <div [formGroup]="form" *ngIf="isPDAM">
+        <div formGroupName="personInCharge" class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.first-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="firstName" required />
+            <mat-error *ngIf="form.get('personInCharge')?.get('firstName')?.hasError('required')">
+              {{ 'sites.edit.person-in-charge.first-name.required' | transloco }}
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.site-phone.label' | transloco }}</mat-label>
-          <input matInput formControlName="sitePhone" required />
-          <mat-error *ngIf="form.get('sitePhone')?.hasError('required')">
-            {{ 'sites.edit.site-phone.required' | transloco }}
-          </mat-error>
-        </mat-form-field>
-      </div>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.middle-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="middleName" />
+          </mat-form-field>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.extension.label' | transloco }}</mat-label>
-          <input matInput formControlName="extension" />
-        </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.father-last-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="fatherLastName" required />
+            <mat-error *ngIf="form.get('personInCharge')?.get('fatherLastName')?.hasError('required')">
+              {{ 'sites.edit.person-in-charge.father-last-name.required' | transloco }}
+            </mat-error>
+          </mat-form-field>
 
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
-          <input matInput formControlName="mobilePhone" />
-        </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.mother-last-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="motherLastName" />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.site-phone.label' | transloco }}</mat-label>
+            <input matInput formControlName="sitePhone" inputmode="numeric" pattern="[0-9]*" numericOnly required />
+            <mat-error *ngIf="form.get('personInCharge')?.get('sitePhone')?.hasError('required')">
+              {{ 'sites.edit.site-phone.required' | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.extension.label' | transloco }}</mat-label>
+            <input matInput formControlName="extension" inputmode="numeric" pattern="[0-9]*" numericOnly />
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
+            <input matInput formControlName="mobilePhone" inputmode="numeric" pattern="[0-9]*" numericOnly />
+          </mat-form-field>
+        </div>
       </div>
 
       <!-- Campos adicionales -->

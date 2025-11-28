@@ -300,7 +300,9 @@
               matInput
               formControlName="phone"
               [placeholder]="'validation-to-program.edit.phone.placeholder' | transloco"
-              type="tel"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              numericOnly
               [attr.aria-label]="'validation-to-program.edit.phone.label' | transloco"
               [title]="'validation-to-program.edit.phone.label' | transloco"
             />

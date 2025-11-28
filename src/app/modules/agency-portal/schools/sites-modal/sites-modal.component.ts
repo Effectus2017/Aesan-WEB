@@ -126,8 +126,13 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
+
+    // Buscar el elemento para obtener el siteId (el id recibido es el ID de la relación SchoolSite)
+    const element = this.tableConfig.dataSourceList.find(item => item.id === id);
+    const siteId = element?.siteId || id; // Fallback al id si no se encuentra
+
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/edit/${id}`]);
+    this._customRouterService.navigate([`sites/edit/${siteId}`]);
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -146,8 +151,13 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   onTableCalendar(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
+
+    // Buscar el elemento para obtener el siteId (el id recibido es el ID de la relación SchoolSite)
+    const element = this.tableConfig.dataSourceList.find(item => item.id === id);
+    const siteId = element?.siteId || id; // Fallback al id si no se encuentra
+
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/calendar/${id}`]);
+    this._customRouterService.navigate([`sites/calendar/${siteId}`]);
   }
 
   onClearSearch(): void {

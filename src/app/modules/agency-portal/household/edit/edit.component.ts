@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
     selector: 'agency-portal-household-edit',
@@ -27,7 +28,8 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
         CommonModule,
         MatSnackBarModule,
         GenericHeaderComponent,
-        TranslocoModule
+        TranslocoModule,
+        NumericOnlyDirective
     ]
 })
 export class HouseholdEditComponent implements OnInit, OnGenericHeaderHandlers {

@@ -29,6 +29,7 @@ import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { SiteDayCareHomeRequest } from 'app/shared/models/Request/SiteDayCareHomeRequest';
+import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
@@ -63,8 +64,10 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { PROGRAM_IDS } from 'app/shared/const';
+import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { environment } from 'environments/environment';
+import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'app-sites-edit',
@@ -87,6 +90,7 @@ import { environment } from 'environments/environment';
     MatCheckboxModule,
     MatTimepickerModule,
     GenericTableComponent,
+    NumericOnlyDirective,
   ],
 })
 export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -428,18 +432,17 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
       hasDiningRoom: [false],
-      // Nombre del autorizado - Campo requerido para indicar el nombre del autorizado del sitio
-      // Administrator authorized name - Required field indicating the name of the authorized of the site
-      administratorAuthorizedName: ['', Validators.required],
-      // Teléfono del sitio - Campo requerido para indicar el teléfono del sitio
-      // Site phone - Required field indicating the site phone
-      sitePhone: ['', Validators.required],
-      // Extensión - Campo requerido para indicar la extensión del teléfono del sitio
-      // Extension - Required field indicating the extension of the site phone
-      extension: [''],
-      // Teléfono móvil - Campo requerido para indicar el teléfono móvil del sitio
-      // Mobile phone - Required field indicating the mobile phone of the site
-      mobilePhone: [''],
+      // Persona a Cargo (solo para PDAM)
+      // Person in Charge (only for PDAM)
+      personInCharge: this._formBuilder.group({
+        firstName: ['', Validators.required],
+        middleName: [''],
+        fatherLastName: ['', Validators.required],
+        motherLastName: [''],
+        sitePhone: ['', Validators.required],
+        extension: [''],
+        mobilePhone: [''],
+      }),
       // Desayuno - Campo requerido para indicar si el sitio tiene desayuno
       // Breakfast - Required field indicating if the site has breakfast
       breakfast: [false],
@@ -826,6 +829,39 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
         inactiveJustificationControl?.updateValueAndValidity();
       });
+
+  }
+
+  // Manejar cambio de non-profit para programa PDAM
+  nonProfitChange(event?: any): void {
+    // Obtener el valor directamente del evento si está disponible
+    // El evento contiene el booleanValue (true para "Sí", false para "No")
+    const nonProfitValue = event?.value !== undefined ? event.value : this.headerConfig.formGroup.value.nonProfit;
+
+    // Solo mostrar el diálogo cuando se selecciona explícitamente "No" (false)
+    // No mostrar si es null, undefined o true
+    if (nonProfitValue !== false) {
+      return;
+    }
+
+    const programs = this.agency?.programs || [];
+    const selectedProgram = programs.find(p => p.id === PROGRAM_IDS.PDAM);
+
+    // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
+    if (selectedProgram && isPDAMProgram(selectedProgram)) {
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sites.edit.pdam-not-eligible.title'),
+          message: this._translocoService.translate('sites.edit.pdam-not-eligible.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
+            text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text')
+          }
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
+      });
+    }
   }
 
   private calculateOperatingDays(): void {
@@ -1162,10 +1198,23 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       startDate: param.startDate,
       baseYear: param.baseYear,
       renewalYear: param.renewalYear,
-      administratorAuthorizedName: param.administratorAuthorizedName,
-      sitePhone: param.sitePhone,
-      extension: param.extension,
-      mobilePhone: param.mobilePhone,
+      personInCharge: param.personInCharge ? {
+        firstName: param.personInCharge.firstName || '',
+        middleName: param.personInCharge.middleName || '',
+        fatherLastName: param.personInCharge.fatherLastName || '',
+        motherLastName: param.personInCharge.motherLastName || '',
+        sitePhone: param.personInCharge.sitePhone || '',
+        extension: param.personInCharge.extension || '',
+        mobilePhone: param.personInCharge.mobilePhone || '',
+      } : {
+        firstName: '',
+        middleName: '',
+        fatherLastName: '',
+        motherLastName: '',
+        sitePhone: '',
+        extension: '',
+        mobilePhone: '',
+      },
       // Servicios básicos
       breakfast: siteService?.breakfast || false,
       breakfastFrom: breakfastFrom,
@@ -1418,10 +1467,15 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       renewalYear: formValues.renewalYear ?? null,
       hasWarehouse: formValues.hasWarehouse ?? null,
       hasDiningRoom: formValues.hasDiningRoom ?? null,
-      administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
-      sitePhone: formValues.sitePhone ?? null,
-      extension: formValues.extension ?? null,
-      mobilePhone: formValues.mobilePhone ?? null,
+      personInCharge: formValues.personInCharge ? {
+        firstName: formValues.personInCharge.firstName ?? null,
+        middleName: formValues.personInCharge.middleName ?? null,
+        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+        motherLastName: formValues.personInCharge.motherLastName ?? null,
+        sitePhone: formValues.personInCharge.sitePhone ?? null,
+        extension: formValues.personInCharge.extension ?? null,
+        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+      } : null,
       communityId: communityId ?? null,
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,
@@ -1637,11 +1691,16 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   }
 
   /**
-   * Cancela la edición y navega al listado de escuelas
-   * Cancels editing and navigates to the schools list
+   * Cancela la edición y navega al listado de sitios o escuelas según el programa
+   * Cancels editing and navigates to the sites or schools list based on the program
    */
-  onCancel() {
-    this._customRouter.navigate(['sites/list']);
+  onCancel(event: Event) {
+    // Si es PDAM, navegar a schools, de lo contrario a sites
+    if (this.isPDAM) {
+      this._customRouter.navigate(['schools']);
+    } else {
+      this._customRouter.navigate(['sites']);
+    }
   }
 
   // Método para agregar una escuela satélite

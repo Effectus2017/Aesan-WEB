@@ -1,0 +1,136 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'template-variables.modal.title' | transloco }}</div>
+    <button 
+      mat-icon-button 
+      [mat-dialog-close]="null" 
+      [tabIndex]="-1" 
+      [title]="'global.buttons.close' | transloco" 
+      [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content - Scrollable area -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0">
+    <!-- Filters -->
+    <div class="flex flex-col gap-4 mb-6 sm:flex-row sm:items-center">
+      <!-- Search -->
+      <mat-form-field appearance="fill" class="flex-1">
+        <mat-label>{{ 'template-variables.modal.search.label' | transloco }}</mat-label>
+        <input
+          matInput
+          [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange()"
+          [placeholder]="'template-variables.modal.search.placeholder' | transloco"
+          [attr.aria-label]="'template-variables.modal.search.label' | transloco"
+        />
+        <mat-icon matPrefix [svgIcon]="'heroicons_outline:magnifying-glass'"></mat-icon>
+      </mat-form-field>
+
+      <!-- Category Filter -->
+      <mat-form-field appearance="fill" class="sm:w-64">
+        <mat-label>{{ 'template-variables.modal.category.label' | transloco }}</mat-label>
+        <mat-select [(ngModel)]="selectedCategory" (ngModelChange)="onCategoryChange()">
+          <mat-option value="all">{{ 'template-variables.modal.category.all' | transloco }}</mat-option>
+          <mat-option *ngFor="let category of categories.slice(1)" [value]="category">
+            {{ 'template-variables.categories.' + category | transloco }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="!isLoading" class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" class="w-full">
+        <!-- Variable Column -->
+        <ng-container matColumnDef="displayName">
+          <th mat-header-cell *matHeaderCellDef>{{ 'template-variables.modal.table.variable' | transloco }}</th>
+          <td mat-cell *matCellDef="let variable">
+            <code class="px-2 py-1 text-sm font-mono bg-gray-100 dark:bg-gray-800 rounded">{{ variable.displayName }}</code>
+          </td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>{{ 'template-variables.modal.table.description' | transloco }}</th>
+          <td mat-cell *matCellDef="let variable">{{ getDescription(variable) }}</td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef>{{ 'template-variables.modal.table.category' | transloco }}</th>
+          <td mat-cell *matCellDef="let variable">
+            <span class="px-2 py-1 text-xs font-medium bg-primary-100 dark:bg-primary-900 text-primary-800 dark:text-primary-200 rounded">
+              {{ 'template-variables.categories.' + variable.category | transloco }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Example Column -->
+        <ng-container matColumnDef="example">
+          <th mat-header-cell *matHeaderCellDef>{{ 'template-variables.modal.table.example' | transloco }}</th>
+          <td mat-cell *matCellDef="let variable" class="max-w-xs">
+            <span class="text-sm text-secondary italic">{{ getExample(variable) }}</span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>{{ 'template-variables.modal.table.actions' | transloco }}</th>
+          <td mat-cell *matCellDef="let variable">
+            <button
+              mat-icon-button
+              (click)="copyVariable(variable)"
+              [matTooltip]="'template-variables.modal.copy' | transloco"
+              [attr.aria-label]="'template-variables.modal.copy' | transloco">
+              <mat-icon [svgIcon]="'heroicons_outline:clipboard'"></mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+        <!-- No data row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            <div class="flex flex-col justify-center items-center py-12">
+              <mat-icon [svgIcon]="'heroicons_outline:inbox'" class="text-6xl text-gray-400 mb-4"></mat-icon>
+              <p class="text-lg text-secondary">{{ 'template-variables.modal.noResults' | transloco }}</p>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Results count -->
+    <div *ngIf="!isLoading" class="mt-4 text-sm text-secondary">
+      {{ 'template-variables.modal.resultsCount' | transloco: { count: filteredVariables.length, total: allVariables.length } }}
+    </div>
+  </div>
+
+  <!-- Actions - Fixed footer -->
+  <div class="flex flex-col flex-shrink-0 justify-end p-3 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center sm:justify-between">
+    <button 
+      mat-stroked-button 
+      type="button" 
+      (click)="openDocumentationPage()"
+      class="mb-2 sm:mb-0">
+      <mat-icon [svgIcon]="'heroicons_outline:document-text'" class="mr-2"></mat-icon>
+      {{ 'template-variables.modal.viewFullDocumentation' | transloco }}
+    </button>
+    <div class="flex gap-3 sm:ml-auto">
+      <button mat-flat-button type="button" [color]="'primary'" (click)="close()">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>
+

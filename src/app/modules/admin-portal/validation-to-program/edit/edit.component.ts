@@ -37,6 +37,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { ActivatedRoute } from '@angular/router';
 import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -62,6 +63,7 @@ import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
     TranslocoModule,
     MatSnackBarModule,
     MatDialogModule,
+    NumericOnlyDirective,
   ],
 })
 export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {

@@ -604,11 +604,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                 // Si hay una región física seleccionada y está en la lista de regiones de la ciudad postal, mantenerla
                 if (physicalRegion && this.listPostalRegions.some(r => r.id === physicalRegion.id)) {
                   this.signUpForm.patchValue({ postalRegion: physicalRegion });
-                } 
+                }
                 // Si hay una región postal ya seleccionada y está en la lista, mantenerla
                 else if (currentPostalRegion && this.listPostalRegions.some(r => r.id === currentPostalRegion.id)) {
                   // Ya está seleccionada, no hacer nada
-                } 
+                }
                 // Si no hay región válida, establecer a null
                 else {
                   regionControl.setValue(null);
@@ -908,7 +908,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Si la agencia es una organización sin fines de lucro, habilitar el formulario
   nonProfitChange(event: any): void {
     const selectedProgram = this.signUpForm.value.program;
-    const isNotNonProfit = this.signUpForm.value.nonProfit === false;
+    // Obtener el valor directamente del evento si está disponible
+    // El evento contiene el booleanValue (true para "Sí", false para "No")
+    const nonProfitValue = event?.value !== undefined ? event.value : this.signUpForm.value.nonProfit;
+    const isNotNonProfit = nonProfitValue === false;
 
     // Verificar elegibilidad para PSAV
     if (isNotNonProfit && isPSAVProgram(selectedProgram)) {
@@ -993,11 +996,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     disableAllControlsExcept(this.signUpForm, 'program');
     this._dialog.open(CfrInfoDialogComponent, {
       data: {
-        title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
-        message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
+        title: this._translocoService.translate('sign-up.pdam-not-eligible.title'),
+        message: this._translocoService.translate('sign-up.pdam-not-eligible.message'),
         cfrLink: {
-          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
-          text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
+          text: this._translocoService.translate('sign-up.pdam-not-eligible.cfr-link-text')
         }
       },
       disableClose: false,

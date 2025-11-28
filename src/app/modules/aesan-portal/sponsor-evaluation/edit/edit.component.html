@@ -340,7 +340,7 @@
           <!-- Phone *  -->
           <mat-form-field data-cy="phone-field">
             <mat-label>{{ "sponsor-evaluation.edit.fields.phone.label" | transloco }}</mat-label>
-            <input matInput formControlName="phone" [placeholder]="'sponsor-evaluation.edit.fields.phone.placeholder' | transloco" type="tel" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <input matInput formControlName="phone" [placeholder]="'sponsor-evaluation.edit.fields.phone.placeholder' | transloco" inputmode="numeric" pattern="[0-9]*" numericOnly [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
           </mat-form-field>
         </div>
 

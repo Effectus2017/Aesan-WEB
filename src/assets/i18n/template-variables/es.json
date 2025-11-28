@@ -1,0 +1,62 @@
+{
+  "template-variables": {
+    "modal": {
+      "title": "Variables Disponibles para Templates",
+      "search": {
+        "label": "Buscar",
+        "placeholder": "Buscar por nombre, descripción o categoría..."
+      },
+      "category": {
+        "label": "Categoría",
+        "all": "Todas"
+      },
+      "table": {
+        "variable": "Variable",
+        "description": "Descripción",
+        "category": "Categoría",
+        "example": "Ejemplo",
+        "actions": "Acciones"
+      },
+      "copy": "Copiar variable",
+      "copied": "Variable {variable} copiada al portapapeles",
+      "copyError": "Error al copiar al portapapeles",
+      "noResults": "No se encontraron variables que coincidan con la búsqueda",
+      "resultsCount": "Mostrando {count} de {total} variables",
+      "viewFullDocumentation": "Ver Documentación Completa"
+    },
+    "categories": {
+      "Sitio": "Sitio",
+      "Agencia": "Agencia",
+      "Auspiciador": "Auspiciador",
+      "Fecha": "Fecha",
+      "Justificación": "Justificación"
+    },
+    "page": {
+      "title": "Documentación de Variables de Templates",
+      "subtitle": "Guía completa de todas las variables disponibles para usar en templates de mensajes y emails",
+      "introduction": {
+        "title": "Introducción",
+        "content": "Las variables de templates permiten personalizar los mensajes y emails con información dinámica. Usa el formato {NombreVariable} en tus templates y el sistema reemplazará automáticamente el valor correspondiente."
+      },
+      "usage": {
+        "title": "Cómo Usar",
+        "step1": "1. Escribe tu mensaje o email normalmente",
+        "step2": "2. Donde quieras insertar información dinámica, usa el formato {NombreVariable}",
+        "step3": "3. El sistema reemplazará automáticamente la variable con el valor correspondiente cuando se envíe el mensaje",
+        "example": "Ejemplo:",
+        "exampleText": "El sitio {SiteName} (Código: {SiteCode}) ha sido inactivado el {InactiveDate}."
+      },
+      "bestPractices": {
+        "title": "Mejores Prácticas",
+        "tip1": "• Siempre usa las llaves {} alrededor del nombre de la variable",
+        "tip2": "• Los nombres de variables son sensibles a mayúsculas y minúsculas",
+        "tip3": "• Si una variable no está disponible, se mostrará el texto literal {NombreVariable}",
+        "tip4": "• Combina múltiples variables en un mismo mensaje para mayor personalización"
+      },
+      "sections": {
+        "byCategory": "Variables por Categoría"
+      }
+    }
+  }
+}
+

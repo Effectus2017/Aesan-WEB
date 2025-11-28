@@ -1,0 +1,104 @@
+<div class="flex absolute inset-0 flex-col min-w-0">
+  <!-- Header -->
+  <div class="flex items-center justify-between px-6 py-4 bg-card border-b border-gray-200 dark:border-gray-700">
+    <div class="flex items-center gap-4">
+      <button
+        mat-icon-button
+        (click)="goBack()"
+        [title]="'global.buttons.back' | transloco"
+        [attr.aria-label]="'global.buttons.back' | transloco">
+        <mat-icon [svgIcon]="'heroicons_outline:arrow-left'"></mat-icon>
+      </button>
+      <div>
+        <h1 class="text-2xl font-semibold">{{ 'template-variables.page.title' | transloco }}</h1>
+        <p class="mt-1 text-sm text-secondary">{{ 'template-variables.page.subtitle' | transloco }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="overflow-y-auto flex-auto p-6">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="flex justify-center items-center py-12">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Content -->
+    <div *ngIf="!isLoading" class="max-w-5xl mx-auto space-y-6">
+      <!-- Introduction -->
+      <mat-card class="p-6">
+        <h2 class="mb-4 text-xl font-semibold">{{ 'template-variables.page.introduction.title' | transloco }}</h2>
+        <p class="text-base text-secondary">{{ 'template-variables.page.introduction.content' | transloco }}</p>
+      </mat-card>
+
+      <!-- How to Use -->
+      <mat-card class="p-6">
+        <h2 class="mb-4 text-xl font-semibold">{{ 'template-variables.page.usage.title' | transloco }}</h2>
+        <div class="space-y-2 text-base text-secondary">
+          <p>{{ 'template-variables.page.usage.step1' | transloco }}</p>
+          <p>{{ 'template-variables.page.usage.step2' | transloco }}</p>
+          <p>{{ 'template-variables.page.usage.step3' | transloco }}</p>
+          <div class="mt-4">
+            <p class="mb-2 font-medium">{{ 'template-variables.page.usage.example' | transloco }}</p>
+            <code class="block p-4 text-sm bg-gray-100 dark:bg-gray-800 rounded">{{ 'template-variables.page.usage.exampleText' | transloco }}</code>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Best Practices -->
+      <mat-card class="p-6">
+        <h2 class="mb-4 text-xl font-semibold">{{ 'template-variables.page.bestPractices.title' | transloco }}</h2>
+        <ul class="space-y-2 text-base text-secondary list-disc list-inside">
+          <li>{{ 'template-variables.page.bestPractices.tip1' | transloco }}</li>
+          <li>{{ 'template-variables.page.bestPractices.tip2' | transloco }}</li>
+          <li>{{ 'template-variables.page.bestPractices.tip3' | transloco }}</li>
+          <li>{{ 'template-variables.page.bestPractices.tip4' | transloco }}</li>
+        </ul>
+      </mat-card>
+
+      <!-- Variables by Category -->
+      <div class="space-y-4">
+        <h2 class="text-2xl font-semibold">{{ 'template-variables.page.sections.byCategory' | transloco }}</h2>
+        
+        <mat-accordion *ngFor="let category of categories" class="block">
+          <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+              <mat-panel-title>
+                {{ 'template-variables.categories.' + category | transloco }}
+              </mat-panel-title>
+              <mat-panel-description>
+                {{ variablesByCategory[category].length }} {{ variablesByCategory[category].length === 1 ? 'variable' : 'variables' }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+
+            <div class="space-y-4 pt-4">
+              <div *ngFor="let variable of variablesByCategory[category]" class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                <div class="flex items-start justify-between mb-2">
+                  <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                      <code class="px-2 py-1 text-base font-mono bg-gray-100 dark:bg-gray-800 rounded">{{ variable.displayName }}</code>
+                      <button
+                        mat-icon-button
+                        (click)="copyVariable(variable)"
+                        [matTooltip]="'template-variables.modal.copy' | transloco"
+                        [attr.aria-label]="'template-variables.modal.copy' | transloco"
+                        class="h-8 w-8">
+                        <mat-icon [svgIcon]="'heroicons_outline:clipboard'" class="icon-size-4"></mat-icon>
+                      </button>
+                    </div>
+                    <p class="mb-2 text-base">{{ getDescription(variable) }}</p>
+                    <div class="mt-2">
+                      <p class="mb-1 text-sm font-medium text-secondary">{{ 'template-variables.modal.table.example' | transloco }}:</p>
+                      <code class="block p-2 text-sm bg-gray-100 dark:bg-gray-800 rounded">{{ getExample(variable) }}</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -36,6 +36,7 @@ import { KitchenType } from 'app/shared/models/KitchenType';
 import { GroupType } from 'app/shared/models/GroupType';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
+import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
@@ -51,6 +52,7 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 export interface SiteEditModalData {
   site: Site;
@@ -76,6 +78,7 @@ export interface SiteEditModalData {
     NgIf,
     NgForOf,
     MatTooltipModule,
+    NumericOnlyDirective,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './site-edit-modal.component.html',
@@ -139,10 +142,15 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     operatingPolicy: [null],
     hasWarehouse: [false],
     hasDiningRoom: [false],
-    administratorAuthorizedName: ['', Validators.required],
-    sitePhone: ['', Validators.required],
-    extension: [''],
-    mobilePhone: [''],
+    personInCharge: this._formBuilder.group({
+      firstName: ['', Validators.required],
+      middleName: [''],
+      fatherLastName: ['', Validators.required],
+      motherLastName: [''],
+      sitePhone: ['', Validators.required],
+      extension: [''],
+      mobilePhone: [''],
+    }),
     community: [null],
     walkers: [null],
     siteType: [null],
@@ -221,7 +229,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
-    
+
     this.setupForm();
     this.loadLists();
     this.loadAgencyData();
@@ -272,7 +280,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     // Listen to isActive changes
     this.form.get('isActive')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value) => {
       const inactiveJustificationControl = this.form.get('inactiveJustification');
-      
+
       if (value === false) {
         this.form.get('inactiveDate')?.enable();
         inactiveJustificationControl?.enable();
@@ -455,7 +463,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
         this.relationshipTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'relationshipType');
         this.homeTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'homeType');
         this.participantTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'participantType');
-        
+
         // After loading options, update form values if site data exists
         if (this.data.site) {
           this.updateFormValuesWithOptions();
@@ -470,27 +478,27 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
 
     // Update form with option objects found by IDs
     const updates: any = {};
-    
+
     if (site.communityId && this.community.length > 0) {
       updates.community = this.community.find((c) => c.id === site.communityId) || null;
     }
-    
+
     if (site.walkersId && this.walkers.length > 0) {
       updates.walkers = this.walkers.find((w) => w.id === site.walkersId) || null;
     }
-    
+
     if (site.siteTypeId && this.siteType.length > 0) {
       updates.siteType = this.siteType.find((st) => st.id === site.siteTypeId) || null;
     }
-    
+
     if (site.experienceId && this.experience.length > 0) {
       updates.experience = this.experience.find((e) => e.id === site.experienceId) || null;
     }
-    
+
     if (site.reviewResultId && this.reviewResult.length > 0) {
       updates.reviewResult = this.reviewResult.find((r) => r.id === site.reviewResultId) || null;
     }
-    
+
     if (Object.keys(updates).length > 0) {
       this.form.patchValue(updates);
     }
@@ -690,7 +698,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
         this.isDayCareHome = site.isDayCareHome.booleanValue === true || site.isDayCareHome.booleanValue == null;
       }
     }
-    
+
     this.form.patchValue({
       name: site.name || '',
       address: site.address || '',
@@ -727,10 +735,23 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       operatingPolicy: site.operatingPolicy || null,
       hasWarehouse: site.hasWarehouse || false,
       hasDiningRoom: site.hasDiningRoom || false,
-      administratorAuthorizedName: site.administratorAuthorizedName || '',
-      sitePhone: site.sitePhone || '',
-      extension: site.extension || '',
-      mobilePhone: site.mobilePhone || '',
+      personInCharge: site.personInCharge ? {
+        firstName: site.personInCharge.firstName || '',
+        middleName: site.personInCharge.middleName || '',
+        fatherLastName: site.personInCharge.fatherLastName || '',
+        motherLastName: site.personInCharge.motherLastName || '',
+        sitePhone: site.personInCharge.sitePhone || '',
+        extension: site.personInCharge.extension || '',
+        mobilePhone: site.personInCharge.mobilePhone || '',
+      } : {
+        firstName: '',
+        middleName: '',
+        fatherLastName: '',
+        motherLastName: '',
+        sitePhone: '',
+        extension: '',
+        mobilePhone: '',
+      },
       community: null, // Will be set in updateFormValuesWithOptions
       walkers: null, // Will be set in updateFormValuesWithOptions
       siteType: null, // Will be set in updateFormValuesWithOptions
@@ -1071,10 +1092,15 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       renewalYear: formValues.renewalYear ?? null,
       hasWarehouse: formValues.hasWarehouse ?? null,
       hasDiningRoom: formValues.hasDiningRoom ?? null,
-      administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
-      sitePhone: formValues.sitePhone ?? null,
-      extension: formValues.extension ?? null,
-      mobilePhone: formValues.mobilePhone ?? null,
+      personInCharge: formValues.personInCharge ? {
+        firstName: formValues.personInCharge.firstName ?? null,
+        middleName: formValues.personInCharge.middleName ?? null,
+        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+        motherLastName: formValues.personInCharge.motherLastName ?? null,
+        sitePhone: formValues.personInCharge.sitePhone ?? null,
+        extension: formValues.personInCharge.extension ?? null,
+        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+      } : null,
       communityId: formValues.community?.id ?? null,
       walkersId: formValues.walkers?.id ?? null,
       siteTypeId: formValues.siteType?.id ?? null,

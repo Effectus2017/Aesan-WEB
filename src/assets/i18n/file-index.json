@@ -62,5 +62,7 @@
   "./assets/i18n/email-template/es.json",
   "./assets/i18n/email-template/en.json",
   "./assets/i18n/message-template/es.json",
-  "./assets/i18n/message-template/en.json"
+  "./assets/i18n/message-template/en.json",
+  "./assets/i18n/template-variables/es.json",
+  "./assets/i18n/template-variables/en.json"
 ]

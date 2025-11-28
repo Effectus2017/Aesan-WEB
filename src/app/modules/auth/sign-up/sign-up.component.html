@@ -340,7 +340,7 @@
             <!-- EIN *  -->
             <mat-form-field data-cy="ein-field">
               <mat-label>{{ "sign-up.ein.label" | transloco }}</mat-label>
-              <input matInput type="number" [formControlName]="'einNumber'" placeholder="{{ 'sign-up.ein.placeholder' | transloco }}" numericOnly maxlength="9" data-cy="ein-input" />
+              <input matInput [formControlName]="'einNumber'" placeholder="{{ 'sign-up.ein.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly maxlength="9" data-cy="ein-input" />
               <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('maxDigits')">
                 El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos
               </mat-error>
@@ -512,7 +512,7 @@
             <!-- Phone *  -->
             <mat-form-field data-cy="phone-field">
               <mat-label>{{ "sign-up.phone.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'phone'" placeholder="{{ 'sign-up.phone.placeholder' | transloco }}" type="tel" data-cy="phone-input" />
+              <input matInput [formControlName]="'phone'" placeholder="{{ 'sign-up.phone.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="phone-input" />
             </mat-form-field>
             <!-- Admin Title *  -->
             <mat-form-field data-cy="admin-title-field">

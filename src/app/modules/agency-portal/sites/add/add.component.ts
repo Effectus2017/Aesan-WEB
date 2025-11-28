@@ -32,6 +32,7 @@ import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { SiteDayCareHomeRequest } from 'app/shared/models/Request/SiteDayCareHomeRequest';
+import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
@@ -47,8 +48,9 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { PROGRAM_IDS } from 'app/shared/const';
+import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { PermissionRequestDialogComponent } from '../permission-request-dialog/permission-request-dialog.component';
+import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../permission-request-form-dialog/permission-request-form-dialog.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -57,6 +59,7 @@ import { SERVICES_COLUMNS_SCHEMA } from '../add-service-by-group-modal/services-
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../add-service-by-group-modal/add-service-by-group-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'environments/environment';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'app-sites-add',
@@ -80,6 +83,7 @@ import { environment } from 'environments/environment';
     MatIconModule,
     MatTimepickerModule,
     MatIconModule,
+    NumericOnlyDirective,
   ],
 })
 export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -330,20 +334,17 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
       hasDiningRoom: [null],
-      // Administrador/Representante Autorizado
-      // Administrator/Authorized Representative
-      // Nombre Completo del Administrador o Representante
-      // Full name of the administrator or representative
-      administratorAuthorizedName: ['', Validators.required],
-      // Teléfono del Sitio
-      // Site phone
-      sitePhone: ['', Validators.required],
-      // Extensión
-      // Extension
-      extension: [''],
-      // Teléfono Móvil
-      // Mobile phone
-      mobilePhone: [''],
+      // Persona a Cargo (solo para PDAM)
+      // Person in Charge (only for PDAM)
+      personInCharge: this._formBuilder.group({
+        firstName: ['', Validators.required],
+        middleName: [''],
+        fatherLastName: ['', Validators.required],
+        motherLastName: [''],
+        sitePhone: ['', Validators.required],
+        extension: [''],
+        mobilePhone: [''],
+      }),
       // Desayuno (si, no)
       // Breakfast (yes, no)
       breakfast: [null],
@@ -503,7 +504,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     cancelButtonText: 'sites.add.buttons.cancel',
     // Submit button
     submitButtonShow: true,
-    submitButtonText: 'sites.add.buttons.submit',
+    submitButtonText: 'sites.add.buttons.save',
   };
 
   // Agregar esta propiedad
@@ -667,27 +668,27 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
         // Leer isDayCareHomeId de los query parameters
         const queryParams = this._route.snapshot.queryParams;
-        const isDayCareHomeIdFromQuery = queryParams['isDayCareHomeId'] 
-          ? parseInt(queryParams['isDayCareHomeId'], 10) 
+        const isDayCareHomeIdFromQuery = queryParams['isDayCareHomeId']
+          ? parseInt(queryParams['isDayCareHomeId'], 10)
           : null;
 
         // Si hay isDayCareHomeId en query params, usarlo directamente
         if (isDayCareHomeIdFromQuery !== null && resolvedData) {
           this.isDayCareHomeId = isDayCareHomeIdFromQuery;
-          
+
           // Obtener las opciones de isDayCareHome del resolver para determinar isDayCareHome (bool)
           const isDayCareHomeOptions = resolvedData.options?.data?.filter(
             (option: OptionSelection) => option.optionKey === 'isDayCareHome'
           ) || [];
-          
+
           const selectedOption = isDayCareHomeOptions.find(
             (opt: OptionSelection) => opt.id === isDayCareHomeIdFromQuery
           );
-          
+
           // Si el ID corresponde a "Sí" (booleanValue === true), entonces isDayCareHome = true
           // Si el ID corresponde a "No" (booleanValue === false), entonces isDayCareHome = false
           // Si el ID corresponde a "Ambos" (booleanValue === null), entonces isDayCareHome = true (para mostrar campos)
-          this.isDayCareHome = selectedOption 
+          this.isDayCareHome = selectedOption
             ? (selectedOption.booleanValue === true || selectedOption.booleanValue == null)
             : false;
         } else {
@@ -733,6 +734,39 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.updateCenterTypeFieldVisibility(organizationType);
       this._changeDetectorRef.detectChanges();
     });
+
+  }
+
+  // Manejar cambio de non-profit para programa PDAM
+  nonProfitChange(event?: any): void {
+    // Obtener el valor directamente del evento si está disponible
+    // El evento contiene el booleanValue (true para "Sí", false para "No")
+    const nonProfitValue = event?.value !== undefined ? event.value : this.headerConfig.formGroup.value.nonProfit;
+
+    // Solo mostrar el diálogo cuando se selecciona explícitamente "No" (false)
+    // No mostrar si es null, undefined o true
+    if (nonProfitValue !== false) {
+      return;
+    }
+
+    const programs = this.agency?.programs || [];
+    const selectedProgram = programs.find(p => p.id === PROGRAM_IDS.PDAM);
+
+    // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
+    if (selectedProgram && isPDAMProgram(selectedProgram)) {
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sites.add.pdam-not-eligible.title'),
+          message: this._translocoService.translate('sites.add.pdam-not-eligible.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
+            text: this._translocoService.translate('sites.add.pdam-not-eligible.cfr-link-text')
+          }
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
+      });
+    }
   }
 
   private calculateOperatingDays(): void {
@@ -1197,19 +1231,17 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Tiene comedor - Indicador de infraestructura
       // Has dining room - Infrastructure indicator
       hasDiningRoom: formValues.hasDiningRoom ?? null,
-      // Información de Contacto / Contact Information
-      // Nombre del administrador autorizado - Campo para contacto
-      // Authorized administrator name - Contact field
-      administratorAuthorizedName: formValues.administratorAuthorizedName ?? null,
-      // Teléfono del sitio - Campo para contacto
-      // Site phone - Contact field
-      sitePhone: formValues.sitePhone ?? null,
-      // Extensión - Campo para contacto
-      // Extension - Contact field
-      extension: formValues.extension ?? null,
-      // Teléfono móvil - Campo para contacto
-      // Mobile phone - Contact field
-      mobilePhone: formValues.mobilePhone ?? null,
+      // Persona a Cargo (solo para PDAM)
+      // Person in Charge (only for PDAM)
+      personInCharge: formValues.personInCharge ? {
+        firstName: formValues.personInCharge.firstName ?? null,
+        middleName: formValues.personInCharge.middleName ?? null,
+        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+        motherLastName: formValues.personInCharge.motherLastName ?? null,
+        sitePhone: formValues.personInCharge.sitePhone ?? null,
+        extension: formValues.personInCharge.extension ?? null,
+        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+      } : null,
       // Comunidad
       // Community
       communityId: formValues.communityId ?? null,
@@ -1451,8 +1483,13 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   }
 
   // Método para cancelar la operación
-  onCancel() {
-    this._customRouter.navigate(['sites/list']);
+  onCancel(event: Event) {
+    // Si es PDAM, navegar a schools, de lo contrario a sites
+    if (this.isPDAM) {
+      this._customRouter.navigate(['schools']);
+    } else {
+      this._customRouter.navigate(['sites']);
+    }
   }
 
   // Método para agregar un sitio satélite

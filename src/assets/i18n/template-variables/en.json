@@ -1,0 +1,62 @@
+{
+  "template-variables": {
+    "modal": {
+      "title": "Available Template Variables",
+      "search": {
+        "label": "Search",
+        "placeholder": "Search by name, description or category..."
+      },
+      "category": {
+        "label": "Category",
+        "all": "All"
+      },
+      "table": {
+        "variable": "Variable",
+        "description": "Description",
+        "category": "Category",
+        "example": "Example",
+        "actions": "Actions"
+      },
+      "copy": "Copy variable",
+      "copied": "Variable {variable} copied to clipboard",
+      "copyError": "Error copying to clipboard",
+      "noResults": "No variables found matching the search",
+      "resultsCount": "Showing {count} of {total} variables",
+      "viewFullDocumentation": "View Full Documentation"
+    },
+    "categories": {
+      "Sitio": "Site",
+      "Agencia": "Agency",
+      "Auspiciador": "Sponsor",
+      "Fecha": "Date",
+      "Justificación": "Justification"
+    },
+    "page": {
+      "title": "Template Variables Documentation",
+      "subtitle": "Complete guide of all available variables for use in message and email templates",
+      "introduction": {
+        "title": "Introduction",
+        "content": "Template variables allow you to personalize messages and emails with dynamic information. Use the format {VariableName} in your templates and the system will automatically replace it with the corresponding value."
+      },
+      "usage": {
+        "title": "How to Use",
+        "step1": "1. Write your message or email normally",
+        "step2": "2. Where you want to insert dynamic information, use the format {VariableName}",
+        "step3": "3. The system will automatically replace the variable with the corresponding value when the message is sent",
+        "example": "Example:",
+        "exampleText": "Site {SiteName} (Code: {SiteCode}) has been inactivated on {InactiveDate}."
+      },
+      "bestPractices": {
+        "title": "Best Practices",
+        "tip1": "• Always use curly braces {} around the variable name",
+        "tip2": "• Variable names are case-sensitive",
+        "tip3": "• If a variable is not available, the literal text {VariableName} will be displayed",
+        "tip4": "• Combine multiple variables in the same message for greater personalization"
+      },
+      "sections": {
+        "byCategory": "Variables by Category"
+      }
+    }
+  }
+}
+

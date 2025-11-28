@@ -1,0 +1,17 @@
+// Estilos específicos para la página de documentación de variables
+:host {
+  display: block;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+mat-card {
+  margin-bottom: 1.5rem;
+}
+
+mat-expansion-panel {
+  margin-bottom: 1rem;
+}
+

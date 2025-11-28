@@ -47,6 +47,26 @@
             "title": "Agregar Sitio",
             "information": "Información",
             "information-description": "Información del sitio",
+            "person-in-charge": {
+                "first-name": {
+                    "label": "Nombre",
+                    "placeholder": "Nombre",
+                    "required": "El nombre es requerido"
+                },
+                "middle-name": {
+                    "label": "Segundo Nombre",
+                    "placeholder": "Segundo Nombre"
+                },
+                "father-last-name": {
+                    "label": "Primer Apellido",
+                    "placeholder": "Primer Apellido",
+                    "required": "El primer apellido es requerido"
+                },
+                "mother-last-name": {
+                    "label": "Segundo Apellido",
+                    "placeholder": "Segundo Apellido"
+                }
+            },
             "name": {
                 "label": "Nombre del sitio",
                 "placeholder": "Nombre del sitio",
@@ -124,6 +144,11 @@
             "non-profit": {
                 "label": "¿Su entidad es una organización sin fines de lucro?",
                 "required": "Este campo es requerido"
+            },
+            "pdam-not-eligible": {
+                "title": "Información sobre Elegibilidad",
+                "message": "Este Sitio no es elegible para participar del programa de PDAM ya que no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 210.9(b)(1).",
+                "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
             },
             "start-date": {
                 "label": "Fecha de Inicio de la Provisión",
@@ -692,6 +717,26 @@
             "title": "Editar Sitio",
             "information": "Información",
             "information-description": "Información del sitio",
+            "person-in-charge": {
+                "first-name": {
+                    "label": "Nombre",
+                    "placeholder": "Nombre",
+                    "required": "El nombre es requerido"
+                },
+                "middle-name": {
+                    "label": "Segundo Nombre",
+                    "placeholder": "Segundo Nombre"
+                },
+                "father-last-name": {
+                    "label": "Primer Apellido",
+                    "placeholder": "Primer Apellido",
+                    "required": "El primer apellido es requerido"
+                },
+                "mother-last-name": {
+                    "label": "Segundo Apellido",
+                    "placeholder": "Segundo Apellido"
+                }
+            },
             "dev-section": {
                 "title": "Herramientas de Desarrollo - Selección de Programas",
                 "disclaimer": "⚠️ ADVERTENCIA: Esta sección es SOLO para pruebas de desarrollo. Permite cambiar manualmente entre programas para probar diferentes configuraciones de campos. NO usar en producción.",
@@ -780,6 +825,11 @@
             "non-profit": {
                 "label": "¿Su entidad es una organización sin fines de lucro?",
                 "required": "Este campo es requerido"
+            },
+            "pdam-not-eligible": {
+                "title": "Información sobre Elegibilidad",
+                "message": "Este Sitio no es elegible para participar del programa de PDAM ya que no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 210.9(b)(1).",
+                "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
             },
             "start-date": {
                 "label": "Fecha de Inicio de la Provisión",

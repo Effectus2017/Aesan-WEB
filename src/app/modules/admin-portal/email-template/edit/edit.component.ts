@@ -4,6 +4,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { EmailTemplateService } from 'app/shared/services/email-template.service';
 import { CommonModule } from '@angular/common';
@@ -15,6 +18,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { QuillModule } from 'ngx-quill';
+import { TemplateVariablesModalComponent, TemplateVariablesModalData } from 'app/shared/components/template-variables-modal/template-variables-modal.component';
 @Component({
     selector: 'app-edit-email-template',
     templateUrl: './edit.component.html',
@@ -26,6 +30,9 @@ import { QuillModule } from 'ngx-quill';
         MatInputModule,
         MatButtonModule,
         MatCheckboxModule,
+        MatDialogModule,
+        MatIconModule,
+        MatTooltipModule,
         CommonModule,
         MatSnackBarModule,
         GenericHeaderComponent,
@@ -42,6 +49,7 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _dialog = inject(MatDialog);
 
   emailTemplateId: number;
 
@@ -204,6 +212,15 @@ export class EditEmailTemplateComponent implements OnInit, OnDestroy, OnGenericH
 
   onCancel() {
     this._customRouterService.navigate(['email-template']);
+  }
+
+  openVariablesModal(): void {
+    this._dialog.open(TemplateVariablesModalComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {} as TemplateVariablesModalData,
+    });
   }
 }
 

@@ -72,7 +72,8 @@
       "messages": {
         "formInvalid": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
         "close": "Cerrar"
-      }
+      },
+      "viewVariables": "Ver variables disponibles"
     }
   }
 }

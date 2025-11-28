@@ -148,7 +148,7 @@
           <!-- Teléfono -->
           <mat-form-field>
             <mat-label>Teléfono</mat-label>
-            <input matInput formControlName="phone" type="tel" />
+            <input matInput formControlName="phone" inputmode="numeric" pattern="[0-9]*" numericOnly />
           </mat-form-field>
 
           <!-- Email -->

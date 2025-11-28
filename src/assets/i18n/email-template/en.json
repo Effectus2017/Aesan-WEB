@@ -72,7 +72,8 @@
       "messages": {
         "formInvalid": "The form is invalid. Please complete all required fields.",
         "close": "Close"
-      }
+      },
+      "viewVariables": "View available variables"
     }
   }
 }

@@ -3,6 +3,7 @@ import { SiteDayCareHomeRequest } from './SiteDayCareHomeRequest';
 import { SiteParticipantRequest } from './SiteParticipantRequest';
 import { SiteEducationLevelRequest } from './SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from './SiteChildGroupRequest';
+import { SitePersonInChargeRequest } from './SitePersonInChargeRequest';
 
 export interface SiteRequest {
     // ===== CAMPOS PRINCIPALES DE SITE =====
@@ -58,11 +59,8 @@ export interface SiteRequest {
     hasWarehouse?: boolean;
     hasDiningRoom?: boolean;
 
-    // Administrador/Representante Autorizado
-    administratorAuthorizedName?: string;
-    sitePhone?: string;
-    extension?: string;
-    mobilePhone?: string;
+    // Persona a Cargo
+    personInCharge?: SitePersonInChargeRequest;
 
     // Campos adicionales
     communityId?: number;
