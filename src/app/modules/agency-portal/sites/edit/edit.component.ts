@@ -617,6 +617,16 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'sites.edit.buttons.cancel',
+    // Settings button
+    settingsButtonShow: true,
+    settingsButtonTooltip: 'sites.edit.settings.tooltip',
+    settingsMenuItems: [
+      {
+        id: 'toggle-active',
+        label: 'sites.edit.settings.toggle-active',
+        icon: 'heroicons_outline:power'
+      }
+    ],
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'sites.edit.buttons.save',
@@ -1701,6 +1711,27 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     } else {
       this._customRouter.navigate(['sites']);
     }
+  }
+
+  // Método para manejar acciones del menú de settings
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'toggle-active':
+        this.onToggleActive();
+        break;
+      default:
+        console.warn(`Acción de menú no reconocida: ${menuItemId}`);
+    }
+  }
+
+  // Método para activar/desactivar
+  private onToggleActive(): void {
+    const currentValue = this.headerConfig.formGroup.get('isActive')?.value;
+    const newValue = !currentValue;
+    this.headerConfig.formGroup.get('isActive')?.setValue(newValue);
+    
+    // Aquí puedes agregar lógica adicional si es necesario
+    console.log(`Estado activo cambiado a: ${newValue}`);
   }
 
   // Método para agregar una escuela satélite

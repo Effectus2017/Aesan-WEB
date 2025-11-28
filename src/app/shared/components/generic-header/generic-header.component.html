@@ -175,5 +175,29 @@
         [attr.aria-label]="'users.edit.avatar.select' | transloco"
       />
     }
+
+    <!-- Botón Settings -->
+    @if (config.settingsButtonShow) {
+    <div [matTooltip]="getButtonTooltip(config.settingsButtonTooltip, config.settingsButtonDisabledTooltip, config.settingsButtonPermission)" [matTooltipDisabled]="!config.settingsButtonTooltip && !config.settingsButtonDisabledTooltip">
+      <button
+        type="button"
+        [title]="getButtonTooltip(config.settingsButtonTooltip, config.settingsButtonDisabledTooltip, config.settingsButtonPermission) || 'Settings'"
+        [disabled]="isButtonDisabledByPermission(config.settingsButtonPermission)"
+        mat-icon-button
+        [matMenuTriggerFor]="settingsMenu">
+        <mat-icon [svgIcon]="'heroicons_outline:cog-6-tooth'"></mat-icon>
+      </button>
+      <mat-menu #settingsMenu="matMenu">
+        @for (item of config.settingsMenuItems; track item.id) {
+        <button
+          mat-menu-item
+          [disabled]="item.disabled"
+          (click)="onSettingsMenuAction(item.id)">
+          <span>{{ item.label | transloco }}</span>
+        </button>
+        }
+      </mat-menu>
+    </div>
+    }
   </form>
 </div>

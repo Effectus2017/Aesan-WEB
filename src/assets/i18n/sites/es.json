@@ -515,6 +515,10 @@
                 "cancel": "Cancelar",
                 "submit": "Enviar"
             },
+            "settings": {
+                "tooltip": "Configuración",
+                "toggle-active": "Activar/Desactivar"
+            },
             "daycare-home-fields": {
                 "title": "Hogar de Cuidado Diurno",
                 "description": "Información específica para hogares de cuidado diurno del programa PACNA"
@@ -1268,6 +1272,10 @@
                 "save": "Guardar",
                 "cancel": "Cancelar",
                 "submit": "Enviar"
+            },
+            "settings": {
+                "tooltip": "Configuración",
+                "toggle-active": "Activar/Desactivar"
             }
         },
         "calendar": {

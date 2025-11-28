@@ -521,6 +521,10 @@
                 "cancel": "Cancel",
                 "submit": "Submit"
             },
+            "settings": {
+                "tooltip": "Settings",
+                "toggle-active": "Activate/Deactivate"
+            },
             "daycare-home-fields": {
                 "title": "Day Care Home Specific Fields",
                 "description": "Specific information for day care homes in the PACNA program"
@@ -1321,6 +1325,10 @@
                 "save": "Save",
                 "cancel": "Cancel",
                 "submit": "Submit"
+            },
+            "settings": {
+                "tooltip": "Settings",
+                "toggle-active": "Activate/Deactivate"
             }
         },
         "calendar": {

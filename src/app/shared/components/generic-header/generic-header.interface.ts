@@ -77,9 +77,23 @@ export interface GenericHeaderConfig {
   uploadButtonDisabledTooltip?: string;
   uploadButtonPermission?: string;
 
+  // Settings Button config
+  settingsButtonShow?: boolean;
+  settingsButtonTooltip?: string;
+  settingsButtonDisabledTooltip?: string;
+  settingsButtonPermission?: string;
+  settingsMenuItems?: SettingsMenuItem[];
+
   // Loading config
   isLoading?: boolean;
 
+}
+
+export interface SettingsMenuItem {
+  id: string;
+  label: string;
+  icon?: string;
+  disabled?: boolean;
 }
 
 export interface OnGenericHeaderHandlers {
@@ -136,4 +150,10 @@ export interface OnGenericHeaderHandlers {
    * Manejador para el evento de subir
    */
   onHeaderUploadFile?: (event: Event) => void;
+
+  /**
+   * Manejador para el evento de acción del menú de settings
+   * @param menuItemId ID del item del menú seleccionado
+   */
+  onSettingsMenuAction?: (menuItemId: string) => void;
 }

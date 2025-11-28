@@ -498,10 +498,23 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // De poseer un contrato Público Alianza, especifique su modalidad
       // If you have a Public Alliance contract, please specify the type of contract
       publicAllianceContractId: [null],
+      // Estado activo del sitio
+      // Site active status
+      isActive: [true],
     }),
     // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'sites.add.buttons.cancel',
+    // Settings button
+    settingsButtonShow: true,
+    settingsButtonTooltip: 'sites.add.settings.tooltip',
+    settingsMenuItems: [
+      {
+        id: 'toggle-active',
+        label: 'sites.add.settings.toggle-active',
+        icon: 'heroicons_outline:power'
+      }
+    ],
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'sites.add.buttons.save',
@@ -1490,6 +1503,27 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     } else {
       this._customRouter.navigate(['sites']);
     }
+  }
+
+  // Método para manejar acciones del menú de settings
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'toggle-active':
+        this.onToggleActive();
+        break;
+      default:
+        console.warn(`Acción de menú no reconocida: ${menuItemId}`);
+    }
+  }
+
+  // Método para activar/desactivar
+  private onToggleActive(): void {
+    const currentValue = this.headerConfig.formGroup.get('isActive')?.value;
+    const newValue = !currentValue;
+    this.headerConfig.formGroup.get('isActive')?.setValue(newValue);
+    
+    // Aquí puedes agregar lógica adicional si es necesario
+    console.log(`Estado activo cambiado a: ${newValue}`);
   }
 
   // Método para agregar un sitio satélite

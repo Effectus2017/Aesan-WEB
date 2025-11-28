@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { NgIf } from '@angular/common';
 import { fuseAnimations } from '@fuse/animations';
 import { RouterLink, RouterModule } from '@angular/router';
@@ -18,7 +19,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, NgIf, RouterModule, RouterLink, TranslocoModule]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, RouterLink, TranslocoModule]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;
@@ -143,5 +144,11 @@ export class GenericHeaderComponent {
   //
   onHeaderUploadFile(event: Event) {
     this.handler.onHeaderUploadFile(event);
+  }
+
+  onSettingsMenuAction(menuItemId: string): void {
+    if (this.handler.onSettingsMenuAction) {
+      this.handler.onSettingsMenuAction(menuItemId);
+    }
   }
 }
