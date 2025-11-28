@@ -1,0 +1,83 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'sites.add.status-modal.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-4">
+      <!-- Campo Estatus -->
+      <mat-form-field>
+        <mat-label>{{ 'sites.add.status-modal.status.label' | transloco }}</mat-label>
+        <mat-select formControlName="isActive">
+          @for (option of data.isActiveOptions; track option.id) {
+          <mat-option [value]="option.booleanValue">
+            {{ currentLang === 'en' ? option.nameEN : option.name }}
+          </mat-option>
+          }
+        </mat-select>
+        @if (form.get('isActive')?.hasError('required')) {
+        <mat-error>
+          {{ 'sites.add.status-modal.status.required' | transloco }}
+        </mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Campo Fecha de Inactivación (solo visible si isActive === false) -->
+      @if (form.get('isActive')?.value === false) {
+      <mat-form-field>
+        <mat-label>{{ 'sites.add.status-modal.inactive-date.label' | transloco }}</mat-label>
+        <input
+          matInput
+          [matDatepicker]="pickerInactiveDate"
+          formControlName="inactiveDate"
+          [placeholder]="'sites.add.status-modal.inactive-date.placeholder' | transloco"
+        />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate"></mat-datepicker-toggle>
+        <mat-datepicker #pickerInactiveDate></mat-datepicker>
+        @if (form.get('inactiveDate')?.hasError('required')) {
+        <mat-error>
+          {{ 'sites.add.status-modal.inactive-date.required' | transloco }}
+        </mat-error>
+        }
+      </mat-form-field>
+      }
+
+      <!-- Campo Justificación de Inactivación (solo visible si isActive === false) -->
+      @if (form.get('isActive')?.value === false) {
+      <mat-form-field>
+        <mat-label>{{ 'sites.add.status-modal.inactive-justification.label' | transloco }}</mat-label>
+        <textarea
+          matInput
+          formControlName="inactiveJustification"
+          [placeholder]="'sites.add.status-modal.inactive-justification.placeholder' | transloco"
+          rows="3">
+        </textarea>
+        @if (form.get('inactiveJustification')?.hasError('required')) {
+        <mat-error>
+          {{ 'sites.add.status-modal.inactive-justification.required' | transloco }}
+        </mat-error>
+        }
+      </mat-form-field>
+      }
+
+      <!-- Actions -->
+      <div class="flex flex-col justify-between mt-4 sm:flex-row sm:items-center">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading">
+          {{ 'sites.add.status-modal.cancel' | transloco }}
+        </button>
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading">
+          @if (isLoading) {
+          <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
+          }
+          {{ 'sites.add.status-modal.save' | transloco }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+

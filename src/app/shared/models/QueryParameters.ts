@@ -54,6 +54,7 @@ export interface QueryParameters {
   schoolId?: number;
   isActive?: boolean;
   inactiveJustification?: string;
+  inactiveDate?: string | null; // Formato YYYY-MM-DD (solo fecha, sin hora)
 
   // Campos para Staff
   staffId?: number;

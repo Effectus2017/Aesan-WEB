@@ -91,11 +91,11 @@ export class SiteService {
 
   /**
    * Actualiza el estado activo/inactivo de un sitio
-   * @param queryParameters Los parámetros de consulta
+   * @param queryParameters Los parámetros de la solicitud (se envían en el body)
    * @returns True si se actualizó correctamente
    */
   updateSiteActiveStatus(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/update-active-status`, queryParameters, getHttpOptions(queryParameters));
+    return this._httpClient.put(`${this.apiUrl}/update-active-status`, queryParameters, getHttpOptions({}));
   }
 
   /**

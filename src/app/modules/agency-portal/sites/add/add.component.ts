@@ -52,6 +52,7 @@ import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { PermissionRequestDialogComponent } from '../permission-request-dialog/permission-request-dialog.component';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../permission-request-form-dialog/permission-request-form-dialog.component';
+import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -114,6 +115,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Yes No Options (1, 2)
   // Si (1) y No (2)
   yesNoOptions: OptionSelection[] = [];
+
+  // Estatus Options
+  // Opciones de estatus (Activo/Inactivo)
+  isActiveOptions: OptionSelection[] = [];
 
   // Relationship Type Options
   // Opciones de Parentesco
@@ -501,20 +506,18 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Estado activo del sitio
       // Site active status
       isActive: [true],
+      // Fecha de inactivación
+      // Inactivation date
+      inactiveDate: [null],
+      // Justificación de inactivación
+      // Inactivation justification
+      inactiveJustification: [''],
     }),
     // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'sites.add.buttons.cancel',
-    // Settings button
-    settingsButtonShow: true,
-    settingsButtonTooltip: 'sites.add.settings.tooltip',
-    settingsMenuItems: [
-      {
-        id: 'toggle-active',
-        label: 'sites.add.settings.toggle-active',
-        icon: 'heroicons_outline:power'
-      }
-    ],
+    // Settings button - Solo visible en edición
+    settingsButtonShow: false,
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'sites.add.buttons.save',
@@ -633,6 +636,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     if (resolvedData) {
       // Yes No Options
       this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      // Estatus Options
+      this.isActiveOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
       this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
       this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
       this.community = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community');
@@ -1518,12 +1523,47 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   // Método para activar/desactivar
   private onToggleActive(): void {
-    const currentValue = this.headerConfig.formGroup.get('isActive')?.value;
-    const newValue = !currentValue;
-    this.headerConfig.formGroup.get('isActive')?.setValue(newValue);
-    
-    // Aquí puedes agregar lógica adicional si es necesario
-    console.log(`Estado activo cambiado a: ${newValue}`);
+    const currentIsActive = this.headerConfig.formGroup.get('isActive')?.value ?? true;
+    const currentInactiveDate = this.headerConfig.formGroup.get('inactiveDate')?.value ?? null;
+    const currentInactiveJustification = this.headerConfig.formGroup.get('inactiveJustification')?.value ?? null;
+
+    const dialogRef = this._dialog.open(SiteStatusModalComponent, {
+      data: {
+        isActive: currentIsActive,
+        inactiveDate: currentInactiveDate,
+        inactiveJustification: currentInactiveJustification,
+        isActiveOptions: this.isActiveOptions
+      } as SiteStatusModalData,
+      disableClose: false,
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.action === 'submit') {
+        // Actualizar el formulario con los valores del modal
+        this.headerConfig.formGroup.get('isActive')?.setValue(result.isActive);
+        this.headerConfig.formGroup.get('inactiveDate')?.setValue(result.inactiveDate);
+        this.headerConfig.formGroup.get('inactiveJustification')?.setValue(result.inactiveJustification);
+
+        // Manejar validaciones condicionales
+        if (result.isActive === false) {
+          // Si está inactivo, requerir fecha y justificación
+          this.headerConfig.formGroup.get('inactiveDate')?.setValidators([Validators.required]);
+          this.headerConfig.formGroup.get('inactiveJustification')?.setValidators([Validators.required]);
+        } else {
+          // Si está activo, limpiar validadores y valores
+          this.headerConfig.formGroup.get('inactiveDate')?.clearValidators();
+          this.headerConfig.formGroup.get('inactiveJustification')?.clearValidators();
+          this.headerConfig.formGroup.get('inactiveDate')?.setValue(null);
+          this.headerConfig.formGroup.get('inactiveJustification')?.setValue('');
+        }
+
+        this.headerConfig.formGroup.get('inactiveDate')?.updateValueAndValidity();
+        this.headerConfig.formGroup.get('inactiveJustification')?.updateValueAndValidity();
+      }
+    });
   }
 
   // Método para agregar un sitio satélite

@@ -185,7 +185,7 @@
         [disabled]="isButtonDisabledByPermission(config.settingsButtonPermission)"
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu">
-        <mat-icon [svgIcon]="'heroicons_outline:cog-6-tooth'"></mat-icon>
+        <mat-icon [svgIcon]="'mat_outline:more_vert'"></mat-icon>
       </button>
       <mat-menu #settingsMenu="matMenu">
         @for (item of config.settingsMenuItems; track item.id) {

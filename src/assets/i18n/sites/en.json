@@ -525,6 +525,26 @@
                 "tooltip": "Settings",
                 "toggle-active": "Activate/Deactivate"
             },
+            "status-modal": {
+                "title": "Change Site Status",
+                "status": {
+                    "label": "Status",
+                    "placeholder": "Select status",
+                    "required": "Status is required"
+                },
+                "inactive-date": {
+                    "label": "Inactivation Date",
+                    "placeholder": "Select date",
+                    "required": "Inactivation date is required"
+                },
+                "inactive-justification": {
+                    "label": "Inactivation Justification",
+                    "placeholder": "Enter inactivation justification",
+                    "required": "Inactivation justification is required"
+                },
+                "cancel": "Cancel",
+                "save": "Save"
+            },
             "daycare-home-fields": {
                 "title": "Day Care Home Specific Fields",
                 "description": "Specific information for day care homes in the PACNA program"
@@ -911,10 +931,10 @@
             "organizationType": {
                 "label": "Organization Type"
             },
-            "education-level": {
-                "label": "Education Level",
-                "placeholder": "Site education level",
-                "required": "Education level is required"
+            "education-levels": {
+                "label": "Education Levels",
+                "placeholder": "Site education levels",
+                "required": "Education levels are required"
             },
             "operating-from-date": {
                 "label": "From Date",
@@ -1255,6 +1275,7 @@
             },
             "site-number": {
                 "label": "Site Number",
+                "placeholder": "Site Number",
                 "description": "Unique site code generated automatically"
             },
             "location-type": {
@@ -1329,7 +1350,29 @@
             "settings": {
                 "tooltip": "Settings",
                 "toggle-active": "Activate/Deactivate"
-            }
+            },
+            "status-modal": {
+                "title": "Change Site Status",
+                "status": {
+                    "label": "Status",
+                    "placeholder": "Select status",
+                    "required": "Status is required"
+                },
+                "inactive-date": {
+                    "label": "Inactivation Date",
+                    "placeholder": "Select date",
+                    "required": "Inactivation date is required"
+                },
+                "inactive-justification": {
+                    "label": "Inactivation Justification",
+                    "placeholder": "Enter inactivation justification",
+                    "required": "Inactivation justification is required"
+                },
+                "cancel": "Cancel",
+                "save": "Save"
+            },
+            "status-updated-successfully": "Site status updated successfully",
+            "status-update-error": "Error updating site status"
         },
         "calendar": {
             "title": "Operating Calendar",

@@ -68,6 +68,7 @@ import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
 
 @Component({
   selector: 'app-sites-edit',
@@ -1726,12 +1727,56 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Método para activar/desactivar
   private onToggleActive(): void {
-    const currentValue = this.headerConfig.formGroup.get('isActive')?.value;
-    const newValue = !currentValue;
-    this.headerConfig.formGroup.get('isActive')?.setValue(newValue);
-    
-    // Aquí puedes agregar lógica adicional si es necesario
-    console.log(`Estado activo cambiado a: ${newValue}`);
+    const currentIsActive = this.headerConfig.formGroup.get('isActive')?.value ?? true;
+    const currentInactiveDate = this.headerConfig.formGroup.get('inactiveDate')?.value ?? null;
+    const currentInactiveJustification = this.headerConfig.formGroup.get('inactiveJustification')?.value ?? null;
+
+    const dialogRef = this._dialog.open(SiteStatusModalComponent, {
+      data: {
+        siteId: this.param.id,
+        isActive: currentIsActive,
+        inactiveDate: currentInactiveDate,
+        inactiveJustification: currentInactiveJustification,
+        isActiveOptions: this.isActive
+      } as SiteStatusModalData,
+      disableClose: false,
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.action === 'submit') {
+        // Actualizar el formulario con los valores del modal
+        const isActiveControl = this.headerConfig.formGroup.get('isActive');
+        const inactiveDateControl = this.headerConfig.formGroup.get('inactiveDate');
+        const inactiveJustificationControl = this.headerConfig.formGroup.get('inactiveJustification');
+
+        isActiveControl?.setValue(result.isActive);
+
+        if (result.isActive === false) {
+          // Si está inactivo, establecer fecha y justificación del modal
+          inactiveDateControl?.enable({ emitEvent: false });
+          inactiveJustificationControl?.enable({ emitEvent: false });
+          inactiveDateControl?.setValue(result.inactiveDate);
+          inactiveJustificationControl?.setValue(result.inactiveJustification);
+          inactiveDateControl?.setValidators([Validators.required]);
+          inactiveJustificationControl?.setValidators([Validators.required]);
+        } else {
+          // Si está activo, limpiar validadores y valores
+          inactiveDateControl?.clearValidators();
+          inactiveJustificationControl?.clearValidators();
+          inactiveDateControl?.setValue(null);
+          inactiveJustificationControl?.setValue('');
+          inactiveDateControl?.disable({ emitEvent: false });
+          inactiveJustificationControl?.disable({ emitEvent: false });
+        }
+
+        inactiveDateControl?.updateValueAndValidity({ emitEvent: false });
+        inactiveJustificationControl?.updateValueAndValidity({ emitEvent: false });
+        this._changeDetectorRef.detectChanges();
+      }
+    });
   }
 
   // Método para agregar una escuela satélite

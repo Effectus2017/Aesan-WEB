@@ -519,6 +519,26 @@
                 "tooltip": "Configuración",
                 "toggle-active": "Activar/Desactivar"
             },
+            "status-modal": {
+                "title": "Cambiar Estatus del Sitio",
+                "status": {
+                    "label": "Estatus",
+                    "placeholder": "Seleccione el estatus",
+                    "required": "El estatus es requerido"
+                },
+                "inactive-date": {
+                    "label": "Fecha de Inactivación",
+                    "placeholder": "Seleccione la fecha",
+                    "required": "La fecha de inactivación es requerida"
+                },
+                "inactive-justification": {
+                    "label": "Justificación de Inactivación",
+                    "placeholder": "Ingrese la justificación de inactivación",
+                    "required": "La justificación de inactivación es requerida"
+                },
+                "cancel": "Cancelar",
+                "save": "Guardar"
+            },
             "daycare-home-fields": {
                 "title": "Hogar de Cuidado Diurno",
                 "description": "Información específica para hogares de cuidado diurno del programa PACNA"
@@ -1202,6 +1222,7 @@
             },
             "site-number": {
                 "label": "Número de Sitio",
+                "placeholder": "Número de Sitio",
                 "description": "Código único del sitio generado automáticamente"
             },
             "location-type": {
@@ -1276,7 +1297,29 @@
             "settings": {
                 "tooltip": "Configuración",
                 "toggle-active": "Activar/Desactivar"
-            }
+            },
+            "status-modal": {
+                "title": "Cambiar Estatus del Sitio",
+                "status": {
+                    "label": "Estatus",
+                    "placeholder": "Seleccione el estatus",
+                    "required": "El estatus es requerido"
+                },
+                "inactive-date": {
+                    "label": "Fecha de Inactivación",
+                    "placeholder": "Seleccione la fecha",
+                    "required": "La fecha de inactivación es requerida"
+                },
+                "inactive-justification": {
+                    "label": "Justificación de Inactivación",
+                    "placeholder": "Ingrese la justificación de inactivación",
+                    "required": "La justificación de inactivación es requerida"
+                },
+                "cancel": "Cancelar",
+                "save": "Guardar"
+            },
+            "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
+            "status-update-error": "Error al actualizar el estatus del sitio"
         },
         "calendar": {
             "title": "Calendario de Funcionamiento",
