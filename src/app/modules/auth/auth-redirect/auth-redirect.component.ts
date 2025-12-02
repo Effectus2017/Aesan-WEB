@@ -16,7 +16,7 @@ export class AuthRedirectComponent implements OnInit {
 
     switch (userRole) {
       case 'Administrator':
-        this._customRouter.navigate(['validation-to-program']);
+        this._customRouter.navigate(['sponsors']);
         break;
       case 'Agency-Administrator':
         this._customRouter.navigate(['program-requests']);

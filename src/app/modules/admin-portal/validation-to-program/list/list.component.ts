@@ -150,6 +150,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     event.stopPropagation();
     event.preventDefault();
     // navega a la página de edición
-    this._customRouterService.navigate([`validation-to-program/edit/${id}`]);
+    this._customRouterService.navigate([`sponsors/edit/${id}`]);
   }
 }

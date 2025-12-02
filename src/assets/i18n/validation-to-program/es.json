@@ -1,7 +1,7 @@
 {
     "validation-to-program": {
         "list": {
-            "title": "Evaluación de Auspiciadores",
+            "title": "Auspiciadores",
             "search": {
                 "placeholder": "Buscar usuario",
                 "button": "Buscar"
@@ -46,7 +46,7 @@
             }
         },
         "edit": {
-            "title": "Editar Evaluación de Auspiciadores",
+            "title": "Editar Auspiciadores",
             "submit": "Aprobar",
             "save": "Guardar",
             "reject": "Rechazar",

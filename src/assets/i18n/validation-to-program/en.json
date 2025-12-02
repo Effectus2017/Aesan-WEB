@@ -1,7 +1,7 @@
 {
     "validation-to-program": {
         "list": {
-            "title": "Sponsor Evaluation",
+            "title": "Sponsors",
             "search": {
                 "placeholder": "Search user",
                 "button": "Search"
@@ -46,7 +46,7 @@
             }
         },
         "edit": {
-            "title": "Edit Sponsor Evaluation",
+            "title": "Edit Sponsor",
             "submit": "Submit",
             "save": "Save",
             "reject": "Reject",

@@ -77,8 +77,8 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
-      // Validation to program (Role: Admin)
-      { path: 'validation-to-program', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
+      // Sponsors (Role: Admin)
+      { path: 'sponsors', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
       // Users (Role: Admin)
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
       // Documents (Role: Admin)

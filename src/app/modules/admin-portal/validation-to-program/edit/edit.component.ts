@@ -343,7 +343,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       complete: () => {
         this.enableEditableFormControls();
         //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
-        this._customRouterService.navigate([`admin/validation-to-program/list`]);
+        this._customRouterService.navigate([`admin/sponsors/list`]);
       },
     });
   }
@@ -402,7 +402,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       complete: () => {
         this.enableEditableFormControls();
         //this._agencyService.getAgencyById({ agencyId: this.param.id }).subscribe();
-        this._customRouterService.navigate([`admin/validation-to-program/list`]);
+        this._customRouterService.navigate([`admin/sponsors/list`]);
       },
     });
   }

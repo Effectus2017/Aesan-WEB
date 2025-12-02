@@ -4,18 +4,9 @@ export const adminNavigation: FuseNavigationItem[] = [
   {
     id: 'home',
     title: 'navigation.home',
-    type: 'group',
+    type: 'basic',
     icon: 'heroicons_solid:home',
-    children: [
-      {
-        id: 'programs',
-        title: 'navigation.programs.validation',
-        type: 'basic',
-        icon: 'heroicons_solid:inbox-arrow-down',
-        link: '/validation-to-program',
-        roles: ['Administrator'],
-      },
-    ],
+    link: '/sponsors',
     roles: ['Administrator'],
   },
   {
