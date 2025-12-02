@@ -88,21 +88,8 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Estado, Cargo y Tipo de Staff -->
+        <!-- Campos de Cargo y Tipo de Staff -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
-          <!-- Status -->
-          <mat-form-field data-cy="status-field">
-            <mat-label>{{ "staff.add.status.label" | transloco }}</mat-label>
-            <mat-select formControlName="status" [placeholder]="'staff.add.status.placeholder' | transloco" [compareWith]="compareById" data-cy="status-select">
-              <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
-                {{ currentLang === 'es' ? status.name : status.nameEN }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('status')?.hasError('required')">
-              {{ "staff.add.status.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-
           <!-- Position -->
           <mat-form-field data-cy="position-field">
             <mat-label>{{ "staff.add.position.label" | transloco }}</mat-label>

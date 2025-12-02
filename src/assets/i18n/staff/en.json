@@ -81,6 +81,14 @@
           "edit": "Edit",
           "delete": "Delete",
           "view": "View"
+        },
+        "viewRelationships": {
+          "title": "Relationships of",
+          "unknownStaff": "Board Member",
+          "noRelationships": {
+            "title": "No relationships configured",
+            "description": "This board member does not have any related persons configured."
+          }
         }
       }
     },
@@ -167,7 +175,8 @@
       "areaCode": {
         "label": "Area Code",
         "placeholder": "Enter the area code",
-        "required": "Area code is required"
+        "required": "Area code is required",
+        "invalid": "The area code must be one of the following: 787, 939, 849"
       },
       "school-assignment": "Site Assignment",
       "school-assignment-description": "Specify the site where the staff will be assigned",
@@ -387,7 +396,8 @@
       "areaCode": {
         "label": "Area Code",
         "placeholder": "Enter the area code",
-        "required": "Area code is required"
+        "required": "Area code is required",
+        "invalid": "The area code must be one of the following: 787, 939, 849"
       },
       "postalAddress": {
         "label": "Postal Address",
@@ -470,6 +480,11 @@
             "placeholder": "Select the relationship status",
             "required": "Active status is required"
           },
+          "comment": {
+            "label": "Comment",
+            "placeholder": "Enter a comment about the relationship (optional)",
+            "maxLength": "Comment cannot exceed 500 characters"
+          },
           "buttons": {
             "save": "Save",
             "update": "Update",
@@ -501,6 +516,21 @@
         "incompleteFields": "Please complete all required fields",
         "classificationRequired": "Classification is required for employees",
         "contactLocationRequired": "Contact and location fields are required for board members"
+      },
+      "status-modal": {
+        "title": "Change Staff Status",
+        "status": {
+          "label": "Status",
+          "required": "Status is required"
+        },
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "status-updated-successfully": "Staff status updated successfully",
+      "status-update-error": "Error updating staff status",
+      "settings": {
+        "tooltip": "Settings",
+        "toggle-active": "Activate/Deactivate"
       }
     }
   }

@@ -74,6 +74,10 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     sortable: false,
     buttons: [
       {
+        key: 'view',
+        label: 'staff.boardMembers.list.buttons.view',
+      },
+      {
         key: 'edit',
         label: 'staff.boardMembers.list.buttons.edit',
       },

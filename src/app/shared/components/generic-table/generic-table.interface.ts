@@ -103,6 +103,7 @@ export interface OnGenericTableHandler {
   onTableSatellites?: (event: Event, id: any) => void;
   onTableSites?: (event: Event, id: any) => void;
   onTableViewStaff?: (event: Event, id: any) => void;
+  onTableViewRelationships?: (event: Event, id: any) => void;
   onTableEditModal?: (event: Event, id: any) => void;
   onTableAction?: (event: Event, action: string, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;

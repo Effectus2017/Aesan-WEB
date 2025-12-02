@@ -37,6 +37,9 @@ import { SiteService } from 'app/shared/services/site.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { puertoRicoAreaCodeValidator } from 'app/shared/validators/puerto-rico-area-code.validator';
+import { PuertoRicoAreaCodeDirective } from 'app/shared/directives/puerto-rico-area-code.directive';
+import { DynamicGridDirective } from "app/shared/directives/dynamic-grid.directive";
 
 @Component({
   selector: 'app-add-staff',
@@ -61,7 +64,9 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     MatIconModule,
     MatTimepickerModule,
     MatIconModule,
-  ],
+    PuertoRicoAreaCodeDirective,
+    DynamicGridDirective
+],
 })
 export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
@@ -120,7 +125,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Apellido Materno
       motherLastName: new FormControl(''),
       // Status
-      status: new FormControl('', [Validators.required]),
+      status: new FormControl(''),
       // Cargo
       position: new FormControl('', [Validators.required]),
       // Tipo de Staff
@@ -142,7 +147,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Región
       region: new FormControl('', [Validators.required]),
       // Código de área
-      areaCode: new FormControl('', [Validators.required]),
+      areaCode: new FormControl('', [Validators.required, puertoRicoAreaCodeValidator()]),
       // Comentarios
       comments: new FormControl(''),
       // Sitio asignado
@@ -212,17 +217,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this.allOptionSelections = result.body.data;
         // Status
         this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
-
-        // Preseleccionar estado "Activo" por defecto
-        const activeStatus = this.listStatus.find(status =>
-          status.name === 'Activo' || status.nameEN === 'Active'
-        );
-
-        if (activeStatus) {
-          this.headerConfig.formGroup.patchValue({
-            status: activeStatus
-          });
-        }
         // Poblar listas separadas
         this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
@@ -426,8 +420,8 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Fecha de finalización de contrato (solo para empleados)
     const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
-    // Status
-    const statusId: number = formValues.status?.id || 0;
+    // Status - establecer por defecto a 1 (Activo)
+    const statusId: number = formValues.status?.id || 1;
 
     // Cargo
     const positionId: number = formValues.position?.id || 0;
@@ -664,7 +658,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     // Si es empleado y ahora tiene clasificación, habilitar todos los campos
     if (this.isEmployee && this.selectedClassification) {
-      const statusControl = this.headerConfig.formGroup.get('status');
       const firstNameControl = this.headerConfig.formGroup.get('firstName');
       const middleNameControl = this.headerConfig.formGroup.get('middleName');
       const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
@@ -681,7 +674,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
 
       // Habilitar todos los campos
-      statusControl?.enable({ emitEvent: false });
       firstNameControl?.enable({ emitEvent: false });
       middleNameControl?.enable({ emitEvent: false });
       fatherLastNameControl?.enable({ emitEvent: false });
@@ -950,10 +942,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
       // Si no hay clasificación seleccionada, deshabilitar solo los campos que dependen de la clasificación
       if (!this.selectedClassification) {
-        // Deshabilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.disable({ emitEvent: false });
-
         // Deshabilitar campos de nombres y apellidos
         firstNameControl?.disable({ emitEvent: false });
         middleNameControl?.disable({ emitEvent: false });
@@ -974,10 +962,6 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
-        // Habilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.enable({ emitEvent: false });
-
         firstNameControl?.enable({ emitEvent: false });
         middleNameControl?.enable({ emitEvent: false });
         fatherLastNameControl?.enable({ emitEvent: false });
@@ -1018,7 +1002,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para miembros de junta
@@ -1043,7 +1027,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para otros tipos

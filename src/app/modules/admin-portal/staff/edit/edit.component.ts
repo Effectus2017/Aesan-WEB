@@ -44,6 +44,7 @@ import { DTOStaffRelationship } from 'app/shared/models/StaffRelationship';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminAddRelationshipModalComponent } from '../add-relationship-modal/add-relationship-modal.component';
 import { AdminEditRelationshipModalComponent } from '../edit-relationship-modal/edit-relationship-modal.component';
+import { StaffStatusModalComponent, StaffStatusModalData } from '../../../agency-portal/staff/staff-status-modal/staff-status-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { UserService } from 'app/shared/services/user.service';
@@ -167,7 +168,7 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       // Mother last name
       motherLastName: new FormControl(''),
       // Status
-      status: new FormControl('', [Validators.required]),
+      status: new FormControl(''),
       // Position
       position: new FormControl('', [Validators.required]),
       // Staff type
@@ -205,6 +206,16 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'staff.edit.cancelButton',
+    // Settings button
+    settingsButtonShow: true,
+    settingsButtonTooltip: 'staff.edit.settings.tooltip',
+    settingsMenuItems: [
+      {
+        id: 'toggle-active',
+        label: 'staff.edit.settings.toggle-active',
+        icon: 'heroicons_outline:power'
+      }
+    ],
   };
 
   // Compare methods
@@ -430,8 +441,8 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     // Fecha de finalización de contrato (solo para empleados)
     const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
-    // Status
-    const statusId: number = formValues.status?.id || 0;
+    // Status - usar el valor existente o establecer por defecto a 1 (Activo)
+    const statusId: number = formValues.status?.id || this.param?.statusId || 1;
 
     // Cargo
     const positionId: number = formValues.position?.id || 0;
@@ -582,6 +593,74 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     this._customRouterService.navigate([targetRoute]);
   }
 
+  // Método para manejar acciones del menú de settings
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'toggle-active':
+        this.onToggleActive();
+        break;
+      default:
+        console.warn(`Acción de menú no reconocida: ${menuItemId}`);
+    }
+  }
+
+  // Método para activar/desactivar
+  private onToggleActive(): void {
+    if (!this.param?.id) {
+      console.error('No se puede cambiar el estado: ID de staff no disponible');
+      return;
+    }
+
+    const currentIsActive = this.param.isActive ?? true;
+
+    const dialogRef = this._matDialog.open(StaffStatusModalComponent, {
+      data: {
+        staffId: this.param.id,
+        isActive: currentIsActive,
+        isActiveOptions: this.listStatus
+      } as StaffStatusModalData,
+      disableClose: false,
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.action === 'submit') {
+        // Recargar los datos del staff
+        this.reloadStaffData();
+      }
+    });
+  }
+
+  // Método para recargar los datos del staff después de cambiar el estado
+  private reloadStaffData(): void {
+    if (!this.param?.id) {
+      return;
+    }
+
+    const requestParameters: QueryParameters = {
+      id: this.param.id,
+      isList: false,
+      isActive: false,
+    };
+
+    this._staffService.getStaffById(requestParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          // Actualizar el parámetro con los nuevos datos
+          this.param = response.body;
+          // Actualizar el formulario con los nuevos datos
+          this.onSetForm(response.body);
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al recargar los datos del staff:', error);
+      }
+    });
+  }
+
   // Método para obtener todas las regiones según el ID de la ciudad
   // Get all regions by city ID
   getRegionsByCityId(city: City, target: string): void {
@@ -670,7 +749,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
 
     // Si es empleado y ahora tiene clasificación, habilitar todos los campos
     if (this.isEmployee && this.selectedClassification) {
-      const statusControl = this.headerConfig.formGroup.get('status');
       const firstNameControl = this.headerConfig.formGroup.get('firstName');
       const middleNameControl = this.headerConfig.formGroup.get('middleName');
       const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
@@ -687,7 +765,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
 
       // Habilitar todos los campos
-      statusControl?.enable({ emitEvent: false });
       firstNameControl?.enable({ emitEvent: false });
       middleNameControl?.enable({ emitEvent: false });
       fatherLastNameControl?.enable({ emitEvent: false });
@@ -802,10 +879,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
 
       // Si no hay clasificación seleccionada, deshabilitar solo los campos que dependen de la clasificación
       if (!this.selectedClassification) {
-        // Deshabilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.disable({ emitEvent: false });
-
         // Deshabilitar campos de nombres y apellidos
         firstNameControl?.disable({ emitEvent: false });
         middleNameControl?.disable({ emitEvent: false });
@@ -825,10 +898,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
-        // Habilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.enable({ emitEvent: false });
-
         firstNameControl?.enable({ emitEvent: false });
         middleNameControl?.enable({ emitEvent: false });
         fatherLastNameControl?.enable({ emitEvent: false });
@@ -1142,7 +1211,6 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
         middleName: this.param.middleName,
         fatherLastName: this.param.fatherLastName,
         motherLastName: this.param.motherLastName,
-        status: this.listStatus.find(status => status.id === this.param?.statusId),
         position: this.findPositionById(this.param.positionId),
         staffType: this.listStaffTypes.find(type => type.id === this.param?.staffTypeId),
         staffClassification: this.listStaffClassifications.find(classification => classification.id === this.param?.staffClassificationId),

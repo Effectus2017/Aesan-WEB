@@ -157,6 +157,11 @@ export class GenericTableComponent implements OnInit {
           this.handler.onTableViewStaff(event, element.id);
         }
         break;
+      case 'view':
+        if (this.handler?.onTableViewRelationships) {
+          this.handler.onTableViewRelationships(event, element.id);
+        }
+        break;
       case 'edit-modal':
         if (this.handler?.onTableEditModal) {
           this.handler.onTableEditModal(event, element.id);

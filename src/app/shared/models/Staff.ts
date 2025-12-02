@@ -83,4 +83,5 @@ export interface StaffList {
   regionName: string;
   userName?: string;
   isActive: boolean;
+  hasRelationships?: boolean;
 }

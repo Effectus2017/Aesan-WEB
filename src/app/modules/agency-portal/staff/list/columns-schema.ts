@@ -7,12 +7,7 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'combined-text',
     sortable: true
   },
-  {
-    key: 'statusName',
-    label: 'staff.boardMembers.list.table.columns.status',
-    type: 'text',
-    sortable: true
-  },
+
   {
     key: 'positionName',
     label: 'staff.boardMembers.list.table.columns.title',
@@ -31,33 +26,39 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'text',
     sortable: true
   },
-  {
-    key: 'postalAddress',
-    label: 'staff.boardMembers.list.table.columns.postalAddress',
-    type: 'text',
-    sortable: true
-  },
+//   {
+//     key: 'postalAddress',
+//     label: 'staff.boardMembers.list.table.columns.postalAddress',
+//     type: 'text',
+//     sortable: true
+//   },
   {
     key: 'cityName',
     label: 'staff.boardMembers.list.table.columns.municipality',
     type: 'text',
     sortable: true
   },
-  {
-    key: 'areaCode',
-    label: 'staff.boardMembers.list.table.columns.areaCode',
-    type: 'text',
-    sortable: true
-  },
-  {
-    key: 'updatedAt',
-    label: 'staff.boardMembers.list.table.columns.updateDate',
-    type: 'date',
-    sortable: true
-  },
-  {
-    key: 'comments',
-    label: 'staff.boardMembers.list.table.columns.comments',
+//   {
+//     key: 'areaCode',
+//     label: 'staff.boardMembers.list.table.columns.areaCode',
+//     type: 'text',
+//     sortable: true
+//   },
+//   {
+//     key: 'updatedAt',
+//     label: 'staff.boardMembers.list.table.columns.updateDate',
+//     type: 'date',
+//     sortable: true
+//   },
+//   {
+//     key: 'comments',
+//     label: 'staff.boardMembers.list.table.columns.comments',
+//     type: 'text',
+//     sortable: true
+//   },
+{
+    key: 'statusName',
+    label: 'staff.boardMembers.list.table.columns.status',
     type: 'text',
     sortable: true
   },
@@ -74,6 +75,10 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
       {
         key: 'delete',
         label: 'staff.boardMembers.list.buttons.delete',
+      },
+      {
+        key: 'view',
+        label: 'staff.boardMembers.list.buttons.view',
       },
     ],
   }

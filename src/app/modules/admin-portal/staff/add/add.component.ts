@@ -118,7 +118,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       // Apellido Materno
       motherLastName: new FormControl(''),
       // Status
-      status: new FormControl('', [Validators.required]),
+      status: new FormControl(''),
       // Cargo
       position: new FormControl('', [Validators.required]),
       // Tipo de Staff
@@ -210,17 +210,6 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
       this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
       this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-
-      // Preseleccionar estado "Activo" por defecto
-      const activeStatus = this.listStatus.find(status =>
-        status.name === 'Activo' || status.nameEN === 'Active'
-      );
-
-      if (activeStatus) {
-        this.headerConfig.formGroup.patchValue({
-          status: activeStatus
-        });
-      }
 
       // Pre-seleccionar tipo de staff según query parameter o por defecto
       this.handleStaffTypePreselection();
@@ -356,8 +345,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     // Fecha de finalización de contrato (solo para empleados)
     const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
-    // Status
-    const statusId: number = formValues.status?.id || 0;
+    // Status - establecer por defecto a 1 (Activo)
+    const statusId: number = formValues.status?.id || 1;
 
     // Cargo
     const positionId: number = formValues.position?.id || 0;
@@ -600,10 +589,6 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
 
       // Si no hay clasificación seleccionada, deshabilitar solo los campos que dependen de la clasificación
       if (!this.selectedClassification) {
-        // Deshabilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.disable({ emitEvent: false });
-
         // Deshabilitar campos de nombres y apellidos
         firstNameControl?.disable({ emitEvent: false });
         middleNameControl?.disable({ emitEvent: false });
@@ -623,9 +608,6 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
-        // Habilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.enable({ emitEvent: false });
 
         firstNameControl?.enable({ emitEvent: false });
         middleNameControl?.enable({ emitEvent: false });

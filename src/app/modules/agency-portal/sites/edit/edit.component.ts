@@ -69,6 +69,8 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 @Component({
   selector: 'app-sites-edit',
@@ -94,6 +96,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     NumericOnlyDirective,
     PhoneFormatDirective,
     DynamicGridDirective,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -342,7 +345,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       region: [null, Validators.required],
       // Código postal - Campo requerido para la ubicación del sitio
       // ZIP code - Required field for site location
-      zipCode: ['', Validators.required],
+      zipCode: ['', [Validators.required, puertoRicoZipCodeValidator()]],
       // Latitud - Campo requerido para coordenadas geográficas
       // Latitude - Required field for geographical coordinates
       latitude: [null, Validators.required],
@@ -364,7 +367,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       postalRegion: [null, Validators.required],
       // Código postal - Campo requerido para la ubicación del sitio
       // Postal ZIP code - Required field for site location
-      postalZipCode: [''],
+      postalZipCode: ['', puertoRicoZipCodeValidator()],
       // Información Administrativa / Administrative Information
       // Estado sin fines de lucro - Campo requerido que indica si el sitio es sin fines de lucro
       // Non-profit - Required field indicating if the site is non-profit

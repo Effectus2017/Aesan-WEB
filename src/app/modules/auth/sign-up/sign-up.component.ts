@@ -15,7 +15,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertType } from '@fuse/components/alert';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { City } from 'app/shared/models/City';
@@ -40,6 +39,8 @@ import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -76,6 +77,7 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
     MatTooltipModule,
     DynamicGridDirective,
     PhoneFormatDirective,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -95,7 +97,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
   private _programService = inject(ProgramService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
   private _dialog = inject(MatDialog);
   private _snackBar = inject(MatSnackBar);
   private _optionSelectionService = inject(OptionSelectionService);
@@ -242,7 +243,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Dirección
       address: [null, Validators.required],
-      zipCode: [null, [Validators.required]],
+      zipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       city: [null, Validators.required],
       region: [null, Validators.required],
       latitude: [null, Validators.required],
@@ -253,7 +254,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Dirección Postal
       postalAddress: [null, Validators.required],
-      postalZipCode: [null, Validators.required],
+      postalZipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       postalCity: [null, Validators.required],
       postalRegion: [null, Validators.required],
 
@@ -1169,17 +1170,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     if (!basicEducationRegistry && isPDAMProgram(selectedProgram)) {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
-      this._fuseConfirmationService.open({
-        title: this._translocoService.translate('sign-up.notification.title'),
-        message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
-        actions: {
-          confirm: {
-            label: this._translocoService.translate('sign-up.notification.confirm'),
-          },
-          cancel: {
-            show: false,
-          },
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.basic-education-not-eligible.title'),
+          message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
+          cfrLink: {
+            url: this._translocoService.translate('sign-up.basic-education-not-eligible.cfr-link-url'),
+            text: this._translocoService.translate('sign-up.basic-education-not-eligible.cfr-link-text')
+          }
         },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive']
       });
       return;
     }

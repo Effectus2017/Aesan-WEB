@@ -16,9 +16,8 @@
 
           <!-- Programa *  -->
           <!-- ¿Es una organización sin fines de lucro? -->
-          <!-- ¿Posee Certificación de Registro de Educación Básica? -->
+          <!-- ¿Posee Certificación de Registro de Educación Básica vigente? -->
           <div class="grid grid-cols-1 col-span-12 gap-4" appDynamicGrid="3">
-            <!-- Programa *  -->
             <mat-form-field data-cy="program-field">
               <mat-label>{{ "sign-up.program-name.label" | transloco }}</mat-label>
               <mat-select id="program-select" [formControlName]="'program'" data-cy="program-select">
@@ -27,7 +26,6 @@
                 </mat-option>
               </mat-select>
             </mat-form-field>
-
             <!-- ¿Es una organización sin fines de lucro? -->
             <!-- Is it a non-profit organization? -->
             <!-- Si (1) y No (2) -->
@@ -41,7 +39,7 @@
             </mat-form-field>
           </div>
 
-          <!-- ¿Posee Certificación de Registro de Educación Básica? -->
+          <!-- ¿Posee Certificación de Registro de Educación Básica vigente? -->
           <!-- Do you have Basic Education Registry Certification? -->
           <!-- Si (1) y No (2) -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!isPSAVProgram(signUpForm.get('program')?.value)">
@@ -392,7 +390,13 @@
             <!-- Zip Code *  -->
             <mat-form-field data-cy="zip-code-field">
               <mat-label>{{ "sign-up.zip-code.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'sign-up.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
+              <input matInput [formControlName]="'zipCode'" placeholder="{{ 'sign-up.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="zip-code-input" />
+              <mat-error *ngIf="signUpForm.get('zipCode')?.hasError('puertoRicoZipCode')">
+                {{ signUpForm.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('zipCode')?.hasError('required')">
+                {{ "sign-up.zip-code.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Latitude *  -->
             <mat-form-field data-cy="latitude-field">
@@ -459,7 +463,13 @@
             <!-- Postal Zip Code *  -->
             <mat-form-field data-cy="postal-zip-code-field">
               <mat-label>{{ "sign-up.zip-code.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'sign-up.zip-code.placeholder' | transloco }}" numericOnly data-cy="postal-zip-code-input" />
+              <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'sign-up.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="postal-zip-code-input" />
+              <mat-error *ngIf="signUpForm.get('postalZipCode')?.hasError('puertoRicoZipCode')">
+                {{ signUpForm.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('postalZipCode')?.hasError('required')">
+                {{ "sign-up.zip-code.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 

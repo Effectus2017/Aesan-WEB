@@ -120,27 +120,10 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Estado y Cargo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="fieldVisibilityService.shouldShowField('status', currentStaffType)">
-          <!-- Status -->
-          <mat-form-field data-cy="status-field">
-            <mat-label>{{ "staff.edit.status.label" | transloco }}</mat-label>
-            <mat-select
-              formControlName="status"
-              [required]="fieldVisibilityService.isFieldRequired('status', currentStaffType)"
-              [placeholder]="'staff.edit.status.placeholder' | transloco"
-              [compareWith]="compareById"
-              data-cy="status-select"
-            >
-              <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
-                {{ currentLang === "es" ? status.name : status.nameEN }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('status')?.hasError('required')">
-              {{ "staff.edit.status.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-
+        <!-- Cargo / Position -->
+          <!-- Fecha de Nacimiento -->
+         <!-- Email -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" appDynamicGrid="3" *ngIf="fieldVisibilityService.shouldShowField('position', currentStaffType)">
           <!-- Position -->
           <mat-form-field data-cy="position-field" *ngIf="fieldVisibilityService.shouldShowField('position', currentStaffType)">
             <mat-label>{{ "staff.edit.position.label" | transloco }}</mat-label>
@@ -159,43 +142,6 @@
               {{ "staff.edit.position.required" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
-
-        <!-- Campos de Fecha de Nacimiento y Email -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <!-- Email -->
-          <mat-form-field data-cy="email-field" *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
-            <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
-            <input
-              matInput
-              formControlName="email"
-              type="email"
-              [required]="fieldVisibilityService.isFieldRequired('email', currentStaffType)"
-              placeholder="{{ 'staff.edit.email.placeholder' | transloco }}"
-              title="{{ 'staff.edit.email.label' | transloco }}"
-              [attr.aria-label]="'staff.edit.email.label' | transloco"
-              data-cy="email-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
-              {{ "staff.edit.email.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('email')">
-              {{ "staff.edit.email.invalid" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('emailExists')">
-              {{ "staff.edit.email.exists" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Fecha de Nacimiento -->
-        <!-- Fechas de Inicio de Contrato -->
-        <!-- Fecha de finalización de contrato -->
-        <div
-          class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12"
-          *ngIf="fieldVisibilityService.shouldShowField('contractStartDate', currentStaffType)"
-          appDynamicGrid="3"
-        >
           <mat-form-field data-cy="birth-date-field" *ngIf="fieldVisibilityService.shouldShowField('birthDate', currentStaffType)">
             <mat-label>{{ "staff.edit.birthDate.label" | transloco }}</mat-label>
             <input
@@ -215,6 +161,29 @@
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('minimumAge')">
               {{ "staff.edit.birthDate.minimumAge" | transloco }}
+            </mat-error>
+          </mat-form-field>
+           <!-- Email -->
+           <mat-form-field data-cy="email-field" *ngIf="fieldVisibilityService.shouldShowField('email', currentStaffType)">
+            <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              [required]="fieldVisibilityService.isFieldRequired('email', currentStaffType)"
+              placeholder="{{ 'staff.edit.email.placeholder' | transloco }}"
+              title="{{ 'staff.edit.email.label' | transloco }}"
+              [attr.aria-label]="'staff.edit.email.label' | transloco"
+              data-cy="email-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
+              {{ "staff.edit.email.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('email')">
+              {{ "staff.edit.email.invalid" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('emailExists')">
+              {{ "staff.edit.email.exists" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -285,6 +254,8 @@
             <input
               matInput
               formControlName="areaCode"
+              puertoRicoAreaCode
+              maxlength="3"
               [required]="fieldVisibilityService.isFieldRequired('areaCode', currentStaffType)"
               placeholder="{{ 'staff.edit.areaCode.placeholder' | transloco }}"
               title="{{ 'staff.edit.areaCode.label' | transloco }}"
@@ -293,6 +264,9 @@
             />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
               {{ "staff.edit.areaCode.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('puertoRicoAreaCode')">
+              {{ "staff.edit.areaCode.invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>

@@ -107,7 +107,10 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "sites.add.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'zipCode'" placeholder="{{ 'sites.add.zip-code.placeholder' | transloco }}" numericOnly data-cy="zip-code-input" />
+            <input matInput [formControlName]="'zipCode'" placeholder="{{ 'sites.add.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="zip-code-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')">{{ "sites.add.zip-code.required" | transloco }}</mat-error>
           </mat-form-field>
 
@@ -182,7 +185,10 @@
 
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "sites.add.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'sites.add.zip-code.placeholder' | transloco }}" numericOnly data-cy="postal-zip-code-input" />
+            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'sites.add.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="postal-zip-code-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('postalZipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
           </mat-form-field>
         </div>
 

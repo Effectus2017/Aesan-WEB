@@ -54,6 +54,9 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
 
+  // Current language
+  currentLang: string = 'es';
+
   // Comparator for selects
   compareById = compareById;
 
@@ -71,6 +74,15 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Obtener el idioma actual
+    this.currentLang = this._translocoService.getActiveLang();
+
+    // Suscribirse a cambios de idioma
+    this._translocoService.langChanges$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((lang) => {
+        this.currentLang = lang;
+      });
 
     this.onLoadInitialData();
 
@@ -101,7 +113,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
       alls: false,
       excludeRelated: true,
       isList: false,
-      staffTypeId: 2,
+      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
       agencyId: agencyId,
     };
 

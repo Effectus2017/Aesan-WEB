@@ -205,7 +205,10 @@
           <!-- Zip Code *  -->
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <input matInput formControlName="zipCode" puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field data-cy="latitude-field">
@@ -271,7 +274,10 @@
           <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalZipCode" [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <input matInput formControlName="postalZipCode" puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="number" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('postalZipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
           </mat-form-field>
         </div>
 

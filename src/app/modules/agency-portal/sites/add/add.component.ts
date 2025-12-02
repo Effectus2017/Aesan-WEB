@@ -61,6 +61,8 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 
 @Component({
@@ -88,6 +90,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     NumericOnlyDirective,
     PhoneFormatDirective,
     DynamicGridDirective,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -239,7 +242,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       region: [null, Validators.required],
       // Código postal - Campo requerido para la ubicación del sitio
       // ZIP code - Required field for site location
-      zipCode: ['', Validators.required],
+      zipCode: ['', [Validators.required, puertoRicoZipCodeValidator()]],
       // Latitud - Campo requerido para coordenadas geográficas
       // Latitude - Required field for geographical coordinates
       latitude: [null, Validators.required],
@@ -262,7 +265,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       postalRegion: [null, Validators.required],
       // Código postal - Para correspondencia
       // Postal ZIP code - For mailing purposes
-      postalZipCode: [''],
+      postalZipCode: ['', puertoRicoZipCodeValidator()],
       // Información Administrativa / Administrative Information
       // Estado sin fines de lucro - Campo requerido que indica si el sitio es sin fines de lucro
       // Non-profit status - Required field indicating if the site is non-profit

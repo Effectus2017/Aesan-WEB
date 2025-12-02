@@ -81,6 +81,14 @@
           "edit": "Editar",
           "delete": "Eliminar",
           "view": "Ver"
+        },
+        "viewRelationships": {
+          "title": "Relaciones de",
+          "unknownStaff": "Miembro de la Junta",
+          "noRelationships": {
+            "title": "No hay relaciones configuradas",
+            "description": "Este miembro de la junta no tiene personas relacionadas configuradas."
+          }
         }
       }
     },
@@ -167,7 +175,8 @@
       "areaCode": {
         "label": "Código de Área",
         "placeholder": "Ingrese el código de área",
-        "required": "El código de área es requerido"
+        "required": "El código de área es requerido",
+        "invalid": "El código de área debe ser uno de los siguientes: 787, 939, 849"
       },
       "site-assignment": "Asignación de Sitio",
       "site-assignment-description": "Especifique el sitio donde estará asignado el personal",
@@ -326,7 +335,8 @@
       "areaCode": {
         "label": "Código de Área",
         "placeholder": "Ingrese el código de área",
-        "required": "El código de área es requerido"
+        "required": "El código de área es requerido",
+        "invalid": "El código de área debe ser uno de los siguientes: 787, 939, 849"
       },
       "postalAddress": {
         "label": "Dirección Postal",
@@ -393,6 +403,11 @@
             "placeholder": "Seleccione el estado de la relación",
             "required": "El estado activo es requerido"
           },
+          "comment": {
+            "label": "Comentario",
+            "placeholder": "Ingrese un comentario sobre la relación (opcional)",
+            "maxLength": "El comentario no puede exceder 500 caracteres"
+          },
           "buttons": {
             "save": "Guardar",
             "update": "Actualizar",
@@ -440,6 +455,21 @@
         "incompleteFields": "Por favor, complete todos los campos requeridos",
         "classificationRequired": "La clasificación es requerida para empleados",
         "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta"
+      },
+      "status-modal": {
+        "title": "Cambiar Estado del Personal",
+        "status": {
+          "label": "Estatus",
+          "required": "El estatus es requerido"
+        },
+        "cancel": "Cancelar",
+        "save": "Guardar"
+      },
+      "status-updated-successfully": "Estado del personal actualizado exitosamente",
+      "status-update-error": "Error al actualizar el estado del personal",
+      "settings": {
+        "tooltip": "Configuración",
+        "toggle-active": "Activar/Desactivar"
       }
     }
   }

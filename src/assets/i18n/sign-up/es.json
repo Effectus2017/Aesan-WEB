@@ -95,7 +95,8 @@
     },
     "zip-code": {
       "label": "Código Postal",
-      "placeholder": "Ingresa el código postal"
+      "placeholder": "00000 o 00000-0000",
+      "required": "El código postal es requerido"
     },
     "same-as-physical-address": {
       "label": "¿Es la misma dirección física?"
@@ -179,7 +180,10 @@
       "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
     },
     "basic-education-not-eligible": {
-      "message": "Para participar en los programas PDAM o PSAV debe tener el Registro de Educación Básica otorgado o en proceso"
+      "title": "Información sobre Elegibilidad",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente Ley: 212-218, sección 10 y 12 . Para conocer más información puede acceder al siguiente enlace:",
+      "cfr-link-url": "https://bvirtualogp.pr.gov/ogp/BVirtual/LeyesOrganicas/pdf/212-2018.pdf",
+      "cfr-link-text": "Ley 212-218, sección 10 y 12"
     },
   "extended-hours-not-eligible": {
     "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR § 226.19(b)(3)."

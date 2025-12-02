@@ -90,7 +90,7 @@
             },
             "zip-code": {
                 "label": "Código postal",
-                "placeholder": "Código postal del sitio",
+                "placeholder": "00000 o 00000-0000",
                 "required": "El código postal es requerido"
             },
             "latitude": {
@@ -125,7 +125,7 @@
             },
             "postalZipCode": {
                 "label": "Código postal",
-                "placeholder": "Código postal del sitio"
+                "placeholder": "00000 o 00000-0000"
             },
             "administrative-information": {
                 "label": "Información Administrativa",
@@ -801,7 +801,7 @@
             },
             "zip-code": {
                 "label": "Código postal",
-                "placeholder": "Código postal del sitio",
+                "placeholder": "00000 o 00000-0000",
                 "required": "El código postal es requerido"
             },
             "latitude": {
@@ -836,7 +836,7 @@
             },
             "postalZipCode": {
                 "label": "Código postal",
-                "placeholder": "Código postal del sitio"
+                "placeholder": "00000 o 00000-0000"
             },
             "administrative-information": {
                 "label": "Información Administrativa",

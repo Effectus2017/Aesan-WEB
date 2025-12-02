@@ -42,6 +42,7 @@ import { StaffRelationshipService } from 'app/shared/services/staff-relationship
 import { MatDialog } from '@angular/material/dialog';
 import { AddRelationshipModalComponent } from '../add-relationship-modal/add-relationship-modal.component';
 import { EditRelationshipModalComponent } from '../edit-relationship-modal/edit-relationship-modal.component';
+import { StaffStatusModalComponent, StaffStatusModalData } from '../staff-status-modal/staff-status-modal.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -50,6 +51,9 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { puertoRicoAreaCodeValidator } from 'app/shared/validators/puerto-rico-area-code.validator';
+import { PuertoRicoAreaCodeDirective } from 'app/shared/directives/puerto-rico-area-code.directive';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 @Component({
   selector: 'app-edit-staff',
@@ -76,6 +80,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     MatIconModule,
     GenericTableComponent,
     MatDialogModule,
+    PuertoRicoAreaCodeDirective,
+    DynamicGridDirective,
   ],
 })
 export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -179,7 +185,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Mother last name
       motherLastName: new FormControl(''),
       // Status
-      status: new FormControl('', [Validators.required]),
+      status: new FormControl(''),
       // Position
       position: new FormControl('', [Validators.required]),
       // Staff type
@@ -206,7 +212,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       region: new FormControl('', [Validators.required]),
       // Area code
       // Unicamente para miembros de junta
-      areaCode: new FormControl('', [Validators.required]),
+      areaCode: new FormControl('', [Validators.required, puertoRicoAreaCodeValidator()]),
       // Comments
       comments: new FormControl(''),
       // Sitio asignado
@@ -226,6 +232,16 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Cancel button
     cancelButtonShow: true,
     cancelButtonText: 'staff.edit.cancelButton',
+    // Settings button
+    settingsButtonShow: true,
+    settingsButtonTooltip: 'staff.edit.settings.tooltip',
+    settingsMenuItems: [
+      {
+        id: 'toggle-active',
+        label: 'staff.edit.settings.toggle-active',
+        icon: 'heroicons_outline:power'
+      }
+    ],
   };
 
   // Compare methods
@@ -583,8 +599,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Fecha de finalización de contrato (solo para empleados)
     const contractEndDate: string | null = this.isEmployee ? formValues.contractEndDate || null : null;
 
-    // Status
-    const statusId: number = formValues.status?.id || 0;
+    // Status - usar el valor existente o establecer por defecto a 1 (Activo)
+    const statusId: number = formValues.status?.id || this.param?.statusId || 1;
 
     // Cargo
     const positionId: number = formValues.position?.id || 0;
@@ -735,6 +751,74 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     }
   }
 
+  // Método para manejar acciones del menú de settings
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'toggle-active':
+        this.onToggleActive();
+        break;
+      default:
+        console.warn(`Acción de menú no reconocida: ${menuItemId}`);
+    }
+  }
+
+  // Método para activar/desactivar
+  private onToggleActive(): void {
+    if (!this.param?.id) {
+      console.error('No se puede cambiar el estado: ID de staff no disponible');
+      return;
+    }
+
+    const currentIsActive = this.param.isActive ?? true;
+
+    const dialogRef = this._matDialog.open(StaffStatusModalComponent, {
+      data: {
+        staffId: this.param.id,
+        isActive: currentIsActive,
+        isActiveOptions: this.listStatus
+      } as StaffStatusModalData,
+      disableClose: false,
+      width: '600px',
+      maxWidth: '90vw',
+      panelClass: ['mat-dialog-container', 'dialog-responsive']
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.action === 'submit') {
+        // Recargar los datos del staff
+        this.reloadStaffData();
+      }
+    });
+  }
+
+  // Método para recargar los datos del staff después de cambiar el estado
+  private reloadStaffData(): void {
+    if (!this.param?.id) {
+      return;
+    }
+
+    const requestParameters: QueryParameters = {
+      id: this.param.id,
+      isList: false,
+      isActive: false,
+    };
+
+    this._staffService.getStaffById(requestParameters).subscribe({
+      next: (response: any) => {
+        if (response?.body) {
+          // Actualizar el parámetro con los nuevos datos
+          this.param = response.body;
+          // Actualizar el formulario con los nuevos datos
+          this.onSetForm(response.body);
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al recargar los datos del staff:', error);
+      }
+    });
+  }
+
   // Método para obtener todas las regiones según el ID de la ciudad
   // Get all regions by city ID
   getRegionsByCityId(city: City, target: string): void {
@@ -818,7 +902,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     // Si es empleado y ahora tiene clasificación, habilitar todos los campos
     if (this.isEmployee && this.selectedClassification) {
-      const statusControl = this.headerConfig.formGroup.get('status');
       const firstNameControl = this.headerConfig.formGroup.get('firstName');
       const middleNameControl = this.headerConfig.formGroup.get('middleName');
       const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
@@ -835,7 +918,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
 
       // Habilitar todos los campos
-      statusControl?.enable({ emitEvent: false });
       firstNameControl?.enable({ emitEvent: false });
       middleNameControl?.enable({ emitEvent: false });
       fatherLastNameControl?.enable({ emitEvent: false });
@@ -950,10 +1032,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
       // Si no hay clasificación seleccionada, deshabilitar solo los campos que dependen de la clasificación
       if (!this.selectedClassification) {
-        // Deshabilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.disable({ emitEvent: false });
-
         // Deshabilitar campos de nombres y apellidos
         firstNameControl?.disable({ emitEvent: false });
         middleNameControl?.disable({ emitEvent: false });
@@ -973,10 +1051,6 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
-        // Habilitar campo estado también
-        const statusControl = this.headerConfig.formGroup.get('status');
-        statusControl?.enable({ emitEvent: false });
-
         firstNameControl?.enable({ emitEvent: false });
         middleNameControl?.enable({ emitEvent: false });
         fatherLastNameControl?.enable({ emitEvent: false });
@@ -1008,7 +1082,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para miembros de junta
@@ -1032,7 +1106,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para otros tipos

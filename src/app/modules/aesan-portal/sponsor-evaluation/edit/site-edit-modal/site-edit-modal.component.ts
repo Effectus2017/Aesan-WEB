@@ -55,6 +55,8 @@ import { PROGRAM_IDS } from 'app/shared/const';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 export interface SiteEditModalData {
   site: Site;
@@ -82,6 +84,7 @@ export interface SiteEditModalData {
     MatTooltipModule,
     NumericOnlyDirective,
     PhoneFormatDirective,
+    PuertoRicoZipCodeDirective,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './site-edit-modal.component.html',
@@ -114,14 +117,14 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     address: ['', Validators.required],
     city: [null, Validators.required],
     region: [null, Validators.required],
-    zipCode: ['', Validators.required],
+    zipCode: ['', [Validators.required, puertoRicoZipCodeValidator()]],
     latitude: [null, Validators.required],
     longitude: [null, Validators.required],
     sameAsPhysicalAddress: [false],
     postalAddress: [''],
     postalCity: [null, Validators.required],
     postalRegion: [null, Validators.required],
-    postalZipCode: [''],
+    postalZipCode: ['', puertoRicoZipCodeValidator()],
     nonProfit: [null, Validators.required],
     startDate: [null],
     baseYear: [{ value: null, disabled: true }, [Validators.pattern(/^[\d]{4}$/)]],

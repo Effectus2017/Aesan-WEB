@@ -188,7 +188,7 @@
         },
         "zipCode": {
           "label": "Zip Code",
-          "placeholder": "Enter the zip code"
+          "placeholder": "00000 or 00000-0000"
         },
         "latitude": {
           "label": "Latitude",
@@ -204,7 +204,7 @@
         },
         "postalZipCode": {
           "label": "Zip Code",
-          "placeholder": "Enter the zip code"
+          "placeholder": "00000 or 00000-0000"
         },
         "sameAsPhysicalAddress": {
           "label": "Is it the same as physical address?"

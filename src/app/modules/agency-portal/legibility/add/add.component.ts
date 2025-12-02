@@ -30,6 +30,8 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { HouseholdRequest } from 'app/shared/models/Request/HouseholdRequest';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 @Component({
     selector: 'agency-portal-readability-module-add',
@@ -50,7 +52,8 @@ import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phon
         MatSelectModule,
         MatDatepickerModule,
         MatNativeDateModule,
-        PhoneFormatDirective
+        PhoneFormatDirective,
+        PuertoRicoZipCodeDirective
     ]
 })
 export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandlers {
@@ -79,7 +82,7 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
       apartment: [null],
       city: [null, Validators.required],
       region: [null, Validators.required],
-      zipCode: [null, Validators.required],
+      zipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       phone: [null, puertoRicoPhoneValidator()],
       email: [null],
       completedBy: [null, Validators.required],

@@ -50,6 +50,8 @@ import { SiteEditModalComponent, SiteEditModalData } from './site-edit-modal/sit
 import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
@@ -82,6 +84,7 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
         GenericTableComponent,
         TranslocoModule,
         PhoneFormatDirective,
+        PuertoRicoZipCodeDirective,
     ]
 })
 export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {
@@ -189,7 +192,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       federalFundsDeniedReason: [null],
       // Campos de dirección física
       address: [null, Validators.required],
-      zipCode: [null, [Validators.required]],
+      zipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       city: [null, Validators.required],
       region: [null, Validators.required],
       latitude: [null, Validators.required],
@@ -198,7 +201,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       sameAsPhysicalAddress: [false],
       // Campos de dirección postal
       postalAddress: [null, Validators.required],
-      postalZipCode: [null, Validators.required],
+      postalZipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       postalCity: [null, Validators.required],
       postalRegion: [null, Validators.required],
     }),

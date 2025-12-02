@@ -161,7 +161,7 @@
         },
         "zipCode": {
           "label": "Código Postal",
-          "placeholder": "Ingresa el código postal"
+          "placeholder": "00000 o 00000-0000"
         },
         "latitude": {
           "label": "Latitud",
@@ -177,7 +177,7 @@
         },
         "postalZipCode": {
           "label": "Código Postal",
-          "placeholder": "Ingresa el código postal"
+          "placeholder": "00000 o 00000-0000"
         },
         "sameAsPhysicalAddress": {
           "label": "¿Es la misma dirección física?"

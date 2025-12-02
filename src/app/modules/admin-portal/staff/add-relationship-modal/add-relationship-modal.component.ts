@@ -107,7 +107,7 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
       alls: true,
       excludeRelated: true,  // Excluir staff ya relacionado (modal Add)
       isList: true,  // Mantener por compatibilidad
-      staffTypeId: 2,
+      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
       agencyId: null,
     };
 

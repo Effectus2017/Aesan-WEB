@@ -82,22 +82,10 @@
           </mat-form-field>
         </div>
 
-        <!-- Campos de Estado y Cargo -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
-          <!-- Status -->
-          <mat-form-field data-cy="status-field">
-            <mat-label>{{ "staff.add.status.label" | transloco }}</mat-label>
-            <mat-select formControlName="status" [placeholder]="'staff.add.status.placeholder' | transloco" [compareWith]="compareById" data-cy="status-select">
-              <mat-option *ngFor="let status of listStatus" [value]="status" data-cy="status-option">
-                {{ currentLang === "es" ? status.name : status.nameEN }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('status')?.hasError('required')">
-              {{ "staff.add.status.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-
-          <!-- Position -->
+        <!-- Cargo / Position -->
+        <!-- Fecha de Nacimiento -->
+        <!-- Email -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" appDynamicGrid="3">
           <mat-form-field data-cy="position-field" *ngIf="isEmployee || isBoardMember">
             <mat-label>{{ "staff.add.position.label" | transloco }}</mat-label>
             <mat-select formControlName="position" [placeholder]="'staff.add.position.placeholder' | transloco" [compareWith]="compareById" data-cy="position-select">
@@ -112,11 +100,18 @@
               {{ "staff.add.position.selectClassificationFirst" | transloco }}
             </mat-hint>
           </mat-form-field>
-        </div>
-
-        <!-- Campos de Fecha de Nacimiento y Email -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <!-- Email -->
+          <mat-form-field data-cy="birth-date-field" *ngIf="isEmployee || isBoardMember">
+            <mat-label>{{ "staff.add.birthDate.label" | transloco }}</mat-label>
+            <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" [placeholder]="'staff.add.birthDate.placeholder' | transloco" data-cy="birthDate-input" />
+            <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #birthDatePicker></mat-datepicker>
+            <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('required')">
+              {{ "staff.add.birthDate.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('minimumAge')">
+              {{ "staff.add.birthDate.minimumAge" | transloco }}
+            </mat-error>
+          </mat-form-field>
           <mat-form-field data-cy="email-field" *ngIf="!isEmployee">
             <mat-label>{{ "staff.add.email.label" | transloco }}</mat-label>
             <input matInput formControlName="email" type="email" [placeholder]="'staff.add.email.placeholder' | transloco" data-cy="email-input" />
@@ -128,22 +123,6 @@
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('emailExists')">
               {{ "staff.add.email.exists" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Fecha de Nacimiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isBoardMember || isEmployee">
-          <mat-form-field data-cy="birth-date-field">
-            <mat-label>{{ "staff.add.birthDate.label" | transloco }}</mat-label>
-            <input matInput [matDatepicker]="birthDatePicker" formControlName="birthDate" [placeholder]="'staff.add.birthDate.placeholder' | transloco" data-cy="birthDate-input" />
-            <mat-datepicker-toggle matSuffix [for]="birthDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #birthDatePicker></mat-datepicker>
-            <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('required')">
-              {{ "staff.add.birthDate.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('birthDate')?.hasError('minimumAge')">
-              {{ "staff.add.birthDate.minimumAge" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -197,9 +176,12 @@
           <!-- Area Code -->
           <mat-form-field data-cy="area-code-field">
             <mat-label>{{ "staff.add.areaCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="areaCode" [placeholder]="'staff.add.areaCode.placeholder' | transloco" data-cy="areaCode-input" />
+            <input matInput formControlName="areaCode" puertoRicoAreaCode maxlength="3" [placeholder]="'staff.add.areaCode.placeholder' | transloco" data-cy="areaCode-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
               {{ "staff.add.areaCode.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('puertoRicoAreaCode')">
+              {{ "staff.add.areaCode.invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -219,12 +201,9 @@
           <mat-form-field data-cy="site-field">
             <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
             <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
-              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
-                {{ site.siteCode }} - {{ site.name }}
-              </mat-option>
+              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
             </mat-select>
           </mat-form-field>
-
         </div>
 
         <!-- Información Adicional -->

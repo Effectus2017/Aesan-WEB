@@ -36,6 +36,28 @@ export class PhoneFormatDirective implements ControlValueAccessor {
       event.preventDefault();
       return;
     }
+
+    // Prevenir entrada del 11º dígito numérico
+    if (/^[0-9]$/.test(event.key)) {
+      const input = event.target as HTMLInputElement;
+      const selectionStart = input.selectionStart || 0;
+      const selectionEnd = input.selectionEnd || 0;
+      const hasSelection = selectionStart !== selectionEnd;
+      
+      // Si hay texto seleccionado, permitir reemplazarlo
+      if (hasSelection) {
+        return;
+      }
+      
+      const currentValue = input.value || '';
+      const currentNumbers = currentValue.replace(/\D/g, '');
+      
+      // Si ya tiene 10 dígitos y se intenta agregar otro número, prevenir
+      if (currentNumbers.length >= 10) {
+        event.preventDefault();
+        return;
+      }
+    }
   }
 
   @HostListener('input', ['$event'])

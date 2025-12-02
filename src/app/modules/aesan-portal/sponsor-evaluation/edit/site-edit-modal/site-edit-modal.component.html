@@ -106,7 +106,10 @@
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <mat-form-field>
           <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
-          <input matInput formControlName="zipCode" required />
+          <input matInput formControlName="zipCode" required puertoRicoZipCode />
+          <mat-error *ngIf="form.get('zipCode')?.hasError('puertoRicoZipCode')">
+            {{ form.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+          </mat-error>
           <mat-error *ngIf="form.get('zipCode')?.hasError('required')">
             {{ 'sites.edit.zip-code.required' | transloco }}
           </mat-error>
@@ -171,7 +174,10 @@
 
         <mat-form-field>
           <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
-          <input matInput formControlName="postalZipCode" />
+          <input matInput formControlName="postalZipCode" puertoRicoZipCode />
+          <mat-error *ngIf="form.get('postalZipCode')?.hasError('puertoRicoZipCode')">
+            {{ form.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
+          </mat-error>
         </mat-form-field>
       </div>
 

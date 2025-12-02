@@ -121,7 +121,10 @@
           <!-- Código postal -->
           <mat-form-field>
             <mat-label>Código postal</mat-label>
-            <input matInput formControlName="zipCode" required />
+            <input matInput formControlName="zipCode" required puertoRicoZipCode />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('zipCode').hasError('required')"> Código postal es obligatorio </mat-error>
           </mat-form-field>
 

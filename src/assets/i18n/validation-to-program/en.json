@@ -87,7 +87,7 @@
             },
             "zip-code": {
                 "label": "Zip Code",
-                "placeholder": "Enter zip code"
+                "placeholder": "00000 or 00000-0000"
             },
             "first-name": {
                 "label": "First Name",
@@ -140,7 +140,7 @@
                 },
                 "zip-code": {
                     "label": "Zip Code",
-                    "placeholder": "Enter zip code"
+                    "placeholder": "00000 or 00000-0000"
                 }
             },
             "coordinates": {

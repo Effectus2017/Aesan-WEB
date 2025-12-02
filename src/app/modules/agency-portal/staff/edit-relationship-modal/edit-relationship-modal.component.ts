@@ -85,6 +85,16 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Obtener el idioma actual
+    this.currentLang = this._translocoService.getActiveLang();
+
+    // Suscribirse a cambios de idioma
+    this._translocoService.langChanges$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((lang) => {
+        this.currentLang = lang;
+      });
+
     // Suscribirse a eventos de navegación para cerrar el modal
     this._router.events
       .pipe(
@@ -115,7 +125,7 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
       alls: false,
       excludeRelated: false,
       isList: true,
-      staffTypeId: 2,
+      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
       agencyId: agencyId,
     };
 

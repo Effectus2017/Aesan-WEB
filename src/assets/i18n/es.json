@@ -31,6 +31,7 @@
         "search": {
             "placeholder": "Buscar..."
         },
+        "loading": "Cargando...",
         "validation": {
             "required": "Este campo es requerido",
             "minLength": "Longitud mínima no cumplida"

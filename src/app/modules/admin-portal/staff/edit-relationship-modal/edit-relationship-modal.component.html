@@ -1,4 +1,4 @@
-<div class="flex flex-col -m-6 max-h-screen min-w-120">
+<div class="flex flex-col -m-6 max-h-screen min-w-250">
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">{{ "staff.edit.relationships.edit" | transloco }}</div>
@@ -19,7 +19,7 @@
           data-cy="related-staff-select"
         >
           <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option">
-            {{ staff.firstName }} {{ staff.fatherLastName }}
+            {{ staff.firstName }} {{ staff.middleName }} {{ staff.fatherLastName }} {{ staff.secondFatherLastName }} - {{ staff.email }}
           </mat-option>
         </mat-select>
         <mat-error *ngIf="form.get('relatedStaff')?.hasError('required')">

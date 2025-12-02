@@ -28,7 +28,10 @@
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>{{ 'households.fields.zipcode' | transloco }}</mat-label>
-            <input matInput formControlName="zipcode" required placeholder="{{ 'households.fields.zipcode' | transloco }}" />
+            <input matInput formControlName="zipcode" required puertoRicoZipCode placeholder="{{ 'households.fields.zipcode' | transloco }}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipcode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('zipcode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('zipcode').hasError('required')">{{ 'households.fields.zipcode' | transloco }} es obligatorio</mat-error>
           </mat-form-field>
           <mat-form-field appearance="fill">

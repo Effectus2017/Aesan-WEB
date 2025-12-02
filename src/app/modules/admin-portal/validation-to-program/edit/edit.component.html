@@ -150,10 +150,14 @@
             <input
               matInput
               formControlName="zipCode"
+              puertoRicoZipCode
               [placeholder]="'validation-to-program.edit.zip-code.placeholder' | transloco"
               [attr.aria-label]="'validation-to-program.edit.zip-code.label' | transloco"
               [title]="'validation-to-program.edit.zip-code.label' | transloco"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
           </mat-form-field>
           <!-- Latitude *  -->
           <mat-form-field>
@@ -218,11 +222,15 @@
             <input
               matInput
               [formControlName]="'postalZipCode'"
+              puertoRicoZipCode
               [placeholder]="'validation-to-program.edit.postal.zip-code.placeholder' | transloco"
               data-cy="postal-zip-code-input"
               [attr.aria-label]="'validation-to-program.edit.postal.zip-code.label' | transloco"
               [title]="'validation-to-program.edit.postal.zip-code.label' | transloco"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('postalZipCode')?.hasError('puertoRicoZipCode')">
+              {{ headerConfig.formGroup.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
+            </mat-error>
           </mat-form-field>
         </div>
 

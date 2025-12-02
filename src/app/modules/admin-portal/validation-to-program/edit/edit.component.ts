@@ -40,6 +40,8 @@ import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -67,6 +69,7 @@ import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phon
     MatDialogModule,
     NumericOnlyDirective,
     PhoneFormatDirective,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {
@@ -124,11 +127,11 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       // Dirección y Coordenadas
       address: [null, Validators.required],
       phone: [null, [Validators.required, puertoRicoPhoneValidator()]],
-      zipCode: [null, Validators.required],
+      zipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
 
       // Dirección Postal
       postalAddress: [null, Validators.required],
-      postalZipCode: [null, Validators.required],
+      postalZipCode: [null, [Validators.required, puertoRicoZipCodeValidator()]],
       postalCity: [null, Validators.required],
       postalRegion: [null, Validators.required],
 

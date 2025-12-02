@@ -18,11 +18,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { AdminViewRelationshipsModalComponent } from '../view-relationships-modal/view-relationships-modal.component';
 
 @Component({
   selector: 'app-admin-list-board-members',
@@ -39,6 +41,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
     MatPaginatorModule,
     MatTableModule,
     MatInputModule,
+    MatDialogModule,
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
@@ -53,6 +56,7 @@ export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGene
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
+  private _matDialog = inject(MatDialog);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   headerConfig: GenericHeaderConfig = {
@@ -128,6 +132,26 @@ export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGene
 
   onCustom(): void {
     this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'board-member' } });
+  }
+
+  onTableViewRelationships(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    // Obtener el nombre del staff desde los datos de la tabla
+    const staff = this.tableConfig.dataSource.data.find((s: StaffList) => s.id === id);
+    const staffName = staff
+      ? `${staff.firstName || ''} ${staff.middleName || ''} ${staff.fatherLastName || ''} ${staff.motherLastName || ''}`.trim()
+      : undefined;
+
+    const dialogRef = this._matDialog.open(AdminViewRelationshipsModalComponent, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: {
+        staffId: id,
+        staffName: staffName,
+      },
+    });
   }
 
   onTableEdit(event: Event, id: number): void {
