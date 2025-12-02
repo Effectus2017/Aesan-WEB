@@ -130,7 +130,7 @@ export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGeneric
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate(['staff/edit', id]);
+    this._customRouterService.navigate(['staff/edit-employee', id]);
   }
 
   onDelete(id: number): void {

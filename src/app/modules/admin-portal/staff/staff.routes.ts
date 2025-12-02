@@ -37,6 +37,20 @@ export default [
         resolve: {
           data: initialDataStaffEditResolver
         }
+      },
+      {
+        path: 'edit-employee/:id',
+        loadComponent: () => import('./edit-employee/edit-employee.component').then(c => c.EditEmployeeComponent),
+        resolve: {
+          data: initialDataStaffEditResolver
+        }
+      },
+      {
+        path: 'edit-board-member/:id',
+        loadComponent: () => import('./edit-board-member/edit-board-member.component').then(c => c.EditBoardMemberComponent),
+        resolve: {
+          data: initialDataStaffEditResolver
+        }
       }
     ]
   }

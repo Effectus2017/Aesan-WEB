@@ -102,6 +102,8 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     this.form.get('providedRationsService')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((value) => {
+        const isActive = this.form.get('isActive')?.value;
+        
         if (value === false) {
           // Si responde "No", mostrar campos de inactivación
           this.showInactivationFields = true;
@@ -116,6 +118,55 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
           this.form.get('inactiveJustification')?.setValue('');
           this.form.get('inactiveDate')?.updateValueAndValidity({ emitEvent: false });
           this.form.get('inactiveJustification')?.updateValueAndValidity({ emitEvent: false });
+          
+          // Si el estatus es inactivo, mostrar el diálogo de confirmación
+          if (isActive === false) {
+            // Obtener la fecha de inactivación si existe
+            const inactiveDateValue = this.data.inactiveDate || this.form.get('inactiveDate')?.value;
+            let inactiveDateOnly: string | null = null;
+            
+            if (inactiveDateValue instanceof Date) {
+              inactiveDateOnly = inactiveDateValue.toISOString().split('T')[0];
+            } else if (typeof inactiveDateValue === 'string' && inactiveDateValue) {
+              inactiveDateOnly = inactiveDateValue;
+            } else if (inactiveDateValue) {
+              inactiveDateOnly = inactiveDateValue.toString();
+            }
+
+            // Mostrar diálogo de confirmación con la notificación
+            this._notificationService.showConfirmationDialogWithCallback(
+              {
+                title: 'sites.edit.status-modal.notification-title',
+                message: 'sites.edit.status-modal.rations-service-notification',
+                icon: {
+                  show: true,
+                  name: 'heroicons_outline:information-circle',
+                  color: 'info',
+                },
+                actions: {
+                  confirm: {
+                    show: true,
+                    label: 'dialog.success.confirm',
+                    color: 'primary',
+                  },
+                  cancel: {
+                    show: false, // Ocultar botón cancelar, solo mostrar aceptar
+                  },
+                },
+              },
+              (result) => {
+                if (result === 'confirmed') {
+                  // Cerrar el modal con acción especial para redirección
+                  this.dialogRef.close({
+                    action: 'redirect-to-changes-form',
+                    siteId: this.data.siteId,
+                    inactiveDate: inactiveDateOnly,
+                    // TODO: Agregar más datos necesarios cuando se defina el formulario de cambios y cancelaciones
+                  });
+                }
+              }
+            );
+          }
         }
         this._changeDetectorRef.detectChanges();
       });
@@ -175,62 +226,6 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (!this.isFormValid || this.isLoading) {
-      return;
-    }
-
-    const providedRationsService = this.form.get('providedRationsService')?.value;
-    const isActive = this.form.get('isActive')?.value;
-
-    // Si el estatus es inactivo y respondió "Sí" a la pregunta de raciones
-    if (isActive === false && providedRationsService === true) {
-      // Obtener la fecha de inactivación si existe (puede ser del data inicial o del formulario)
-      // Si el usuario cambió a "Sí" después de seleccionar una fecha, esta ya fue limpiada
-      // Por lo tanto, usamos la fecha inicial del sitio si existe
-      const inactiveDateValue = this.data.inactiveDate || this.form.get('inactiveDate')?.value;
-      let inactiveDateOnly: string | null = null;
-      
-      if (inactiveDateValue instanceof Date) {
-        inactiveDateOnly = inactiveDateValue.toISOString().split('T')[0];
-      } else if (typeof inactiveDateValue === 'string' && inactiveDateValue) {
-        inactiveDateOnly = inactiveDateValue;
-      } else if (inactiveDateValue) {
-        // Si es otro tipo de objeto, intentar convertirlo
-        inactiveDateOnly = inactiveDateValue.toString();
-      }
-
-      // Mostrar diálogo de confirmación con la notificación
-      this._notificationService.showConfirmationDialogWithCallback(
-        {
-          title: 'sites.edit.status-modal.notification-title',
-          message: 'sites.edit.status-modal.rations-service-notification',
-          icon: {
-            show: true,
-            name: 'heroicons_outline:information-circle',
-            color: 'info',
-          },
-          actions: {
-            confirm: {
-              show: true,
-              label: 'dialog.success.confirm',
-              color: 'primary',
-            },
-            cancel: {
-              show: false, // Ocultar botón cancelar, solo mostrar aceptar
-            },
-          },
-        },
-        (result) => {
-          if (result === 'confirmed') {
-            // Cerrar el modal con acción especial para redirección
-            this.dialogRef.close({
-              action: 'redirect-to-changes-form',
-              siteId: this.data.siteId,
-              inactiveDate: inactiveDateOnly,
-              // TODO: Agregar más datos necesarios cuando se defina el formulario de cambios y cancelaciones
-            });
-          }
-        }
-      );
       return;
     }
 

@@ -19,7 +19,9 @@
                     "actions": "Actions",
                     "satelliteSiteName": "Satellite Site Name",
                     "assignmentDate": "Assignment Date",
-                    "comment": "Comment"
+                    "comment": "Comment",
+                    "operatingDays": "Operating Days (From-To)",
+                    "approvalDate": "Approval Date"
                 },
                 "buttons": {
                     "edit": "Edit",

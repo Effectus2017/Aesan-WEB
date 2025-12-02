@@ -18,4 +18,16 @@ export interface SchoolSiteTableResponse {
   siteNumber?: number;
   address: string;
   siteIsActive: boolean;
+
+  // Tipo de Grupo
+  groupTypeId?: number;
+  groupTypeName?: string;
+  groupTypeNameEN?: string;
+
+  // Días de Funcionamiento
+  operatingFromDate?: Date;
+  operatingToDate?: Date;
+
+  // Fecha de Aprobación
+  approvalDate?: Date;
 }

@@ -13,7 +13,7 @@ import { Site } from '../../../../shared/models/Site';
 import { SchoolSiteTableResponse } from '../../../../shared/models/Response/SchoolSiteTableResponse';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CustomRouterService } from '../../../../shared/services/custom-router.service';
 import { SchoolSiteService } from '../../../../shared/services/school-site.service';
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
@@ -92,17 +92,42 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (response: any) => {
-          this.tableConfig.dataSource.data = response.body.data || [];
+          const data = (response.body.data || []).map((site: SchoolSiteTableResponse) => {
+            // Formatear el rango de fechas de funcionamiento
+            if (site.operatingFromDate && site.operatingToDate) {
+              const fromDate = new Date(site.operatingFromDate);
+              const toDate = new Date(site.operatingToDate);
+              const formattedFrom = fromDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              const formattedTo = toDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
+            } else {
+              (site as any).operatingDaysFormatted = '';
+            }
+            return site;
+          });
+          this.tableConfig.dataSource.data = data;
           this.tableConfig.length = response.body.count || 0;
-          this.tableConfig.dataSourceList = response.body.data || [];
+          this.tableConfig.dataSourceList = data;
           this._changeDetectorRef.markForCheck();
         },
         error: (error) => {
           console.error('Error al obtener sitios de la escuela:', error);
           // Fallback a datos pasados por el modal si hay error
-          this.tableConfig.dataSource.data = this.data.data || [];
+          const fallbackData = (this.data.data || []).map((site: SchoolSiteTableResponse) => {
+            if (site.operatingFromDate && site.operatingToDate) {
+              const fromDate = new Date(site.operatingFromDate);
+              const toDate = new Date(site.operatingToDate);
+              const formattedFrom = fromDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              const formattedTo = toDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
+            } else {
+              (site as any).operatingDaysFormatted = '';
+            }
+            return site;
+          });
+          this.tableConfig.dataSource.data = fallbackData;
           this.tableConfig.length = this.data.data?.length || 0;
-          this.tableConfig.dataSourceList = this.data.data || [];
+          this.tableConfig.dataSourceList = fallbackData;
           this._changeDetectorRef.markForCheck();
         }
       });
@@ -110,9 +135,13 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
 
   private setupSearchSubscription(): void {
     this.searchForm.get('search')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.getAll(0, this.searchForm.value);
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        takeUntil(this._unsubscribeAll)
+      )
+      .subscribe((searchValue: string) => {
+        this.getAll(0, { search: searchValue || '' });
       });
   }
 

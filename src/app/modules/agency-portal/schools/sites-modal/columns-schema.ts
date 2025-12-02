@@ -13,14 +13,19 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.list.table.columns.name',
   },
   {
-    key: 'address',
+    key: 'groupTypeName',
     type: 'text',
-    label: 'sites.list.table.columns.address',
+    label: 'sites.list.table.columns.groupTypeName',
   },
   {
-    key: 'siteIsActive',
-    type: 'boolean',
-    label: 'sites.list.table.columns.isActive',
+    key: 'operatingDaysFormatted',
+    type: 'text',
+    label: 'sites.list.table.columns.operatingDays',
+  },
+  {
+    key: 'approvalDate',
+    type: 'date',
+    label: 'sites.list.table.columns.approvalDate',
   },
   {
     key: 'actions',

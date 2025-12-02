@@ -19,7 +19,9 @@
                     "actions": "Acciones",
                     "satelliteSiteName": "Nombre del Sitio Satélite",
                     "assignmentDate": "Fecha de Asignación",
-                    "comment": "Comentario"
+                    "comment": "Comentario",
+                    "operatingDays": "Días de Funcionamiento (Desde-Hasta)",
+                    "approvalDate": "Fecha de Aprobación"
                 },
                 "buttons": {
                     "edit": "Editar",

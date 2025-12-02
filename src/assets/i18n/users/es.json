@@ -65,8 +65,17 @@
             "buttons": {
                 "cancel": "Cancelar",
                 "update": "Actualizar",
+                "save": "Guardar",
                 "update-password": "Actualizar Contraseña",
                 "force-password": "Forzar Cambio de Contraseña"
+            },
+            "agency": {
+                "readonly": "Agencia a la que pertenece"
+            },
+            "update-password-modal": {
+                "title": "Actualizar Contraseña",
+                "subtitle": "Actualizar contraseña para {{ userName }}",
+                "password-mismatch": "Las contraseñas no coinciden"
             },
             "firstName": {
                 "label": "Nombre",

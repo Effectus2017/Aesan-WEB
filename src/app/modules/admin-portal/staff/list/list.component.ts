@@ -157,7 +157,7 @@ export class AdminListBoardMembersComponent implements OnInit, OnDestroy, OnGene
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate(['staff/edit', id]);
+    this._customRouterService.navigate(['staff/edit-board-member', id]);
   }
 
   onDelete(id: number): void {

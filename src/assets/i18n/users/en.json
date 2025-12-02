@@ -65,8 +65,17 @@
             "buttons": {
                 "cancel": "Cancel",
                 "update": "Update",
+                "save": "Save",
                 "update-password": "Update Password",
                 "force-password": "Force Password Change"
+            },
+            "agency": {
+                "readonly": "Agency to which it belongs"
+            },
+            "update-password-modal": {
+                "title": "Update Password",
+                "subtitle": "Update password for {{ userName }}",
+                "password-mismatch": "Passwords do not match"
             },
             "firstName": {
                 "label": "First Name",

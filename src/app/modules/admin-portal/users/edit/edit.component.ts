@@ -14,6 +14,8 @@ import { NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { compare, compareById, compareString, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
@@ -36,6 +38,7 @@ import { PermissionService } from 'app/shared/services/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
 import { DeletePermissionModalComponent } from '../delete-permission-modal/delete-permission-modal.component';
+import { UpdatePasswordModalComponent } from '../update-password-modal/update-password-modal.component';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
@@ -53,6 +56,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     MatButtonModule,
     MatSelectModule,
     MatIconModule,
+    MatMenuModule,
+    MatDialogModule,
     TranslocoModule,
     GenericHeaderComponent,
     MatCheckboxModule,
@@ -88,24 +93,25 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
         role: new FormControl(null, Validators.required),
-        agency: new FormControl(null, Validators.required),
+        agency: new FormControl(null),
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
       }),
-      password: this._formBuilder.group({
-        currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-        newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-      }),
     }),
     saveButtonShow: true,
-    saveButtonText: 'users.edit.buttons.update',
-    submitButtonShow: true,
-    submitButtonText: 'users.edit.buttons.update-password',
-    submitDisabled: true,
-    customButtonShow: true,
-    customButtonText: 'users.edit.buttons.force-password',
-    customButtonColor: 'primary',
+    saveButtonText: 'users.edit.buttons.save',
+    settingsButtonShow: true,
+    settingsMenuItems: [
+      {
+        id: 'force-password',
+        label: 'users.edit.buttons.force-password',
+      },
+      {
+        id: 'update-password',
+        label: 'users.edit.buttons.update-password',
+      },
+    ],
   };
 
   tableConfig: GenericTableConfig = {
@@ -170,15 +176,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this._changeDetectorRef.markForCheck();
     }
 
-    // Suscribirse a los cambios del formulario para actualizar el estado del botón
-    this.headerConfig.formGroup
-      .get('password')
-      .valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        // Actualizar el estado del botón basado en la validación del formulario
-        this.headerConfig.submitDisabled = this.headerConfig.formGroup.get('password').invalid;
-        this._changeDetectorRef.markForCheck();
-      });
   }
 
   onPassword(formGroup: FormGroup) {
@@ -245,14 +242,17 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.getUserByIdWithSP(requestParameters).subscribe();
   }
 
-  // Para cuando se actualiza la contraseña. submit button
-  onSubmit() {
-    if (this.headerConfig.formGroup.controls.password.valid) {
-      this.onUpdatePassword(this.headerConfig.formGroup.value.password);
-    } else {
-      this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
-      this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
-      this.headerConfig.formGroup.markAllAsTouched();
+  // Método para manejar acciones del menú de settings
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'force-password':
+        this.onForcePassword();
+        break;
+      case 'update-password':
+        this.openUpdatePasswordModal();
+        break;
+      default:
+        console.warn(`Acción de menú no reconocida: ${menuItemId}`);
     }
   }
 
@@ -261,9 +261,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
       this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
     } else {
-      this.headerConfig.formGroup.get('password').get('currentPassword').setErrors({ passwordNotMatch: true });
-      this.headerConfig.formGroup.get('password').get('newPassword').setErrors({ passwordNotMatch: true });
-      this.headerConfig.formGroup.markAllAsTouched();
+      this.headerConfig.formGroup.get('datosPersonales').markAllAsTouched();
     }
   }
 
@@ -312,7 +310,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       userName: this.user.userName,
       imageURL: this.imageURL,
       roles: [roleName],
-      agencyId: form.agency.id,
+      agencyId: this.user.agency?.id,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,
@@ -501,12 +499,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     });
   }
 
-  // Para cuando se fuerza la contraseña. custom button
-  onCustom() {
-    this.onForcePassword();
-  }
-
-  // Para cuando se fuerza la contraseña. custom button
+  // Para cuando se fuerza la contraseña
   onForcePassword() {
     const requestParameters: QueryParameters = {
       userId: this.id,
@@ -751,6 +744,35 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    */
   onAdd(): void {
     this.openAddPermissionModal();
+  }
+
+  /**
+   * Abre el modal para actualizar contraseña
+   */
+  openUpdatePasswordModal(): void {
+    const dialogRef = this._matDialog.open(UpdatePasswordModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        userId: this.id,
+        userName: this.user?.firstName + ' ' + this.user?.fatherLastName,
+        userRole: this.userRole,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        // Recargar los datos del usuario
+        this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+          next: (result: any) => {
+            if (result?.body) {
+              this.onSetForm(result.body);
+              this._changeDetectorRef.markForCheck();
+            }
+          },
+        });
+      }
+    });
   }
 
   /**

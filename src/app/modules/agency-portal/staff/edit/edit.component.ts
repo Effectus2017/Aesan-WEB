@@ -278,35 +278,64 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   get isSubmitButtonEnabled(): boolean {
     const form = this.headerConfig.formGroup;
 
-    // Si el formulario no es válido, deshabilitar
-    if (!form.valid) {
+    // Si el formulario está pendiente (validaciones asíncronas), deshabilitar temporalmente
+    if (form.pending) {
       return false;
     }
 
     // Validaciones específicas según el tipo de staff
     if (this.isEmployee) {
-      // Para empleados: clasificación es requerida
-      const staffClassification = form.get('staffClassification')?.value;
-      if (!staffClassification) {
+      // Para empleados: clasificación es requerida y debe ser válida
+      const staffClassificationControl = form.get('staffClassification');
+      const staffClassification = staffClassificationControl?.value;
+      if (!staffClassification || staffClassificationControl?.invalid) {
         return false;
       }
 
-      // Para empleados: posición es requerida
-      const position = form.get('position')?.value;
-      if (!position) {
+      // Para empleados: posición es requerida y debe ser válida
+      const positionControl = form.get('position');
+      const position = positionControl?.value;
+      if (!position || positionControl?.invalid) {
         return false;
       }
     } else if (this.isBoardMember) {
-      // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
-      const email = form.get('email')?.value;
+      // Para miembros de junta: email, dirección postal, ciudad, región, código de área y posición son requeridos
+      const emailControl = form.get('email');
+      const email = emailControl?.value;
       const postalAddress = form.get('postalAddress')?.value;
-      const city = form.get('city')?.value;
-      const region = form.get('region')?.value;
+      const cityControl = form.get('city');
+      const city = cityControl?.value;
+      const regionControl = form.get('region');
+      const region = regionControl?.value;
       const areaCode = form.get('areaCode')?.value;
+      const positionControl = form.get('position');
+      const position = positionControl?.value;
 
-      if (!email || !postalAddress || !city || !region || !areaCode) {
+      // Verificar valores
+      if (!email || !postalAddress || !city || !region || !areaCode || !position) {
         return false;
       }
+
+      // Verificar que los controles de objetos sean válidos
+      if (cityControl?.invalid || regionControl?.invalid || positionControl?.invalid) {
+        return false;
+      }
+
+      // Si el email tiene valor pero el control está pending, esperar a que termine la validación asíncrona
+      if (email && emailControl?.pending) {
+        return false;
+      }
+
+      // Si el email tiene errores de validación (no solo pending), deshabilitar
+      if (email && emailControl?.invalid && !emailControl?.pending) {
+        return false;
+      }
+    }
+
+    // Si llegamos aquí y el formulario no es válido, deshabilitar
+    // Pero solo si no es por validaciones asíncronas pendientes
+    if (!form.valid && !form.pending) {
+      return false;
     }
 
     return true;
@@ -470,6 +499,51 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     this.onStaffTypeChange(staffType);
 
+    // Buscar los objetos correctos de las listas usando los IDs
+    const cityId = param.city?.id || param.cityId;
+    const regionId = param.region?.id || param.regionId;
+    const foundCity = cityId ? this.listCities.find(c => c.id === cityId) : null;
+    const foundRegion = regionId ? this.listRegions.find(r => r.id === regionId) : null;
+
+    // Si se encontró la ciudad pero no la región, cargar las regiones de esa ciudad
+    if (foundCity && !foundRegion && cityId) {
+      const queryParameters: QueryParameters = {
+        cityId: cityId,
+      };
+      this._geoService.getRegionsByCityId(queryParameters).subscribe({
+        next: (response) => {
+          if (response?.body?.data) {
+            this.listRegions = response.body.data;
+            const finalRegion = this.listRegions.find(r => r.id === regionId);
+            this.setFormValues(param, foundCity, finalRegion);
+          } else {
+            this.setFormValues(param, foundCity, null);
+          }
+        },
+        error: (error) => {
+          console.error('Error al cargar las regiones:', error);
+          this.setFormValues(param, foundCity, null);
+        }
+      });
+    } else {
+      this.setFormValues(param, foundCity, foundRegion);
+    }
+  }
+
+  private setFormValues(param: Staff, city: City | null, region: Region | null): void {
+    // Buscar otros objetos de las listas usando los IDs
+    const staffClassification = param.staffClassification?.id
+      ? this.listStaffClassifications.find(sc => sc.id === param.staffClassification.id)
+      : param.staffClassification;
+
+    const position = param.position?.id && this.listPositions.length > 0
+      ? this.listPositions.find(p => p.id === param.position.id)
+      : param.position;
+
+    const status = param.status?.id
+      ? this.listStatus.find(s => s.id === param.status.id)
+      : param.status;
+
     // TERCERO: Ahora hacer el patchValue cuando listPositions ya tiene las opciones correctas
     this.headerConfig.formGroup.patchValue({
       id: param.id,
@@ -477,23 +551,21 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       middleName: param.middleName,
       fatherLastName: param.fatherLastName,
       motherLastName: param.motherLastName,
-      status: param.status,
-      position: param.position,
+      status: status,
+      position: position,
       staffType: param.staffType,
-      staffClassification: param.staffClassification,
+      staffClassification: staffClassification,
       contractStartDate: param.contractStartDate,
       contractEndDate: param.contractEndDate,
       birthDate: param.birthDate,
       email: param.email,
       postalAddress: param.postalAddress,
-      city: param.city,
-      region: param.region,
+      city: city,
+      region: region,
       areaCode: param.areaCode,
       comments: param.comments,
-      //reviewResult: this.reviewResult.find((o) => o.id === staff.reviewResultId),
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
-
       site: param.site,
       isPrimary: param.isPrimary,
     });
