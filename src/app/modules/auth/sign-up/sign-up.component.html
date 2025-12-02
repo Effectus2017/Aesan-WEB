@@ -25,6 +25,9 @@
                   {{ currentLang === "en" ? program.nameEN : program.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('program')?.hasError('required') && (signUpForm.get('program')?.touched || signUpForm.get('program')?.dirty)">
+                {{ "sign-up.program.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- ¿Es una organización sin fines de lucro? -->
             <!-- Is it a non-profit organization? -->
@@ -36,6 +39,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('nonProfit')?.hasError('required') && (signUpForm.get('nonProfit')?.touched || signUpForm.get('nonProfit')?.dirty)">
+                {{ "sign-up.non-profit.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -50,6 +56,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('basicEducationRegistry')?.hasError('required') && (signUpForm.get('basicEducationRegistry')?.touched || signUpForm.get('basicEducationRegistry')?.dirty)">
+                {{ "sign-up.basic-education-registry.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -121,6 +130,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('taxExemptionStatusId')?.hasError('required') && (signUpForm.get('taxExemptionStatusId')?.touched || signUpForm.get('taxExemptionStatusId')?.dirty)">
+                {{ "sign-up.tax-exemption-status.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- ¿Qué tipo de Exención Contributiva tiene? -->
@@ -133,6 +145,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('taxExemptionTypeId')?.hasError('required') && (signUpForm.get('taxExemptionTypeId')?.touched || signUpForm.get('taxExemptionTypeId')?.dirty)">
+                {{ "sign-up.tax-exemption-type.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -147,6 +162,9 @@
                   currentLang === "en" ? option.nameEN : option.name
                 }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('stateFundsDenied')?.hasError('required') && (signUpForm.get('stateFundsDenied')?.touched || signUpForm.get('stateFundsDenied')?.dirty)">
+                {{ "sign-up.state-funds-denied.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- ¿Ha sido denegado o descalificado de fondos federales en los últimos siete años? -->
@@ -160,6 +178,9 @@
                     currentLang === "en" ? option.nameEN : option.name
                   }}</mat-option>
                 </mat-select>
+                <mat-error *ngIf="signUpForm.get('federalFundsDenied')?.hasError('required') && (signUpForm.get('federalFundsDenied')?.touched || signUpForm.get('federalFundsDenied')?.dirty)">
+                  {{ "sign-up.federal-funds-denied.required" | transloco }}
+                </mat-error>
               </mat-form-field>
               <button mat-icon-button type="button" class="mt-2" (click)="openCfrInfoByKey(getStateFundsDeniedKey())" data-cy="state-funds-denied-info-button">
                 <mat-icon class="text-hint" svgIcon="mat_outline:info"></mat-icon>
@@ -218,6 +239,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('typeOfEntityId')?.hasError('required') && (signUpForm.get('typeOfEntityId')?.touched || signUpForm.get('typeOfEntityId')?.dirty)">
+                {{ "sign-up.type-of-entity.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field data-cy="type-of-applicant-field">
               <mat-label>{{ "sign-up.type-of-applicant.label" | transloco }}</mat-label>
@@ -226,6 +250,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('typeOfApplicantId')?.hasError('required') && (signUpForm.get('typeOfApplicantId')?.touched || signUpForm.get('typeOfApplicantId')?.dirty)">
+                {{ "sign-up.type-of-applicant.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -241,6 +268,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('publicAllianceContractId')?.hasError('required') && (signUpForm.get('publicAllianceContractId')?.touched || signUpForm.get('publicAllianceContractId')?.dirty)">
+                {{ "sign-up.public-alliance-contract.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -271,6 +301,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('isDayCareHomeId')?.hasError('required') && (signUpForm.get('isDayCareHomeId')?.touched || signUpForm.get('isDayCareHomeId')?.dirty)">
+                {{ "sign-up.is-day-care-home.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -290,6 +323,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('participatesInHeadStartProgramId')?.hasError('required') && (signUpForm.get('participatesInHeadStartProgramId')?.touched || signUpForm.get('participatesInHeadStartProgramId')?.dirty)">
+                {{ "sign-up.participates-in-head-start-program.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -300,6 +336,9 @@
             <mat-form-field data-cy="agency-field">
               <mat-label>{{ "sign-up.agency.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'name'" placeholder="{{ 'sign-up.agency.placeholder' | transloco }}" data-cy="agency-input" />
+              <mat-error *ngIf="signUpForm.get('name')?.hasError('required') && (signUpForm.get('name')?.touched || signUpForm.get('name')?.dirty)">
+                {{ "sign-up.agency.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- IUE Number *  -->
@@ -312,6 +351,9 @@
                 maxlength="12"
                 data-cy="uie-input"
               />
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('required') && (signUpForm.get('uieNumber')?.touched || signUpForm.get('uieNumber')?.dirty)">
+                {{ "sign-up.uie.required" | transloco }}
+              </mat-error>
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxlength')">
                 El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres
               </mat-error>
@@ -334,6 +376,9 @@
                 maxlength="10"
                 data-cy="sdr-input"
               />
+              <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('required') && (signUpForm.get('sdrNumber')?.touched || signUpForm.get('sdrNumber')?.dirty)">
+                {{ "sign-up.state-department-registration.required" | transloco }}
+              </mat-error>
               <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('maxDigits')">
                 El número de registro del departamento de estado debe tener máximo 10 dígitos
               </mat-error>
@@ -343,6 +388,9 @@
             <mat-form-field data-cy="ein-field">
               <mat-label>{{ "sign-up.ein.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'einNumber'" placeholder="{{ 'sign-up.ein.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly maxlength="9" data-cy="ein-input" />
+              <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('required') && (signUpForm.get('einNumber')?.touched || signUpForm.get('einNumber')?.dirty)">
+                {{ "sign-up.ein.required" | transloco }}
+              </mat-error>
               <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('maxDigits')">
                 El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos
               </mat-error>
@@ -362,6 +410,9 @@
             <mat-form-field data-cy="address-field">
               <mat-label>{{ "sign-up.address.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'address'" placeholder="{{ 'sign-up.address.placeholder' | transloco }}" data-cy="address-input" />
+              <mat-error *ngIf="signUpForm.get('address')?.hasError('required') && (signUpForm.get('address')?.touched || signUpForm.get('address')?.dirty)">
+                {{ "sign-up.address.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- City para Dirección Física *  -->
@@ -372,6 +423,9 @@
                   {{ city.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('city')?.hasError('required') && (signUpForm.get('city')?.touched || signUpForm.get('city')?.dirty)">
+                {{ "sign-up.city.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- Region *  -->
@@ -380,6 +434,9 @@
               <mat-select [formControlName]="'region'" data-cy="region-select" [compareWith]="compare">
                 <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('region')?.hasError('required') && (signUpForm.get('region')?.touched || signUpForm.get('region')?.dirty)">
+                {{ "sign-up.region.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -402,12 +459,18 @@
             <mat-form-field data-cy="latitude-field">
               <mat-label>{{ "sign-up.latitude.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'latitude'" placeholder="{{ 'sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+              <mat-error *ngIf="signUpForm.get('latitude')?.hasError('required') && (signUpForm.get('latitude')?.touched || signUpForm.get('latitude')?.dirty)">
+                {{ "sign-up.latitude.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Longitude *  -->
             <div class="flex gap-2 items-center">
               <mat-form-field data-cy="longitude-field" class="flex-grow">
                 <mat-label>{{ "sign-up.longitude.label" | transloco }}</mat-label>
                 <input matInput [formControlName]="'longitude'" placeholder="{{ 'sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+                <mat-error *ngIf="signUpForm.get('longitude')?.hasError('required') && (signUpForm.get('longitude')?.touched || signUpForm.get('longitude')?.dirty)">
+                  {{ "sign-up.longitude.required" | transloco }}
+                </mat-error>
               </mat-form-field>
               <button
                 mat-icon-button
@@ -444,6 +507,9 @@
             <mat-form-field data-cy="postal-address-field">
               <mat-label>{{ "sign-up.postal-address.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'sign-up.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
+              <mat-error *ngIf="signUpForm.get('postalAddress')?.hasError('required') && (signUpForm.get('postalAddress')?.touched || signUpForm.get('postalAddress')?.dirty)">
+                {{ "sign-up.postal-address.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- City para Dirección Postal *  -->
             <mat-form-field data-cy="postal-city-field">
@@ -451,6 +517,9 @@
               <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
                 <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('postalCity')?.hasError('required') && (signUpForm.get('postalCity')?.touched || signUpForm.get('postalCity')?.dirty)">
+                {{ "sign-up.city.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Region para Dirección Postal *  -->
             <mat-form-field data-cy="postal-region-field">
@@ -458,6 +527,9 @@
               <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compare">
                 <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('postalRegion')?.hasError('required') && (signUpForm.get('postalRegion')?.touched || signUpForm.get('postalRegion')?.dirty)">
+                {{ "sign-up.region.required" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- Postal Zip Code *  -->
@@ -487,6 +559,9 @@
             <mat-form-field data-cy="first-name-field">
               <mat-label>{{ "sign-up.first-name.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'firstName'" placeholder="{{ 'sign-up.first-name.placeholder' | transloco }}" data-cy="first-name-input" />
+              <mat-error *ngIf="signUpForm.get('firstName')?.hasError('required') && (signUpForm.get('firstName')?.touched || signUpForm.get('firstName')?.dirty)">
+                {{ "sign-up.first-name.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Middle Name *  -->
             <mat-form-field data-cy="middle-name-field">
@@ -497,6 +572,9 @@
             <mat-form-field data-cy="father-last-name-field">
               <mat-label>{{ "sign-up.father-last-name.label" | transloco }}</mat-label>
               <input matInput [formControlName]="'fatherLastName'" placeholder="{{ 'sign-up.father-last-name.placeholder' | transloco }}" data-cy="father-last-name-input" />
+              <mat-error *ngIf="signUpForm.get('fatherLastName')?.hasError('required') && (signUpForm.get('fatherLastName')?.touched || signUpForm.get('fatherLastName')?.dirty)">
+                {{ "sign-up.father-last-name.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <!-- Mother Last Name *  -->
             <mat-form-field data-cy="mother-last-name-field">
@@ -548,6 +626,9 @@
                   {{ currentLang === "en" ? option.nameEN : option.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="signUpForm.get('positionId')?.hasError('required') && (signUpForm.get('positionId')?.touched || signUpForm.get('positionId')?.dirty)">
+                {{ "sign-up.admin-title.required" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
         </div>

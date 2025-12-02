@@ -1331,7 +1331,9 @@
             "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
             "status-update-error": "Error al actualizar el estatus del sitio",
             "status-modal": {
-                "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento"
+                "notification-title": "Información Importante",
+                "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento",
+                "changes-form-not-implemented": "El formulario de cambios y cancelaciones está en desarrollo"
             }
         },
         "calendar": {

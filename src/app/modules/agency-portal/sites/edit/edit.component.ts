@@ -1754,6 +1754,21 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.action === 'redirect-to-changes-form') {
+        // Redirigir al formulario de cambios y cancelaciones
+        // TODO: Cuando se implemente el formulario, usar la ruta correcta
+        // Por ejemplo: this._customRouter.navigate(['sites/changes-cancellations', result.siteId], {
+        //   queryParams: {
+        //     inactiveDate: result.inactiveDate,
+        //     prefill: true
+        //   }
+        // });
+        
+        // Por ahora, mostrar mensaje de que el formulario está en desarrollo
+        this._notificationService.showInfo('sites.edit.status-modal.changes-form-not-implemented');
+        return;
+      }
+
       if (result && result.action === 'submit') {
         // Actualizar el formulario con los valores del modal
         const isActiveControl = this.headerConfig.formGroup.get('isActive');

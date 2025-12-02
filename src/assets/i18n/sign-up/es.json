@@ -12,10 +12,12 @@
     "non-profit": {
       "label": "¿Su entidad es una organización sin fines de lucro?",
       "yes": "Sí",
-      "no": "No"
+      "no": "No",
+      "required": "Este campo es requerido"
     },
     "basic-education-registry": {
-      "label": "¿Posee Certificación de Registro de Educación Básica vigente?"
+      "label": "¿Posee Certificación de Registro de Educación Básica vigente?",
+      "required": "Este campo es requerido"
     },
     "extended-hours": {
       "label": "¿Está interesado en participar de horario extendido?"
@@ -34,7 +36,8 @@
     "state-funds-denied": {
       "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
       "yes": "Sí",
-      "no": "No"
+      "no": "No",
+      "required": "Este campo es requerido"
     },
   "state-funds-denied-reason": {
     "label": "Razón por la cual fue descalificado o denegado de fondos estatales",
@@ -49,7 +52,8 @@
     "federal-funds-denied": {
       "label": "¿Ha sido denegado o descalificado de fondos federales en los últimos siete años?",
       "yes": "Sí",
-      "no": "No"
+      "no": "No",
+      "required": "Este campo es requerido"
     },
     "national-youth-program": {
       "label": "¿Su Institución es un Programa Nacional de Juventud?",
@@ -59,10 +63,12 @@
     "is-day-care-home": {
       "label": "¿Es usted una Entidad Auspiciadora de Hogares?",
       "yes": "Sí",
-      "no": "No"
+      "no": "No",
+      "required": "Este campo es requerido"
     },
     "participates-in-head-start-program": {
       "label": "¿Su Entidad participa actualmente en alguno de los siguientes programas?",
+      "required": "Este campo es requerido",
       "not-eligible": {
         "title": "Información sobre Elegibilidad",
         "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 225.2.",
@@ -74,24 +80,29 @@
     "agency": {
       "label": "Nombre de la Entidad Auspiciadora",
       "placeholder": "Ingresa el nombre de la entidad auspiciadora",
-      "description": "Información del auspiciador"
+      "description": "Información del auspiciador",
+      "required": "El nombre de la entidad auspiciadora es requerido"
     },
     "state-department-registration": {
       "label": "Número de Registro del Departamento de Estado",
-      "placeholder": "Ingresa el número de registro del departamento de estado"
+      "placeholder": "Ingresa el número de registro del departamento de estado",
+      "required": "El número de registro del departamento de estado es requerido"
     },
     "address": {
       "label": "Dirección",
       "placeholder": "Ingresa la dirección",
-      "description": "Información de la dirección"
+      "description": "Información de la dirección",
+      "required": "La dirección es requerida"
     },
     "city": {
       "label": "Municipio",
-      "placeholder": "Selecciona tu municipio"
+      "placeholder": "Selecciona tu municipio",
+      "required": "El municipio es requerido"
     },
     "region": {
       "label": "Región",
-      "placeholder": "Selecciona tu región"
+      "placeholder": "Selecciona tu región",
+      "required": "La región es requerida"
     },
     "zip-code": {
       "label": "Código Postal",
@@ -104,44 +115,53 @@
     "postal-address": {
       "label": "Dirección Postal",
       "placeholder": "Ingresa la dirección postal",
-      "description": "Información de la dirección postal"
+      "description": "Información de la dirección postal",
+      "required": "La dirección postal es requerida"
     },
     "user-information": "Información del Usuario",
     "user-information-description": "Aquí puede agregar la información del usuario",
     "first-name": {
       "label": "Nombre",
-      "placeholder": "Ingresa el nombre"
+      "placeholder": "Ingresa el nombre",
+      "required": "El nombre es requerido"
     },
     "father-last-name": {
       "label": "Primer Apellido",
-      "placeholder": "Ingresa el primer apellido"
+      "placeholder": "Ingresa el primer apellido",
+      "required": "El primer apellido es requerido"
     },
     "admin-title": {
       "label": "Persona a Cargo",
-      "placeholder": "Ingresa la persona a cargo"
+      "placeholder": "Ingresa la persona a cargo",
+      "required": "La persona a cargo es requerida"
     },
     "uie": {
       "label": "Identificador Único de Entidad (IUE)",
-      "placeholder": "Ingresa el Identificador Único de Entidad (IUE)"
+      "placeholder": "Ingresa el Identificador Único de Entidad (IUE)",
+      "required": "El Identificador Único de Entidad (IUE) es requerido"
     },
     "ein": {
       "label": "Número de Seguro Social Patronal (EIN)",
-      "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)"
+      "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)",
+      "required": "El Número de Seguro Social Patronal (EIN) es requerido"
     },
     "latitude": {
       "label": "Latitud",
-      "placeholder": "Ingresa la latitud"
+      "placeholder": "Ingresa la latitud",
+      "required": "La latitud es requerida"
     },
     "longitude": {
       "label": "Longitud",
-      "placeholder": "Ingresa la longitud"
+      "placeholder": "Ingresa la longitud",
+      "required": "La longitud es requerida"
     },
     "gps-coordinates": {
       "tooltip": "Hacer clic para obtener coordenadas GPS"
     },
     "phone": {
       "label": "Teléfono",
-      "placeholder": "(xxx) xxx-xxxx"
+      "placeholder": "(xxx) xxx-xxxx",
+      "required": "El teléfono es requerido"
     },
     "email": {
       "label": "Correo Electrónico",
@@ -212,19 +232,24 @@
       "message": "No es elegible para participar en el programa PACNA"
     },
     "tax-exemption-status": {
-      "label": "¿En qué estatus se encuentra su Exención Contributiva?"
+      "label": "¿En qué estatus se encuentra su Exención Contributiva?",
+      "required": "El estatus de exención contributiva es requerido"
     },
     "tax-exemption-type": {
-      "label": "Tipo de Exención"
+      "label": "Tipo de Exención",
+      "required": "El tipo de exención es requerido"
     },
     "type-of-entity": {
-      "label": "Tipo de Entidad"
+      "label": "Tipo de Entidad",
+      "required": "El tipo de entidad es requerido"
     },
     "type-of-applicant": {
-      "label": "Tipo de Solicitante"
+      "label": "Tipo de Solicitante",
+      "required": "El tipo de solicitante es requerido"
     },
     "public-alliance-contract": {
-      "label": "De poseer un contrato Público Alianza, especifique su modalidad"
+      "label": "De poseer un contrato Público Alianza, especifique su modalidad",
+      "required": "El contrato Público Alianza es requerido"
     }
   }
 }

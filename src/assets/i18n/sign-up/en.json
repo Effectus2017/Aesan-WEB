@@ -7,10 +7,12 @@
     "non-profit": {
       "label": "Is your entity a non-profit organization?",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "required": "This field is required"
     },
     "basic-education-registry": {
-      "label": "Do you have valid Basic Education Registry Certification?"
+      "label": "Do you have valid Basic Education Registry Certification?",
+      "required": "This field is required"
     },
     "extended-hours": {
       "label": "Are you interested in participating in extended hours?"
@@ -29,7 +31,8 @@
     "state-funds-denied": {
       "label": "Have you been denied or disqualified from state funds in the last seven years?",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "required": "This field is required"
     },
   "state-funds-denied-reason": {
     "label": "Reason why the sponsor was disqualified or denied state funds",
@@ -44,7 +47,8 @@
     "federal-funds-denied": {
       "label": "Have you been denied or disqualified from federal funds in the last seven years?",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "required": "This field is required"
     },
     "national-youth-program": {
       "label": "Is your institution a National Youth Program?",
@@ -54,10 +58,12 @@
     "is-day-care-home": {
       "label": "Are you a Day Care Homes?",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "required": "This field is required"
     },
     "participates-in-head-start-program": {
       "label": "Does your Entity currently participate in any of the following programs?",
+      "required": "This field is required",
       "not-eligible": {
         "title": "Eligibility Information",
         "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: 7 CFR 225.2.",
@@ -69,24 +75,29 @@
     "agency": {
       "label": "Name of the Sponsoring Entity",
       "placeholder": "Enter the name of the sponsoring entity",
-      "description": "Sponsor information"
+      "description": "Sponsor information",
+      "required": "The name of the sponsoring entity is required"
     },
     "state-department-registration": {
       "label": "State Department Registration Number",
-      "placeholder": "Enter the state department registration number"
+      "placeholder": "Enter the state department registration number",
+      "required": "The state department registration number is required"
     },
     "address": {
       "label": "Address",
       "placeholder": "Enter the address",
-      "description": "Address information"
+      "description": "Address information",
+      "required": "Address is required"
     },
     "city": {
       "label": "City",
-      "placeholder": "Select your city"
+      "placeholder": "Select your city",
+      "required": "City is required"
     },
     "region": {
       "label": "Region",
-      "placeholder": "Select your region"
+      "placeholder": "Select your region",
+      "required": "Region is required"
     },
           "zip-code": {
         "label": "Zip Code",
@@ -99,44 +110,53 @@
       "postal-address": {
         "label": "Postal Address",
         "placeholder": "Enter the postal address",
-        "description": "Postal address information"
+        "description": "Postal address information",
+        "required": "Postal address is required"
       },
     "user-information": "User Information",
     "user-information-description": "Here you can add the user information",
     "first-name": {
       "label": "First Name",
-      "placeholder": "Enter the first name"
+      "placeholder": "Enter the first name",
+      "required": "First name is required"
     },
     "father-last-name": {
       "label": "First Last Name",
-      "placeholder": "Enter the first last name"
+      "placeholder": "Enter the first last name",
+      "required": "First last name is required"
     },
     "admin-title": {
       "label": "Person in Charge",
-      "placeholder": "Enter the person in charge"
+      "placeholder": "Enter the person in charge",
+      "required": "Person in charge is required"
     },
     "uie": {
       "label": "Unique Entity Identifier (UEI)",
-      "placeholder": "Enter the Unique Entity Identifier (UEI)"
+      "placeholder": "Enter the Unique Entity Identifier (UEI)",
+      "required": "Unique Entity Identifier (UEI) is required"
     },
     "ein": {
       "label": "Employer Identification Number (EIN)",
-      "placeholder": "Enter the Employer Identification Number (EIN)"
+      "placeholder": "Enter the Employer Identification Number (EIN)",
+      "required": "Employer Identification Number (EIN) is required"
     },
     "latitude": {
       "label": "Latitude",
-      "placeholder": "Enter the latitude"
+      "placeholder": "Enter the latitude",
+      "required": "Latitude is required"
     },
     "longitude": {
       "label": "Longitude",
-      "placeholder": "Enter the longitude"
+      "placeholder": "Enter the longitude",
+      "required": "Longitude is required"
     },
     "gps-coordinates": {
       "tooltip": "Click to get GPS coordinates"
     },
     "phone": {
       "label": "Phone",
-      "placeholder": "(xxx) xxx-xxxx"
+      "placeholder": "(xxx) xxx-xxxx",
+      "required": "Phone is required"
     },
     "email": {
       "label": "Email",
@@ -212,19 +232,24 @@
       "required-close": "Close"
     },
     "tax-exemption-status": {
-      "label": "What is the status of your Tax Exemption?"
+      "label": "What is the status of your Tax Exemption?",
+      "required": "Tax exemption status is required"
     },
     "tax-exemption-type": {
-      "label": "Type of Exemption"
+      "label": "Type of Exemption",
+      "required": "Type of exemption is required"
     },
     "type-of-entity": {
-      "label": "Type of Entity"
+      "label": "Type of Entity",
+      "required": "Type of entity is required"
     },
     "type-of-applicant": {
-      "label": "Type of Applicant"
+      "label": "Type of Applicant",
+      "required": "Type of applicant is required"
     },
     "public-alliance-contract": {
-      "label": "If you have a Public Alliance contract, please specify the type of contract"
+      "label": "If you have a Public Alliance contract, please specify the type of contract",
+      "required": "Public Alliance contract is required"
     }
   }
 }
