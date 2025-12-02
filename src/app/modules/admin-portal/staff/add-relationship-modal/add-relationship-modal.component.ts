@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { Staff } from 'app/shared/models/Staff';
@@ -61,7 +61,8 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   });
 
   // Loading
-  isLoading: boolean = false;
+  isLoading: boolean = false; // Para el submit
+  isInitialLoading: boolean = false; // Para la carga inicial
 
   constructor(
     public dialogRef: MatDialogRef<AdminAddRelationshipModalComponent>,
@@ -73,8 +74,7 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
     // Deshabilitar el auto mode del loading service para evitar ExpressionChangedAfterItHasBeenCheckedError
     this._fuseLoadingService.setAutoMode(false);
 
-    this.loadStaffList();
-    this.loadRelationshipTypes();
+    this.loadInitialData();
 
     // Suscribirse a cambios de navegación para cerrar el modal automáticamente
     this._router.events
@@ -96,11 +96,13 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga la lista de staff disponible
+   * Carga los datos iniciales (staff y tipos de relación) usando forkJoin
    */
-  private loadStaffList(): void {
+  private loadInitialData(): void {
+    this.isInitialLoading = true;
+    this._changeDetectorRef.markForCheck();
 
-    const queryParams: QueryParameters = {
+    const staffQueryParams: QueryParameters = {
       take: 25,
       skip: 0,
       name: null,
@@ -111,41 +113,37 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
       agencyId: null,
     };
 
-    this._staffService.getAllStaffFromDb(queryParams).subscribe({
-      next: (response) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(response?.body?.data)) {
-          // Filtrar el staff actual para evitar auto-relación
-          this.listStaff = response.body.data.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-      error: (error) => {
-        console.error('Error loading staff list:', error);
-        this._notificationService.showError(this._translocoService.translate('staff.relationship.error.loadStaff'));
-      }
-    });
-  }
-
-  /**
-   * Carga los tipos de relación disponibles
-   */
-  private loadRelationshipTypes(): void {
-    const queryParams: QueryParameters = {
+    const relationshipQueryParams: QueryParameters = {
       optionKey: 'relationshipType',
       names: null,
     };
 
-    this._optionSelectionService.getOptionSelectionByOptionKey(queryParams).subscribe({
+    // Ejecutar ambas requests en paralelo usando forkJoin
+    forkJoin({
+      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
+      relationshipTypes: this._optionSelectionService.getOptionSelectionByOptionKey(relationshipQueryParams)
+    }).subscribe({
       next: (response) => {
-        if (!isNullOrUndefinedEmptyStringNullArray(response?.body?.data)) {
-          this.listRelationshipTypes = response.body.data;
-          this._changeDetectorRef.detectChanges();
+        // Procesar respuesta de staff
+        if (!isNullOrUndefinedEmptyStringNullArray(response.staff?.body?.data)) {
+          // Filtrar el staff actual para evitar auto-relación
+          this.listStaff = response.staff.body.data.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
         }
+
+        // Procesar respuesta de relationship types
+        if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes?.body?.data)) {
+          this.listRelationshipTypes = response.relationshipTypes.body.data;
+        }
+
+        this.isInitialLoading = false;
+        this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
-        console.error('Error loading relationship types:', error);
-        this._notificationService.showError(this._translocoService.translate('staff.relationship.error.loadTypes'));
-      }
+        console.error('Error loading initial data:', error);
+        this.isInitialLoading = false;
+        this._notificationService.showError(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
+        this._changeDetectorRef.markForCheck();
+      },
     });
   }
 

@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { Staff } from 'app/shared/models/Staff';
@@ -70,7 +70,8 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   });
 
   // Loading
-  isLoading: boolean = false;
+  isLoading: boolean = false; // Para el submit
+  isInitialLoading: boolean = false; // Para la carga inicial
 
   constructor(
     public dialogRef: MatDialogRef<AdminEditRelationshipModalComponent>,
@@ -97,9 +98,6 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
 
     // Cargar datos iniciales
     this.loadInitialData();
-
-    // Pre-llenar el formulario con los datos de la relación existente
-    this.populateForm();
   }
 
   ngOnDestroy(): void {
@@ -108,62 +106,59 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga los datos iniciales necesarios para el formulario
+   * Carga los datos iniciales necesarios para el formulario usando forkJoin
    */
-  private async loadInitialData(): Promise<void> {
-    try {
-      // this._fuseLoadingService.show(); // Eliminado
+  private loadInitialData(): void {
+    this.isInitialLoading = true;
+    this._changeDetectorRef.markForCheck();
 
-      // Cargar lista de staff (excluyendo el staff actual)
-      const staffQueryParams: QueryParameters = {
-        take: 25,
-        skip: 0,
-        name: null,
-        alls: true,
-        excludeRelated: false,  // Incluir todo el staff (modal Edit)
-        isList: true,  // Mantener por compatibilidad
-        staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
-        agencyId: null,
-      };
-      this._staffService.getAllStaffFromDb(staffQueryParams).subscribe({
-        next: (response: any) => {
-          if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-            // Filtrar el usuario actual para evitar auto-relaciones
-            this.listStaff = response.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
-            this._changeDetectorRef.detectChanges();
-          }
-        },
-        error: (error) => {
-          console.error('Error loading staff:', error);
-          this._notificationService.showError('Error al cargar la lista de personal');
+    const staffQueryParams: QueryParameters = {
+      take: 25,
+      skip: 0,
+      name: null,
+      alls: true,
+      excludeRelated: false,  // Incluir todo el staff (modal Edit)
+      isList: true,  // Mantener por compatibilidad
+      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
+      agencyId: null,
+    };
+
+    const relationshipTypeQueryParams: QueryParameters = {
+      optionKey: 'staffRelationshipType,yesNo',  // Agregar yesNo para opciones activo/inactivo
+      names: null,
+    };
+
+    // Ejecutar ambas requests en paralelo usando forkJoin
+    forkJoin({
+      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
+      relationshipTypes: this._optionSelectionService.getOptionSelectionByOptionKey(relationshipTypeQueryParams)
+    }).subscribe({
+      next: (response) => {
+        // Procesar respuesta de staff
+        if (!isNullOrUndefinedEmptyStringNullArray(response.staff?.body)) {
+          // Filtrar el usuario actual para evitar auto-relaciones
+          this.listStaff = response.staff.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
         }
-      });
 
-      // Cargar tipos de relación
-      const relationshipTypeQueryParams: QueryParameters = {
-        optionKey: 'staffRelationshipType,yesNo',  // Agregar yesNo para opciones activo/inactivo
-        names: null,
-      };
-      this._optionSelectionService.getOptionSelectionByOptionKey(relationshipTypeQueryParams).subscribe({
-        next: (response: any) => {
-          if (!isNullOrUndefinedEmptyStringNullArray(response)) {
-            this.listRelationshipTypes = response.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
-            this.yesNoOptions = response.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-            this._changeDetectorRef.detectChanges();
-          }
-        },
-        error: (error) => {
-          console.error('Error loading relationship types:', error);
-          this._notificationService.showError('Error al cargar los tipos de relación');
+        // Procesar respuesta de relationship types y yesNo options
+        if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes?.body?.data)) {
+          this.listRelationshipTypes = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
+          this.yesNoOptions = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
         }
-      });
 
-    } catch (error) {
-      console.error('Error in loadInitialData:', error);
-      this._notificationService.showError('Error al cargar los datos iniciales');
-    } finally {
-              // this._fuseLoadingService.hide(); // Eliminado
-    }
+        // Pre-llenar el formulario después de que los datos se hayan cargado
+        this.populateForm();
+
+        this.isInitialLoading = false;
+        this._changeDetectorRef.markForCheck();
+      },
+      error: (error) => {
+        console.error('Error loading initial data:', error);
+        this.isInitialLoading = false;
+        this._notificationService.showError(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
+        this._changeDetectorRef.markForCheck();
+      },
+    });
   }
 
   /**

@@ -1,4 +1,4 @@
-import { Component, Inject, ViewEncapsulation, ChangeDetectionStrategy, OnInit, OnDestroy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, Inject, ViewEncapsulation, ChangeDetectionStrategy, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,7 +38,7 @@ export interface StaffStatusModalData {
     TranslocoModule
   ]
 })
-export class StaffStatusModalComponent implements OnInit, OnDestroy {
+export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewInit {
   form: FormGroup;
   isLoading: boolean = false;
   currentLang: string = 'es';
@@ -68,7 +68,14 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((lang) => {
         this.currentLang = lang;
+        this._changeDetectorRef.markForCheck();
       });
+  }
+
+  ngAfterViewInit(): void {
+    // Forzar detección de cambios después de que la vista esté inicializada
+    // Esto asegura que las opciones del dropdown se rendericen correctamente
+    this._changeDetectorRef.markForCheck();
   }
 
   ngOnDestroy(): void {

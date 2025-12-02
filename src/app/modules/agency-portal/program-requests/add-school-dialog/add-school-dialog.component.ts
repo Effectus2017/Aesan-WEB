@@ -70,6 +70,9 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
   facilities: Facility[] = [];
   mealTypes: MealType[] = [];
 
+  // Loading
+  isLoading: boolean = false;
+
   public matDialogRef: MatDialogRef<AddSchoolDialogComponent> = inject(MatDialogRef<AddSchoolDialogComponent>);
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
@@ -114,6 +117,8 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
   }
 
   loadSelectData(): void {
+    this.isLoading = true;
+    this._changeDetectorRef.markForCheck();
 
     var queryParams: QueryParameters = {
       take: 25,
@@ -139,10 +144,13 @@ export class AddSchoolDialogComponent implements OnInit, OnDestroy {
         this.organizationTypes = responses.organizationTypes.body.data;
         this.facilities = responses.facilities.body.data;
         this.mealTypes = responses.mealTypes.body.data;
+        this.isLoading = false;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
         console.error('Error al cargar los datos:', error);
+        this.isLoading = false;
+        this._changeDetectorRef.markForCheck();
       }
     });
   }

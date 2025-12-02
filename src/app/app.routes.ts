@@ -9,7 +9,7 @@ export const appRoutes: Route[] = [
   // Redirigir después del inicio de sesión
   { path: 'signed-in-redirect', pathMatch: 'full', redirectTo: 'auth-redirect' },
 
-    // Ruta de redirección basada en el rol
+  // Ruta de redirección basada en el rol
   {
     path: 'auth-redirect',
     canActivate: [AuthGuard],
@@ -124,7 +124,7 @@ export const appRoutes: Route[] = [
     },
     children: [
       { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes') },
-        { path: 'sponsor-evaluation', loadChildren: () => import('app/modules/aesan-portal/sponsor-evaluation/sponsor-evaluation.routes') },
+      { path: 'sponsor-evaluation', loadChildren: () => import('app/modules/aesan-portal/sponsor-evaluation/sponsor-evaluation.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
     ],
   },
@@ -136,8 +136,8 @@ export const appRoutes: Route[] = [
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
     data: {
-        layout: 'modern',
-      },
+      layout: 'modern',
+    },
     resolve: {
       initialData: initialDataAgencyPortalResolver,
     },

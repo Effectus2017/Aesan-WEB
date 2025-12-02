@@ -46,6 +46,9 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   // Formulario para el buscador
   searchForm: FormGroup;
 
+  // Loading
+  isInitialLoading: boolean = false;
+
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<SchoolSiteTableResponse>([]),
     dataSourceList: [],
@@ -71,7 +74,9 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   ngOnInit(): void {
-    this.getAll(0, this.searchForm.value);
+    this.isInitialLoading = true;
+    this._changeDetectorRef.markForCheck();
+    this.getAll(0, this.searchForm.value, true);
     this.setupSearchSubscription();
   }
 
@@ -80,7 +85,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     this._unsubscribeAll.complete();
   }
 
-  getAll(index: number, form: any): void {
+  getAll(index: number, form: any, isInitialLoad: boolean = false): void {
     const queryParameters: QueryParameters = {
       schoolId: this.data.schoolId,
       take: this.tableConfig.pageSize,
@@ -108,6 +113,9 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
           this.tableConfig.dataSource.data = data;
           this.tableConfig.length = response.body.count || 0;
           this.tableConfig.dataSourceList = data;
+          if (isInitialLoad) {
+            this.isInitialLoading = false;
+          }
           this._changeDetectorRef.markForCheck();
         },
         error: (error) => {
@@ -128,6 +136,9 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
           this.tableConfig.dataSource.data = fallbackData;
           this.tableConfig.length = this.data.data?.length || 0;
           this.tableConfig.dataSourceList = fallbackData;
+          if (isInitialLoad) {
+            this.isInitialLoading = false;
+          }
           this._changeDetectorRef.markForCheck();
         }
       });

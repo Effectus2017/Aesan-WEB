@@ -9,7 +9,11 @@
 
   <!-- Form -->
   <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="flex flex-col gap-6">
+    <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
+      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+    </div>
+
+    <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
       <!-- Dropdown 1: Staff Relacionado -->
       <mat-form-field data-cy="related-staff-field">
         <mat-label>{{ "staff.edit.relationships.modal.relatedStaff.label" | transloco }}</mat-label>

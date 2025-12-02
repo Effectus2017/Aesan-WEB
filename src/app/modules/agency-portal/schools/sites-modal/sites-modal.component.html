@@ -13,7 +13,11 @@
 
   <!-- Content -->
   <div class="flex overflow-y-auto flex-col flex-auto p-6">
-    <form [formGroup]="searchForm" class="flex flex-col gap-6">
+    <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
+      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+    </div>
+
+    <form *ngIf="!isInitialLoading" [formGroup]="searchForm" class="flex flex-col gap-6">
       <!-- Campo de búsqueda -->
       <mat-form-field>
         <input matInput formControlName="search" [placeholder]="'schools.sites.modal.search.placeholder' | transloco" autocomplete="on"/>

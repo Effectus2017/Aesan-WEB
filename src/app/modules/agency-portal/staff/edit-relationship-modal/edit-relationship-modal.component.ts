@@ -73,7 +73,8 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   });
 
   // Loading
-  isLoading: boolean = false;
+  isLoading: boolean = false; // Para el submit
+  isInitialLoading: boolean = false; // Para la carga inicial
 
   constructor(
     public dialogRef: MatDialogRef<EditRelationshipModalComponent>,
@@ -115,6 +116,8 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   onLoadInitialData(): void {
+    this.isInitialLoading = true;
+    this._changeDetectorRef.markForCheck();
 
     const agencyId = this._authService.getAgencyId();
 
@@ -159,14 +162,15 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
           this.onSetForm();
         });
 
+        this.isInitialLoading = false;
         // Una sola llamada a detectChanges después de todos los cambios
         this._changeDetectorRef.detectChanges();
       },
       error: (error) => {
+        this.isInitialLoading = false;
         this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
+        this._changeDetectorRef.markForCheck();
       },
-      complete: () => {
-      }
     });
   }
 

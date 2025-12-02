@@ -66,7 +66,8 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   });
 
   // Loading
-  isLoading: boolean = false;
+  isLoading: boolean = false; // Para el submit
+  isInitialLoading: boolean = false; // Para la carga inicial
 
   constructor(
     public dialogRef: MatDialogRef<AddRelationshipModalComponent>,
@@ -103,6 +104,8 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   onLoadInitialData(): void {
+    this.isInitialLoading = true;
+    this._changeDetectorRef.markForCheck();
 
     const agencyId = this._authService.getAgencyId();
 
@@ -139,13 +142,14 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
           this.listRelationshipTypes = response.relationshipTypes.body.data;
         }
 
-        this._changeDetectorRef.detectChanges();
+        this.isInitialLoading = false;
+        this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
+        this.isInitialLoading = false;
         this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
+        this._changeDetectorRef.markForCheck();
       },
-      complete: () => {
-      }
     });
   }
 
