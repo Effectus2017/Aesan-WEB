@@ -132,7 +132,7 @@
       "permissions": [],
       "minRoleLevel": 2
     },
-    "areaCode": {
+    "zipCode": {
       "showFor": ["board-member", "other"],
       "hideFor": ["employee"],
       "requiredFor": ["board-member", "other"],

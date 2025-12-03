@@ -227,25 +227,25 @@
             </mat-error>
           </mat-form-field>
 
-          <!-- Area Code -->
-          <mat-form-field data-cy="area-code-field">
-            <mat-label>{{ "staff.edit.areaCode.label" | transloco }}</mat-label>
+          <!-- Zip Code -->
+          <mat-form-field data-cy="zip-code-field">
+            <mat-label>{{ "staff.edit.zipCode.label" | transloco }}</mat-label>
             <input
               matInput
-              formControlName="areaCode"
-              puertoRicoAreaCode
-              maxlength="3"
+              formControlName="zipCode"
+              puertoRicoZipCode
+              maxlength="10"
               required
-              placeholder="{{ 'staff.edit.areaCode.placeholder' | transloco }}"
-              title="{{ 'staff.edit.areaCode.label' | transloco }}"
-              [attr.aria-label]="'staff.edit.areaCode.label' | transloco"
-              data-cy="areaCode-input"
+              placeholder="{{ 'staff.edit.zipCode.placeholder' | transloco }}"
+              title="{{ 'staff.edit.zipCode.label' | transloco }}"
+              [attr.aria-label]="'staff.edit.zipCode.label' | transloco"
+              data-cy="zipCode-input"
             />
-            <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('required')">
-              {{ "staff.edit.areaCode.required" | transloco }}
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('required')">
+              {{ "staff.edit.zipCode.required" | transloco }}
             </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('areaCode')?.hasError('puertoRicoAreaCode')">
-              {{ "staff.edit.areaCode.invalid" | transloco }}
+            <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
+              {{ "staff.edit.zipCode.invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>

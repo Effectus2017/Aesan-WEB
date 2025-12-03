@@ -117,7 +117,10 @@
 
         <mat-form-field>
           <mat-label>{{ 'sites.edit.latitude.label' | transloco }}</mat-label>
-          <input matInput formControlName="latitude" required />
+          <input matInput formControlName="latitude" latitude required />
+          <mat-error *ngIf="form.get('latitude')?.hasError('latitude')">
+            {{ form.get('latitude')?.errors?.['latitude']?.message }}
+          </mat-error>
           <mat-error *ngIf="form.get('latitude')?.hasError('required')">
             {{ 'sites.edit.latitude.required' | transloco }}
           </mat-error>
@@ -125,7 +128,10 @@
 
         <mat-form-field>
           <mat-label>{{ 'sites.edit.longitude.label' | transloco }}</mat-label>
-          <input matInput formControlName="longitude" required />
+          <input matInput formControlName="longitude" longitude required />
+          <mat-error *ngIf="form.get('longitude')?.hasError('longitude')">
+            {{ form.get('longitude')?.errors?.['longitude']?.message }}
+          </mat-error>
           <mat-error *ngIf="form.get('longitude')?.hasError('required')">
             {{ 'sites.edit.longitude.required' | transloco }}
           </mat-error>

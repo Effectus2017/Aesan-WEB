@@ -48,8 +48,8 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
-import { puertoRicoAreaCodeValidator } from 'app/shared/validators/puerto-rico-area-code.validator';
-import { PuertoRicoAreaCodeDirective } from 'app/shared/directives/puerto-rico-area-code.directive';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 @Component({
   selector: 'app-edit-board-member',
@@ -75,7 +75,7 @@ import { PuertoRicoAreaCodeDirective } from 'app/shared/directives/puerto-rico-a
     MatTimepickerModule,
     GenericTableComponent,
     MatDialogModule,
-    PuertoRicoAreaCodeDirective,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -175,8 +175,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       city: new FormControl('', [Validators.required]),
       // Region
       region: new FormControl('', [Validators.required]),
-      // Area code
-      areaCode: new FormControl('', [Validators.required, puertoRicoAreaCodeValidator()]),
+      // Zip code
+      zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comments
       comments: new FormControl(''),
       // Sitio asignado
@@ -240,8 +240,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const city = cityControl?.value;
     const regionControl = form.get('region');
     const region = regionControl?.value;
-    const areaCodeControl = form.get('areaCode');
-    const areaCode = areaCodeControl?.value;
+    const zipCodeControl = form.get('zipCode');
+    const zipCode = zipCodeControl?.value;
     const positionControl = form.get('position');
     const position = positionControl?.value;
     const firstName = form.get('firstName')?.value;
@@ -250,7 +250,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const birthDate = birthDateControl?.value;
 
     // Verificar que todos los campos requeridos tengan valores
-    if (!email || !postalAddress || !city || !region || !areaCode || !position || !firstName || !fatherLastName || !birthDate) {
+    if (!email || !postalAddress || !city || !region || !zipCode || !position || !firstName || !fatherLastName || !birthDate) {
       return false;
     }
 
@@ -280,7 +280,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     if (emailControl?.hasError('email') || emailControl?.hasError('emailExists')) {
       return false;
     }
-    if (areaCodeControl?.hasError('puertoRicoAreaCode')) {
+    if (zipCodeControl?.hasError('puertoRicoZipCode')) {
       return false;
     }
     if (birthDateControl?.hasError('minimumAge')) {
@@ -300,7 +300,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     if (postalAddress && form.get('postalAddress')?.hasError('required')) {
       return false;
     }
-    if (areaCode && areaCodeControl?.hasError('required')) {
+    if (zipCode && zipCodeControl?.hasError('required')) {
       return false;
     }
     if (birthDate && birthDateControl?.hasError('required')) {
@@ -496,7 +496,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       postalAddress: param.postalAddress,
       city: city,
       region: region,
-      areaCode: param.areaCode,
+      zipCode: param.zipCode,
       comments: param.comments,
       site: param.site,
       isPrimary: param.isPrimary,
@@ -579,8 +579,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     // Dirección postal
     const postalAddress: string = formValues.postalAddress || '';
 
-    // Código de área
-    const areaCode: string = formValues.areaCode || '';
+    // Código postal
+    const zipCode: string = formValues.zipCode || '';
 
     // Ciudad
     const cityId: number = formValues.city?.id || 0;
@@ -614,7 +614,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     this.isLoading = true;
 
     // Validación: email, dirección postal, ciudad, región, código de área son requeridos
-    if (!email || !postalAddress || !cityId || !regionId || !areaCode) {
+    if (!email || !postalAddress || !cityId || !regionId || !zipCode) {
       this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.contactLocationRequired'));
       this.isLoading = false;
       return;
@@ -647,7 +647,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       postalAddress: postalAddress,
       cityId: cityId,
       regionId: regionId,
-      areaCode: areaCode,
+      zipCode: zipCode,
     };
 
     // Disable the form
@@ -789,7 +789,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const emailControl = this.headerConfig.formGroup.get('email');
     const cityControl = this.headerConfig.formGroup.get('city');
     const regionControl = this.headerConfig.formGroup.get('region');
-    const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
+    const zipCodeControl = this.headerConfig.formGroup.get('zipCode');
     const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
     const positionControl = this.headerConfig.formGroup.get('position');
 
@@ -800,7 +800,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     emailControl?.setValidators([Validators.required, Validators.email]);
     cityControl?.setValidators([Validators.required]);
     regionControl?.setValidators([Validators.required]);
-    areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
+    zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
     postalAddressControl?.setValidators([Validators.required]);
     positionControl?.setValidators([Validators.required]);
 
@@ -810,7 +810,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     emailControl?.updateValueAndValidity();
     cityControl?.updateValueAndValidity();
     regionControl?.updateValueAndValidity();
-    areaCodeControl?.updateValueAndValidity();
+    zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
     positionControl?.updateValueAndValidity();
 
@@ -822,7 +822,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     emailControl?.enable({ emitEvent: false });
     cityControl?.enable({ emitEvent: false });
     regionControl?.enable({ emitEvent: false });
-    areaCodeControl?.enable({ emitEvent: false });
+      zipCodeControl?.enable({ emitEvent: false });
     postalAddressControl?.enable({ emitEvent: false });
 
     // Actualizar el estado del botón de submit

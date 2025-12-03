@@ -165,10 +165,14 @@
             <input
               matInput
               formControlName="latitude"
+              latitude
               [placeholder]="'validation-to-program.edit.coordinates.latitude.placeholder' | transloco"
               [attr.aria-label]="'validation-to-program.edit.coordinates.latitude.label' | transloco"
               [title]="'validation-to-program.edit.coordinates.latitude.label' | transloco"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('latitude')?.hasError('latitude')">
+              {{ headerConfig.formGroup.get('latitude')?.errors?.['latitude']?.message }}
+            </mat-error>
           </mat-form-field>
           <!-- Longitude *  -->
           <mat-form-field>
@@ -176,10 +180,14 @@
             <input
               matInput
               formControlName="longitude"
+              longitude
               [placeholder]="'validation-to-program.edit.coordinates.longitude.placeholder' | transloco"
               [attr.aria-label]="'validation-to-program.edit.coordinates.longitude.label' | transloco"
               [title]="'validation-to-program.edit.coordinates.longitude.label' | transloco"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('longitude')?.hasError('longitude')">
+              {{ headerConfig.formGroup.get('longitude')?.errors?.['longitude']?.message }}
+            </mat-error>
           </mat-form-field>
         </div>
 

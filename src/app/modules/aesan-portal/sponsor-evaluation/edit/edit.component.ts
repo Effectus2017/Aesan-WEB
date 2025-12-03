@@ -52,6 +52,8 @@ import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 
 @Component({
     selector: 'app-aesan-sponsor-evaluation-edit',
@@ -85,6 +87,8 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
         TranslocoModule,
         PhoneFormatDirective,
         PuertoRicoZipCodeDirective,
+        LatitudeDirective,
+        LongitudeDirective,
     ]
 })
 export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {

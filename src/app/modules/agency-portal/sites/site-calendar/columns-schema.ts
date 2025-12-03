@@ -9,7 +9,7 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'startTime',
     type: 'text',
-    label: 'sites.calendar.day-events.table.columns.startTime'
+    label: 'Desde'
   },
   {
     key: 'endTime',

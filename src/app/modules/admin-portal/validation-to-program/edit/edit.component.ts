@@ -42,6 +42,8 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 
 @Component({
   selector: 'app-admin-validation-to-program-edit',
@@ -70,6 +72,8 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
     NumericOnlyDirective,
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
+    LatitudeDirective,
+    LongitudeDirective,
   ],
 })
 export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler {

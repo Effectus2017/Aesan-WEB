@@ -1,4 +1,5 @@
 export interface SiteServiceRequest {
+  id?: number;
   siteId?: number;
   childGroupId?: number;
   breakfast?: boolean;

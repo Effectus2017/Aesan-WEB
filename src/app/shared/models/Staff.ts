@@ -31,7 +31,7 @@ export interface Staff {
   cityName: string;
   regionId: number;
   regionName: string;
-  areaCode: string;
+  zipCode: string;
   agencyId?: number;
   agencyName?: string;
   comments?: string;

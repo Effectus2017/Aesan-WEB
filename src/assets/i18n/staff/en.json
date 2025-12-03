@@ -71,7 +71,7 @@
             "email": "Email",
             "postalAddress": "Postal Address",
             "municipality": "Municipality",
-            "areaCode": "Area Code",
+            "zipCode": "ZIP Code",
             "updateDate": "Update Date",
             "comments": "Comments",
             "actions": "Actions"
@@ -172,11 +172,11 @@
         "placeholder": "Select the region",
         "required": "Region is required"
       },
-      "areaCode": {
-        "label": "Area Code",
-        "placeholder": "Enter the area code",
-        "required": "Area code is required",
-        "invalid": "The area code must be one of the following: 787, 939, 849"
+      "zipCode": {
+        "label": "ZIP Code",
+        "placeholder": "Enter the ZIP code",
+        "required": "ZIP code is required",
+        "invalid": "The ZIP code must have the format ##### or #####-####"
       },
       "school-assignment": "Site Assignment",
       "school-assignment-description": "Specify the site where the staff will be assigned",
@@ -393,11 +393,11 @@
         "placeholder": "Select the region",
         "required": "Region is required"
       },
-      "areaCode": {
-        "label": "Area Code",
-        "placeholder": "Enter the area code",
-        "required": "Area code is required",
-        "invalid": "The area code must be one of the following: 787, 939, 849"
+      "zipCode": {
+        "label": "ZIP Code",
+        "placeholder": "Enter the ZIP code",
+        "required": "ZIP code is required",
+        "invalid": "The ZIP code must have the format ##### or #####-####"
       },
       "postalAddress": {
         "label": "Postal Address",

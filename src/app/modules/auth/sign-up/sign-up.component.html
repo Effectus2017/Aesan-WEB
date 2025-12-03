@@ -458,7 +458,10 @@
             <!-- Latitude *  -->
             <mat-form-field data-cy="latitude-field">
               <mat-label>{{ "sign-up.latitude.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'latitude'" placeholder="{{ 'sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+              <input matInput [formControlName]="'latitude'" latitude placeholder="{{ 'sign-up.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+              <mat-error *ngIf="signUpForm.get('latitude')?.hasError('latitude') && (signUpForm.get('latitude')?.touched || signUpForm.get('latitude')?.dirty)">
+                {{ signUpForm.get('latitude')?.errors?.['latitude']?.message }}
+              </mat-error>
               <mat-error *ngIf="signUpForm.get('latitude')?.hasError('required') && (signUpForm.get('latitude')?.touched || signUpForm.get('latitude')?.dirty)">
                 {{ "sign-up.latitude.required" | transloco }}
               </mat-error>
@@ -467,7 +470,10 @@
             <div class="flex gap-2 items-center">
               <mat-form-field data-cy="longitude-field" class="flex-grow">
                 <mat-label>{{ "sign-up.longitude.label" | transloco }}</mat-label>
-                <input matInput [formControlName]="'longitude'" placeholder="{{ 'sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+                <input matInput [formControlName]="'longitude'" longitude placeholder="{{ 'sign-up.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+                <mat-error *ngIf="signUpForm.get('longitude')?.hasError('longitude') && (signUpForm.get('longitude')?.touched || signUpForm.get('longitude')?.dirty)">
+                  {{ signUpForm.get('longitude')?.errors?.['longitude']?.message }}
+                </mat-error>
                 <mat-error *ngIf="signUpForm.get('longitude')?.hasError('required') && (signUpForm.get('longitude')?.touched || signUpForm.get('longitude')?.dirty)">
                   {{ "sign-up.longitude.required" | transloco }}
                 </mat-error>

@@ -5,12 +5,15 @@ import { SiteServiceRequest } from '../models/Request/SiteServiceRequest';
  * Solo incluye servicios que estén completamente configurados (activo + horarios).
  * Si un servicio está activo pero no tiene horarios válidos, se marca como false (no null).
  * El stored procedure espera s.Breakfast = 1, por lo que null no funcionaría correctamente.
- * 
+ *
  * @param service - El objeto SiteServiceRequest a validar
  * @returns Un nuevo SiteServiceRequest con solo servicios válidos
  */
 export function validateAndCleanSiteService(service: SiteServiceRequest): SiteServiceRequest {
   const cleaned: SiteServiceRequest = {
+    // Preservar id y siteId si están presentes (importante para actualizaciones)
+    id: service.id,
+    siteId: service.siteId,
     childGroupId: service.childGroupId ?? null,
   };
 
@@ -151,7 +154,7 @@ export function validateAndCleanSiteService(service: SiteServiceRequest): SiteSe
     .filter(([key, value]) => key.includes('breakfast') || key.includes('lunch') || key.includes('dinner') || key.includes('snack'))
     .filter(([key, value]) => key.endsWith('breakfast') || key.endsWith('lunch') || key.endsWith('dinner') || key.endsWith('snackAM') || key.endsWith('snackPM') || key.endsWith('snackNight') || key.endsWith('dinnerExtended') || key.endsWith('dinnerAtRisk') || key.endsWith('snackExtended') || key.endsWith('snackAtRisk'))
     .filter(([key, value]) => value === true);
-  
+
   console.log(`[SiteServiceValidator] Servicios válidos encontrados: ${validServices.length}`, validServices.map(([key]) => key));
 
   return cleaned;

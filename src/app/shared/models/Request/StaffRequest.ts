@@ -18,7 +18,7 @@ export interface StaffRequest {
     postalAddress?: string;
     cityId?: number;
     regionId?: number;
-    areaCode?: string;
+    zipCode?: string;
     agencyId?: number;
     comments?: string;
     userId?: string;

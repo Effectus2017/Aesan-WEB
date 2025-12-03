@@ -36,6 +36,8 @@ import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 
 
 
@@ -62,6 +64,7 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     MatIconModule,
     MatTimepickerModule,
     MatIconModule,
+    PuertoRicoZipCodeDirective,
   ],
 })
 export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -139,8 +142,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       city: new FormControl('', [Validators.required]),
       // Región
       region: new FormControl('', [Validators.required]),
-      // Código de área
-      areaCode: new FormControl('', [Validators.required]),
+      // Código postal
+      zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comentarios
       comments: new FormControl(''),
       // Campos de revisión (solo para administradores)
@@ -330,8 +333,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     // Dirección postal (solo para no empleados)
     const postalAddress: string = this.isEmployee ? '' : (formValues.postalAddress || '');
 
-    // Código de área (solo para no empleados)
-    const areaCode: string = this.isEmployee ? '' : (formValues.areaCode || '');
+    // Código postal (solo para no empleados)
+    const zipCode: string = this.isEmployee ? '' : (formValues.zipCode || '');
 
     // Ciudad (solo para no empleados)
     const cityId: number = this.isEmployee ? 0 : (formValues.city?.id || 0);
@@ -384,8 +387,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         return;
       }
     } else if (this.isBoardMember) {
-      // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
-      if (!email || !postalAddress || !cityId || !regionId || !areaCode) {
+      // Para miembros de junta: email, dirección postal, ciudad, región, código postal son requeridos
+      if (!email || !postalAddress || !cityId || !regionId || !zipCode) {
         this._notificationService.showError(this._translocoService.translate('staff.add.error.contactLocationRequired'));
         this.isLoading = false;
         return;
@@ -412,7 +415,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       staffRequest.postalAddress = postalAddress;
       staffRequest.cityId = cityId;
       staffRequest.regionId = regionId;
-      staffRequest.areaCode = areaCode;
+      staffRequest.zipCode = zipCode;
     }
 
     // Agregar clasificación solo si es empleado
@@ -530,7 +533,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     const emailControl = this.headerConfig.formGroup.get('email');
     const cityControl = this.headerConfig.formGroup.get('city');
     const regionControl = this.headerConfig.formGroup.get('region');
-    const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
+    const zipCodeControl = this.headerConfig.formGroup.get('zipCode');
     const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
     const positionControl = this.headerConfig.formGroup.get('position');
     const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
@@ -550,7 +553,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       emailControl?.clearValidators();
       cityControl?.clearValidators();
       regionControl?.clearValidators();
-      areaCodeControl?.clearValidators();
+      zipCodeControl?.clearValidators();
       postalAddressControl?.clearValidators();
 
       // Forzar actualización inmediata del estado de validez después de limpiar
@@ -561,7 +564,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       emailControl?.updateValueAndValidity({ emitEvent: false });
       cityControl?.updateValueAndValidity({ emitEvent: false });
       regionControl?.updateValueAndValidity({ emitEvent: false });
-      areaCodeControl?.updateValueAndValidity({ emitEvent: false });
+      zipCodeControl?.updateValueAndValidity({ emitEvent: false });
       postalAddressControl?.updateValueAndValidity({ emitEvent: false });
 
       // Resetear completamente el estado de los campos después de limpiar validadores
@@ -579,8 +582,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       cityControl?.markAsPristine();
       regionControl?.markAsUntouched();
       regionControl?.markAsPristine();
-      areaCodeControl?.markAsUntouched();
-      areaCodeControl?.markAsPristine();
+      zipCodeControl?.markAsUntouched();
+      zipCodeControl?.markAsPristine();
       postalAddressControl?.markAsUntouched();
       postalAddressControl?.markAsPristine();
 
@@ -604,7 +607,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         emailControl?.disable({ emitEvent: false });
         cityControl?.disable({ emitEvent: false });
         regionControl?.disable({ emitEvent: false });
-        areaCodeControl?.disable({ emitEvent: false });
+        zipCodeControl?.disable({ emitEvent: false });
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
@@ -623,7 +626,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         emailControl?.enable({ emitEvent: false });
         cityControl?.enable({ emitEvent: false });
         regionControl?.enable({ emitEvent: false });
-        areaCodeControl?.enable({ emitEvent: false });
+        zipCodeControl?.enable({ emitEvent: false });
         postalAddressControl?.enable({ emitEvent: false });
       }
     } else if (this.isBoardMember) {
@@ -640,7 +643,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para miembros de junta
@@ -664,7 +667,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required]);
+      zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para otros tipos
@@ -685,7 +688,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     emailControl?.updateValueAndValidity();
     cityControl?.updateValueAndValidity();
     regionControl?.updateValueAndValidity();
-    areaCodeControl?.updateValueAndValidity();
+    zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
   }
 
@@ -761,12 +764,12 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         email: '',
         city: null,
         region: null,
-        areaCode: '',
+        zipCode: '',
         postalAddress: ''
       });
 
       // Limpiar el estado de validación de estos campos
-      const fieldsToClear = ['birthDate', 'email', 'city', 'region', 'areaCode', 'postalAddress'];
+      const fieldsToClear = ['birthDate', 'email', 'city', 'region', 'zipCode', 'postalAddress'];
       fieldsToClear.forEach(fieldName => {
         const control = this.headerConfig.formGroup.get(fieldName);
         if (control) {

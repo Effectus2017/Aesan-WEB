@@ -51,8 +51,8 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
-import { puertoRicoAreaCodeValidator } from 'app/shared/validators/puerto-rico-area-code.validator';
-import { PuertoRicoAreaCodeDirective } from 'app/shared/directives/puerto-rico-area-code.directive';
+import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 @Component({
@@ -80,7 +80,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     MatIconModule,
     GenericTableComponent,
     MatDialogModule,
-    PuertoRicoAreaCodeDirective,
+    PuertoRicoZipCodeDirective,
     DynamicGridDirective,
   ],
 })
@@ -212,7 +212,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       region: new FormControl('', [Validators.required]),
       // Area code
       // Unicamente para miembros de junta
-      areaCode: new FormControl('', [Validators.required, puertoRicoAreaCodeValidator()]),
+      zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comments
       comments: new FormControl(''),
       // Sitio asignado
@@ -307,12 +307,12 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       const city = cityControl?.value;
       const regionControl = form.get('region');
       const region = regionControl?.value;
-      const areaCode = form.get('areaCode')?.value;
+      const zipCode = form.get('zipCode')?.value;
       const positionControl = form.get('position');
       const position = positionControl?.value;
 
       // Verificar valores
-      if (!email || !postalAddress || !city || !region || !areaCode || !position) {
+      if (!email || !postalAddress || !city || !region || !zipCode || !position) {
         return false;
       }
 
@@ -562,7 +562,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       postalAddress: param.postalAddress,
       city: city,
       region: region,
-      areaCode: param.areaCode,
+      zipCode: param.zipCode,
       comments: param.comments,
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
@@ -657,7 +657,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const postalAddress: string = this.isEmployee ? '' : formValues.postalAddress || '';
 
     // Código de área (solo para no empleados)
-    const areaCode: string = this.isEmployee ? '' : formValues.areaCode || '';
+    const zipCode: string = this.isEmployee ? '' : formValues.zipCode || '';
 
     // Ciudad (solo para no empleados)
     const cityId: number = this.isEmployee ? 0 : formValues.city?.id || 0;
@@ -715,7 +715,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       }
     } else if (this.isBoardMember) {
       // Para miembros de junta: email, dirección postal, ciudad, región, código de área son requeridos
-      if (!email || !postalAddress || !cityId || !regionId || !areaCode) {
+      if (!email || !postalAddress || !cityId || !regionId || !zipCode) {
         this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.contactLocationRequired'));
         this.isLoading = false;
         return;
@@ -767,7 +767,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       staffRequest.postalAddress = postalAddress;
       staffRequest.cityId = cityId;
       staffRequest.regionId = regionId;
-      staffRequest.areaCode = areaCode;
+      staffRequest.zipCode = zipCode;
     }
 
     // Agregar clasificación solo si es empleado
@@ -986,7 +986,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       const emailControl = this.headerConfig.formGroup.get('email');
       const cityControl = this.headerConfig.formGroup.get('city');
       const regionControl = this.headerConfig.formGroup.get('region');
-      const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
+      const zipCodeControl = this.headerConfig.formGroup.get('zipCode');
       const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
 
       // Habilitar todos los campos
@@ -1002,7 +1002,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.enable({ emitEvent: false });
       cityControl?.enable({ emitEvent: false });
       regionControl?.enable({ emitEvent: false });
-      areaCodeControl?.enable({ emitEvent: false });
+      zipCodeControl?.enable({ emitEvent: false });
       postalAddressControl?.enable({ emitEvent: false });
     }
 
@@ -1045,7 +1045,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const emailControl = this.headerConfig.formGroup.get('email');
     const cityControl = this.headerConfig.formGroup.get('city');
     const regionControl = this.headerConfig.formGroup.get('region');
-    const areaCodeControl = this.headerConfig.formGroup.get('areaCode');
+      const zipCodeControl = this.headerConfig.formGroup.get('zipCode');
     const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
     const positionControl = this.headerConfig.formGroup.get('position');
     const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
@@ -1065,7 +1065,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.clearValidators();
       cityControl?.clearValidators();
       regionControl?.clearValidators();
-      areaCodeControl?.clearValidators();
+      zipCodeControl?.clearValidators();
       postalAddressControl?.clearValidators();
 
       // Forzar actualización inmediata del estado de validez después de limpiar
@@ -1076,7 +1076,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.updateValueAndValidity({ emitEvent: false });
       cityControl?.updateValueAndValidity({ emitEvent: false });
       regionControl?.updateValueAndValidity({ emitEvent: false });
-      areaCodeControl?.updateValueAndValidity({ emitEvent: false });
+      zipCodeControl?.updateValueAndValidity({ emitEvent: false });
       postalAddressControl?.updateValueAndValidity({ emitEvent: false });
 
       // Resetear completamente el estado de los campos después de limpiar validadores
@@ -1094,8 +1094,8 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       cityControl?.markAsPristine();
       regionControl?.markAsUntouched();
       regionControl?.markAsPristine();
-      areaCodeControl?.markAsUntouched();
-      areaCodeControl?.markAsPristine();
+      zipCodeControl?.markAsUntouched();
+      zipCodeControl?.markAsPristine();
       postalAddressControl?.markAsUntouched();
       postalAddressControl?.markAsPristine();
 
@@ -1119,7 +1119,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         emailControl?.disable({ emitEvent: false });
         cityControl?.disable({ emitEvent: false });
         regionControl?.disable({ emitEvent: false });
-        areaCodeControl?.disable({ emitEvent: false });
+        zipCodeControl?.disable({ emitEvent: false });
         postalAddressControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
@@ -1137,7 +1137,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         emailControl?.enable({ emitEvent: false });
         cityControl?.enable({ emitEvent: false });
         regionControl?.enable({ emitEvent: false });
-        areaCodeControl?.enable({ emitEvent: false });
+        zipCodeControl?.enable({ emitEvent: false });
         postalAddressControl?.enable({ emitEvent: false });
       }
     } else if (this.isBoardMember) {
@@ -1154,7 +1154,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
+      zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para miembros de junta
@@ -1178,7 +1178,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailControl?.setValidators([Validators.required, Validators.email]);
       cityControl?.setValidators([Validators.required]);
       regionControl?.setValidators([Validators.required]);
-      areaCodeControl?.setValidators([Validators.required, puertoRicoAreaCodeValidator()]);
+      zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para otros tipos
@@ -1199,7 +1199,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     emailControl?.updateValueAndValidity();
     cityControl?.updateValueAndValidity();
     regionControl?.updateValueAndValidity();
-    areaCodeControl?.updateValueAndValidity();
+    zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
 
     // Actualizar visibilidad del botón de agregar relaciones

@@ -15,7 +15,7 @@
                     "isActive": "Active",
                     "groupTypeName": "Group Type",
                     "generalEnrollment": "General Enrollment",
-                    "siteCode": "Site Code",
+                    "siteCode": "ID",
                     "actions": "Actions",
                     "satelliteSiteName": "Satellite Site Name",
                     "assignmentDate": "Assignment Date",
@@ -1402,8 +1402,8 @@
                 "table": {
                     "columns": {
                         "title": "Title",
-                        "startTime": "Start Time",
-                        "endTime": "End Time",
+                        "startTime": "From",
+                        "endTime": "To",
                         "type": "Type",
                         "comment": "Comment",
                         "actions": "Actions"
@@ -1506,7 +1506,7 @@
                 "day-events": {
                     "title": "Day Events",
                     "totalEvents": "Total events",
-                    "addService": "Add Service",
+                    "addService": "Add Event",
                     "addEvent": "Add Event"
                 }
             }

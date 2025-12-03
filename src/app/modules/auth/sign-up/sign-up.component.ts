@@ -41,6 +41,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPFHFProgram, isPDFEProgram, isAESANProgram, isPAFProgram, PROGRAM_CODES } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -78,6 +80,8 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
     DynamicGridDirective,
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
+    LatitudeDirective,
+    LongitudeDirective,
   ],
 })
 export class AuthSignUpComponent implements OnInit, OnDestroy {
@@ -878,7 +882,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         postalAddress: postalAddress,
         cityId: cityId,
         regionId: regionId,
-        areaCode: '787', // Código de área por defecto para PR
+        zipCode: zipCode, // Usar el código postal del formulario
         isActive: true,
       },
     };

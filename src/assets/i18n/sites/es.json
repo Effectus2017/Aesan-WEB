@@ -15,7 +15,7 @@
                     "isActive": "Activo",
                     "groupTypeName": "Tipo de Grupo",
                     "generalEnrollment": "Matrícula General",
-                    "siteCode": "Código de Sitio",
+                    "siteCode": "ID",
                     "actions": "Acciones",
                     "satelliteSiteName": "Nombre del Sitio Satélite",
                     "assignmentDate": "Fecha de Asignación",
@@ -1349,8 +1349,8 @@
                 "table": {
                     "columns": {
                         "title": "Título",
-                        "startTime": "Hora Inicio",
-                        "endTime": "Hora Fin",
+                        "startTime": "Desde",
+                        "endTime": "Hasta",
                         "type": "Tipo",
                         "comment": "Comentario",
                         "actions": "Acciones"
@@ -1453,7 +1453,7 @@
                 "day-events": {
                     "title": "Eventos del día",
                     "totalEvents": "Total de eventos",
-                    "addService": "Agregar Servicio",
+                    "addService": "Agregar Evento",
                     "addEvent": "Agregar Evento"
                 }
             }

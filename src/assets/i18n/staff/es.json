@@ -71,7 +71,7 @@
             "email": "Correo Electrónico",
             "postalAddress": "Dirección Postal",
             "municipality": "Municipio",
-            "areaCode": "Código de área",
+            "zipCode": "Código Postal",
             "updateDate": "Fecha de Actualización",
             "comments": "Comentarios",
             "actions": "Acciones"
@@ -172,11 +172,11 @@
         "placeholder": "Seleccione la región",
         "required": "La región es requerida"
       },
-      "areaCode": {
-        "label": "Código de Área",
-        "placeholder": "Ingrese el código de área",
-        "required": "El código de área es requerido",
-        "invalid": "El código de área debe ser uno de los siguientes: 787, 939, 849"
+      "zipCode": {
+        "label": "Código Postal",
+        "placeholder": "Ingrese el código postal",
+        "required": "El código postal es requerido",
+        "invalid": "El código postal debe tener el formato ##### o #####-####"
       },
       "site-assignment": "Asignación de Sitio",
       "site-assignment-description": "Especifique el sitio donde estará asignado el personal",
@@ -332,11 +332,11 @@
         "placeholder": "Seleccione la región",
         "required": "La región es requerida"
       },
-      "areaCode": {
-        "label": "Código de Área",
-        "placeholder": "Ingrese el código de área",
-        "required": "El código de área es requerido",
-        "invalid": "El código de área debe ser uno de los siguientes: 787, 939, 849"
+      "zipCode": {
+        "label": "Código Postal",
+        "placeholder": "Ingrese el código postal",
+        "required": "El código postal es requerido",
+        "invalid": "El código postal debe tener el formato ##### o #####-####"
       },
       "postalAddress": {
         "label": "Dirección Postal",

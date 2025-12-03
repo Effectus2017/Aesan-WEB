@@ -116,14 +116,20 @@
 
           <mat-form-field data-cy="latitude-field">
             <mat-label>{{ "sites.add.latitude.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'latitude'" placeholder="{{ 'sites.add.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+            <input matInput [formControlName]="'latitude'" latitude placeholder="{{ 'sites.add.latitude.placeholder' | transloco }}" data-cy="latitude-input" />
+            <mat-error *ngIf="headerConfig.formGroup.get('latitude')?.hasError('latitude')">
+              {{ headerConfig.formGroup.get('latitude')?.errors?.['latitude']?.message }}
+            </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('latitude').hasError('required')">{{ "sites.add.latitude.required" | transloco }}</mat-error>
           </mat-form-field>
 
           <div class="flex gap-2 items-center">
             <mat-form-field data-cy="longitude-field" class="flex-grow">
               <mat-label>{{ "sites.add.longitude.label" | transloco }}</mat-label>
-              <input matInput [formControlName]="'longitude'" placeholder="{{ 'sites.add.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+              <input matInput [formControlName]="'longitude'" longitude placeholder="{{ 'sites.add.longitude.placeholder' | transloco }}" data-cy="longitude-input" />
+              <mat-error *ngIf="headerConfig.formGroup.get('longitude')?.hasError('longitude')">
+                {{ headerConfig.formGroup.get('longitude')?.errors?.['longitude']?.message }}
+              </mat-error>
               <mat-error *ngIf="headerConfig.formGroup.get('longitude').hasError('required')">{{ "sites.add.longitude.required" | transloco }}</mat-error>
             </mat-form-field>
             <button

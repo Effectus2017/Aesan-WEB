@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -63,6 +63,8 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 
 @Component({
@@ -91,6 +93,8 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     PhoneFormatDirective,
     DynamicGridDirective,
     PuertoRicoZipCodeDirective,
+    LatitudeDirective,
+    LongitudeDirective,
   ],
 })
 export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -769,6 +773,72 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         this._changeDetectorRef.detectChanges();
       });
 
+    // Configurar validaciones condicionales para servicios
+    this.setupServiceValidations();
+  }
+
+  /**
+   * Configura validaciones condicionales para todos los servicios
+   * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
+   */
+  private setupServiceValidations(): void {
+    // Lista de servicios con sus campos From y To correspondientes
+    const services = [
+      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    // Configurar suscripciones para cada servicio
+    services.forEach(({ service, from, to }) => {
+      const serviceControl = this.headerConfig.formGroup.get(service);
+      const fromControl = this.headerConfig.formGroup.get(from);
+      const toControl = this.headerConfig.formGroup.get(to);
+
+      if (serviceControl && fromControl && toControl) {
+        // Validación inicial
+        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+
+        // Suscribirse a cambios en el campo de servicio
+        serviceControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((value: boolean | null) => {
+            this.updateServiceTimeValidations(value, fromControl, toControl);
+          });
+      }
+    });
+  }
+
+  /**
+   * Actualiza las validaciones de los campos de hora según el estado del servicio
+   * @param serviceValue Valor del servicio (true = Sí, false/null = No)
+   * @param fromControl Control del campo "Hora desde"
+   * @param toControl Control del campo "Hora hasta"
+   */
+  private updateServiceTimeValidations(
+    serviceValue: boolean | null,
+    fromControl: AbstractControl,
+    toControl: AbstractControl
+  ): void {
+    if (serviceValue === true) {
+      // Si el servicio está en "Sí", hacer requeridos los campos de hora
+      fromControl.setValidators([Validators.required]);
+      toControl.setValidators([Validators.required]);
+    } else {
+      // Si el servicio está en "No" o null, remover validaciones requeridas
+      fromControl.clearValidators();
+      toControl.clearValidators();
+    }
+
+    fromControl.updateValueAndValidity({ emitEvent: false });
+    toControl.updateValueAndValidity({ emitEvent: false });
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -1283,6 +1353,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       operatingFromDate: formValues.operatingFromDate ?? null,
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
+      // How long has the site been providing services with an established enrollment?
+      serviceTime: formValues.serviceTime ?? null,
       // Información Operacional / Operational Information
       // Tipo de cocina - Campo requerido para servicio de alimentos
       // Kitchen type - Required field for food service
@@ -1346,19 +1419,19 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       } : null,
       // Comunidad
       // Community
-      communityId: formValues.communityId ?? null,
+      communityId: formValues.community?.id ?? null,
       // Caminantes
       // Walkers
-      walkersId: formValues.walkersId ?? null,
+      walkersId: formValues.walkers?.id ?? null,
       // Tipo de sitio
       // Site type
-      siteTypeId: formValues.siteTypeId ?? null,
+      siteTypeId: formValues.siteType?.id ?? null,
       // Experiencia
       // Experience
-      experienceId: formValues.experienceId ?? null,
+      experienceId: formValues.experience?.id ?? null,
       // Resultado de revisión
       // Review result
-      reviewResultId: formValues.reviewResultId ?? null,
+      reviewResultId: formValues.reviewResult?.id ?? null,
       // Fecha de revisión
       // Review date
       reviewDate: formValues.reviewDate ?? null,

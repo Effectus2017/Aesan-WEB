@@ -213,13 +213,19 @@
           <!-- Latitude *  -->
           <mat-form-field data-cy="latitude-field">
             <mat-label>{{ "sponsor-evaluation.edit.fields.latitude.label" | transloco }}</mat-label>
-            <input matInput formControlName="latitude" [placeholder]="'sponsor-evaluation.edit.fields.latitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <input matInput formControlName="latitude" latitude [placeholder]="'sponsor-evaluation.edit.fields.latitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+            <mat-error *ngIf="headerConfig.formGroup.get('latitude')?.hasError('latitude')">
+              {{ headerConfig.formGroup.get('latitude')?.errors?.['latitude']?.message }}
+            </mat-error>
           </mat-form-field>
           <!-- Longitude *  -->
           <div class="flex gap-2 items-center">
             <mat-form-field data-cy="longitude-field" class="flex-grow">
               <mat-label>{{ "sponsor-evaluation.edit.fields.longitude.label" | transloco }}</mat-label>
-              <input matInput formControlName="longitude" [placeholder]="'sponsor-evaluation.edit.fields.longitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+              <input matInput formControlName="longitude" longitude [placeholder]="'sponsor-evaluation.edit.fields.longitude.placeholder' | transloco" [ngClass]="{'text-slate-300' : isDarkMode, 'text-slate-700' : !isDarkMode}" />
+              <mat-error *ngIf="headerConfig.formGroup.get('longitude')?.hasError('longitude')">
+                {{ headerConfig.formGroup.get('longitude')?.errors?.['longitude']?.message }}
+              </mat-error>
             </mat-form-field>
             <button
               mat-icon-button

@@ -57,6 +57,8 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 
 export interface SiteEditModalData {
   site: Site;
@@ -85,6 +87,8 @@ export interface SiteEditModalData {
     NumericOnlyDirective,
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
+    LatitudeDirective,
+    LongitudeDirective,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './site-edit-modal.component.html',

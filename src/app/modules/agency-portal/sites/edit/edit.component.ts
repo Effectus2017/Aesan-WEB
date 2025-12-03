@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -71,6 +71,8 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
+import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 @Component({
   selector: 'app-sites-edit',
@@ -97,6 +99,8 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     PhoneFormatDirective,
     DynamicGridDirective,
     PuertoRicoZipCodeDirective,
+    LatitudeDirective,
+    LongitudeDirective,
   ],
 })
 export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -444,11 +448,11 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
       personInCharge: this._formBuilder.group({
-        firstName: ['', Validators.required],
+        firstName: [''],
         middleName: [''],
-        fatherLastName: ['', Validators.required],
+        fatherLastName: [''],
         motherLastName: [''],
-        sitePhone: ['', [Validators.required, puertoRicoPhoneValidator()]],
+        sitePhone: ['', puertoRicoPhoneValidator()],
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
@@ -847,6 +851,72 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
 
+    // Configurar validaciones condicionales para servicios
+    this.setupServiceValidations();
+  }
+
+  /**
+   * Configura validaciones condicionales para todos los servicios
+   * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
+   */
+  private setupServiceValidations(): void {
+    // Lista de servicios con sus campos From y To correspondientes
+    const services = [
+      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    // Configurar suscripciones para cada servicio
+    services.forEach(({ service, from, to }) => {
+      const serviceControl = this.headerConfig.formGroup.get(service);
+      const fromControl = this.headerConfig.formGroup.get(from);
+      const toControl = this.headerConfig.formGroup.get(to);
+
+      if (serviceControl && fromControl && toControl) {
+        // Validación inicial
+        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+
+        // Suscribirse a cambios en el campo de servicio
+        serviceControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((value: boolean | null) => {
+            this.updateServiceTimeValidations(value, fromControl, toControl);
+          });
+      }
+    });
+  }
+
+  /**
+   * Actualiza las validaciones de los campos de hora según el estado del servicio
+   * @param serviceValue Valor del servicio (true = Sí, false/null = No)
+   * @param fromControl Control del campo "Hora desde"
+   * @param toControl Control del campo "Hora hasta"
+   */
+  private updateServiceTimeValidations(
+    serviceValue: boolean | null,
+    fromControl: AbstractControl,
+    toControl: AbstractControl
+  ): void {
+    if (serviceValue === true) {
+      // Si el servicio está en "Sí", hacer requeridos los campos de hora
+      fromControl.setValidators([Validators.required]);
+      toControl.setValidators([Validators.required]);
+    } else {
+      // Si el servicio está en "No" o null, remover validaciones requeridas
+      fromControl.clearValidators();
+      toControl.clearValidators();
+    }
+
+    fromControl.updateValueAndValidity({ emitEvent: false });
+    toControl.updateValueAndValidity({ emitEvent: false });
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -1008,8 +1078,61 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
     this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
 
+    // Actualizar validaciones de personInCharge según el programa
+    this.updatePersonInChargeValidations();
+
     // updateValidations() se ejecuta después en la suscripción a agency$
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Actualiza las validaciones de personInCharge según el programa
+   * Solo se valida cuando isPDAM es true
+   */
+  private updatePersonInChargeValidations(): void {
+    const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
+
+    if (!personInChargeGroup) {
+      return;
+    }
+
+    if (this.isPDAM) {
+      // Restaurar validaciones requeridas para PDAM
+      const firstNameControl = personInChargeGroup.get('firstName');
+      const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
+      const sitePhoneControl = personInChargeGroup.get('sitePhone');
+
+      if (firstNameControl) {
+        firstNameControl.setValidators([Validators.required]);
+        firstNameControl.updateValueAndValidity();
+      }
+
+      if (fatherLastNameControl) {
+        fatherLastNameControl.setValidators([Validators.required]);
+        fatherLastNameControl.updateValueAndValidity();
+      }
+
+      if (sitePhoneControl) {
+        sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+        sitePhoneControl.updateValueAndValidity();
+      }
+
+      // mobilePhone solo tiene validación de formato, no requerido
+      const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
+      if (mobilePhoneControl) {
+        mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
+        mobilePhoneControl.updateValueAndValidity();
+      }
+    } else {
+      // Limpiar todas las validaciones cuando no es PDAM (incluye PSAV)
+      Object.keys(personInChargeGroup.controls).forEach(key => {
+        const control = personInChargeGroup.get(key);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    }
   }
 
   private updateValidations(): void {
@@ -1548,7 +1671,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const snackAtRiskService = formValues.snackAtRisk ?? null;
 
     // Crear SiteServiceRequest
+    const siteService = this.param.services && this.param.services.length > 0 ? this.param.services[0] : null;
     const siteServiceRequest: SiteServiceRequest = {
+      id: siteService?.id, // ID del servicio existente para actualizar
       childGroupId: null, // Servicio general
 
       // Servicios básicos
@@ -1763,7 +1888,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         //     prefill: true
         //   }
         // });
-        
+
         // Por ahora, mostrar mensaje de que el formulario está en desarrollo
         this._notificationService.showInfo('sites.edit.status-modal.changes-form-not-implemented');
         return;
@@ -2357,6 +2482,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    */
   onDevPDAMChange(checked: boolean): void {
     this.isPDAM = checked;
+    this.updatePersonInChargeValidations();
     this.updateDevPrograms();
   }
 
@@ -2365,6 +2491,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    */
   onDevPSAVChange(checked: boolean): void {
     this.isPSAV = checked;
+    this.updatePersonInChargeValidations();
     this.updateDevPrograms();
   }
 
