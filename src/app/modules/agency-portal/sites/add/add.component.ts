@@ -1627,7 +1627,16 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       next: (result: any) => {
         switch (result.body) {
           case true:
-            this._notificationService.showSuccessDialog();
+            this._notificationService.showSuccessDialogWithCallback(
+              'sites.add.success',
+              (result) => {
+                if (result === 'confirmed') {
+                  // Navegar a la ruta correcta según el programa
+                  const targetRoute = this.getTargetRoute();
+                  this._customRouter.navigate(targetRoute);
+                }
+              }
+            );
             break;
           default:
             this._notificationService.showErrorDialog();
@@ -1663,12 +1672,23 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   // Método para cancelar la operación
   onCancel(event: Event) {
-    // Si es PDAM, navegar a schools, de lo contrario a sites
-    if (this.isPDAM) {
-      this._customRouter.navigate(['schools']);
-    } else {
-      this._customRouter.navigate(['sites']);
+    // Navegar a la ruta correcta según el programa
+    const targetRoute = this.getTargetRoute();
+    this._customRouter.navigate(targetRoute);
+  }
+
+  /**
+   * Determina la ruta de navegación según el programa activo
+   * Determines navigation route based on active program
+   * @returns Array con la ruta de navegación
+   */
+  private getTargetRoute(): string[] {
+    // PDAM y PSAV usan 'schools', todos los demás programas usan 'sites'
+    if (this.isPDAM || this.isPSAV) {
+      return ['schools'];
     }
+    // PACNA, PFHF, PDFE, AESAN usan 'sites'
+    return ['sites'];
   }
 
   // Método para manejar acciones del menú de settings

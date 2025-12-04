@@ -807,7 +807,8 @@
                 "error": {
                     "service-not-found": "Service not found"
                 }
-            }
+            },
+            "success": "Site created successfully"
         },
         "edit": {
             "title": "Edit Site",
@@ -1509,7 +1510,8 @@
                     "addService": "Add Event",
                     "addEvent": "Add Event"
                 }
-            }
+            },
+            "success": "Site updated successfully"
         },
         "notification": {
             "title": "Service Validation",

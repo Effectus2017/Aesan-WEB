@@ -54,8 +54,11 @@ export class LatitudeDirective implements ControlValueAccessor, Validator, OnIni
       'Backspace', 'Tab', 'End', 'Home', 'ArrowLeft', 'ArrowRight', 'Delete', 'Enter', 'Escape'
     ];
 
-    // Permitir teclas de control o combinaciones con Ctrl
-    if (allowedKeys.includes(event.key) || (event.ctrlKey && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase()))) {
+    // Permitir teclas de control o combinaciones con Ctrl/Cmd (Mac)
+    const isCtrlOrCmd = event.ctrlKey || event.metaKey;
+    const isShortcut = isCtrlOrCmd && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase());
+    
+    if (allowedKeys.includes(event.key) || isShortcut) {
       return;
     }
 
@@ -125,30 +128,84 @@ export class LatitudeDirective implements ControlValueAccessor, Validator, OnIni
   @HostListener('paste', ['$event'])
   onPaste(event: ClipboardEvent): void {
     event.preventDefault();
+    event.stopPropagation();
+    
     const clipboardData = event.clipboardData || (window as any).clipboardData;
+    if (!clipboardData) {
+      return;
+    }
+    
     const pastedInput: string = clipboardData.getData('text');
-
-    // Limpiar el texto pegado
-    let value = pastedInput.replace(/[^0-9.\-]/g, '');
-
-    // Asegurar formato correcto
-    const hasNegative = value.includes('-');
-    value = value.replace(/-/g, '');
-    if (hasNegative) {
-      value = '-' + value;
+    if (!pastedInput) {
+      return;
     }
 
-    const parts = value.split('.');
+    const input = this.el.nativeElement;
+    const currentValue = input.value || '';
+    const cursorPosition = input.selectionStart || 0;
+    const selectionEnd = input.selectionEnd || 0;
+    
+    // Obtener el texto antes y después de la selección
+    const textBefore = currentValue.substring(0, cursorPosition);
+    const textAfter = currentValue.substring(selectionEnd);
+
+    // Limpiar el texto pegado
+    let cleanedValue = pastedInput.replace(/[^0-9.\-]/g, '');
+
+    // Asegurar formato correcto
+    const hasNegative = cleanedValue.includes('-');
+    cleanedValue = cleanedValue.replace(/-/g, '');
+    if (hasNegative && !textBefore.includes('-')) {
+      cleanedValue = '-' + cleanedValue;
+    }
+
+    const parts = cleanedValue.split('.');
     if (parts.length > 2) {
-      value = parts[0] + '.' + parts.slice(1).join('');
+      cleanedValue = parts[0] + '.' + parts.slice(1).join('');
     }
 
     if (parts.length === 2 && parts[1].length > 6) {
-      value = parts[0] + '.' + parts[1].substring(0, 6);
+      cleanedValue = parts[0] + '.' + parts[1].substring(0, 6);
     }
 
-    this.el.nativeElement.value = value;
-    this.onChange(value);
+    // Construir el nuevo valor
+    let newValue = textBefore + cleanedValue + textAfter;
+    
+    // Asegurar que solo haya un signo negativo al inicio
+    if (newValue.includes('-')) {
+      const negativeCount = (newValue.match(/-/g) || []).length;
+      if (negativeCount > 1) {
+        newValue = '-' + newValue.replace(/-/g, '');
+      } else if (!newValue.startsWith('-')) {
+        newValue = '-' + newValue.replace(/-/g, '');
+      }
+    }
+    
+    // Asegurar que solo haya un punto decimal
+    const decimalParts = newValue.split('.');
+    if (decimalParts.length > 2) {
+      newValue = decimalParts[0] + '.' + decimalParts.slice(1).join('');
+    }
+    
+    // Limitar la precisión decimal a 6 dígitos después del punto
+    if (decimalParts.length === 2 && decimalParts[1].length > 6) {
+      newValue = decimalParts[0] + '.' + decimalParts[1].substring(0, 6);
+    }
+
+    // Actualizar el valor del input
+    input.value = newValue;
+    
+    // Notificar el cambio al formulario reactivo primero
+    this.onChange(newValue);
+    
+    // Actualizar la posición del cursor
+    const newCursorPosition = cursorPosition + cleanedValue.length;
+    requestAnimationFrame(() => {
+      input.setSelectionRange(newCursorPosition, newCursorPosition);
+      // Disparar evento input para asegurar que Angular detecte el cambio
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    });
   }
 
   // ControlValueAccessor implementation

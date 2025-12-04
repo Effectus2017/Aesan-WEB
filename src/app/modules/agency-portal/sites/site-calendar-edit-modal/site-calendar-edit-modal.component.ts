@@ -183,13 +183,42 @@ export class SiteCalendarEditModalComponent {
   }
 
   getFormattedDate(): string {
-    const date = new Date(this.data.operatingDay.date);
+    // Usar parseDateSafe para evitar problemas de zona horaria
+    const date = this.parseDateSafe(this.data.operatingDay.date);
     return date.toLocaleDateString('es-ES', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
+  }
+
+  private parseDateSafe(dateString: string | Date | undefined): Date {
+    if (!dateString) {
+      return new Date();
+    }
+
+    // Si ya es un objeto Date, devolverlo
+    if (dateString instanceof Date) {
+      return new Date(dateString);
+    }
+
+    // Si es un string, parsearlo manualmente
+    if (typeof dateString === 'string') {
+      // Intentar parsear formato ISO "YYYY-MM-DD" o "YYYY-MM-DDTHH:mm:ss"
+      const dateMatch = dateString.match(/(\d{4})-(\d{2})-(\d{2})/);
+      if (dateMatch) {
+        const year = parseInt(dateMatch[1], 10);
+        const month = parseInt(dateMatch[2], 10) - 1; // Los meses en Date son 0-indexed
+        const day = parseInt(dateMatch[3], 10);
+
+        // Crear fecha en hora local (medianoche local) para preservar el día
+        return new Date(year, month, day, 0, 0, 0, 0);
+      }
+    }
+
+    // Fallback: usar constructor de Date normal
+    return new Date(dateString);
   }
 
   onCancel(): void {

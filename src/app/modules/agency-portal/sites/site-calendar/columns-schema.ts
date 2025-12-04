@@ -9,7 +9,7 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'startTime',
     type: 'text',
-    label: 'Desde'
+    label: 'sites.calendar.day-events.table.columns.startTime'
   },
   {
     key: 'endTime',
@@ -36,11 +36,11 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
         label: 'sites.calendar.day-events.table.buttons.edit',
         icon: 'heroicons_outline:pencil'
       },
-      {
-        key: 'delete',
-        label: 'sites.calendar.day-events.table.buttons.delete',
-        icon: 'heroicons_outline:trash'
-      },
+    //   {
+    //     key: 'delete',
+    //     label: 'sites.calendar.day-events.table.buttons.delete',
+    //     icon: 'heroicons_outline:trash'
+    //   },
       {
         key: 'toggle',
         label: 'sites.calendar.day-events.table.buttons.toggle',

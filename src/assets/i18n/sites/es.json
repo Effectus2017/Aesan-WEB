@@ -742,7 +742,8 @@
                 "error": {
                     "service-not-found": "Servicio no encontrado"
                 }
-            }
+            },
+            "success": "Sitio creado exitosamente"
         },
         "edit": {
             "title": "Editar Sitio",
@@ -1456,7 +1457,8 @@
                     "addService": "Agregar Evento",
                     "addEvent": "Agregar Evento"
                 }
-            }
+            },
+            "success": "Sitio actualizado exitosamente"
         },
         "notification": {
             "title": "Validación de Servicio",

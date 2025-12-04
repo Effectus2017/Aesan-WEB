@@ -74,14 +74,14 @@
           <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
             {{ 'global.buttons.cancel' | transloco }}
           </button>
-          <button
+          <!-- <button
             mat-flat-button
             type="button"
             [color]="'warn'"
             (click)="onDelete()"
             class="bg-red-600 hover:bg-red-700">
             {{ 'global.buttons.delete' | transloco }}
-          </button>
+          </button> -->
         </div>
         <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
           {{ 'global.buttons.save' | transloco }}

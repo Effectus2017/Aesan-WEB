@@ -6,7 +6,7 @@
     <form [formGroup]="headerConfig.formGroup" #sitesEditForm="ngForm" data-cy="sites-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <!-- DEVELOPMENT SECTION - Program Selection for Testing -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 p-4 mb-6 bg-yellow-50 rounded-lg border border-yellow-200 sm:grid-cols-1">
+        <div class="grid grid-cols-1 col-span-12 gap-4 p-4 mb-6 bg-yellow-50 rounded-lg border border-yellow-200 sm:grid-cols-1" *ngIf="isDevelopmentMode">
           <p class="mb-4 text-sm text-yellow-700">{{ "sites.edit.dev-section.disclaimer" | transloco }}</p>
 
           <div class="grid grid-cols-2 col-span-12 gap-4 sm:grid-cols-4">
