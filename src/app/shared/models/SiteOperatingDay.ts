@@ -10,6 +10,7 @@ export interface SiteOperatingDay {
   comment: string;
   isWeekendOverride: boolean;
   isExcluded: boolean;
+  isHoliday: boolean;
   createdAt: Date;
   updatedAt: Date;
   services?: SiteOperatingDayService[];

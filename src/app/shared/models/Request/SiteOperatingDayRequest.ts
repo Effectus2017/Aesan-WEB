@@ -1,12 +1,13 @@
 export interface SiteOperatingDayRequest {
   id?: number;
   siteId: number;
-  date: string;
+  operatingDate: string;
   startTime: string;
   endTime: string;
   isOperating: boolean;
   comment: string;
   isWeekendOverride: boolean;
   isExcluded: boolean;
+  isHoliday: boolean;
 }
 

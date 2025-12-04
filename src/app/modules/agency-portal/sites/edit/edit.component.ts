@@ -40,7 +40,21 @@ import { EducationLevelResponse } from 'app/shared/models/Response/EducationLeve
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
-import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeDate, toTimeString, logFormValidationErrors } from 'app/shared/utils';
+import { 
+  compareById, 
+  isNullOrUndefinedEmptyStringNullArray, 
+  toTimeDate, 
+  toTimeString, 
+  logFormValidationErrors,
+  generateTimeOptions,
+  filterEndTimeOptions,
+  timeStringToDate,
+  dateToTimeString,
+  timeToMinutes,
+  dateToMinutes,
+  compareByTime,
+  TimeOption
+} from 'app/shared/utils';
 import { Site } from 'app/shared/models/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
@@ -260,6 +274,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
   showDifferentGroupsFields: boolean = false;
+
+  // Opciones de hora para los campos "hasta" - se filtran dinámicamente
+  timeOptions: TimeOption[] = [];
 
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
@@ -643,6 +660,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'sites.edit.buttons.save',
+    submitDisabled: true, // Inicialmente deshabilitado hasta que el formulario sea válido
   };
 
   satellitesTableConfig: GenericTableConfig = {
@@ -662,6 +680,11 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Compare methods
   compareById = compareById;
+
+  /**
+   * Compara dos objetos Date por su hora (wrapper para usar en template)
+   */
+  compareByTimeWrapper = compareByTime;
 
   // Función para obtener la clase de grid dinámica
   getGridColumnsClass(): string {
@@ -688,10 +711,24 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Site ID
   siteId: number = 0;
 
+  /**
+   * Ordena las opciones de community alfabéticamente según el idioma actual
+   */
+  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
+    return [...options].sort((a, b) => {
+      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
+      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   constructor() {}
 
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
+
+    // Generar opciones de hora
+    this.initializeTimeOptions();
 
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
@@ -725,7 +762,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Tipo de grupo
       this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
-      this.community = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community');
+      this.community = this.sortOptionsAlphabetically(
+        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
+      );
       // Caminantes / Walkers
       this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
       // Tipo de distribución / Distribution type
@@ -733,7 +772,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Tipo de sitio / Site type
       this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
       // Experiencia / Experience
-      this.experience = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience');
+      this.experience = this.sortOptionsAlphabetically(
+        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
+      );
       // Resultado de revisión / Review result
       this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
 
@@ -805,9 +846,19 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
+      this.community = this.sortOptionsAlphabetically(this.community);
+      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     this.setupFormListeners();
+
+    // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
+    this.headerConfig.formGroup.statusChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   private setupFormListeners(): void {
@@ -858,6 +909,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   /**
    * Configura validaciones condicionales para todos los servicios
    * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
+   * Si hay horarios seleccionados, el campo si/no del servicio es requerido
    */
   private setupServiceValidations(): void {
     // Lista de servicios con sus campos From y To correspondientes
@@ -882,16 +934,189 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
       if (serviceControl && fromControl && toControl) {
         // Validación inicial
-        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl, serviceControl);
+        this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
 
         // Suscribirse a cambios en el campo de servicio
         serviceControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((value: boolean | null) => {
-            this.updateServiceTimeValidations(value, fromControl, toControl);
+            this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
+            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+          });
+
+        // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
+        fromControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this.validateAndAdjustTimeRange(fromControl, toControl);
+            this.validateTimeRange(fromControl, toControl);
+            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+            // Forzar detección de cambios para actualizar las opciones en el template
+            this._changeDetectorRef.detectChanges();
+          });
+
+        // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
+        toControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this.validateAndAdjustTimeRange(fromControl, toControl);
+            this.validateTimeRange(fromControl, toControl);
+            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
           });
       }
     });
+  }
+
+  /**
+   * Genera todas las opciones de hora (cada 30 minutos)
+   */
+  private initializeTimeOptions(): void {
+    this.timeOptions = generateTimeOptions();
+  }
+
+  /**
+   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   */
+  getEndTimeOptions(fromField: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromField);
+    if (!fromControl) return this.timeOptions;
+
+    const fromTime = fromControl.value;
+    return filterEndTimeOptions(this.timeOptions, fromTime);
+  }
+
+  /**
+   * Convierte string HH:mm a objeto Date (wrapper para usar en template)
+   */
+  timeStringToDateWrapper(timeString: string): Date | null {
+    return timeStringToDate(timeString);
+  }
+
+  /**
+   * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
+   * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
+   */
+  private validateAndAdjustTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+
+    if (!fromTime) {
+      return;
+    }
+
+    if (!toTime) {
+      // Si no hay hora "hasta", establecer la siguiente hora válida
+      const nextValidTime = this.getNextValidTime(fromTime);
+      toControl.setValue(nextValidTime, { emitEvent: false });
+      return;
+    }
+
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+
+    // Si la hora "hasta" es menor o igual a "desde", ajustarla
+    if (toMinutes <= fromMinutes) {
+      const nextValidTime = this.getNextValidTime(fromTime);
+      toControl.setValue(nextValidTime, { emitEvent: false });
+    }
+  }
+
+  /**
+   * Obtiene la siguiente hora válida (30 minutos después de la hora "desde")
+   */
+  private getNextValidTime(fromTime: Date): Date {
+    const nextTime = new Date(fromTime);
+    nextTime.setMinutes(nextTime.getMinutes() + 30);
+    // Si se pasa de medianoche, establecer a las 23:30
+    if (nextTime.getDate() !== fromTime.getDate()) {
+      nextTime.setHours(23);
+      nextTime.setMinutes(30);
+    }
+    return nextTime;
+  }
+
+  /**
+   * Valida que la hora "hasta" sea mayor que la hora "desde"
+   */
+  private validateTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+
+    if (!fromTime || !toTime) {
+      toControl.setErrors(null);
+      return;
+    }
+
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+
+    if (toMinutes <= fromMinutes) {
+      toControl.setErrors({ timeRangeInvalid: true });
+    } else {
+      // Si hay otros errores, mantenerlos, si no, limpiar
+      const currentErrors = toControl.errors;
+      if (currentErrors && Object.keys(currentErrors).length > 1) {
+        delete currentErrors['timeRangeInvalid'];
+        toControl.setErrors(Object.keys(currentErrors).length > 0 ? currentErrors : null);
+      } else {
+        toControl.setErrors(null);
+      }
+    }
+    toControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
+   */
+  isEndTimeInvalid(fromField: string, toField: string): boolean {
+    const fromControl = this.headerConfig.formGroup.get(fromField);
+    const toControl = this.headerConfig.formGroup.get(toField);
+    
+    if (!fromControl || !toControl) return false;
+    
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+    
+    if (!fromTime || !toTime) return false;
+    
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+    
+    return toMinutes <= fromMinutes;
+  }
+
+  /**
+   * Actualiza la validación requerida del campo servicio basado en si hay horarios seleccionados
+   * Si hay un horario "desde" o "hasta", el campo si/no del servicio es requerido
+   */
+  private updateServiceRequiredValidation(
+    serviceControl: AbstractControl,
+    fromControl: AbstractControl,
+    toControl: AbstractControl
+  ): void {
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+    // Verificar si hay horarios (pueden ser Date, string, o null/undefined)
+    const hasFromTime = fromTime !== null && fromTime !== undefined && fromTime !== '';
+    const hasToTime = toTime !== null && toTime !== undefined && toTime !== '';
+
+    if (hasFromTime || hasToTime) {
+      // Si hay algún horario seleccionado, el campo si/no es requerido
+      serviceControl.setValidators([Validators.required]);
+      serviceControl.updateValueAndValidity({ emitEvent: false });
+    } else {
+      // Si no hay horarios, remover la validación requerida solo si el servicio no está en "Sí"
+      const serviceValue = serviceControl.value;
+      if (serviceValue !== true) {
+        serviceControl.clearValidators();
+        serviceControl.updateValueAndValidity({ emitEvent: false });
+      }
+    }
+    
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -899,11 +1124,13 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    * @param serviceValue Valor del servicio (true = Sí, false/null = No)
    * @param fromControl Control del campo "Hora desde"
    * @param toControl Control del campo "Hora hasta"
+   * @param serviceControl Control del campo servicio (opcional, para actualizar validación del servicio)
    */
   private updateServiceTimeValidations(
     serviceValue: boolean | null,
     fromControl: AbstractControl,
-    toControl: AbstractControl
+    toControl: AbstractControl,
+    serviceControl?: AbstractControl
   ): void {
     if (serviceValue === true) {
       // Si el servicio está en "Sí", hacer requeridos los campos de hora
@@ -913,10 +1140,25 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Si el servicio está en "No" o null, remover validaciones requeridas
       fromControl.clearValidators();
       toControl.clearValidators();
+      // Limpiar valores si el servicio está en "No"
+      if (serviceValue === false) {
+        fromControl.setValue(null, { emitEvent: false });
+        toControl.setValue(null, { emitEvent: false });
+        // Si el servicio está en "No", remover también la validación requerida del servicio
+        if (serviceControl) {
+          serviceControl.clearValidators();
+          serviceControl.updateValueAndValidity({ emitEvent: false });
+        }
+      }
     }
 
     fromControl.updateValueAndValidity({ emitEvent: false });
     toControl.updateValueAndValidity({ emitEvent: false });
+
+    // Actualizar el estado del botón de guardar después de cambiar las validaciones
+    // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -1180,12 +1422,13 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       address: [Validators.required],
       city: [Validators.required],
       region: [Validators.required],
-      zipCode: [Validators.required],
+      zipCode: [Validators.required, puertoRicoZipCodeValidator()], // Incluir validador personalizado
       latitude: [Validators.required],
       longitude: [Validators.required],
       postalCity: [Validators.required],
       nonProfit: [Validators.required],
       organizationType: [Validators.required],
+      locationType: [Validators.required],
     };
 
     Object.keys(requiredFields).forEach((fieldName) => {
@@ -1245,6 +1488,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       }
       centerTypeControl.updateValueAndValidity();
     }
+
+    // Actualizar el estado del botón después de restaurar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   onSetForm(param: Site): void {
@@ -1458,6 +1705,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Calcular días operativos automáticamente si es necesario
     this.calculateOperatingDaysIfNeeded();
 
+    // Actualizar el estado del botón después de cargar todos los datos
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
   }
 
@@ -2293,6 +2542,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
 
     distributionTypeControl?.updateValueAndValidity();
+
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -2328,6 +2581,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       centerTypeControl?.clearValidators();
       centerTypeControl?.updateValueAndValidity();
     }
+
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**

@@ -9,6 +9,7 @@ export interface OperatingDayApiResponse {
   comment: string;
   isWeekendOverride: boolean;
   isExcluded: boolean;
+  isHoliday: boolean;
   createdAt: string;
   updatedAt: string;
   services?: SiteOperatingDayService[];

@@ -47,6 +47,7 @@
         },
         "add": {
             "title": "Add Site",
+            "time-range-invalid": "End time must be greater than start time",
             "information": "Information",
             "information-description": "Site information",
             "person-in-charge": {
@@ -297,7 +298,8 @@
             },
             "breakfast-to": {
                 "label": "Breakfast To",
-                "placeholder": "Breakfast to"
+                "placeholder": "Breakfast to",
+                "required": "Breakfast end time is required"
             },
             "lunch": {
                 "label": "Lunch",
@@ -309,7 +311,8 @@
             },
             "lunch-to": {
                 "label": "Lunch To",
-                "placeholder": "Lunch to"
+                "placeholder": "Lunch to",
+                "required": "Lunch end time is required"
             },
             "snack": {
                 "label": "Snack",
@@ -333,7 +336,8 @@
             },
             "snack-am-to": {
                 "label": "AM Snack To",
-                "placeholder": "AM Snack to"
+                "placeholder": "AM Snack to",
+                "required": "AM Snack end time is required"
             },
             "snack-pm": {
                 "label": "PM Snack",
@@ -345,7 +349,8 @@
             },
             "snack-pm-to": {
                 "label": "PM Snack To",
-                "placeholder": "PM Snack to"
+                "placeholder": "PM Snack to",
+                "required": "PM Snack end time is required"
             },
             "dinner": {
                 "label": "Dinner",
@@ -357,7 +362,8 @@
             },
             "dinner-to": {
                 "label": "Dinner To",
-                "placeholder": "Dinner to"
+                "placeholder": "Dinner to",
+                "required": "Dinner end time is required"
             },
             "snack-night": {
                 "label": "Night Snack",
@@ -812,6 +818,7 @@
         },
         "edit": {
             "title": "Edit Site",
+            "time-range-invalid": "End time must be greater than start time",
             "information": "Information",
             "information-description": "Site information",
             "person-in-charge": {
@@ -1435,14 +1442,16 @@
                     },
                     "endTime": {
                         "label": "End Time",
-                        "required": "End time is required"
+                        "required": "End time is required",
+                        "invalid": "End time must be greater than start time"
                     },
                     "comment": {
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
                     "weekendOverride": "Weekend",
-                    "excludeDay": "Exclude day (non-operational)"
+                    "excludeDay": "Business day that does not operate",
+                    "isHoliday": "Is holiday"
                 },
                 "add-day": {
                     "title": "Add Operating Day",
@@ -1453,14 +1462,16 @@
                     },
                     "endTime": {
                         "label": "End Time",
-                        "required": "End time is required"
+                        "required": "End time is required",
+                        "invalid": "End time must be greater than start time"
                     },
                     "comment": {
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
                     "weekendOverride": "Weekend",
-                    "excludeDay": "Exclude day (non-operational)"
+                    "excludeDay": "Business day that does not operate",
+                    "isHoliday": "Is holiday"
                 },
                 "edit-service": {
                     "title": "Edit Service",
@@ -1471,7 +1482,8 @@
                     },
                     "endTime": {
                         "label": "End Time",
-                        "required": "End time is required"
+                        "required": "End time is required",
+                        "invalid": "End time must be greater than start time"
                     },
                     "comment": {
                         "label": "Comment",
@@ -1492,7 +1504,8 @@
                     },
                     "endTime": {
                         "label": "End Time",
-                        "required": "End time is required"
+                        "required": "End time is required",
+                        "invalid": "End time must be greater than start time"
                     },
                     "comment": {
                         "label": "Comment",

@@ -10,6 +10,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarServiceEditModalData } from './site-calendar-service-edit-modal-data.interface';
+import { 
+  generateTimeOptions, 
+  filterEndTimeOptions, 
+  normalizeTime, 
+  timeToMinutes,
+  TimeOption
+} from 'app/shared/utils';
 
 @Component({
   selector: 'app-site-calendar-service-edit-modal',
@@ -29,9 +36,9 @@ import { SiteCalendarServiceEditModalData } from './site-calendar-service-edit-m
   templateUrl: './site-calendar-service-edit-modal.component.html'
 })
 export class SiteCalendarServiceEditModalComponent {
-  timeOptions: { value: string; display: string }[] = [];
-  startTimeOptions: { value: string; display: string }[] = [];
-  endTimeOptions: { value: string; display: string }[] = [];
+  timeOptions: TimeOption[] = [];
+  startTimeOptions: TimeOption[] = [];
+  endTimeOptions: TimeOption[] = [];
   dayStartTime: string = '';
   dayEndTime: string = '';
 
@@ -67,77 +74,52 @@ export class SiteCalendarServiceEditModalComponent {
     }
     
     // Normalizar formato (remover segundos si existen)
-    this.dayStartTime = this.normalizeTime(this.dayStartTime);
-    this.dayEndTime = this.normalizeTime(this.dayEndTime);
-  }
-
-  private normalizeTime(time: string): string {
-    if (!time) return '00:00';
-    // Si tiene formato HH:mm:ss, remover los segundos
-    const parts = time.split(':');
-    if (parts.length >= 2) {
-      return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
-    }
-    return time;
-  }
-
-  private timeToMinutes(time: string): number {
-    const parts = time.split(':');
-    if (parts.length < 2) return 0;
-    const hours = parseInt(parts[0]) || 0;
-    const minutes = parseInt(parts[1]) || 0;
-    return hours * 60 + minutes;
+    this.dayStartTime = normalizeTime(this.dayStartTime);
+    this.dayEndTime = normalizeTime(this.dayEndTime);
   }
 
   private generateTimeOptions(): void {
-    const allOptions: { value: string; display: string }[] = [];
-    const dayStartMinutes = this.timeToMinutes(this.dayStartTime);
-    const dayEndMinutes = this.timeToMinutes(this.dayEndTime);
-
-    // Generar todas las opciones de tiempo (cada 30 minutos)
-    for (let hour = 0; hour < 24; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const time12 = this.convert24To12(hour, minute);
-        const timeMinutes = hour * 60 + minute;
-        
-        // Solo incluir horarios dentro del rango del día de funcionamiento
-        if (timeMinutes >= dayStartMinutes && timeMinutes <= dayEndMinutes) {
-          allOptions.push({
-            value: time24,
-            display: time12
-          });
-        }
-      }
-    }
-
-    this.timeOptions = allOptions;
-    this.startTimeOptions = allOptions;
+    this.timeOptions = generateTimeOptions(this.dayStartTime, this.dayEndTime);
+    this.startTimeOptions = this.timeOptions;
     // Para endTime, solo mostrar opciones mayores o iguales a la hora de inicio seleccionada
     this.updateEndTimeOptions();
   }
 
   private updateEndTimeOptions(): void {
     const selectedStartTime = this.data.form.get('startTime')?.value;
-    if (!selectedStartTime) {
-      this.endTimeOptions = this.timeOptions;
-      return;
+    
+    this.endTimeOptions = filterEndTimeOptions(this.timeOptions, selectedStartTime, this.dayEndTime);
+
+    // Validar y ajustar endTime si es necesario
+    const currentEndTime = this.data.form.get('endTime')?.value;
+    if (currentEndTime && selectedStartTime) {
+      const endMinutes = timeToMinutes(currentEndTime);
+      const startMinutes = timeToMinutes(selectedStartTime);
+      // Si endTime es menor o igual a startTime, resetearlo a la primera opción válida
+      if (endMinutes <= startMinutes) {
+        if (this.endTimeOptions.length > 0) {
+          // Establecer la primera opción válida (la más cercana después de startTime)
+          this.data.form.get('endTime')?.setValue(this.endTimeOptions[0].value, { emitEvent: false });
+        } else {
+          // Si no hay opciones válidas, limpiar el valor
+          this.data.form.get('endTime')?.setValue('', { emitEvent: false });
+        }
+      }
     }
-
-    const startMinutes = this.timeToMinutes(selectedStartTime);
-    const dayEndMinutes = this.timeToMinutes(this.dayEndTime);
-
-    this.endTimeOptions = this.timeOptions.filter(option => {
-      const optionMinutes = this.timeToMinutes(option.value);
-      return optionMinutes > startMinutes && optionMinutes <= dayEndMinutes;
-    });
   }
 
-  private convert24To12(hour: number, minute: number): string {
-    const period = hour >= 12 ? 'PM' : 'AM';
-    const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
-    const minuteStr = minute.toString().padStart(2, '0');
-    return `${displayHour}:${minuteStr} ${period}`;
+  isEndTimeInvalid(): boolean {
+    const startTime = this.data.form.get('startTime')?.value;
+    const endTime = this.data.form.get('endTime')?.value;
+    
+    if (!startTime || !endTime) {
+      return false;
+    }
+    
+    const startMinutes = timeToMinutes(startTime);
+    const endMinutes = timeToMinutes(endTime);
+    
+    return endMinutes <= startMinutes;
   }
 
   private convertFormValuesTo24h(): void {
@@ -220,7 +202,7 @@ export class SiteCalendarServiceEditModalComponent {
   }
 
   onSave(): void {
-    if (this.data.form.valid) {
+    if (this.data.form.valid && !this.isEndTimeInvalid()) {
       this.dialogRef.close(this.data.form.value);
     }
   }

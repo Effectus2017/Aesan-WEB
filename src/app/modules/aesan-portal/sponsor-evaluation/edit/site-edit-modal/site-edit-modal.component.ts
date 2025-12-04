@@ -236,7 +236,29 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     this.agencyId = this._authService.getAgencyId();
   }
 
+  /**
+   * Ordena las opciones de community alfabéticamente según el idioma actual
+   */
+  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
+    return [...options].sort((a, b) => {
+      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
+      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   ngOnInit(): void {
+    // Configurar FieldVisibilityService SOLO para distributionType
+    this._fieldVisibilityService.setActiveConfig('sites');
+
+    // Listener para cambios de idioma
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+      this.community = this.sortOptionsAlphabetically(this.community);
+      this.experience = this.sortOptionsAlphabetically(this.experience);
+    });
+
+    this.setupForm();
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
 
@@ -461,10 +483,14 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
         // this.kitchenTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'kitchenType');
         // this.groupTypes = options.filter((opt: OptionSelection) => opt.optionKey === 'groupType');
         this.siteLocations = options.filter((opt: OptionSelection) => opt.optionKey === 'siteLocation');
-        this.community = options.filter((opt: OptionSelection) => opt.optionKey === 'community');
+        this.community = this.sortOptionsAlphabetically(
+          options.filter((opt: OptionSelection) => opt.optionKey === 'community')
+        );
         this.walkers = options.filter((opt: OptionSelection) => opt.optionKey === 'walkers');
         this.siteType = options.filter((opt: OptionSelection) => opt.optionKey === 'siteType');
-        this.experience = options.filter((opt: OptionSelection) => opt.optionKey === 'experience');
+        this.experience = this.sortOptionsAlphabetically(
+          options.filter((opt: OptionSelection) => opt.optionKey === 'experience')
+        );
         this.reviewResult = options.filter((opt: OptionSelection) => opt.optionKey === 'reviewResult');
         this.publicAllianceContractOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'publicAllianceContract');
         this.isActive = options.filter((opt: OptionSelection) => opt.optionKey === 'isActive');

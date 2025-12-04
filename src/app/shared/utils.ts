@@ -584,3 +584,170 @@ export function logFormValidationErrors(formGroup: UntypedFormGroup | FormGroup,
   console.log('📋 Resumen - Campos inválidos:', invalidFields);
   console.groupEnd();
 }
+
+/**
+ * Tipo para opciones de hora
+ */
+export interface TimeOption {
+  value: string; // Formato HH:mm (24 horas)
+  display: string; // Formato h:mm AM/PM (12 horas)
+}
+
+/**
+ * Convierte hora 24h a formato 12h para mostrar
+ * @param hour Hora en formato 24h (0-23)
+ * @param minute Minutos (0-59)
+ * @returns String en formato "h:mm AM/PM"
+ */
+export function convert24To12(hour: number, minute: number): string {
+  const period = hour >= 12 ? 'PM' : 'AM';
+  const displayHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+  const minuteStr = minute.toString().padStart(2, '0');
+  return `${displayHour}:${minuteStr} ${period}`;
+}
+
+/**
+ * Convierte string de tiempo a minutos desde medianoche
+ * @param time String en formato HH:mm
+ * @returns Número de minutos desde medianoche
+ */
+export function timeToMinutes(time: string): number {
+  if (!time) return 0;
+  const parts = time.split(':');
+  if (parts.length < 2) return 0;
+  const hours = parseInt(parts[0]) || 0;
+  const minutes = parseInt(parts[1]) || 0;
+  return hours * 60 + minutes;
+}
+
+/**
+ * Convierte un objeto Date a minutos desde medianoche
+ * @param date Objeto Date
+ * @returns Número de minutos desde medianoche, 0 si date es null
+ */
+export function dateToMinutes(date: Date | null): number {
+  if (!date || !(date instanceof Date)) return 0;
+  return date.getHours() * 60 + date.getMinutes();
+}
+
+/**
+ * Convierte un objeto Date a string en formato HH:mm
+ * @param date Objeto Date
+ * @returns String en formato HH:mm o string vacío si date es null
+ */
+export function dateToTimeString(date: Date | null): string {
+  if (!date || !(date instanceof Date)) return '';
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
+}
+
+/**
+ * Convierte string HH:mm a objeto Date
+ * @param timeString String en formato HH:mm
+ * @returns Objeto Date o null si timeString es inválido
+ */
+export function timeStringToDate(timeString: string): Date | null {
+  if (!timeString) return null;
+  const parts = timeString.split(':');
+  if (parts.length < 2) return null;
+  const hours = parseInt(parts[0]) || 0;
+  const minutes = parseInt(parts[1]) || 0;
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+}
+
+/**
+ * Genera todas las opciones de hora (cada 30 minutos) dentro de un rango opcional
+ * @param dayStartTime Hora de inicio del día en formato HH:mm (opcional, por defecto '00:00')
+ * @param dayEndTime Hora de fin del día en formato HH:mm (opcional, por defecto '23:59')
+ * @returns Array de opciones de hora con formato { value: string, display: string }
+ */
+export function generateTimeOptions(dayStartTime: string = '00:00', dayEndTime: string = '23:59'): TimeOption[] {
+  const options: TimeOption[] = [];
+  const dayStartMinutes = timeToMinutes(dayStartTime);
+  const dayEndMinutes = timeToMinutes(dayEndTime);
+
+  // Generar todas las opciones de tiempo (cada 30 minutos)
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      const time12 = convert24To12(hour, minute);
+      const timeMinutes = hour * 60 + minute;
+      
+      // Solo incluir horarios dentro del rango del día de funcionamiento
+      if (timeMinutes >= dayStartMinutes && timeMinutes <= dayEndMinutes) {
+        options.push({
+          value: time24,
+          display: time12
+        });
+      }
+    }
+  }
+
+  return options;
+}
+
+/**
+ * Filtra opciones de hora para mostrar solo las que son mayores que la hora de inicio
+ * @param allOptions Array completo de opciones de hora
+ * @param startTime Hora de inicio en formato HH:mm o Date
+ * @param dayEndTime Hora de fin del día en formato HH:mm (opcional, por defecto '23:59')
+ * @returns Array filtrado de opciones de hora
+ */
+export function filterEndTimeOptions(
+  allOptions: TimeOption[],
+  startTime: string | Date | null,
+  dayEndTime: string = '23:59'
+): TimeOption[] {
+  if (!startTime) {
+    return allOptions;
+  }
+
+  let startTimeString: string;
+  if (startTime instanceof Date) {
+    startTimeString = dateToTimeString(startTime);
+  } else {
+    startTimeString = startTime;
+  }
+
+  if (!startTimeString) {
+    return allOptions;
+  }
+
+  const startMinutes = timeToMinutes(startTimeString);
+  const dayEndMinutes = timeToMinutes(dayEndTime);
+
+  return allOptions.filter(option => {
+    const optionMinutes = timeToMinutes(option.value);
+    return optionMinutes > startMinutes && optionMinutes <= dayEndMinutes;
+  });
+}
+
+/**
+ * Compara dos objetos Date por su hora (ignora la fecha)
+ * @param date1 Primer objeto Date
+ * @param date2 Segundo objeto Date
+ * @returns true si las horas son iguales, false en caso contrario
+ */
+export function compareByTime(date1: Date | null, date2: Date | null): boolean {
+  if (!date1 || !date2) return date1 === date2;
+  if (!(date1 instanceof Date) || !(date2 instanceof Date)) return false;
+  return date1.getHours() === date2.getHours() && date1.getMinutes() === date2.getMinutes();
+}
+
+/**
+ * Normaliza un string de tiempo removiendo segundos si existen
+ * @param time String de tiempo en formato HH:mm o HH:mm:ss
+ * @returns String normalizado en formato HH:mm
+ */
+export function normalizeTime(time: string): string {
+  if (!time) return '00:00';
+  // Si tiene formato HH:mm:ss, remover los segundos
+  const parts = time.split(':');
+  if (parts.length >= 2) {
+    return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
+  }
+  return time;
+}

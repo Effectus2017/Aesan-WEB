@@ -20,7 +20,22 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, toTimeString, logFormValidationErrors } from 'app/shared/utils';
+import {
+  compare,
+  compareById,
+  comparePostal,
+  isNullOrUndefinedEmptyStringNullArray,
+  toTimeString,
+  logFormValidationErrors,
+  generateTimeOptions,
+  filterEndTimeOptions,
+  timeStringToDate,
+  dateToTimeString,
+  timeToMinutes,
+  dateToMinutes,
+  compareByTime,
+  TimeOption
+} from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { Region } from 'app/shared/models/Region';
@@ -531,6 +546,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'sites.add.buttons.save',
+    submitDisabled: true, // Inicialmente deshabilitado hasta que todos los campos requeridos estén válidos
   };
 
   // Agregar esta propiedad
@@ -540,6 +556,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   compare = compare;
   comparePostal = comparePostal;
   compareById = compareById;
+
+  /**
+   * Compara dos objetos Date por su hora (wrapper para usar en template)
+   */
+  compareByTimeWrapper = compareByTime;
 
   isLoading = false;
 
@@ -563,6 +584,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
   showDifferentGroupsFields: boolean = false;
+
+  // Opciones de hora para los campos "hasta" - se filtran dinámicamente
+  timeOptions: TimeOption[] = [];
 
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
@@ -618,10 +642,24 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     return this.shouldShowDifferentGroupsFields();
   }
 
+  /**
+   * Ordena las opciones de community alfabéticamente según el idioma actual
+   */
+  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
+    return [...options].sort((a, b) => {
+      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
+      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      return nameA.localeCompare(nameB);
+    });
+  }
+
   constructor() {}
 
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
+
+    // Generar opciones de hora
+    this.initializeTimeOptions();
 
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
@@ -653,7 +691,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.isActiveOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
       this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
       this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      this.community = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community');
+      this.community = this.sortOptionsAlphabetically(
+        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
+      );
       this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
       this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
       this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
@@ -661,7 +701,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
       this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      this.experience = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience');
+      this.experience = this.sortOptionsAlphabetically(
+        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
+      );
       this.siteLocations = resolvedData.siteLocations || [];
 
       // Catálogos
@@ -742,12 +784,22 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
+      this.community = this.sortOptionsAlphabetically(this.community);
+      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     // Actualizar validaciones de distributionType inicialmente
     this.updateDistributionTypeValidation();
 
     this.setupFormListeners();
+
+    // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
+    this.headerConfig.formGroup.statusChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   private setupFormListeners(): void {
@@ -812,8 +864,144 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
           .subscribe((value: boolean | null) => {
             this.updateServiceTimeValidations(value, fromControl, toControl);
           });
+
+        // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
+        fromControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this.validateAndAdjustTimeRange(fromControl, toControl);
+            this.validateTimeRange(fromControl, toControl);
+            // Forzar detección de cambios para actualizar las opciones en el template
+            this._changeDetectorRef.detectChanges();
+          });
+
+        // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
+        toControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            this.validateAndAdjustTimeRange(fromControl, toControl);
+            this.validateTimeRange(fromControl, toControl);
+          });
       }
     });
+  }
+
+  /**
+   * Genera todas las opciones de hora (cada 30 minutos)
+   */
+  private initializeTimeOptions(): void {
+    this.timeOptions = generateTimeOptions();
+  }
+
+  /**
+   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   */
+  getEndTimeOptions(fromField: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromField);
+    if (!fromControl) return this.timeOptions;
+
+    const fromTime = fromControl.value;
+    return filterEndTimeOptions(this.timeOptions, fromTime);
+  }
+
+  /**
+   * Convierte string HH:mm a objeto Date (wrapper para usar en template)
+   */
+  timeStringToDateWrapper(timeString: string): Date | null {
+    return timeStringToDate(timeString);
+  }
+
+  /**
+   * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
+   * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
+   */
+  private validateAndAdjustTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+
+    if (!fromTime) {
+      return;
+    }
+
+    if (!toTime) {
+      // Si no hay hora "hasta", establecer la siguiente hora válida
+      const nextValidTime = this.getNextValidTime(fromTime);
+      toControl.setValue(nextValidTime, { emitEvent: false });
+      return;
+    }
+
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+
+    // Si la hora "hasta" es menor o igual a "desde", ajustarla
+    if (toMinutes <= fromMinutes) {
+      const nextValidTime = this.getNextValidTime(fromTime);
+      toControl.setValue(nextValidTime, { emitEvent: false });
+    }
+  }
+
+  /**
+   * Obtiene la siguiente hora válida (30 minutos después de la hora "desde")
+   */
+  private getNextValidTime(fromTime: Date): Date {
+    const nextTime = new Date(fromTime);
+    nextTime.setMinutes(nextTime.getMinutes() + 30);
+    // Si se pasa de medianoche, establecer a las 23:30
+    if (nextTime.getDate() !== fromTime.getDate()) {
+      nextTime.setHours(23);
+      nextTime.setMinutes(30);
+    }
+    return nextTime;
+  }
+
+  /**
+   * Valida que la hora "hasta" sea mayor que la hora "desde"
+   */
+  private validateTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+
+    if (!fromTime || !toTime) {
+      toControl.setErrors(null);
+      return;
+    }
+
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+
+    if (toMinutes <= fromMinutes) {
+      toControl.setErrors({ timeRangeInvalid: true });
+    } else {
+      // Si hay otros errores, mantenerlos, si no, limpiar
+      const currentErrors = toControl.errors;
+      if (currentErrors && Object.keys(currentErrors).length > 1) {
+        delete currentErrors['timeRangeInvalid'];
+        toControl.setErrors(Object.keys(currentErrors).length > 0 ? currentErrors : null);
+      } else {
+        toControl.setErrors(null);
+      }
+    }
+    toControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /**
+   * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
+   */
+  isEndTimeInvalid(fromField: string, toField: string): boolean {
+    const fromControl = this.headerConfig.formGroup.get(fromField);
+    const toControl = this.headerConfig.formGroup.get(toField);
+
+    if (!fromControl || !toControl) return false;
+
+    const fromTime = fromControl.value;
+    const toTime = toControl.value;
+
+    if (!fromTime || !toTime) return false;
+
+    const fromMinutes = dateToMinutes(fromTime);
+    const toMinutes = dateToMinutes(toTime);
+
+    return toMinutes <= fromMinutes;
   }
 
   /**
@@ -839,6 +1027,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
     fromControl.updateValueAndValidity({ emitEvent: false });
     toControl.updateValueAndValidity({ emitEvent: false });
+
+    // Actualizar el estado del botón de guardar después de cambiar las validaciones
+    // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -921,6 +1114,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       centerTypeControl?.clearValidators();
       centerTypeControl?.updateValueAndValidity();
     }
+
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -1086,7 +1283,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       address: [Validators.required],
       city: [Validators.required],
       region: [Validators.required],
-      zipCode: [Validators.required],
+      zipCode: [Validators.required, puertoRicoZipCodeValidator()], // Incluir validador personalizado
       latitude: [Validators.required],
       longitude: [Validators.required],
       postalCity: [Validators.required],
@@ -1155,6 +1352,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       }
       centerTypeControl.updateValueAndValidity();
     }
+
+    // Actualizar el estado del botón después de restaurar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -2035,6 +2236,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     }
 
     distributionTypeControl?.updateValueAndValidity();
+
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**

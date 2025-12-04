@@ -863,15 +863,17 @@
           </mat-form-field>
           <mat-form-field data-cy="breakfast-to-field">
             <mat-label>{{ "sites.add.breakfast-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.breakfast-to.placeholder' | transloco }}"
-              formControlName="breakfastTo"
-              [matTimepicker]="pickerBreakfastTo"
-              data-cy="breakfast-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastTo" />
-            <mat-timepicker #pickerBreakfastTo />
+            <mat-select formControlName="breakfastTo" data-cy="breakfast-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('breakfastFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('breakfastTo')?.hasError('required')">
+              {{ 'sites.add.breakfast-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('breakfastTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('breakfastFrom', 'breakfastTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -902,15 +904,17 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-am-to-field">
             <mat-label>{{ "sites.add.snack-am-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.snack-am-to.placeholder' | transloco }}"
-              formControlName="snackAMTo"
-              [matTimepicker]="pickerSnackAMTo"
-              data-cy="snack-am-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
-            <mat-timepicker #pickerSnackAMTo />
+            <mat-select formControlName="snackAMTo" data-cy="snack-am-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackAMFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackAMTo')?.hasError('required')">
+              {{ 'sites.add.snack-am-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackAMTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAMFrom', 'snackAMTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -941,9 +945,17 @@
           </mat-form-field>
           <mat-form-field data-cy="lunch-to-field">
             <mat-label>{{ "sites.add.lunch-to.label" | transloco }}</mat-label>
-            <input matInput placeholder="{{ 'sites.add.lunch-to.placeholder' | transloco }}" formControlName="lunchTo" [matTimepicker]="pickerLunchTo" data-cy="lunch-to-input" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
-            <mat-timepicker #pickerLunchTo />
+            <mat-select formControlName="lunchTo" data-cy="lunch-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('lunchFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('lunchTo')?.hasError('required')">
+              {{ 'sites.add.lunch-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('lunchTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('lunchFrom', 'lunchTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -974,15 +986,17 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-pm-to-field">
             <mat-label>{{ "sites.add.snack-pm-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.snack-pm-to.placeholder' | transloco }}"
-              formControlName="snackPMTo"
-              [matTimepicker]="pickerSnackPMTo"
-              data-cy="snack-pm-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMTo" />
-            <mat-timepicker #pickerSnackPMTo />
+            <mat-select formControlName="snackPMTo" data-cy="snack-pm-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackPMFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackPMTo')?.hasError('required')">
+              {{ 'sites.add.snack-pm-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackPMTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackPMFrom', 'snackPMTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1013,15 +1027,17 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-to-field">
             <mat-label>{{ "sites.add.dinner-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.dinner-to.placeholder' | transloco }}"
-              formControlName="dinnerTo"
-              [matTimepicker]="pickerDinnerTo"
-              data-cy="dinner-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerTo" />
-            <mat-timepicker #pickerDinnerTo />
+            <mat-select formControlName="dinnerTo" data-cy="dinner-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('required')">
+              {{ 'sites.add.dinner-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerFrom', 'dinnerTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1052,15 +1068,17 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-night-to-field">
             <mat-label>{{ "sites.add.snack-night-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.snack-night-to.placeholder' | transloco }}"
-              formControlName="snackNightTo"
-              [matTimepicker]="pickerSnackNightTo"
-              data-cy="snack-night-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightTo" />
-            <mat-timepicker #pickerSnackNightTo />
+            <mat-select formControlName="snackNightTo" data-cy="snack-night-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackNightFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('required')">
+              {{ 'sites.add.snack-night-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackNightFrom', 'snackNightTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1091,15 +1109,17 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-extended-to-field">
             <mat-label>{{ "sites.add.dinner-extended-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.dinner-extended-to.placeholder' | transloco }}"
-              formControlName="dinnerExtendedTo"
-              [matTimepicker]="pickerDinnerExtendedTo"
-              data-cy="dinner-extended-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedTo" />
-            <mat-timepicker #pickerDinnerExtendedTo />
+            <mat-select formControlName="dinnerExtendedTo" data-cy="dinner-extended-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('required')">
+              {{ 'sites.add.dinner-extended-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerExtendedFrom', 'dinnerExtendedTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1130,15 +1150,17 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-at-risk-to-field">
             <mat-label>{{ "sites.add.dinner-at-risk-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.dinner-at-risk-to.placeholder' | transloco }}"
-              formControlName="dinnerAtRiskTo"
-              [matTimepicker]="pickerDinnerAtRiskTo"
-              data-cy="dinner-at-risk-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskTo" />
-            <mat-timepicker #pickerDinnerAtRiskTo />
+            <mat-select formControlName="dinnerAtRiskTo" data-cy="dinner-at-risk-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('required')">
+              {{ 'sites.add.dinner-at-risk-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerAtRiskFrom', 'dinnerAtRiskTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1169,15 +1191,17 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-extended-to-field">
             <mat-label>{{ "sites.add.snack-extended-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.snack-extended-to.placeholder' | transloco }}"
-              formControlName="snackExtendedTo"
-              [matTimepicker]="pickerSnackExtendedTo"
-              data-cy="snack-extended-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedTo" />
-            <mat-timepicker #pickerSnackExtendedTo />
+            <mat-select formControlName="snackExtendedTo" data-cy="snack-extended-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('required')">
+              {{ 'sites.add.snack-extended-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackExtendedFrom', 'snackExtendedTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1208,15 +1232,17 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-at-risk-to-field">
             <mat-label>{{ "sites.add.snack-at-risk-to.label" | transloco }}</mat-label>
-            <input
-              matInput
-              placeholder="{{ 'sites.add.snack-at-risk-to.placeholder' | transloco }}"
-              formControlName="snackAtRiskTo"
-              [matTimepicker]="pickerSnackAtRiskTo"
-              data-cy="snack-at-risk-to-input"
-            />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskTo" />
-            <mat-timepicker #pickerSnackAtRiskTo />
+            <mat-select formControlName="snackAtRiskTo" data-cy="snack-at-risk-to-input" required [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('required')">
+              {{ 'sites.add.snack-at-risk-to.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAtRiskFrom', 'snackAtRiskTo')">
+              {{ 'sites.add.time-range-invalid' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 

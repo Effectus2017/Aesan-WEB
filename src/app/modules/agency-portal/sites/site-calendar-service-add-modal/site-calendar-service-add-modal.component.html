@@ -56,6 +56,9 @@
           <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
             {{ 'sites.calendar.modals.add-service.endTime.required' | transloco }}
           </mat-error>
+          <mat-error *ngIf="isEndTimeInvalid()">
+            {{ 'sites.calendar.modals.add-service.endTime.invalid' | transloco }}
+          </mat-error>
         </mat-form-field>
       </div>
 
@@ -79,7 +82,7 @@
             {{ 'sites.calendar.modals.add-service.buttons.cancel' | transloco }}
           </button>
         </div>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
+        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid()">
           {{ 'sites.calendar.modals.add-service.buttons.save' | transloco }}
         </button>
       </div>

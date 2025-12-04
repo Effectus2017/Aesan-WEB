@@ -89,7 +89,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     endTime: ['', Validators.required],
     comment: [''],
     isWeekendOverride: [false],
-    isExcluded: [false]
+    isExcluded: [false],
+    isHoliday: [false]
   });
 
   // Configuración de la tabla de eventos del día
@@ -349,6 +350,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isOperating: true,
       isWeekendOverride: false,
       isExcluded: false,
+      isHoliday: false,
       comment: '',
       createdAt: new Date(),
       updatedAt: new Date()
@@ -360,7 +362,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: '16:00',
       comment: '',
       isWeekendOverride: false,
-      isExcluded: false
+      isExcluded: false,
+      isHoliday: false
     });
 
       const dialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
@@ -387,7 +390,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: dayData.endTime || '16:00',
       comment: dayData.comment || '',
       isWeekendOverride: dayData.isWeekendOverride || false,
-      isExcluded: dayData.isExcluded || false
+      isExcluded: dayData.isExcluded || false,
+      isHoliday: dayData.isHoliday || false
     });
 
       const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
@@ -421,7 +425,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: operatingDay.endTime || '16:00',
       comment: operatingDay.comment || '',
       isWeekendOverride: operatingDay.isWeekendOverride || false,
-      isExcluded: operatingDay.isExcluded || false
+      isExcluded: operatingDay.isExcluded || false,
+      isHoliday: operatingDay.isHoliday || false
     });
 
       const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
@@ -457,7 +462,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       endTime: operatingDay.endTime || '16:00',
       comment: operatingDay.comment || '',
       isWeekendOverride: operatingDay.isWeekendOverride || false,
-      isExcluded: operatingDay.isExcluded || false
+      isExcluded: operatingDay.isExcluded || false,
+      isHoliday: operatingDay.isHoliday || false
     });
 
       const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
@@ -493,12 +499,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const request: SiteOperatingDayRequest = {
       id: operatingDay.id,
       siteId: this.currentSiteId,
-      date: operatingDay.date,
+      operatingDate: operatingDay.date,
       startTime: formData.isExcluded ? null : startTime,
       endTime: formData.isExcluded ? null : endTime,
       isOperating: !formData.isExcluded,
       isWeekendOverride: formData.isWeekendOverride,
       isExcluded: formData.isExcluded,
+      isHoliday: formData.isHoliday,
       comment: formData.comment
     };
 
@@ -532,12 +539,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const request: SiteOperatingDayRequest = {
       id: operatingDay.id,
       siteId: this.currentSiteId,
-      date: operatingDay.date,
+      operatingDate: operatingDay.date,
       startTime: startTime,
       endTime: endTime,
       isOperating: !formData.isExcluded,
       isWeekendOverride: formData.isWeekendOverride,
       isExcluded: formData.isExcluded,
+      isHoliday: formData.isHoliday,
       comment: formData.comment
     };
 
@@ -578,12 +586,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     const request: SiteOperatingDayRequest = {
       siteId: this.currentSiteId,
-      date: operatingDay.date,
+      operatingDate: operatingDay.date,
       startTime: formData.isExcluded ? null : startTime,
       endTime: formData.isExcluded ? null : endTime,
       isOperating: !formData.isExcluded,
       isWeekendOverride: formData.isWeekendOverride,
       isExcluded: formData.isExcluded,
+      isHoliday: formData.isHoliday,
       comment: formData.comment
     };
     this.loading = true;
@@ -1107,12 +1116,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const request: SiteOperatingDayRequest = {
       id: operatingDay.id,
       siteId: this.currentSiteId,
-      date: operatingDay.date,
+      operatingDate: operatingDay.date,
       startTime: operatingDay.startTime,
       endTime: operatingDay.endTime,
       isOperating: operatingDay.isOperating,
       isWeekendOverride: operatingDay.isWeekendOverride,
       isExcluded: operatingDay.isExcluded,
+      isHoliday: operatingDay.isHoliday,
       comment: operatingDay.comment
     };
 
@@ -1575,6 +1585,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       comment: day.comment || '',
       isWeekendOverride: day.isWeekendOverride || false,
       isExcluded: day.isExcluded || false,
+      isHoliday: day.isHoliday || false,
       createdAt: day.createdAt ? new Date(day.createdAt) : new Date(),
       updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date(),
       services: day.services || []

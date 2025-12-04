@@ -55,6 +55,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       comment: [''],
       isWeekendOverride: [false],
       isExcluded: [false],
+      isHoliday: [false],
     });
 
     // Crear un día vacío para el modal
@@ -66,6 +67,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       endTime: '19:00',
       isWeekendOverride: false,
       isExcluded: false,
+      isHoliday: false,
       comment: '',
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -125,6 +127,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
         comment: formData.comment,
         isWeekendOverride: formData.isWeekendOverride,
         isExcluded: formData.isExcluded,
+        isHoliday: formData.isHoliday,
       },
       isService: false // Identificar que es un día de funcionamiento
     };
