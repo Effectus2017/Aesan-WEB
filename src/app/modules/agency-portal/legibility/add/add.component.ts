@@ -110,13 +110,15 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
     columnsSchema: READABILITY_MODULE_HOUSEHOLD_MEMBERS_COLUMNS_SCHEMA,
     displayedColumns: READABILITY_MODULE_HOUSEHOLD_MEMBERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
-    addButtonShow: true,
-    addButtonLabel: 'readability-module.add.buttons.addMember',
-    addButtonTooltip: 'readability-module.add.buttons.addMemberTooltip',
-    addButtonTooltipPosition: 'above',
-    addButtonIcon: 'add',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add-household-members',
+        label: 'readability-module.add.buttons.addMember',
+      },
+    ],
+    addMenuTooltip: 'readability-module.add.buttons.addMemberTooltip',
     tableId: 'householdMembersTable',
-    onAddButtonClick: (event: Event) => this.onTableAddHouseholdMembers(event, null),
   };
 
   tableHouseholdIncomeChildConfig: GenericTableConfig = {
@@ -125,13 +127,15 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
     columnsSchema: READABILITY_MODULE_HOUSEHOLD_INCOME_CHILD_COLUMNS_SCHEMA,
     displayedColumns: READABILITY_MODULE_HOUSEHOLD_INCOME_CHILD_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
-    addButtonShow: true,
-    addButtonLabel: 'readability-module.add.buttons.addIncome',
-    addButtonTooltip: 'readability-module.add.buttons.addIncomeTooltip',
-    addButtonTooltipPosition: 'above',
-    addButtonIcon: 'add',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add-household-income-child',
+        label: 'readability-module.add.buttons.addIncome',
+      },
+    ],
+    addMenuTooltip: 'readability-module.add.buttons.addIncomeTooltip',
     tableId: 'householdIncomeChildTable',
-    onAddButtonClick: (event: Event) => this.onTableAddHouseholdIncomeChild(event, null),
   };
 
   tableHouseholdIncomeConfig: GenericTableConfig = {
@@ -140,13 +144,15 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
     columnsSchema: READABILITY_MODULE_HOUSEHOLD_INCOME_COLUMNS_SCHEMA,
     displayedColumns: READABILITY_MODULE_HOUSEHOLD_INCOME_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
-    addButtonShow: true,
-    addButtonLabel: 'readability-module.add.buttons.addIncome',
-    addButtonTooltip: 'readability-module.add.buttons.addIncomeTooltip',
-    addButtonTooltipPosition: 'above',
-    addButtonIcon: 'add',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add-household-income',
+        label: 'readability-module.add.buttons.addIncome',
+      },
+    ],
+    addMenuTooltip: 'readability-module.add.buttons.addIncomeTooltip',
     tableId: 'householdIncomeTable',
-    onAddButtonClick: (event: Event) => this.onTableAddHouseholdIncome(event, null),
   };
 
   constructor() {}
@@ -205,6 +211,20 @@ export class ReadabilityModuleComponent implements OnInit, OnGenericHeaderHandle
           this._changeDetectorRef.markForCheck();
         }
       });
+  }
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    const fakeEvent = new Event('click');
+    if (menuItemId === 'add-household-members') {
+      this.onTableAddHouseholdMembers(fakeEvent, null);
+    } else if (menuItemId === 'add-household-income-child') {
+      this.onTableAddHouseholdIncomeChild(fakeEvent, null);
+    } else if (menuItemId === 'add-household-income') {
+      this.onTableAddHouseholdIncome(fakeEvent, null);
+    }
   }
 
   onTableAddHouseholdIncome(event: Event, element: any) {

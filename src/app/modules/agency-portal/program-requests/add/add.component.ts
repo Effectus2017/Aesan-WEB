@@ -323,11 +323,14 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
-    addButtonShow: true,
-    addButtonIcon: 'add',
-    addButtonLabel: 'global.buttons.addSchool',
-    addButtonTooltip: 'global.tooltips.addSchool',
-    addButtonTooltipPosition: 'above',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'global.buttons.addSchool',
+      },
+    ],
+    addMenuTooltip: 'global.tooltips.addSchool',
     fullScreen: true,
   };
 
@@ -341,11 +344,14 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
-    addButtonShow: true,
-    addButtonIcon: 'add',
-    addButtonLabel: 'global.buttons.addSchool',
-    addButtonTooltip: 'global.tooltips.addSchool',
-    addButtonTooltipPosition: 'above',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'global.buttons.addSchool',
+      },
+    ],
+    addMenuTooltip: 'global.tooltips.addSchool',
   };
 
   private _activeTable: 'schools' | 'incomeSources' = 'schools';
@@ -623,6 +629,15 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
   // -----------------------------------------------------------------------------------------------------
   // Métodos para manejar la tabla
   // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onTableAdd();
+    }
+  }
 
   onTableAdd() {
     // Determinar qué tabla está activa basado en el evento del botón

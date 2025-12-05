@@ -166,10 +166,13 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
-    addButtonShow: true, // Se actualizará dinámicamente
-    addButtonLabel: 'staff.edit.relationships.add',
-    addButtonIcon: 'add',
-    onAddButtonClick: () => this.onAddRelationship(),
+    addMenuShow: true, // Se actualizará dinámicamente
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'staff.edit.relationships.add',
+      },
+    ],
   };
 
   headerConfig: GenericHeaderConfig = {
@@ -1300,6 +1303,15 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.onAddRelationship();
   }
 
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onAddRelationship();
+    }
+  }
+
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
@@ -1401,7 +1413,7 @@ export class EditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    * Actualiza la visibilidad del botón de agregar relaciones según el tipo de staff
    */
   private updateRelationshipsTableButtonVisibility(): void {
-    this.relationshipsTableConfig.addButtonShow = !this.isEmployee;
+    this.relationshipsTableConfig.addMenuShow = !this.isEmployee;
   }
 
   /**

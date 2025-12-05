@@ -151,10 +151,13 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       pageSize: 25,
       pageSizeOptions: [25, 50, 100],
       length: 0,
-      addButtonShow: !this.isEmployee, // Solo mostrar para no empleados
-      addButtonLabel: 'staff.edit.relationships.add',
-      addButtonIcon: 'add',
-      onAddButtonClick: (event?: Event) => this.onAddRelationship(),
+      addMenuShow: !this.isEmployee, // Solo mostrar para no empleados
+      addMenuItems: [
+        {
+          id: 'add',
+          label: 'staff.edit.relationships.add',
+        },
+      ],
     };
   }
 
@@ -1057,6 +1060,15 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
    */
   onAddButtonClick(event?: Event, tableId?: string): void {
     this.onAddRelationship();
+  }
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onAddRelationship();
+    }
   }
 
   /**

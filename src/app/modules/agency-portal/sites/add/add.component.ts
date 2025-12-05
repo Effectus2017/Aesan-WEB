@@ -604,16 +604,17 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     dataSource: new MatTableDataSource<any>(),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,
     displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
-    addButtonShow: true,
-    addButtonIcon: 'add',
-    addButtonLabel: 'sites.add.services.add-service',
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'sites.add.services.add-service',
+      },
+    ],
     handler: this,
     showPaginator: true,
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
-    onAddButtonClick: (event: Event, tableId?: string) => {
-      this.onTableAdd();
-    },
     fullScreen: true,
   };
 
@@ -2381,6 +2382,15 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   /**
    * Maneja el evento de agregar servicio desde la tabla
    */
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onTableAdd();
+    }
+  }
+
   onTableAdd(): void {
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {

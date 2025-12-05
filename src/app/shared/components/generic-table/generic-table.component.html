@@ -1,20 +1,30 @@
-<!-- Start of Selection -->
-<div class="flex flex-row justify-end mb-2" *ngIf="config.addButtonShow">
-  <button
-    class="mr-2 mb-4 dark:bg-amber-600 dark:hover:bg-amber-600"
-    mat-mini-fab
-    color="primary"
-    (click)="onAddButtonClick($event)"
-    [matTooltip]="config.addButtonTooltip | transloco"
-    [matTooltipPosition]="config.addButtonTooltipPosition | transloco"
-    [title]="config.addButtonLabel | transloco"
-    [attr.aria-label]="config.addButtonLabel | transloco"
-  >
-    <mat-icon [attr.aria-hidden]="true">{{ config.addButtonIcon }}</mat-icon>
-  </button>
-</div>
-
 <div [class.p-6]="!config.fullScreen" [class.bg-white]="!config.fullScreen" [class.rounded-lg]="!config.fullScreen" [class.border]="!config.fullScreen" [class.border-gray-200]="!config.fullScreen" [class.shadow-sm]="!config.fullScreen">
+  <!-- Header con menú de acciones -->
+  <div class="flex justify-end items-center mb-2" *ngIf="config.addMenuShow">
+    <div [matTooltip]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)" [matTooltipDisabled]="!getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)">
+      <button
+        type="button"
+        title="Opciones"
+        aria-label="Opciones"
+        [title]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission) || 'Opciones'"
+        [attr.aria-label]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission) || 'Opciones'"
+        [disabled]="isAddMenuDisabledByPermission(config.addMenuPermission)"
+        mat-icon-button
+        [matMenuTriggerFor]="addMenu">
+        <mat-icon [svgIcon]="'mat_outline:more_vert'" [attr.aria-hidden]="true"></mat-icon>
+      </button>
+      <mat-menu #addMenu="matMenu">
+        @for (item of config.addMenuItems; track item.id) {
+        <button
+          mat-menu-item
+          [disabled]="item.disabled"
+          (click)="onAddMenuAction(item.id)">
+          <span>{{ item.label | transloco }}</span>
+        </button>
+        }
+      </mat-menu>
+    </div>
+  </div>
   <table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>

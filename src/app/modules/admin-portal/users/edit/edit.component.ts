@@ -124,15 +124,15 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
-    addButtonShow: true,
+    addMenuShow: true,
     fullScreen: true,
-    addButtonIcon: 'add',
-    addButtonLabel: 'global.buttons.addPermission',
-    addButtonTooltip: 'global.tooltips.addPermission',
-    addButtonTooltipPosition: 'above',
-    onAddButtonClick: (event: Event, tableId?: string) => {
-      this.openAddPermissionModal();
-    },
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'global.buttons.addPermission',
+      },
+    ],
+    addMenuTooltip: 'global.tooltips.addPermission',
   };
 
   imageURL: string;
@@ -854,6 +854,15 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.openDeletePermissionModal(permission);
     } else {
       console.warn('Permission not found with id:', id);
+    }
+  }
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.openAddPermissionModal();
     }
   }
 }

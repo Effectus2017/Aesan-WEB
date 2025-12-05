@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -13,7 +14,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, TranslocoModule]
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule]
 })
 export class GenericTableComponent implements OnInit {
   @Input() config: GenericTableConfig;
@@ -320,6 +321,7 @@ export class GenericTableComponent implements OnInit {
     return col.key;
   }
 
+
   /**
    * Maneja el error cuando una imagen no se puede cargar
    * @param event El evento de error
@@ -392,6 +394,54 @@ export class GenericTableComponent implements OnInit {
   onViewStaff(event: Event, id: number): void {
     if (this.handler && this.handler.onTableViewStaff) {
       this.handler.onTableViewStaff(event, id);
+    }
+  }
+
+  /**
+   * Verifica si el botón de menú debe estar deshabilitado por permisos
+   * @param permission Permiso requerido para el botón
+   * @returns true si el botón debe estar deshabilitado
+   */
+  isAddMenuDisabledByPermission(permission?: string): boolean {
+    if (!permission) return false;
+    return !this._authService.hasPermission(permission);
+  }
+
+  /**
+   * Obtiene el tooltip para el botón de menú de agregar
+   * @param tooltipKey Clave de traducción del tooltip
+   * @param disabledTooltipKey Clave de traducción del tooltip deshabilitado
+   * @param permission Permiso requerido para el botón
+   * @returns El mensaje del tooltip apropiado
+   */
+  getAddMenuTooltip(tooltipKey?: string, disabledTooltipKey?: string, permission?: string): string | undefined {
+    const isDisabled = this.isAddMenuDisabledByPermission(permission);
+
+    // Si está deshabilitado y tiene tooltip para deshabilitado, usarlo
+    if (isDisabled && disabledTooltipKey) {
+      return this._translocoService.translate(disabledTooltipKey);
+    }
+
+    // Si está deshabilitado por permisos y no tiene tooltip específico, usar genérico
+    if (isDisabled && permission && !this._authService.hasPermission(permission)) {
+      return this._translocoService.translate('global.tooltips.noPermission');
+    }
+
+    // Si está habilitado y tiene tooltip normal, usarlo
+    if (!isDisabled && tooltipKey) {
+      return this._translocoService.translate(tooltipKey);
+    }
+
+    return undefined;
+  }
+
+  /**
+   * Maneja el evento de acción del menú de agregar
+   * @param menuItemId ID del item del menú seleccionado
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (this.handler?.onAddMenuAction) {
+      this.handler.onAddMenuAction(menuItemId);
     }
   }
 }

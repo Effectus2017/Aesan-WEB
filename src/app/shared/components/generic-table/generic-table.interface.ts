@@ -81,12 +81,30 @@ export interface GenericTableConfig<T = any> {
   pageSize?: number;
   pageSizeOptions?: number[];
   length?: number;
+  /**
+   * @deprecated Usar addMenuShow en su lugar. Se mantiene para retrocompatibilidad.
+   */
   addButtonShow?: boolean;
+  /**
+   * @deprecated Usar addMenuItems en su lugar. Se mantiene para retrocompatibilidad.
+   */
   addButtonIcon?: string;
+  /**
+   * @deprecated Usar addMenuItems en su lugar. Se mantiene para retrocompatibilidad.
+   */
   addButtonLabel?: string;
+  /**
+   * @deprecated Usar addMenuTooltip en su lugar. Se mantiene para retrocompatibilidad.
+   */
   addButtonTooltip?: string;
+  /**
+   * @deprecated Se mantiene para retrocompatibilidad.
+   */
   addButtonTooltipPosition?: 'above' | 'below' | 'left'  | 'right';
   tableId?: string;
+  /**
+   * @deprecated Usar onAddMenuAction en su lugar. Se mantiene para retrocompatibilidad.
+   */
   onAddButtonClick?: (event?: Event) => void;
   /**
    * Si es true, la tabla está en pantalla completa y no se mostrará el borde del contenedor.
@@ -94,6 +112,27 @@ export interface GenericTableConfig<T = any> {
    * @default false
    */
   fullScreen?: boolean;
+  /**
+   * Controla si se muestra el menú de tres puntos para agregar elementos.
+   * Si es true, se mostrará el botón de menú en lugar del botón add tradicional.
+   */
+  addMenuShow?: boolean;
+  /**
+   * Array de items del menú de agregar.
+   */
+  addMenuItems?: AddMenuItem[];
+  /**
+   * Tooltip del botón de menú cuando está habilitado.
+   */
+  addMenuTooltip?: string;
+  /**
+   * Tooltip del botón de menú cuando está deshabilitado.
+   */
+  addMenuDisabledTooltip?: string;
+  /**
+   * Permiso requerido para mostrar el menú de agregar.
+   */
+  addMenuPermission?: string;
 }
 
 export interface OnGenericTableHandler {
@@ -113,7 +152,15 @@ export interface OnGenericTableHandler {
   onTableEditModal?: (event: Event, id: any) => void;
   onTableAction?: (event: Event, action: string, id: any) => void;
   onTableCheckChange?: (event: MatCheckboxChange, element: any) => void;
+  /**
+   * @deprecated Usar onAddMenuAction en su lugar. Se mantiene para retrocompatibilidad.
+   */
   onAddButtonClick?: (event?: Event, tableId?: string) => void;
+  /**
+   * Manejador para el evento de acción del menú de agregar.
+   * @param menuItemId ID del item del menú seleccionado
+   */
+  onAddMenuAction?: (menuItemId: string) => void;
   getPaginator?: (event?: PageEvent) => void;
   // Métodos para obtener datos
   getById?: (id: number) => void;
@@ -129,3 +176,10 @@ export interface GenericTableButtonConfig {
     tooltip?: string;
     action?: (event: Event, element: any) => void;
   }
+
+export interface AddMenuItem {
+  id: string;
+  label: string;
+  icon?: string;
+  disabled?: boolean;
+}

@@ -141,10 +141,13 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
-    addButtonShow: true,
-    addButtonLabel: 'staff.edit.relationships.add',
-    addButtonIcon: 'add',
-    onAddButtonClick: () => this.onAddRelationship(),
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'staff.edit.relationships.add',
+      },
+    ],
   };
 
   headerConfig: GenericHeaderConfig = {
@@ -860,6 +863,15 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
    */
   onAddButtonClick(): void {
     this.onAddRelationship();
+  }
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onAddRelationship();
+    }
   }
 
   onTableEdit(event: Event, id: number): void {
