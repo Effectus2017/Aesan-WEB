@@ -406,7 +406,15 @@
       },
       "comments": {
         "label": "Comments",
-        "placeholder": "Enter additional comments (optional)"
+        "placeholder": "Enter additional comments (optional)",
+        "employee": {
+          "label": "Employee description *",
+          "placeholder": "Describe the employee"
+        },
+        "boardMember": {
+          "label": "Comments",
+          "placeholder": "Additional comments about the board member"
+        }
       },
       "school-assignment": "Site Assignment",
       "school-assignment-description": "Specify the site where the staff will be assigned",

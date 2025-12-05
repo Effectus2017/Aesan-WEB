@@ -1,46 +1,78 @@
+// Datos para las tarjetas KPI
 export const agencyDashboardCardsData = [
   {
-    id: 'amparadoresSitios',
-    title: 'Total de Amparadores/Sitios',
-    value: '700',
-    color: 'text-blue-500',
-    bgColor: 'bg-blue-500',
+    id: 'programa',
+    title: 'agency.dashboard.kpis.program',
+    value: 'PDAM',
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-500',
+    fullWidth: false
+  },
+  {
+    id: 'totalSitios',
+    title: 'agency.dashboard.kpis.totalSites',
+    value: '70',
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-500',
     fullWidth: false
   },
   {
     id: 'presupuestoAprobado',
-    title: 'Presupuesto Aprobado',
+    title: 'agency.dashboard.kpis.approvedBudget',
     value: '$50,987.35',
-    color: 'text-green-500',
-    bgColor: 'bg-green-500',
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-500',
     fullWidth: false
-  },
-  {
-    id: 'presupuestoRechazado',
-    title: 'Presupuesto Rechazado',
-    value: '$12,345.67',
-    color: 'text-red-500',
-    bgColor: 'bg-red-500',
-    fullWidth: false
-  },
-  {
-    id: 'detalleFormularios',
-    title: 'Detalle de los Formularios',
-    value: '',
-    color: 'text-purple-500',
-    bgColor: 'bg-purple-500',
-    isEmptyCard: true,
-    fullWidth: true
   }
 ];
 
+// Datos para el gráfico de raciones por mes
+export const rationsByMonthData = [
+  { month: 'Enero', value: 195 },
+  { month: 'Febrero', value: 190 },
+  { month: 'Marzo', value: 198 },
+  { month: 'Abril', value: 160 }
+];
+
+// Datos para el gráfico de visitas coordinadas
+export const coordinatedVisitsData = [
+  { name: 'Visita Inicial', value: 74.4 },
+  { name: 'Visita de Seguimiento', value: 24.6 }
+];
+
+// Datos para la tabla de formularios
 export const agencyDashboardTableData = [
-    { id: 1, nombre: 'Formulario A', tipo: 'Solicitud', estado: 'Completado', fechaCreacion: new Date(2023, 5, 15) },
-    { id: 2, nombre: 'Formulario B', tipo: 'Registro', estado: 'Pendiente', fechaCreacion: new Date(2023, 6, 22) },
-    { id: 3, nombre: 'Formulario C', tipo: 'Evaluación', estado: 'En Proceso', fechaCreacion: new Date(2023, 7, 10) },
-    { id: 4, nombre: 'Formulario D', tipo: 'Solicitud', estado: 'Completado', fechaCreacion: new Date(2023, 8, 5) },
-    { id: 5, nombre: 'Formulario E', tipo: 'Registro', estado: 'Rechazado', fechaCreacion: new Date(2023, 9, 18) },
-    { id: 6, nombre: 'Formulario F', tipo: 'Evaluación', estado: 'Pendiente', fechaCreacion: new Date(2023, 10, 7) },
-    { id: 7, nombre: 'Formulario G', tipo: 'Solicitud', estado: 'En Proceso', fechaCreacion: new Date(2023, 11, 12) }
-]
+  {
+    id: 1,
+    formNumber: '123-432',
+    formName: 'Presupuesto',
+    status: 'Aprobado',
+    submissionDate: new Date('0001-01-01'),
+    approvalDate: new Date('0001-01-01')
+  },
+  {
+    id: 2,
+    formNumber: '123-433',
+    formName: 'Manejo Financiero',
+    status: 'Pendiente a Aprobar',
+    submissionDate: new Date('0001-01-01'),
+    approvalDate: new Date('0001-01-01')
+  },
+  {
+    id: 3,
+    formNumber: '123-434',
+    formName: 'Solicitud al Programa',
+    status: 'Aprobado',
+    submissionDate: new Date('0001-01-01'),
+    approvalDate: new Date('0001-01-01')
+  },
+  {
+    id: 4,
+    formNumber: '123-435',
+    formName: 'Raciones',
+    status: 'Aprobado',
+    submissionDate: new Date('0001-01-01'),
+    approvalDate: new Date('0001-01-01')
+  }
+];
 

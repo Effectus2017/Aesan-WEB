@@ -14,6 +14,8 @@ import { UserService } from 'app/shared/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
+import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
     selector: 'user',
@@ -31,7 +33,8 @@ import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
         MatDividerModule,
         MatTooltipModule,
         ThemeToggleComponent,
-        NgClass
+        NgClass,
+        TranslocoModule
     ]
 })
 export class UserComponent implements OnInit, OnDestroy {
@@ -46,6 +49,8 @@ export class UserComponent implements OnInit, OnDestroy {
   private _fuseConfigService: FuseConfigService = inject(FuseConfigService);
 
   isDarkMode: boolean;
+  private _customRouterService: CustomRouterService = inject(CustomRouterService);
+
   /**
    * Constructor
    */
@@ -112,6 +117,13 @@ export class UserComponent implements OnInit, OnDestroy {
    */
   signOut(): void {
     this._router.navigate(['/sign-out']);
+  }
+
+  /**
+   * Navigate to user profile
+   */
+  navigateToProfile(): void {
+    this._customRouterService.navigate(['users/profile']);
   }
 
 }

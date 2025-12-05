@@ -620,8 +620,8 @@
                 "label": "General Enrollment",
                 "placeholder": "General Enrollment"
             },
-            "site-number": {
-                "label": "Site Number",
+            "id": {
+                "label": "ID",
                 "description": "Unique site code generated automatically"
             },
             "dev-section": {
@@ -1289,9 +1289,9 @@
                 "label": "General Enrollment",
                 "placeholder": "General Enrollment"
             },
-            "site-number": {
-                "label": "Site Number",
-                "placeholder": "Site Number",
+            "id": {
+                "label": "ID",
+                "placeholder": "ID",
                 "description": "Unique site code generated automatically"
             },
             "location-type": {
@@ -1397,7 +1397,8 @@
                 "notification-title": "Important Information",
                 "rations-service-notification": "You must complete the changes and cancellations form with the new operating end date",
                 "changes-form-not-implemented": "The changes and cancellations form is under development"
-            }
+            },
+            "success": "Site updated successfully"
         },
         "calendar": {
             "title": "Operating Calendar",

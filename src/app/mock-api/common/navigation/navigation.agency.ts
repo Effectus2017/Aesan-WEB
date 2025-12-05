@@ -2,6 +2,14 @@ import { FuseNavigationItem } from '@fuse/components/navigation';
 
 export const agencyNavigation: FuseNavigationItem[] = [
   {
+    id: 'dashboard.agency',
+    title: 'navigation.dashboard',
+    type: 'basic',
+    icon: 'heroicons_solid:home',
+    link: '/dashboard',
+    roles: ['Agency-Administrator', 'Agency-User'],
+  },
+  {
     id: 'program-requests',
     title: 'navigation.program-requests',
     type: 'basic',
@@ -132,15 +140,6 @@ export const agencyNavigation: FuseNavigationItem[] = [
     ],
     roles: ['Agency-Administrator'],
     permissions: ['AccountingView'],
-  },
-  {
-    id: 'dashboard.agency',
-    title: 'navigation.dashboard',
-    type: 'basic',
-    icon: 'heroicons_solid:chart-pie',
-    link: '/dashboard',
-    roles: ['Agency-Administrator'],
-    permissions: ['ReportView'],
   },
   // {
   //   id: 'employees',

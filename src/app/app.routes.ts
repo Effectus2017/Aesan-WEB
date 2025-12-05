@@ -164,6 +164,8 @@ export const appRoutes: Route[] = [
       { path: 'employees', loadChildren: () => import('app/modules/agency-portal/employees/employees.routes') },
       // Staff, listado de staff (Role: Agency)
       { path: 'staff', loadChildren: () => import('app/modules/agency-portal/staff/staff.routes') },
+      // Users, perfil de usuario (Role: Agency)
+      { path: 'users', loadChildren: () => import('app/modules/agency-portal/users/users.routes') },
       // Legibility module, listado de módulos de elegibilidad (Role: Agency)
       { path: 'legibility', loadChildren: () => import('app/modules/agency-portal/legibility/legibility.routes') },
     ],

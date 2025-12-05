@@ -19,10 +19,10 @@ export class AuthRedirectComponent implements OnInit {
         this._customRouter.navigate(['sponsors']);
         break;
       case 'Agency-Administrator':
-        this._customRouter.navigate(['program-requests']);
+        this._customRouter.navigate(['dashboard']);
         break;
       case 'Agency-User':
-        this._customRouter.navigate(['program-requests']);
+        this._customRouter.navigate(['dashboard']);
         break;
       case 'Monitor':
         this._customRouter.navigate(['dashboard']);

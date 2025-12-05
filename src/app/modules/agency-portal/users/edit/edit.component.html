@@ -1,0 +1,128 @@
+<div class="flex absolute inset-0 flex-col min-w-0">
+  <!-- Header -->
+  <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
+
+  <!-- Main -->
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <div class="flex justify-center p-8 py-4 w-full rounded-full sm:justify-start">
+      <img
+        title="{{ 'users.edit.avatar.title' | transloco }}"
+        (click)="fileInput.click()"
+        class="object-cover rounded-full ring-4 ring-gray-400 cursor-pointer w-26 h-26"
+        [src]="imageURL || 'assets/images/avatars/profile.png'"
+        [alt]="'users.edit.avatar.alt' | transloco"
+        (error)="handleMissingImage($event)"
+        data-cy="avatar-image"
+      />
+      <input
+        hidden
+        onclick="this.value=null"
+        (change)="onFileSelected($event)"
+        #fileInput
+        type="file"
+        id="file"
+        data-cy="file-input"
+        [attr.aria-label]="'users.edit.avatar.select' | transloco"
+      />
+    </div>
+
+    <form [formGroup]="headerConfig.formGroup" #usersEditForm="ngForm" data-cy="users-edit-form">
+      <div class="grid grid-cols-12 gap-2 p-4 pt-4 sm:pt-4">
+        <!-- Personal Information -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.firstName.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="firstName"
+              data-cy="name-input"
+              [placeholder]="'users.edit.firstName.placeholder' | transloco"
+              [attr.aria-label]="'users.edit.firstName.label' | transloco"
+              [title]="'users.edit.firstName.label' | transloco"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('firstName').hasError('required')">
+              {{ "users.edit.firstName.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.middleName.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="middleName"
+              data-cy="middle-name-input"
+              [placeholder]="'users.edit.middleName.placeholder' | transloco"
+              [attr.aria-label]="'users.edit.middleName.label' | transloco"
+              [title]="'users.edit.middleName.label' | transloco"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('middleName').hasError('required')">
+              {{ "users.edit.middleName.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.fatherLastName.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="fatherLastName"
+              data-cy="father-last-name-input"
+              [placeholder]="'users.edit.fatherLastName.placeholder' | transloco"
+              [attr.aria-label]="'users.edit.fatherLastName.label' | transloco"
+              [title]="'users.edit.fatherLastName.label' | transloco"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName').hasError('required')">
+              {{ "users.edit.fatherLastName.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.motherLastName.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="motherLastName"
+              data-cy="mother-last-name-input"
+              [placeholder]="'users.edit.motherLastName.placeholder' | transloco"
+              [attr.aria-label]="'users.edit.motherLastName.label' | transloco"
+              [title]="'users.edit.motherLastName.label' | transloco"
+            />
+          </mat-form-field>
+        </div>
+        <!-- Access Information -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              data-cy="email-input"
+              [placeholder]="'users.edit.email.placeholder' | transloco"
+              [attr.aria-label]="'users.edit.email.label' | transloco"
+              [title]="'users.edit.email.label' | transloco"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('required')">
+              {{ "users.edit.email.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('email')">
+              {{ "users.edit.email.invalid" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('emailExists')">
+              {{ "users.edit.email.exists" | transloco }}
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field class="flex-auto">
+            <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>
+            <mat-select
+              formControlName="role"
+              [placeholder]="'users.edit.role.placeholder' | transloco"
+              [compareWith]="compareById"
+              data-cy="role-select"
+              [attr.aria-label]="'users.edit.role.label' | transloco"
+              disabled
+            >
+              <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">
+                {{ _roles.name }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

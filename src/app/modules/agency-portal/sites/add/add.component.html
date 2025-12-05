@@ -444,9 +444,13 @@
               [formControlName]="'operatingFromDate'"
               placeholder="{{ 'sites.add.operating-from-date.placeholder' | transloco }}"
               data-cy="operating-from-date-input"
+              required
             />
             <mat-datepicker-toggle matSuffix [for]="operatingFromPicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingFromPicker></mat-datepicker>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingFromDate')?.hasError('required')">
+              {{ "sites.add.operating-from-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field data-cy="operating-to-date-field">
@@ -457,9 +461,13 @@
               [formControlName]="'operatingToDate'"
               placeholder="{{ 'sites.add.operating-to-date.placeholder' | transloco }}"
               data-cy="operating-to-date-input"
+              required
             />
             <mat-datepicker-toggle matSuffix [for]="operatingToPicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingToPicker></mat-datepicker>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingToDate')?.hasError('required')">
+              {{ "sites.add.operating-to-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field data-cy="operating-days-calculated-field">
@@ -1253,8 +1261,8 @@
           <p class="mb-6 text-secondary">{{ "sites.add.administrator-authorized.description" | transloco }}</p>
         </div>
 
-        <!-- Persona a Cargo - Campos individuales (solo para PDAM) -->
-        <div [formGroup]="headerConfig.formGroup" *ngIf="isPDAM && !shouldShowDayCareFields()" class="grid grid-cols-1 col-span-12">
+        <!-- Persona a Cargo - Campos individuales (solo para PDAM y PSAV) -->
+        <div [formGroup]="headerConfig.formGroup" *ngIf="(isPDAM || isPSAV) && !shouldShowDayCareFields()" class="grid grid-cols-1 col-span-12">
           <div formGroupName="personInCharge">
             <!-- Campos de nombre -->
             <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-4 sm:col-span-12">

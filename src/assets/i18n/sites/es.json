@@ -614,8 +614,8 @@
                 "label": "Matrícula General",
                 "placeholder": "Matrícula General"
             },
-            "site-number": {
-                "label": "Número de Sitio",
+            "id": {
+                "label": "ID",
                 "description": "Código único del sitio generado automáticamente"
             },
             "dev-section": {
@@ -1236,9 +1236,9 @@
                 "label": "Matrícula General",
                 "placeholder": "Matrícula General"
             },
-            "site-number": {
-                "label": "Número de Sitio",
-                "placeholder": "Número de Sitio",
+            "id": {
+                "label": "ID",
+                "placeholder": "ID",
                 "description": "Código único del sitio generado automáticamente"
             },
             "location-type": {
@@ -1344,7 +1344,8 @@
                 "notification-title": "Información Importante",
                 "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento",
                 "changes-form-not-implemented": "El formulario de cambios y cancelaciones está en desarrollo"
-            }
+            },
+            "success": "Sitio actualizado exitosamente"
         },
         "calendar": {
             "title": "Calendario de Funcionamiento",

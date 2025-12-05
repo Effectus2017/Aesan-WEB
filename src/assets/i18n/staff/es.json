@@ -345,7 +345,15 @@
       },
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional):"
+        "placeholder": "Ingrese comentarios adicionales (opcional):",
+        "employee": {
+          "label": "Descripción del empleado *",
+          "placeholder": "Describa al empleado"
+        },
+        "boardMember": {
+          "label": "Comentarios",
+          "placeholder": "Comentarios adicionales sobre el miembro de la junta directiva"
+        }
       },
       "site-assignment": "Asignación de Sitio",
       "site-assignment-description": "Especifique el sitio donde estará asignado el personal",

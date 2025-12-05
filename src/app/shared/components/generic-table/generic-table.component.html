@@ -154,12 +154,13 @@
         }
 
         @if (button.key === 'sites') {
-        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || (element?.sitesCount ?? 0) === 0">
           <button
             [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
-            [disabled]="isButtonDisabled(button)"
+            [disabled]="isButtonDisabled(button) || (element?.sitesCount ?? 0) === 0"
+            [style.visibility]="(element?.sitesCount ?? 0) > 0 ? 'visible' : 'hidden'"
             (click)="onSites($event, element.id)"
             [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
           >
@@ -372,13 +373,14 @@
             }
 
             @if (button.key === 'sites') {
-            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || (element?.sitesCount ?? 0) === 0">
               <button
                   [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
-                  [disabled]="isButtonDisabled(button)"
+                  [disabled]="isButtonDisabled(button) || (element?.sitesCount ?? 0) === 0"
+                  [style.visibility]="(element?.sitesCount ?? 0) > 0 ? 'visible' : 'hidden'"
                   (click)="onSites($event, element.id)"
                   [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
               >

@@ -45,7 +45,9 @@
         "notification": "Notificación",
         "orientation-request-sent": "Su solicitud de orientación fue enviada al Coordinador del Programa",
         "accept": "Aceptar",
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "profile": "Perfil",
+        "signed-in-as": "Sesión iniciada como"
     },
     "reset-password": {
         "title": "Restablecer Contraseña",

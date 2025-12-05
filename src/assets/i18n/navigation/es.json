@@ -34,7 +34,7 @@
             "employee-management": "Manejo de Empleados",
             "rations-form": "Formulario de Raciones"
         },
-        "dashboard": "Gráficas",
+        "dashboard": "Inicio",
         "evaluation": "Evaluación",
         "sponsorEvaluation": "Evaluación de Auspiciadores",
         "reports": "Reportes",
@@ -94,6 +94,32 @@
             "status": "Estado: {{status}}",
             "tooltip": "Estado actual de la agencia"
         },
-        "shortcuts": "Atajos"
+        "shortcuts": "Accesos Rápidos"
+    },
+    "agency": {
+        "dashboard": {
+            "welcome": "Bienvenido a NUTRE",
+            "today": "Hoy es",
+            "kpis": {
+                "program": "Programa en el que participa",
+                "totalSites": "Total de Sitios",
+                "approvedBudget": "Presupuesto Aprobado"
+            },
+            "charts": {
+                "rationsByMonth": "Raciones servidas por meses",
+                "coordinatedVisits": "Visitas Coordinadas por Tipo de Visita"
+            },
+            "table": {
+                "title": "Formularios",
+                "formNumber": "# de Formulario",
+                "formName": "Formularios",
+                "status": "Estatus",
+                "submissionDate": "Fecha Sometido",
+                "approvalDate": "Fecha Aprobación",
+                "actions": "Acciones",
+                "view": "Ver",
+                "edit": "Editar"
+            }
+        }
     }
 }

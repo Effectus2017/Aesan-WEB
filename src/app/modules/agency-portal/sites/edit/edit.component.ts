@@ -40,11 +40,11 @@ import { EducationLevelResponse } from 'app/shared/models/Response/EducationLeve
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
-import { 
-  compareById, 
-  isNullOrUndefinedEmptyStringNullArray, 
-  toTimeDate, 
-  toTimeString, 
+import {
+  compareById,
+  isNullOrUndefinedEmptyStringNullArray,
+  toTimeDate,
+  toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
   filterEndTimeOptions,
@@ -81,13 +81,16 @@ import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cf
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
-import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+
+
 @Component({
   selector: 'app-sites-edit',
   templateUrl: './edit.component.html',
@@ -111,10 +114,10 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     GenericTableComponent,
     NumericOnlyDirective,
     PhoneFormatDirective,
-    DynamicGridDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
+    DynamicGridDirective,
   ],
 })
 export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -247,7 +250,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   // Resultado de revisión / Review result
   // Review result
-  reviewResult: OptionSelection[] = [];
+  // COMENTADO: Se va a cambiar de lugar
+  // reviewResult: OptionSelection[] = [];
 
   // Lista de sitios
   // List of sites
@@ -413,8 +417,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       educationLevels: [[], Validators.required],
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: [null],
-      operatingToDate: [null],
+      operatingFromDate: [null, Validators.required],
+      operatingToDate: [null, Validators.required],
       operatingDaysCalculated: [{ value: null, disabled: true }],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
@@ -462,8 +466,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
       hasDiningRoom: [false],
-      // Persona a Cargo (solo para PDAM)
-      // Person in Charge (only for PDAM)
+      // Persona a Cargo (solo para PDAM y PSAV)
+      // Person in Charge (only for PDAM and PSAV)
       personInCharge: this._formBuilder.group({
         firstName: [''],
         middleName: [''],
@@ -575,13 +579,14 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       inactiveDate: [{ value: null, disabled: true }],
       // Resultado de revisión - Resultado de la revisión del sitio
       // Review result - Result of the site review
-      reviewResult: [null],
+      // COMENTADO: Se va a cambiar de lugar
+      // reviewResult: [null],
       // Fecha de revisión - Fecha cuando se realizó la revisión
       // Review date - Date when the review was conducted
-      reviewDate: [null],
+      // reviewDate: [null],
       // Justificación de revisión - Justificación de la revisión
       // Review justification - Justification of the review
-      reviewJustification: [null],
+      // reviewJustification: [null],
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
@@ -776,7 +781,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
       // Resultado de revisión / Review result
-      this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+      // COMENTADO: Se va a cambiar de lugar
+      // this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
 
       // Catálogos
       this.centerTypes = resolvedData.centerTypes;
@@ -1072,17 +1078,17 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   isEndTimeInvalid(fromField: string, toField: string): boolean {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     const toControl = this.headerConfig.formGroup.get(toField);
-    
+
     if (!fromControl || !toControl) return false;
-    
+
     const fromTime = fromControl.value;
     const toTime = toControl.value;
-    
+
     if (!fromTime || !toTime) return false;
-    
+
     const fromMinutes = dateToMinutes(fromTime);
     const toMinutes = dateToMinutes(toTime);
-    
+
     return toMinutes <= fromMinutes;
   }
 
@@ -1113,7 +1119,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         serviceControl.updateValueAndValidity({ emitEvent: false });
       }
     }
-    
+
     // Actualizar el estado del botón después de cambiar las validaciones
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
@@ -1329,7 +1335,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /**
    * Actualiza las validaciones de personInCharge según el programa
-   * Solo se valida cuando isPDAM es true
+   * Solo se valida cuando isPDAM o isPSAV es true
    */
   private updatePersonInChargeValidations(): void {
     const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
@@ -1338,8 +1344,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       return;
     }
 
-    if (this.isPDAM) {
-      // Restaurar validaciones requeridas para PDAM
+    if (this.isPDAM || this.isPSAV) {
+      // Restaurar validaciones requeridas para PDAM y PSAV
       const firstNameControl = personInChargeGroup.get('firstName');
       const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
       const sitePhoneControl = personInChargeGroup.get('sitePhone');
@@ -1366,7 +1372,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         mobilePhoneControl.updateValueAndValidity();
       }
     } else {
-      // Limpiar todas las validaciones cuando no es PDAM (incluye PSAV)
+      // Limpiar todas las validaciones cuando no es PDAM ni PSAV
       Object.keys(personInChargeGroup.controls).forEach(key => {
         const control = personInChargeGroup.get(key);
         if (control) {
@@ -1556,9 +1562,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const walkersId = param.walkersId;
     const siteTypeId = param.siteTypeId;
     const experienceId = param.experienceId;
-    const reviewResultId = param.reviewResultId;
-    const reviewDate = param.reviewDate;
-    const reviewJustification = param.reviewJustification;
+    // COMENTADO: Se va a cambiar de lugar
+    // const reviewResultId = param.reviewResultId;
+    // const reviewDate = param.reviewDate;
+    // const reviewJustification = param.reviewJustification;
 
     this.headerConfig.formGroup.patchValue({
       name: param.name,
@@ -1638,9 +1645,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       walkers: this.walkers.find((o) => o.id === walkersId),
       siteType: this.siteType.find((o) => o.id === siteTypeId),
       experience: this.experience.find((o) => o.id === experienceId),
-      reviewResult: this.reviewResult.find((o) => o.id === reviewResultId),
-      reviewDate: reviewDate,
-      reviewJustification: reviewJustification,
+      // COMENTADO: Se va a cambiar de lugar
+      // reviewResult: this.reviewResult.find((o) => o.id === reviewResultId),
+      // reviewDate: reviewDate,
+      // reviewJustification: reviewJustification,
       isActive: param.isActive,
       inactiveJustification: param.inactiveJustification || null,
       inactiveDate: param.inactiveDate,
@@ -1809,9 +1817,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const walkersId = formValues.walkers?.id;
     const siteTypeId = formValues.siteType?.id;
     const experienceId = formValues.experience?.id;
-    const reviewResultId = formValues.reviewResult?.id;
-    const reviewDate = formValues.reviewDate;
-    const reviewJustification = formValues.reviewJustification;
+    // COMENTADO: Se va a cambiar de lugar
+    // const reviewResultId = formValues.reviewResult?.id;
+    // const reviewDate = formValues.reviewDate;
+    // const reviewJustification = formValues.reviewJustification;
 
 
     // Construir el objeto de actualización
@@ -1866,9 +1875,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,
       experienceId: experienceId ?? null,
-      reviewResultId: reviewResultId ?? null,
-      reviewDate: reviewDate ?? null,
-      reviewJustification: reviewJustification ?? null,
+      // COMENTADO: Se va a cambiar de lugar
+      // reviewResultId: reviewResultId ?? null,
+      // reviewDate: reviewDate ?? null,
+      // reviewJustification: reviewJustification ?? null,
       // Campos requeridos por el stored procedure 104_UpdateSite
       serviceTime: formValues.serviceTime ?? null,
       isActive: formValues.isActive ?? true,

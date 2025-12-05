@@ -311,8 +311,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       educationLevels: [[], Validators.required],
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: [null],
-      operatingToDate: [null],
+      operatingFromDate: [null, Validators.required],
+      operatingToDate: [null, Validators.required],
       operatingDaysCalculated: [{ value: null, disabled: true }],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
@@ -364,8 +364,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
       hasDiningRoom: [null],
-      // Persona a Cargo (solo para PDAM)
-      // Person in Charge (only for PDAM)
+      // Persona a Cargo (solo para PDAM y PSAV)
+      // Person in Charge (only for PDAM and PSAV)
       personInCharge: this._formBuilder.group({
         firstName: ['', Validators.required],
         middleName: [''],
@@ -1360,7 +1360,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   /**
    * Actualiza las validaciones de personInCharge según el programa
-   * Solo se valida cuando isPDAM es true
+   * Solo se valida cuando isPDAM o isPSAV es true
    */
   private updatePersonInChargeValidations(): void {
     const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
@@ -1369,8 +1369,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       return;
     }
 
-    if (this.isPDAM) {
-      // Restaurar validaciones requeridas para PDAM
+    if (this.isPDAM || this.isPSAV) {
+      // Restaurar validaciones requeridas para PDAM y PSAV
       const firstNameControl = personInChargeGroup.get('firstName');
       const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
       const sitePhoneControl = personInChargeGroup.get('sitePhone');
@@ -1397,7 +1397,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         mobilePhoneControl.updateValueAndValidity();
       }
     } else {
-      // Limpiar todas las validaciones cuando no es PDAM
+      // Limpiar todas las validaciones cuando no es PDAM ni PSAV
       Object.keys(personInChargeGroup.controls).forEach(key => {
         const control = personInChargeGroup.get(key);
         if (control) {

@@ -34,7 +34,7 @@
             "employee-management": "Employee Management",
             "rations-form": "Rations Form"
         },
-        "dashboard": "Charts",
+        "dashboard": "Home",
         "evaluation": "Evaluation",
         "sponsorEvaluation": "Sponsor Evaluation",
         "reports": "Reports",
@@ -105,6 +105,32 @@
             "residential-types": "Residential Types",
             "email-templates": "Email Templates",
             "message-templates": "Message Templates"
+        }
+    },
+    "agency": {
+        "dashboard": {
+            "welcome": "Welcome to NUTRE",
+            "today": "Today is",
+            "kpis": {
+                "program": "Program in which participates",
+                "totalSites": "Total Sites",
+                "approvedBudget": "Approved Budget"
+            },
+            "charts": {
+                "rationsByMonth": "Rations served by months",
+                "coordinatedVisits": "Coordinated Visits by Type of Visit"
+            },
+            "table": {
+                "title": "Forms",
+                "formNumber": "Form Number",
+                "formName": "Forms",
+                "status": "Status",
+                "submissionDate": "Submission Date",
+                "approvalDate": "Approval Date",
+                "actions": "Actions",
+                "view": "View",
+                "edit": "Edit"
+            }
         }
     }
 }

@@ -1,31 +1,123 @@
-<div class="flex flex-col flex-auto min-w-0">
-  <!-- Main -->
-  <div class="flex-auto p-6 sm:p-10">
-    <!-- Grid de tarjetas -->
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <!-- Cards dinámicas basadas en los datos -->
-      <ng-container *ngFor="let card of agencyDashboardCardsData">
-        <div [id]="card.id"
-             class="flex flex-col flex-auto p-6 overflow-hidden shadow bg-card rounded-2xl"
-             [ngClass]="{
-               'md:col-span-2 lg:col-span-3': card.fullWidth === true,
-               'md:col-span-1 lg:col-span-1': !card.fullWidth
-             }">
-          <div class="flex items-start justify-between">
-            <div class="text-lg font-medium leading-6 tracking-tight truncate">{{ card.title }}</div>
-          </div>
-          <div class="flex flex-col items-center mt-2" *ngIf="!card.isEmptyCard">
-            <div class="font-bold leading-none tracking-tight text-7xl sm:text-8xl" [ngClass]="card.color">{{ card.value }}</div>
-          </div>
+<div class="flex overflow-hidden absolute inset-0 flex-col min-w-0">
+  <!-- Header con título -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-          <!-- Tabla para la card "Detalle de los Formularios" -->
-          <div class="mt-4" *ngIf="card.isEmptyCard">
-            <div class="flex-auto overflow-y-auto" cdkScrollable>
-                <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
-              </div>
+  <!-- Main Content -->
+  <div class="overflow-y-auto flex-auto" cdkScrollable>
+    <div class="p-6 sm:p-10">
+      <!-- Fecha actual -->
+      <p class="mb-6 text-sm text-gray-600">
+        {{ 'agency.dashboard.today' | transloco }} {{ currentDate }}
+      </p>
+      <!-- Sección de KPIs -->
+      <div class="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-3">
+        <ng-container *ngFor="let card of agencyDashboardCardsData">
+          <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow hover:shadow-md">
+            <div class="mb-2 text-sm font-medium text-gray-600">
+              {{ card.title | transloco }}
+            </div>
+            <div class="text-4xl font-bold" [ngClass]="card.color">
+              {{ card.value }}
+            </div>
           </div>
+        </ng-container>
+      </div>
+
+      <!-- Sección de Gráficos -->
+      <div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-2">
+        <!-- Gráfico de Raciones por Mes -->
+        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <apx-chart
+            [series]="rationsChartOptions.series"
+            [chart]="rationsChartOptions.chart"
+            [plotOptions]="rationsChartOptions.plotOptions"
+            [dataLabels]="rationsChartOptions.dataLabels"
+            [xaxis]="rationsChartOptions.xaxis"
+            [yaxis]="rationsChartOptions.yaxis"
+            [colors]="rationsChartOptions.colors"
+            [title]="rationsChartOptions.title">
+          </apx-chart>
         </div>
-      </ng-container>
+
+        <!-- Gráfico de Visitas Coordinadas -->
+        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <apx-chart
+            [series]="visitsChartOptions.series"
+            [chart]="visitsChartOptions.chart"
+            [labels]="visitsChartOptions.labels"
+            [dataLabels]="visitsChartOptions.dataLabels"
+            [colors]="visitsChartOptions.colors"
+            [legend]="visitsChartOptions.legend"
+            [title]="visitsChartOptions.title">
+          </apx-chart>
+        </div>
+      </div>
+
+      <!-- Tabla de Formularios -->
+      <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <h2 class="mb-4 text-xl font-bold text-gray-800">
+          {{ 'agency.dashboard.table.title' | transloco }}
+        </h2>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="text-white bg-gray-800">
+              <tr>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.formNumber' | transloco }}
+                </th>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.formName' | transloco }}
+                </th>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.status' | transloco }}
+                </th>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.submissionDate' | transloco }}
+                </th>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.approvalDate' | transloco }}
+                </th>
+                <th class="px-6 py-3 text-xs font-medium tracking-wider text-left uppercase">
+                  {{ 'agency.dashboard.table.actions' | transloco }}
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr *ngFor="let row of tableConfig.dataSource.data" class="hover:bg-gray-50">
+                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                  {{ row.formNumber }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                  {{ row.formName }}
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap">
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                        [ngClass]="{
+                          'bg-green-100 text-green-800': row.status === 'Aprobado',
+                          'bg-yellow-100 text-yellow-800': row.status === 'Pendiente a Aprobar'
+                        }">
+                    {{ row.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                  {{ row.submissionDate | date: 'dd/MM/yyyy' }}
+                </td>
+                <td class="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                  {{ row.approvalDate | date: 'dd/MM/yyyy' }}
+                </td>
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap">
+                  <button (click)="onView(row)" class="mr-3 text-teal-600 hover:text-teal-900">
+                    {{ 'agency.dashboard.table.view' | transloco }}
+                  </button>
+                  <button (click)="onEdit(row)" class="text-teal-600 hover:text-teal-900">
+                    {{ 'agency.dashboard.table.edit' | transloco }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

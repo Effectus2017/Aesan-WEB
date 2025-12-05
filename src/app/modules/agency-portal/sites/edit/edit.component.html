@@ -50,29 +50,21 @@
           <p class="mb-6 text-secondary">{{ "sites.edit.information-description" | transloco }}</p>
         </div>
 
-         <!-- Número de Sitio -->
-         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-            <mat-form-field data-cy="site-number-field">
-              <mat-label>{{ "sites.edit.site-number.label" | transloco }}</mat-label>
-              <input matInput formControlName="siteCode" readonly disabled placeholder="{{ 'sites.edit.site-number.placeholder' | transloco }}" data-cy="site-number-input" />
-              <mat-hint>{{ "sites.edit.site-number.description" | transloco }}</mat-hint>
-            </mat-form-field>
-          </div>
-
+        <!-- ID -->
         <!-- ✅ VERIFICADO: Nombre del sitio - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Nombre del sitio / Site Name -->
-          <!-- Estatus / Status -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 mt-2 sm:grid-cols-1 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+          <mat-form-field data-cy="site-number-field">
+            <mat-label>{{ "sites.edit.id.label" | transloco }}</mat-label>
+            <input matInput formControlName="siteCode" readonly disabled placeholder="{{ 'sites.edit.id.placeholder' | transloco }}" data-cy="site-number-input" />
+            <mat-hint>{{ "sites.edit.id.description" | transloco }}</mat-hint>
+          </mat-form-field>
           <mat-form-field data-cy="name-field">
             <mat-label>{{ "sites.edit.name.label" | transloco }}</mat-label>
             <input matInput formControlName="name" required placeholder="{{ 'sites.edit.name.placeholder' | transloco }}" data-cy="name-input" />
             <mat-error *ngIf="headerConfig.formGroup.get('name').hasError('required')">{{ "sites.edit.name.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
-
-        <!-- Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings -->
-
-
 
         <!-- ✅ VERIFICADO: Dirección física - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Datos de la dirección física del sitio / Site physical address data -->
@@ -121,7 +113,14 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="zip-code-field">
             <mat-label>{{ "sites.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'zipCode'" placeholder="{{ 'sites.edit.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="zip-code-input" />
+            <input
+              matInput
+              [formControlName]="'zipCode'"
+              placeholder="{{ 'sites.edit.zip-code.placeholder' | transloco }}"
+              numericOnly
+              puertoRicoZipCode
+              data-cy="zip-code-input"
+            />
             <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
               {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
             </mat-error>
@@ -203,7 +202,14 @@
 
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "sites.edit.zip-code.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'postalZipCode'" placeholder="{{ 'sites.edit.zip-code.placeholder' | transloco }}" numericOnly puertoRicoZipCode data-cy="postal-zip-code-input" />
+            <input
+              matInput
+              [formControlName]="'postalZipCode'"
+              placeholder="{{ 'sites.edit.zip-code.placeholder' | transloco }}"
+              numericOnly
+              puertoRicoZipCode
+              data-cy="postal-zip-code-input"
+            />
             <mat-error *ngIf="headerConfig.formGroup.get('postalZipCode')?.hasError('puertoRicoZipCode')">
               {{ headerConfig.formGroup.get('postalZipCode')?.errors?.['puertoRicoZipCode']?.message }}
             </mat-error>
@@ -431,9 +437,13 @@
               [formControlName]="'operatingFromDate'"
               placeholder="{{ 'sites.edit.operating-from-date.placeholder' | transloco }}"
               data-cy="operating-from-date-input"
+              required
             />
             <mat-datepicker-toggle matSuffix [for]="operatingFromPicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingFromPicker></mat-datepicker>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingFromDate')?.hasError('required')">
+              {{ "sites.edit.operating-from-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field data-cy="operating-to-date-field">
@@ -444,9 +454,13 @@
               [formControlName]="'operatingToDate'"
               placeholder="{{ 'sites.edit.operating-to-date.placeholder' | transloco }}"
               data-cy="operating-to-date-input"
+              required
             />
             <mat-datepicker-toggle matSuffix [for]="operatingToPicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingToPicker></mat-datepicker>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingToDate')?.hasError('required')">
+              {{ "sites.edit.operating-to-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field data-cy="operating-days-calculated-field">
@@ -506,7 +520,7 @@
         <!-- Tipo de Entrega / Delivery Type -->
         <!-- Tipo de Cocina / Kitchen Type -->
         <!-- Tipo de Solicitante / Type of Applicant -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12" *ngIf="!shouldShowDayCareFields()" appDynamicGrid="5">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-5 sm:col-span-12" *ngIf="!shouldShowDayCareFields()" appDynamicGrid="4">
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "sites.edit.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" (valueChange)="getKitchenTypesByGroupType($event)" data-cy="group-type-select" [compareWith]="compareById">
@@ -810,7 +824,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('breakfast')?.hasError('required')">
-              {{ 'sites.edit.breakfast.required' | transloco }}
+              {{ "sites.edit.breakfast.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="breakfast-from-field">
@@ -825,7 +839,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastFrom" />
             <mat-timepicker #pickerBreakfastFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('breakfastFrom')?.hasError('required')">
-              {{ 'sites.edit.breakfast-from.required' | transloco }}
+              {{ "sites.edit.breakfast-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="breakfast-to-field">
@@ -836,10 +850,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('breakfastTo')?.hasError('required')">
-              {{ 'sites.edit.breakfast-to.required' | transloco }}
+              {{ "sites.edit.breakfast-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('breakfastTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('breakfastFrom', 'breakfastTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -855,7 +869,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAM')?.hasError('required')">
-              {{ 'sites.edit.snack-am.required' | transloco }}
+              {{ "sites.edit.snack-am.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-am-from-field">
@@ -870,7 +884,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMFrom" />
             <mat-timepicker #pickerSnackAMFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('snackAMFrom')?.hasError('required')">
-              {{ 'sites.edit.snack-am-from.required' | transloco }}
+              {{ "sites.edit.snack-am-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-am-to-field">
@@ -881,10 +895,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAMTo')?.hasError('required')">
-              {{ 'sites.edit.snack-am-to.required' | transloco }}
+              {{ "sites.edit.snack-am-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAMTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAMFrom', 'snackAMTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -900,7 +914,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('lunch')?.hasError('required')">
-              {{ 'sites.edit.lunch.required' | transloco }}
+              {{ "sites.edit.lunch.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="lunch-from-field">
@@ -915,7 +929,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
             <mat-timepicker #pickerLunchFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('lunchFrom')?.hasError('required')">
-              {{ 'sites.edit.lunch-from.required' | transloco }}
+              {{ "sites.edit.lunch-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="lunch-to-field">
@@ -926,10 +940,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('lunchTo')?.hasError('required')">
-              {{ 'sites.edit.lunch-to.required' | transloco }}
+              {{ "sites.edit.lunch-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('lunchTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('lunchFrom', 'lunchTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -945,7 +959,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackPM')?.hasError('required')">
-              {{ 'sites.edit.snack-pm.required' | transloco }}
+              {{ "sites.edit.snack-pm.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-pm-from-field">
@@ -960,7 +974,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMFrom" />
             <mat-timepicker #pickerSnackPMFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('snackPMFrom')?.hasError('required')">
-              {{ 'sites.edit.snack-pm-from.required' | transloco }}
+              {{ "sites.edit.snack-pm-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-pm-to-field">
@@ -971,10 +985,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackPMTo')?.hasError('required')">
-              {{ 'sites.edit.snack-pm-to.required' | transloco }}
+              {{ "sites.edit.snack-pm-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('snackPMTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackPMFrom', 'snackPMTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1005,7 +1019,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerFrom" />
             <mat-timepicker #pickerDinnerFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerFrom')?.hasError('required')">
-              {{ 'sites.edit.dinner-from.required' | transloco }}
+              {{ "sites.edit.dinner-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="dinner-to-field">
@@ -1016,10 +1030,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('required')">
-              {{ 'sites.edit.dinner-to.required' | transloco }}
+              {{ "sites.edit.dinner-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerFrom', 'dinnerTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1037,7 +1051,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackNight')?.hasError('required')">
-              {{ 'sites.edit.snack-night.required' | transloco }}
+              {{ "sites.edit.snack-night.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-night-from-field">
@@ -1052,7 +1066,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightFrom" />
             <mat-timepicker #pickerSnackNightFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('snackNightFrom')?.hasError('required')">
-              {{ 'sites.edit.snack-night-from.required' | transloco }}
+              {{ "sites.edit.snack-night-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-night-to-field">
@@ -1063,10 +1077,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('required')">
-              {{ 'sites.edit.snack-night-to.required' | transloco }}
+              {{ "sites.edit.snack-night-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackNightFrom', 'snackNightTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1082,7 +1096,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtended')?.hasError('required')">
-              {{ 'sites.edit.dinner-extended.required' | transloco }}
+              {{ "sites.edit.dinner-extended.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="dinner-extended-from-field">
@@ -1097,7 +1111,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedFrom" />
             <mat-timepicker #pickerDinnerExtendedFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedFrom')?.hasError('required')">
-              {{ 'sites.edit.dinner-extended-from.required' | transloco }}
+              {{ "sites.edit.dinner-extended-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="dinner-extended-to-field">
@@ -1108,10 +1122,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('required')">
-              {{ 'sites.edit.dinner-extended-to.required' | transloco }}
+              {{ "sites.edit.dinner-extended-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerExtendedFrom', 'dinnerExtendedTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1127,7 +1141,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRisk')?.hasError('required')">
-              {{ 'sites.edit.dinner-at-risk.required' | transloco }}
+              {{ "sites.edit.dinner-at-risk.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="dinner-at-risk-from-field">
@@ -1142,7 +1156,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskFrom" />
             <mat-timepicker #pickerDinnerAtRiskFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskFrom')?.hasError('required')">
-              {{ 'sites.edit.dinner-at-risk-from.required' | transloco }}
+              {{ "sites.edit.dinner-at-risk-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="dinner-at-risk-to-field">
@@ -1153,10 +1167,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('required')">
-              {{ 'sites.edit.dinner-at-risk-to.required' | transloco }}
+              {{ "sites.edit.dinner-at-risk-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerAtRiskFrom', 'dinnerAtRiskTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1172,7 +1186,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackExtended')?.hasError('required')">
-              {{ 'sites.edit.snack-extended.required' | transloco }}
+              {{ "sites.edit.snack-extended.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-extended-from-field">
@@ -1187,7 +1201,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedFrom" />
             <mat-timepicker #pickerSnackExtendedFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedFrom')?.hasError('required')">
-              {{ 'sites.edit.snack-extended-from.required' | transloco }}
+              {{ "sites.edit.snack-extended-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-extended-to-field">
@@ -1198,10 +1212,10 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('required')">
-              {{ 'sites.edit.snack-extended-to.required' | transloco }}
+              {{ "sites.edit.snack-extended-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackExtendedFrom', 'snackExtendedTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
@@ -1217,7 +1231,7 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAtRisk')?.hasError('required')">
-              {{ 'sites.edit.snack-at-risk.required' | transloco }}
+              {{ "sites.edit.snack-at-risk.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-at-risk-from-field">
@@ -1232,7 +1246,7 @@
             <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskFrom" />
             <mat-timepicker #pickerSnackAtRiskFrom />
             <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskFrom')?.hasError('required')">
-              {{ 'sites.edit.snack-at-risk-from.required' | transloco }}
+              {{ "sites.edit.snack-at-risk-from.required" | transloco }}
             </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="snack-at-risk-to-field">
@@ -1243,23 +1257,23 @@
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('required')">
-              {{ 'sites.edit.snack-at-risk-to.required' | transloco }}
+              {{ "sites.edit.snack-at-risk-to.required" | transloco }}
             </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAtRiskFrom', 'snackAtRiskTo')">
-              {{ 'sites.edit.time-range-invalid' | transloco }}
+              {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
         </div>
 
         <!-- TITULO -->
-        <!-- Persona a Cargo (solo para PDAM) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM">
+        <!-- Persona a Cargo (solo para PDAM y PSAV) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM || isPSAV">
           <p class="text-lg font-medium">{{ "sites.edit.administrator-authorized.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.administrator-authorized.description" | transloco }}</p>
         </div>
 
-        <!-- Persona a Cargo - Campos individuales (solo para PDAM) -->
-        <div [formGroup]="headerConfig.formGroup" *ngIf="isPDAM && !shouldShowDayCareFields()" class="grid grid-cols-1 col-span-12">
+        <!-- Persona a Cargo - Campos individuales (solo para PDAM y PSAV) -->
+        <div [formGroup]="headerConfig.formGroup" *ngIf="(isPDAM || isPSAV) && !shouldShowDayCareFields()" class="grid grid-cols-1 col-span-12">
           <div formGroupName="personInCharge">
             <!-- Campos de nombre -->
             <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-4 sm:col-span-12">
@@ -1311,12 +1325,22 @@
               <mat-form-field data-cy="site-phone-field">
                 <mat-label>{{ "sites.edit.site-phone.label" | transloco }}</mat-label>
                 <input matInput formControlName="sitePhone" placeholder="{{ 'sites.edit.site-phone.placeholder' | transloco }}" phoneFormat data-cy="site-phone-input" />
-                <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('sitePhone')?.hasError('required')">{{ "sites.edit.site-phone.required" | transloco }}</mat-error>
+                <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('sitePhone')?.hasError('required')">{{
+                  "sites.edit.site-phone.required" | transloco
+                }}</mat-error>
                 <mat-error *ngIf="headerConfig.formGroup.get('personInCharge')?.get('sitePhone')?.hasError('puertoRicoPhone')">El teléfono debe tener 10 dígitos</mat-error>
               </mat-form-field>
               <mat-form-field data-cy="extension-field">
                 <mat-label>{{ "sites.edit.extension.label" | transloco }}</mat-label>
-                <input matInput formControlName="extension" placeholder="{{ 'sites.edit.extension.placeholder' | transloco }}" inputmode="numeric" pattern="[0-9]*" numericOnly data-cy="extension-input" />
+                <input
+                  matInput
+                  formControlName="extension"
+                  placeholder="{{ 'sites.edit.extension.placeholder' | transloco }}"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  numericOnly
+                  data-cy="extension-input"
+                />
               </mat-form-field>
               <mat-form-field data-cy="mobile-phone-field">
                 <mat-label>{{ "sites.edit.mobile-phone.label" | transloco }}</mat-label>
@@ -1342,13 +1366,13 @@
         </div>
 
         <!-- Campos de Revisión -->
+        <!-- COMENTADO: Se va a cambiar de lugar -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.edit.review.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.review.description" | transloco }}</p>
         </div>
 
-        <!-- Resultado de revisión -->
-        <!-- Fecha de revisión -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="review-result-field">
             <mat-label>{{ "sites.edit.review-result.label" | transloco }}</mat-label>
@@ -1373,7 +1397,6 @@
           </mat-form-field>
         </div>
 
-        <!-- Justificación de revisión -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="review-justification-field">
             <mat-label>{{ "sites.edit.review-justification.label" | transloco }}</mat-label>
@@ -1386,6 +1409,7 @@
             ></textarea>
           </mat-form-field>
         </div>
+        -->
 
         <!-- Satélites -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="satellitesTableConfig.dataSource.data.length > 0">

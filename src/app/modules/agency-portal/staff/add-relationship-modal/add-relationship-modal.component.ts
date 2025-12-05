@@ -114,7 +114,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
       skip: 0,
       name: null,
       alls: false,
-      excludeRelated: true,
+      excludeRelated: false,
       isList: false,
       staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
       agencyId: agencyId,

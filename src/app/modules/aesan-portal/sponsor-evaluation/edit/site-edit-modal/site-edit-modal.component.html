@@ -372,16 +372,22 @@
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <mat-form-field>
             <mat-label>{{ 'sites.edit.operating-from-date.label' | transloco }}</mat-label>
-            <input matInput [matDatepicker]="operatingFromDatePicker" formControlName="operatingFromDate" />
+            <input matInput [matDatepicker]="operatingFromDatePicker" formControlName="operatingFromDate" required />
             <mat-datepicker-toggle matSuffix [for]="operatingFromDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingFromDatePicker></mat-datepicker>
+            <mat-error *ngIf="form.get('operatingFromDate')?.hasError('required')">
+              {{ "sites.edit.operating-from-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field>
             <mat-label>{{ 'sites.edit.operating-to-date.label' | transloco }}</mat-label>
-            <input matInput [matDatepicker]="operatingToDatePicker" formControlName="operatingToDate" />
+            <input matInput [matDatepicker]="operatingToDatePicker" formControlName="operatingToDate" required />
             <mat-datepicker-toggle matSuffix [for]="operatingToDatePicker"></mat-datepicker-toggle>
             <mat-datepicker #operatingToDatePicker></mat-datepicker>
+            <mat-error *ngIf="form.get('operatingToDate')?.hasError('required')">
+              {{ "sites.edit.operating-to-date.required" | transloco }}
+            </mat-error>
           </mat-form-field>
 
           <mat-form-field>
