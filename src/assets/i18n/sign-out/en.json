@@ -1,0 +1,14 @@
+{
+  "sign-out": {
+    "title": "You have signed out!",
+    "redirecting": "Redirecting in",
+    "redirecting-now": "You are now being redirected!",
+    "go-to": "Go to",
+    "sign-in": "sign in",
+    "countdown": {
+      "second": "# second",
+      "seconds": "# seconds"
+    }
+  }
+}
+

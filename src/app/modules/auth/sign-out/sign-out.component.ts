@@ -1,14 +1,15 @@
 import { I18nPluralPipe, NgIf } from '@angular/common';
-import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { finalize, Subject, takeUntil, takeWhile, tap, timer } from 'rxjs';
 
 @Component({
     selector: 'auth-sign-out',
     templateUrl: './sign-out.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, RouterLink, I18nPluralPipe]
+    imports: [NgIf, RouterLink, I18nPluralPipe, TranslocoModule]
 })
 export class AuthSignOutComponent implements OnInit, OnDestroy
 {
@@ -18,6 +19,7 @@ export class AuthSignOutComponent implements OnInit, OnDestroy
         'other': '# seconds',
     };
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    private _translocoService = inject(TranslocoService);
 
     /**
      * Constructor
@@ -38,6 +40,9 @@ export class AuthSignOutComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
+        // Initialize countdown mapping with translations
+        this._updateCountdownMapping();
+
         // Sign out
         this._authService.signOut();
 
@@ -53,6 +58,17 @@ export class AuthSignOutComponent implements OnInit, OnDestroy
                 tap(() => this.countdown--),
             )
             .subscribe();
+    }
+
+    /**
+     * Update countdown mapping with current language translations
+     */
+    private _updateCountdownMapping(): void
+    {
+        this.countdownMapping = {
+            '=1'   : this._translocoService.translate('sign-out.countdown.second'),
+            'other': this._translocoService.translate('sign-out.countdown.seconds'),
+        };
     }
 
     /**
