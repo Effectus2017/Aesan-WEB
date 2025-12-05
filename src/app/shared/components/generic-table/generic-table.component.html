@@ -25,6 +25,14 @@
       </mat-menu>
     </div>
   </div>
+
+  <!-- Mensaje cuando la tabla está vacía -->
+  @if (isEmpty) {
+  <div class="flex flex-col justify-center items-center py-12">
+    <mat-icon [svgIcon]="'heroicons_outline:inbox'" class="mb-4 text-6xl text-gray-400 dark:text-gray-500"></mat-icon>
+    <p class="text-lg text-secondary dark:text-gray-400">{{ 'global.table.empty' | transloco }}</p>
+  </div>
+  } @else {
   <table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>
@@ -240,10 +248,17 @@
   <tr mat-header-row *matHeaderRowDef="config.displayedColumns"></tr>
   <tr class="h-16 order-row" mat-row *matRowDef="let row; columns: config.displayedColumns"></tr>
   </table>
+  }
 </div>
 
 <!-- Lista para móviles -->
 <div class="w-full sm:hidden">
+  @if (isEmpty) {
+  <div class="flex flex-col justify-center items-center px-4 py-12">
+    <mat-icon [svgIcon]="'heroicons_outline:inbox'" class="mb-4 text-6xl text-gray-400 dark:text-gray-500"></mat-icon>
+    <p class="text-lg text-secondary dark:text-gray-400">{{ 'global.table.empty' | transloco }}</p>
+  </div>
+  } @else {
   @for (element of config.dataSource.connect() | async; track element) {
   <div class="p-2 m-2 rounded-lg border bg-card">
     @for (col of config.columnsSchema; track col) {
@@ -460,5 +475,6 @@
     </div>
     }
   </div>
+  }
   }
 </div>

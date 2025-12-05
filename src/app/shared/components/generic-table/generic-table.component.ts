@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, DoCheck, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'app-generic-table',
@@ -16,16 +17,60 @@ import { AuthService } from 'app/core/auth/auth.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule]
 })
-export class GenericTableComponent implements OnInit {
+export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCheck {
   @Input() config: GenericTableConfig;
   @Input() handler: OnGenericTableHandler;
   @Input() darkMode: boolean = false;
 
   private _authService = inject(AuthService);
   public _translocoService = inject(TranslocoService);
+  private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _unsubscribeAll = new Subject<void>();
+  private _lastDataLength = 0;
 
   ngOnInit(): void {
+    this._subscribeToDataSource();
+    this._updateLastDataLength();
+  }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    // Si el config cambia, re-suscribirse al dataSource
+    if (changes['config'] && this.config?.dataSource) {
+      this._unsubscribeAll.next();
+      this._subscribeToDataSource();
+      this._updateLastDataLength();
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+
+  ngDoCheck(): void {
+    // Detectar cambios en el dataSource.data cuando se agregan datos directamente
+    const currentLength = this.config?.dataSource?.data?.length || 0;
+    if (currentLength !== this._lastDataLength) {
+      this._lastDataLength = currentLength;
+      this._changeDetectorRef.markForCheck();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
+  }
+
+  private _subscribeToDataSource(): void {
+    // Suscribirse a los cambios del dataSource para detectar cuando se agregan datos
+    if (this.config?.dataSource) {
+      this.config.dataSource.connect()
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe(() => {
+          this._updateLastDataLength();
+          this._changeDetectorRef.markForCheck();
+        });
+    }
+  }
+
+  private _updateLastDataLength(): void {
+    this._lastDataLength = this.config?.dataSource?.data?.length || 0;
   }
 
   /**
@@ -395,6 +440,18 @@ export class GenericTableComponent implements OnInit {
     if (this.handler && this.handler.onTableViewStaff) {
       this.handler.onTableViewStaff(event, id);
     }
+  }
+
+  /**
+   * Verifica si la tabla está vacía
+   * @returns true si la tabla no tiene datos
+   */
+  get isEmpty(): boolean {
+    if (!this.config?.dataSource) {
+      return true;
+    }
+    const data = this.config.dataSource.data;
+    return !data || data.length === 0;
   }
 
   /**

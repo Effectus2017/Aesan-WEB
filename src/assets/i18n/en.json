@@ -35,6 +35,9 @@
         "validation": {
             "required": "This field is required",
             "minLength": "Minimum length not met"
+        },
+        "table": {
+            "empty": "No data available"
         }
     },
     "side-menu": {
