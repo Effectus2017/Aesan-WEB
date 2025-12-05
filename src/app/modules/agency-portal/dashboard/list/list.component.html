@@ -5,10 +5,6 @@
   <!-- Main Content -->
   <div class="overflow-y-auto flex-auto" cdkScrollable>
     <div class="p-6 sm:p-10">
-      <!-- Fecha actual -->
-      <p class="mb-6 text-sm text-gray-600">
-        {{ 'agency.dashboard.today' | transloco }} {{ currentDate }}
-      </p>
       <!-- Sección de KPIs -->
       <div class="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-3">
         <ng-container *ngFor="let card of agencyDashboardCardsData">

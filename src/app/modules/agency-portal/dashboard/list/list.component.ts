@@ -8,13 +8,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { fuseAnimations } from '@fuse/animations';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SharedModule } from 'app/shared/shared.module';
 import { agencyDashboardCardsData, agencyDashboardTableData, rationsByMonthData, coordinatedVisitsData } from './columns-data';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { AGENCY_DASHBOARD_COLUMNS_SCHEMA } from './columns-schema';
-import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -63,9 +62,8 @@ export type PieChartOptions = {
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
     imports: [CommonModule,
-        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, NgIf, TranslocoModule,
+        MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, TranslocoModule,
         SharedModule,
-        GenericTableComponent,
         GenericHeaderComponent,
         NgApexchartsModule]
 })
@@ -83,6 +81,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   headerConfig: GenericHeaderConfig = {
     title: 'agency.dashboard.welcome',
     agency: this.sponsorName,
+    subtitle: '',
   };
 
   // Configuración del gráfico de barras horizontales (Raciones por mes)
@@ -191,8 +190,14 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     const monthName = months[now.month - 1];
     this.currentDate = `${dayName} ${now.day} de ${monthName} de ${now.year}`;
 
-    // Actualizar headerConfig con el nombre del auspiciador
+    // Actualizar headerConfig con el nombre del auspiciador y la fecha
     this.headerConfig.agency = this.sponsorName;
+    this._translocoService.selectTranslate('agency.dashboard.today')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(translation => {
+        this.headerConfig.subtitle = `${translation} ${this.currentDate}`;
+        this._changeDetectorRef.detectChanges();
+      });
 
     // Traducir títulos de los gráficos
     this._translocoService.selectTranslate('agency.dashboard.charts.rationsByMonth')

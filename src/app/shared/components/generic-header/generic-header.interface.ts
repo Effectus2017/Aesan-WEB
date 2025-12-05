@@ -4,6 +4,7 @@ export interface GenericHeaderConfig {
   // Propiedades obligatorias
   title: string;
   agency?: string;
+  subtitle?: string;
   formGroup?: FormGroup;
 
   // Search Field config

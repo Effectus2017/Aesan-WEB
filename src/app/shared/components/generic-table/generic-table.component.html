@@ -14,7 +14,8 @@
   </button>
 </div>
 
-<table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
+<div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+  <table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>
       {{ col.label | transloco }}
@@ -228,7 +229,8 @@
 
   <tr mat-header-row *matHeaderRowDef="config.displayedColumns"></tr>
   <tr class="h-16 order-row" mat-row *matRowDef="let row; columns: config.displayedColumns"></tr>
-</table>
+  </table>
+</div>
 
 <!-- Lista para móviles -->
 <div class="w-full sm:hidden">
