@@ -50,7 +50,10 @@
         "accept": "Aceptar",
         "close": "Cerrar",
         "profile": "Perfil",
-        "signed-in-as": "Sesión iniciada como"
+        "signed-in-as": "Sesión iniciada como",
+        "sign-out": "Cerrar sesión",
+        "dark-mode": "Modo oscuro",
+        "light-mode": "Modo claro"
     },
     "reset-password": {
         "title": "Restablecer Contraseña",

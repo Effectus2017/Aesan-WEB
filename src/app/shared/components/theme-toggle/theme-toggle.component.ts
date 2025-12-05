@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { FuseConfigService } from '@fuse/services/config';
+import { TranslocoModule } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -13,7 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs: 'themeToggle',
-    imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule]
+    imports: [MatButtonModule, MatIconModule, MatTooltipModule, CommonModule, TranslocoModule]
 })
 export class ThemeToggleComponent implements OnInit {
   @Input() menuItem: boolean = false;

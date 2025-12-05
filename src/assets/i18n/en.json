@@ -56,7 +56,10 @@
         "accept": "Accept",
         "close": "Close",
         "profile": "Profile",
-        "signed-in-as": "Signed in as"
+        "signed-in-as": "Signed in as",
+        "sign-out": "Sign out",
+        "dark-mode": "Dark mode",
+        "light-mode": "Light mode"
     },
     "reset-password": {
         "title": "Reset Password",
