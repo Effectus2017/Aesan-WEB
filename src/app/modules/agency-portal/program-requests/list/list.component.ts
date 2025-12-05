@@ -67,6 +67,7 @@ export class AgencyProgramRequestsListComponent implements OnInit, OnDestroy, On
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();

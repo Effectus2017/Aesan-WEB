@@ -1,6 +1,6 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120">
   <!-- Header - Fixed, outside scroll -->
-  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-shrink-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+  <div class="flex flex-shrink-0 justify-between items-center pr-3 pl-6 h-16 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="flex flex-col">
       <div class="text-lg font-medium">
         {{ 'sponsor-evaluation.edit.staffBySite.modal.title' | transloco }}
@@ -12,9 +12,14 @@
   </div>
 
   <!-- Content - Scrollable area -->
-  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0">
+    <!-- Loading State -->
+    <div *ngIf="isInitialLoading" class="flex justify-center items-center py-8">
+      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+    </div>
+
     <!-- Tabla de personal -->
-    <div class="flex-1">
+    <div *ngIf="!isInitialLoading" class="flex-1">
       <app-generic-table
         [config]="tableConfig"
         [handler]="this"
@@ -24,7 +29,7 @@
   </div>
 
   <!-- Actions - Fixed footer, outside scroll -->
-  <div class="flex flex-col justify-end p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+  <div class="flex flex-col flex-shrink-0 justify-end p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
     <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()" class="sm:ml-auto">
       {{ 'global.buttons.close' | transloco }}
     </button>

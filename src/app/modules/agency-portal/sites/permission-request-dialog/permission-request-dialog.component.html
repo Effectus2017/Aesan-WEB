@@ -8,17 +8,19 @@
   </div>
 
   <!-- Content -->
-  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
     <p class="mb-6">{{ 'dialog.permission-request.message' | transloco }}</p>
+  </div>
 
-    <!-- Actions -->
-    <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
+  <!-- Actions - Fixed footer, outside scroll -->
+  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex gap-2">
       <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="'no'">
         {{ 'dialog.permission-request.no' | transloco }}
       </button>
-      <button mat-flat-button type="button" [color]="'primary'" [mat-dialog-close]="'yes'">
-        {{ 'dialog.permission-request.yes' | transloco }}
-      </button>
     </div>
+    <button mat-flat-button type="button" [color]="'primary'" [mat-dialog-close]="'yes'">
+      {{ 'dialog.permission-request.yes' | transloco }}
+    </button>
   </div>
 </div>

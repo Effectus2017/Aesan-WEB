@@ -71,6 +71,7 @@ export class PermissionsListComponent implements OnInit, OnDestroy, OnGenericTab
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

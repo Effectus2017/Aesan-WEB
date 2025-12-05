@@ -8,37 +8,41 @@
   </div>
 
   <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="flex flex-col gap-4">
-      <!-- Campo Estatus -->
-      <mat-form-field>
-        <mat-label>{{ 'staff.edit.status-modal.status.label' | transloco }}</mat-label>
-        <mat-select formControlName="isActive">
-          @for (option of data.isActiveOptions; track option.id) {
-          <mat-option [value]="option.booleanValue">
-            {{ currentLang === 'en' ? option.nameEN : option.name }}
-          </mat-option>
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-4">
+        <!-- Campo Estatus -->
+        <mat-form-field>
+          <mat-label>{{ 'staff.edit.status-modal.status.label' | transloco }}</mat-label>
+          <mat-select formControlName="isActive">
+            @for (option of data.isActiveOptions; track option.id) {
+            <mat-option [value]="option.booleanValue">
+              {{ currentLang === 'en' ? option.nameEN : option.name }}
+            </mat-option>
+            }
+          </mat-select>
+          @if (form.get('isActive')?.hasError('required')) {
+          <mat-error>
+            {{ 'staff.edit.status-modal.status.required' | transloco }}
+          </mat-error>
           }
-        </mat-select>
-        @if (form.get('isActive')?.hasError('required')) {
-        <mat-error>
-          {{ 'staff.edit.status-modal.status.required' | transloco }}
-        </mat-error>
-        }
-      </mat-form-field>
+        </mat-form-field>
+      </div>
+    </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
         <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading">
           {{ 'staff.edit.status-modal.cancel' | transloco }}
         </button>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading">
-          @if (isLoading) {
-          <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-          }
-          {{ 'staff.edit.status-modal.save' | transloco }}
-        </button>
       </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading">
+        @if (isLoading) {
+        <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
+        }
+        {{ 'staff.edit.status-modal.save' | transloco }}
+      </button>
     </div>
   </form>
 </div>

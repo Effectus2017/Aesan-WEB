@@ -307,6 +307,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     onAddButtonClick: (event: Event, tableId?: string) => {
       this.onTableAdd();
     },
+    fullScreen: true,
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)

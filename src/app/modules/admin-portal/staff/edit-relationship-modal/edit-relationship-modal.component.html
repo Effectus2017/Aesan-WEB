@@ -8,74 +8,78 @@
   </div>
 
   <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
-      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
+        <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+      </div>
+
+      <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
+        <!-- Dropdown 1: Staff Relacionado -->
+        <mat-form-field data-cy="related-staff-field">
+          <mat-label>{{ "staff.edit.relationships.modal.relatedStaff.label" | transloco }}</mat-label>
+          <mat-select formControlName="relatedStaff"
+            [placeholder]="'staff.edit.relationships.modal.relatedStaff.placeholder' | transloco"
+            [compareWith]="compareById"
+            data-cy="related-staff-select"
+          >
+            <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option">
+              {{ staff.firstName }} {{ staff.middleName }} {{ staff.fatherLastName }} {{ staff.secondFatherLastName }} - {{ staff.email }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('relatedStaff')?.hasError('required')">
+            {{ "staff.edit.relationships.modal.relatedStaff.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Dropdown 2: Tipo de Relación -->
+        <mat-form-field data-cy="relationship-type-field">
+          <mat-label>{{ "staff.edit.relationships.modal.relationshipType.label" | transloco }}</mat-label>
+          <mat-select
+            formControlName="relationshipType"
+            [placeholder]="'staff.edit.relationships.modal.relationshipType.placeholder' | transloco"
+            [compareWith]="compareById"
+            data-cy="relationship-type-select"
+          >
+            <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">
+              {{ type.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('relationshipType')?.hasError('required')">
+            {{ "staff.edit.relationships.modal.relationshipType.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Dropdown 3: Estado Activo/Inactivo -->
+        <mat-form-field data-cy="is-active-field">
+          <mat-label>{{ "staff.edit.relationships.modal.isActive.label" | transloco }}</mat-label>
+          <mat-select
+            formControlName="isActive"
+            [placeholder]="'staff.edit.relationships.modal.isActive.placeholder' | transloco"
+            data-cy="is-active-select"
+          >
+            <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-active-option">
+              {{ currentLang === "en" ? option.nameEN : option.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('isActive')?.hasError('required')">
+            {{ "staff.edit.relationships.modal.isActive.required" | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
     </div>
 
-    <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
-      <!-- Dropdown 1: Staff Relacionado -->
-      <mat-form-field data-cy="related-staff-field">
-        <mat-label>{{ "staff.edit.relationships.modal.relatedStaff.label" | transloco }}</mat-label>
-        <mat-select formControlName="relatedStaff"
-          [placeholder]="'staff.edit.relationships.modal.relatedStaff.placeholder' | transloco"
-          [compareWith]="compareById"
-          data-cy="related-staff-select"
-        >
-          <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option">
-            {{ staff.firstName }} {{ staff.middleName }} {{ staff.fatherLastName }} {{ staff.secondFatherLastName }} - {{ staff.email }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('relatedStaff')?.hasError('required')">
-          {{ "staff.edit.relationships.modal.relatedStaff.required" | transloco }}
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Dropdown 2: Tipo de Relación -->
-      <mat-form-field data-cy="relationship-type-field">
-        <mat-label>{{ "staff.edit.relationships.modal.relationshipType.label" | transloco }}</mat-label>
-        <mat-select
-          formControlName="relationshipType"
-          [placeholder]="'staff.edit.relationships.modal.relationshipType.placeholder' | transloco"
-          [compareWith]="compareById"
-          data-cy="relationship-type-select"
-        >
-          <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">
-            {{ type.name }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('relationshipType')?.hasError('required')">
-          {{ "staff.edit.relationships.modal.relationshipType.required" | transloco }}
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Dropdown 3: Estado Activo/Inactivo -->
-      <mat-form-field data-cy="is-active-field">
-        <mat-label>{{ "staff.edit.relationships.modal.isActive.label" | transloco }}</mat-label>
-        <mat-select
-          formControlName="isActive"
-          [placeholder]="'staff.edit.relationships.modal.isActive.placeholder' | transloco"
-          data-cy="is-active-select"
-        >
-          <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-active-option">
-            {{ currentLang === "en" ? option.nameEN : option.name }}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="form.get('isActive')?.hasError('required')">
-          {{ "staff.edit.relationships.modal.isActive.required" | transloco }}
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
         <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading" data-cy="cancel-button">
           {{ "staff.edit.relationships.modal.buttons.cancel" | transloco }}
         </button>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" data-cy="save-button">
-          <mat-icon *ngIf="isLoading" class="mr-2 animate-spin">hourglass_empty</mat-icon>
-          {{ isLoading ? ("staff.edit.relationships.modal.buttons.updating" | transloco) : ("staff.edit.relationships.modal.buttons.update" | transloco) }}
-        </button>
       </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" data-cy="save-button">
+        <mat-icon *ngIf="isLoading" class="mr-2 animate-spin">hourglass_empty</mat-icon>
+        {{ isLoading ? ("staff.edit.relationships.modal.buttons.updating" | transloco) : ("staff.edit.relationships.modal.buttons.update" | transloco) }}
+      </button>
     </div>
   </form>
 </div>

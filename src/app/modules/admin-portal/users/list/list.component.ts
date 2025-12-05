@@ -64,6 +64,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

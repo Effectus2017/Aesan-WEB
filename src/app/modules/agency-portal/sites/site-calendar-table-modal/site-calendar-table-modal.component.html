@@ -10,7 +10,7 @@
   </div>
 
   <!-- Content -->
-  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
     <div class="flex flex-col gap-6">
       <!-- Información del día -->
       <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
@@ -27,32 +27,32 @@
           [darkMode]="false">
         </app-generic-table>
       </div>
+    </div>
+  </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
-            {{ 'global.buttons.close' | transloco }}
-          </button>
-        </div>
-        <div class="flex gap-2">
-          <button
-            mat-flat-button
-            type="button"
-            [color]="'primary'"
-            (click)="addService()">
-            {{ 'sites.calendar.modals.day-events.addService' | transloco }}
-          </button>
-          <button
-            *ngIf="!hasOperatingDay()"
-            mat-flat-button
-            type="button"
-            [color]="'primary'"
-            (click)="addEvent()">
-            {{ 'sites.calendar.modals.day-events.addEvent' | transloco }}
-          </button>
-        </div>
-      </div>
+  <!-- Actions - Fixed footer, outside scroll -->
+  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+    <div class="flex gap-2">
+      <button
+        mat-flat-button
+        type="button"
+        [color]="'primary'"
+        (click)="addService()">
+        {{ 'sites.calendar.modals.day-events.addService' | transloco }}
+      </button>
+      <button
+        *ngIf="!hasOperatingDay()"
+        mat-flat-button
+        type="button"
+        [color]="'primary'"
+        (click)="addEvent()">
+        {{ 'sites.calendar.modals.day-events.addEvent' | transloco }}
+      </button>
     </div>
   </div>
 </div>

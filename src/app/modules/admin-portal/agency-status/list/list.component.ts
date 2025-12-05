@@ -74,6 +74,7 @@ export class AgencyStatusListComponent implements OnInit, OnDestroy, OnGenericTa
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

@@ -10,77 +10,79 @@
   </div>
 
   <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="data.form" (ngSubmit)="onSave()">
-    <div class="flex flex-col gap-6">
-      <!-- Información del servicio -->
-      <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          <strong>{{ 'sites.calendar.modals.edit-service.service' | transloco }}:</strong> {{ getServiceName() }}
-        </p>
-      </div>
-
-      <!-- Horarios -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-service.startTime.label' | transloco }}</mat-label>
-          <mat-select formControlName="startTime" required>
-            <mat-option *ngFor="let time of startTimeOptions" [value]="time.value">
-              {{ time.display }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-service.startTime.required' | transloco }}
-          </mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
-          <mat-label>{{ 'sites.calendar.modals.edit-service.endTime.label' | transloco }}</mat-label>
-          <mat-select formControlName="endTime" required>
-            <mat-option *ngFor="let time of endTimeOptions" [value]="time.value">
-              {{ time.display }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
-            {{ 'sites.calendar.modals.edit-service.endTime.required' | transloco }}
-          </mat-error>
-          <mat-error *ngIf="isEndTimeInvalid()">
-            {{ 'sites.calendar.modals.edit-service.endTime.invalid' | transloco }}
-          </mat-error>
-        </mat-form-field>
-      </div>
-
-      <!-- Comentario -->
-      <mat-form-field>
-        <mat-label>{{ 'sites.calendar.modals.edit-service.comment.label' | transloco }}</mat-label>
-        <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.edit-service.comment.placeholder' | transloco"></textarea>
-      </mat-form-field>
-
-      <!-- Opciones -->
-      <div class="flex flex-col gap-3">
-        <mat-checkbox formControlName="isEnabled">
-          {{ 'sites.calendar.modals.edit-service.enabled' | transloco }}
-        </mat-checkbox>
-      </div>
-
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
-            {{ 'global.buttons.cancel' | transloco }}
-          </button>
-          <!-- <button
-            mat-flat-button
-            type="button"
-            [color]="'warn'"
-            (click)="onDelete()"
-            class="bg-red-600 hover:bg-red-700">
-            {{ 'global.buttons.delete' | transloco }}
-          </button> -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="data.form" (ngSubmit)="onSave()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
+        <!-- Información del servicio -->
+        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+          <p class="text-sm text-gray-600 dark:text-gray-400">
+            <strong>{{ 'sites.calendar.modals.edit-service.service' | transloco }}:</strong> {{ getServiceName() }}
+          </p>
         </div>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid()">
-          {{ 'global.buttons.save' | transloco }}
-        </button>
+
+        <!-- Horarios -->
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <mat-form-field>
+            <mat-label>{{ 'sites.calendar.modals.edit-service.startTime.label' | transloco }}</mat-label>
+            <mat-select formControlName="startTime" required>
+              <mat-option *ngFor="let time of startTimeOptions" [value]="time.value">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="data.form.get('startTime')?.hasError('required')">
+              {{ 'sites.calendar.modals.edit-service.startTime.required' | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field>
+            <mat-label>{{ 'sites.calendar.modals.edit-service.endTime.label' | transloco }}</mat-label>
+            <mat-select formControlName="endTime" required>
+              <mat-option *ngFor="let time of endTimeOptions" [value]="time.value">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="data.form.get('endTime')?.hasError('required')">
+              {{ 'sites.calendar.modals.edit-service.endTime.required' | transloco }}
+            </mat-error>
+            <mat-error *ngIf="isEndTimeInvalid()">
+              {{ 'sites.calendar.modals.edit-service.endTime.invalid' | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Comentario -->
+        <mat-form-field>
+          <mat-label>{{ 'sites.calendar.modals.edit-service.comment.label' | transloco }}</mat-label>
+          <textarea matInput formControlName="comment" rows="3" [placeholder]="'sites.calendar.modals.edit-service.comment.placeholder' | transloco"></textarea>
+        </mat-form-field>
+
+        <!-- Opciones -->
+        <div class="flex flex-col gap-3">
+          <mat-checkbox formControlName="isEnabled">
+            {{ 'sites.calendar.modals.edit-service.enabled' | transloco }}
+          </mat-checkbox>
+        </div>
       </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+        <!-- <button
+          mat-flat-button
+          type="button"
+          [color]="'warn'"
+          (click)="onDelete()"
+          class="bg-red-600 hover:bg-red-700">
+          {{ 'global.buttons.delete' | transloco }}
+        </button> -->
+      </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid()">
+        {{ 'global.buttons.save' | transloco }}
+      </button>
     </div>
   </form>
 </div>

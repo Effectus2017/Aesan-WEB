@@ -73,6 +73,7 @@ export class StaffTypeListComponent implements OnInit, OnDestroy, OnGenericTable
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

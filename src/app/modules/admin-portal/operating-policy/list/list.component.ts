@@ -73,6 +73,7 @@ export class OperatingPolicyListComponent implements OnInit, OnDestroy, OnGeneri
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

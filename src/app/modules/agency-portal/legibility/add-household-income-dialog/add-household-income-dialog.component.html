@@ -9,8 +9,9 @@
   </div>
 
   <!-- Form -->
-  <form class="flex flex-col flex-auto p-6 overflow-y-auto" [formGroup]="householdIncomeForm" (ngSubmit)="onSubmit()">
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-1">
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="householdIncomeForm" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="grid grid-cols-1 gap-6 sm:grid-cols-1">
       <!-- Nombre y Apellido -->
       <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
         <!-- Nombre -->
@@ -112,12 +113,16 @@
           </mat-form-field>
       </div>
     }
+      </div>
     </div>
-    <!-- Actions -->
-    <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
-      <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
-        {{ "global.buttons.cancel" | transloco }}
-      </button>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+          {{ "global.buttons.cancel" | transloco }}
+        </button>
+      </div>
       <button mat-flat-button type="submit" [color]="'primary'" [disabled]="householdIncomeForm.invalid">
         {{ "global.buttons.save" | transloco }}
       </button>

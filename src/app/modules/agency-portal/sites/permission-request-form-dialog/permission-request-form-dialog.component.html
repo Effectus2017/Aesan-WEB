@@ -8,35 +8,39 @@
   </div>
 
   <!-- Form -->
-  <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="flex flex-col gap-4">
-      <p class="mb-4">{{ 'dialog.permission-request-form.message' | transloco }}</p>
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-4">
+        <p class="mb-4">{{ 'dialog.permission-request-form.message' | transloco }}</p>
 
-      <mat-form-field>
-        <mat-label>{{ 'dialog.permission-request-form.reason.label' | transloco }}</mat-label>
-        <textarea
-          matInput
-          formControlName="reason"
-          [placeholder]="'dialog.permission-request-form.reason.placeholder' | transloco"
-          rows="4">
-        </textarea>
-        <mat-error *ngIf="form.get('reason')?.hasError('required')">
-          {{ 'dialog.permission-request-form.reason.required' | transloco }}
-        </mat-error>
-        <mat-error *ngIf="form.get('reason')?.hasError('minlength')">
-          {{ 'dialog.permission-request-form.reason.minlength' | transloco }}
-        </mat-error>
-      </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'dialog.permission-request-form.reason.label' | transloco }}</mat-label>
+          <textarea
+            matInput
+            formControlName="reason"
+            [placeholder]="'dialog.permission-request-form.reason.placeholder' | transloco"
+            rows="4">
+          </textarea>
+          <mat-error *ngIf="form.get('reason')?.hasError('required')">
+            {{ 'dialog.permission-request-form.reason.required' | transloco }}
+          </mat-error>
+          <mat-error *ngIf="form.get('reason')?.hasError('minlength')">
+            {{ 'dialog.permission-request-form.reason.minlength' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
 
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
         <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="{ action: 'cancel' }">
           {{ 'dialog.permission-request-form.cancel' | transloco }}
         </button>
-        <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid">
-          {{ 'dialog.permission-request-form.submit' | transloco }}
-        </button>
       </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid">
+        {{ 'dialog.permission-request-form.submit' | transloco }}
+      </button>
     </div>
   </form>
 </div>

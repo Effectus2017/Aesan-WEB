@@ -40,5 +40,29 @@ export const AGENCY_DASHBOARD_COLUMNS_SCHEMA: ColumnSchema[] = [
         visible: true,
         sortable: false,
         searchable: false
+    },
+    {
+        key: 'actions',
+        type: 'button',
+        label: 'agency.dashboard.table.actions',
+        visible: true,
+        sortable: false,
+        searchable: false,
+        buttons: [
+            {
+                key: 'view',
+                label: 'agency.dashboard.table.view',
+                icon: 'heroicons_outline:eye',
+                tooltip: 'agency.dashboard.table.view',
+                color: 'primary'
+            },
+            {
+                key: 'edit',
+                label: 'agency.dashboard.table.edit',
+                icon: 'heroicons_outline:pencil',
+                tooltip: 'agency.dashboard.table.edit',
+                color: 'primary'
+            }
+        ]
     }
 ];

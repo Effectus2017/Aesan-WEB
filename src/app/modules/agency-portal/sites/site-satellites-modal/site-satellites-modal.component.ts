@@ -51,7 +51,8 @@ export class SiteSatellitesModalComponent implements OnInit, OnDestroy, OnGeneri
     handler: this,
     showPaginator: true,
     addButtonShow: false,
-    length: 0
+    length: 0,
+    fullScreen: true,
   };
 
   constructor(

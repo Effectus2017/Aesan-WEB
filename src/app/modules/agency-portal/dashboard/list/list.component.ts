@@ -12,9 +12,10 @@ import { NgFor } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SharedModule } from 'app/shared/shared.module';
 import { agencyDashboardCardsData, agencyDashboardTableData, rationsByMonthData, coordinatedVisitsData } from './columns-data';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { AGENCY_DASHBOARD_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from 'app/core/auth/auth.service';
 import { DateTime } from 'luxon';
@@ -65,22 +66,23 @@ export type PieChartOptions = {
         MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, TranslocoModule,
         SharedModule,
         GenericHeaderComponent,
+        GenericTableComponent,
         NgApexchartsModule]
 })
-export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _translocoService = inject(TranslocoService);
   private _unsubscribeAll = new Subject<void>();
 
   agencyDashboardCardsData = agencyDashboardCardsData;
-  sponsorName = 'Nombre del Auspiciador';
+  userName = 'Usuario';
   currentDate = '';
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'agency.dashboard.welcome',
-    agency: this.sponsorName,
+    agency: this.userName,
     subtitle: '',
   };
 
@@ -176,10 +178,18 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   constructor() {}
 
   ngOnInit() {
-    // Obtener nombre del auspiciador
+    // Obtener nombre del usuario
     const userData = this._authService.getUserDataFromToken();
-    if (userData && userData.agency) {
-      this.sponsorName = userData.agency;
+    if (userData) {
+      // Combinar name y lastName si están disponibles
+      const nameParts = [];
+      if (userData.name) {
+        nameParts.push(userData.name);
+      }
+      if (userData.lastName) {
+        nameParts.push(userData.lastName);
+      }
+      this.userName = nameParts.length > 0 ? nameParts.join(' ') : 'Usuario';
     }
 
     // Formatear fecha actual
@@ -190,8 +200,8 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     const monthName = months[now.month - 1];
     this.currentDate = `${dayName} ${now.day} de ${monthName} de ${now.year}`;
 
-    // Actualizar headerConfig con el nombre del auspiciador y la fecha
-    this.headerConfig.agency = this.sponsorName;
+    // Actualizar headerConfig con el nombre del usuario y la fecha
+    this.headerConfig.agency = this.userName;
     this._translocoService.selectTranslate('agency.dashboard.today')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(translation => {
@@ -240,5 +250,24 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   onEdit(row: any): void {
     // Implementar acción de editar
     console.log('Editar formulario:', row);
+  }
+
+  // Implementación de OnGenericTableHandler
+  onTableEdit(event: Event, id: any): void {
+    const row = this.tableConfig.dataSource.data.find((item: any) => item.id === id || item.formNumber === id);
+    if (row) {
+      this.onEdit(row);
+    }
+  }
+
+  onTableAction(event: Event, action: string, id: any): void {
+    const row = this.tableConfig.dataSource.data.find((item: any) => item.id === id || item.formNumber === id);
+    if (row) {
+      if (action === 'view') {
+        this.onView(row);
+      } else if (action === 'edit') {
+        this.onEdit(row);
+      }
+    }
   }
 }

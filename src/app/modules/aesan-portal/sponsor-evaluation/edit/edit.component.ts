@@ -96,12 +96,9 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
 
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
-  private _agencyStatusService = inject(AgencyStatusService);
   private _geoService = inject(GeoService);
-  private _programService = inject(ProgramService);
   private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
   private _notificationService = inject(NotificationService);
   private _dialog = inject(MatDialog);
@@ -136,6 +133,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     showPaginator: true,
     pageSizeOptions: [25, 50, 100],
     pageSize: 25,
+    fullScreen: false,
   };
 
   // Configuración de tabla requerida por OnGenericTableHandler
@@ -387,7 +385,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
             break;
         }
       },
-      error: (error) => {
+      error: () => {
         this._notificationService.showErrorDialog();
       },
       complete: () => {
@@ -523,7 +521,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
           this._notificationService.showSuccessDialog();
         }
       },
-      error: (error) => {
+      error: () => {
         this._notificationService.showErrorDialog();
       },
       complete: () => {

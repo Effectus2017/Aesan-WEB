@@ -263,16 +263,16 @@
                 "required": "¿Cuenta con un Salón Comedor?"
             },
             "administrator-authorized": {
-                "label": "Persona a Cargo",
-                "description": "Información de la persona a cargo del sitio"
+                "label": "Información del Representante",
+                "description": "Información del representante del sitio"
             },
             "administrator-authorized-name": {
-                "label": "Persona a Cargo",
-                "placeholder": "Nombre completo de la persona a cargo",
-                "required": "El nombre completo de la persona a cargo es requerido"
+                "label": "Información del Representante",
+                "placeholder": "Nombre completo del representante",
+                "required": "El nombre completo del representante es requerido"
             },
             "person-in-charge-name": {
-                "placeholder": "Nombre completo de la persona a cargo"
+                "placeholder": "Nombre completo del representante"
             },
             "administrator-birth-date": {
                 "label": "Fecha de Nacimiento del Administrador",
@@ -982,13 +982,13 @@
                 "required": "¿Cuenta con un Salón Comedor?"
             },
             "administrator-authorized": {
-                "label": "Persona a Cargo",
-                "description": "Información de la persona a cargo del sitio"
+                "label": "Información del Representante",
+                "description": "Información del representante del sitio"
             },
             "administrator-authorized-name": {
-                "label": "Persona a Cargo",
-                "placeholder": "Nombre completo de la persona a cargo",
-                "required": "El nombre completo de la persona a cargo es requerido"
+                "label": "Información del Representante",
+                "placeholder": "Nombre completo del representante",
+                "required": "El nombre completo del representante es requerido"
             },
             "administrator-birth-date": {
                 "label": "Fecha de Nacimiento del Administrador",

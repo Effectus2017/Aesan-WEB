@@ -14,7 +14,7 @@
   </button>
 </div>
 
-<div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+<div [class.p-6]="!config.fullScreen" [class.bg-white]="!config.fullScreen" [class.rounded-lg]="!config.fullScreen" [class.border]="!config.fullScreen" [class.border-gray-200]="!config.fullScreen" [class.shadow-sm]="!config.fullScreen">
   <table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>

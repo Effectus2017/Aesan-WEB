@@ -61,7 +61,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     pageSize: 15,
     pageSizeOptions: [5, 10, 15, 25],
     addButtonShow: false,
-    length: 0
+    length: 0,
+    fullScreen: true,
   };
 
   constructor(

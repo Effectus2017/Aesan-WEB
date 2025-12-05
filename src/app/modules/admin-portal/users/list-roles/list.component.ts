@@ -57,6 +57,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
     pageSize: 10,
     pageSizeOptions: [10, 25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

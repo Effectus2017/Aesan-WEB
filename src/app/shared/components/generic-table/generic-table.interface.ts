@@ -88,6 +88,12 @@ export interface GenericTableConfig<T = any> {
   addButtonTooltipPosition?: 'above' | 'below' | 'left'  | 'right';
   tableId?: string;
   onAddButtonClick?: (event?: Event) => void;
+  /**
+   * Si es true, la tabla está en pantalla completa y no se mostrará el borde del contenedor.
+   * Si es false o undefined, se mostrará el borde por defecto.
+   * @default false
+   */
+  fullScreen?: boolean;
 }
 
 export interface OnGenericTableHandler {

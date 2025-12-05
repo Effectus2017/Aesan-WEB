@@ -328,6 +328,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     addButtonLabel: 'global.buttons.addSchool',
     addButtonTooltip: 'global.tooltips.addSchool',
     addButtonTooltipPosition: 'above',
+    fullScreen: true,
   };
 
   tableConfigIncomeSources: GenericTableConfig = {

@@ -63,6 +63,7 @@ export class AgenciesUsersListComponent implements OnInit, OnDestroy, OnGenericT
     pageSize: 10,
     pageSizeOptions: [10, 25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

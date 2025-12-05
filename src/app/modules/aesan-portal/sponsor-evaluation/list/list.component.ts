@@ -36,6 +36,8 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatTable) table: MatTable<ProgramRequest>;
 
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+
   private _formBuilder = inject(UntypedFormBuilder);
   private _programRequestService: ProgramRequestService = inject(ProgramRequestService);
   private _customRouterService = inject(CustomRouterService);
@@ -67,14 +69,10 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
     pageSize: 25,
     pageSizeOptions: [25, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-
-  constructor() {
-
-  }
 
   ngOnInit(): void {
     // Obtener datos del resolver

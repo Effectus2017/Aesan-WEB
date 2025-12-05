@@ -125,6 +125,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     pageSizeOptions: [15, 50, 100],
     length: 0,
     addButtonShow: true,
+    fullScreen: true,
     addButtonIcon: 'add',
     addButtonLabel: 'global.buttons.addPermission',
     addButtonTooltip: 'global.tooltips.addPermission',

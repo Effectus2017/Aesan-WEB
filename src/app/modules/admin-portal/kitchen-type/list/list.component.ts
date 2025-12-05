@@ -74,6 +74,7 @@ export class KitchenTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   constructor() {}

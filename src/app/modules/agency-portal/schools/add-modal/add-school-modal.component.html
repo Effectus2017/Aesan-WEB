@@ -12,33 +12,33 @@
   </div>
 
   <!-- Content -->
-  <div class="flex overflow-y-auto flex-col flex-auto p-6">
-    <form [formGroup]="schoolForm" class="flex flex-col gap-6">
-      <!-- Campo Nombre -->
-      <mat-form-field>
-        <input matInput formControlName="name" [placeholder]="'schools.modal.name' | transloco" autocomplete="on"/>
-        <mat-error *ngIf="schoolForm.get('name')?.hasError('required')">
-          {{ 'global.validation.required' | transloco }}
-        </mat-error>
-        <mat-error *ngIf="schoolForm.get('name')?.hasError('minlength')">
-          {{ 'global.validation.minLength' | transloco }}
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Actions -->
-      <div class="flex flex-col justify-between mt-6 pt-6 border-t sm:flex-row sm:items-center">
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="loading">
-            {{ 'global.buttons.cancel' | transloco }}
-          </button>
-        </div>
-        <div class="flex gap-2">
-          <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="schoolForm.invalid || loading">
-            <span *ngIf="loading">{{ 'global.buttons.save' | transloco }}</span>
-            <span *ngIf="!loading">{{ 'global.buttons.add' | transloco }}</span>
-          </button>
-        </div>
+  <form [formGroup]="schoolForm" class="flex flex-col flex-auto min-h-0">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
+        <!-- Campo Nombre -->
+        <mat-form-field>
+          <input matInput formControlName="name" [placeholder]="'schools.modal.name' | transloco" autocomplete="on"/>
+          <mat-error *ngIf="schoolForm.get('name')?.hasError('required')">
+            {{ 'global.validation.required' | transloco }}
+          </mat-error>
+          <mat-error *ngIf="schoolForm.get('name')?.hasError('minlength')">
+            {{ 'global.validation.minLength' | transloco }}
+          </mat-error>
+        </mat-form-field>
       </div>
-    </form>
-  </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="loading">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+      </div>
+      <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="schoolForm.invalid || loading">
+        <span *ngIf="loading">{{ 'global.buttons.save' | transloco }}</span>
+        <span *ngIf="!loading">{{ 'global.buttons.add' | transloco }}</span>
+      </button>
+    </div>
+  </form>
 </div>

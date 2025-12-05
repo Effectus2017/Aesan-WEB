@@ -261,13 +261,13 @@
                 "required": "Has Dining Room?"
             },
             "administrator-authorized": {
-                "label": "Person in Charge",
-                "description": "Person in charge information"
+                "label": "Representative Information",
+                "description": "Representative information"
             },
             "administrator-authorized-name": {
-                "label": "Person in Charge",
-                "placeholder": "Full name of person in charge",
-                "required": "Full name of person in charge is required"
+                "label": "Representative Information",
+                "placeholder": "Full name of representative",
+                "required": "Full name of representative is required"
             },
             "site-phone": {
                 "label": "Site Phone",
@@ -1040,13 +1040,13 @@
                 "required": "Has Dining Room?"
             },
             "administrator-authorized": {
-                "label": "Person in Charge",
-                "description": "Person in charge information"
+                "label": "Representative Information",
+                "description": "Representative information"
             },
             "administrator-authorized-name": {
-                "label": "Person in Charge",
-                "placeholder": "Full name of person in charge",
-                "required": "Full name of person in charge is required"
+                "label": "Representative Information",
+                "placeholder": "Full name of representative",
+                "required": "Full name of representative is required"
             },
             "site-phone": {
                 "label": "Site Phone",

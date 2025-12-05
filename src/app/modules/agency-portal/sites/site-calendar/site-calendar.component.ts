@@ -103,7 +103,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     ),
     handler: this,
     showPaginator: false,
-    addButtonShow: false
+    addButtonShow: false,
+    fullScreen: true,
   };
 
   ngOnInit() {

@@ -8,7 +8,7 @@
   </div>
 
   <!-- Content -->
-  <div class="flex overflow-y-auto flex-col flex-auto p-6">
+  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
     <div class="flex flex-col gap-6">
       <!-- Description -->
       <p class="text-secondary">
@@ -17,11 +17,12 @@
           permissionName: data.permission.name
         } }}
       </p>
-
     </div>
+  </div>
 
-    <!-- Action Buttons -->
-    <div class="flex justify-end gap-3 mt-6 pt-6 border-t">
+  <!-- Actions - Fixed footer, outside scroll -->
+  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex gap-2">
       <button
         mat-button
         type="button"
@@ -31,16 +32,16 @@
       >
         {{ 'global.buttons.cancel' | transloco }}
       </button>
-      <button
-        mat-flat-button
-        color="warn"
-        type="button"
-        [disabled]="isLoading"
-        (click)="onDelete()"
-        data-cy="delete-button"
-      >
-        {{ "global.buttons.delete" | transloco }}
-      </button>
     </div>
+    <button
+      mat-flat-button
+      color="warn"
+      type="button"
+      [disabled]="isLoading"
+      (click)="onDelete()"
+      data-cy="delete-button"
+    >
+      {{ "global.buttons.delete" | transloco }}
+    </button>
   </div>
 </div>

@@ -83,6 +83,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     pageSize: 15,
     pageSizeOptions: [15, 50, 100],
     length: 0,
+    fullScreen: true,
   };
 
   // Constructor

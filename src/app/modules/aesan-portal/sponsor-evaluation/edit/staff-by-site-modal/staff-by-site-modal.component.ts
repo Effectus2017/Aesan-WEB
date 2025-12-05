@@ -6,44 +6,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 import { SiteStaffResponse } from 'app/shared/models/Response/SiteStaffResponse';
+import { STAFF_BY_SITE_COLUMNS_SCHEMA } from './columns-schema';
 
 export interface StaffBySiteModalData {
   siteId: number;
   staffList: SiteStaffResponse[];
 }
-
-const STAFF_BY_SITE_COLUMNS_SCHEMA: ColumnSchema[] = [
-  {
-    key: ['firstName', 'middleName', 'fatherLastName', 'motherLastName'],
-    type: 'combined-text',
-    label: 'sponsor-evaluation.edit.staffBySite.table.columns.fullName',
-  },
-  {
-    key: 'email',
-    type: 'text',
-    label: 'sponsor-evaluation.edit.staffBySite.table.columns.email',
-  },
-  {
-    key: 'assignmentDate',
-    type: 'date',
-    label: 'sponsor-evaluation.edit.staffBySite.table.columns.assignmentDate',
-  },
-  {
-    key: 'isPrimary',
-    type: 'boolean',
-    label: 'sponsor-evaluation.edit.staffBySite.table.columns.isPrimary',
-  },
-  {
-    key: 'isActive',
-    type: 'boolean',
-    label: 'sponsor-evaluation.edit.staffBySite.table.columns.isActive',
-  },
-];
 
 @Component({
   selector: 'app-staff-by-site-modal',
@@ -65,6 +37,9 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
 
+  // Loading
+  isInitialLoading: boolean = true;
+
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<SiteStaffResponse>([]),
     columnsSchema: STAFF_BY_SITE_COLUMNS_SCHEMA,
@@ -74,6 +49,7 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
     pageSize: 15,
     pageSizeOptions: [10, 15, 25, 50],
     length: 0,
+    fullScreen: true,
   };
 
   siteId: number;
@@ -87,11 +63,15 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
   }
 
   ngOnInit(): void {
-    if (this.data.staffList) {
-      this.tableConfig.dataSource.data = this.data.staffList;
-      this.tableConfig.length = this.data.staffList.length;
+    // Simular carga inicial para mostrar el indicador de carga
+    setTimeout(() => {
+      if (this.data.staffList) {
+        this.tableConfig.dataSource.data = this.data.staffList;
+        this.tableConfig.length = this.data.staffList.length;
+      }
+      this.isInitialLoading = false;
       this._changeDetectorRef.detectChanges();
-    }
+    }, 100);
   }
 
   ngOnDestroy(): void {
