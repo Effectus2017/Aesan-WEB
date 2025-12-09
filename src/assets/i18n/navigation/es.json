@@ -103,7 +103,8 @@
             "kpis": {
                 "program": "Programa en el que participa",
                 "totalSites": "Total de Sitios",
-                "approvedBudget": "Presupuesto Aprobado"
+                "approvedBudget": "Presupuesto Aprobado",
+                "totalSchools": "Total de Escuelas"
             },
             "charts": {
                 "rationsByMonth": "Raciones servidas por meses",
@@ -119,6 +120,9 @@
                 "actions": "Acciones",
                 "view": "Ver",
                 "edit": "Editar"
+            },
+            "schools": {
+                "title": "Escuelas donde está el programa"
             }
         }
     }

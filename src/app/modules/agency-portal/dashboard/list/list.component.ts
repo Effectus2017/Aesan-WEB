@@ -14,6 +14,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { agencyDashboardCardsData, agencyDashboardTableData, rationsByMonthData, coordinatedVisitsData } from './columns-data';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { AGENCY_DASHBOARD_COLUMNS_SCHEMA } from './columns-schema';
+import { ActivatedRoute } from '@angular/router';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
@@ -73,9 +74,10 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _translocoService = inject(TranslocoService);
+  private _route = inject(ActivatedRoute);
   private _unsubscribeAll = new Subject<void>();
 
-  agencyDashboardCardsData = agencyDashboardCardsData;
+  agencyDashboardCardsData = [...agencyDashboardCardsData];
   userName = 'Usuario';
   currentDate = '';
 
@@ -162,7 +164,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     }
   };
 
-  // Configuración de la tabla
+  // Configuración de la tabla de formularios
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
     dataSourceList: [],
@@ -228,10 +230,46 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
         }
       });
 
-    // Inicializar datos de la tabla
+    // Inicializar datos de la tabla de formularios
     this.tableConfig.dataSource.data = agencyDashboardTableData;
     this.tableConfig.length = agencyDashboardTableData.length;
 
+    // Obtener datos del dashboard desde el resolver
+    const dashboardData = this._route.snapshot.data['dashboard'];
+    console.log('Dashboard data from resolver:', dashboardData);
+
+    if (dashboardData) {
+      this.updateDashboardCards(dashboardData);
+    } else {
+      console.warn('No dashboard data found in resolver');
+    }
+
+    this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Actualiza las cards del dashboard con los datos del resolver
+   */
+  private updateDashboardCards(dashboardData: any): void {
+    console.log('Updating dashboard cards with data:', dashboardData);
+
+    // Crear un nuevo array con las cards actualizadas para asegurar que Angular detecte los cambios
+    this.agencyDashboardCardsData = this.agencyDashboardCardsData.map(card => {
+      if (card.id === 'totalEscuelas') {
+        if (dashboardData.totalSchools !== undefined && dashboardData.totalSchools !== null) {
+          return { ...card, value: dashboardData.totalSchools.toString() };
+        }
+      } else if (card.id === 'totalSitios') {
+        if (dashboardData.totalSites !== undefined && dashboardData.totalSites !== null) {
+          return { ...card, value: dashboardData.totalSites.toString() };
+        }
+      }
+      return card;
+    });
+
+    console.log('Updated agencyDashboardCardsData:', this.agencyDashboardCardsData);
+
+    // Forzar detección de cambios después de actualizar las cards
     this._changeDetectorRef.detectChanges();
   }
 

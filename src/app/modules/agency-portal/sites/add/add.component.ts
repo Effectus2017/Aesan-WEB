@@ -377,7 +377,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       }),
       // Desayuno (si, no)
       // Breakfast (yes, no)
-      breakfast: [null],
+      breakfast: [false],
       // Horario desde para el desayuno
       // Breakfast schedule from
       breakfastFrom: [null],
@@ -386,7 +386,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       breakfastTo: [null],
       // Almuerzo (si, no)
       // Lunch (yes, no)
-      lunch: [null],
+      lunch: [false],
       // Horario desde para el almuerzo
       // Lunch schedule from
       lunchFrom: [null],
@@ -395,7 +395,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       lunchTo: [null],
       // Merienda AM (si, no)
       // Snack AM (yes, no)
-      snackAM: [null],
+      snackAM: [false],
       // Horario desde para la merienda AM
       // Snack AM schedule from
       snackAMFrom: [null],
@@ -404,7 +404,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       snackAMTo: [null],
       // Merienda PM (si, no)
       // Snack PM (yes, no)
-      snackPM: [null],
+      snackPM: [false],
       // Horario desde para la merienda PM
       // Snack PM schedule from
       snackPMFrom: [null],
@@ -425,7 +425,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       experience: [null],
       // Cena (si, no)
       // Dinner (yes, no)
-      dinner: [null],
+      dinner: [false],
       // Horario desde para la cena
       // Dinner schedule from
       dinnerFrom: [null],
@@ -434,7 +434,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       dinnerTo: [null],
       // Merienda nocturna (si, no)
       // Snack night (yes, no)
-      snackNight: [null],
+      snackNight: [false],
       // Horario desde para la merienda nocturna
       // Snack night schedule from
       snackNightFrom: [null],
@@ -444,28 +444,28 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
       // Cena Horario Extendido (si, no)
-      dinnerExtended: [null],
+      dinnerExtended: [false],
       // Horario desde para la cena horario extendido
       dinnerExtendedFrom: [null],
       // Horario hasta para la cena horario extendido
       dinnerExtendedTo: [null],
 
       // Cena en Riesgo (si, no)
-      dinnerAtRisk: [null],
+      dinnerAtRisk: [false],
       // Horario desde para la cena en riesgo
       dinnerAtRiskFrom: [null],
       // Horario hasta para la cena en riesgo
       dinnerAtRiskTo: [null],
 
       // Merienda Horario Extendido (si, no)
-      snackExtended: [null],
+      snackExtended: [false],
       // Horario desde para la merienda horario extendido
       snackExtendedFrom: [null],
       // Horario hasta para la merienda horario extendido
       snackExtendedTo: [null],
 
       // Merienda en Riesgo (si, no)
-      snackAtRisk: [null],
+      snackAtRisk: [false],
       // Horario desde para la merienda en riesgo
       snackAtRiskFrom: [null],
       // Horario hasta para la merienda en riesgo

@@ -1,9 +1,9 @@
 // Datos para las tarjetas KPI
 export const agencyDashboardCardsData = [
   {
-    id: 'programa',
-    title: 'agency.dashboard.kpis.program',
-    value: 'PDAM',
+    id: 'totalEscuelas',
+    title: 'agency.dashboard.kpis.totalSchools',
+    value: '0',
     color: 'text-teal-600',
     bgColor: 'bg-teal-500',
     fullWidth: false

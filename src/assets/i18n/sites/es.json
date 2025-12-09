@@ -1024,7 +1024,8 @@
             },
             "breakfast-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin del desayuno es requerida"
             },
             "lunch": {
                 "label": "Almuerzo",
@@ -1036,7 +1037,8 @@
             },
             "lunch-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin del almuerzo es requerida"
             },
             "snack": {
                 "label": "Merienda",
@@ -1060,7 +1062,8 @@
             },
             "snack-am-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la merienda AM es requerida"
             },
             "snack-pm": {
                 "label": "Merienda PM",
@@ -1072,7 +1075,8 @@
             },
             "snack-pm-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la merienda PM es requerida"
             },
             "dinner": {
                 "label": "Cena",
@@ -1084,7 +1088,8 @@
             },
             "dinner-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la cena es requerida"
             },
             "snack-night": {
                 "label": "Merienda nocturna",

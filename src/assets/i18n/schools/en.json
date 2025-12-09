@@ -9,6 +9,7 @@
                     "schoolCode": "School Code",
                     "schoolNumber": "School Number",
                     "isActive": "Active",
+                    "status": "Status",
                     "createdAt": "Created Date",
                     "sites-count": "Sites Count",
                     "actions": "Actions"

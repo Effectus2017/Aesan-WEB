@@ -49,23 +49,6 @@
             {{ "staff.edit.relationships.modal.relationshipType.required" | transloco }}
           </mat-error>
         </mat-form-field>
-
-        <!-- Dropdown 3: Estado Activo/Inactivo -->
-        <mat-form-field data-cy="is-active-field">
-          <mat-label>{{ "staff.edit.relationships.modal.isActive.label" | transloco }}</mat-label>
-          <mat-select
-            formControlName="isActive"
-            [placeholder]="'staff.edit.relationships.modal.isActive.placeholder' | transloco"
-            data-cy="is-active-select"
-          >
-            <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-active-option">
-              {{ currentLang === "en" ? option.nameEN : option.name }}
-            </mat-option>
-          </mat-select>
-          <mat-error *ngIf="form.get('isActive')?.hasError('required')">
-            {{ "staff.edit.relationships.modal.isActive.required" | transloco }}
-          </mat-error>
-        </mat-form-field>
       </div>
     </div>
 

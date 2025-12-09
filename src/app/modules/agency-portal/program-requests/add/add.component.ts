@@ -382,31 +382,6 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     this.param = param;
     this.headerConfig.formGroup.patchValue({
       name: param.name || null,
-      //   city: param.city || null,
-      //   region: param.region || null,
-      //   program: param.programs || null,
-      //   status: param.status || null,
-      //   sdrNumber: param.sdrNumber || null,
-      //   uieNumber: param.uieNumber || null,
-      //   einNumber: param.einNumber || null,
-      //   // Dirección
-      //   address: param.address || null,
-      //   zipCode: param.zipCode || null,
-      //   latitude: param.latitude || null,
-      //   longitude: param.longitude || null,
-      //   // Dirección Postal
-      //   postalAddress: param.postalAddress || null,
-      //   postalZipCode: param.postalZipCode || null,
-      //   postalCity: param.postalCity || null,
-      //   postalRegion: param.postalRegion || null,
-      //   // Datos del Contacto
-      //   firstName: param.user.firstName || null,
-      //   middleName: param.user.middleName || null,
-      //   fatherLastName: param.user.fatherLastName || null,
-      //   motherLastName: param.user.motherLastName || null,
-      //   email: param.email || null,
-      //   phone: param.phone || null,
-      //   administrationTitle: param.user.administrationTitle || null,
     });
   }
 

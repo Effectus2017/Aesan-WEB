@@ -66,3 +66,39 @@ export const AGENCY_DASHBOARD_COLUMNS_SCHEMA: ColumnSchema[] = [
         ]
     }
 ];
+
+// Schema de columnas para la tabla de escuelas en el dashboard
+export const AGENCY_DASHBOARD_SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
+    {
+        key: 'schoolCode',
+        type: 'text',
+        label: 'schools.list.table.columns.schoolCode',
+        visible: true,
+        sortable: true,
+        searchable: false
+    },
+    {
+        key: 'name',
+        type: 'text',
+        label: 'schools.list.table.columns.name',
+        visible: true,
+        sortable: true,
+        searchable: false
+    },
+    {
+        key: 'sitesCount',
+        type: 'text',
+        label: 'schools.list.table.columns.sites-count',
+        visible: true,
+        sortable: false,
+        searchable: false
+    },
+    {
+        key: 'createdAt',
+        type: 'date',
+        label: 'schools.list.table.columns.createdAt',
+        visible: true,
+        sortable: false,
+        searchable: false
+    }
+];

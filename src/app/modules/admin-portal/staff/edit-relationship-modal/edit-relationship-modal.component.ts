@@ -55,7 +55,6 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   // Lists for selects
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
-  yesNoOptions: OptionSelection[] = []; // Nuevo campo para activo/inactivo
 
   // Current language
   currentLang: string = 'es';
@@ -66,7 +65,6 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
     relationshipType: new FormControl('', [Validators.required]),
-    isActive: new FormControl(true, [Validators.required]), // Nuevo campo para activo/inactivo
   });
 
   // Loading
@@ -124,7 +122,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
     };
 
     const relationshipTypeQueryParams: QueryParameters = {
-      optionKey: 'staffRelationshipType,yesNo',  // Agregar yesNo para opciones activo/inactivo
+      optionKey: 'staffRelationshipType',
       names: null,
     };
 
@@ -140,10 +138,9 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
           this.listStaff = response.staff.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
         }
 
-        // Procesar respuesta de relationship types y yesNo options
+        // Procesar respuesta de relationship types
         if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes?.body?.data)) {
           this.listRelationshipTypes = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
-          this.yesNoOptions = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
         }
 
         // Pre-llenar el formulario después de que los datos se hayan cargado
@@ -190,8 +187,7 @@ export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
       // Crear request de actualización
       const updateRequest: UpdateStaffRelationshipRequest = {
         id: this.data.relationship.id,
-        relationshipTypeId: formValue.relationshipType.id,
-        isActive: formValue.isActive // Incluir el campo isActive en el request
+        relationshipTypeId: formValue.relationshipType.id
       };
 
       // Llamar al servicio para actualizar

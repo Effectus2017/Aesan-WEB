@@ -14,9 +14,9 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     sortable: true,
   },
   {
-    key: 'statusName',
+    key: 'isActive',
     label: 'staff.boardMembers.list.table.columns.status',
-    type: 'text',
+    type: 'boolean',
     sortable: true,
   },
   {

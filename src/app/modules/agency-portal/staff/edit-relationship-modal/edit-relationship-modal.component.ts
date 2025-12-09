@@ -57,7 +57,6 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   // Lists for selects
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
-  yesNoOptions: OptionSelection[] = []; // Nuevo campo para activo/inactivo
 
   // Current language
   currentLang: string = 'es';
@@ -68,7 +67,6 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
     relationshipType: new FormControl('', [Validators.required]),
-    isActive: new FormControl(true, [Validators.required]), // Nuevo campo para activo/inactivo
     comment: new FormControl('', [Validators.maxLength(500)]), // Campo para comentarios
   });
 
@@ -133,7 +131,7 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
     };
 
     const relationshipQueryParams: QueryParameters = {
-      optionKey: 'staffRelationshipType,yesNo',  // Agregar yesNo para opciones activo/inactivo
+      optionKey: 'staffRelationshipType',
       names: null,
     };
 
@@ -152,10 +150,9 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
             this.listStaff = response.staff.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
           }
 
-          // Procesar respuesta de relationship types y yesNo options
+          // Procesar respuesta de relationship types
           if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes)) {
             this.listRelationshipTypes = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
-            this.yesNoOptions = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
           }
 
           // Pre-llenar el formulario después de que los datos se hayan cargado
@@ -197,7 +194,6 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
         this.form.setValue({
           relatedStaff: relatedStaff,
           relationshipType: relationshipType,
-          isActive: this.data.relationship.isActive ?? true,  // Usar el valor existente o true por defecto
           comment: this.data.relationship.comment || ''  // Usar el valor existente o string vacío por defecto
         });
 
@@ -225,7 +221,6 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
       const updateRequest: UpdateStaffRelationshipRequest = {
         id: this.data.relationship.id,
         relationshipTypeId: formValue.relationshipType.id,
-        isActive: formValue.isActive, // Incluir el campo isActive en el request
         comment: formValue.comment // Incluir el campo comment en el request
       };
 

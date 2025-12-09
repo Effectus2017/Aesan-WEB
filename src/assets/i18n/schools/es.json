@@ -9,6 +9,7 @@
                     "schoolCode": "Código de Escuela",
                     "schoolNumber": "Número de Escuela",
                     "isActive": "Activo",
+                    "status": "Estado",
                     "createdAt": "Fecha de Creación",
                     "sites-count": "Cantidad de Sitios",
                     "actions": "Acciones"

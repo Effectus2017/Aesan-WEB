@@ -149,6 +149,12 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
         staffName: staffName,
       },
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.getAll(0, this.headerConfig.formGroup.value);
+      }
+    });
   }
 
   onTableEdit(event: Event, id: number): void {

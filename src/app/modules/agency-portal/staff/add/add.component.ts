@@ -521,15 +521,21 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this.headerConfig.formGroup.disable();
 
     // Crear staff (el backend ahora maneja también la asociación con el sitio)
+    let isSuccess = false;
     this._staffService.insertStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {
           case true:
             // Mostrar mensaje de éxito
+            isSuccess = true;
+            // Limpiar el estado de validación para evitar que se muestren errores en el fondo
+            // pero mantener los valores del formulario
+            this.clearValidationErrors();
             this.showSuccessMessage();
             break;
           default:
             this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));
+            this.headerConfig.formGroup.enable();
             break;
         }
       },
@@ -539,8 +545,11 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       },
       complete: () => {
         this.isLoading = false;
-        // Enable the form
-        this.headerConfig.formGroup.enable();
+        // Solo habilitar el formulario si no fue exitoso (para permitir reintentos)
+        // Si fue exitoso, mantenerlo deshabilitado hasta que se navegue
+        if (!isSuccess) {
+          this.headerConfig.formGroup.enable();
+        }
       },
     });
   }
@@ -751,6 +760,23 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this.clearValidationState();
 
     this.updateValidations();
+  }
+
+  /**
+   * Limpia los errores de validación sin cambiar los valores del formulario
+   * Útil después de un éxito para evitar que se muestren errores en el fondo
+   */
+  private clearValidationErrors(): void {
+    // Marcar todos los controles como untouched y pristine para ocultar errores
+    Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
+      const control = this.headerConfig.formGroup.get(key);
+      if (control) {
+        control.markAsUntouched();
+        control.markAsPristine();
+        // No limpiar los errores aquí, solo el estado de touched/pristine
+        // para que no se muestren visualmente
+      }
+    });
   }
 
   /**

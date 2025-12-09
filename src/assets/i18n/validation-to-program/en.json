@@ -65,15 +65,21 @@
             },
             "state-department-registration": {
                 "label": "State Department Registration",
-                "placeholder": "Enter state department registration number"
+                "placeholder": "Enter state department registration number",
+                "required": "State Department Registration (SDR) number is required",
+                "maxDigits": "State Department Registration (SDR) number must have a maximum of 10 digits"
             },
             "uieNumber": {
                 "label": "Unique Entity Identifier (UEI)",
-                "placeholder": "Enter Unique Entity Identifier (UEI)"
+                "placeholder": "Enter Unique Entity Identifier (UEI)",
+                "maxlength": "Unique Entity Identifier (UEI) must have a maximum of 12 characters",
+                "alphanumeric": "Unique Entity Identifier (UEI) can only contain letters and numbers"
             },
             "einNumber": {
                 "label": "EIN Number",
-                "placeholder": "Enter EIN number"
+                "placeholder": "Enter EIN number",
+                "required": "Employer Identification Number (EIN) is required",
+                "maxDigits": "Employer Identification Number (EIN) must have a maximum of 9 digits"
             },
             "address": {
                 "label": "Address",
@@ -111,7 +117,9 @@
             },
             "phone": {
                 "label": "Phone",
-                "placeholder": "Enter phone number"
+                "placeholder": "Enter phone number",
+                "required": "Phone number is required",
+                "puertoRicoPhone": "Phone number must have 10 digits"
             },
             "administration-title": {
                 "label": "Person in Charge",

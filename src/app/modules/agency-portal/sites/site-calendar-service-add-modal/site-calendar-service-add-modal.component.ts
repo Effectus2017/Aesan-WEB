@@ -175,20 +175,33 @@ export class SiteCalendarServiceAddModalComponent {
     
     this.endTimeOptions = filterEndTimeOptions(this.timeOptions, selectedStartTime, this.dayEndTime);
 
-    // Validar y ajustar endTime si es necesario
+    // Si no hay hora de inicio seleccionada, no hacer nada
+    if (!selectedStartTime) {
+      return;
+    }
+
     const currentEndTime = this.data.form.get('endTime')?.value;
-    if (currentEndTime && selectedStartTime) {
-      const endMinutes = timeToMinutes(currentEndTime);
-      const startMinutes = timeToMinutes(selectedStartTime);
-      // Si endTime es menor o igual a startTime, resetearlo a la primera opción válida
-      if (endMinutes <= startMinutes) {
-        if (this.endTimeOptions.length > 0) {
-          // Establecer la primera opción válida (la más cercana después de startTime)
-          this.data.form.get('endTime')?.setValue(this.endTimeOptions[0].value, { emitEvent: false });
-        } else {
-          // Si no hay opciones válidas, limpiar el valor
-          this.data.form.get('endTime')?.setValue('', { emitEvent: false });
-        }
+    
+    // Si no hay hora de fin seleccionada, asignar automáticamente la primera opción válida
+    if (!currentEndTime) {
+      if (this.endTimeOptions.length > 0) {
+        // Establecer la primera opción válida (la más cercana después de startTime)
+        this.data.form.get('endTime')?.setValue(this.endTimeOptions[0].value, { emitEvent: false });
+      }
+      return;
+    }
+
+    // Si hay hora de fin pero es inválida (menor o igual a startTime), ajustarla automáticamente
+    const endMinutes = timeToMinutes(currentEndTime);
+    const startMinutes = timeToMinutes(selectedStartTime);
+    
+    if (endMinutes <= startMinutes) {
+      if (this.endTimeOptions.length > 0) {
+        // Establecer la primera opción válida (la más cercana después de startTime)
+        this.data.form.get('endTime')?.setValue(this.endTimeOptions[0].value, { emitEvent: false });
+      } else {
+        // Si no hay opciones válidas, limpiar el valor
+        this.data.form.get('endTime')?.setValue('', { emitEvent: false });
       }
     }
   }

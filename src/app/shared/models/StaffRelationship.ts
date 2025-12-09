@@ -39,6 +39,6 @@ export interface CreateStaffRelationshipRequest {
 export interface UpdateStaffRelationshipRequest {
   id: number;
   relationshipTypeId: number;
-  isActive: boolean;
+  isActive?: boolean;
   comment?: string;
 }

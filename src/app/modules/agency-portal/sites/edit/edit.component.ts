@@ -490,7 +490,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       breakfastTo: [null],
       // Almuerzo - Campo requerido para indicar si el sitio tiene almuerzo
       // Lunch - Required field indicating if the site has lunch
-      lunch: [null],
+      lunch: [false],
       // Almuerzo desde - Campo requerido para indicar la hora de inicio del almuerzo
       // Lunch from - Required field indicating the start time of lunch
       lunchFrom: [null],
@@ -499,7 +499,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       lunchTo: [null],
       // Merienda AM - Campo requerido para indicar si el sitio tiene merienda AM
       // Snack AM - Required field indicating if the site has snack AM
-      snackAM: [null],
+      snackAM: [false],
       // Merienda AM desde - Campo requerido para indicar la hora de inicio de la merienda AM
       // Snack AM from - Required field indicating the start time of snack AM
       snackAMFrom: [null],
@@ -508,7 +508,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackAMTo: [null],
       // Merienda PM - Campo requerido para indicar si el sitio tiene merienda PM
       // Snack PM - Required field indicating if the site has snack PM
-      snackPM: [null],
+      snackPM: [false],
       // Merienda PM desde - Campo requerido para indicar la hora de inicio de la merienda PM
       // Snack PM from - Required field indicating the start time of snack PM
       snackPMFrom: [null],
@@ -517,7 +517,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackPMTo: [null],
       // Cena - Campo requerido para indicar si el sitio tiene cena
       // Dinner - Required field indicating if the site has dinner
-      dinner: [null],
+      dinner: [false],
       // Cena desde - Campo requerido para indicar la hora de inicio de la cena
       // Dinner from - Required field indicating the start time of dinner
       dinnerFrom: [null],
@@ -526,7 +526,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       dinnerTo: [null],
       // Merienda nocturna - Campo requerido para indicar si el sitio tiene merienda nocturna
       // Snack night - Required field indicating if the site has snack night
-      snackNight: [null],
+      snackNight: [false],
       // Merienda nocturna desde - Campo requerido para indicar la hora de inicio de la merienda nocturna
       // Snack night from - Required field indicating the start time of snack night
       snackNightFrom: [null],
@@ -535,7 +535,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       snackNightTo: [null],
       // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
       // Cena Horario Extendido (si, no)
-      dinnerExtended: [null],
+      dinnerExtended: [false],
       // Horario desde para la cena horario extendido
       dinnerExtendedFrom: [null],
       // Horario hasta para la cena horario extendido
@@ -1612,35 +1612,35 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         mobilePhone: '',
       },
       // Servicios básicos
-      breakfast: siteService?.breakfast || false,
+      breakfast: siteService?.breakfast ?? false,
       breakfastFrom: breakfastFrom,
       breakfastTo: breakfastTo,
-      lunch: siteService?.lunch || false,
+      lunch: siteService?.lunch ?? false,
       lunchFrom: lunchFrom,
       lunchTo: lunchTo,
-      snackAM: siteService?.snackAM || false,
+      snackAM: siteService?.snackAM ?? false,
       snackAMFrom: snackAMFrom,
       snackAMTo: snackAMTo,
-      snackPM: siteService?.snackPM || false,
+      snackPM: siteService?.snackPM ?? false,
       snackPMFrom: snackPMFrom,
       snackPMTo: snackPMTo,
-      dinner: siteService?.dinner || false,
+      dinner: siteService?.dinner ?? false,
       dinnerFrom: dinnerFrom,
       dinnerTo: dinnerTo,
-      snackNight: siteService?.snackNight || false,
+      snackNight: siteService?.snackNight ?? false,
       snackNightFrom: snackNightFrom,
       snackNightTo: snackNightTo,
       // Servicios adicionales para PACNA
-      dinnerExtended: siteService?.dinnerExtended || false,
+      dinnerExtended: siteService?.dinnerExtended ?? false,
       dinnerExtendedFrom: dinnerExtendedFrom,
       dinnerExtendedTo: dinnerExtendedTo,
-      dinnerAtRisk: siteService?.dinnerAtRisk || false,
+      dinnerAtRisk: siteService?.dinnerAtRisk ?? false,
       dinnerAtRiskFrom: dinnerAtRiskFrom,
       dinnerAtRiskTo: dinnerAtRiskTo,
-      snackExtended: siteService?.snackExtended || false,
+      snackExtended: siteService?.snackExtended ?? false,
       snackExtendedFrom: snackExtendedFrom,
       snackExtendedTo: snackExtendedTo,
-      snackAtRisk: siteService?.snackAtRisk || false,
+      snackAtRisk: siteService?.snackAtRisk ?? false,
       snackAtRiskFrom: snackAtRiskFrom,
       snackAtRiskTo: snackAtRiskTo,
       community: this.community.find((o) => o.id === communityId),
@@ -1991,35 +1991,35 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           siteId: this.param.id, // ID del sitio existente
           childGroupId: null, // Se asignará cuando se cree el grupo
           // Servicios básicos
-          breakfast: serviceData.breakfast || false,
+          breakfast: serviceData.breakfast ?? false,
           breakfastFrom: serviceData.breakfastFrom || null,
           breakfastTo: serviceData.breakfastTo || null,
-          lunch: serviceData.lunch || false,
+          lunch: serviceData.lunch ?? false,
           lunchFrom: serviceData.lunchFrom || null,
           lunchTo: serviceData.lunchTo || null,
-          snackAM: serviceData.snackAM || false,
+          snackAM: serviceData.snackAM ?? false,
           snackAMFrom: serviceData.snackAMFrom || null,
           snackAMTo: serviceData.snackAMTo || null,
-          dinner: serviceData.dinner || false,
+          dinner: serviceData.dinner ?? false,
           dinnerFrom: serviceData.dinnerFrom || null,
           dinnerTo: serviceData.dinnerTo || null,
-          snackPM: serviceData.snackPM || false,
+          snackPM: serviceData.snackPM ?? false,
           snackPMFrom: serviceData.snackPMFrom || null,
           snackPMTo: serviceData.snackPMTo || null,
-          snackNight: serviceData.snackNight || false,
+          snackNight: serviceData.snackNight ?? false,
           snackNightFrom: serviceData.snackNightFrom || null,
           snackNightTo: serviceData.snackNightTo || null,
           // Servicios PACNA
-          dinnerExtended: serviceData.dinnerExtended || false,
+          dinnerExtended: serviceData.dinnerExtended ?? false,
           dinnerExtendedFrom: serviceData.dinnerExtendedFrom || null,
           dinnerExtendedTo: serviceData.dinnerExtendedTo || null,
-          dinnerAtRisk: serviceData.dinnerAtRisk || false,
+          dinnerAtRisk: serviceData.dinnerAtRisk ?? false,
           dinnerAtRiskFrom: serviceData.dinnerAtRiskFrom || null,
           dinnerAtRiskTo: serviceData.dinnerAtRiskTo || null,
-          snackExtended: serviceData.snackExtended || false,
+          snackExtended: serviceData.snackExtended ?? false,
           snackExtendedFrom: serviceData.snackExtendedFrom || null,
           snackExtendedTo: serviceData.snackExtendedTo || null,
-          snackAtRisk: serviceData.snackAtRisk || false,
+          snackAtRisk: serviceData.snackAtRisk ?? false,
           snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
           snackAtRiskTo: serviceData.snackAtRiskTo || null,
         };

@@ -25,7 +25,8 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'isActive',
     type: 'boolean',
-    label: 'schools.list.table.columns.isActive',
+    label: 'schools.list.table.columns.status',
+    sortable: true,
   },
   {
     key: 'actions',

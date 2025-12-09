@@ -1077,7 +1077,8 @@
             },
             "breakfast-to": {
                 "label": "Breakfast To",
-                "placeholder": "Breakfast to"
+                "placeholder": "Breakfast to",
+                "required": "Breakfast end time is required"
             },
             "lunch": {
                 "label": "Lunch",
@@ -1089,7 +1090,8 @@
             },
             "lunch-to": {
                 "label": "Lunch To",
-                "placeholder": "Lunch to"
+                "placeholder": "Lunch to",
+                "required": "Lunch end time is required"
             },
             "snack": {
                 "label": "Snack",
@@ -1113,7 +1115,8 @@
             },
             "snack-am-to": {
                 "label": "AM Snack To",
-                "placeholder": "AM Snack to"
+                "placeholder": "AM Snack to",
+                "required": "AM Snack end time is required"
             },
             "snack-pm": {
                 "label": "PM Snack",
@@ -1125,7 +1128,8 @@
             },
             "snack-pm-to": {
                 "label": "PM Snack To",
-                "placeholder": "PM Snack to"
+                "placeholder": "PM Snack to",
+                "required": "PM Snack end time is required"
             },
             "dinner": {
                 "label": "Dinner",
@@ -1161,7 +1165,8 @@
             },
             "dinner-to": {
                 "label": "Dinner To",
-                "placeholder": "Dinner to"
+                "placeholder": "Dinner to",
+                "required": "Dinner end time is required"
             },
             "snack-night": {
                 "label": "Night Snack",

@@ -65,15 +65,21 @@
             },
             "state-department-registration": {
                 "label": "Registro Depto. Estado",
-                "placeholder": "Ingrese el número de registro"
+                "placeholder": "Ingrese el número de registro",
+                "required": "El Número de Registro del Departamento de Estado (SDR) es requerido",
+                "maxDigits": "El Número de Registro del Departamento de Estado (SDR) debe tener máximo 10 dígitos"
             },
             "uieNumber": {
                 "label": "Identificador Único de Entidad (IUE)",
-                "placeholder": "Ingrese el Identificador Único de Entidad (IUE)"
+                "placeholder": "Ingrese el Identificador Único de Entidad (IUE)",
+                "maxlength": "El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres",
+                "alphanumeric": "El Identificador Único de Entidad (IUE) solo puede contener letras y números"
             },
             "einNumber": {
                 "label": "EIN #",
-                "placeholder": "Ingrese el número EIN"
+                "placeholder": "Ingrese el número EIN",
+                "required": "El Número de Seguro Social Patronal (EIN) es requerido",
+                "maxDigits": "El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos"
             },
             "address": {
                 "label": "Dirección",
@@ -111,7 +117,9 @@
             },
             "phone": {
                 "label": "Teléfono",
-                "placeholder": "Ingrese el número de teléfono"
+                "placeholder": "Ingrese el número de teléfono",
+                "required": "El teléfono es requerido",
+                "puertoRicoPhone": "El teléfono debe tener 10 dígitos"
             },
             "administration-title": {
                 "label": "Persona a Cargo",

@@ -851,7 +851,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "sites.add.breakfast.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="breakfast-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -871,7 +871,7 @@
           </mat-form-field>
           <mat-form-field data-cy="breakfast-to-field">
             <mat-label>{{ "sites.add.breakfast-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="breakfastTo" data-cy="breakfast-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="breakfastTo" data-cy="breakfast-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('breakfastFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -892,7 +892,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "sites.add.snack-am.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-am-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -912,7 +912,7 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-am-to-field">
             <mat-label>{{ "sites.add.snack-am-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAMTo" data-cy="snack-am-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="snackAMTo" data-cy="snack-am-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('snackAMFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -933,7 +933,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "sites.add.lunch.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'lunch'" data-cy="lunch-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'lunch'" data-cy="lunch-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="lunch-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -953,7 +953,7 @@
           </mat-form-field>
           <mat-form-field data-cy="lunch-to-field">
             <mat-label>{{ "sites.add.lunch-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="lunchTo" data-cy="lunch-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="lunchTo" data-cy="lunch-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('lunchFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -974,7 +974,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "sites.add.snack-pm.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-pm-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -994,7 +994,7 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-pm-to-field">
             <mat-label>{{ "sites.add.snack-pm-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackPMTo" data-cy="snack-pm-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="snackPMTo" data-cy="snack-pm-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('snackPMFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1015,7 +1015,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="(isPSAV || isPACNA) && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="dinner-field">
             <mat-label>{{ "sites.add.dinner.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinner'" data-cy="dinner-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1035,7 +1035,7 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-to-field">
             <mat-label>{{ "sites.add.dinner-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerTo" data-cy="dinner-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="dinnerTo" data-cy="dinner-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('dinnerFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1056,7 +1056,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "sites.add.snack-night.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1076,7 +1076,7 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-night-to-field">
             <mat-label>{{ "sites.add.snack-night-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNightTo" data-cy="snack-night-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="snackNightTo" data-cy="snack-night-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('snackNightFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1097,7 +1097,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="dinner-extended-field">
             <mat-label>{{ "sites.add.dinner-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-extended-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1117,7 +1117,7 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-extended-to-field">
             <mat-label>{{ "sites.add.dinner-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtendedTo" data-cy="dinner-extended-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="dinnerExtendedTo" data-cy="dinner-extended-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('dinnerExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1138,7 +1138,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="dinner-at-risk-field">
             <mat-label>{{ "sites.add.dinner-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-at-risk-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1158,7 +1158,7 @@
           </mat-form-field>
           <mat-form-field data-cy="dinner-at-risk-to-field">
             <mat-label>{{ "sites.add.dinner-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRiskTo" data-cy="dinner-at-risk-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="dinnerAtRiskTo" data-cy="dinner-at-risk-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('dinnerAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1179,7 +1179,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-extended-field">
             <mat-label>{{ "sites.add.snack-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-extended-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1199,7 +1199,7 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-extended-to-field">
             <mat-label>{{ "sites.add.snack-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtendedTo" data-cy="snack-extended-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="snackExtendedTo" data-cy="snack-extended-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('snackExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1220,7 +1220,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
           <mat-form-field data-cy="snack-at-risk-field">
             <mat-label>{{ "sites.add.snack-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select" [compareWith]="compareById">
+            <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-at-risk-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -1240,7 +1240,7 @@
           </mat-form-field>
           <mat-form-field data-cy="snack-at-risk-to-field">
             <mat-label>{{ "sites.add.snack-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRiskTo" data-cy="snack-at-risk-to-input" required [compareWith]="compareByTimeWrapper">
+            <mat-select formControlName="snackAtRiskTo" data-cy="snack-at-risk-to-input" [compareWith]="compareByTimeWrapper">
               <mat-option *ngFor="let time of getEndTimeOptions('snackAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
                 {{ time.display }}
               </mat-option>
@@ -1255,8 +1255,8 @@
         </div>
 
         <!-- TITULO -->
-        <!-- Persona a Cargo (solo para PDAM) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM">
+        <!-- Persona a Cargo (solo para PDAM y PSAV) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="(isPDAM || isPSAV) && !shouldHideIndividualServiceFields()">
           <p class="text-lg font-medium">{{ "sites.add.administrator-authorized.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.add.administrator-authorized.description" | transloco }}</p>
         </div>

@@ -119,7 +119,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
       // Datos de la Agencia
       uieNumber: [null, [Validators.required, Validators.maxLength(12), alphanumericValidator()]],
-      sdrNumber: [null, Validators.required],
+      sdrNumber: [null, [Validators.required, maxDigitsValidator(10)]],
       einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
       // Datos de la Ciudad y Región
@@ -255,9 +255,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       cityId: formValues.city?.id,
       regionId: formValues.region?.id,
       statusId: formValues.status?.id,
-      sdrNumber: formValues.sdrNumber,
+      sdrNumber: formValues.sdrNumber ? parseInt(formValues.sdrNumber.toString(), 10) : 0,
       uieNumber: formValues.uieNumber,
-      einNumber: formValues.einNumber,
+      einNumber: formValues.einNumber ? parseInt(formValues.einNumber.toString(), 10) : 0,
       address: formValues.address,
       zipCode: formValues.zipCode,
       latitude: parseFloat(formValues.latitude),

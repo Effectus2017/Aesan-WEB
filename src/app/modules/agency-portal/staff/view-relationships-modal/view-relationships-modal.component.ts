@@ -47,6 +47,7 @@ export class ViewRelationshipsModalComponent implements OnInit, OnDestroy {
     pageSizeOptions: [10, 25, 50],
     length: 0,
     addButtonShow: false,
+    fullScreen: true,
   };
 
   staffName: string = '';
