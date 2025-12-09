@@ -70,7 +70,7 @@
                 "force-password": "Forzar Cambio de Contraseña"
             },
             "agency": {
-                "readonly": "Agencia a la que pertenece"
+                "readonly": "Auspiciador"
             },
             "update-password-modal": {
                 "title": "Actualizar Contraseña",
@@ -227,7 +227,7 @@
             "submit": "Guardar",
             "back": "Volver",
             "agency": {
-                "label": "Agencia a la que pertenece",
+                "label": "Auspiciador",
                 "placeholder": "Seleccione una agencia",
                 "required": "La agencia es requerida"
             },

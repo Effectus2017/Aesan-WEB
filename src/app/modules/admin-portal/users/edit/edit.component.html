@@ -1,4 +1,4 @@
-<div class="flex overflow-y-auto absolute inset-0 flex-col min-w-0" cdkScrollable>
+<div class="flex absolute inset-0 flex-col min-w-0">
   <!-- Header -->
   <app-generic-header [config]="headerConfig" [handler]="this" #usersHeader></app-generic-header>
 
@@ -26,11 +26,11 @@
       />
     </div>
 
-    <div class="grid grid-cols-12 gap-2 p-8 pb-4">
+
       <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-12">
-        <div formGroupName="datosPersonales">
+        <div class="grid grid-cols-12 gap-2 p-4 pt-4 sm:pt-4">
           <!-- Personal Information -->
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-4">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.firstName.label" | transloco }}</mat-label>
               <input
@@ -41,7 +41,7 @@
                 [attr.aria-label]="'users.edit.firstName.label' | transloco"
                 [title]="'users.edit.firstName.label' | transloco"
               />
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('firstName').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('firstName').hasError('required')">
                 {{ "users.edit.firstName.required" | transloco }}
               </mat-error>
             </mat-form-field>
@@ -55,7 +55,7 @@
                 [attr.aria-label]="'users.edit.middleName.label' | transloco"
                 [title]="'users.edit.middleName.label' | transloco"
               />
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('middleName').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('middleName').hasError('required')">
                 {{ "users.edit.middleName.required" | transloco }}
               </mat-error>
             </mat-form-field>
@@ -69,7 +69,7 @@
                 [attr.aria-label]="'users.edit.fatherLastName.label' | transloco"
                 [title]="'users.edit.fatherLastName.label' | transloco"
               />
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('fatherLastName').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName').hasError('required')">
                 {{ "users.edit.fatherLastName.required" | transloco }}
               </mat-error>
             </mat-form-field>
@@ -86,7 +86,7 @@
             </mat-form-field>
           </div>
           <!-- Access Information -->
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
               <input
@@ -97,13 +97,13 @@
                 [attr.aria-label]="'users.edit.email.label' | transloco"
                 [title]="'users.edit.email.label' | transloco"
               />
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('required')">
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('required')">
                 {{ "users.edit.email.required" | transloco }}
               </mat-error>
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('email')">
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('email')">
                 {{ "users.edit.email.invalid" | transloco }}
               </mat-error>
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('email').hasError('emailExists')">
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('emailExists')">
                 {{ "users.edit.email.exists" | transloco }}
               </mat-error>
             </mat-form-field>
@@ -136,7 +136,7 @@
           </div>
           @if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {
           <!-- Nuevos checkboxes para estados del usuario -->
-          <div class="grid grid-cols-1 gap-2 mb-4 sm:grid-cols-3">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
             <mat-checkbox formControlName="isActive" [attr.aria-label]="'users.edit.isActive.label' | transloco" data-cy="is-active-checkbox">
               {{ "users.edit.isActive.label" | transloco }}
             </mat-checkbox>
@@ -155,13 +155,15 @@
           </div>
           }
         </div>
-        <div class="overflow-hidden col-span-10">
-          <div class="prose-sm prose">
-            <h2 class="my-12">{{ "users.edit.permissions-section" | transloco }}</h2>
-          </div>
-        </div>
-        <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+
       </form>
-    </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 my-6 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ "users.edit.permissions-section" | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-1 sm:col-span-12">
+        <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+      </div>
+
+
   </div>
 </div>

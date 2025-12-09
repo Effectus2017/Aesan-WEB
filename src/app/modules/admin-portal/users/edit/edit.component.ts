@@ -4,8 +4,8 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';
-import { Subject, takeUntil } from 'rxjs';
-import { ChangePassword, RequestUser } from '../users.types';
+import { Subject } from 'rxjs';
+import { RequestUser } from '../users.types';
 import { UploadService } from 'app/shared/services/upload.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,7 +28,6 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { SafeImageUrlPipe } from 'app/shared/pipes/safe-image-url.pipe';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { PERMISSIONS_COLUMNS_SCHEMA } from './columns-schema';
@@ -69,7 +68,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private route: ActivatedRoute = inject(ActivatedRoute);
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _usersService: UsersService = inject(UsersService);
-  private _agencyService: AgencyService = inject(AgencyService);
   private _uploadService: UploadService = inject(UploadService);
   private _authService: AuthService = inject(AuthService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
@@ -86,7 +84,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
     formGroup: this._formBuilder.group({
-      datosPersonales: this._formBuilder.group({
         email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
         firstName: new FormControl(null, Validators.required),
         middleName: new FormControl(null),
@@ -97,7 +94,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
-      }),
     }),
     saveButtonShow: true,
     saveButtonText: 'users.edit.buttons.save',
@@ -125,7 +121,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     pageSizeOptions: [15, 50, 100],
     length: 0,
     addMenuShow: true,
-    fullScreen: true,
+    fullScreen: false,
     addMenuItems: [
       {
         id: 'add',
@@ -211,7 +207,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.imageURL = param.imageURL;
     }
 
-    this.headerConfig.formGroup.controls.datosPersonales.patchValue({
+    this.headerConfig.formGroup.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
       middleName: this.user.middleName,
@@ -225,7 +221,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     });
 
     // Actualizar el validador de email con el email original
-    const emailControl = this.headerConfig.formGroup.get('datosPersonales.email');
+    const emailControl = this.headerConfig.formGroup.get('email');
     if (emailControl) {
       emailControl.clearAsyncValidators();
       emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
@@ -259,10 +255,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Para cuando se actualiza el usuario. save button
   onSave(): void {
-    if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
-      this.onUpdate(this.headerConfig.formGroup.value.datosPersonales);
+    if (this.headerConfig.formGroup.valid) {
+      this.onUpdate(this.headerConfig.formGroup.value);
     } else {
-      this.headerConfig.formGroup.get('datosPersonales').markAllAsTouched();
+      this.headerConfig.formGroup.markAllAsTouched();
     }
   }
 
@@ -275,8 +271,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   onUpdate(form: any) {
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email) && isNullOrUndefinedEmptyStringNullArray(this.user.email)) {
-      this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors({ required: true });
-      this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
+      this.headerConfig.formGroup.get('email').setErrors({ required: true });
+      this.headerConfig.formGroup.get('email').markAsTouched();
       return;
     }
 
@@ -284,14 +280,14 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const loggedInUserId = this._authService.getUserId();
     let roleName: string;
 
-    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('datosPersonales.role').disabled) {
+    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('role').disabled) {
       // Si el rol está deshabilitado, usar el rol actual del usuario
       roleName = this.user.roles[0];
     } else {
       // Si el rol no está deshabilitado, verificar que no sea nulo
       if (isNullOrUndefinedEmptyStringNullArray(form.role?.name)) {
-        this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
-        this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+        this.headerConfig.formGroup.get('role').setErrors({ required: true });
+        this.headerConfig.formGroup.get('role').markAsTouched();
         return;
       }
       roleName = form.role.name;
@@ -345,7 +341,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           });
         }
       },
-      error: (error) => {
+      error: () => {
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.update.error.title'),
@@ -412,7 +408,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           });
         }
       },
-      error: (error) => {
+      error: () => {
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.password.error.title'),
@@ -474,7 +470,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           });
         }
       },
-      error: (error) => {
+      error: () => {
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.password.reset.error.title'),
@@ -530,7 +526,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           });
         }
       },
-      error: (error) => {
+      error: () => {
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.edit.messages.force-password.title'),
           message: this._translocoService.translate('users.edit.messages.force-password.error'),
@@ -639,7 +635,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
                 });
               }
             },
-            error: (error) => {
+            error: () => {
               // Mostrar mensaje de error
               this._fuseConfirmationService.open({
                 title: this._translocoService.translate('users.edit.messages.avatar.title'),
@@ -666,7 +662,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           this._changeDetectorRef.markForCheck();
         }
       },
-      error: (error) => {
+      error: () => {
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.edit.messages.upload.title'),
@@ -700,7 +696,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
    */
   private disableEditableFormControls(): void {
     // Deshabilitar todos los controles excepto email y otros campos sensibles
-    handleFormControls(this.headerConfig.formGroup.get('datosPersonales') as UntypedFormGroup, 'disable', {
+    handleFormControls(this.headerConfig.formGroup as UntypedFormGroup, 'disable', {
       controls: ['email', 'userName'],
       mode: 'include',
     });
@@ -711,7 +707,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     // Si el usuario que se está editando es el mismo que está logueado,
     // deshabilitar el campo de rol para evitar que cambie su propio rol
     if (loggedInUserId === this.id) {
-      this.headerConfig.formGroup.get('datosPersonales.role').disable();
+      this.headerConfig.formGroup.get('role').disable();
     }
   }
 

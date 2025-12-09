@@ -70,7 +70,7 @@
                 "force-password": "Force Password Change"
             },
             "agency": {
-                "readonly": "Agency to which it belongs"
+                "readonly": "Sponsor"
             },
             "update-password-modal": {
                 "title": "Update Password",
@@ -193,7 +193,7 @@
             "submit": "Save",
             "back": "Back",
             "agency": {
-                "label": "Agency to which it belongs",
+                "label": "Sponsor",
                 "placeholder": "Select an agency",
                 "required": "Agency is required"
             },

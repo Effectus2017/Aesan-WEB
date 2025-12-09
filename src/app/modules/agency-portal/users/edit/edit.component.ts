@@ -70,7 +70,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
     formGroup: this._formBuilder.group({
-
         email: new FormControl({ value: null, readonly: false }, [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
         firstName: new FormControl(null, Validators.required),
         middleName: new FormControl(null),
@@ -78,7 +77,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         motherLastName: new FormControl(null),
         role: new FormControl({ value: null, disabled: true }), // Rol readonly en perfil
         agency: new FormControl(null),
-
     }),
     saveButtonShow: true,
     saveButtonText: 'users.edit.buttons.save',
