@@ -23,6 +23,7 @@ export class CurrentProgramBannerComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<void> = new Subject<void>();
 
     currentProgram: string | null = null;
+    completedRegistrationDate: string | null = null;
     showBanner: boolean = false;
     bannerText: string = '';
     tooltipText: string = '';
@@ -81,15 +82,25 @@ export class CurrentProgramBannerComponent implements OnInit, OnDestroy {
                     // Tomar el primer programa de la agencia
                     const firstProgram = agency.programs[0];
                     this.currentProgram = firstProgram.name;
+
+                    // Extraer la fecha de completado de la inscripción
+                    if (agency.inscription?.completedRegistrationDate) {
+                        this.completedRegistrationDate = this._formatDate(agency.inscription.completedRegistrationDate);
+                    } else {
+                        this.completedRegistrationDate = null;
+                    }
+
                     this.showBanner = true;
                     this._updateBannerText();
                     this._updateTooltipText();
                     this._updateProgramIcon();
                 } else {
                     this.showBanner = false;
+                    this.completedRegistrationDate = null;
                 }
             } else {
                 this.showBanner = false;
+                this.completedRegistrationDate = null;
             }
 
             this._changeDetectorRef.markForCheck();
@@ -100,7 +111,19 @@ export class CurrentProgramBannerComponent implements OnInit, OnDestroy {
      * Actualiza el texto del banner según el idioma activo
      */
     private _updateBannerText(): void {
-        this._translocoService.selectTranslate('navigation.currentProgram.program', { program: this.currentProgram })
+        const params: any = { program: this.currentProgram };
+
+        // Determinar qué clave de traducción usar según si existe la fecha
+        const translationKey = this.completedRegistrationDate
+            ? 'navigation.currentProgram.programWithDate'
+            : 'navigation.currentProgram.program';
+
+        // Incluir la fecha de completado si existe
+        if (this.completedRegistrationDate) {
+            params.completedDate = this.completedRegistrationDate;
+        }
+
+        this._translocoService.selectTranslate(translationKey, params)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((translation) => {
                 this.bannerText = translation;
@@ -151,6 +174,40 @@ export class CurrentProgramBannerComponent implements OnInit, OnDestroy {
             default:
                 this.programIcon = 'mat_outline:domain';
                 break;
+        }
+    }
+
+    /**
+     * Formatea la fecha en formato largo según el idioma activo
+     * Ejemplo: "15 de octubre de 2025" (es) o "October 15, 2025" (en)
+     */
+    private _formatDate(dateString: string | null | undefined): string | null {
+        if (!dateString) {
+            return null;
+        }
+
+        try {
+            const date = new Date(dateString);
+
+            // Validar que la fecha sea válida
+            if (isNaN(date.getTime())) {
+                return null;
+            }
+
+            // Obtener el idioma actual
+            const currentLang = this._translocoService.getActiveLang() || 'es';
+
+            // Formatear la fecha según el idioma
+            const formatter = new Intl.DateTimeFormat(currentLang === 'es' ? 'es-PR' : 'en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            return formatter.format(date);
+        } catch (error) {
+            console.error('Error formateando fecha:', error);
+            return null;
         }
     }
 }

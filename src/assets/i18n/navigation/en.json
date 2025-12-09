@@ -77,14 +77,15 @@
             "cancel": "Cancel",
             "understood": "Understood",
             "confirmation": {
-                "title": "Confirm",
-                "message": "Are you sure you have completed the registration?",
+                "title": "{{days}} days to complete registration",
+                "message": "Do you want to mark the registration as completed?",
                 "cancel": "Cancel",
                 "confirm": "Accept"
             }
         },
         "currentProgram": {
             "program": "Current Program: {{program}}",
+            "programWithDate": "Current Program: {{program}} - Completed: {{completedDate}}",
             "tooltip": "Current program in which the agency is located"
         },
         "agencyStatus": {

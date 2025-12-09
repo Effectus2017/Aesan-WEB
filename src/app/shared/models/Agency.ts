@@ -67,6 +67,7 @@ class InscriptionResponse {
     extendedHours?: boolean | null;
     comments?: string | null;
     deadlineToCompleteRegistration?: string | null;
+    completedRegistrationDate?: string | null;
     federalFundsDenied?: boolean;
     federalFundsDeniedReason?: string | null;
     id?: number;

@@ -11,6 +11,8 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Agency } from 'app/shared/models/Agency';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
 
 @Component({
     selector: 'deadline-banner',
@@ -27,6 +29,7 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
     private _authService: AuthService = inject(AuthService);
     private _snackBar: MatSnackBar = inject(MatSnackBar);
     private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
+    private _notificationService: NotificationService = inject(NotificationService);
     private _router: Router = inject(Router);
     private _activatedRoute: ActivatedRoute = inject(ActivatedRoute);
     private _unsubscribeAll: Subject<void> = new Subject<void>();
@@ -92,9 +95,16 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
             this.isAdminPortal = false;
         }
 
+        console.log('[DeadlineBanner] Route check:', {
+            isAdminPortal: this.isAdminPortal,
+            daysRemaining: this.daysRemaining,
+            isExpired: this.isExpired
+        });
+
         // Recalcular la visibilidad del banner cuando cambia la ruta
         if (this.daysRemaining !== null) {
             this.showBanner = !this.isAdminPortal && (this.daysRemaining > 0 || this.isExpired);
+            console.log('[DeadlineBanner] Banner visibility after route check:', this.showBanner);
             this._changeDetectorRef.markForCheck();
         }
     }
@@ -106,15 +116,42 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
         // Suscribirse al observable de la agencia actual
         this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
             if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-                const agency = result.body;
+                const agency = result.body || result;
 
-
-
-                if (agency.deadlineToCompleteRegistration) {
-                    this._calculateDaysRemaining(agency.deadlineToCompleteRegistration);
-                } else {
+                // Verificar si el registro ya está completado - si es así, ocultar el banner
+                const completedRegistrationDate = agency?.inscription?.completedRegistrationDate;
+                if (completedRegistrationDate) {
+                    console.log('[DeadlineBanner] Registration already completed, hiding banner');
                     this.showBanner = false;
+                    this._changeDetectorRef.markForCheck();
+                    return;
                 }
+
+                // Buscar la fecha límite primero en inscription, luego en el nivel superior como fallback
+                const deadlineDate = agency?.inscription?.deadlineToCompleteRegistration
+                    || agency?.deadlineToCompleteRegistration;
+
+                // Log para debugging
+                console.log('[DeadlineBanner] Agency data:', {
+                    hasAgency: !!agency,
+                    hasInscription: !!agency?.inscription,
+                    completedRegistrationDate: completedRegistrationDate,
+                    deadlineFromInscription: agency?.inscription?.deadlineToCompleteRegistration,
+                    deadlineFromAgency: agency?.deadlineToCompleteRegistration,
+                    finalDeadline: deadlineDate
+                });
+
+                if (deadlineDate) {
+                    this._calculateDaysRemaining(deadlineDate);
+                } else {
+                    console.log('[DeadlineBanner] No deadline date found, hiding banner');
+                    this.showBanner = false;
+                    this._changeDetectorRef.markForCheck();
+                }
+            } else {
+                console.log('[DeadlineBanner] No agency data available');
+                this.showBanner = false;
+                this._changeDetectorRef.markForCheck();
             }
             // Verificar la ruta actual después de cargar los datos de la agencia
             this._checkCurrentRoute();
@@ -127,6 +164,14 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
     private _calculateDaysRemaining(deadlineDate: string): void {
         const deadline = new Date(deadlineDate);
         const now = new Date();
+
+        // Validar que la fecha sea válida
+        if (isNaN(deadline.getTime())) {
+            console.error('[DeadlineBanner] Invalid deadline date:', deadlineDate);
+            this.showBanner = false;
+            this._changeDetectorRef.markForCheck();
+            return;
+        }
 
         // Reset time to start of day for accurate day calculation
         deadline.setHours(0, 0, 0, 0);
@@ -141,6 +186,15 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
 
         // Mostrar el banner si no estamos en el portal de administrador y (quedan días O ha caducado)
         this.showBanner = !this.isAdminPortal && (daysDiff > 0 || this.isExpired);
+
+        console.log('[DeadlineBanner] Calculated days:', {
+            deadlineDate,
+            daysRemaining: daysDiff,
+            isExpired: this.isExpired,
+            isUrgent: this.isUrgent,
+            isAdminPortal: this.isAdminPortal,
+            showBanner: this.showBanner
+        });
 
         this._updateBannerText();
         this._updateTooltipText();
@@ -221,9 +275,10 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
             });
         } else {
             // Modal de confirmación para tiempo restante - botones aceptar/cancelar
+            // Usa las traducciones de confirmación con mensaje más resumido
             this._fuseConfirmationService.open({
-                title: this.bannerText,
-                message: this.tooltipText,
+                title: this._translocoService.translate('navigation.deadline.confirmation.title', { days: this.daysRemaining }),
+                message: this._translocoService.translate('navigation.deadline.confirmation.message'),
                 icon: {
                     show: true,
                     name: 'heroicons_outline:exclamation-triangle',
@@ -243,15 +298,58 @@ export class DeadlineBannerComponent implements OnInit, OnDestroy {
                 dismissible: true
             }).afterClosed().subscribe((result) => {
                 if (result === 'confirmed') {
-                    // TODO: Implementar la lógica para marcar como completado
-                    this._snackBar.open('Función de completar registro en desarrollo', 'Cerrar', {
-                        duration: 3000,
-                        horizontalPosition: 'center',
-                        verticalPosition: 'top'
-                    });
+                    this._completeRegistration();
                 }
             });
         }
+    }
+
+    /**
+     * Completa el registro de la agencia usando la misma lógica que el botón de completar en accesos rápidos
+     */
+    private _completeRegistration(): void {
+        // Obtener la agencia del usuario actual logueado
+        const agencyId = this._authService.getAgencyId();
+
+        if (!agencyId) {
+            console.error('[DeadlineBanner] No se pudo obtener el AgencyId del usuario actual');
+            this._notificationService.showErrorDialog('dialog.error.messageSendError');
+            return;
+        }
+
+        console.log('[DeadlineBanner] AgencyId obtenido del usuario:', agencyId);
+
+        // Usar formato ISO para la fecha (el backend lo parsea automáticamente)
+        const now = new Date();
+        const queryParameters: QueryParameters = {
+            AgencyId: agencyId,
+            CompletedRegistrationDate: now.toISOString()
+        };
+
+        console.log('[DeadlineBanner] Enviando request con parámetros:', queryParameters);
+
+        this._agencyService.updateCompletedRegistrationDate(queryParameters).subscribe({
+            next: (response) => {
+                console.log('[DeadlineBanner] Respuesta exitosa:', response);
+                this._notificationService.showSuccessDialog('dialog.success.messageSent');
+                // Ocultar el banner después de completar
+                this.showBanner = false;
+                this._changeDetectorRef.markForCheck();
+                // Recargar los datos de la agencia para actualizar el estado
+                this._loadAgencyData();
+            },
+            error: (error) => {
+                console.error('[DeadlineBanner] Error al completar registro:', error);
+                console.error('[DeadlineBanner] Error details:', {
+                    status: error.status,
+                    statusText: error.statusText,
+                    message: error.message,
+                    error: error.error
+                });
+                const errorMessage = error.error?.message || error.message || 'Error desconocido';
+                this._notificationService.showErrorDialog('dialog.error.messageSendError');
+            },
+        });
     }
 
     /**
