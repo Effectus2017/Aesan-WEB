@@ -11,7 +11,7 @@ export interface Agency {
     statusId?: number;
     // Identification
     sdrNumber?: number;
-    uieNumber?: string;
+    uieNumber?: number;
     einNumber?: number;
     // Address
     address?: string;

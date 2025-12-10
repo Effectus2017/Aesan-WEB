@@ -325,21 +325,24 @@
               </mat-error>
             </mat-form-field>
 
-            <!-- IUE Number *  -->
+            <!-- Identificador Único de Entidad (IUE) *  -->
             <mat-form-field data-cy="uie-field">
               <mat-label>{{ "sign-up.uie.label" | transloco }}</mat-label>
               <input
                 matInput
                 [formControlName]="'uieNumber'"
                 placeholder="{{ 'sign-up.uie.placeholder' | transloco }}"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                numericOnly
                 maxlength="12"
                 data-cy="uie-input"
               />
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('required') && (signUpForm.get('uieNumber')?.touched || signUpForm.get('uieNumber')?.dirty)">
                 {{ "sign-up.uie.required" | transloco }}
               </mat-error>
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxlength')">
-                {{ "sign-up.uie.maxlength" | transloco }}
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxDigits')">
+                {{ "sign-up.uie.maxDigits" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>

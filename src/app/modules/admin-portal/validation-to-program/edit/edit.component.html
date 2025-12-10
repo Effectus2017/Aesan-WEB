@@ -58,15 +58,15 @@
               matInput
               formControlName="uieNumber"
               [placeholder]="'validation-to-program.edit.uieNumber.placeholder' | transloco"
+              inputmode="numeric"
+              pattern="[0-9]*"
+              numericOnly
               maxlength="12"
               [attr.aria-label]="'validation-to-program.edit.uieNumber.label' | transloco"
               [title]="'validation-to-program.edit.uieNumber.label' | transloco"
             />
-            <mat-error *ngIf="headerConfig.formGroup.get('uieNumber')?.hasError('maxlength')">
-              {{ "validation-to-program.edit.uieNumber.maxlength" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('uieNumber')?.hasError('alphanumeric')">
-              {{ "validation-to-program.edit.uieNumber.alphanumeric" | transloco }}
+            <mat-error *ngIf="headerConfig.formGroup.get('uieNumber')?.hasError('maxDigits')">
+              {{ "validation-to-program.edit.uieNumber.maxDigits" | transloco }}
             </mat-error>
           </mat-form-field>
 

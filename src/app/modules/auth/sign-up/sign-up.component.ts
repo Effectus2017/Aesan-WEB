@@ -203,7 +203,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
       // Datos de la Agencia
       sdrNumber: [null, [Validators.required, maxDigitsValidator(10)]],
-      uieNumber: [null, [Validators.required, Validators.maxLength(12), alphanumericValidator()]],
+      uieNumber: [null, [Validators.required, maxDigitsValidator(12)]],
       einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
       // Datos de la Agencia
@@ -732,7 +732,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     const name = formValues.name;
     const sdrNumber: number = formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0;
-    const uieNumber: string = formValues.uieNumber ? formValues.uieNumber.toString() : '';
+    const uieNumber: number = formValues.uieNumber && formValues.uieNumber.toString().trim() !== '' ? parseInt(formValues.uieNumber.toString(), 10) || 0 : 0;
     const einNumber: number = formValues.einNumber ? parseInt(formValues.einNumber) : 0;
     const address: string = formValues.address;
     const zipCode: string = formValues.zipCode;
