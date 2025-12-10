@@ -274,22 +274,6 @@
             </mat-form-field>
           </div>
 
-          <!-- National Youth Program -->
-          <!-- ¿Su Institución es un Programa Nacional de Juventud? -->
-          <!-- Este campo ya NO se debe mostrar para NINGÚN programa (incluyendo PSAV) -->
-          <!-- PSAV acaba de solicitar que esta pregunta se mueva para la Intención de Participación recurrente.  No se ha implementado aún. -->
-          <!-- NO BORRAR ESTE CAMPO -->
-          <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="false">
-            <mat-form-field data-cy="national-youth-program-field">
-              <mat-label>{{ "sign-up.national-youth-program.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'nationalYouthProgram'" data-cy="national-youth-program-input">
-                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="national-youth-program-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div> -->
-
           <!-- ¿Es usted una Entidad Auspiciadora de Hogares? -->
           <!-- Are you a Day Care Homes? -->
           <!-- No, Sí, Ambos - Ahora usa OptionSelection -->
@@ -355,7 +339,7 @@
                 {{ "sign-up.uie.required" | transloco }}
               </mat-error>
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxlength')">
-                El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres
+                {{ "sign-up.uie.maxlength" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>
@@ -380,7 +364,7 @@
                 {{ "sign-up.state-department-registration.required" | transloco }}
               </mat-error>
               <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('maxDigits')">
-                El número de registro del departamento de estado debe tener máximo 10 dígitos
+                {{ "sign-up.state-department-registration.maxDigits" | transloco }}
               </mat-error>
             </mat-form-field>
 
@@ -392,7 +376,7 @@
                 {{ "sign-up.ein.required" | transloco }}
               </mat-error>
               <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('maxDigits')">
-                El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos
+                {{ "sign-up.ein.maxDigits" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>
@@ -621,7 +605,7 @@
                 {{ "sign-up.phone.required" | transloco }}
               </mat-error>
               <mat-error *ngIf="signUpForm.get('phone')?.hasError('puertoRicoPhone') && (signUpForm.get('phone')?.touched || signUpForm.get('phone')?.dirty)">
-                El teléfono debe tener 10 dígitos
+                {{ "sign-up.phone.invalid" | transloco }}
               </mat-error>
             </mat-form-field>
             <!-- Admin Title *  -->

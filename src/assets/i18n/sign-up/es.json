@@ -86,7 +86,8 @@
     "state-department-registration": {
       "label": "Número de Registro del Departamento de Estado",
       "placeholder": "Ingresa el número de registro del departamento de estado",
-      "required": "El número de registro del departamento de estado es requerido"
+      "required": "El número de registro del departamento de estado es requerido",
+      "maxDigits": "El número de registro del departamento de estado debe tener máximo 10 dígitos"
     },
     "address": {
       "label": "Dirección",
@@ -138,12 +139,14 @@
     "uie": {
       "label": "Identificador Único de Entidad (IUE)",
       "placeholder": "Ingresa el Identificador Único de Entidad (IUE)",
-      "required": "El Identificador Único de Entidad (IUE) es requerido"
+      "required": "El Identificador Único de Entidad (IUE) es requerido",
+      "maxlength": "El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres"
     },
     "ein": {
       "label": "Número de Seguro Social Patronal (EIN)",
       "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)",
-      "required": "El Número de Seguro Social Patronal (EIN) es requerido"
+      "required": "El Número de Seguro Social Patronal (EIN) es requerido",
+      "maxDigits": "El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos"
     },
     "latitude": {
       "label": "Latitud",
@@ -161,7 +164,8 @@
     "phone": {
       "label": "Teléfono",
       "placeholder": "(xxx) xxx-xxxx",
-      "required": "El teléfono es requerido"
+      "required": "El teléfono es requerido",
+      "invalid": "El teléfono debe tener 10 dígitos"
     },
     "email": {
       "label": "Correo Electrónico",

@@ -51,6 +51,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'app-admin-edit-staff',
@@ -78,6 +79,7 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
     GenericTableComponent,
     MatDialogModule,
     PuertoRicoZipCodeDirective,
+    NumericOnlyDirective,
   ],
 })
 export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -123,6 +125,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
   listAdministrativePositions: OptionSelection[] = [];
   listOperationalPositions: OptionSelection[] = [];
   listBoardMemberTitles: OptionSelection[] = [];
+  // Listas para campos de Miembros de la Junta
+  listTenureDurationUnits: OptionSelection[] = [];
+  listReceivesProgramSalary: OptionSelection[] = [];
 
   // Propiedad para controlar si mostrar campos de revisión (solo para empleados)
   isEmployee: boolean = false;
@@ -204,6 +209,10 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       reviewDate: new FormControl(''),
       // Review justification
       reviewJustification: new FormControl(''),
+      // Campos específicos para Miembros de la Junta
+      tenureDuration: new FormControl(''),
+      tenureDurationUnit: new FormControl(''),
+      receivesProgramSalary: new FormControl(''),
     }),
     // Submit button
     submitButtonShow: true,
@@ -287,6 +296,13 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       if (!email || !postalAddress || !city || !region || !zipCode) {
         return false;
       }
+      // Validar campos específicos de miembros de junta
+      const tenureDuration = form.get('tenureDuration')?.value;
+      const tenureDurationUnit = form.get('tenureDurationUnit')?.value;
+      const receivesProgramSalary = form.get('receivesProgramSalary')?.value;
+      if (!tenureDuration || !tenureDurationUnit || !receivesProgramSalary) {
+        return false;
+      }
     }
 
     return true;
@@ -311,6 +327,31 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
       this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
       this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+      // Listas para campos de Miembros de la Junta
+      this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
+      this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+
+      // Si el formulario ya está inicializado y es miembro de junta, actualizar los valores
+      if (this.param && this.isBoardMember) {
+        const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+        const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+
+        if (tenureDurationUnitControl && this.param.tenureDurationUnitId) {
+          const tenureUnit = this.listTenureDurationUnits.find(u => u.id === this.param.tenureDurationUnitId);
+          if (tenureUnit) {
+            tenureDurationUnitControl.setValue(tenureUnit);
+          }
+        }
+
+        if (receivesProgramSalaryControl && this.param.receivesProgramSalaryId) {
+          const receivesSalary = this.listReceivesProgramSalary.find(s => s.id === this.param.receivesProgramSalaryId);
+          if (receivesSalary) {
+            receivesProgramSalaryControl.setValue(receivesSalary);
+          }
+        }
+
+        this._changeDetectorRef.detectChanges();
+      }
 
       // Configurar el formulario con los datos del staff
       this.setFormData();
@@ -396,6 +437,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       reviewResult: this.reviewResult.find((o) => o.id === param.reviewResultId),
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
+      tenureDuration: param.tenureDuration,
+      tenureDurationUnit: param.tenureDurationUnitId ? this.listTenureDurationUnits.find(u => u.id === param.tenureDurationUnitId) : null,
+      receivesProgramSalary: param.receivesProgramSalaryId ? this.listReceivesProgramSalary.find(s => s.id === param.receivesProgramSalaryId) : null,
     });
 
     // Actualizar el validador de email con el email original
@@ -492,6 +536,15 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
         this.isLoading = false;
         return;
       }
+      // Validar campos específicos de miembros de junta
+      const tenureDuration = formValues.tenureDuration;
+      const tenureDurationUnit = formValues.tenureDurationUnit;
+      const receivesProgramSalary = formValues.receivesProgramSalary;
+      if (!tenureDuration || !tenureDurationUnit || !receivesProgramSalary) {
+        this._notificationService.showError('Por favor, complete todos los campos requeridos');
+        this.isLoading = false;
+        return;
+      }
     }
 
     // Campos de revisión
@@ -528,6 +581,13 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       staffRequest.cityId = cityId;
       staffRequest.regionId = regionId;
       staffRequest.zipCode = zipCode;
+    }
+
+    // Agregar campos específicos para miembros de junta
+    if (this.isBoardMember) {
+      staffRequest.tenureDuration = formValues.tenureDuration ? parseInt(formValues.tenureDuration) : null;
+      staffRequest.tenureDurationUnitId = formValues.tenureDurationUnit?.id || null;
+      staffRequest.receivesProgramSalaryId = formValues.receivesProgramSalary?.id || null;
     }
 
     // Agregar clasificación solo si es empleado
@@ -902,6 +962,16 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
         regionControl?.disable({ emitEvent: false });
         zipCodeControl?.disable({ emitEvent: false });
         postalAddressControl?.disable({ emitEvent: false });
+        // Deshabilitar campos específicos de miembros de junta para empleados
+        const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');
+        const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+        const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+        tenureDurationControl?.clearValidators();
+        tenureDurationUnitControl?.clearValidators();
+        receivesProgramSalaryControl?.clearValidators();
+        tenureDurationControl?.disable({ emitEvent: false });
+        tenureDurationUnitControl?.disable({ emitEvent: false });
+        receivesProgramSalaryControl?.disable({ emitEvent: false });
       } else {
         // Si hay clasificación seleccionada, habilitar todos los campos
         firstNameControl?.enable({ emitEvent: false });
@@ -937,6 +1007,13 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       regionControl?.setValidators([Validators.required]);
       zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
+      // Campos específicos para miembros de junta son requeridos
+      const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');
+      const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+      const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+      tenureDurationControl?.setValidators([Validators.required]);
+      tenureDurationUnitControl?.setValidators([Validators.required]);
+      receivesProgramSalaryControl?.setValidators([Validators.required]);
 
       // Habilitar todos los campos para miembros de junta
       firstNameControl?.enable({ emitEvent: false });
@@ -946,6 +1023,9 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
       contractStartDateControl?.enable({ emitEvent: false });
       contractEndDateControl?.enable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
+      tenureDurationControl?.enable({ emitEvent: false });
+      tenureDurationUnitControl?.enable({ emitEvent: false });
+      receivesProgramSalaryControl?.enable({ emitEvent: false });
     } else {
       // Para otros casos: ambos requeridos
       staffClassificationControl?.setValidators([Validators.required]);
@@ -982,6 +1062,14 @@ export class AdminEditStaffComponent implements OnInit, OnDestroy, OnGenericHead
     regionControl?.updateValueAndValidity();
     zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
+
+    // Actualizar validaciones de campos específicos de miembros de junta
+    const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');
+    const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+    const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+    tenureDurationControl?.updateValueAndValidity();
+    tenureDurationUnitControl?.updateValueAndValidity();
+    receivesProgramSalaryControl?.updateValueAndValidity();
 
     // Actualizar el estado del botón de submit
     this.updateSubmitButtonState();

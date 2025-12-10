@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import fieldConfig from '../../modules/agency-portal/staff/edit/field-visibility-config.json';
+import fieldConfig from '../../modules/agency-portal/staff/edit-board-member/field-visibility-config.json';
 import sitesFieldConfig from '../../modules/agency-portal/sites/field-visibility-config.json';
 import {
   isPSAVProgram,

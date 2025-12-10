@@ -39,15 +39,6 @@ export default [
         }
       },
       {
-        path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then(c => c.EditStaffComponent),
-        canActivate: [PermissionGuard],
-        data: { permission: 'staff.edit' },
-        resolve: {
-          data: initialDataStaffEditResolver
-        }
-      },
-      {
         path: 'edit-employee/:id',
         loadComponent: () => import('./edit-employee/edit-employee.component').then(c => c.EditEmployeeComponent),
         canActivate: [PermissionGuard],

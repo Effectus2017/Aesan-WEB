@@ -50,6 +50,7 @@ import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 
 @Component({
   selector: 'app-edit-board-member',
@@ -76,6 +77,7 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
     GenericTableComponent,
     MatDialogModule,
     PuertoRicoZipCodeDirective,
+    NumericOnlyDirective,
   ],
 })
 export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
@@ -117,6 +119,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
   // Lista completa de opciones de selección
   listBoardMemberTitles: OptionSelection[] = [];
+  // Listas para campos de Miembros de la Junta
+  listTenureDurationUnits: OptionSelection[] = [];
+  listReceivesProgramSalary: OptionSelection[] = [];
 
   // ViewChild para el contenedor del formulario
   @ViewChild('formContainer', { static: false }) formContainer!: ElementRef;
@@ -185,6 +190,10 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       // Sitio asignado
       site: new FormControl(null),
       isPrimary: new FormControl(false),
+      // Campos específicos para Miembros de la Junta
+      tenureDuration: new FormControl(''),
+      tenureDurationUnit: new FormControl(''),
+      receivesProgramSalary: new FormControl(''),
     }),
     // Submit button
     submitButtonShow: true,
@@ -251,9 +260,15 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const fatherLastName = form.get('fatherLastName')?.value;
     const birthDateControl = form.get('birthDate');
     const birthDate = birthDateControl?.value;
+    const tenureDurationControl = form.get('tenureDuration');
+    const tenureDuration = tenureDurationControl?.value;
+    const tenureDurationUnitControl = form.get('tenureDurationUnit');
+    const tenureDurationUnit = tenureDurationUnitControl?.value;
+    const receivesProgramSalaryControl = form.get('receivesProgramSalary');
+    const receivesProgramSalary = receivesProgramSalaryControl?.value;
 
     // Verificar que todos los campos requeridos tengan valores
-    if (!email || !postalAddress || !city || !region || !zipCode || !position || !firstName || !fatherLastName || !birthDate) {
+    if (!email || !postalAddress || !city || !region || !zipCode || !position || !firstName || !fatherLastName || !birthDate || !tenureDuration || !tenureDurationUnit || !receivesProgramSalary) {
       return false;
     }
 
@@ -276,6 +291,12 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       return false;
     }
     if (position && !position.id) {
+      return false;
+    }
+    if (tenureDurationUnit && !tenureDurationUnit.id) {
+      return false;
+    }
+    if (receivesProgramSalary && !receivesProgramSalary.id) {
       return false;
     }
 
@@ -307,6 +328,15 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       return false;
     }
     if (birthDate && birthDateControl?.hasError('required')) {
+      return false;
+    }
+    if (tenureDuration && tenureDurationControl?.hasError('required')) {
+      return false;
+    }
+    if (tenureDurationUnit && tenureDurationUnitControl?.hasError('required')) {
+      return false;
+    }
+    if (receivesProgramSalary && receivesProgramSalaryControl?.hasError('required')) {
       return false;
     }
 
@@ -345,17 +375,42 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
         // Posiciones de miembros de junta
         this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
         this.listPositions = this.listBoardMemberTitles;
-        
-        // Si ya se cargó el staff y hay un position establecido, actualizarlo con el objeto de la lista
-        if (this.param && this.listPositions.length > 0) {
-          const currentPosition = this.headerConfig.formGroup.get('position')?.value;
-          if (currentPosition?.id) {
-            const foundPosition = this.listPositions.find(p => p.id === currentPosition.id);
-            if (foundPosition && foundPosition !== currentPosition) {
-              this.headerConfig.formGroup.patchValue({ position: foundPosition });
-              this.updateSubmitButtonState();
+        // Listas para campos de Miembros de la Junta
+        this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
+        this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+
+        // Si el formulario ya está inicializado, actualizar los valores
+        if (this.param) {
+          const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+          const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+
+          if (tenureDurationUnitControl && this.param.tenureDurationUnitId) {
+            const tenureUnit = this.listTenureDurationUnits.find(u => u.id === this.param.tenureDurationUnitId);
+            if (tenureUnit) {
+              tenureDurationUnitControl.setValue(tenureUnit);
             }
           }
+
+          if (receivesProgramSalaryControl && this.param.receivesProgramSalaryId) {
+            const receivesSalary = this.listReceivesProgramSalary.find(s => s.id === this.param.receivesProgramSalaryId);
+            if (receivesSalary) {
+              receivesProgramSalaryControl.setValue(receivesSalary);
+            }
+          }
+
+          // Si ya se cargó el staff y hay un position establecido, actualizarlo con el objeto de la lista
+          if (this.listPositions.length > 0) {
+            const currentPosition = this.headerConfig.formGroup.get('position')?.value;
+            if (currentPosition?.id) {
+              const foundPosition = this.listPositions.find(p => p.id === currentPosition.id);
+              if (foundPosition && foundPosition !== currentPosition) {
+                this.headerConfig.formGroup.patchValue({ position: foundPosition });
+                this.updateSubmitButtonState();
+              }
+            }
+          }
+
+          this._changeDetectorRef.detectChanges();
         }
       }
     });
@@ -503,6 +558,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       comments: param.comments,
       site: param.site,
       isPrimary: param.isPrimary,
+      tenureDuration: param.tenureDuration,
+      tenureDurationUnit: param.tenureDurationUnitId ? this.listTenureDurationUnits.find(u => u.id === param.tenureDurationUnitId) : null,
+      receivesProgramSalary: param.receivesProgramSalaryId ? this.listReceivesProgramSalary.find(s => s.id === param.receivesProgramSalaryId) : null,
     });
 
     // Actualizar el validador de email con el email original
@@ -623,6 +681,16 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       return;
     }
 
+    // Validación: campos específicos de miembros de junta son requeridos
+    const tenureDuration = formValues.tenureDuration;
+    const tenureDurationUnit = formValues.tenureDurationUnit;
+    const receivesProgramSalary = formValues.receivesProgramSalary;
+    if (!tenureDuration || !tenureDurationUnit || !receivesProgramSalary) {
+      this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.incompleteFields'));
+      this.isLoading = false;
+      return;
+    }
+
     // Validar que staffTypeId sea válido
     if (!staffTypeId) {
       this._notificationService.showErrorDialog('El tipo de personal es requerido y no puede ser 0.');
@@ -651,6 +719,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       cityId: cityId,
       regionId: regionId,
       zipCode: zipCode,
+      tenureDuration: tenureDuration ? parseInt(tenureDuration) : null,
+      tenureDurationUnitId: tenureDurationUnit?.id || null,
+      receivesProgramSalaryId: receivesProgramSalary?.id || null,
     };
 
     // Disable the form
@@ -795,6 +866,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const zipCodeControl = this.headerConfig.formGroup.get('zipCode');
     const postalAddressControl = this.headerConfig.formGroup.get('postalAddress');
     const positionControl = this.headerConfig.formGroup.get('position');
+    const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');
+    const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
+    const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
 
     // Para miembros de junta: fecha de nacimiento requerida (mínimo 18 años)
     birthDateControl?.setValidators([Validators.required, minimumAgeValidator(18)]);
@@ -806,6 +880,10 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
     postalAddressControl?.setValidators([Validators.required]);
     positionControl?.setValidators([Validators.required]);
+    // Campos específicos para miembros de junta son requeridos
+    tenureDurationControl?.setValidators([Validators.required]);
+    tenureDurationUnitControl?.setValidators([Validators.required]);
+    receivesProgramSalaryControl?.setValidators([Validators.required]);
 
     birthDateControl?.updateValueAndValidity();
     firstNameControl?.updateValueAndValidity();
@@ -816,6 +894,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
     positionControl?.updateValueAndValidity();
+    tenureDurationControl?.updateValueAndValidity();
+    tenureDurationUnitControl?.updateValueAndValidity();
+    receivesProgramSalaryControl?.updateValueAndValidity();
 
     // Habilitar todos los campos para miembros de junta
     firstNameControl?.enable({ emitEvent: false });
@@ -827,6 +908,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     regionControl?.enable({ emitEvent: false });
       zipCodeControl?.enable({ emitEvent: false });
     postalAddressControl?.enable({ emitEvent: false });
+    tenureDurationControl?.enable({ emitEvent: false });
+    tenureDurationUnitControl?.enable({ emitEvent: false });
+    receivesProgramSalaryControl?.enable({ emitEvent: false });
 
     // Actualizar el estado del botón de submit
     this.updateSubmitButtonState();

@@ -200,7 +200,7 @@
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional)",
         "employee": {
-          "label": "Descripción del empleado *",
+          "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"
         },
         "boardMember": {
@@ -226,6 +226,21 @@
         "label": "Justificación de Revisión",
         "placeholder": "Ingrese la justificación de la revisión realizada",
         "required": "La justificación de revisión es requerida"
+      },
+      "tenureDuration": {
+        "label": "Tiempo de Duración del Cargo",
+        "placeholder": "Ingrese el tiempo de duración del cargo",
+        "required": "El tiempo de duración del cargo es requerido"
+      },
+      "tenureDurationUnit": {
+        "label": "Unidad de Tiempo",
+        "placeholder": "Seleccione la unidad de tiempo",
+        "required": "La unidad de tiempo es requerida"
+      },
+      "receivesProgramSalary": {
+        "label": "¿Recibe salario del programa?",
+        "placeholder": "Seleccione una opción",
+        "required": "Este campo es requerido"
       },
       "buttons": {
         "save": "Guardar",
@@ -343,11 +358,26 @@
         "placeholder": "Ingrese la dirección postal",
         "required": "La dirección postal es requerida"
       },
+      "tenureDuration": {
+        "label": "Tiempo de Duración del Cargo",
+        "placeholder": "Ingrese el tiempo de duración del cargo",
+        "required": "El tiempo de duración del cargo es requerido"
+      },
+      "tenureDurationUnit": {
+        "label": "Unidad de Tiempo",
+        "placeholder": "Seleccione la unidad de tiempo",
+        "required": "La unidad de tiempo es requerida"
+      },
+      "receivesProgramSalary": {
+        "label": "¿Recibe salario del programa?",
+        "placeholder": "Seleccione una opción",
+        "required": "Este campo es requerido"
+      },
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional):",
         "employee": {
-          "label": "Descripción del empleado *",
+          "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"
         },
         "boardMember": {

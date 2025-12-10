@@ -226,6 +226,44 @@
           </mat-form-field>
         </div>
 
+        <!-- Campos específicos para Miembros de la Junta -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isBoardMember">
+          <!-- Tiempo de Duración del Cargo -->
+          <mat-form-field data-cy="tenure-duration-field">
+            <mat-label>{{ "staff.add.tenureDuration.label" | transloco }}</mat-label>
+            <input matInput type="number" formControlName="tenureDuration" [placeholder]="'staff.add.tenureDuration.placeholder' | transloco" data-cy="tenureDuration-input" min="1" numericOnly />
+            <mat-error *ngIf="headerConfig.formGroup.get('tenureDuration')?.hasError('required')">
+              {{ "staff.add.tenureDuration.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Unidad de Tiempo -->
+          <mat-form-field data-cy="tenure-duration-unit-field">
+            <mat-label>{{ "staff.add.tenureDurationUnit.label" | transloco }}</mat-label>
+            <mat-select formControlName="tenureDurationUnit" [placeholder]="'staff.add.tenureDurationUnit.placeholder' | transloco" [compareWith]="compareById" data-cy="tenureDurationUnit-select">
+              <mat-option *ngFor="let unit of listTenureDurationUnits" [value]="unit" data-cy="tenureDurationUnit-option">
+                {{ currentLang === "es" ? unit.name : unit.nameEN }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('tenureDurationUnit')?.hasError('required')">
+              {{ "staff.add.tenureDurationUnit.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- ¿Recibe salario del programa? -->
+          <mat-form-field data-cy="receives-program-salary-field">
+            <mat-label>{{ "staff.add.receivesProgramSalary.label" | transloco }}</mat-label>
+            <mat-select formControlName="receivesProgramSalary" [placeholder]="'staff.add.receivesProgramSalary.placeholder' | transloco" [compareWith]="compareById" data-cy="receivesProgramSalary-select">
+              <mat-option *ngFor="let option of listReceivesProgramSalary" [value]="option" data-cy="receivesProgramSalary-option">
+                {{ currentLang === "es" ? option.name : option.nameEN }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('receivesProgramSalary')?.hasError('required')">
+              {{ "staff.add.receivesProgramSalary.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- Información Adicional -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">

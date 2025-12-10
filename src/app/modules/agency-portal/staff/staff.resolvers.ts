@@ -120,7 +120,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     // options selection service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo',
       names: null,
     }),
     // Staff types service
@@ -224,7 +224,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           geoService.getRegionsFromDb(requestParameters),
           // Staff positions service
           optionSelectionService.getOptionSelectionByOptionKey({
-            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo',
             names: null,
           }),
           // Staff types service
@@ -259,7 +259,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           geoService.getRegionsFromDb(requestParameters),
           // Staff positions service
           optionSelectionService.getOptionSelectionByOptionKey({
-            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo',
             names: null,
           }),
           // Staff types service

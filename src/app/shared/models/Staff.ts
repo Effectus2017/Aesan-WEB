@@ -45,6 +45,15 @@ export interface Staff {
   reviewDate?: string;
   reviewJustification?: string;
 
+  // Campos específicos para Miembros de la Junta
+  tenureDuration?: number; // Tiempo de duración del cargo (numérico)
+  tenureDurationUnitId?: number; // Referencia a OptionSelection con optionKey = 'tenureDurationUnit'
+  tenureDurationUnitName?: string;
+  tenureDurationUnitNameEN?: string;
+  receivesProgramSalaryId?: number; // Referencia a OptionSelection con optionKey = 'yesNo' (¿Recibe salario del programa?)
+  receivesProgramSalaryName?: string;
+  receivesProgramSalaryNameEN?: string;
+
   // Datos de la relación SchoolStaff
   schoolId?: number;
   isPrimary?: boolean;
@@ -62,6 +71,10 @@ export interface Staff {
   staffType?: StaffType;
   // Staff classification
   staffClassification?: StaffClassification;
+  // Tenure duration unit (objeto completo)
+  tenureDurationUnit?: OptionSelection;
+  // Receives program salary (objeto completo)
+  receivesProgramSalary?: OptionSelection;
   // School (objeto completo)
   school?: SiteListItem;
 }

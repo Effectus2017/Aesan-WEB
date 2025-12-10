@@ -81,7 +81,8 @@
     "state-department-registration": {
       "label": "State Department Registration Number",
       "placeholder": "Enter the state department registration number",
-      "required": "The state department registration number is required"
+      "required": "The state department registration number is required",
+      "maxDigits": "The state department registration number must have a maximum of 10 digits"
     },
     "address": {
       "label": "Address",
@@ -133,12 +134,14 @@
     "uie": {
       "label": "Unique Entity Identifier (UEI)",
       "placeholder": "Enter the Unique Entity Identifier (UEI)",
-      "required": "Unique Entity Identifier (UEI) is required"
+      "required": "Unique Entity Identifier (UEI) is required",
+      "maxlength": "The Unique Entity Identifier (UEI) must have a maximum of 12 characters"
     },
     "ein": {
       "label": "Employer Identification Number (EIN)",
       "placeholder": "Enter the Employer Identification Number (EIN)",
-      "required": "Employer Identification Number (EIN) is required"
+      "required": "Employer Identification Number (EIN) is required",
+      "maxDigits": "The Employer Identification Number (EIN) must have a maximum of 9 digits"
     },
     "latitude": {
       "label": "Latitude",
@@ -156,7 +159,8 @@
     "phone": {
       "label": "Phone",
       "placeholder": "(xxx) xxx-xxxx",
-      "required": "Phone is required"
+      "required": "Phone is required",
+      "invalid": "The phone number must have 10 digits"
     },
     "email": {
       "label": "Email",

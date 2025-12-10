@@ -57,7 +57,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = () => {
     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'administrativePosition',
+      optionKey: 'administrativePosition,tenureDurationUnit,yesNo',
       names: 'Administrador,Director,Coordinador(a) del Programa',
     }),
     staffTypeService.getAllStaffTypesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
@@ -164,7 +164,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             geoService.getRegionsFromDb(requestParameters),
             // Staff positions service
             optionSelectionService.getOptionSelectionByOptionKey({
-              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo',
               names: null,
             }),
             // Staff types service
@@ -195,7 +195,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             geoService.getRegionsFromDb(requestParameters),
             // Staff positions service
             optionSelectionService.getOptionSelectionByOptionKey({
-              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive',
+              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo',
               names: null,
             }),
             // Staff types service
