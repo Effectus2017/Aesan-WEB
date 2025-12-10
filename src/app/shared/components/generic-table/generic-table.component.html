@@ -72,7 +72,7 @@
       {{ col.key && col.key[0] ? getNestedValue(element, col.key[0]) : '' }} {{ col.key && col.key[1] ? getNestedValue(element, col.key[1]) : '' }} {{ col.key && col.key[2] ? getNestedValue(element, col.key[2]) : '' }} {{ col.key && col.key[3] ? getNestedValue(element, col.key[3]) : '' }}
       } @case ('boolean') {
       @if (col.key) {
-        @if (getNestedValue(element, col.key)) {
+        @if (getBooleanValue(element, col.key)) {
           {{ _translocoService.getActiveLang() === 'en' ? ((typeof col.key === 'string' && col.key === 'isActive') ? "Active" : "Yes") : ((typeof col.key === 'string' && col.key === 'isActive') ? "Activo" : "Si") }}
         } @else {
           {{ _translocoService.getActiveLang() === 'en' ? ((typeof col.key === 'string' && col.key === 'isActive') ? "Inactive" : "No") : ((typeof col.key === 'string' && col.key === 'isActive') ? "Inactivo" : "No") }}
@@ -179,13 +179,12 @@
         }
 
         @if (button.key === 'sites') {
-        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || (element?.sitesCount ?? 0) === 0">
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
             [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
-            [disabled]="isButtonDisabled(button) || (element?.sitesCount ?? 0) === 0"
-            [style.visibility]="(element?.sitesCount ?? 0) > 0 ? 'visible' : 'hidden'"
+            [disabled]="isButtonDisabled(button)"
             (click)="onSites($event, element.id)"
             [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
           >
@@ -306,7 +305,7 @@
         {{ col.key && col.key[0] ? getNestedValue(element, col.key[0]) : '' }} {{ col.key && col.key[1] ? getNestedValue(element, col.key[1]) : '' }} {{ col.key && col.key[2] ? getNestedValue(element, col.key[2]) : '' }} {{ col.key && col.key[3] ? getNestedValue(element, col.key[3]) : '' }}
         } @case ('boolean') {
         @if (col.key) {
-          @if (getNestedValue(element, col.key)) {
+          @if (getBooleanValue(element, col.key)) {
             {{ _translocoService.getActiveLang() === 'en' ? ((typeof col.key === 'string' && col.key === 'isActive') ? "Active" : "Yes") : ((typeof col.key === 'string' && col.key === 'isActive') ? "Activo" : "Si") }}
           } @else {
             {{ _translocoService.getActiveLang() === 'en' ? ((typeof col.key === 'string' && col.key === 'isActive') ? "Inactive" : "No") : ((typeof col.key === 'string' && col.key === 'isActive') ? "Inactivo" : "No") }}
@@ -412,14 +411,13 @@
             }
 
             @if (button.key === 'sites') {
-            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || (element?.sitesCount ?? 0) === 0">
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
                   [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
-                  [disabled]="isButtonDisabled(button) || (element?.sitesCount ?? 0) === 0"
-                  [style.visibility]="(element?.sitesCount ?? 0) > 0 ? 'visible' : 'hidden'"
+                  [disabled]="isButtonDisabled(button)"
                   (click)="onSites($event, element.id)"
                   [attr.aria-label]="'schools.list.table.buttons.' + button.key | transloco"
               >

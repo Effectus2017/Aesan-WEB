@@ -1,12 +1,12 @@
 /* ----------------------------------------------------------------------------------------------------- */
 /*  @ Import/write your custom styles here.
-/*  @ Styles from this file will override 'vendors.scss' and Fuse's base styles.
+/*  @ Styles from this file will override 'vendors.scss'
 /* ----------------------------------------------------------------------------------------------------- */
 
 @use 'angular-calendar/scss/angular-calendar';
 
 .dark-theme {
-  // Colores que coinciden con el tema Fuse (slate palette)
+  // Colores que coinciden con el tema Material (slate palette)
   $bg-dark-primary: #0F172A;    // slate.900 - Fondo principal
   $bg-dark-secondary: #1E293B;  // slate.800 - Fondo secundario
   $bg-active: #334155;          // slate.700 - Fondo activo

@@ -5,6 +5,17 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable #formContainer>
     <form [formGroup]="headerConfig.formGroup" #staffEditForm="ngForm" data-cy="staff-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+
+        <!-- Indicador de Administrador del Sitio (solo lectura) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="param?.isSiteAdmin">
+            <mat-form-field data-cy="site-admin-indicator-field" appearance="outline">
+              <mat-label>{{ "staff.edit.siteAdministrator.label" | transloco }}</mat-label>
+              <input matInput [value]="'staff.edit.siteAdministrator.yes' | transloco" readonly />
+              <mat-icon matPrefix class="text-green-500">check_circle</mat-icon>
+            </mat-form-field>
+          </div>
+
+
         <!-- Información General -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
@@ -54,6 +65,7 @@
             </mat-error>
           </mat-form-field>
         </div>
+
 
         <!-- Campos de Nombre -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">

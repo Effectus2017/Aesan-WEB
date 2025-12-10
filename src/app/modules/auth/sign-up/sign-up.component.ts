@@ -865,7 +865,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Campos requeridos con valores por defecto
         statusId: 21, // Activo por defecto
         staffTypeId: 1, // Empleado por defecto
-        staffClassificationId: 1, // Empleado Administrativo por defecto
+        staffClassificationId: 1, // Administrativo (id: 1) por defecto - SIEMPRE debe ser 1 para sign-up
         birthDate: null, // Fecha por defecto, se puede actualizar después
         postalAddress: postalAddress,
         cityId: cityId,

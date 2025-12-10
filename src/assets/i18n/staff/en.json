@@ -46,6 +46,7 @@
             "position": "Position",
             "status": "Status",
             "description": "Employee description",
+            "siteAdministrator": "Site Administrator",
             "actions": "Actions"
           }
         },
@@ -73,6 +74,7 @@
             "municipality": "Municipality",
             "zipCode": "ZIP Code",
             "updateDate": "Update Date",
+            "siteAdministrator": "Site Administrator",
             "comments": "Comments",
             "actions": "Actions"
           }
@@ -126,6 +128,10 @@
         "placeholder": "Select the position",
         "required": "Position is required",
         "selectClassificationFirst": "First select a classification to see available positions"
+      },
+      "siteAdministrator": {
+        "label": "Site Administrator",
+        "yes": "Yes"
       },
       "staffType": {
         "label": "Staff Type",

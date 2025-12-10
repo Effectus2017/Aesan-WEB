@@ -114,7 +114,7 @@ export const appConfig: ApplicationConfig = {
       })
     ),
 
-    // Fuse
+    // Auth
     provideAuth(),
     provideIcons(),
     provideFuse({

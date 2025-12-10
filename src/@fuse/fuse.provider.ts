@@ -22,7 +22,7 @@ export type FuseProviderConfig = {
 }
 
 /**
- * Fuse provider
+ * Auth provider
  */
 export const provideFuse = (config: FuseProviderConfig): Array<Provider | EnvironmentProviders> =>
 {
@@ -89,7 +89,7 @@ export const provideFuse = (config: FuseProviderConfig): Array<Provider | Enviro
         },
     ];
 
-    // Mock Api services
+    // Mock Api services for Auth
     if ( config?.mockApi?.services )
     {
         providers.push(

@@ -283,6 +283,21 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   }
 
   /**
+   * Obtiene el valor booleano de un campo, manejando correctamente null, undefined, false, 0, 1, y true
+   * @param element El elemento que contiene el valor
+   * @param path La ruta al valor
+   * @returns true si el valor es verdadero, false en caso contrario (incluyendo null/undefined)
+   */
+  getBooleanValue(element: any, path: string | string[]): boolean {
+    const value = this.getNestedValue(element, path);
+    if (value === null || value === undefined) {
+      return false;
+    }
+    // Manejar valores numéricos (0/1) y booleanos
+    return value === true || value === 1 || value === '1' || value === 'true';
+  }
+
+  /**
    * Esta función se encarga de manejar el cambio de estado de un checkbox en la tabla.
    *
    * @param event El evento de cambio del checkbox.

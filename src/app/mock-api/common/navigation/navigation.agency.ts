@@ -9,14 +9,14 @@ export const agencyNavigation: FuseNavigationItem[] = [
     link: '/dashboard',
     roles: ['Agency-Administrator', 'Agency-User'],
   },
-  {
-    id: 'program-requests',
-    title: 'navigation.program-requests',
-    type: 'basic',
-    icon: 'heroicons_outline:document-text',
-    link: '/program-requests',
-    //permissions: ['ProgramRequestView'],
-  },
+  // {
+  //   id: 'program-requests',
+  //   title: 'navigation.program-requests',
+  //   type: 'basic',
+  //   icon: 'heroicons_outline:document-text',
+  //   link: '/program-requests',
+  //   //permissions: ['ProgramRequestView'],
+  // },
   {
     id: 'legibility',
     title: 'navigation.legibility',

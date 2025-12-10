@@ -5,6 +5,15 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable #formContainer>
     <form [formGroup]="headerConfig.formGroup" #staffEditForm="ngForm" data-cy="staff-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+        <!-- Indicador de Administrador del Sitio (solo lectura) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="param?.isSiteAdmin">
+          <mat-form-field data-cy="site-admin-indicator-field" appearance="outline">
+            <mat-label>{{ "staff.edit.siteAdministrator.label" | transloco }}</mat-label>
+            <input matInput [value]="'staff.edit.siteAdministrator.yes' | transloco" readonly />
+            <mat-icon matPrefix class="text-green-500">check_circle</mat-icon>
+          </mat-form-field>
+        </div>
+
         <!-- Información General -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
@@ -123,13 +132,7 @@
           <!-- Position -->
           <mat-form-field data-cy="position-field">
             <mat-label>{{ "staff.edit.position.label" | transloco }}</mat-label>
-            <mat-select
-              formControlName="position"
-              required
-              [placeholder]="'staff.edit.position.placeholder' | transloco"
-              [compareWith]="compareById"
-              data-cy="position-select"
-            >
+            <mat-select formControlName="position" required [placeholder]="'staff.edit.position.placeholder' | transloco" [compareWith]="compareById" data-cy="position-select">
               <mat-option *ngFor="let position of listPositions" [value]="position" data-cy="position-option">
                 {{ currentLang === "es" ? position.name : position.nameEN }}
               </mat-option>
@@ -211,9 +214,7 @@
           <mat-form-field data-cy="site-field">
             <mat-label>{{ "staff.edit.site.label" | transloco }}</mat-label>
             <mat-select formControlName="site" [placeholder]="'staff.edit.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
-              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
-                {{ site.siteCode }} - {{ site.name }}
-              </mat-option>
+              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -258,12 +259,7 @@
           <!-- Resultado de revisión -->
           <mat-form-field data-cy="review-result-field">
             <mat-label>{{ "staff.edit.review-result.label" | transloco }}</mat-label>
-            <mat-select
-              [formControlName]="'reviewResult'"
-              [required]="canViewReviewFields"
-              [compareWith]="compareById"
-              data-cy="review-result-select"
-            >
+            <mat-select [formControlName]="'reviewResult'" [required]="canViewReviewFields" [compareWith]="compareById" data-cy="review-result-select">
               <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -306,4 +302,3 @@
     </form>
   </div>
 </div>
-

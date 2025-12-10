@@ -46,6 +46,7 @@
             "position": "Puesto",
             "status": "Estatus",
             "description": "Descripción del empleado",
+            "siteAdministrator": "Administrador del Sitio",
             "actions": "Acciones"
           }
         },
@@ -73,6 +74,7 @@
             "municipality": "Municipio",
             "zipCode": "Código Postal",
             "updateDate": "Fecha de Actualización",
+            "siteAdministrator": "Administrador del Sitio",
             "comments": "Comentarios",
             "actions": "Acciones"
           }
@@ -316,6 +318,10 @@
         "label": "Cargo",
         "placeholder": "Seleccione el cargo",
         "required": "El cargo es requerido"
+      },
+      "siteAdministrator": {
+        "label": "Administrador del Sitio",
+        "yes": "Sí"
       },
       "birthDate": {
         "label": "Fecha de Nacimiento",

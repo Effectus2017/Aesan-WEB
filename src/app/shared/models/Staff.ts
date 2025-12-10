@@ -40,6 +40,7 @@ export interface Staff {
   createdAt: string;
   updatedAt?: string;
   isActive: boolean;
+  isSiteAdmin?: boolean;
   // Campos de revisión (solo para empleados)
   reviewResultId?: number;
   reviewDate?: string;
@@ -97,4 +98,5 @@ export interface StaffList {
   userName?: string;
   isActive: boolean;
   hasRelationships?: boolean;
+  isSiteAdmin?: boolean;
 }

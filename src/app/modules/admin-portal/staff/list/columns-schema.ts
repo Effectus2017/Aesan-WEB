@@ -61,6 +61,12 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'date',
     sortable: true,
   },
+  {
+    key: 'isSiteAdmin',
+    label: 'staff.boardMembers.list.table.columns.siteAdministrator',
+    type: 'boolean',
+    sortable: true,
+  },
 //   {
 //     key: 'comments',
 //     label: 'staff.boardMembers.list.table.columns.comments',

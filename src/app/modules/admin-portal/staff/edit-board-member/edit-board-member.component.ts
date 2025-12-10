@@ -12,7 +12,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { NgIf, NgForOf } from '@angular/common';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { STAFF_RELATIONSHIPS_COLUMNS_SCHEMA } from '../edit/columns-schema';
+import { STAFF_RELATIONSHIPS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';

@@ -375,6 +375,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Cargar sitio actualmente asignado al staff
     this.loadCurrentSiteAssignment(param.id);
+
+    // detecta cambios en el formulario
+    this._changeDetectorRef.detectChanges();
   }
 
   /**

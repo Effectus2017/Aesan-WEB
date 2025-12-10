@@ -32,13 +32,6 @@ export default [
         }
       },
       {
-        path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then(c => c.AdminEditStaffComponent),
-        resolve: {
-          data: initialDataStaffEditResolver
-        }
-      },
-      {
         path: 'edit-employee/:id',
         loadComponent: () => import('./edit-employee/edit-employee.component').then(c => c.EditEmployeeComponent),
         resolve: {

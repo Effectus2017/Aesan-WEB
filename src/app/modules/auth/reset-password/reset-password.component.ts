@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
@@ -39,6 +39,7 @@ export class ResetPasswordComponent implements OnInit {
   private _usersService = inject(UsersService);
   private _formBuilder = inject(UntypedFormBuilder);
   private _router = inject(Router);
+  private _translocoService = inject(TranslocoService);
 
   alert: { type: FuseAlertType; message: string } = {
     type: 'success',
@@ -86,7 +87,7 @@ export class ResetPasswordComponent implements OnInit {
     } catch (error) {
       this.alert = {
         type: 'error',
-        message: 'El enlace de restablecimiento no es válido o ha expirado'
+        message: this._translocoService.translate('reset-password.error.invalid-token')
       };
       this.showAlert = true;
       setTimeout(() => {
@@ -117,7 +118,7 @@ export class ResetPasswordComponent implements OnInit {
       next: () => {
         this.alert = {
           type: 'success',
-          message: 'Tu contraseña ha sido actualizada exitosamente'
+          message: this._translocoService.translate('reset-password.success.password-updated')
         };
         this.showAlert = true;
 
@@ -132,7 +133,7 @@ export class ResetPasswordComponent implements OnInit {
         this.resetPasswordForm.enable();
         this.alert = {
           type: 'error',
-          message: error.error?.message || 'Ha ocurrido un error al restablecer la contraseña'
+          message: error.error?.message || this._translocoService.translate('reset-password.error.reset-error')
         };
         this.showAlert = true;
       }
