@@ -30,7 +30,17 @@ import { Region } from 'app/shared/models/Region';
 import { Program } from 'app/shared/models/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { compare, comparePostal, disableAllControlsExcept, enableAllControls, isNullOrUndefinedEmptyStringNullArray, compareItems, maxDigitsValidator, alphanumericValidator, logFormValidationErrors } from 'app/shared/utils';
+import {
+  compare,
+  comparePostal,
+  disableAllControlsExcept,
+  enableAllControls,
+  isNullOrUndefinedEmptyStringNullArray,
+  compareItems,
+  maxDigitsValidator,
+  alphanumericValidator,
+  logFormValidationErrors,
+} from 'app/shared/utils';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { ProgramService } from 'app/shared/services/program.service';
@@ -230,20 +240,20 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Have you been denied or disqualified from federal funds in the last seven years?
       // Si (1) y No (2)
       federalFundsDenied: [null, Validators.required],
-    // ¿Razón por la cual fue descalificado o denegado de fondos federales?
-    // Reason why the sponsor was disqualified or denied federal funds?
-    // Se activa cuando federalFundsDenied = true
-    federalFundsDeniedReason: [null],
+      // ¿Razón por la cual fue descalificado o denegado de fondos federales?
+      // Reason why the sponsor was disqualified or denied federal funds?
+      // Se activa cuando federalFundsDenied = true
+      federalFundsDeniedReason: [null],
 
       // ¿En qué estatus se encuentra su Exención Contributiva?"
       // In what status is your Tax Exemption?
       // En Proceso (3), Otorgado (4), Denegado (5)
-      taxExemptionStatusId: [null, Validators.required],
+      taxExemptionStatusId: [null],
 
       // ¿Qué tipo de Exención Contributiva tiene?
       // What type of Tax Exemption does it have?
       // Estatal (11), Federal (12)
-      taxExemptionTypeId: [null, Validators.required],
+      taxExemptionTypeId: [null],
 
       // Dirección
       address: [null, Validators.required],
@@ -379,10 +389,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Suscribirse a cambios en el campo email para validación asíncrona adicional
     const emailControl = this.signUpForm.get('email');
     if (emailControl) {
-      emailControl.statusChanges.pipe(
-        takeUntil(this._unsubscribeAll),
-        debounceTime(100)
-      ).subscribe(() => {
+      emailControl.statusChanges.pipe(takeUntil(this._unsubscribeAll), debounceTime(100)).subscribe(() => {
         // Forzar detección de cambios cuando el estado del control cambia
         this._changeDetectorRef.markForCheck();
       });
@@ -467,11 +474,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         const basicEducationRegistryControl = this.signUpForm.get('basicEducationRegistry');
 
         if (isPSAVProgram(currentProgram)) {
-
-            // Para PSAV, quitar la validación requerida y limpiar el valor
+          // Para PSAV, quitar la validación requerida y limpiar el valor
           basicEducationRegistryControl.clearValidators();
           basicEducationRegistryControl.setValue(null);
-
         } else {
           // Para otros programas, mantener la validación requerida
           basicEducationRegistryControl.setValidators([Validators.required]);
@@ -492,8 +497,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           this.checkBasicEducationRegistry();
         }
 
-        // Actualizar validaciones de exención contributiva para PACNA tras cambio de programa
-        this.updateTaxExemptionValidatorsForPacna();
+        // Actualizar validaciones de exención contributiva según programa
+        this.updateTaxExemptionValidators();
       }
     });
 
@@ -562,12 +567,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       next: (response: HttpResponse<any>) => {
         this.listCities = response.body;
       },
-      error: (error) => {
-
-      },
-      complete: () => {
-
-      },
+      error: (error) => {},
+      complete: () => {},
     });
   }
 
@@ -582,9 +583,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
       next: (response) => {
         if (response?.body?.data) {
-
-            if (target === 'region') {
-
+          if (target === 'region') {
             this.listRegions = response.body.data;
             const regionControl = this.signUpForm.get('region');
 
@@ -596,9 +595,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                 regionControl.setValue(null);
               }
             }
-
           } else if (target === 'postalRegion') {
-
             this.listPostalRegions = response.body.data;
             const regionControl = this.signUpForm.get('postalRegion');
             const currentPostalRegion = this.signUpForm.get('postalRegion')?.value;
@@ -610,14 +607,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
                 this.signUpForm.patchValue({ postalRegion: this.listPostalRegions[0] });
               } else {
                 // PRIMERO verificar si hay una región postal ya seleccionada y está en la lista, mantenerla
-                if (currentPostalRegion && this.listPostalRegions.some(r => r.id === currentPostalRegion.id)) {
+                if (currentPostalRegion && this.listPostalRegions.some((r) => r.id === currentPostalRegion.id)) {
                   // Ya está seleccionada y es válida, no hacer nada - preservar el valor
                   return;
                 }
                 // Si hay una región física seleccionada y está en la lista de regiones de la ciudad postal, mantenerla
-                if (physicalRegion && this.listPostalRegions.some(r => r.id === physicalRegion.id)) {
+                if (physicalRegion && this.listPostalRegions.some((r) => r.id === physicalRegion.id)) {
                   // Buscar la región en la lista para usar la misma referencia
-                  const matchingRegion = this.listPostalRegions.find(r => r.id === physicalRegion.id);
+                  const matchingRegion = this.listPostalRegions.find((r) => r.id === physicalRegion.id);
                   if (matchingRegion) {
                     this.signUpForm.patchValue({ postalRegion: matchingRegion });
                     return;
@@ -639,7 +636,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
-
 
   signUp(): void {
     if (this.signUpForm.invalid) {
@@ -701,10 +697,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
               data: {
                 title: this._translocoService.translate('sign-up.email.exists-title'),
                 message: this._translocoService.translate('sign-up.email.exists'),
-                cfrLink: null // No hay link CFR para este mensaje
+                cfrLink: null, // No hay link CFR para este mensaje
               },
               disableClose: false,
-              panelClass: ['mat-dialog-container', 'dialog-responsive']
+              panelClass: ['mat-dialog-container', 'dialog-responsive'],
             });
             this.signUpForm.enable();
             return;
@@ -716,7 +712,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           // En caso de error de red, permitir continuar (no bloquear)
           console.error('Error al verificar correo:', error);
           this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
-        }
+        },
       });
     } else {
       // Si no hay email, continuar normalmente (la validación del formulario ya lo maneja)
@@ -727,14 +723,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   /**
    * Continúa con el proceso de registro después de validar el correo
    */
-  private proceedWithRegistration(
-    formValues: any,
-    cityId: number,
-    regionId: number,
-    postalCityId: number,
-    postalRegionId: number,
-    programId: number
-  ): void {
+  private proceedWithRegistration(formValues: any, cityId: number, regionId: number, postalCityId: number, postalRegionId: number, programId: number): void {
     // Disable the form
     this.signUpForm.disable();
 
@@ -769,10 +758,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
     const isDayCareHomeId = formValues.isDayCareHomeId == null ? null : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
-    const participatesInHeadStartProgramId = formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
-    const servicesOfferedSince: string | null = formValues.servicesOfferedSince
-      ? new Date(formValues.servicesOfferedSince).toISOString()
-      : null;
+    const participatesInHeadStartProgramId =
+      formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
+    const servicesOfferedSince: string | null = formValues.servicesOfferedSince ? new Date(formValues.servicesOfferedSince).toISOString() : null;
 
     const firstName = formValues.firstName;
     const middleName = formValues.middleName;
@@ -944,27 +932,40 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this.isEligible = true;
     enableAllControls(this.signUpForm);
 
-    // Actualizar validaciones de exención contributiva para PACNA
-    this.updateTaxExemptionValidatorsForPacna();
+    // Actualizar validaciones de exención contributiva según programa
+    this.updateTaxExemptionValidators();
   }
 
-  // Actualiza validaciones y visibilidad (lógica) de exención contributiva para PACNA
-  private updateTaxExemptionValidatorsForPacna(): void {
+  // Actualiza validaciones de exención contributiva según programa
+  private updateTaxExemptionValidators(): void {
     const selectedProgram = this.signUpForm.get('program')?.value;
     const isPacna = isPACNAProgram(selectedProgram);
+    const isPdam = isPDAMProgram(selectedProgram);
+    const isPsav = isPSAVProgram(selectedProgram);
     const isNonProfit = this.signUpForm.get('nonProfit')?.value === true;
 
     const taxExemptionStatusControl = this.signUpForm.get('taxExemptionStatusId');
     const taxExemptionTypeControl = this.signUpForm.get('taxExemptionTypeId');
 
-    if (isPacna && !isNonProfit) {
-      // En PACNA y NO sin fines de lucro: ocultar y NO requerir
-      taxExemptionStatusControl?.clearValidators();
-      taxExemptionTypeControl?.clearValidators();
-      taxExemptionStatusControl?.setValue(null);
-      taxExemptionTypeControl?.setValue(null);
-    } else {
-      // En otros casos mantener requerido
+    // Para PACNA: solo requerido si es sin fines de lucro
+    if (isPacna) {
+      if (isNonProfit) {
+        taxExemptionStatusControl?.setValidators([Validators.required]);
+        taxExemptionTypeControl?.setValidators([Validators.required]);
+      } else {
+        taxExemptionStatusControl?.clearValidators();
+        taxExemptionTypeControl?.clearValidators();
+        taxExemptionStatusControl?.setValue(null);
+        taxExemptionTypeControl?.setValue(null);
+      }
+    }
+    // Para PSAV y PDAM: requerido siempre (pero si nonProfit=false, el formulario se bloquea antes)
+    else if (isPsav || isPdam) {
+      taxExemptionStatusControl?.setValidators([Validators.required]);
+      taxExemptionTypeControl?.setValidators([Validators.required]);
+    }
+    // Para otros programas: requerido siempre
+    else {
       taxExemptionStatusControl?.setValidators([Validators.required]);
       taxExemptionTypeControl?.setValidators([Validators.required]);
     }
@@ -972,6 +973,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     taxExemptionStatusControl?.updateValueAndValidity({ emitEvent: false });
     taxExemptionTypeControl?.updateValueAndValidity({ emitEvent: false });
     this._changeDetectorRef.markForCheck();
+  }
+
+  // Actualiza validaciones y visibilidad (lógica) de exención contributiva para PACNA
+  // Mantener este método para compatibilidad con cambios en nonProfit
+  private updateTaxExemptionValidatorsForPacna(): void {
+    this.updateTaxExemptionValidators();
   }
 
   // Indica si se deben mostrar los campos de exención contributiva en el template
@@ -990,6 +997,18 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Manejar cambio de non-profit para programa PSAV
   nonProfitChangePSAV(): void {
     this.isEligible = false;
+
+    // Limpiar validadores de exención contributiva cuando no es elegible
+    const taxExemptionStatusControl = this.signUpForm.get('taxExemptionStatusId');
+    const taxExemptionTypeControl = this.signUpForm.get('taxExemptionTypeId');
+
+    taxExemptionStatusControl?.clearValidators();
+    taxExemptionTypeControl?.clearValidators();
+    taxExemptionStatusControl?.setValue(null);
+    taxExemptionTypeControl?.setValue(null);
+    taxExemptionStatusControl?.updateValueAndValidity({ emitEvent: false });
+    taxExemptionTypeControl?.updateValueAndValidity({ emitEvent: false });
+
     disableAllControlsExcept(this.signUpForm, 'program');
     this._dialog.open(CfrInfoDialogComponent, {
       data: {
@@ -997,17 +1016,29 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
         cfrLink: {
           url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
-          text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text')
-        }
+          text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text'),
+        },
       },
       disableClose: false,
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
     });
   }
 
   // Manejar cambio de non-profit para programa PDAM
   nonProfitChangePDAM(): void {
     this.isEligible = false;
+
+    // Limpiar validadores de exención contributiva cuando no es elegible
+    const taxExemptionStatusControl = this.signUpForm.get('taxExemptionStatusId');
+    const taxExemptionTypeControl = this.signUpForm.get('taxExemptionTypeId');
+
+    taxExemptionStatusControl?.clearValidators();
+    taxExemptionTypeControl?.clearValidators();
+    taxExemptionStatusControl?.setValue(null);
+    taxExemptionTypeControl?.setValue(null);
+    taxExemptionStatusControl?.updateValueAndValidity({ emitEvent: false });
+    taxExemptionTypeControl?.updateValueAndValidity({ emitEvent: false });
+
     disableAllControlsExcept(this.signUpForm, 'program');
     this._dialog.open(CfrInfoDialogComponent, {
       data: {
@@ -1015,11 +1046,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         message: this._translocoService.translate('sign-up.pdam-not-eligible.message'),
         cfrLink: {
           url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
-          text: this._translocoService.translate('sign-up.pdam-not-eligible.cfr-link-text')
-        }
+          text: this._translocoService.translate('sign-up.pdam-not-eligible.cfr-link-text'),
+        },
       },
       disableClose: false,
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
     });
   }
 
@@ -1080,9 +1111,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       selectedOptionObj = selectedOption;
     } else if (selectedOption && typeof selectedOption === 'number') {
       // Si es solo el ID, buscar la opción en el array
-      selectedOptionObj = this.participatesInHeadStartProgramOptions.find(
-        opt => opt.id === selectedOption
-      ) || null;
+      selectedOptionObj = this.participatesInHeadStartProgramOptions.find((opt) => opt.id === selectedOption) || null;
     }
 
     // Verificar si la opción seleccionada tiene booleanValue === true
@@ -1098,11 +1127,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           message: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.message'),
           cfrLink: {
             url: '', // Pendiente validar URL exacta
-            text: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.cfr-link-text')
-          }
+            text: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.cfr-link-text'),
+          },
         },
         disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
       });
     } else {
       // Si se selecciona una opción con booleanValue === false o null, habilitar el formulario
@@ -1180,11 +1209,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           message: this._translocoService.translate('sign-up.basic-education-not-eligible.message'),
           cfrLink: {
             url: this._translocoService.translate('sign-up.basic-education-not-eligible.cfr-link-url'),
-            text: this._translocoService.translate('sign-up.basic-education-not-eligible.cfr-link-text')
-          }
+            text: this._translocoService.translate('sign-up.basic-education-not-eligible.cfr-link-text'),
+          },
         },
         disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
       });
       return;
     }
@@ -1200,11 +1229,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           message: this._translocoService.translate('sign-up.extended-hours-not-eligible.message'),
           cfrLink: {
             url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-226/subpart-E/section-226.19',
-            text: '7 CFR 226.19 -- Outside-school-hours care center provisions'
-          }
+            text: '7 CFR 226.19 -- Outside-school-hours care center provisions',
+          },
         },
         disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
       });
       return;
     }
@@ -1225,9 +1254,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Clave base para fondos estatales según programa (para usar directo desde el HTML)
   getStateFundsDeniedKey(): string {
     const program = this.signUpForm?.value?.program;
-    return isPACNAProgram(program)
-      ? 'cfr-info-dialog.cfr-226-6'
-      : 'cfr-info-dialog.cfr-225-6-b-9';
+    return isPACNAProgram(program) ? 'cfr-info-dialog.cfr-226-6' : 'cfr-info-dialog.cfr-225-6-b-9';
   }
 
   // Función ÚNICA para abrir el diálogo CFR dado un key base (title/message/cfr-link-text/cfr-link-url)
@@ -1243,7 +1270,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this._dialog.open(CfrInfoDialogComponent, {
       data,
       disableClose: false,
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
     });
   }
 

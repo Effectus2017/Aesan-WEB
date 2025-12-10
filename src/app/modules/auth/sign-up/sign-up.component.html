@@ -122,7 +122,7 @@
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2" *ngIf="shouldShowTaxExemption()">
             <!-- ¿En qué estatus se encuentra su Exención Contributiva? -->
             <!-- In what status is your Tax Exemption? -->
-            <!-- En Proceso (3), Otorgado (4), Denegado (5) -->
+            <!-- En Proceso (3), Otorgado (4) -->
             <mat-form-field data-cy="tax-exemption-status-field">
               <mat-label>{{ "sign-up.tax-exemption-status.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'taxExemptionStatusId'" (selectionChange)="checkTaxExemptionStatus()" data-cy="tax-exemption-status-input">

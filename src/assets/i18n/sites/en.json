@@ -1394,15 +1394,13 @@
                     "required": "Inactivation justification is required"
                 },
                 "cancel": "Cancel",
-                "save": "Save"
-            },
-            "status-updated-successfully": "Site status updated successfully",
-            "status-update-error": "Error updating site status",
-            "status-modal": {
+                "save": "Save",
                 "notification-title": "Important Information",
                 "rations-service-notification": "You must complete the changes and cancellations form with the new operating end date",
                 "changes-form-not-implemented": "The changes and cancellations form is under development"
             },
+            "status-updated-successfully": "Site status updated successfully",
+            "status-update-error": "Error updating site status",
             "success": "Site updated successfully"
         },
         "calendar": {
