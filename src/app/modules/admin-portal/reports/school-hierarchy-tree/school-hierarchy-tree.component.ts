@@ -54,6 +54,10 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     title: 'reports.school-hierarchy-tree.title',
   };
 
+  // Estado de nodos expandidos/colapsados (por defecto todos expandidos)
+  private expandedNodes: Set<string> = new Set();
+  private nodesWithChildren: Set<string> = new Set<string>(); // Rastrea qué nodos tienen hijos originalmente
+
   // D3.js variables
   private svg: any;
   private g: any;
@@ -192,7 +196,13 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     const containerWidth = containerRect.width || this.width;
     this.width = containerWidth;
 
-    // Construir estructura de nodos primero para calcular altura necesaria
+    // Inicializar todos los nodos como expandidos si es la primera vez
+    if (this.expandedNodes.size === 0) {
+      const fullNodes = this.buildFullNodeStructure();
+      this.initializeExpandedNodes(fullNodes);
+    }
+
+    // Construir estructura de nodos filtrada según estado expandido
     const nodes = this.buildNodeStructure();
 
     // Calcular posiciones para determinar la altura real necesaria
@@ -273,8 +283,9 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     gradient4.append('stop').attr('offset', '100%').attr('stop-color', '#a855f7');
   }
 
-  private buildNodeStructure(): HierarchyNode[] {
+  private buildFullNodeStructure(): HierarchyNode[] {
     const nodes: HierarchyNode[] = [];
+    this.nodesWithChildren.clear(); // Limpiar el set antes de reconstruir
 
     if (!this.hierarchyData || !this.hierarchyData.sponsor) return nodes;
 
@@ -298,9 +309,11 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       children: []
     };
     sponsorNode.children!.push(yearNode);
+    this.nodesWithChildren.add(sponsorNode.id); // El sponsor tiene hijos
 
     // Nivel 3: Escuelas
     if (this.hierarchyData.schools && this.hierarchyData.schools.length > 0) {
+      this.nodesWithChildren.add(yearNode.id); // El año tiene hijos
       this.hierarchyData.schools.forEach((school) => {
         const schoolNode: HierarchyNode = {
           id: `school-${school.id}`,
@@ -313,6 +326,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
 
         // Nivel 4: Sitios
         if (school.sites && school.sites.length > 0) {
+          this.nodesWithChildren.add(schoolNode.id); // La escuela tiene hijos
           school.sites.forEach((site) => {
             const siteNode: HierarchyNode = {
               id: `site-${site.id}`,
@@ -331,6 +345,58 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
 
     nodes.push(sponsorNode);
     return nodes;
+  }
+
+  private buildNodeStructure(): HierarchyNode[] {
+    // Obtener la estructura completa
+    const fullNodes = this.buildFullNodeStructure();
+
+    // Filtrar hijos basándose en el estado expandido, pero siempre incluir los nodos padres
+    const filterChildren = (node: HierarchyNode): HierarchyNode => {
+      const filteredNode: HierarchyNode = {
+        id: node.id,
+        name: node.name,
+        level: node.level,
+        type: node.type,
+        data: node.data,
+        children: []
+      };
+
+      // Si el nodo está expandido y tiene hijos, incluir los hijos filtrados
+      if (this.expandedNodes.has(node.id) && node.children && node.children.length > 0) {
+        filteredNode.children = node.children.map(child => filterChildren(child));
+      } else if (node.children && node.children.length > 0) {
+        // Si está colapsado, mantener children como array vacío pero no null
+        // para que el indicador + se muestre
+        filteredNode.children = [];
+      }
+
+      return filteredNode;
+    };
+
+    return fullNodes.map(node => filterChildren(node));
+  }
+
+  private initializeExpandedNodes(nodes: HierarchyNode[]): void {
+    // Función recursiva para inicializar todos los nodos como expandidos
+    const initializeNode = (node: HierarchyNode) => {
+      this.expandedNodes.add(node.id);
+      if (node.children) {
+        node.children.forEach(child => initializeNode(child));
+      }
+    };
+
+    nodes.forEach(node => initializeNode(node));
+  }
+
+  private toggleNode(nodeId: string): void {
+    if (this.expandedNodes.has(nodeId)) {
+      this.expandedNodes.delete(nodeId);
+    } else {
+      this.expandedNodes.add(nodeId);
+    }
+    // Re-renderizar el árbol
+    this.renderHierarchy();
   }
 
   private calculatePositions(nodes: HierarchyNode[]): Map<string, { x: number; y: number; node: HierarchyNode }> {
@@ -459,6 +525,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         .attr('transform', `translate(${pos.x}, ${pos.y})`);
 
       // Caja con gradiente
+      const hasChildren = this.nodesWithChildren.has(node.id);
       const box = nodeGroup.append('rect')
         .attr('width', this.nodeWidth)
         .attr('height', this.nodeHeight)
@@ -469,7 +536,13 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         .attr('fill', `url(#gradient-level${level})`)
         .attr('stroke', '#ffffff')
         .attr('stroke-width', 2)
-        .style('filter', 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))');
+        .style('filter', 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))')
+        .style('cursor', hasChildren ? 'pointer' : 'default')
+        .on('click', () => {
+          if (hasChildren) {
+            this.toggleNode(node.id);
+          }
+        });
 
       // Contenido dentro del rectángulo - mostrar el nombre del dato
       let displayText = '';
@@ -520,14 +593,6 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
           .text(line);
       });
 
-      // Etiqueta de nivel fuera de la caja (arriba)
-      nodeGroup.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('y', -this.nodeHeight / 2 - 10)
-        .style('font-size', '12px')
-        .style('font-weight', '600')
-        .style('fill', '#374151')
-        .text(`Nivel ${level}`);
 
       // Texto descriptivo fuera de la caja (abajo) - solo para nivel 1
       if (level === 1) {
@@ -538,6 +603,39 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
           .style('font-weight', '500')
           .style('fill', '#374151')
           .text('Auspiciador Administrador');
+      }
+
+      // Indicador de expandir/colapsar (solo para nodos con hijos originalmente)
+      if (this.nodesWithChildren.has(node.id)) {
+        const isExpanded = this.expandedNodes.has(node.id);
+        const indicatorX = this.nodeWidth / 2 - 15;
+        const indicatorY = -this.nodeHeight / 2 + 15;
+
+        // Círculo de fondo para el indicador
+        nodeGroup.append('circle')
+          .attr('cx', indicatorX)
+          .attr('cy', indicatorY)
+          .attr('r', 10)
+          .attr('fill', '#ffffff')
+          .attr('stroke', '#374151')
+          .attr('stroke-width', 1)
+          .style('cursor', 'pointer')
+          .on('click', (event: MouseEvent) => {
+            event.stopPropagation();
+            this.toggleNode(node.id);
+          });
+
+        // Símbolo + o -
+        nodeGroup.append('text')
+          .attr('x', indicatorX)
+          .attr('y', indicatorY)
+          .attr('text-anchor', 'middle')
+          .attr('dy', '.35em')
+          .style('font-size', '14px')
+          .style('font-weight', 'bold')
+          .style('fill', '#374151')
+          .style('pointer-events', 'none')
+          .text(isExpanded ? '−' : '+');
       }
     });
   }
