@@ -51,10 +51,10 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
   private g: any;
   private width = 1200;
   private height = 800;
-  private nodeWidth = 180;
-  private nodeHeight = 80;
-  private levelSpacing = 200;
-  private nodeSpacing = 100;
+  private nodeWidth = 200;
+  private nodeHeight = 100;
+  private levelSpacing = 250;
+  private nodeSpacing = 120;
 
   ngOnInit(): void {
     // Generar años disponibles (año actual y 9 años anteriores)
@@ -65,11 +65,24 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     this._route.data.pipe(takeUntil(this._unsubscribeAll)).subscribe((data: any) => {
       if (data.data) {
         this.agencies = data.data.agencies || [];
-        this.hierarchyData = data.data.hierarchy;
         this.selectedYear = data.data.selectedYear || this.selectedYear;
         this.selectedSponsorId = data.data.selectedSponsorId;
 
-        // No renderizar aquí, esperar a AfterViewInit
+        // Solo cargar jerarquía si hay un auspiciador seleccionado
+        if (this.selectedSponsorId) {
+          this.hierarchyData = data.data.hierarchy;
+          // Si hay datos de jerarquía del resolver, renderizar
+          if (this.hierarchyData) {
+            setTimeout(() => {
+              if (this.treeContainer?.nativeElement) {
+                this.renderHierarchy();
+              }
+            }, 200);
+          }
+        } else {
+          // Limpiar datos si no hay auspiciador seleccionado
+          this.hierarchyData = null;
+        }
       }
     });
   }
@@ -92,14 +105,34 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
   }
 
   onYearChange(): void {
-    this.loadHierarchy();
+    // Solo cargar si hay un auspiciador seleccionado
+    if (this.selectedSponsorId) {
+      this.loadHierarchy();
+    }
   }
 
   onSponsorChange(): void {
-    this.loadHierarchy();
+    // Solo cargar si hay un auspiciador seleccionado
+    if (this.selectedSponsorId) {
+      this.loadHierarchy();
+    } else {
+      // Limpiar datos si se deselecciona el auspiciador
+      this.hierarchyData = null;
+      this.error = null;
+      if (this.treeContainer?.nativeElement) {
+        d3.select(this.treeContainer.nativeElement).selectAll('*').remove();
+      }
+    }
   }
 
   loadHierarchy(): void {
+    // Validar que haya un auspiciador seleccionado
+    if (!this.selectedSponsorId) {
+      this.error = 'Por favor seleccione un auspiciador';
+      this.loading = false;
+      return;
+    }
+
     this.loading = true;
     this.error = null;
 
@@ -140,38 +173,46 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
 
     // Verificar que el contenedor tenga dimensiones
     const containerRect = this.treeContainer.nativeElement.getBoundingClientRect();
-    if (containerRect.width === 0 || containerRect.height === 0) {
-      console.warn('Container has no dimensions', containerRect);
+    if (containerRect.width === 0) {
+      console.warn('Container has no width', containerRect);
       // Reintentar después de un breve delay
       setTimeout(() => this.renderHierarchy(), 100);
       return;
     }
 
-    // Ajustar dimensiones del SVG según el contenedor
+    // Usar el ancho del contenedor
     const containerWidth = containerRect.width || this.width;
-    const containerHeight = Math.max(containerRect.height, 600) || this.height;
     this.width = containerWidth;
-    this.height = containerHeight;
 
-    // Configurar SVG
+    // Construir estructura de nodos primero para calcular altura necesaria
+    const nodes = this.buildNodeStructure();
+
+    // Calcular posiciones para determinar la altura real necesaria
+    const positions = this.calculatePositions(nodes);
+
+    // Calcular la altura máxima necesaria basada en las posiciones
+    let maxY = 0;
+    positions.forEach((pos) => {
+      maxY = Math.max(maxY, pos.y + this.nodeHeight / 2 + 50); // +50 para padding inferior
+    });
+
+    // Establecer altura del SVG basada en el contenido real, no en el contenedor
+    this.height = Math.max(maxY, 600); // Mínimo 600px
+
+    // Configurar SVG con dimensiones calculadas
     this.svg = d3.select(this.treeContainer.nativeElement)
       .append('svg')
       .attr('width', this.width)
       .attr('height', this.height)
       .attr('viewBox', `0 0 ${this.width} ${this.height}`)
-      .style('background', '#ffffff');
+      .style('background', '#ffffff')
+      .style('display', 'block'); // Asegurar que el SVG sea un bloque para el scroll
 
     // Crear grupo principal
     this.g = this.svg.append('g');
 
     // Crear gradientes para cada nivel
     this.createGradients();
-
-    // Construir estructura de nodos
-    const nodes = this.buildNodeStructure();
-
-    // Calcular posiciones
-    const positions = this.calculatePositions(nodes);
 
     // Dibujar conexiones
     this.drawConnections(positions);
@@ -304,7 +345,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         if (yearNode.children && yearNode.children.length > 0) {
           const schools = yearNode.children;
           const schoolSpacing = schools.length > 1
-            ? Math.min(250, (this.width - 200) / Math.max(1, schools.length))
+            ? Math.min(300, (this.width - 200) / Math.max(1, schools.length))
             : 0;
           const startSchoolX = schools.length > 1
             ? startX - ((schools.length - 1) * schoolSpacing) / 2
@@ -334,7 +375,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
                 const sites = school.children;
                 const schoolPos = positions.get(school.id);
                 if (schoolPos) {
-                  const siteSpacing = sites.length > 1 ? 120 : 0;
+                  const siteSpacing = sites.length > 1 ? 150 : 0;
                   const startSiteX = sites.length > 1
                     ? schoolPos.x - ((sites.length - 1) * siteSpacing) / 2
                     : schoolPos.x;
@@ -422,53 +463,74 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         .attr('stroke-width', 2)
         .style('filter', 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))');
 
-      // Contenido según el nivel
+      // Contenido dentro del rectángulo - mostrar el nombre del dato
+      let displayText = '';
       if (level === 1) {
-        // Nivel 1: Número "1"
-        nodeGroup.append('text')
-          .attr('text-anchor', 'middle')
-          .attr('dy', '.35em')
-          .style('font-size', '32px')
-          .style('font-weight', 'bold')
-          .style('fill', '#ffffff')
-          .text('1');
+        displayText = this.hierarchyData?.sponsor?.name || 'Auspiciador';
+      } else if (level === 2) {
+        displayText = this.hierarchyData?.year ? `${this.hierarchyData.year.year}` : 'Año';
       } else {
-        // Niveles 2, 3, 4: Símbolo ∞
+        displayText = node.name || '';
+      }
+
+      // Función para dividir texto en múltiples líneas si es muy largo
+      const wrapText = (text: string, maxWidth: number): string[] => {
+        const words = text.split(' ');
+        const lines: string[] = [];
+        let currentLine = '';
+
+        words.forEach((word) => {
+          const testLine = currentLine + (currentLine ? ' ' : '') + word;
+          // Aproximación: cada carácter ocupa ~8px con font-size 14px
+          const testWidth = testLine.length * 8;
+          if (testWidth > maxWidth && currentLine) {
+            lines.push(currentLine);
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+        });
+        if (currentLine) {
+          lines.push(currentLine);
+        }
+        return lines.length > 0 ? lines : [text];
+      };
+
+      const textLines = wrapText(displayText, this.nodeWidth - 20);
+      const lineHeight = 18;
+      const startY = -(textLines.length - 1) * lineHeight / 2;
+
+      // Dibujar cada línea de texto
+      textLines.forEach((line, index) => {
         nodeGroup.append('text')
           .attr('text-anchor', 'middle')
-          .attr('dy', '.35em')
-          .style('font-size', '32px')
-          .style('font-weight', 'bold')
+          .attr('y', startY + (index * lineHeight))
+          .style('font-size', '14px')
+          .style('font-weight', '600')
           .style('fill', '#ffffff')
-          .text('∞');
-      }
+          .style('pointer-events', 'none')
+          .text(line);
+      });
 
       // Etiqueta de nivel fuera de la caja (arriba)
       nodeGroup.append('text')
         .attr('text-anchor', 'middle')
         .attr('y', -this.nodeHeight / 2 - 10)
-        .style('font-size', '14px')
+        .style('font-size', '12px')
         .style('font-weight', '600')
         .style('fill', '#374151')
         .text(`Nivel ${level}`);
 
-      // Texto descriptivo fuera de la caja (abajo)
-      let labelText = '';
+      // Texto descriptivo fuera de la caja (abajo) - solo para nivel 1
       if (level === 1) {
-        labelText = 'Auspiciador Administrador';
-      } else if (level === 2) {
-        labelText = this.hierarchyData?.year ? `${this.hierarchyData.year.year} Año` : 'Año';
-      } else {
-        labelText = node.name;
+        nodeGroup.append('text')
+          .attr('text-anchor', 'middle')
+          .attr('y', this.nodeHeight / 2 + 20)
+          .style('font-size', '12px')
+          .style('font-weight', '500')
+          .style('fill', '#374151')
+          .text('Auspiciador Administrador');
       }
-
-      nodeGroup.append('text')
-        .attr('text-anchor', 'middle')
-        .attr('y', this.nodeHeight / 2 + 20)
-        .style('font-size', '12px')
-        .style('font-weight', '500')
-        .style('fill', '#374151')
-        .text(labelText);
     });
   }
 
