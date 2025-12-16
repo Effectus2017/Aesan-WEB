@@ -1,51 +1,45 @@
-<div class="flex flex-col w-full h-full bg-gray-50">
-  <!-- Header con controles -->
-  <div class="p-6 bg-white border-b border-gray-200">
-    <div class="flex justify-between items-center mb-4">
-      <h1 class="text-2xl font-bold text-gray-800">
-        {{ 'reports.school-hierarchy-tree.title' | transloco }}
-      </h1>
-    </div>
+<div class="flex absolute inset-0 flex-col min-w-0 w-full h-full">
+  <!-- Header -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-    <!-- Filtros -->
-    <div class="flex gap-4 items-end">
+  <!-- Filtros -->
+  <div class="p-6 bg-white border-b border-gray-200">
+    <div class="flex flex-col gap-4 items-end sm:flex-row">
       <!-- Selector de Año -->
-      <div class="flex-1 max-w-xs">
-        <label for="year-select" class="block mb-2 text-sm font-medium text-gray-700">
-          {{ 'reports.school-hierarchy-tree.year' | transloco }}
-        </label>
-        <select
-          id="year-select"
-          [(ngModel)]="selectedYear"
-          (change)="onYearChange()"
-          class="px-4 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <option *ngFor="let year of availableYears" [value]="year">
-            {{ year }}
-          </option>
-        </select>
+      <div class="flex-1 w-full max-w-xs sm:max-w-xs">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'reports.school-hierarchy-tree.year' | transloco }}</mat-label>
+          <mat-select
+            [(ngModel)]="selectedYear"
+            (selectionChange)="onYearChange()"
+            data-cy="year-select">
+            <mat-option *ngFor="let year of availableYears" [value]="year">
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <!-- Selector de Auspiciador -->
-      <div class="flex-1 max-w-xs">
-        <label for="sponsor-select" class="block mb-2 text-sm font-medium text-gray-700">
-          {{ 'reports.school-hierarchy-tree.sponsor' | transloco }}
-        </label>
-        <select
-          id="sponsor-select"
-          [(ngModel)]="selectedSponsorId"
-          (change)="onSponsorChange()"
-          class="px-4 py-2 w-full rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-          <option [value]="undefined">{{ 'reports.school-hierarchy-tree.all-sponsors' | transloco }}</option>
-          <option *ngFor="let agency of agencies" [value]="agency.id">
-            {{ agency.name }}
-          </option>
-        </select>
+      <div class="flex-1 w-full max-w-xs sm:max-w-xs">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'reports.school-hierarchy-tree.sponsor' | transloco }}</mat-label>
+          <mat-select
+            [(ngModel)]="selectedSponsorId"
+            (selectionChange)="onSponsorChange()"
+            data-cy="sponsor-select">
+            <mat-option [value]="undefined">{{ 'reports.school-hierarchy-tree.all-sponsors' | transloco }}</mat-option>
+            <mat-option *ngFor="let agency of agencies" [value]="agency.id">
+              {{ agency.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </div>
   </div>
 
   <!-- Contenedor del diagrama -->
-  <div class="flex-1 p-6 bg-white">
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <!-- Estado inicial: solicitar selección de auspiciador -->
     <div *ngIf="!loading && !error && !hierarchyData && !selectedSponsorId" class="flex justify-center items-center h-full">
       <div class="text-center">
@@ -88,7 +82,7 @@
       *ngIf="!loading && !error && hierarchyData && selectedSponsorId"
       #treeContainer
       id="treeContainer"
-      class="w-full h-full border border-gray-200 rounded-lg bg-white">
+      class="relative w-full min-h-[600px] bg-white rounded-lg border border-gray-200">
     </div>
   </div>
 </div>

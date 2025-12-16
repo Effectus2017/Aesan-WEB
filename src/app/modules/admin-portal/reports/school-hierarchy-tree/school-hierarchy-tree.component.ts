@@ -7,6 +7,10 @@ import * as d3 from 'd3';
 import { ReportsService } from 'app/shared/services/reports.service';
 import { HierarchyStructureResponse, SponsorNode, SchoolNode, SiteNode } from 'app/shared/models/HierarchyStructure';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
+import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 interface HierarchyNode {
   id: string;
@@ -20,11 +24,10 @@ interface HierarchyNode {
 @Component({
   selector: 'app-school-hierarchy-tree',
   templateUrl: './school-hierarchy-tree.component.html',
-  styleUrls: ['./school-hierarchy-tree.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslocoModule]
+  imports: [CommonModule, FormsModule, TranslocoModule, GenericHeaderComponent, MatFormFieldModule, MatSelectModule]
 })
-export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDestroy, OnGenericHeaderHandlers {
   @ViewChild('treeContainer', { static: false }) treeContainer!: ElementRef;
 
   private _reportsService = inject(ReportsService);
@@ -46,15 +49,20 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
   loading: boolean = false;
   error: string | null = null;
 
+  // Generic Header Config
+  headerConfig: GenericHeaderConfig = {
+    title: 'reports.school-hierarchy-tree.title',
+  };
+
   // D3.js variables
   private svg: any;
   private g: any;
   private width = 1200;
   private height = 800;
-  private nodeWidth = 200;
-  private nodeHeight = 100;
-  private levelSpacing = 250;
-  private nodeSpacing = 120;
+  private nodeWidth = 150;
+  private nodeHeight = 70;
+  private levelSpacing = 200;
+  private nodeSpacing = 100;
 
   ngOnInit(): void {
     // Generar años disponibles (año actual y 9 años anteriores)
@@ -206,7 +214,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       .attr('height', this.height)
       .attr('viewBox', `0 0 ${this.width} ${this.height}`)
       .style('background', '#ffffff')
-      .style('display', 'block'); // Asegurar que el SVG sea un bloque para el scroll
+      .classed('block mx-auto', true); // Aplicar clases Tailwind: display block y margin auto
 
     // Crear grupo principal
     this.g = this.svg.append('g');
@@ -481,8 +489,8 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
 
         words.forEach((word) => {
           const testLine = currentLine + (currentLine ? ' ' : '') + word;
-          // Aproximación: cada carácter ocupa ~8px con font-size 14px
-          const testWidth = testLine.length * 8;
+          // Aproximación: cada carácter ocupa ~6px con font-size 12px
+          const testWidth = testLine.length * 6;
           if (testWidth > maxWidth && currentLine) {
             lines.push(currentLine);
             currentLine = word;
@@ -497,7 +505,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       };
 
       const textLines = wrapText(displayText, this.nodeWidth - 20);
-      const lineHeight = 18;
+      const lineHeight = 14;
       const startY = -(textLines.length - 1) * lineHeight / 2;
 
       // Dibujar cada línea de texto
@@ -505,7 +513,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         nodeGroup.append('text')
           .attr('text-anchor', 'middle')
           .attr('y', startY + (index * lineHeight))
-          .style('font-size', '14px')
+          .style('font-size', '12px')
           .style('font-weight', '600')
           .style('fill', '#ffffff')
           .style('pointer-events', 'none')
