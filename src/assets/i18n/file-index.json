@@ -66,5 +66,7 @@
   "./assets/i18n/message-template/es.json",
   "./assets/i18n/message-template/en.json",
   "./assets/i18n/template-variables/es.json",
-  "./assets/i18n/template-variables/en.json"
+  "./assets/i18n/template-variables/en.json",
+  "./assets/i18n/reports/es.json",
+  "./assets/i18n/reports/en.json"
 ]

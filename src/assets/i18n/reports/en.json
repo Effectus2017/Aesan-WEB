@@ -1,0 +1,37 @@
+{
+  "reports": {
+    "title": "Reports",
+    "list": {
+      "title": "Reports",
+      "search": {
+        "placeholder": "Search report..."
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "description": "Description",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "open": "Open"
+        }
+      },
+      "reports": {
+        "schoolHierarchyTree": {
+          "name": "School Hierarchy Tree",
+          "description": "Hierarchical visualization of sponsors, years, schools, and sites"
+        }
+      }
+    },
+    "school-hierarchy-tree": {
+      "title": "School Hierarchy Tree",
+      "year": "Year",
+      "sponsor": "Sponsor",
+      "all-sponsors": "All Sponsors",
+      "loading": "Loading hierarchy structure...",
+      "error-title": "Error loading data",
+      "retry": "Retry"
+    }
+  }
+}
+

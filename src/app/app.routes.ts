@@ -107,6 +107,8 @@ export const appRoutes: Route[] = [
       { path: 'message-template', loadChildren: () => import('app/modules/admin-portal/message-template/message-template.routes') },
       // Organization types (Role: Admin)
       { path: 'organization-type', loadChildren: () => import('app/modules/admin-portal/organization-type/organization-type.routes') },
+      // Reports (Role: Admin)
+      { path: 'reports', loadChildren: () => import('app/modules/admin-portal/reports/reports.routes') },
     ],
   },
 

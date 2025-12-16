@@ -77,7 +77,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     id: 'schools',
     title: 'navigation.schools',
     type: 'basic',
-    icon: 'heroicons_outline:academic-cap',
+    icon: 'heroicons_solid:academic-cap',
     link: '/schools',
     roles: ['Agency-Administrator'],
     permissions: ['school.view'],
