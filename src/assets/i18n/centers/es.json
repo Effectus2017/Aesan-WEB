@@ -1,0 +1,41 @@
+{
+  "centers": {
+    "list": {
+      "title": "Lista de Centros",
+      "search": {
+        "placeholder": "Buscar por nombre"
+      },
+      "buttons": {
+        "save": "Buscar"
+      },
+      "table": {
+        "columns": {
+          "centerCode": "Código del Centro",
+          "name": "Nombre",
+          "sites-count": "Cantidad de Sitios",
+          "createdAt": "Fecha de Creación",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar",
+          "sites": "Sitios"
+        }
+      }
+    },
+    "modal": {
+      "create": "Crear Centro",
+      "edit": "Editar Centro",
+      "name": "Nombre del Centro"
+    },
+    "sites": {
+      "modal": {
+        "title": "Sitios del Centro",
+        "search": {
+          "placeholder": "Buscar sitios por nombre"
+        }
+      }
+    }
+  }
+}
+

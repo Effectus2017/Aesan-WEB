@@ -42,8 +42,10 @@
         "sites": {
             "title": "Sites",
             "centers": "Centers",
-            "homes": "Homes"
+            "homes": "Homes",
+            "centersAndHomes": "Centers/Homes"
         },
+        "centers": "Centers",
         "schools": "Sites",
         "administration": {
             "title": "Administration",

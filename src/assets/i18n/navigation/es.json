@@ -42,8 +42,10 @@
         "sites": {
             "title": "Sitios",
             "centers": "Centros",
-            "homes": "Hogares"
+            "homes": "Hogares",
+            "centersAndHomes": "Centros/Hogares"
         },
+        "centers": "Centros",
         "schools": "Sitios",
         "administration": {
             "title": "Administración",

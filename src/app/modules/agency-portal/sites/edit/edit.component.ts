@@ -2119,11 +2119,15 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // PDAM y PSAV usan 'schools', todos los demás programas usan 'sites'
+    // PDAM y PSAV usan 'schools'
     if (this.isPDAM || this.isPSAV) {
       return ['schools'];
     }
-    // PACNA, PFHF, PDFE, AESAN usan 'sites'
+    // PACNA usa 'sites-pacna'
+    if (this.isPACNA) {
+      return ['sites-pacna'];
+    }
+    // PFHF, PDFE, AESAN usan 'sites'
     return ['sites'];
   }
 

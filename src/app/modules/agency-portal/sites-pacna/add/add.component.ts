@@ -61,15 +61,15 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
-import { PermissionRequestDialogComponent } from '../permission-request-dialog/permission-request-dialog.component';
+import { PermissionRequestDialogComponent } from '../../sites/permission-request-dialog/permission-request-dialog.component';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
-import { PermissionRequestFormDialogComponent } from '../permission-request-form-dialog/permission-request-form-dialog.component';
-import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
+import { PermissionRequestFormDialogComponent } from '../../sites/permission-request-form-dialog/permission-request-form-dialog.component';
+import { SiteStatusModalComponent, SiteStatusModalData } from '../../sites/site-status-modal/site-status-modal.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SERVICES_COLUMNS_SCHEMA } from '../add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../add-service-by-group-modal/add-service-by-group-modal.component';
+import { SERVICES_COLUMNS_SCHEMA } from '../../sites/add-service-by-group-modal/services-columns-schema';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../sites/add-service-by-group-modal/add-service-by-group-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -83,7 +83,7 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 
 @Component({
-  selector: 'app-sites-add',
+  selector: 'app-sites-pacna-add',
   templateUrl: './add.component.html',
   providers: [provideNativeDateAdapter()],
   standalone: true,
@@ -112,7 +112,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     LongitudeDirective,
   ],
 })
-export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class AddSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);

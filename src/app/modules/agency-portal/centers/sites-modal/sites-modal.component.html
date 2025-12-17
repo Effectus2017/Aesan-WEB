@@ -1,0 +1,58 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col">
+      <div class="text-lg font-medium">
+        {{ 'centers.sites.modal.title' | transloco }}: {{ data.schoolName }}
+      </div>
+    </div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
+    <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
+      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+    </div>
+
+    <form *ngIf="!isInitialLoading" [formGroup]="searchForm" class="flex flex-col gap-6">
+      <!-- Campo de búsqueda -->
+      <mat-form-field>
+        <input matInput formControlName="search" [placeholder]="'centers.sites.modal.search.placeholder' | transloco" autocomplete="on"/>
+        <mat-icon matSuffix>search</mat-icon>
+        <button mat-icon-button
+                matSuffix
+                *ngIf="searchForm.get('search')?.value"
+                (click)="onClearSearch()"
+                type="button"
+                [attr.aria-label]="'global.buttons.clear' | transloco">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Tabla de sitios -->
+      <div class="flex-1">
+        <app-generic-table
+          [config]="tableConfig"
+          [handler]="this"
+          [darkMode]="false">
+        </app-generic-table>
+      </div>
+    </form>
+  </div>
+
+  <!-- Actions - Fixed footer, outside scroll -->
+  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" (click)="closeModal()">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+    <button mat-flat-button type="button" [color]="'primary'" (click)="onAddButtonClick()">
+      {{ 'global.buttons.add' | transloco }}
+    </button>
+  </div>
+</div>
+

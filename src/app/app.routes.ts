@@ -158,6 +158,10 @@ export const appRoutes: Route[] = [
       { path: 'sites', loadChildren: () => import('app/modules/agency-portal/sites/sites.routes') },
       // Schools, listado de escuelas (Role: Agency)
       { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes') },
+      // Centers, listado de centros para PACNA (Role: Agency)
+      { path: 'centers', loadChildren: () => import('app/modules/agency-portal/centers/centers.routes') },
+      // Sites PACNA, formularios separados para sitios de PACNA (Role: Agency)
+      { path: 'sites-pacna', loadChildren: () => import('app/modules/agency-portal/sites-pacna/sites-pacna.routes') },
       // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)

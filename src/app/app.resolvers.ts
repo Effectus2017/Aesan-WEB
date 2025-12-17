@@ -4,7 +4,6 @@ import { forkJoin, map, switchMap, tap } from 'rxjs';
 import { AgencyService } from './shared/services/agency.service';
 import { QueryParameters } from './shared/models/QueryParameters';
 import { AuthService } from './core/auth/auth.service';
-import { OptionSelectionService } from './shared/services/option-selection.service';
 
 export const initialDataResolver = () => {
   const navigationService = inject(NavigationService);
@@ -25,15 +24,18 @@ export const initialDataResolver = () => {
         if (agency?.body?.programs) {
           localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
         }
-        // Almacenar isDayCareHomeId de la agencia en localStorage
-        const isDayCareHomeId = agency?.body?.inscription?.isDayCareHomeId 
-          ?? agency?.body?.inscription?.isDayCareHome?.id 
-          ?? null;
-        if (isDayCareHomeId !== null && isDayCareHomeId !== undefined) {
-          localStorage.setItem('agencyIsDayCareHomeId', String(isDayCareHomeId));
+        // Almacenar isDayCareHome booleanValue en localStorage (true/false/null)
+        const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
+        if (isDayCareHomeOption) {
+          const booleanValue = isDayCareHomeOption.booleanValue;
+          // Guardar como string: "true", "false", o "null"
+          if (booleanValue === null || booleanValue === undefined) {
+            localStorage.setItem('agencyIsDayCareHome', 'null');
+          } else {
+            localStorage.setItem('agencyIsDayCareHome', String(booleanValue));
+          }
         } else {
-          // Si no hay valor, remover la clave para indicar que no aplica
-          localStorage.removeItem('agencyIsDayCareHomeId');
+          localStorage.removeItem('agencyIsDayCareHome');
         }
       }),
       map(([navigation, agency]) => ({
@@ -55,7 +57,6 @@ export const initialDataAgencyPortalResolver = () => {
   const navigationService = inject(NavigationService);
   const agencyService = inject(AgencyService);
   const authService = inject(AuthService);
-  const optionSelectionService = inject(OptionSelectionService);
 
   const agencyId = authService.getAgencyId();
 
@@ -65,44 +66,32 @@ export const initialDataAgencyPortalResolver = () => {
 
   // Fork join multiple API endpoint calls to wait all of them to finish
   return forkJoin([
-    navigationService.get(), 
-    agencyService.getAgencyById(params),
-    optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'isDayCareHome' } as QueryParameters)
+    navigationService.get(),
+    agencyService.getAgencyById(params)
   ]).pipe(
     tap(([navigation, agency]) => {
       // Almacenar los programas de la agencia en localStorage
       if (agency?.body?.programs) {
         localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
       }
-      // Almacenar isDayCareHomeId de la agencia en localStorage
-      const isDayCareHomeId = agency?.body?.inscription?.isDayCareHomeId 
-        ?? agency?.body?.inscription?.isDayCareHome?.id 
-        ?? null;
-      if (isDayCareHomeId !== null && isDayCareHomeId !== undefined) {
-        localStorage.setItem('agencyIsDayCareHomeId', String(isDayCareHomeId));
+      // Almacenar isDayCareHome booleanValue en localStorage (true/false/null)
+      const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
+      if (isDayCareHomeOption) {
+        const booleanValue = isDayCareHomeOption.booleanValue;
+        // Guardar como string: "true", "false", o "null"
+        if (booleanValue === null || booleanValue === undefined) {
+          localStorage.setItem('agencyIsDayCareHome', 'null');
+        } else {
+          localStorage.setItem('agencyIsDayCareHome', String(booleanValue));
+        }
       } else {
-        // Si no hay valor, remover la clave para indicar que no aplica
-        localStorage.removeItem('agencyIsDayCareHomeId');
+        localStorage.removeItem('agencyIsDayCareHome');
       }
     }),
-    map(([navigation, agency, isDayCareHomeOptions]) => {
-      const agencyData = agency.body;
-      // La respuesta puede tener body.data o body directamente
-      const optionsData = isDayCareHomeOptions?.body?.data || isDayCareHomeOptions?.body || [];
-      
-      // Asegurar que optionsData sea un array
-      const optionsArray = Array.isArray(optionsData) ? optionsData : [];
-      
-      // Ajustar el menú de sitios si IsDayCareHomeId = "Ambos"
-      const adjustedNavigation = navigationService.adjustSitesMenuForAgency(
-        navigation, 
-        agencyData, 
-        optionsArray
-      );
-      
+    map(([navigation, agency]) => {
       return {
-        navigation: adjustedNavigation,
-        agency: agencyData,
+        navigation: navigation,
+        agency: agency.body,
       };
     })
   );
