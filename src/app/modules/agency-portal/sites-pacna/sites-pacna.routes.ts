@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
+import { PacnaProgramGuard } from 'app/core/auth/guards/pacna-program.guard';
 import { SitesPacnaComponent } from './sites-pacna.component';
 import { initialDataSitesPacnaEditResolver, initialDataSitesPacnaAddResolver, initialDataSitesPacnaListResolver } from './sites-pacna.resolvers';
 import { initialDataSiteCalendarResolver } from '../sites/sites.resolvers';
@@ -12,7 +13,7 @@ export default [
       {
         path: '',
         loadComponent: () => import('./list/list.component').then((c) => c.SitesPacnaListComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.view' },
         resolve: {
           data: initialDataSitesPacnaListResolver,
@@ -22,7 +23,7 @@ export default [
             {
               path: 'homes/add',
               loadComponent: () => import('./add-sites-home/add.component').then((c) => c.AddSitePacnaHomeComponent),
-              canActivate: [PermissionGuard],
+              canActivate: [PacnaProgramGuard, PermissionGuard],
               data: { permission: 'site.create' },
               resolve: {
                 data: initialDataSitesPacnaAddResolver,
@@ -41,7 +42,7 @@ export default [
             {
               path: 'centers/add',
               loadComponent: () => import('./add-sites-center/add.component').then((c) => c.AddSitePacnaCenterComponent),
-              canActivate: [PermissionGuard],
+              canActivate: [PacnaProgramGuard, PermissionGuard],
               data: { permission: 'site.create' },
               resolve: {
                 data: initialDataSitesPacnaAddResolver,
@@ -50,7 +51,7 @@ export default [
             {
               path: 'centers/edit/:id',
               loadComponent: () => import('./edit-sites-center/edit.component').then((c) => c.EditSitePacnaCenterComponent),
-              canActivate: [PermissionGuard],
+              canActivate: [PacnaProgramGuard, PermissionGuard],
               data: { permission: 'site.edit' },
               resolve: {
                 data: initialDataSitesPacnaEditResolver,
@@ -60,7 +61,7 @@ export default [
             {
               path: 'homes/add',
               loadComponent: () => import('./add-sites-home/add.component').then((c) => c.AddSitePacnaHomeComponent),
-              canActivate: [PermissionGuard],
+              canActivate: [PacnaProgramGuard, PermissionGuard],
               data: { permission: 'site.create' },
               resolve: {
                 data: initialDataSitesPacnaAddResolver,
@@ -69,7 +70,7 @@ export default [
             {
               path: 'homes/edit/:id',
               loadComponent: () => import('./edit-sites-home/edit.component').then((c) => c.EditSitePacnaHomeComponent),
-              canActivate: [PermissionGuard],
+              canActivate: [PacnaProgramGuard, PermissionGuard],
               data: { permission: 'site.edit' },
               resolve: {
                 data: initialDataSitesPacnaEditResolver,
@@ -78,7 +79,7 @@ export default [
       {
         path: 'calendar/:id',
         loadComponent: () => import('../calendar/site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {
           data: initialDataSiteCalendarResolver,

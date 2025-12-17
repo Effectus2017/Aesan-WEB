@@ -12,7 +12,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -26,7 +25,6 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { AddSchoolModalComponent } from '../add-modal/add-school-modal.component';
 import { EditSchoolModalComponent } from '../edit-modal/edit-school-modal.component';
 import { SitesModalComponent } from '../sites-modal/sites-modal.component';
-import { SiteService } from 'app/shared/services/site.service';
 
 @Component({
   selector: 'app-schools-list',
@@ -52,8 +50,6 @@ import { SiteService } from 'app/shared/services/site.service';
 export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
-  private _siteService = inject(SiteService);
-  private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -224,7 +220,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       // No hay acciones adicionales necesarias al cerrar el modal
     });
   }

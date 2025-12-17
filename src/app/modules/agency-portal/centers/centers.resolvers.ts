@@ -19,9 +19,9 @@ export const initialDataCentersListResolver: ResolveFn<any> = (route: ActivatedR
     agencyId: agencyId,
   };
 
-  return forkJoin([schoolService.getSchoolsByAgencyId(requestParameters)]).pipe(
-    map(([schools]) => ({
-      schools: schools.body,
+  return forkJoin([schoolService.getCentersByAgencyId(requestParameters)]).pipe(
+    map(([centers]) => ({
+      centers: centers.body,
     }))
   );
 };

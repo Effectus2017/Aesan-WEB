@@ -22,7 +22,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils'
 import { PROGRAM_IDS } from '../../../../shared/const';
 
 @Component({
-  selector: 'app-centers-sites-modal',
+  selector: 'app-sites-center-modal',
   standalone: true,
   imports: [
     CommonModule,
@@ -37,7 +37,7 @@ import { PROGRAM_IDS } from '../../../../shared/const';
   ],
   templateUrl: './sites-modal.component.html'
 })
-export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
+export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _formBuilder = inject(FormBuilder);
@@ -67,7 +67,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   };
 
   constructor(
-    public dialogRef: MatDialogRef<SitesModalComponent>,
+    public dialogRef: MatDialogRef<SitesCentersModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.searchForm = this._formBuilder.group({
@@ -243,22 +243,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
 
   onAddButtonClick(event?: Event): void {
     // Close modal and navigate to sites/add with schoolId as query parameter
-    // Determine route based on program
-    const programsRaw = localStorage.getItem('agencyPrograms');
-    let targetRoute = 'sites';
-    if (programsRaw) {
-      try {
-        const programs = JSON.parse(programsRaw);
-        const isPACNA = programs.some((p: any) => p?.id === PROGRAM_IDS.PACNA);
-        if (isPACNA) {
-          // Para PACNA, navegar a centers/add ya que este modal es para centers
-          targetRoute = 'sites-pacna/centers';
-        }
-      } catch {
-        // Si hay error parseando, usar ruta por defecto
-      }
-    }
-
+    let targetRoute = 'sites-pacna/centers';
     this.dialogRef.close();
     this._customRouterService.navigate([`${targetRoute}/add`], {
       queryParams: { schoolId: this.data.schoolId }

@@ -12,7 +12,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { CENTERS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -25,11 +24,10 @@ import { School } from 'app/shared/models/School';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AddCenterModalComponent } from '../add-modal/add-center-modal.component';
 import { EditCenterModalComponent } from '../edit-modal/edit-center-modal.component';
-import { SitesModalComponent } from '../sites-modal/sites-modal.component';
-import { SiteService } from 'app/shared/services/site.service';
+import { SitesCentersModalComponent } from '../sites-centers-modal/sites-modal.component';
 
 @Component({
-  selector: 'app-centers-list',
+  selector: 'app-list-centers',
   templateUrl: './list.component.html',
   encapsulation: ViewEncapsulation.None,
   animations: fuseAnimations,
@@ -49,11 +47,9 @@ import { SiteService } from 'app/shared/services/site.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class ListCentersComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
-  private _siteService = inject(SiteService);
-  private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -94,9 +90,9 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      this.tableConfig.dataSource.data = resolvedData.schools.data;
-      this.tableConfig.length = resolvedData.schools.count;
-      this.tableConfig.dataSourceList = resolvedData.schools.data;
+      this.tableConfig.dataSource.data = resolvedData.centers.data;
+      this.tableConfig.length = resolvedData.centers.count;
+      this.tableConfig.dataSourceList = resolvedData.centers.data;
       this._changeDetectorRef.markForCheck();
     }
   }
@@ -126,7 +122,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       agencyId: agencyId,
     };
 
-    this._schoolService.getSchoolsByAgencyId(requestParameters)
+    this._schoolService.getCentersByAgencyId(requestParameters)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (response: any) => {
@@ -215,7 +211,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     const centerName = center?.name || '';
 
     // Open modal - SitesModalComponent now handles data loading internally
-    const dialogRef = this._dialog.open(SitesModalComponent, {
+    const dialogRef = this._dialog.open(SitesCentersModalComponent, {
       width: '80%',
       maxWidth: '1200px',
       data: {
@@ -224,7 +220,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe(() => {
       // No additional actions needed when closing the modal
     });
   }
