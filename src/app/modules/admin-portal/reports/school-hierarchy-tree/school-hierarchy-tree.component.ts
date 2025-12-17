@@ -192,9 +192,8 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       return;
     }
 
-    // Usar el ancho del contenedor
+    // Usar el ancho del contenedor como base
     const containerWidth = containerRect.width || this.width;
-    this.width = containerWidth;
 
     // Inicializar todos los nodos como expandidos si es la primera vez
     if (this.expandedNodes.size === 0) {
@@ -205,17 +204,40 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     // Construir estructura de nodos filtrada según estado expandido
     const nodes = this.buildNodeStructure();
 
-    // Calcular posiciones para determinar la altura real necesaria
+    // Calcular posiciones con un ancho inicial (se ajustará después)
+    this.width = containerWidth;
     const positions = this.calculatePositions(nodes);
 
-    // Calcular la altura máxima necesaria basada en las posiciones
+    // Calcular el ancho real necesario basado en las posiciones de los nodos
+    let minX = Infinity;
+    let maxX = -Infinity;
     let maxY = 0;
+
     positions.forEach((pos) => {
-      maxY = Math.max(maxY, pos.y + this.nodeHeight / 2 + 50); // +50 para padding inferior
+      const nodeWidth = pos.node.level === 4 ? this.nodeWidth * 0.8 : this.nodeWidth;
+      const nodeHeight = pos.node.level === 4 ? this.nodeHeight * 0.8 : this.nodeHeight;
+
+      minX = Math.min(minX, pos.x - nodeWidth / 2);
+      maxX = Math.max(maxX, pos.x + nodeWidth / 2);
+      maxY = Math.max(maxY, pos.y + nodeHeight / 2 + 50); // +50 para padding inferior
     });
 
-    // Establecer altura del SVG basada en el contenido real, no en el contenedor
-    this.height = Math.max(maxY, 600); // Mínimo 600px
+    // Calcular dimensiones reales necesarias
+    const requiredWidth = Math.max(maxX - minX + 100, containerWidth); // +100 para padding lateral
+    const requiredHeight = Math.max(maxY, 600); // Mínimo 600px
+
+    // Si el ancho necesario es mayor, recalcular posiciones centradas
+    if (requiredWidth > containerWidth) {
+      this.width = requiredWidth;
+      // Recalcular posiciones con el nuevo ancho (centrado)
+      const newStartX = requiredWidth / 2;
+      positions.clear();
+      const recalculatedPositions = this.recalculatePositions(nodes, newStartX);
+      recalculatedPositions.forEach((value, key) => positions.set(key, value));
+    }
+
+    // Establecer altura del SVG basada en el contenido real
+    this.height = requiredHeight;
 
     // Configurar SVG con dimensiones calculadas
     this.svg = d3.select(this.treeContainer.nativeElement)
@@ -224,7 +246,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       .attr('height', this.height)
       .attr('viewBox', `0 0 ${this.width} ${this.height}`)
       .style('background', '#ffffff')
-      .classed('block mx-auto', true); // Aplicar clases Tailwind: display block y margin auto
+      .classed('block', true); // Remover mx-auto para permitir scroll horizontal
 
     // Crear grupo principal
     this.g = this.svg.append('g');
@@ -471,6 +493,77 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
     return positions;
   }
 
+  private recalculatePositions(nodes: HierarchyNode[], startX: number): Map<string, { x: number; y: number; node: HierarchyNode }> {
+    const positions = new Map<string, { x: number; y: number; node: HierarchyNode }>();
+    let currentY = 100;
+
+    // Nivel 1: Auspiciador (centrado)
+    if (nodes.length > 0) {
+      positions.set(nodes[0].id, { x: startX, y: currentY, node: nodes[0] });
+      currentY += this.levelSpacing;
+
+      // Nivel 2: Año (centrado)
+      if (nodes[0].children && nodes[0].children.length > 0) {
+        const yearNode = nodes[0].children[0];
+        positions.set(yearNode.id, { x: startX, y: currentY, node: yearNode });
+        currentY += this.levelSpacing;
+
+        // Nivel 3: Escuelas (distribuidas horizontalmente)
+        if (yearNode.children && yearNode.children.length > 0) {
+          const schools = yearNode.children;
+          const schoolSpacing = schools.length > 1
+            ? Math.min(300, (this.width - 200) / Math.max(1, schools.length))
+            : 0;
+          const startSchoolX = schools.length > 1
+            ? startX - ((schools.length - 1) * schoolSpacing) / 2
+            : startX;
+
+          schools.forEach((school, index) => {
+            const schoolX = schools.length > 1
+              ? startSchoolX + (index * schoolSpacing)
+              : startX;
+            positions.set(school.id, { x: schoolX, y: currentY, node: school });
+          });
+
+          // Calcular altura máxima de sitios para el siguiente nivel
+          let maxSitesCount = 0;
+          schools.forEach((school) => {
+            if (school.children && school.children.length > 0) {
+              maxSitesCount = Math.max(maxSitesCount, school.children.length);
+            }
+          });
+
+          if (maxSitesCount > 0) {
+            currentY += this.levelSpacing;
+
+            // Nivel 4: Sitios (distribuidos bajo cada escuela)
+            schools.forEach((school) => {
+              if (school.children && school.children.length > 0) {
+                const sites = school.children;
+                const schoolPos = positions.get(school.id);
+                if (schoolPos) {
+                  const siteSpacing = sites.length > 1 ? 150 : 0;
+                  const startSiteX = sites.length > 1
+                    ? schoolPos.x - ((sites.length - 1) * siteSpacing) / 2
+                    : schoolPos.x;
+
+                  sites.forEach((site, siteIndex) => {
+                    const siteX = sites.length > 1
+                      ? startSiteX + (siteIndex * siteSpacing)
+                      : schoolPos.x;
+                    positions.set(site.id, { x: siteX, y: currentY, node: site });
+                  });
+                }
+              }
+            });
+          }
+        }
+      }
+    }
+
+    return positions;
+  }
+
   private drawConnections(positions: Map<string, { x: number; y: number; node: HierarchyNode }>): void {
     // Crear marcadores de flecha para cada nivel
     const defs = this.svg.select('defs');
@@ -501,11 +594,14 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         node.children.forEach((child) => {
           const childPos = positions.get(child.id);
           if (childPos) {
+            // Calcular altura del nodo hijo (sitios son 20% más pequeños)
+            const childNodeHeight = child.level === 4 ? this.nodeHeight * 0.8 : this.nodeHeight;
+
             this.g.append('line')
               .attr('x1', pos.x)
               .attr('y1', pos.y + this.nodeHeight / 2)
               .attr('x2', childPos.x)
-              .attr('y2', childPos.y - this.nodeHeight / 2)
+              .attr('y2', childPos.y - childNodeHeight / 2)
               .attr('stroke', this.getLevelColor(node.level))
               .attr('stroke-width', 3)
               .attr('marker-end', `url(#arrowhead-level${node.level})`);
@@ -526,14 +622,22 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
 
       // Caja con gradiente
       const hasChildren = this.nodesWithChildren.has(node.id);
+      // Verificar si es un sitio inactivo (nivel 4)
+      const isInactiveSite = level === 4 && (node.data?.isActive === false || node.data?.isActive === null);
+      const fillColor = isInactiveSite ? '#9ca3af' : `url(#gradient-level${level})`;
+
+      // Para sitios (nivel 4), usar dimensiones 20% más pequeñas
+      const nodeWidth = level === 4 ? this.nodeWidth * 0.8 : this.nodeWidth;
+      const nodeHeight = level === 4 ? this.nodeHeight * 0.8 : this.nodeHeight;
+
       const box = nodeGroup.append('rect')
-        .attr('width', this.nodeWidth)
-        .attr('height', this.nodeHeight)
-        .attr('x', -this.nodeWidth / 2)
-        .attr('y', -this.nodeHeight / 2)
+        .attr('width', nodeWidth)
+        .attr('height', nodeHeight)
+        .attr('x', -nodeWidth / 2)
+        .attr('y', -nodeHeight / 2)
         .attr('rx', 8)
         .attr('ry', 8)
-        .attr('fill', `url(#gradient-level${level})`)
+        .attr('fill', fillColor)
         .attr('stroke', '#ffffff')
         .attr('stroke-width', 2)
         .style('filter', 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))')
@@ -577,18 +681,20 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
         return lines.length > 0 ? lines : [text];
       };
 
-      const textLines = wrapText(displayText, this.nodeWidth - 20);
+      const textLines = wrapText(displayText, nodeWidth - 20);
       const lineHeight = 14;
       const startY = -(textLines.length - 1) * lineHeight / 2;
 
       // Dibujar cada línea de texto
+      // Si es un sitio inactivo, usar texto oscuro para mejor legibilidad sobre fondo gris
+      const textColor = isInactiveSite ? '#1f2937' : '#ffffff';
       textLines.forEach((line, index) => {
         nodeGroup.append('text')
           .attr('text-anchor', 'middle')
           .attr('y', startY + (index * lineHeight))
           .style('font-size', '12px')
           .style('font-weight', '600')
-          .style('fill', '#ffffff')
+          .style('fill', textColor)
           .style('pointer-events', 'none')
           .text(line);
       });
@@ -598,7 +704,7 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       if (level === 1) {
         nodeGroup.append('text')
           .attr('text-anchor', 'middle')
-          .attr('y', this.nodeHeight / 2 + 20)
+          .attr('y', nodeHeight / 2 + 20)
           .style('font-size', '12px')
           .style('font-weight', '500')
           .style('fill', '#374151')
@@ -608,8 +714,8 @@ export class SchoolHierarchyTreeComponent implements OnInit, AfterViewInit, OnDe
       // Indicador de expandir/colapsar (solo para nodos con hijos originalmente)
       if (this.nodesWithChildren.has(node.id)) {
         const isExpanded = this.expandedNodes.has(node.id);
-        const indicatorX = this.nodeWidth / 2 - 15;
-        const indicatorY = -this.nodeHeight / 2 + 15;
+        const indicatorX = nodeWidth / 2 - 15;
+        const indicatorY = -nodeHeight / 2 + 15;
 
         // Círculo de fondo para el indicador
         nodeGroup.append('circle')

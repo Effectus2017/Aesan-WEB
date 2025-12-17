@@ -1471,7 +1471,7 @@
                 "day-events": {
                     "title": "Eventos del día",
                     "totalEvents": "Total de eventos",
-                    "addService": "Agregar Evento",
+                    "addService": "Agregar Servicio",
                     "addEvent": "Agregar Evento"
                 }
             },

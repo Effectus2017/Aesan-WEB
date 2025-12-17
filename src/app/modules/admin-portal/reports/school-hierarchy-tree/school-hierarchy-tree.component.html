@@ -39,7 +39,7 @@
   </div>
 
   <!-- Contenedor del diagrama -->
-  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+  <div class="overflow-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <!-- Estado inicial: solicitar selección de auspiciador -->
     <div *ngIf="!loading && !error && !hierarchyData && !selectedSponsorId" class="flex justify-center items-center h-full">
       <div class="text-center">
@@ -82,7 +82,7 @@
       *ngIf="!loading && !error && hierarchyData && selectedSponsorId"
       #treeContainer
       id="treeContainer"
-      class="relative w-full min-h-[600px] bg-white rounded-lg border border-gray-200">
+      class="relative bg-white rounded-lg border border-gray-200">
     </div>
   </div>
 </div>

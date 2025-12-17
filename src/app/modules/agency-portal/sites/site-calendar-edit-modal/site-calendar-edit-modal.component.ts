@@ -132,7 +132,7 @@ export class SiteCalendarEditModalComponent {
         time24 = this.removeSeconds(endTime);
       } else {
         // Formato desconocido, usar por defecto
-        time24 = '16:00';
+        time24 = '18:00';
       }
 
       this.data.form.get('endTime')?.setValue(time24);

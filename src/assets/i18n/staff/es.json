@@ -42,7 +42,7 @@
           "columns": {
             "fullName": "Nombre Completo",
             "classification": "Clasificación",
-            "agency": "Agencia",
+            "agency": "Auspiciador",
             "position": "Puesto",
             "status": "Estatus",
             "description": "Descripción del empleado",
@@ -185,7 +185,8 @@
       "site": {
         "label": "Sitio Asignado",
         "placeholder": "Seleccione el sitio (opcional)",
-        "hint": "Selecciona el sitio donde estará asignado el personal"
+        "hint": "Selecciona el sitio donde estará asignado el personal",
+        "required": "El sitio es requerido"
       },
       "assignmentType": {
         "label": "Tipo de Asignación",
@@ -201,6 +202,7 @@
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional)",
+        "required": "La descripción es requerida",
         "employee": {
           "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"

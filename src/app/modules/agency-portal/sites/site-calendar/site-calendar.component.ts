@@ -347,7 +347,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       siteId: this.currentSiteId,
       date: date.toISOString().split('T')[0],
       startTime: '08:00',
-      endTime: '16:00',
+      endTime: '18:00',
       isOperating: true,
       isWeekendOverride: false,
       isExcluded: false,
@@ -360,7 +360,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     // Preparar el formulario con valores por defecto
     this.editForm.patchValue({
       startTime: '08:00',
-      endTime: '16:00',
+      endTime: '18:00',
       comment: '',
       isWeekendOverride: false,
       isExcluded: false,
@@ -388,7 +388,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
       startTime: dayData.startTime || '08:00',
-      endTime: dayData.endTime || '16:00',
+      endTime: dayData.endTime || '18:00',
       comment: dayData.comment || '',
       isWeekendOverride: dayData.isWeekendOverride || false,
       isExcluded: dayData.isExcluded || false,
@@ -423,7 +423,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
       startTime: operatingDay.startTime || '08:00',
-      endTime: operatingDay.endTime || '16:00',
+      endTime: operatingDay.endTime || '18:00',
       comment: operatingDay.comment || '',
       isWeekendOverride: operatingDay.isWeekendOverride || false,
       isExcluded: operatingDay.isExcluded || false,
@@ -460,7 +460,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
       startTime: operatingDay.startTime || '08:00',
-      endTime: operatingDay.endTime || '16:00',
+      endTime: operatingDay.endTime || '18:00',
       comment: operatingDay.comment || '',
       isWeekendOverride: operatingDay.isWeekendOverride || false,
       isExcluded: operatingDay.isExcluded || false,

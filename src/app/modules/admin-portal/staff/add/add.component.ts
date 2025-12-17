@@ -150,7 +150,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       // Código postal
       zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comentarios
-      comments: new FormControl(''),
+      comments: new FormControl('', [Validators.required]),
       // Campos específicos para Miembros de la Junta
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),

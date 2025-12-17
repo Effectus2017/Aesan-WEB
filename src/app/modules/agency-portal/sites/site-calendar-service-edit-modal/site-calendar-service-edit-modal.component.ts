@@ -149,7 +149,7 @@ export class SiteCalendarServiceEditModalComponent {
       } else if (endTime.includes(':')) {
         time24 = this.removeSeconds(endTime);
       } else {
-        time24 = '16:00';
+        time24 = '18:00';
       }
 
       this.data.form.get('endTime')?.setValue(time24);

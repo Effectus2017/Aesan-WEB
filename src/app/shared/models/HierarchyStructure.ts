@@ -46,5 +46,6 @@ export interface SiteNode {
   name: string;
   siteNumber?: number | null;
   siteCode: string;
+  isActive?: boolean | null;
 }
 
