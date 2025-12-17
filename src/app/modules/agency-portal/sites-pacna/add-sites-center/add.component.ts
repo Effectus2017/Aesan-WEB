@@ -737,8 +737,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
-
-
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
       this._changeDetectorRef.markForCheck();
