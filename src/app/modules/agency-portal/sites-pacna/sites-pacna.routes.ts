@@ -18,27 +18,66 @@ export default [
           data: initialDataSitesPacnaListResolver,
         },
       },
-      {
-        path: 'add',
-        loadComponent: () => import('./add/add.component').then((c) => c.AddSitePacnaComponent),
-        canActivate: [PermissionGuard],
-        data: { permission: 'site.create' },
-        resolve: {
-          data: initialDataSitesPacnaAddResolver,
-        },
-      },
-      {
-        path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then((c) => c.EditSitePacnaComponent),
-        canActivate: [PermissionGuard],
-        data: { permission: 'site.edit' },
-        resolve: {
-          data: initialDataSitesPacnaEditResolver,
-        },
-      },
+            // Rutas para Hogares (Day Care Home)
+            {
+              path: 'homes/add',
+              loadComponent: () => import('./add-sites-home/add.component').then((c) => c.AddSitePacnaHomeComponent),
+              canActivate: [PermissionGuard],
+              data: { permission: 'site.create' },
+              resolve: {
+                data: initialDataSitesPacnaAddResolver,
+              },
+            },
+            // {
+            //   path: 'homes/edit/:id',
+            //   loadComponent: () => import('./homes/edit/edit.component').then((c) => c.EditSitePacnaHomeComponent),
+            //   canActivate: [PermissionGuard],
+            //   data: { permission: 'site.edit' },
+            //   resolve: {
+            //     data: initialDataSitesPacnaEditResolver,
+            //   },
+            // },
+            // Rutas para Centros (Centers)
+            {
+              path: 'centers/add',
+              loadComponent: () => import('./add-sites-center/add.component').then((c) => c.AddSitePacnaCenterComponent),
+              canActivate: [PermissionGuard],
+              data: { permission: 'site.create' },
+              resolve: {
+                data: initialDataSitesPacnaAddResolver,
+              },
+            },
+            {
+              path: 'centers/edit/:id',
+              loadComponent: () => import('./edit-sites-center/edit.component').then((c) => c.EditSitePacnaCenterComponent),
+              canActivate: [PermissionGuard],
+              data: { permission: 'site.edit' },
+              resolve: {
+                data: initialDataSitesPacnaEditResolver,
+              },
+            },
+            // Rutas legacy (mantener temporalmente para compatibilidad)
+            {
+              path: 'homes/add',
+              loadComponent: () => import('./add-sites-home/add.component').then((c) => c.AddSitePacnaHomeComponent),
+              canActivate: [PermissionGuard],
+              data: { permission: 'site.create' },
+              resolve: {
+                data: initialDataSitesPacnaAddResolver,
+              },
+            },
+            {
+              path: 'homes/edit/:id',
+              loadComponent: () => import('./edit-sites-home/edit.component').then((c) => c.EditSitePacnaHomeComponent),
+              canActivate: [PermissionGuard],
+              data: { permission: 'site.edit' },
+              resolve: {
+                data: initialDataSitesPacnaEditResolver,
+              },
+            },
       {
         path: 'calendar/:id',
-        loadComponent: () => import('../sites/site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
+        loadComponent: () => import('../calendar/site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
         canActivate: [PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {

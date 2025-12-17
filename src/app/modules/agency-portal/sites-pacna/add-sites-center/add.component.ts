@@ -61,15 +61,10 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
-import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
-import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
-import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
 import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -81,9 +76,14 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
+import { PermissionRequestFormDialogComponent } from 'app/shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
+import { SiteStatusModalComponent, SiteStatusModalData } from 'app/modules/agency-portal/sites/site-status-modal/site-status-modal.component';
+import { PermissionRequestDialogComponent } from 'app/shared/components/permission-request-dialog/permission-request-dialog.component';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 
 @Component({
-  selector: 'app-sites-add',
+  selector: 'app-add-sites-center',
   templateUrl: './add.component.html',
   providers: [provideNativeDateAdapter()],
   standalone: true,
@@ -112,7 +112,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
     LongitudeDirective,
   ],
 })
-export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
@@ -511,6 +511,15 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Fecha de Nacimiento del Proveedor
       // Provider Birth Date
       administratorBirthDate: [null],
+      // Nombre Completo de la Persona a Cargo (Day Care Home)
+      // Administrator Authorized Name (Day Care Home)
+      administratorAuthorizedName: [null],
+      // Teléfono del Sitio (Day Care Home)
+      // Site Phone (Day Care Home)
+      sitePhone: [null],
+      // Teléfono Móvil (Day Care Home)
+      // Mobile Phone (Day Care Home)
+      mobilePhone: [null],
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
@@ -1272,6 +1281,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
       // Limpiar validaciones de personInCharge cuando es Day Care Home
       this.updatePersonInChargeValidations();
+      // Configurar validaciones de campos de Day Care Home
+      this.updateDayCareHomeValidations();
     } else {
       // Restaurar validaciones requeridas cuando no es Day Care Home
       this.restoreRequiredValidations();
@@ -1315,6 +1326,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
     // personInCharge solo es requerido para PDAM
     this.updatePersonInChargeValidations();
+
+    // Campos de Day Care Home - requeridos solo cuando shouldShowDayCareFields() es true
+    this.updateDayCareHomeValidations();
 
     // Campos específicos de PACNA - requeridos solo cuando es PACNA y no es Day Care Home
     if (this.isPACNA && !this.isDayCareHome) {
@@ -1402,6 +1416,50 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Limpiar todas las validaciones cuando no es PDAM ni PSAV
       Object.keys(personInChargeGroup.controls).forEach(key => {
         const control = personInChargeGroup.get(key);
+        if (control) {
+          control.clearValidators();
+          control.updateValueAndValidity();
+        }
+      });
+    }
+  }
+
+  /**
+   * Actualiza las validaciones de campos de Day Care Home
+   * Solo se valida cuando shouldShowDayCareFields() es true
+   */
+  private updateDayCareHomeValidations(): void {
+    if (this.shouldShowDayCareFields()) {
+      // Configurar validaciones requeridas para campos de Day Care Home
+      const administratorAuthorizedNameControl = this.headerConfig.formGroup.get('administratorAuthorizedName');
+      const administratorBirthDateControl = this.headerConfig.formGroup.get('administratorBirthDate');
+      const sitePhoneControl = this.headerConfig.formGroup.get('sitePhone');
+      const mobilePhoneControl = this.headerConfig.formGroup.get('mobilePhone');
+
+      if (administratorAuthorizedNameControl) {
+        administratorAuthorizedNameControl.setValidators([Validators.required]);
+        administratorAuthorizedNameControl.updateValueAndValidity();
+      }
+
+      if (administratorBirthDateControl) {
+        administratorBirthDateControl.setValidators([Validators.required]);
+        administratorBirthDateControl.updateValueAndValidity();
+      }
+
+      if (sitePhoneControl) {
+        sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+        sitePhoneControl.updateValueAndValidity();
+      }
+
+      if (mobilePhoneControl) {
+        mobilePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+        mobilePhoneControl.updateValueAndValidity();
+      }
+    } else {
+      // Limpiar validaciones cuando no es Day Care Home
+      const dayCareHomeFields = ['administratorAuthorizedName', 'administratorBirthDate', 'sitePhone', 'mobilePhone'];
+      dayCareHomeFields.forEach(fieldName => {
+        const control = this.headerConfig.formGroup.get(fieldName);
         if (control) {
           control.clearValidators();
           control.updateValueAndValidity();

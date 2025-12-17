@@ -17,7 +17,7 @@ import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
-import { SiteCalendarService } from './site-calendar.service';
+import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 // Resolver para el calendario del sitio
 export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {

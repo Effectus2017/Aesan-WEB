@@ -63,13 +63,13 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { SERVICES_COLUMNS_SCHEMA } from '../../sites/add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../sites/add-service-by-group-modal/add-service-by-group-modal.component';
+import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
 import { MatDialog } from '@angular/material/dialog';
-import { PermissionRequestDialogComponent } from '../../sites/permission-request-dialog/permission-request-dialog.component';
-import { PermissionRequestFormDialogComponent } from '../../sites/permission-request-form-dialog/permission-request-form-dialog.component';
+import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
+import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
@@ -92,7 +92,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
 
 
 @Component({
-  selector: 'app-sites-pacna-edit',
+  selector: 'app-edit-sites-center',
   templateUrl: './edit.component.html',
   providers: [provideNativeDateAdapter()],
   standalone: true,
@@ -120,7 +120,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     DynamicGridDirective,
   ],
 })
-export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente
   // Subject to unsubscribe from all observables on component destroy
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -130,18 +130,11 @@ export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeade
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
-  private _operatingPolicyService = inject(OperatingPolicyService);
-  private _snackBar = inject(MatSnackBar);
   private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
-  private _sponsorTypeService = inject(SponsorTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
-  private _deliveryTypeService = inject(DeliveryTypeService);
-  private _centerTypeService = inject(CenterTypeService);
-  private _organizationTypeService = inject(OrganizationTypeService);
-  private _educationLevelService = inject(EducationLevelService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -150,7 +143,6 @@ export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeade
   private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Catálogos
   // Catalogs
@@ -1764,7 +1756,6 @@ export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeade
     const postalRegionId: number = formValues.postalRegion?.id;
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     const organizationTypeId: number = formValues.organizationType?.id;
-    const operatingDays: number = Number(formValues.operatingDays);
     const kitchenTypeId: number = formValues.kitchenType?.id;
     const siteLocationId: number = formValues.siteLocation?.id;
     const groupTypeId: number = formValues.groupType?.id;
@@ -1776,7 +1767,6 @@ export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeade
     const operatingPolicyId: number = formValues.operatingPolicy?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
-    const relationshipTypeId: number = formValues.relationshipType?.id;
     // Horarios de servicios básicos
     const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
     const breakfastTo: string = toTimeString(formValues.breakfastTo);
@@ -2078,7 +2068,7 @@ export class EditSitePacnaComponent implements OnInit, OnDestroy, OnGenericHeade
             break;
         }
       },
-      error: (err) => {
+      error: () => {
         this._notificationService.showErrorDialog();
         this.headerConfig.formGroup.enable();
       },

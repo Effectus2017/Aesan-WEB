@@ -251,7 +251,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
         const programs = JSON.parse(programsRaw);
         const isPACNA = programs.some((p: any) => p?.id === PROGRAM_IDS.PACNA);
         if (isPACNA) {
-          targetRoute = 'sites-pacna';
+          // Para PACNA, navegar a centers/add ya que este modal es para centers
+          targetRoute = 'sites-pacna/centers';
         }
       } catch {
         // Si hay error parseando, usar ruta por defecto

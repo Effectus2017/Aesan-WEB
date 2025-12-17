@@ -179,14 +179,18 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    // Navegar a sites-pacna/edit
+    // Determinar la ruta según el tipo de sitio
     const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'];
-    if (isDayCareHomeId) {
-      this._customRouterService.navigate([`sites-pacna/edit/${id}`], {
-        queryParams: { isDayCareHomeId: isDayCareHomeId }
-      });
+    if (isDayCareHomeId && this._homeOptionId && parseInt(isDayCareHomeId, 10) === this._homeOptionId) {
+      // Es un Home, navegar a homes/edit
+      this._customRouterService.navigate([`sites-pacna/homes/edit/${id}`]);
+    } else if (isDayCareHomeId && this._centerOptionId && parseInt(isDayCareHomeId, 10) === this._centerOptionId) {
+      // Es un Center, navegar a centers/edit
+      this._customRouterService.navigate([`sites-pacna/centers/edit/${id}`]);
     } else {
-      this._customRouterService.navigate([`sites-pacna/edit/${id}`]);
+      // Si no hay isDayCareHomeId, intentar determinar desde el sitio o usar ruta por defecto
+      // Por ahora, usar centers como predeterminado si no se puede determinar
+      this._customRouterService.navigate([`sites-pacna/centers/edit/${id}`]);
     }
   }
 
@@ -197,14 +201,24 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   }
 
   onAdd() {
-    // Navegar a sites-pacna/add con el queryParam si existe
+    // Determinar la ruta según el tipo de sitio
     const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'];
-    if (isDayCareHomeId) {
-      this._customRouterService.navigate(['sites-pacna/add'], { 
-        queryParams: { isDayCareHomeId: isDayCareHomeId } 
-      });
+    if (isDayCareHomeId && this._homeOptionId && parseInt(isDayCareHomeId, 10) === this._homeOptionId) {
+      // Es un Home, navegar a homes/add
+      this._customRouterService.navigate(['sites-pacna/homes/add']);
+    } else if (isDayCareHomeId && this._centerOptionId && parseInt(isDayCareHomeId, 10) === this._centerOptionId) {
+      // Es un Center, navegar a centers/add
+      this._customRouterService.navigate(['sites-pacna/centers/add']);
     } else {
-      this._customRouterService.navigate(['sites-pacna/add']);
+      // Si no hay isDayCareHomeId, intentar determinar desde localStorage o usar ruta por defecto
+      // Verificar si hay información en localStorage sobre el tipo de sitio
+      const agencyIsDayCareHome = localStorage.getItem('agencyIsDayCareHome');
+      if (agencyIsDayCareHome === 'true') {
+        this._customRouterService.navigate(['sites-pacna/homes/add']);
+      } else {
+        // Por defecto, usar centers
+        this._customRouterService.navigate(['sites-pacna/centers/add']);
+      }
     }
   }
 
