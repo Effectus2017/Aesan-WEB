@@ -807,40 +807,39 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       this._changeDetectorRef.markForCheck();
     }
 
-    // Obtener datos de la agencia para determinar campos visibles
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.agency = result.body;
-        const programs = this.agency.programs || [];
+    // Obtener datos de la agencia desde el resolver padre
+    const parentData = this._route.snapshot.parent?.data['initialData'];
+    if (parentData?.agency) {
+      this.agency = parentData.agency;
+      const programs = this.agency.programs || [];
 
-        // Obtener el valor de isDayCareHome de la inscripción o del sitio
-        // Si el sitio tiene isDayCareHomeId, usarlo; si no, usar el de la agencia
-        if (resolvedData?.site?.isDayCareHomeId) {
-          this.isDayCareHomeId = resolvedData.site.isDayCareHomeId;
-          const isDayCareHomeOption = resolvedData.site.isDayCareHome;
-          this.isDayCareHome = isDayCareHomeOption
-            ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-            : false;
-        } else {
-          // Convertir OptionSelection a boolean:
-          // - Si booleanValue === true (Sí) → true
-          // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
-          // - Si booleanValue === false (No) o no existe → false
-          const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
-          this.isDayCareHomeId = isDayCareHomeOption?.id || null;
-          this.isDayCareHome = isDayCareHomeOption
-            ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-            : false;
-        }
-
-        // Determinar qué campos mostrar según los programas
-        this.determineVisibleFields(programs);
-
-        // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
-        // para asegurar que las validaciones se apliquen correctamente
-        this.updateValidations();
+      // Obtener el valor de isDayCareHome de la inscripción o del sitio
+      // Si el sitio tiene isDayCareHomeId, usarlo; si no, usar el de la agencia
+      if (resolvedData?.site?.isDayCareHomeId) {
+        this.isDayCareHomeId = resolvedData.site.isDayCareHomeId;
+        const isDayCareHomeOption = resolvedData.site.isDayCareHome;
+        this.isDayCareHome = isDayCareHomeOption
+          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+          : false;
+      } else {
+        // Convertir OptionSelection a boolean:
+        // - Si booleanValue === true (Sí) → true
+        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
+        // - Si booleanValue === false (No) o no existe → false
+        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
+        this.isDayCareHomeId = isDayCareHomeOption?.id || null;
+        this.isDayCareHome = isDayCareHomeOption
+          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
+          : false;
       }
-    });
+
+      // Determinar qué campos mostrar según los programas
+      this.determineVisibleFields(programs);
+
+      // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
+      // para asegurar que las validaciones se apliquen correctamente
+      this.updateValidations();
+    }
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -1161,37 +1160,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   // Manejar cambio de non-profit para programa PDAM
-  nonProfitChange(event?: any): void {
-    // Obtener el valor directamente del evento si está disponible
-    // El evento contiene el booleanValue (true para "Sí", false para "No")
-    const nonProfitValue = event?.value !== undefined ? event.value : this.headerConfig.formGroup.value.nonProfit;
-
-    // Solo mostrar el diálogo cuando se selecciona explícitamente "No" (false)
-    // No mostrar si es null, undefined o true
-    if (nonProfitValue !== false) {
-      return;
-    }
-
-    const programs = this.agency?.programs || [];
-    const selectedProgram = programs.find(p => p.id === PROGRAM_IDS.PDAM);
-
-    // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
-    if (selectedProgram && isPDAMProgram(selectedProgram)) {
-      this._dialog.open(CfrInfoDialogComponent, {
-        data: {
-          title: this._translocoService.translate('sites.edit.pdam-not-eligible.title'),
-          message: this._translocoService.translate('sites.edit.pdam-not-eligible.message'),
-          cfrLink: {
-            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
-            text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text')
-          }
-        },
-        disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
-      });
-    }
-  }
-
   private calculateOperatingDays(): void {
     const fromDateValue = this.headerConfig.formGroup.get('operatingFromDate')?.value;
     const toDateValue = this.headerConfig.formGroup.get('operatingToDate')?.value;
@@ -1312,69 +1280,18 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   private determineVisibleFields(programs: any[]): void {
-    this.isPDAM = programs.some((p) => p.id === PROGRAM_IDS.PDAM);
-    this.isPSAV = programs.some((p) => p.id === PROGRAM_IDS.PSAV);
-    this.isPACNA = programs.some((p) => p.id === PROGRAM_IDS.PACNA);
-    this.isPFHF = programs.some((p) => p.id === PROGRAM_IDS.PFHF);
-    this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
-    this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
-
-    // Actualizar validaciones de personInCharge según el programa
-    this.updatePersonInChargeValidations();
+    // Este componente es específico para PACNA, por lo que siempre es PACNA
+    this.isPACNA = true;
+    this.isPDAM = false;
+    this.isPSAV = false;
+    this.isPFHF = false;
+    this.isPDFE = false;
+    this.isAESAN = false;
 
     // updateValidations() se ejecuta después en la suscripción a agency$
     this._changeDetectorRef.detectChanges();
   }
 
-  /**
-   * Actualiza las validaciones de personInCharge según el programa
-   * Solo se valida cuando isPDAM o isPSAV es true
-   */
-  private updatePersonInChargeValidations(): void {
-    const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
-
-    if (!personInChargeGroup) {
-      return;
-    }
-
-    if (this.isPDAM || this.isPSAV) {
-      // Restaurar validaciones requeridas para PDAM y PSAV
-      const firstNameControl = personInChargeGroup.get('firstName');
-      const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
-      const sitePhoneControl = personInChargeGroup.get('sitePhone');
-
-      if (firstNameControl) {
-        firstNameControl.setValidators([Validators.required]);
-        firstNameControl.updateValueAndValidity();
-      }
-
-      if (fatherLastNameControl) {
-        fatherLastNameControl.setValidators([Validators.required]);
-        fatherLastNameControl.updateValueAndValidity();
-      }
-
-      if (sitePhoneControl) {
-        sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
-        sitePhoneControl.updateValueAndValidity();
-      }
-
-      // mobilePhone solo tiene validación de formato, no requerido
-      const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
-      if (mobilePhoneControl) {
-        mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
-        mobilePhoneControl.updateValueAndValidity();
-      }
-    } else {
-      // Limpiar todas las validaciones cuando no es PDAM ni PSAV
-      Object.keys(personInChargeGroup.controls).forEach(key => {
-        const control = personInChargeGroup.get(key);
-        if (control) {
-          control.clearValidators();
-          control.updateValueAndValidity();
-        }
-      });
-    }
-  }
 
   private updateValidations(): void {
     // Si es Day Care Home, remover todas las validaciones requeridas
@@ -1438,14 +1355,10 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       }
     });
 
-    // educationLevels solo es requerido para PDAM
+    // educationLevels no es requerido para PACNA
     const educationLevelsControl = this.headerConfig.formGroup.get('educationLevels');
     if (educationLevelsControl) {
-      if (this.isPDAM) {
-        educationLevelsControl.setValidators([Validators.required]);
-      } else {
-        educationLevelsControl.clearValidators();
-      }
+      educationLevelsControl.clearValidators();
       educationLevelsControl.updateValueAndValidity();
     }
 
@@ -2108,16 +2021,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // PDAM y PSAV usan 'schools'
-    if (this.isPDAM || this.isPSAV) {
-      return ['schools'];
-    }
-    // PACNA usa 'sites-pacna'
-    if (this.isPACNA) {
-      return ['sites-pacna'];
-    }
-    // PFHF, PDFE, AESAN usan 'sites'
-    return ['sites'];
+    return ['sites-pacna'];
   }
 
   // Método para manejar acciones del menú de settings
@@ -2154,15 +2058,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.action === 'redirect-to-changes-form') {
-        // Redirigir al formulario de cambios y cancelaciones
-        // TODO: Cuando se implemente el formulario, usar la ruta correcta
-        // Por ejemplo: this._customRouter.navigate(['sites/changes-cancellations', result.siteId], {
-        //   queryParams: {
-        //     inactiveDate: result.inactiveDate,
-        //     prefill: true
-        //   }
-        // });
-
         // Por ahora, mostrar mensaje de que el formulario está en desarrollo
         this._notificationService.showInfo('sites.edit.status-modal.changes-form-not-implemented');
         return;
@@ -2773,7 +2668,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    */
   onDevPDAMChange(checked: boolean): void {
     this.isPDAM = checked;
-    this.updatePersonInChargeValidations();
+    //this.updatePersonInChargeValidations();
     this.updateDevPrograms();
   }
 
@@ -2782,7 +2677,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    */
   onDevPSAVChange(checked: boolean): void {
     this.isPSAV = checked;
-    this.updatePersonInChargeValidations();
+    //this.updatePersonInChargeValidations();
     this.updateDevPrograms();
   }
 

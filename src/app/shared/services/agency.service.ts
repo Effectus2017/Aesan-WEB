@@ -53,7 +53,7 @@ export class AgencyService {
    * @returns La agencia
    */
   getAgencyById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-agency-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agency.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-agency-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agency.next(response.body)));
   }
 
   /**
@@ -64,7 +64,7 @@ export class AgencyService {
   getAgencyByIdAndUserId(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient
       .get(`${this.apiUrl}/get-agency-by-id-and-user-id`, getHttpOptions(queryParameters))
-      .pipe(tap((response: any) => this._agency.next(response)));
+      .pipe(tap((response: any) => this._agency.next(response.body)));
   }
 
   /**
