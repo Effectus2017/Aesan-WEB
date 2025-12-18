@@ -39,6 +39,8 @@ export interface SiteRequest {
     operatingFromDate?: string;
     operatingToDate?: string;
     operatingDaysCalculated?: number;
+    operatingStartTime?: string;
+    operatingEndTime?: string;
 
     /**
      * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?

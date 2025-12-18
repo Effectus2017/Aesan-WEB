@@ -485,6 +485,33 @@
           </mat-form-field>
         </div>
 
+        <!-- Horas de funcionamiento -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+          <mat-form-field data-cy="operating-start-time-field">
+            <mat-label>{{ "sites.add.operating-start-time.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'operatingStartTime'" required data-cy="operating-start-time-select">
+              <mat-option *ngFor="let time of timeOptions" [value]="time.value" data-cy="operating-start-time-option">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingStartTime')?.hasError('required')">
+              {{ "sites.add.operating-start-time.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field data-cy="operating-end-time-field">
+            <mat-label>{{ "sites.add.operating-end-time.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'operatingEndTime'" required data-cy="operating-end-time-select">
+              <mat-option *ngFor="let time of timeOptions" [value]="time.value" data-cy="operating-end-time-option">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingEndTime')?.hasError('required')">
+              {{ "sites.add.operating-end-time.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- TITULO -->
         <!-- Datos Operacionales -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">

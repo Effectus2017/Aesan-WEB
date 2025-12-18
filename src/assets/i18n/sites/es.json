@@ -193,6 +193,16 @@
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente"
             },
+            "operating-start-time": {
+                "label": "Hora de Inicio",
+                "placeholder": "Seleccione la hora de inicio",
+                "required": "La hora de inicio es requerida"
+            },
+            "operating-end-time": {
+                "label": "Hora de Fin",
+                "placeholder": "Seleccione la hora de fin",
+                "required": "La hora de fin es requerida"
+            },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
                 "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
@@ -911,6 +921,16 @@
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente",
                 "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
+            },
+            "operating-start-time": {
+                "label": "Hora de Inicio",
+                "placeholder": "Seleccione la hora de inicio",
+                "required": "La hora de inicio es requerida"
+            },
+            "operating-end-time": {
+                "label": "Hora de Fin",
+                "placeholder": "Seleccione la hora de fin",
+                "required": "La hora de fin es requerida"
             },
             "operating-dates": {
                 "label": "Días de Funcionamiento",

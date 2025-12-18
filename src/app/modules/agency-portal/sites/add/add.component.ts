@@ -314,6 +314,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       operatingFromDate: [null, Validators.required],
       operatingToDate: [null, Validators.required],
       operatingDaysCalculated: [{ value: null, disabled: true }],
+      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
+      // Operating hours - Start and end times for operating days
+      operatingStartTime: [null, Validators.required],
+      operatingEndTime: [null, Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?

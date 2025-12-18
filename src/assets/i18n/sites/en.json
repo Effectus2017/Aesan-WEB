@@ -191,6 +191,16 @@
                 "placeholder": "Total calculated operating days",
                 "description": "Total days calculated automatically"
             },
+            "operating-start-time": {
+                "label": "Start Time",
+                "placeholder": "Select start time",
+                "required": "Start time is required"
+            },
+            "operating-end-time": {
+                "label": "End Time",
+                "placeholder": "Select end time",
+                "required": "End time is required"
+            },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
                 "placeholder": "Select the date when your entity began operating (optional)",
@@ -969,6 +979,16 @@
                 "placeholder": "Total calculated operating days",
                 "description": "Total days calculated automatically",
                 "hint": "This field is calculated automatically based on the configured operating dates"
+            },
+            "operating-start-time": {
+                "label": "Start Time",
+                "placeholder": "Select start time",
+                "required": "Start time is required"
+            },
+            "operating-end-time": {
+                "label": "End Time",
+                "placeholder": "Select end time",
+                "required": "End time is required"
             },
             "operating-dates": {
                 "label": "Operating Days",
