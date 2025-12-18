@@ -929,6 +929,27 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    */
+  /**
+   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
+   */
+  getStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    if (!operatingStartTime || !operatingEndTime) {
+      // Si no hay horas de funcionamiento, mostrar todas las opciones
+      return this.timeOptions;
+    }
+
+    // Filtrar opciones dentro del rango
+    return this.timeOptions.filter(option => {
+      const optionMinutes = timeToMinutes(option.value);
+      const startMinutes = timeToMinutes(operatingStartTime);
+      const endMinutes = timeToMinutes(operatingEndTime);
+      return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
+    });
+  }
+
   getEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     if (!fromControl) return this.timeOptions;

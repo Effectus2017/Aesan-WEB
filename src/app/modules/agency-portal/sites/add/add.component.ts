@@ -915,6 +915,27 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   }
 
   /**
+   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
+   */
+  getStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    if (!operatingStartTime || !operatingEndTime) {
+      // Si no hay horas de funcionamiento, mostrar todas las opciones
+      return this.timeOptions;
+    }
+
+    // Filtrar opciones dentro del rango
+    return this.timeOptions.filter(option => {
+      const optionMinutes = timeToMinutes(option.value);
+      const startMinutes = timeToMinutes(operatingStartTime);
+      const endMinutes = timeToMinutes(operatingEndTime);
+      return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
+    });
+  }
+
+  /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    */
   getEndTimeOptions(fromField: string): TimeOption[] {
