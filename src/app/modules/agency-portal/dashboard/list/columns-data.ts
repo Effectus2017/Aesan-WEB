@@ -27,17 +27,19 @@ export const agencyDashboardCardsData = [
 ];
 
 // Datos para el gráfico de raciones por mes
+// Nota: Los meses se traducirán dinámicamente en el componente
 export const rationsByMonthData = [
-  { month: 'Enero', value: 195 },
-  { month: 'Febrero', value: 190 },
-  { month: 'Marzo', value: 198 },
-  { month: 'Abril', value: 160 }
+  { monthKey: 'january', value: 195 },
+  { monthKey: 'february', value: 190 },
+  { monthKey: 'march', value: 198 },
+  { monthKey: 'april', value: 160 }
 ];
 
 // Datos para el gráfico de visitas coordinadas
+// Nota: Los nombres se traducirán dinámicamente en el componente
 export const coordinatedVisitsData = [
-  { name: 'Visita Inicial', value: 74.4 },
-  { name: 'Visita de Seguimiento', value: 24.6 }
+  { nameKey: 'initial', value: 74.4 },
+  { nameKey: 'followUp', value: 24.6 }
 ];
 
 // Datos para la tabla de formularios

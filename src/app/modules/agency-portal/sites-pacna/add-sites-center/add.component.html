@@ -222,7 +222,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "sites.add.non-profit.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
+            <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange()" data-cy="non-profit-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="non-profit-option">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -321,6 +321,20 @@
             </mat-error>
           </mat-form-field>
         </div>
+
+        <!-- ✅ VERIFICADO: Participantes / Participants - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
+        <!-- Participantes / Participants -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+            <mat-form-field data-cy="participant-types-field">
+              <mat-label>{{ "sites.add.participant-types.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'participantTypes'" multiple data-cy="participant-types-select">
+                <mat-option *ngFor="let option of participantTypeOptions" [value]="option.id" data-cy="participant-types-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('participantTypes').hasError('required')">{{ "sites.add.participant-types.required" | transloco }}</mat-error>
+            </mat-form-field>
+          </div>
 
         <!-- Tipo de organización / Organization Type -->
         <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
@@ -938,6 +952,8 @@
             </mat-error>
           </mat-form-field>
         </div>
+
+
 
       </div>
     </form>

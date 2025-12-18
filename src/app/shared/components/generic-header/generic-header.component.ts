@@ -19,7 +19,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, RouterLink, TranslocoModule]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, TranslocoModule]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;
@@ -149,6 +149,12 @@ export class GenericHeaderComponent {
   onSettingsMenuAction(menuItemId: string): void {
     if (this.handler.onSettingsMenuAction) {
       this.handler.onSettingsMenuAction(menuItemId);
+    }
+  }
+
+  onAdd() {
+    if (this.handler.onAdd) {
+      this.handler.onAdd();
     }
   }
 }

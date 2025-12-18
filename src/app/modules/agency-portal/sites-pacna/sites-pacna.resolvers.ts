@@ -7,7 +7,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { forkJoin, map } from 'rxjs';
+import { forkJoin, map, switchMap } from 'rxjs';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -23,25 +23,33 @@ import { PROGRAM_IDS } from 'app/shared/const';
 export const initialDataSitesPacnaListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const siteService = inject(SiteService);
   const authService = inject(AuthService);
+  const optionSelectionService = inject(OptionSelectionService);
   const agencyId = authService.getAgencyId();
 
-  // Leer isDayCareHomeId de los query parameters
-  const isDayCareHomeId = route.queryParams['isDayCareHomeId']
-    ? parseInt(route.queryParams['isDayCareHomeId'], 10)
-    : undefined;
+  // Cargar opciones de isDayCareHome para obtener el ID de Hogares
+  const optionsParams: QueryParameters = { optionKey: 'isDayCareHome' } as QueryParameters;
 
-  const requestParameters: QueryParameters = {
-    take: 25,
-    skip: 0,
-    alls: false,
-    isList: false,
-    agencyId: agencyId,
-    isDayCareHomeId: isDayCareHomeId,
-  };
+  return optionSelectionService.getOptionSelectionByOptionKey(optionsParams).pipe(
+    switchMap((optionsResponse) => {
+      // Obtener el ID de la opción "Hogar" (booleanValue === true)
+      const options = optionsResponse?.body?.data || optionsResponse?.body || [];
+      const homeOption = options.find((option: any) => option?.booleanValue === true);
+      const homeOptionId = homeOption?.id;
 
-  return forkJoin([siteService.getAllSitesFromDb(requestParameters)]).pipe(
-    map(([sites]) => ({
-      sites: sites.body,
+      // Hacer la búsqueda con el isDayCareHomeId de Hogares
+      const requestParameters: QueryParameters = {
+        take: 25,
+        skip: 0,
+        alls: false,
+        isList: false,
+        agencyId: agencyId,
+        isDayCareHomeId: homeOptionId,
+      };
+
+      return siteService.getAllSitesFromDb(requestParameters);
+    }),
+    map((sitesResponse) => ({
+      sites: sitesResponse.body,
     }))
   );
 };

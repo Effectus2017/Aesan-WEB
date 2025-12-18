@@ -57,12 +57,10 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   isPACNAAgency = false;
-  private _centerOptionId?: number;
   private _homeOptionId?: number;
-  private _currentIsDayCareHomeId?: number;
 
   headerConfig: GenericHeaderConfig = {
-    title: 'sites.list.title',
+    title: 'sites.list.titleHomes',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
@@ -90,30 +88,17 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   ngOnInit() {
     this.detectPACNAAgency();
     this.loadIsDayCareHomeOptions();
+    this.updateHeaderTitle();
 
-    // Leer isDayCareHomeId de los query parameters
-    this._route.queryParams
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(params => {
-        const isDayCareHomeId = params['isDayCareHomeId'] ? parseInt(params['isDayCareHomeId'], 10) : undefined;
-        this._currentIsDayCareHomeId = isDayCareHomeId;
-        this.updateHeaderTitle(isDayCareHomeId);
-        
-        // Obtener datos del resolver
-        const resolvedData = this._route.snapshot.data['data'];
+    // Obtener datos del resolver
+    const resolvedData = this._route.snapshot.data['data'];
 
-        if (resolvedData) {
-          this.tableConfig.dataSource.data = resolvedData.sites.data;
-          this.tableConfig.length = resolvedData.sites.count;
-          this.tableConfig.dataSourceList = resolvedData.sites.data;
-          this._changeDetectorRef.markForCheck();
-        }
-
-        // Si hay isDayCareHomeId en query params, hacer una nueva búsqueda
-        if (isDayCareHomeId !== undefined) {
-          this.getAll(0, this.headerConfig.formGroup.value);
-        }
-      });
+    if (resolvedData) {
+      this.tableConfig.dataSource.data = resolvedData.sites.data;
+      this.tableConfig.length = resolvedData.sites.count;
+      this.tableConfig.dataSourceList = resolvedData.sites.data;
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
   ngOnDestroy(): void {
@@ -131,18 +116,13 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   getAll(index: number, form: any) {
     const name = form.name || null;
     const pageSize = this.tableConfig.pageSize;
-    
-    // Leer isDayCareHomeId de los query parameters actuales
-    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'] 
-      ? parseInt(this._route.snapshot.queryParams['isDayCareHomeId'], 10) 
-      : undefined;
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
       name: name,
       alls: false,
-      isDayCareHomeId: isDayCareHomeId,
+      isDayCareHomeId: this._homeOptionId,
     };
 
     this._siteService.getAllSitesFromDb(requestParameters)
@@ -179,19 +159,7 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    // Determinar la ruta según el tipo de sitio
-    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'];
-    if (isDayCareHomeId && this._homeOptionId && parseInt(isDayCareHomeId, 10) === this._homeOptionId) {
-      // Es un Home, navegar a homes/edit
-      this._customRouterService.navigate([`sites-pacna/homes/edit/${id}`]);
-    } else if (isDayCareHomeId && this._centerOptionId && parseInt(isDayCareHomeId, 10) === this._centerOptionId) {
-      // Es un Center, navegar a centers/edit
-      this._customRouterService.navigate([`sites-pacna/centers/edit/${id}`]);
-    } else {
-      // Si no hay isDayCareHomeId, intentar determinar desde el sitio o usar ruta por defecto
-      // Por ahora, usar centers como predeterminado si no se puede determinar
-      this._customRouterService.navigate([`sites-pacna/centers/edit/${id}`]);
-    }
+    this._customRouterService.navigate([`sites-pacna/homes/edit/${id}`]);
   }
 
   onTableCalendar(event: Event, id: number) {
@@ -201,25 +169,7 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   }
 
   onAdd() {
-    // Determinar la ruta según el tipo de sitio
-    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'];
-    if (isDayCareHomeId && this._homeOptionId && parseInt(isDayCareHomeId, 10) === this._homeOptionId) {
-      // Es un Home, navegar a homes/add
-      this._customRouterService.navigate(['sites-pacna/homes/add']);
-    } else if (isDayCareHomeId && this._centerOptionId && parseInt(isDayCareHomeId, 10) === this._centerOptionId) {
-      // Es un Center, navegar a centers/add
-      this._customRouterService.navigate(['sites-pacna/centers/add']);
-    } else {
-      // Si no hay isDayCareHomeId, intentar determinar desde localStorage o usar ruta por defecto
-      // Verificar si hay información en localStorage sobre el tipo de sitio
-      const agencyIsDayCareHome = localStorage.getItem('agencyIsDayCareHome');
-      if (agencyIsDayCareHome === 'true') {
-        this._customRouterService.navigate(['sites-pacna/homes/add']);
-      } else {
-        // Por defecto, usar centers
-        this._customRouterService.navigate(['sites-pacna/centers/add']);
-      }
-    }
+    this._customRouterService.navigate(['sites-pacna/homes/add']);
   }
 
   private detectPACNAAgency(): void {
@@ -245,11 +195,8 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
       .subscribe({
         next: (response: any) => {
           const options = response?.body?.data || response?.body || [];
-          const centerOption = options.find((option: any) => option?.booleanValue === false);
           const homeOption = options.find((option: any) => option?.booleanValue === true);
-          this._centerOptionId = centerOption?.id;
           this._homeOptionId = homeOption?.id;
-          this.updateHeaderTitle(this._currentIsDayCareHomeId);
         },
         error: (error) => {
           console.error('Error al obtener opciones de isDayCareHome:', error);
@@ -257,15 +204,8 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  private updateHeaderTitle(isDayCareHomeId?: number): void {
-    if (!this.isPACNAAgency) {
-      this.headerConfig.title = 'sites.list.title';
-      return;
-    }
-
-    if (this._centerOptionId && isDayCareHomeId === this._centerOptionId) {
-      this.headerConfig.title = 'sites.list.titleCenters';
-    } else if (this._homeOptionId && isDayCareHomeId === this._homeOptionId) {
+  private updateHeaderTitle(): void {
+    if (this.isPACNAAgency) {
       this.headerConfig.title = 'sites.list.titleHomes';
     } else {
       this.headerConfig.title = 'sites.list.title';

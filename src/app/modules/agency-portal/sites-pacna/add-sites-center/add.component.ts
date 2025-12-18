@@ -45,6 +45,7 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
@@ -116,15 +117,12 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
-  private _agencyService = inject(AgencyService);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
   private _areaTypeService = inject(AreaTypeService);
-  private _centerTypeService = inject(CenterTypeService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // catálogos
   listCities: City[] = [];
@@ -949,7 +947,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Manejar cambio de non-profit
   // Nota: Este método se mantiene por compatibilidad, pero no aplica validaciones de PDAM
   // ya que este componente es específico para PACNA
-  nonProfitChange(event?: any): void {
+  nonProfitChange(): void {
     // No hay validaciones específicas para PACNA relacionadas con non-profit
   }
 
@@ -1599,6 +1597,19 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Agregar grupos de niños si OffersServiceToDifferentGroups = true
     if (formValues.offersServiceToDifferentGroups && this.childGroups.length > 0) {
       siteRequest.childGroups = this.childGroups;
+    }
+
+    // Agregar participantes (selección múltiple)
+    // Add participants (multiple selection)
+    if (formValues.participantTypes && Array.isArray(formValues.participantTypes) && formValues.participantTypes.length > 0) {
+      siteRequest.participants = formValues.participantTypes.map((participantTypeId: number) => {
+        const participantRequest: SiteParticipantRequest = {
+          siteId: 0, // Se asignará cuando se cree el sitio
+          participantTypeId: participantTypeId,
+          isActive: true,
+        };
+        return participantRequest;
+      });
     }
 
     this.isLoading = true;

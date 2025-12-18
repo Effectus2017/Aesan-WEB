@@ -433,17 +433,17 @@
                 "organized-athletic-programs": {
                     "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "at-risk-service": {
                     "label": "Is the site interested in participating in the at-risk snack and dinner service?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "public-alliance-contract": {
                     "label": "If you have a Public Alliance contract, please specify the type of contract",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "validation": {
                     "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
@@ -1143,17 +1143,17 @@
                 "organized-athletic-programs": {
                     "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "at-risk-service": {
                     "label": "Is the site interested in participating in the at-risk snack and dinner service?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "public-alliance-contract": {
                     "label": "If you have a Public Alliance contract, please specify the type of contract",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "validation": {
                     "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
