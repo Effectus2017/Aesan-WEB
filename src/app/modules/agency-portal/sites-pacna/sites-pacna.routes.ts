@@ -3,7 +3,7 @@ import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PacnaProgramGuard } from 'app/core/auth/guards/pacna-program.guard';
 import { SitesPacnaComponent } from './sites-pacna.component';
 import { initialDataSitesPacnaEditResolver, initialDataSitesPacnaAddResolver, initialDataSitesPacnaListResolver } from './sites-pacna.resolvers';
-import { initialDataSiteCalendarResolver } from '../sites/sites.resolvers';
+import { initialDataSiteCalendarResolver } from '../sites-pdam/sites.resolvers';
 
 export default [
   {

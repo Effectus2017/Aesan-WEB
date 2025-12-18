@@ -184,13 +184,13 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`sites/edit/${id}`]);
+    this._customRouterService.navigate([`sites-pdam/edit/${id}`]);
   }
 
   onTableCalendar(event: Event, id: number) {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`sites/calendar/${id}`]);
+    this._customRouterService.navigate([`sites-pdam/calendar/${id}`]);
   }
 
   onTableSatellites(event: Event, id: number) {
@@ -200,7 +200,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   }
 
   onAdd() {
-    this._customRouterService.navigate(['sites/add']);
+    this._customRouterService.navigate(['sites-pdam/add']);
   }
 
   private openSatellitesModal(siteId: number): void {

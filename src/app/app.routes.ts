@@ -154,14 +154,16 @@ export const appRoutes: Route[] = [
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents-files/documents.routes') },
       // Forms, listado de formularios para solicitar programas (Role: Agency)
       { path: 'forms', loadChildren: () => import('app/modules/agency-portal/formularios/forms.routes') },
-      // Sites, listado de sitios (Role: Agency)
-      { path: 'sites', loadChildren: () => import('app/modules/agency-portal/sites/sites.routes') },
       // Schools, listado de escuelas (Role: Agency)
       { path: 'schools', loadChildren: () => import('app/modules/agency-portal/schools/schools.routes') },
       // Centers, listado de centros para PACNA (Role: Agency)
       { path: 'centers', loadChildren: () => import('app/modules/agency-portal/centers/centers.routes') },
+      // Sites PDAM, listado de sitios (Role: Agency)
+      { path: 'sites-pdam', loadChildren: () => import('app/modules/agency-portal/sites-pdam/sites.routes') },
       // Sites PACNA, formularios separados para sitios de PACNA (Role: Agency)
       { path: 'sites-pacna', loadChildren: () => import('app/modules/agency-portal/sites-pacna/sites-pacna.routes') },
+      // Sites PSAV, formularios separados para sitios de PSAV (Role: Agency)
+      { path: 'sites-psav', loadChildren: () => import('app/modules/agency-portal/sites-psav/sites-psav.routes') },
       // Household, listado de hogares (Role: Agency)
       { path: 'household', loadChildren: () => import('app/modules/agency-portal/household/household.routes') },
       // Household member, listado de miembros del hogar (Role: Agency)

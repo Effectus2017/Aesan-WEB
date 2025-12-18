@@ -1970,16 +1970,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // PDAM y PSAV usan 'schools'
-    if (this.isPDAM || this.isPSAV) {
-      return ['schools'];
-    }
-    // PACNA usa 'sites-pacna'
-    if (this.isPACNA) {
-      return ['sites-pacna'];
-    }
-    // PFHF, PDFE, AESAN usan 'sites'
-    return ['sites'];
+    // Este componente es específico para PDAM
+    return ['sites-pdam'];
   }
 
   // Método para manejar acciones del menú de settings

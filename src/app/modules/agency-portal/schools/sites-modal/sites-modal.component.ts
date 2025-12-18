@@ -173,7 +173,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     const siteId = element?.siteId || id; // Fallback al id si no se encuentra
 
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/edit/${siteId}`]);
+    this._customRouterService.navigate([`sites-pdam/edit/${siteId}`]);
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -198,7 +198,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     const siteId = element?.siteId || id; // Fallback al id si no se encuentra
 
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/calendar/${siteId}`]);
+    this._customRouterService.navigate([`sites-pdam/calendar/${siteId}`]);
   }
 
   onClearSearch(): void {
@@ -207,9 +207,9 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   onAddButtonClick(event?: Event): void {
-    // Cerrar el modal y navegar a sites/add con schoolId como query parameter
+    // Cerrar el modal y navegar a sites-pdam/add con schoolId como query parameter
     this.dialogRef.close();
-    this._customRouterService.navigate(['sites/add'], {
+    this._customRouterService.navigate(['sites-pdam/add'], {
       queryParams: { schoolId: this.data.schoolId }
     });
   }

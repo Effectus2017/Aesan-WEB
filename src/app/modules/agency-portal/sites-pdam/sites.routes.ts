@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
+import { PdamProgramGuard } from 'app/core/auth/guards/pdam-program.guard';
 import { SitesComponent } from './sites.component';
 import { initialDataSitesEditResolver, initialDataSitesListResolver, initialDataSiteCalendarResolver } from './sites.resolvers';
 import { initialDataSitesAddResolver } from './sites.resolvers';
@@ -11,7 +12,7 @@ export default [
       {
         path: '',
         loadComponent: () => import('./list/list.component').then((c) => c.ListComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.view' },
         resolve: {
           data: initialDataSitesListResolver,
@@ -20,7 +21,7 @@ export default [
       {
         path: 'add',
         loadComponent: () => import('./add/add.component').then((c) => c.AddSiteComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
           data: initialDataSitesAddResolver,
@@ -29,7 +30,7 @@ export default [
       {
         path: 'edit/:id',
         loadComponent: () => import('./edit/edit.component').then((c) => c.EditSiteComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {
           data: initialDataSitesEditResolver,
@@ -38,7 +39,7 @@ export default [
       {
         path: 'calendar/:id',
         loadComponent: () => import('../calendar/site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
-        canActivate: [PermissionGuard],
+        canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {
           data: initialDataSiteCalendarResolver,

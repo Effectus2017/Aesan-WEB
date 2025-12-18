@@ -179,7 +179,7 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
 
     // Determine route based on program
     const programsRaw = localStorage.getItem('agencyPrograms');
-    let targetRoute = 'sites';
+    let targetRoute = 'sites-pdam';
     if (programsRaw) {
       try {
         const programs = JSON.parse(programsRaw);
@@ -219,7 +219,7 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
 
     // Determine route based on program
     const programsRaw = localStorage.getItem('agencyPrograms');
-    let targetRoute = 'sites';
+    let targetRoute = 'sites-pdam';
     if (programsRaw) {
       try {
         const programs = JSON.parse(programsRaw);
