@@ -16,7 +16,6 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
@@ -24,14 +23,11 @@ import {
   compare,
   compareById,
   comparePostal,
-  isNullOrUndefinedEmptyStringNullArray,
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
   filterEndTimeOptions,
   timeStringToDate,
-  dateToTimeString,
-  timeToMinutes,
   dateToMinutes,
   compareByTime,
   TimeOption
@@ -52,7 +48,6 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CenterType } from 'app/shared/models/CenterType';
-import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
@@ -60,24 +55,21 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
-import { AgencyService } from 'app/shared/services/agency.service';
-import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
-import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
-import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { PermissionRequestFormDialogComponent } from 'app/shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
-import { SiteStatusModalComponent, SiteStatusModalData } from 'app/modules/agency-portal/sites/site-status-modal/site-status-modal.component';
+import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 import { PermissionRequestDialogComponent } from 'app/shared/components/permission-request-dialog/permission-request-dialog.component';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { ServiceByGroupDialogData } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 
 @Component({
   selector: 'app-add-sites-center',
@@ -722,6 +714,19 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.calculateOperatingDays();
     });
 
+    // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
+    this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.revalidateAllServiceTimes();
+      });
+
+    this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.revalidateAllServiceTimes();
+      });
+
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
       this.calculateOperatingDays();
     });
@@ -815,7 +820,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     if (!fromControl) return this.timeOptions;
 
     const fromTime = fromControl.value;
-    return filterEndTimeOptions(this.timeOptions, fromTime);
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    return filterEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -929,10 +937,22 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     fromControl: AbstractControl,
     toControl: AbstractControl
   ): void {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
     if (serviceValue === true) {
-      // Si el servicio está en "Sí", hacer requeridos los campos de hora
-      fromControl.setValidators([Validators.required]);
-      toControl.setValidators([Validators.required]);
+      // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
+      const fromValidators = [Validators.required];
+      const toValidators = [Validators.required];
+
+      // Agregar validador de rango si hay horas de funcionamiento configuradas
+      if (operatingStartTime && operatingEndTime) {
+        fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
+        toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
+      }
+
+      fromControl.setValidators(fromValidators);
+      toControl.setValidators(toValidators);
     } else {
       // Si el servicio está en "No" o null, remover validaciones requeridas
       fromControl.clearValidators();
@@ -946,6 +966,35 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
+   */
+  private revalidateAllServiceTimes(): void {
+    const services = [
+      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    services.forEach(({ service, from, to }) => {
+      const serviceControl = this.headerConfig.formGroup.get(service);
+      const fromControl = this.headerConfig.formGroup.get(from);
+      const toControl = this.headerConfig.formGroup.get(to);
+
+      if (serviceControl && fromControl && toControl && serviceControl.value === true) {
+        // Revalidar solo si el servicio está activo
+        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+      }
+    });
   }
 
   // Manejar cambio de non-profit

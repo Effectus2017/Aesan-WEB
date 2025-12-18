@@ -150,8 +150,16 @@ export class SiteCalendarServiceAddModalComponent {
 
   private initializeTimeConstraints(): void {
     // Obtener los horarios del día de funcionamiento
-    this.dayStartTime = this.data.operatingDay.startTime || '00:00';
-    this.dayEndTime = this.data.operatingDay.endTime || '23:59';
+    // Prioridad: 1) operatingStartTime/operatingEndTime del sitio (si están disponibles), 2) operatingDay.startTime/endTime, 3) valores por defecto
+    if (this.data.operatingStartTime && this.data.operatingEndTime) {
+      // Usar las horas de funcionamiento del sitio como límites principales
+      this.dayStartTime = this.data.operatingStartTime;
+      this.dayEndTime = this.data.operatingEndTime;
+    } else {
+      // Fallback a las horas del día específico
+      this.dayStartTime = this.data.operatingDay.startTime || '00:00';
+      this.dayEndTime = this.data.operatingDay.endTime || '23:59';
+    }
     
     // Normalizar formato (remover segundos si existen)
     this.dayStartTime = normalizeTime(this.dayStartTime);
@@ -173,7 +181,10 @@ export class SiteCalendarServiceAddModalComponent {
   private updateEndTimeOptions(): void {
     const selectedStartTime = this.data.form.get('startTime')?.value;
     
-    this.endTimeOptions = filterEndTimeOptions(this.timeOptions, selectedStartTime, this.dayEndTime);
+    // Usar operatingStartTime y operatingEndTime del sitio si están disponibles
+    const operatingStartTime = this.data.operatingStartTime || null;
+    const operatingEndTime = this.data.operatingEndTime || null;
+    this.endTimeOptions = filterEndTimeOptions(this.timeOptions, selectedStartTime, this.dayEndTime, operatingStartTime, operatingEndTime);
 
     // Si no hay hora de inicio seleccionada, no hacer nada
     if (!selectedStartTime) {

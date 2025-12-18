@@ -23,9 +23,10 @@ import { ColumnSchema, GenericTableConfig } from 'app/shared/components/generic-
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteTableResponse } from 'app/shared/models/Response/SiteTableResponse';
 import { AuthService } from 'app/core/auth/auth.service';
-import { SiteSatellitesModalComponent } from '../site-satellites-modal/site-satellites-modal.component';
+
 import { PROGRAM_IDS } from 'app/shared/const';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { SiteSatellitesModalComponent } from 'app/shared/components/site-satellites-modal/site-satellites-modal.component';
 
 @Component({
   selector: 'app-schools-list',
@@ -102,7 +103,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
         const isDayCareHomeId = params['isDayCareHomeId'] ? parseInt(params['isDayCareHomeId'], 10) : undefined;
         this._currentIsDayCareHomeId = isDayCareHomeId;
         this.updateHeaderTitle(isDayCareHomeId);
-        
+
         // Obtener datos del resolver en lugar de suscribirse
         const resolvedData = this._route.snapshot.data['data'];
 
@@ -135,10 +136,10 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   getAll(index: number, form: any) {
     const name = form.name || null;
     const pageSize = this.tableConfig.pageSize;
-    
+
     // Leer isDayCareHomeId de los query parameters actuales
-    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId'] 
-      ? parseInt(this._route.snapshot.queryParams['isDayCareHomeId'], 10) 
+    const isDayCareHomeId = this._route.snapshot.queryParams['isDayCareHomeId']
+      ? parseInt(this._route.snapshot.queryParams['isDayCareHomeId'], 10)
       : undefined;
 
     const requestParameters: QueryParameters = {

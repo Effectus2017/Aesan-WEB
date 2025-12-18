@@ -64,7 +64,7 @@ import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
-import { SiteStatusModalComponent, SiteStatusModalData } from '../site-status-modal/site-status-modal.component';
+
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -77,10 +77,12 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
+import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 
 @Component({
   selector: 'app-sites-add',
@@ -818,6 +820,19 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.calculateOperatingDays();
     });
 
+    // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
+    this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.revalidateAllServiceTimes();
+      });
+
+    this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.revalidateAllServiceTimes();
+      });
+
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
       this.updateCenterTypeFieldVisibility(organizationType);
@@ -907,7 +922,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     if (!fromControl) return this.timeOptions;
 
     const fromTime = fromControl.value;
-    return filterEndTimeOptions(this.timeOptions, fromTime);
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    return filterEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -1021,10 +1039,22 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     fromControl: AbstractControl,
     toControl: AbstractControl
   ): void {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
     if (serviceValue === true) {
-      // Si el servicio está en "Sí", hacer requeridos los campos de hora
-      fromControl.setValidators([Validators.required]);
-      toControl.setValidators([Validators.required]);
+      // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
+      const fromValidators = [Validators.required];
+      const toValidators = [Validators.required];
+
+      // Agregar validador de rango si hay horas de funcionamiento configuradas
+      if (operatingStartTime && operatingEndTime) {
+        fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
+        toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
+      }
+
+      fromControl.setValidators(fromValidators);
+      toControl.setValidators(toValidators);
     } else {
       // Si el servicio está en "No" o null, remover validaciones requeridas
       fromControl.clearValidators();
@@ -1038,6 +1068,35 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
+   */
+  private revalidateAllServiceTimes(): void {
+    const services = [
+      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    services.forEach(({ service, from, to }) => {
+      const serviceControl = this.headerConfig.formGroup.get(service);
+      const fromControl = this.headerConfig.formGroup.get(from);
+      const toControl = this.headerConfig.formGroup.get(to);
+
+      if (serviceControl && fromControl && toControl && serviceControl.value === true) {
+        // Revalidar solo si el servicio está activo
+        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+      }
+    });
   }
 
   // Manejar cambio de non-profit para programa PDAM

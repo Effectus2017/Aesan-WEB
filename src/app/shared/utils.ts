@@ -690,18 +690,51 @@ export function generateTimeOptions(dayStartTime: string = '00:00', dayEndTime: 
 }
 
 /**
- * Filtra opciones de hora para mostrar solo las que son mayores que la hora de inicio
+ * Filtra opciones de hora para mostrar solo las que están dentro del rango especificado
  * @param allOptions Array completo de opciones de hora
  * @param startTime Hora de inicio en formato HH:mm o Date
- * @param dayEndTime Hora de fin del día en formato HH:mm (opcional, por defecto '23:59')
+ * @param dayEndTime Hora de fin del día en formato HH:mm o Date (opcional, por defecto '23:59')
+ * @param operatingStartTime Hora de inicio del día de funcionamiento (opcional, para límite inferior adicional)
+ * @param operatingEndTime Hora de fin del día de funcionamiento (opcional, para límite superior adicional)
  * @returns Array filtrado de opciones de hora
  */
 export function filterEndTimeOptions(
   allOptions: TimeOption[],
   startTime: string | Date | null,
-  dayEndTime: string = '23:59'
+  dayEndTime: string | Date = '23:59',
+  operatingStartTime?: string | Date | null,
+  operatingEndTime?: string | Date | null
 ): TimeOption[] {
   if (!startTime) {
+    // Si no hay startTime, filtrar solo por operatingStartTime y operatingEndTime si están disponibles
+    if (operatingStartTime || operatingEndTime) {
+      let minTime = '00:00';
+      let maxTime = '23:59';
+
+      if (operatingStartTime) {
+        if (operatingStartTime instanceof Date) {
+          minTime = dateToTimeString(operatingStartTime);
+        } else {
+          minTime = operatingStartTime;
+        }
+      }
+
+      if (operatingEndTime) {
+        if (operatingEndTime instanceof Date) {
+          maxTime = dateToTimeString(operatingEndTime);
+        } else {
+          maxTime = operatingEndTime;
+        }
+      }
+
+      const minMinutes = timeToMinutes(minTime);
+      const maxMinutes = timeToMinutes(maxTime);
+
+      return allOptions.filter(option => {
+        const optionMinutes = timeToMinutes(option.value);
+        return optionMinutes >= minMinutes && optionMinutes <= maxMinutes;
+      });
+    }
     return allOptions;
   }
 
@@ -716,12 +749,49 @@ export function filterEndTimeOptions(
     return allOptions;
   }
 
-  const startMinutes = timeToMinutes(startTimeString);
-  const dayEndMinutes = timeToMinutes(dayEndTime);
+  // Determinar el límite superior: usar el más restrictivo entre dayEndTime y operatingEndTime
+  let maxTime: string;
+  if (dayEndTime instanceof Date) {
+    maxTime = dateToTimeString(dayEndTime);
+  } else {
+    maxTime = dayEndTime;
+  }
+
+  // Si hay operatingEndTime, usar el más restrictivo
+  if (operatingEndTime) {
+    let operatingEndTimeStr: string;
+    if (operatingEndTime instanceof Date) {
+      operatingEndTimeStr = dateToTimeString(operatingEndTime);
+    } else {
+      operatingEndTimeStr = operatingEndTime;
+    }
+    const maxMinutes = timeToMinutes(maxTime);
+    const operatingEndMinutes = timeToMinutes(operatingEndTimeStr);
+    // Usar el menor de los dos (más restrictivo)
+    maxTime = maxMinutes < operatingEndMinutes ? maxTime : operatingEndTimeStr;
+  }
+
+  // Determinar el límite inferior: usar el más restrictivo entre startTime y operatingStartTime
+  let minTime = startTimeString;
+  if (operatingStartTime) {
+    let operatingStartTimeStr: string;
+    if (operatingStartTime instanceof Date) {
+      operatingStartTimeStr = dateToTimeString(operatingStartTime);
+    } else {
+      operatingStartTimeStr = operatingStartTime;
+    }
+    const startMinutes = timeToMinutes(startTimeString);
+    const operatingStartMinutes = timeToMinutes(operatingStartTimeStr);
+    // Usar el mayor de los dos (más restrictivo)
+    minTime = startMinutes > operatingStartMinutes ? startTimeString : operatingStartTimeStr;
+  }
+
+  const startMinutes = timeToMinutes(minTime);
+  const maxMinutes = timeToMinutes(maxTime);
 
   return allOptions.filter(option => {
     const optionMinutes = timeToMinutes(option.value);
-    return optionMinutes > startMinutes && optionMinutes <= dayEndMinutes;
+    return optionMinutes > startMinutes && optionMinutes <= maxMinutes;
   });
 }
 

@@ -7,4 +7,7 @@ export interface SiteCalendarServiceEditModalData {
   service: SiteOperatingDayService;
   siteId: number;
   operatingDay?: SiteOperatingDay;
+  // Horas de funcionamiento del sitio (opcional, para validación de rango)
+  operatingStartTime?: string; // Hora de inicio del día de funcionamiento del sitio
+  operatingEndTime?: string; // Hora de fin del día de funcionamiento del sitio
 }
