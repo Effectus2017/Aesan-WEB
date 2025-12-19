@@ -377,11 +377,6 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   onClassificationChange(classification: StaffClassification): void {
     this.selectedClassification = classification;
 
-    // Resetear posición
-    this.headerConfig.formGroup.patchValue({
-      position: null
-    });
-
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
 

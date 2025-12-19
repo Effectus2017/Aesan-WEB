@@ -161,7 +161,8 @@
         "label": "Email",
         "placeholder": "Enter the email",
         "required": "Email is required",
-        "invalid": "Email is not valid"
+        "invalid": "Email is not valid",
+        "exists": "Email already exists"
       },
       "postalAddress": {
         "label": "Postal Address",
@@ -402,7 +403,8 @@
         "label": "Email",
         "placeholder": "Enter the email",
         "required": "Email is required",
-        "invalid": "Email is not valid"
+        "invalid": "Email is not valid",
+        "exists": "Email already exists"
       },
       "city": {
         "label": "City",

@@ -33,12 +33,6 @@ export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
     sortable: true
   },
   {
-    key: 'isSiteAdmin',
-    label: 'staff.employees.list.table.columns.siteAdministrator',
-    type: 'boolean',
-    sortable: true,
-  },
-  {
     key: 'buttons',
     label: 'staff.employees.list.table.columns.actions',
     type: 'button',
