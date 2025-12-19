@@ -683,10 +683,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
     if (agencyFromResolver) {
       this.agency = agencyFromResolver;
-      const programs = this.agency.programs || [];
 
       // Determinar qué campos mostrar según los programas
-      this.determineVisibleFields(programs);
+      this.determineVisibleFields();
     }
 
     // Transloco
@@ -1020,13 +1019,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     });
   }
 
-  // Manejar cambio de non-profit
-  // Nota: Este método se mantiene por compatibilidad, pero no aplica validaciones de PDAM
-  // ya que este componente es específico para PACNA
-  nonProfitChange(): void {
-    // No hay validaciones específicas para PACNA relacionadas con non-profit
-  }
-
   private calculateOperatingDays(): void {
     const fromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
     const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
@@ -1122,50 +1114,12 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.add.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(programs: any[]): void {
-    // Este componente es específico para PACNA Centros
-    this.isPDAM = false;
-    this.isPSAV = false;
-    this.isPFHF = false;
-    this.isPDFE = false;
-    this.isAESAN = false;
-
-    // Cargar tipos de centro según el programa
-    this.loadCenterTypesByProgram(programs);
+  private determineVisibleFields(): void {
 
     this.updateValidations();
 
@@ -1186,13 +1140,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     });
 
     this._changeDetectorRef.detectChanges();
-  }
-
-  // Método para cargar tipos de centro según los programas de la agencia
-  // Load center types by agency programs
-  private loadCenterTypesByProgram(programs: any[]): void {
-    // Los tipos de centro ya vienen filtrados desde el resolver
-    // No necesitamos cargar nada adicional aquí
   }
 
   private updateValidations(): void {
@@ -1378,6 +1325,26 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
 
+    // Fechas de operación
+    const operatingFromDate: string = formValues.operatingFromDate;
+    const operatingToDate: string = formValues.operatingToDate;
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Horas de funcionamiento
+    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+
+    // Persona a cargo
+    const personInCharge = formValues.personInCharge ? {
+      firstName: formValues.personInCharge.firstName ?? null,
+      middleName: formValues.personInCharge.middleName ?? null,
+      fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+      motherLastName: formValues.personInCharge.motherLastName ?? null,
+      sitePhone: formValues.personInCharge.sitePhone ?? null,
+      extension: formValues.personInCharge.extension ?? null,
+      mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+    } : null;
+
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
       // School Id - ID de la escuela asociada (si viene del modal)
@@ -1432,9 +1399,13 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       centerTypeId: centerTypeId,
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingFromDate: operatingFromDate ?? null,
+      operatingToDate: operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
+      // Operating hours - Start and end times for operating days
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
       serviceTime: formValues.serviceTime ?? null,
@@ -1490,15 +1461,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       hasDiningRoom: formValues.hasDiningRoom ?? null,
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
-      personInCharge: formValues.personInCharge ? {
-        firstName: formValues.personInCharge.firstName ?? null,
-        middleName: formValues.personInCharge.middleName ?? null,
-        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
-        motherLastName: formValues.personInCharge.motherLastName ?? null,
-        sitePhone: formValues.personInCharge.sitePhone ?? null,
-        extension: formValues.personInCharge.extension ?? null,
-        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
-      } : null,
+      personInCharge: personInCharge ?? null,
       // Comunidad
       // Community
       communityId: formValues.community?.id ?? null,

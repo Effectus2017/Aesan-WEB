@@ -1266,16 +1266,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   }
 
   private determineVisibleFields(programs: any[]): void {
-    // Este componente es específico para PACNA, por lo que siempre es PACNA
-    this.isPACNA = true;
-    this.isPDAM = false;
-    this.isPSAV = false;
-    this.isPFHF = false;
-    this.isPDFE = false;
-    this.isAESAN = false;
-
-    // Cargar tipos de centro según el programa
-    this.loadCenterTypesByProgram(programs);
 
     this.updateValidations();
 
@@ -1296,13 +1286,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     });
 
     this._changeDetectorRef.detectChanges();
-  }
-
-  // Método para cargar tipos de centro según los programas de la agencia
-  // Load center types by agency programs
-  private loadCenterTypesByProgram(programs: any[]): void {
-    // Los tipos de centro ya vienen filtrados desde el resolver
-    // No necesitamos cargar nada adicional aquí
   }
 
   private updateValidations(): void {
@@ -1585,6 +1568,26 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
 
+    // Fechas de operación
+    const operatingFromDate: string = formValues.operatingFromDate;
+    const operatingToDate: string = formValues.operatingToDate;
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Horas de funcionamiento
+    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+
+    // Persona a cargo
+    const personInCharge = formValues.personInCharge ? {
+      firstName: formValues.personInCharge.firstName ?? null,
+      middleName: formValues.personInCharge.middleName ?? null,
+      fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+      motherLastName: formValues.personInCharge.motherLastName ?? null,
+      sitePhone: formValues.personInCharge.sitePhone ?? null,
+      extension: formValues.personInCharge.extension ?? null,
+      mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+    } : null;
+
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
       // School Id - ID de la escuela asociada (si viene del modal)
@@ -1639,9 +1642,13 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       centerTypeId: centerTypeId,
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingFromDate: operatingFromDate ?? null,
+      operatingToDate: operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
+      // Operating hours - Start and end times for operating days
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
       serviceTime: formValues.serviceTime ?? null,
@@ -1697,15 +1704,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       hasDiningRoom: formValues.hasDiningRoom ?? null,
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
-      personInCharge: formValues.personInCharge ? {
-        firstName: formValues.personInCharge.firstName ?? null,
-        middleName: formValues.personInCharge.middleName ?? null,
-        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
-        motherLastName: formValues.personInCharge.motherLastName ?? null,
-        sitePhone: formValues.personInCharge.sitePhone ?? null,
-        extension: formValues.personInCharge.extension ?? null,
-        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
-      } : null,
+      personInCharge: personInCharge ?? null,
       // Comunidad
       // Community
       communityId: formValues.community?.id ?? null,

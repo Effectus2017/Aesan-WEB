@@ -1248,47 +1248,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.edit.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
   private determineVisibleFields(programs: any[]): void {
-    // Este componente es específico para PACNA, por lo que siempre es PACNA
-    this.isPACNA = true;
-    this.isPDAM = false;
-    this.isPSAV = false;
-    this.isPFHF = false;
-    this.isPDFE = false;
-    this.isAESAN = false;
 
     // Actualizar validaciones de personInCharge según el programa
     this.updatePersonInChargeValidations();
