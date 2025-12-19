@@ -3,6 +3,11 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 // Esquema de columnas para el listado de sitios PSAV
 export const SITES_PSAV_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
+    key: 'siteCode',
+    type: 'text',
+    label: 'sites.list.table.columns.siteCode',
+  },
+  {
     key: 'name',
     type: 'text',
     label: 'sites.list.table.columns.name',
@@ -37,11 +42,7 @@ export const SITES_PSAV_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'text',
     label: 'sites.list.table.columns.generalEnrollment',
   },
-  {
-    key: 'siteCode',
-    type: 'text',
-    label: 'sites.list.table.columns.siteCode',
-  },
+
   {
     key: 'actions',
     type: 'button',
@@ -59,4 +60,3 @@ export const SITES_PSAV_COLUMNS_SCHEMA: ColumnSchema[] = [
     ],
   },
 ];
-

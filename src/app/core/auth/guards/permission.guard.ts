@@ -2,12 +2,10 @@ import { Injectable, inject } from "@angular/core";
 import { CanActivate, Router, ActivatedRouteSnapshot } from "@angular/router";
 import { AuthService } from "../auth.service";
 import { NotificationService } from "app/shared/services/notification.service";
-import { TranslocoService } from "@ngneat/transloco";
 
 @Injectable({ providedIn: 'root' })
 export class PermissionGuard implements CanActivate {
   private _notificationService = inject(NotificationService);
-  private _translocoService = inject(TranslocoService);
 
   constructor(private auth: AuthService, private router: Router) {}
 
@@ -29,7 +27,7 @@ export class PermissionGuard implements CanActivate {
     if (!this.auth.hasPermission(permission)) {
       console.log('PermissionGuard - Access denied, showing error dialog');
       // Mostrar diálogo de error de acceso denegado
-      this._notificationService.showErrorDialog(this._translocoService.translate('global.tooltips.noAccessPermission'));
+      this._notificationService.showErrorDialog('global.tooltips.noAccessPermission');
       return false;
     }
 

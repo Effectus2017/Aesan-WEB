@@ -505,11 +505,13 @@
             },
             "community": {
                 "label": "Comunidad",
-                "placeholder": "Seleccione el tipo de comunidad"
+                "placeholder": "Seleccione el tipo de comunidad",
+                "required": "La comunidad es requerida"
             },
             "walkers": {
                 "label": "Caminantes",
-                "placeholder": "Seleccione el tipo de caminantes"
+                "placeholder": "Seleccione el tipo de caminantes",
+                "required": "Los caminantes son requeridos"
             },
             "services-field": {
                 "label": "Servicios",
@@ -522,11 +524,13 @@
             },
             "site-type": {
                 "label": "Tipo de Sitio",
-                "placeholder": "Seleccione el tipo de sitio"
+                "placeholder": "Seleccione el tipo de sitio",
+                "required": "El tipo de sitio es requerido"
             },
             "experience": {
                 "label": "Experiencia",
-                "placeholder": "Seleccione la experiencia"
+                "placeholder": "Seleccione la experiencia",
+                "required": "La experiencia es requerida"
             },
             "buttons": {
                 "save": "Guardar",

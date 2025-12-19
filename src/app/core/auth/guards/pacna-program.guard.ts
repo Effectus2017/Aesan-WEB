@@ -1,13 +1,11 @@
 import { Injectable, inject } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot } from '@angular/router';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { TranslocoService } from '@ngneat/transloco';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 @Injectable({ providedIn: 'root' })
 export class PacnaProgramGuard implements CanActivate {
   private _notificationService = inject(NotificationService);
-  private _translocoService = inject(TranslocoService);
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     // Obtener los programas de la agencia desde localStorage
@@ -16,7 +14,7 @@ export class PacnaProgramGuard implements CanActivate {
     if (!programsRaw) {
       console.log('PacnaProgramGuard - No agency programs found, denying access');
       this._notificationService.showErrorDialog(
-        this._translocoService.translate('global.tooltips.noAccessPermission')
+        'global.tooltips.noAccessPermission'
       );
       return false;
     }
@@ -30,7 +28,7 @@ export class PacnaProgramGuard implements CanActivate {
       if (!isPACNA) {
         console.log('PacnaProgramGuard - Agency is not in PACNA program, denying access');
         this._notificationService.showErrorDialog(
-          this._translocoService.translate('global.tooltips.noAccessPermission')
+          'global.tooltips.noAccessPermission'
         );
         return false;
       }
@@ -40,7 +38,7 @@ export class PacnaProgramGuard implements CanActivate {
     } catch (error) {
       console.error('PacnaProgramGuard - Error parsing agency programs:', error);
       this._notificationService.showErrorDialog(
-        this._translocoService.translate('global.tooltips.noAccessPermission')
+        'global.tooltips.noAccessPermission'
       );
       return false;
     }

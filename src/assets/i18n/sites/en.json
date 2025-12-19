@@ -495,11 +495,13 @@
             },
             "community": {
                 "label": "Community",
-                "placeholder": "Select community type"
+                "placeholder": "Select community type",
+                "required": "Community is required"
             },
             "walkers": {
                 "label": "Walkers",
-                "placeholder": "Select walker type"
+                "placeholder": "Select walker type",
+                "required": "Walkers is required"
             },
             "services": {
                 "label": "Services",
@@ -512,11 +514,13 @@
             },
             "site-type": {
                 "label": "Site Type",
-                "placeholder": "Select site type"
+                "placeholder": "Select site type",
+                "required": "Site type is required"
             },
             "experience": {
                 "label": "Experience",
-                "placeholder": "Select experience"
+                "placeholder": "Select experience",
+                "required": "Experience is required"
             },
             "review": {
                 "label": "Review",
