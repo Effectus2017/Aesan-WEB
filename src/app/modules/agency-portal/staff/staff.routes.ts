@@ -39,6 +39,24 @@ export default [
         }
       },
       {
+        path: 'add-employee',
+        loadComponent: () => import('./add-employee/add-employee.component').then(c => c.AddEmployeeComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.create' },
+        resolve: {
+          data: initialDataStaffAddResolver
+        }
+      },
+      {
+        path: 'add-board-member',
+        loadComponent: () => import('./add-board-member/add-board-member.component').then(c => c.AddBoardMemberComponent),
+        canActivate: [PermissionGuard],
+        data: { permission: 'staff.create' },
+        resolve: {
+          data: initialDataStaffAddResolver
+        }
+      },
+      {
         path: 'edit-employee/:id',
         loadComponent: () => import('./edit-employee/edit-employee.component').then(c => c.EditEmployeeComponent),
         canActivate: [PermissionGuard],

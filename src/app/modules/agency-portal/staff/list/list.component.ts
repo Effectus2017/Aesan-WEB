@@ -128,7 +128,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   }
 
   onCustom(): void {
-    this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'board-member' } });
+    this._customRouterService.navigate(['staff/add-board-member']);
   }
 
   onTableViewRelationships(event: Event, id: number): void {

@@ -122,7 +122,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onCustom(): void {
-    this._customRouterService.navigate(['staff/add'], { queryParams: { staffType: 'employee' } });
+    this._customRouterService.navigate(['staff/add-employee']);
   }
 
   onTableEdit(event: Event, id: number): void {
