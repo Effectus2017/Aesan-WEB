@@ -59,7 +59,6 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
-import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
@@ -587,12 +586,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
-
-  // Propiedad para controlar la visibilidad de la sección de desarrollo
-  isDevelopmentMode: boolean = !environment.production;
-
-  // Propiedad para controlar visibilidad de campos de provisión en modo desarrollo
-  showProvisionFieldsDev: boolean = false;
 
   // School-related properties
   schoolId: number | null = null;
@@ -1952,49 +1945,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     });
   }
 
-  // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
-
-  /**
-   * Maneja el cambio de estado de PDAM para desarrollo
-   */
-  onDevPDAMChange(checked: boolean): void {
-    this.isPDAM = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PSAV para desarrollo
-   */
-  onDevPSAVChange(checked: boolean): void {
-    this.isPSAV = checked;
-    this.updateDevPrograms();
-  }
-
-
-  /**
-   * Maneja el cambio de estado de PFHF para desarrollo
-   */
-  onDevPFHFChange(checked: boolean): void {
-    this.isPFHF = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PDFE para desarrollo
-   */
-  onDevPDFEChange(checked: boolean): void {
-    this.isPDFE = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de AESAN para desarrollo
-   */
-  onDevAESANChange(checked: boolean): void {
-    this.isAESAN = checked;
-    this.updateDevPrograms();
-  }
-
   /**
    * Maneja el cambio del campo "¿Ofrece servicio a diferentes grupos de niños?"
    */
@@ -2052,15 +2002,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
 
   /**
-   * Actualiza los programas activos basado en los checkboxes de desarrollo
-   */
-  private updateDevPrograms(): void {
-    // Actualizar validaciones y campos visibles
-    this.updateValidations();
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
    * Verifica si se debe mostrar el campo de Tipo de Cocina
    * Solo se muestra cuando:
    * - El programa es PDAM
@@ -2097,15 +2038,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   /**
    * Verifica si se deben mostrar los campos de fecha de inicio de provisión
    * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
-   * O si está en modo desarrollo y el checkbox está marcado
    */
   get shouldShowProvisionFields(): boolean {
     const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
-
-    // En modo desarrollo, si el checkbox está marcado, mostrar siempre
-    if (this.isDevelopmentMode && this.showProvisionFieldsDev) {
-      return true;
-    }
 
     // Verificar si la política seleccionada es 3, 4 o 5
     if (operatingPolicy && operatingPolicy.id) {
@@ -2113,13 +2048,5 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     }
 
     return false;
-  }
-
-  /**
-   * Maneja el cambio del checkbox de campos de provisión para desarrollo
-   */
-  onDevProvisionFieldsChange(checked: boolean): void {
-    this.showProvisionFieldsDev = checked;
-    this._changeDetectorRef.detectChanges();
   }
 }

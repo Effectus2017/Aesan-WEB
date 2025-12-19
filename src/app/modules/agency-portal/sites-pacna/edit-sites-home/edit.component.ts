@@ -76,7 +76,6 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { environment } from 'environments/environment';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
@@ -277,12 +276,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
-
-  // Propiedad para controlar la visibilidad de la sección de desarrollo
-  isDevelopmentMode: boolean = !environment.production;
-
-  // Propiedad para controlar visibilidad de campos de provisión en modo desarrollo
-  showProvisionFieldsDev: boolean = false;
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SiteChildGroupRequest[] = [];
@@ -2556,76 +2549,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     });
   }
 
-  // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
-
-  /**
-   * Maneja el cambio de estado de PDAM para desarrollo
-   */
-  onDevPDAMChange(checked: boolean): void {
-    this.isPDAM = checked;
-    //this.updatePersonInChargeValidations();
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PSAV para desarrollo
-   */
-  onDevPSAVChange(checked: boolean): void {
-    this.isPSAV = checked;
-    //this.updatePersonInChargeValidations();
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PACNA para desarrollo
-   */
-  onDevPACNAChange(checked: boolean): void {
-    this.isPACNA = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PFHF para desarrollo
-   */
-  onDevPFHFChange(checked: boolean): void {
-    this.isPFHF = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de PDFE para desarrollo
-   */
-  onDevPDFEChange(checked: boolean): void {
-    this.isPDFE = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Maneja el cambio de estado de AESAN para desarrollo
-   */
-  onDevAESANChange(checked: boolean): void {
-    this.isAESAN = checked;
-    this.updateDevPrograms();
-  }
-
-
-  /**
-   * Maneja el cambio de estado de Day Care Home para desarrollo
-   */
-  onDevDayCareHomeChange(checked: boolean): void {
-    this.isDayCareHome = checked;
-    this.updateDevPrograms();
-  }
-
-  /**
-   * Actualiza los programas activos basado en los checkboxes de desarrollo
-   */
-  private updateDevPrograms(): void {
-    // Actualizar validaciones y campos visibles
-    this.updateValidations();
-    this._changeDetectorRef.detectChanges();
-  }
-
   /**
    * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
    * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
@@ -2641,15 +2564,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   /**
    * Verifica si se deben mostrar los campos de fecha de inicio de provisión
    * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
-   * O si está en modo desarrollo y el checkbox está marcado
    */
   get shouldShowProvisionFields(): boolean {
     const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
-
-    // En modo desarrollo, si el checkbox está marcado, mostrar siempre
-    if (this.isDevelopmentMode && this.showProvisionFieldsDev) {
-      return true;
-    }
 
     // Verificar si la política seleccionada es 3, 4 o 5
     if (operatingPolicy && operatingPolicy.id) {
@@ -2657,13 +2574,5 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     }
 
     return false;
-  }
-
-  /**
-   * Maneja el cambio del checkbox de campos de provisión para desarrollo
-   */
-  onDevProvisionFieldsChange(checked: boolean): void {
-    this.showProvisionFieldsDev = checked;
-    this._changeDetectorRef.detectChanges();
   }
 }
