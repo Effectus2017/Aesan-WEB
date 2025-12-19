@@ -43,7 +43,7 @@ import {
   timeToMinutes,
   dateToMinutes,
   compareByTime,
-  TimeOption
+  TimeOption,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -80,7 +80,6 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from 'app/shared/components/site-satellites-modal/columns-schema';
-
 
 @Component({
   selector: 'app-sites-psav-edit',
@@ -149,7 +148,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Si (1) y No (2)
   yesNoOptions: OptionSelection[] = [];
 
-
   // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for site classification
   organizationTypes: OrganizationType[] = [];
@@ -174,6 +172,9 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Site Location
   // Site location - Determined by group type
   siteLocations: OptionSelection[] = [];
+
+  // Propiedad para controlar visibilidad del campo Tipo de Localización
+  // Property to control visibility of the Location Type field
   isSiteLocationDisabled: boolean = false;
 
   // Tipo de grupo
@@ -208,7 +209,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Lista de sitios
   // List of sites
 
-
   // Propiedad para controlar visibilidad del campo Tipo de Centro
 
   // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
@@ -221,7 +221,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   timeOptions: TimeOption[] = [];
 
   currentLang: string = 'es';
-
 
   // Tipo de área
   // Type of area
@@ -440,7 +439,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
 
-
       // Código de Sitio
       // Site Code
       siteCode: [{ value: '', disabled: true }],
@@ -455,8 +453,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       {
         id: 'toggle-active',
         label: 'sites.edit.settings.toggle-active',
-        icon: 'heroicons_outline:power'
-      }
+        icon: 'heroicons_outline:power',
+      },
     ],
     // Submit button
     submitButtonShow: true,
@@ -551,13 +549,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
-      this.siteLocations = resolvedData.siteLocations || [];
+      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
       this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
-      this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
-      );
+      this.community = this.sortOptionsAlphabetically(resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community'));
       // Caminantes / Walkers
       this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
       // Tipo de distribución / Distribution type
@@ -565,9 +561,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Tipo de sitio / Site type
       this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
       // Experiencia / Experience
-      this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
-      );
+      this.experience = this.sortOptionsAlphabetically(resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience'));
+
       // Resultado de revisión / Review result
       // COMENTADO: Se va a cambiar de lugar
       // this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
@@ -575,7 +570,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Catálogos
       this.organizationTypes = resolvedData.organizationTypes;
       this.kitchenTypes = resolvedData.kitchenTypes;
-      this.siteLocations = resolvedData.siteLocations || [];
       this.groupTypes = resolvedData.groupTypes;
 
       this.deliveryTypes = resolvedData.deliveryTypes;
@@ -584,7 +578,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       this.listPostalRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
-
 
       // Usar la sitio del resolver
       // Use site from resolver
@@ -598,7 +591,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
         const programs = this.agency.programs || [];
-
       }
     });
 
@@ -612,12 +604,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     this.setupFormListeners();
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
-    this.headerConfig.formGroup.statusChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-        this._changeDetectorRef.detectChanges();
-      });
+    this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   private setupFormListeners(): void {
@@ -631,14 +621,16 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     });
 
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingStartTime')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.revalidateAllServiceTimes();
       });
 
-    this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingEndTime')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.revalidateAllServiceTimes();
       });
@@ -651,7 +643,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       this.getKitchenTypesByGroupType(groupType);
       this._changeDetectorRef.detectChanges();
     });
-
 
     // Listener para cambios en organizationType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
@@ -693,32 +684,26 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
 
         // Suscribirse a cambios en el campo de servicio
-        serviceControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((value: boolean | null) => {
-            this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
-            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-          });
+        serviceControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value: boolean | null) => {
+          this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
+          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+        });
 
         // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-        fromControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
-            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-            // Forzar detección de cambios para actualizar las opciones en el template
-            this._changeDetectorRef.detectChanges();
-          });
+        fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          this.validateAndAdjustTimeRange(fromControl, toControl);
+          this.validateTimeRange(fromControl, toControl);
+          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+          // Forzar detección de cambios para actualizar las opciones en el template
+          this._changeDetectorRef.detectChanges();
+        });
 
         // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-        toControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
-            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-          });
+        toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          this.validateAndAdjustTimeRange(fromControl, toControl);
+          this.validateTimeRange(fromControl, toControl);
+          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+        });
       }
     });
   }
@@ -746,7 +731,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     }
 
     // Filtrar opciones dentro del rango
-    return this.timeOptions.filter(option => {
+    return this.timeOptions.filter((option) => {
       const optionMinutes = timeToMinutes(option.value);
       const startMinutes = timeToMinutes(operatingStartTime);
       const endMinutes = timeToMinutes(operatingEndTime);
@@ -869,11 +854,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    * Actualiza la validación requerida del campo servicio basado en si hay horarios seleccionados
    * Si hay un horario "desde" o "hasta", el campo si/no del servicio es requerido
    */
-  private updateServiceRequiredValidation(
-    serviceControl: AbstractControl,
-    fromControl: AbstractControl,
-    toControl: AbstractControl
-  ): void {
+  private updateServiceRequiredValidation(serviceControl: AbstractControl, fromControl: AbstractControl, toControl: AbstractControl): void {
     const fromTime = fromControl.value;
     const toTime = toControl.value;
     // Verificar si hay horarios (pueden ser Date, string, o null/undefined)
@@ -905,12 +886,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    * @param toControl Control del campo "Hora hasta"
    * @param serviceControl Control del campo servicio (opcional, para actualizar validación del servicio)
    */
-  private updateServiceTimeValidations(
-    serviceValue: boolean | null,
-    fromControl: AbstractControl,
-    toControl: AbstractControl,
-    serviceControl?: AbstractControl
-  ): void {
+  private updateServiceTimeValidations(serviceValue: boolean | null, fromControl: AbstractControl, toControl: AbstractControl, serviceControl?: AbstractControl): void {
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
@@ -990,7 +966,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     }
 
     const programs = this.agency?.programs || [];
-    const selectedProgram = programs.find(p => p.id === PROGRAM_IDS.PDAM);
+    const selectedProgram = programs.find((p) => p.id === PROGRAM_IDS.PDAM);
 
     // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
     if (selectedProgram && isPDAMProgram(selectedProgram)) {
@@ -1000,11 +976,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
           message: this._translocoService.translate('sites.edit.pdam-not-eligible.message'),
           cfrLink: {
             url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
-            text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text')
-          }
+            text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text'),
+          },
         },
         disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
       });
     }
   }
@@ -1094,14 +1070,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
-
-
-
 
   onSetForm(param: Site): void {
     this.param = param;
@@ -1135,13 +1107,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const snackPMFrom: Date | null = siteService ? toTimeDate(siteService.snackPMFrom) : null;
     const snackPMTo: Date | null = siteService ? toTimeDate(siteService.snackPMTo) : null;
 
-
     // Campos adicionales
     const dinnerFrom: Date | null = siteService ? toTimeDate(siteService.dinnerFrom) : null;
     const dinnerTo: Date | null = siteService ? toTimeDate(siteService.dinnerTo) : null;
     const snackNightFrom: Date | null = siteService ? toTimeDate(siteService.snackNightFrom) : null;
     const snackNightTo: Date | null = siteService ? toTimeDate(siteService.snackNightTo) : null;
-
 
     const communityId = param.communityId;
     const walkersId = param.walkersId;
@@ -1174,23 +1144,25 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
-      personInCharge: param.personInCharge ? {
-        firstName: param.personInCharge.firstName || '',
-        middleName: param.personInCharge.middleName || '',
-        fatherLastName: param.personInCharge.fatherLastName || '',
-        motherLastName: param.personInCharge.motherLastName || '',
-        sitePhone: param.personInCharge.sitePhone || '',
-        extension: param.personInCharge.extension || '',
-        mobilePhone: param.personInCharge.mobilePhone || '',
-      } : {
-        firstName: '',
-        middleName: '',
-        fatherLastName: '',
-        motherLastName: '',
-        sitePhone: '',
-        extension: '',
-        mobilePhone: '',
-      },
+      personInCharge: param.personInCharge
+        ? {
+            firstName: param.personInCharge.firstName || '',
+            middleName: param.personInCharge.middleName || '',
+            fatherLastName: param.personInCharge.fatherLastName || '',
+            motherLastName: param.personInCharge.motherLastName || '',
+            sitePhone: param.personInCharge.sitePhone || '',
+            extension: param.personInCharge.extension || '',
+            mobilePhone: param.personInCharge.mobilePhone || '',
+          }
+        : {
+            firstName: '',
+            middleName: '',
+            fatherLastName: '',
+            motherLastName: '',
+            sitePhone: '',
+            extension: '',
+            mobilePhone: '',
+          },
       // Servicios básicos
       breakfast: siteService?.breakfast ?? false,
       breakfastFrom: breakfastFrom,
@@ -1233,9 +1205,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       locationType: locationType,
       generalEnrollment: param.generalEnrollment,
       siteCode: param.siteCode || '',
-
     });
-
 
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
@@ -1272,8 +1242,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingToDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
 
     // Si operatingDaysCalculated es null, 0 o undefined, pero existen las fechas, calcular automáticamente
-    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) &&
-        operatingFromDate && operatingToDate) {
+    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) && operatingFromDate && operatingToDate) {
       this.calculateOperatingDays();
     }
   }
@@ -1297,7 +1266,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Obtener y mapear los valores del formulario
     // Get and map form values
     const cityId: number = formValues.city?.id;
@@ -1338,7 +1308,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const dinner = formValues.dinner;
     const snackNight = formValues.snackNight;
 
-
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
     const siteTypeId = formValues.siteType?.id;
@@ -1348,6 +1317,25 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     // const reviewDate = formValues.reviewDate;
     // const reviewJustification = formValues.reviewJustification;
 
+    // Fechas de operación
+    const operatingFromDate: string = formValues.operatingFromDate;
+    const operatingToDate: string = formValues.operatingToDate;
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Horas de funcionamiento
+    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+
+    // Persona a cargo
+    const personInCharge = formValues.personInCharge ? {
+      firstName: formValues.personInCharge.firstName ?? null,
+      middleName: formValues.personInCharge.middleName ?? null,
+      fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+      motherLastName: formValues.personInCharge.motherLastName ?? null,
+      sitePhone: formValues.personInCharge.sitePhone ?? null,
+      extension: formValues.personInCharge.extension ?? null,
+      mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+    } : null;
 
     // Construir el objeto de actualización
     // Build the update object
@@ -1367,9 +1355,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
       organizationTypeId: organizationTypeId,
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingFromDate: operatingFromDate ?? null,
+      operatingToDate: operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,
@@ -1380,15 +1370,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       nonProfit: formValues.nonProfit ?? null,
       hasWarehouse: formValues.hasWarehouse ?? null,
       hasDiningRoom: formValues.hasDiningRoom ?? null,
-      personInCharge: formValues.personInCharge ? {
-        firstName: formValues.personInCharge.firstName ?? null,
-        middleName: formValues.personInCharge.middleName ?? null,
-        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
-        motherLastName: formValues.personInCharge.motherLastName ?? null,
-        sitePhone: formValues.personInCharge.sitePhone ?? null,
-        extension: formValues.personInCharge.extension ?? null,
-        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
-      } : null,
+      personInCharge: personInCharge ?? null,
       communityId: communityId ?? null,
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,
@@ -1403,9 +1385,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
-
     };
-
 
     // ===== CREAR SCHOOL SERVICE REQUEST =====
     // Constantes para servicios básicos
@@ -1415,7 +1395,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const snackPMService = snackPM ?? null;
     const dinnerService = dinner ?? null;
     const snackNightService = snackNight ?? null;
-
 
     // Crear SiteServiceRequest
     const siteService = this.param.services && this.param.services.length > 0 ? this.param.services[0] : null;
@@ -1455,7 +1434,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     // Agregar servicios al SiteRequest
     siteRequest.services = [cleanedServiceRequest];
 
-
     this.isLoading = true;
     this.headerConfig.formGroup.disable();
 
@@ -1463,16 +1441,12 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       next: (result: any) => {
         switch (result.body) {
           case true:
-            this._notificationService.showSuccessDialogWithCallback(
-              'sites.edit.success',
-              (result) => {
-                if (result === 'confirmed') {
-                  // Navegar a la ruta correcta según el programa
-                  const targetRoute = this.getTargetRoute();
-                  this._customRouter.navigate(targetRoute);
-                }
+            this._notificationService.showSuccessDialogWithCallback('sites.edit.success', (result) => {
+              if (result === 'confirmed') {
+                // Navegar a la ruta correcta según el programa
+                this._customRouterService.navigate(['schools']);
               }
-            );
+            });
             break;
           default:
             this._notificationService.showErrorDialog();
@@ -1487,7 +1461,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         this.isLoading = false;
         // Enable the form
         this.headerConfig.formGroup.enable();
-
       },
     });
   }
@@ -1498,18 +1471,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    */
   onCancel(event: Event) {
     // Navegar a la ruta correcta según el programa
-    const targetRoute = this.getTargetRoute();
-    this._customRouter.navigate(targetRoute);
-  }
-
-  /**
-   * Determina la ruta de navegación según el programa activo
-   * Determines navigation route based on active program
-   * @returns Array con la ruta de navegación
-   */
-  private getTargetRoute(): string[] {
-    // Este componente es específico para PSAV
-    return ['sites-psav'];
+    this._customRouterService.navigate(['schools']);
   }
 
   // Método para manejar acciones del menú de settings
@@ -1536,12 +1498,12 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         inactiveDate: currentInactiveDate,
         inactiveJustification: currentInactiveJustification,
         isActiveOptions: this.isActive,
-        yesNoOptions: this.yesNoOptions
+        yesNoOptions: this.yesNoOptions,
       } as SiteStatusModalData,
       disableClose: false,
       width: '600px',
       maxWidth: '90vw',
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -1629,8 +1591,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
             if (regionControl) {
               // Preservar el valor actual si ya está establecido y es válido
               const currentPostalRegion = regionControl.value;
-              const isValidCurrentRegion = currentPostalRegion &&
-                this.listPostalRegions.some(r => r.id === currentPostalRegion.id);
+              const isValidCurrentRegion = currentPostalRegion && this.listPostalRegions.some((r) => r.id === currentPostalRegion.id);
 
               if (this.listPostalRegions.length === 1) {
                 this.headerConfig.formGroup.patchValue({ postalRegion: this.listPostalRegions[0] });
@@ -1732,7 +1693,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
           const areaType = response.body[0]; // Debería haber solo un tipo de área por ciudad
 
           // Validar que el tipo de área esté en la lista disponible
-          const validAreaType = this.areaTypes.find(at => at.id === areaType.id);
+          const validAreaType = this.areaTypes.find((at) => at.id === areaType.id);
           if (validAreaType) {
             this.headerConfig.formGroup.patchValue({ areaType: validAreaType });
             // Mantener el campo deshabilitado después del patchValue
@@ -1741,9 +1702,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
           } else {
             console.warn('Tipo de área obtenido no está en la lista disponible:', areaType);
             // Intentar encontrar por nombre como fallback
-            const fallbackAreaType = this.areaTypes.find(at =>
-              at.name === areaType.name || at.nameEN === areaType.nameEN
-            );
+            const fallbackAreaType = this.areaTypes.find((at) => at.name === areaType.name || at.nameEN === areaType.nameEN);
             if (fallbackAreaType) {
               this.headerConfig.formGroup.patchValue({ areaType: fallbackAreaType });
               // Mantener el campo deshabilitado después del patchValue
@@ -1782,26 +1741,32 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         this.listPostalRegions = [...this.listRegions];
 
         // Buscar la región en la lista para asegurar que sea la misma referencia
-        const matchingRegion = this.listPostalRegions.find(r => r.id === physicalRegion.id);
+        const matchingRegion = this.listPostalRegions.find((r) => r.id === physicalRegion.id);
         const regionToSet = matchingRegion || physicalRegion;
 
         // Establecer los valores después de sincronizar la lista
-        this.headerConfig.formGroup.patchValue({
-          postalAddress: physicalAddress,
-          postalCity: physicalCity,
-          postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
-          postalZipCode: physicalZipCode,
-        }, { emitEvent: false }); // emitEvent: false para evitar que se dispare valueChange en postalCity
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false }
+        ); // emitEvent: false para evitar que se dispare valueChange en postalCity
 
         // Forzar detección de cambios para actualizar la vista
         this._changeDetectorRef.detectChanges();
       } else {
         // Si no hay ciudad o región, solo copiar lo que hay
-        this.headerConfig.formGroup.patchValue({
-          postalAddress: physicalAddress,
-          postalCity: physicalCity,
-          postalZipCode: physicalZipCode,
-        }, { emitEvent: false });
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false }
+        );
       }
 
       this.headerConfig.formGroup.updateValueAndValidity();
@@ -1814,7 +1779,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       });
     }
   }
-
 
   /**
    * Edita un elemento de la tabla
@@ -1942,7 +1906,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     this._changeDetectorRef.detectChanges();
   }
 
-
   /**
    * Convierte el objeto groupType a la clave usada en la configuración
    */
@@ -1952,7 +1915,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     // Usar directamente el nombre del groupType
     return groupType.name || groupType.nameEN || '';
   }
-
 
   // Método para obtener Site Location según el tipo de grupo seleccionado
   // Get site location by group type
@@ -1990,5 +1952,4 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
-
 }

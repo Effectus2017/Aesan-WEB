@@ -74,7 +74,6 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { environment } from 'environments/environment';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -761,7 +760,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
-      this.siteLocations = resolvedData.siteLocations || [];
+      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
       this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
@@ -778,6 +777,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       this.experience = this.sortOptionsAlphabetically(
         resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
+
       // Resultado de revisión / Review result
       // COMENTADO: Se va a cambiar de lugar
       // this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
@@ -787,7 +787,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       this.organizationTypes = resolvedData.organizationTypes;
       this.educationLevels = resolvedData.educationLevels;
       this.kitchenTypes = resolvedData.kitchenTypes;
-      this.siteLocations = resolvedData.siteLocations || [];
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
 
@@ -1744,7 +1743,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Obtener y mapear los valores del formulario
     // Get and map form values
     const cityId: number = formValues.city?.id;

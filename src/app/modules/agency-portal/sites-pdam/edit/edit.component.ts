@@ -90,6 +90,7 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+import { tr } from '@faker-js/faker/.';
 
 
 @Component({
@@ -259,7 +260,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
 
   // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = false;
+  isPDAM: boolean = true;
   isPSAV: boolean = false;
   isPACNA: boolean = false;
   isPFHF: boolean = false;
@@ -770,7 +771,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
-      this.siteLocations = resolvedData.siteLocations || [];
+      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
       this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
@@ -796,7 +797,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.organizationTypes = resolvedData.organizationTypes;
       this.educationLevels = resolvedData.educationLevels;
       this.kitchenTypes = resolvedData.kitchenTypes;
-      this.siteLocations = resolvedData.siteLocations || [];
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
 
@@ -1840,7 +1840,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Obtener y mapear los valores del formulario
     // Get and map form values
     const cityId: number = formValues.city?.id;

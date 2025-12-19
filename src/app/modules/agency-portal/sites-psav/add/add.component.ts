@@ -103,7 +103,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
   private _notificationService = inject(NotificationService);
-  private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
@@ -114,7 +113,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _customRouterService = inject(CustomRouterService);
 
   // catálogos
   listCities: City[] = [];
@@ -469,6 +468,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         this.schoolId = +params['schoolId'];
       }
     });
+
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
@@ -483,9 +483,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
       this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+
       this.experience = this.sortOptionsAlphabetically(
         resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
+
       this.siteLocations = resolvedData.siteLocations || [];
 
       // Catálogos
@@ -493,14 +495,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.kitchenTypes = resolvedData.kitchenTypes;
       this.groupTypes = resolvedData.groupTypes;
 
-
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
-
-
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
@@ -511,7 +510,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
-        const programs = this.agency.programs || [];
 
       }
     });
@@ -836,7 +834,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   // Manejar cambio de non-profit
-  nonProfitChange(event?: any): void {
+  nonProfitChange(): void {
     // PSAV no requiere validación especial de non-profit
   }
 
@@ -927,7 +925,8 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Ciudad
     const cityId: number = formValues.city?.id;
     // Región
@@ -973,6 +972,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
+
+    const operatingFromDate: string = formValues.operatingFromDate;
+    const operatingToDate: string = formValues.operatingToDate;
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Horas de funcionamiento
+    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
@@ -1025,9 +1032,13 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       organizationTypeId: organizationTypeId,
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingFromDate: operatingFromDate ?? null,
+      operatingToDate: operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
+      // Operating hours - Start and end times for operating days
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
       serviceTime: formValues.serviceTime ?? null,
@@ -1162,8 +1173,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
               (result) => {
                 if (result === 'confirmed') {
                   // Navegar a la ruta correcta según el programa
-                  const targetRoute = this.getTargetRoute();
-                  this._customRouter.navigate(targetRoute);
+                  this._customRouterService.navigate(['schools']);
                 }
               }
             );
@@ -1190,18 +1200,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Método para cancelar la operación
   onCancel(event: Event) {
     // Navegar a la ruta correcta según el programa
-    const targetRoute = this.getTargetRoute();
-    this._customRouter.navigate(targetRoute);
-  }
-
-  /**
-   * Determina la ruta de navegación según el programa activo
-   * Determines navigation route based on active program
-   * @returns Array con la ruta de navegación
-   */
-  private getTargetRoute(): string[] {
-    // PSAV siempre usa 'sites-psav'
-    return ['sites-psav'];
+    this._customRouterService.navigate(['schools']);
   }
 
   // Método para manejar acciones del menú de settings

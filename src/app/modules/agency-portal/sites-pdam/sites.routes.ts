@@ -9,15 +9,15 @@ export default [
     path: '',
     component: SitesComponent,
     children: [
-      {
-        path: '',
-        loadComponent: () => import('./list/list.component').then((c) => c.ListComponent),
-        canActivate: [PdamProgramGuard, PermissionGuard],
-        data: { permission: 'site.view' },
-        resolve: {
-          data: initialDataSitesListResolver,
-        },
-      },
+    //   {
+    //     path: '',
+    //     loadComponent: () => import('./list/list.component').then((c) => c.ListComponent),
+    //     canActivate: [PdamProgramGuard, PermissionGuard],
+    //     data: { permission: 'site.view' },
+    //     resolve: {
+    //       data: initialDataSitesListResolver,
+    //     },
+    //   },
       {
         path: 'add',
         loadComponent: () => import('./add/add.component').then((c) => c.AddSiteComponent),

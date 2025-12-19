@@ -648,6 +648,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.experience = this.sortOptionsAlphabetically(
         resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
+
       this.siteLocations = resolvedData.siteLocations || [];
 
       // Catálogos
@@ -1299,7 +1300,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Ciudad
     const cityId: number = formValues.city?.id;
     // Región
@@ -2223,7 +2225,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
    * Valida los campos específicos de PACNA
    */
   checkPACNAValidation(): void {
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     const organizedAthleticPrograms = formValues.organizedAthleticPrograms === true;
     const atRiskService = formValues.atRiskService === true;
 

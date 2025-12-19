@@ -133,6 +133,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _customRouterService = inject(CustomRouterService);
 
   // catálogos
   listCities: City[] = [];
@@ -576,7 +577,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
 
   // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = false;
+  isPDAM: boolean = true;
   isPSAV: boolean = false;
   isPACNA: boolean = false;
   isPFHF: boolean = false;
@@ -1506,7 +1507,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Ciudad
     const cityId: number = formValues.city?.id;
     // Región
@@ -1919,8 +1921,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
               (result) => {
                 if (result === 'confirmed') {
                   // Navegar a la ruta correcta según el programa
-                  const targetRoute = this.getTargetRoute();
-                  this._customRouter.navigate(targetRoute);
+                  this._customRouterService.navigate(['schools']);
                 }
               }
             );
@@ -1960,18 +1961,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Método para cancelar la operación
   onCancel(event: Event) {
     // Navegar a la ruta correcta según el programa
-    const targetRoute = this.getTargetRoute();
-    this._customRouter.navigate(targetRoute);
-  }
-
-  /**
-   * Determina la ruta de navegación según el programa activo
-   * Determines navigation route based on active program
-   * @returns Array con la ruta de navegación
-   */
-  private getTargetRoute(): string[] {
-    // Este componente es específico para PDAM
-    return ['sites-pdam'];
+    this._customRouterService.navigate(['schools']);
   }
 
   // Método para manejar acciones del menú de settings
@@ -2573,7 +2563,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     const organizedAthleticPrograms = formValues.organizedAthleticPrograms === true;
     const atRiskService = formValues.atRiskService === true;
 

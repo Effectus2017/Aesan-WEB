@@ -722,6 +722,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       this.experience = this.sortOptionsAlphabetically(
         resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
+
       this.siteLocations = resolvedData.siteLocations || [];
 
       // Catálogos
@@ -1259,35 +1260,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     return workingDaysInFullWeeks + remainingWorkingDays;
   }
 
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.add.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
@@ -1535,7 +1507,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     // Ciudad
     const cityId: number = formValues.city?.id;
     // Región
@@ -2602,7 +2575,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
+    const formValues = this.headerConfig.formGroup.getRawValue();
     const organizedAthleticPrograms = formValues.organizedAthleticPrograms === true;
     const atRiskService = formValues.atRiskService === true;
 
