@@ -514,7 +514,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
-
       }
     });
 
@@ -818,6 +817,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
 
+    // Fechas de operación
     const operatingFromDate: string = formValues.operatingFromDate;
     const operatingToDate: string = formValues.operatingToDate;
     // Días de operación

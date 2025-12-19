@@ -40,7 +40,7 @@ export const initialDataResolver = () => {
       }),
       map(([navigation, agency]) => ({
         navigation: navigation, // NavigationService devuelve Navigation directamente
-        agency: agency.body,     // AgencyService devuelve HttpResponse
+        agency: agency,     // AgencyService devuelve AgencyResponse
       }))
     );
   } else {

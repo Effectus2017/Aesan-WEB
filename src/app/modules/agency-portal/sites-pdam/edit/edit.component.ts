@@ -2002,8 +2002,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
               (result) => {
                 if (result === 'confirmed') {
                   // Navegar a la ruta correcta según el programa
-                  const targetRoute = this.getTargetRoute();
-                  this._customRouter.navigate(targetRoute);
+                  this._customRouterService.navigate(['schools']);
                 }
               }
             );
@@ -2044,8 +2043,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    */
   onCancel(event: Event) {
     // Navegar a la ruta correcta según el programa
-    const targetRoute = this.getTargetRoute();
-    this._customRouter.navigate(targetRoute);
+    this._customRouterService.navigate(['schools']);
   }
 
   /**

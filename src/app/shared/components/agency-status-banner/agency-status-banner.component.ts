@@ -56,9 +56,6 @@ export class AgencyStatusBannerComponent implements OnInit, OnDestroy {
         this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
             if (!isNullOrUndefinedEmptyStringNullArray(result)) {
                 const agency = result.body || result;
-
-
-
                 if (agency && agency.status) {
                     // Usar el ID del status para la lógica interna y el nombre para mostrar
                     this.agencyStatus = agency.status.id;

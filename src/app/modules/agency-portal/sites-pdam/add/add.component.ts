@@ -739,11 +739,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
-
-
-
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
-
       this._changeDetectorRef.markForCheck();
     }
 
@@ -933,7 +929,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   getStartTimeOptions(): TimeOption[] {
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-    
+
     return filterStartTimeOptions(
       this.timeOptions,
       operatingStartTime,
@@ -1072,36 +1068,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         panelClass: ['mat-dialog-container', 'dialog-responsive']
       });
     }
-  }
-
-
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.add.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
   }
 
   ngOnDestroy(): void {
@@ -1412,6 +1378,15 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
 
+     // Fechas de operación
+     const operatingFromDate: string = formValues.operatingFromDate;
+     const operatingToDate: string = formValues.operatingToDate;
+     // Días de operación
+     const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+     // Horas de funcionamiento
+     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
       // School Id - ID de la escuela asociada (si viene del modal)
@@ -1466,9 +1441,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       centerTypeId: centerTypeId,
       // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
       // Operating dates - Dates from and to when the site operates
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingFromDate: operatingFromDate ?? null,
+      operatingToDate: operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Horas de funcionamiento
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
       serviceTime: formValues.serviceTime ?? null,

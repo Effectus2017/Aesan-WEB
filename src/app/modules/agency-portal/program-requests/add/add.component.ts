@@ -362,13 +362,6 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     this.tableConfig.dataSource.data = schoolsColumnsData;
     this.tableConfigIncomeSources.dataSource.data = incomeSourcesData;
     this._activeTable = 'schools';
-
-    // this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-    //   if (result.body) {
-    //     this.onSetForm(result.body);
-    //     this._changeDetectorRef.detectChanges();
-    //   }
-    // });
   }
 
   ngOnDestroy(): void {

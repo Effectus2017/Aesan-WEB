@@ -42,8 +42,8 @@
         "sites": {
             "title": "Sitios",
             "centers": "Centros",
-            "homes": "Sitios",
-            "centersAndHomes": "Centros/Sitios"
+            "homes": "Hogares",
+            "centersAndHomes": "Centros/Hogares"
         },
         "centers": "Centros",
         "schools": "Sitios",

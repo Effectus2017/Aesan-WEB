@@ -124,14 +124,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
-  private _snackBar = inject(MatSnackBar);
-  private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
-  private _deliveryTypeService = inject(DeliveryTypeService);
-  private _organizationTypeService = inject(OrganizationTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -140,7 +136,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Catálogos
   // Catalogs
@@ -594,7 +589,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
-        const programs = this.agency.programs || [];
       }
     });
 
@@ -649,7 +643,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     });
 
     // Listener para cambios en organizationType
-    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
+    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe(() => {
       this._changeDetectorRef.detectChanges();
     });
 
@@ -1080,13 +1074,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     this._changeDetectorRef.detectChanges();
   }
 
-  /**
-   * Calcula los días operativos automáticamente si es necesario
-   * Calculates operating days automatically if needed
-   */
-  private calculateOperatingDaysIfNeeded(): void {
-    DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.headerConfig.formGroup);
-  }
 
   /**
    * Envía el formulario de edición de escuela
@@ -1116,7 +1103,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const postalCityId: number = formValues.postalCity?.id;
     const postalRegionId: number = formValues.postalRegion?.id;
     const organizationTypeId: number = formValues.organizationType?.id;
-    const operatingDays: number = Number(formValues.operatingDays);
     const kitchenTypeId: number = formValues.kitchenType?.id;
     const siteLocationId: number = formValues.siteLocation?.id;
     const groupTypeId: number = formValues.groupType?.id;
@@ -1124,7 +1110,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const applicantTypeId: number = formValues.typeOfApplicant?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
-    const relationshipTypeId: number = formValues.relationshipType?.id;
     // Horarios de servicios básicos
     const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
     const breakfastTo: string = toTimeString(formValues.breakfastTo);
@@ -1294,7 +1279,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
             break;
         }
       },
-      error: (err) => {
+      error: () => {
         this._notificationService.showErrorDialog();
         this.headerConfig.formGroup.enable();
       },

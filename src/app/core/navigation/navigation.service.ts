@@ -100,7 +100,16 @@ export class NavigationService implements OnDestroy {
 
   private adjustNavigationByUserRole(navigation: Navigation): Navigation {
     const userRole = this._authService.getUserRole();
-    const userPermissions = this._authService.getUserPermissions?.() || [];
+    const userPermissionsRaw = this._authService.getUserPermissions?.();
+    
+    // Asegurar que userPermissions sea siempre un array
+    let userPermissions: string[] = [];
+    if (Array.isArray(userPermissionsRaw)) {
+      userPermissions = userPermissionsRaw;
+    } else if (userPermissionsRaw !== null && userPermissionsRaw !== undefined) {
+      console.warn('getUserPermissions devolvió un valor no-array:', userPermissionsRaw);
+      userPermissions = [];
+    }
 
     let nav: FuseNavigationItem[] = [];
     if (userRole === 'Administrator') {
@@ -123,7 +132,14 @@ export class NavigationService implements OnDestroy {
   }
 
   private adjustLinks(items: FuseNavigationItem[], userRole: string, userPermissions: string[]): FuseNavigationItem[] {
+    // Validar que userPermissions sea un array
+    if (!Array.isArray(userPermissions)) {
+      console.warn('userPermissions no es un array válido en adjustLinks:', userPermissions);
+      userPermissions = [];
+    }
+
     let prefix = this.getRoutePrefix(userRole, '');
+    
     return items
       .filter((item) => this.isItemAllowedByPermissions(item, userPermissions))
       .map((item) => {
@@ -178,10 +194,30 @@ export class NavigationService implements OnDestroy {
 
 
   private isItemAllowedByPermissions(item: FuseNavigationItem, userPermissions: string[]): boolean {
+    // Validar que userPermissions sea un array
+    if (!Array.isArray(userPermissions)) {
+      console.warn('userPermissions no es un array en isItemAllowedByPermissions:', userPermissions);
+      return true; // Si no podemos validar, permitir el item por defecto
+    }
+
     if (!item.permissions || item.permissions.length === 0) {
       return true;
     }
-    return item.permissions.some((perm) => userPermissions.includes(perm));
+
+    // Validar que item.permissions sea un array de strings
+    if (!Array.isArray(item.permissions)) {
+      console.warn('item.permissions no es un array:', item.permissions);
+      return true;
+    }
+
+    return item.permissions.some((perm) => {
+      // Validar que perm sea un string
+      if (typeof perm !== 'string') {
+        console.warn('Permiso no es un string:', perm);
+        return false;
+      }
+      return userPermissions.includes(perm);
+    });
   }
 
 }

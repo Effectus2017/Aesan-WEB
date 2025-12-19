@@ -75,9 +75,6 @@ export class CurrentProgramBannerComponent implements OnInit, OnDestroy {
         this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
             if (!isNullOrUndefinedEmptyStringNullArray(result)) {
                 const agency = result.body || result;
-
-
-
                 if (agency && agency.programs && agency.programs.length > 0) {
                     // Tomar el primer programa de la agencia
                     const firstProgram = agency.programs[0];
