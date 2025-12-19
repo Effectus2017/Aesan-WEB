@@ -40,6 +40,8 @@ import {
   logFormValidationErrors,
   generateTimeOptions,
   filterEndTimeOptions,
+  filterStartTimeOptions,
+  getEndTimeOptions,
   timeStringToDate,
   dateToMinutes,
   timeToMinutes,
@@ -597,6 +599,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Tipo de Hogar
       // Home Type
       homeType: [null],
+      // ¿Es un centro o institución afiliada?
+      // Is it an affiliated center or institution?
+      isAffiliatedCenter: [null, Validators.required],
       // Participantes (selección múltiple)
       // Participants (multiple selection)
       participantTypes: [[]],
@@ -950,18 +955,11 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    if (!operatingStartTime || !operatingEndTime) {
-      // Si no hay horas de funcionamiento, mostrar todas las opciones
-      return this.timeOptions;
-    }
-
-    // Filtrar opciones dentro del rango
-    return this.timeOptions.filter((option) => {
-      const optionMinutes = timeToMinutes(option.value);
-      const startMinutes = dateToMinutes(operatingStartTime);
-      const endMinutes = dateToMinutes(operatingEndTime);
-      return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
-    });
+    return filterStartTimeOptions(
+      this.timeOptions,
+      operatingStartTime,
+      operatingEndTime
+    );
   }
 
   getEndTimeOptions(fromField: string): TimeOption[] {
@@ -972,7 +970,13 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return filterEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
+    return getEndTimeOptions(
+      this.timeOptions,
+      fromTime,
+      '23:59',
+      operatingStartTime,
+      operatingEndTime
+    );
   }
 
   /**
@@ -1217,6 +1221,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         organizedAthleticPrograms: [Validators.required],
         atRiskService: [Validators.required],
         publicAllianceContractId: [Validators.required],
+        isAffiliatedCenter: [Validators.required],
       };
 
       Object.keys(pacnaFields).forEach((fieldName) => {
@@ -1228,7 +1233,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       });
     } else {
       // Limpiar validadores de campos PACNA si no es PACNA o es Day Care Home
-      const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId'];
+      const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId', 'isAffiliatedCenter'];
       pacnaFieldsToClear.forEach((fieldName) => {
         const control = this.headerConfig.formGroup.get(fieldName);
         if (control) {
@@ -1340,8 +1345,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       operatingFromDate: param.operatingFromDate,
       operatingToDate: param.operatingToDate,
       operatingDaysCalculated: param.operatingDaysCalculated,
-      operatingStartTime: param.operatingStartTime ?? null,
-      operatingEndTime: param.operatingEndTime ?? null,
+      operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
+      operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
@@ -1441,6 +1446,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // De poseer un contrato Público Alianza, especifique su modalidad
       // If you have a Public Alliance contract, please specify the type of contract
       publicAllianceContractId: param.publicAllianceContractId ?? null,
+
+      // ¿Es un centro o institución afiliada?
+      // Is it an affiliated center or institution?
+      isAffiliatedCenter: param.isAffiliatedCenter ?? null,
     });
 
     // Establecer isDayCareHomeId del sitio si existe
@@ -1641,6 +1650,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // De poseer un contrato Público Alianza, especifique su modalidad
       // If you have a Public Alliance contract, please specify the type of contract
       publicAllianceContractId: formValues.publicAllianceContractId ?? null,
+
+      // ¿Es un centro o institución afiliada?
+      // Is it an affiliated center or institution?
+      isAffiliatedCenter: formValues.isAffiliatedCenter ?? null,
 
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home

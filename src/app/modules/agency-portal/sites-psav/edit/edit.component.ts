@@ -39,6 +39,8 @@ import {
   logFormValidationErrors,
   generateTimeOptions,
   filterEndTimeOptions,
+  filterStartTimeOptions,
+  getEndTimeOptions,
   timeStringToDate,
   timeToMinutes,
   dateToMinutes,
@@ -727,18 +729,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    if (!operatingStartTime || !operatingEndTime) {
-      // Si no hay horas de funcionamiento, mostrar todas las opciones
-      return this.timeOptions;
-    }
-
-    // Filtrar opciones dentro del rango
-    return this.timeOptions.filter((option) => {
-      const optionMinutes = timeToMinutes(option.value);
-      const startMinutes = dateToMinutes(operatingStartTime);
-      const endMinutes = dateToMinutes(operatingEndTime);
-      return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
-    });
+    return filterStartTimeOptions(
+      this.timeOptions,
+      operatingStartTime,
+      operatingEndTime
+    );
   }
 
   getEndTimeOptions(fromField: string): TimeOption[] {
@@ -749,7 +744,13 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return filterEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
+    return getEndTimeOptions(
+      this.timeOptions,
+      fromTime,
+      '23:59',
+      operatingStartTime,
+      operatingEndTime
+    );
   }
 
   /**
@@ -986,8 +987,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingFromDate: param.operatingFromDate,
       operatingToDate: param.operatingToDate,
       operatingDaysCalculated: param.operatingDaysCalculated,
-      operatingStartTime: param.operatingStartTime ?? null,
-      operatingEndTime: param.operatingEndTime ?? null,
+      operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
+      operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,

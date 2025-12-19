@@ -116,6 +116,13 @@ export interface SiteRequest {
     publicAllianceContractId?: number;
 
     /**
+     * ¿Es un centro o institución afiliada?
+     * Is it an affiliated center or institution?
+     * Solo para programa PACNA
+     */
+    isAffiliatedCenter?: boolean;
+
+    /**
      * ID que indica si el sitio es un Centro (No) o un Hogar (Sí)
      * ID indicating if the site is a Center (No) or a Home (Yes)
      * Solo para sitios de agencias con programa PACNA
