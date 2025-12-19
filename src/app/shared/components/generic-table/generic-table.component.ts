@@ -227,12 +227,14 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
    * @param event El evento de edición.
    * @param id El ID del elemento a editar.
    */
-  onEdit(event: Event, id: number): void {
+  onEdit(event: Event, id: number | string): void {
     // Actualizar tableConfig del handler antes de llamar a onTableEdit
     if (this.handler && this.config) {
       this.handler.tableConfig = this.config;
     }
-    this.handler.onTableEdit(event, id);
+    if (this.handler && this.handler.onTableEdit) {
+      this.handler.onTableEdit(event, id);
+    }
   }
 
   onEditElement(event: Event, element: any): void {

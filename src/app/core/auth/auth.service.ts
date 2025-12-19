@@ -42,6 +42,39 @@ export class AuthService {
   }
 
   // -----------------------------------------------------------------------------------------------------
+  // @ Private methods
+  // -----------------------------------------------------------------------------------------------------
+
+  /**
+   * Decodifica el payload del JWT manejando correctamente UTF-8
+   * @param payloadPart Parte del token JWT a decodificar
+   * @returns Objeto decodificado del payload
+   */
+  private decodeJwtPayload(payloadPart: string): any {
+    try {
+      // Normalizar Base64 URL-safe a Base64 estándar
+      const base64 = payloadPart.replace(/-/g, '+').replace(/_/g, '/');
+
+      // Decodificar Base64
+      const binaryString = atob(base64);
+
+      // Convertir a bytes y luego a UTF-8
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+
+      // Decodificar como UTF-8
+      const decodedPayload = new TextDecoder('utf-8').decode(bytes);
+
+      return JSON.parse(decodedPayload);
+    } catch (error) {
+      console.error('Error al decodificar el payload del token:', error);
+      throw error;
+    }
+  }
+
+  // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
@@ -53,21 +86,28 @@ export class AuthService {
     return this._httpClient.post(`${this.apiUrl}/login`, credentials).pipe(
       switchMap((response: any) => {
         const token: Token = response as Token;
-        var user = JSON.parse(window.atob(token.access_token.split('.')[1])) as TokenResponse;
-        // Store the access token in the local storage
-        this.accessToken = token.access_token;
+        try {
+          const payloadPart = token.access_token.split('.')[1];
+          const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
 
-        // Set the authenticated flag to true
-        this._authenticated = true;
+          // Store the access token in the local storage
+          this.accessToken = token.access_token;
 
-        // Store the user on the user service
-        this._userService.user = user;
+          // Set the authenticated flag to true
+          this._authenticated = true;
 
-        // Store the permissions
-        this._permissions = user.permissions ?? [];
+          // Store the user on the user service
+          this._userService.user = user;
 
-        // Return a new observable with the response
-        return of(response);
+          // Store the permissions
+          this._permissions = user.permissions ?? [];
+
+          // Return a new observable with the response
+          return of(response);
+        } catch (error) {
+          console.error('Error al decodificar el token en signIn:', error);
+          return throwError(() => new Error('Error al procesar el token de autenticación'));
+        }
       })
     );
   }
@@ -134,9 +174,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.role;
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.role;
+    } catch (error) {
+      return null;
+    }
   }
 
   getUserPermissions(): string[] | null {
@@ -144,9 +187,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.permissions ?? [];
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.permissions ?? [];
+    } catch (error) {
+      return null;
+    }
   }
 
   getUserAgency(): string | null {
@@ -154,9 +200,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.agency;
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.agency;
+    } catch (error) {
+      return null;
+    }
   }
 
   getUserPrograms(): string | null {
@@ -164,9 +213,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.programs;
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.programs;
+    } catch (error) {
+      return null;
+    }
   }
 
   getUserId(): string | null {
@@ -174,9 +226,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.nameid;
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.nameid;
+    } catch (error) {
+      return null;
+    }
   }
 
   getAgencyId(): number | null {
@@ -184,9 +239,12 @@ export class AuthService {
     if (!payloadPart) {
         return null;
     }
-    const decodedPayload = atob(payloadPart);
-    var user = JSON.parse(decodedPayload) as TokenResponse;
-    return user.agencyId;
+    try {
+      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+      return user.agencyId;
+    } catch (error) {
+      return null;
+    }
   }
 
   getUserDataFromToken(): TokenResponse | null {
@@ -196,8 +254,7 @@ export class AuthService {
     }
     try {
         const payloadPart = token.split('.')[1];
-        const decodedPayload = atob(payloadPart);
-        const payload = JSON.parse(decodedPayload);
+        const payload = this.decodeJwtPayload(payloadPart);
 
         const userData = {
             nameid: payload.nameid,

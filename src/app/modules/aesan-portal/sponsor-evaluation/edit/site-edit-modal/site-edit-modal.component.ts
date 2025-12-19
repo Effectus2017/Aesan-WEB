@@ -38,6 +38,7 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SitePersonInChargeRequest } from 'app/shared/models/Request/SitePersonInChargeRequest';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, toTimeString } from 'app/shared/utils';
+import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
@@ -346,11 +347,11 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
 
     // Listen to operating dates changes for calculating days
     this.form.get('operatingFromDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.form);
     });
 
     this.form.get('operatingToDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.form);
     });
 
     // Listen to groupType changes for distributionType validation and siteLocation
@@ -833,105 +834,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     }
 
     // Calcular días operativos automáticamente si es necesario
-    this.calculateOperatingDaysIfNeeded();
+    DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.form);
   }
 
-  private calculateOperatingDaysIfNeeded(): void {
-    const operatingDaysCalculated = this.form.get('operatingDaysCalculated')?.value;
-    const operatingFromDate = this.form.get('operatingFromDate')?.value;
-    const operatingToDate = this.form.get('operatingToDate')?.value;
-
-    // Si operatingDaysCalculated es null, 0 o undefined, pero existen las fechas, calcular automáticamente
-    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) &&
-        operatingFromDate && operatingToDate) {
-      this.calculateOperatingDays();
-    }
-  }
-
-  private calculateOperatingDays(): void {
-    const fromDateValue = this.form.get('operatingFromDate')?.value;
-    const toDateValue = this.form.get('operatingToDate')?.value;
-
-    if (fromDateValue && toDateValue) {
-      try {
-        // Convert form values to Date objects if they aren't already
-        const fromDate = fromDateValue instanceof Date ? fromDateValue : new Date(fromDateValue);
-        const toDate = toDateValue instanceof Date ? toDateValue : new Date(toDateValue);
-
-        // Validate that the conversion was successful
-        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-          console.warn('Invalid date values provided for operating days calculation');
-          this.form.patchValue({
-            operatingDaysCalculated: null,
-          });
-          return;
-        }
-
-        const workingDays = this.calculateWorkingDays(fromDate, toDate);
-
-        this.form.patchValue({
-          operatingDaysCalculated: workingDays,
-        });
-      } catch (error) {
-        console.error('Error calculating working days:', error);
-        this.form.patchValue({
-          operatingDaysCalculated: null,
-        });
-      }
-    } else {
-      this.form.patchValue({
-        operatingDaysCalculated: null,
-      });
-    }
-  }
-
-  /**
-   * Calcula los días laborables entre dos fechas (excluyendo fines de semana)
-   * @param startDate Fecha de inicio
-   * @param endDate Fecha de fin
-   * @returns Número de días laborables
-   */
-  private calculateWorkingDays(startDate: Date, endDate: Date): number {
-    // Validar que los parámetros sean Date objects válidos
-    if (!startDate || !endDate || !(startDate instanceof Date) || !(endDate instanceof Date)) {
-      console.warn('Invalid Date objects provided to calculateWorkingDays');
-      return 0;
-    }
-
-    // Validar fechas
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.warn('Invalid date values provided to calculateWorkingDays');
-      return 0;
-    }
-
-    // Normalizar fechas a medianoche para evitar problemas de zona horaria
-    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-    // Asegurar que las fechas estén en el orden correcto
-    const [earlier, later] = start <= end ? [start, end] : [end, start];
-
-    // Calcular semanas completas para optimización
-    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    const fullWeeks = Math.floor(totalDays / 7);
-    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
-
-    // Calcular días restantes
-    const remainingDays = totalDays % 7;
-    const startDayOfWeek = earlier.getDay();
-    let remainingWorkingDays = 0;
-
-    for (let i = 0; i < remainingDays; i++) {
-      const dayOfWeek = (startDayOfWeek + i) % 7;
-      // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
-      // Excluir sábado (6) y domingo (0)
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        remainingWorkingDays++;
-      }
-    }
-
-    return workingDaysInFullWeeks + remainingWorkingDays;
-  }
 
   private updateDistributionTypeValidation(): void {
     const groupType = this.form.get('groupType')?.value;

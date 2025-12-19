@@ -57,19 +57,18 @@
     }
     <!-- Botón Agregar -->
     @if (config.goToAddButtonShow) {
-    <a [routerLink]="'add'">
-      <div [matTooltip]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission)" [matTooltipDisabled]="!config.goToAddButtonTooltip && !config.goToAddButtonDisabledTooltip">
-        <button
-          type="button"
-          [title]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission) || 'Agregar'"
-          class="text-white bg-[#F1A621]"
-          mat-raised-button
-          [color]="'primary'"
-          [disabled]="isButtonDisabledByPermission(config.goToAddButtonPermission)">
-          <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
-        </button>
-      </div>
-    </a>
+    <div [matTooltip]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission)" [matTooltipDisabled]="!config.goToAddButtonTooltip && !config.goToAddButtonDisabledTooltip">
+      <button
+        type="button"
+        [title]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission) || 'Agregar'"
+        class="text-white bg-[#F1A621]"
+        mat-raised-button
+        [color]="'primary'"
+        [disabled]="isButtonDisabledByPermission(config.goToAddButtonPermission)"
+        (click)="onAdd()">
+        <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
+      </button>
+    </div>
     }
 
     <!-- Botón Cancelar -->

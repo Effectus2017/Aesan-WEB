@@ -191,6 +191,16 @@
                 "placeholder": "Total calculated operating days",
                 "description": "Total days calculated automatically"
             },
+            "operating-start-time": {
+                "label": "Start Time",
+                "placeholder": "Select start time",
+                "required": "Start time is required"
+            },
+            "operating-end-time": {
+                "label": "End Time",
+                "placeholder": "Select end time",
+                "required": "End time is required"
+            },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
                 "placeholder": "Select the date when your entity began operating (optional)",
@@ -433,24 +443,33 @@
                 "organized-athletic-programs": {
                     "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "at-risk-service": {
                     "label": "Is the site interested in participating in the at-risk snack and dinner service?",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
                 },
                 "public-alliance-contract": {
                     "label": "If you have a Public Alliance contract, please specify the type of contract",
                     "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
+                    "required": "This field is required"
+                },
+                "is-affiliated-center": {
+                    "label": "Is it an affiliated center or institution?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required"
                 },
                 "validation": {
                     "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
                     "one-true-warning": "This site may have additional restrictions in PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "Is it an affiliated center or institution?",
+                "placeholder": "Select an option",
+                "required": "This field is required"
+            },
                 "description": "List of satellite sites associated with this main site"
             },
             "activate-deactivate": {
@@ -485,11 +504,13 @@
             },
             "community": {
                 "label": "Community",
-                "placeholder": "Select community type"
+                "placeholder": "Select community type",
+                "required": "Community is required"
             },
             "walkers": {
                 "label": "Walkers",
-                "placeholder": "Select walker type"
+                "placeholder": "Select walker type",
+                "required": "Walkers is required"
             },
             "services": {
                 "label": "Services",
@@ -502,11 +523,13 @@
             },
             "site-type": {
                 "label": "Site Type",
-                "placeholder": "Select site type"
+                "placeholder": "Select site type",
+                "required": "Site type is required"
             },
             "experience": {
                 "label": "Experience",
-                "placeholder": "Select experience"
+                "placeholder": "Select experience",
+                "required": "Experience is required"
             },
             "review": {
                 "label": "Review",
@@ -819,6 +842,9 @@
         "edit": {
             "title": "Edit Site",
             "time-range-invalid": "End time must be greater than start time",
+            "service-time-range-error": {
+                "message": "Service time must be within the site's operating hours range"
+            },
             "information": "Information",
             "information-description": "Site information",
             "person-in-charge": {
@@ -970,6 +996,16 @@
                 "description": "Total days calculated automatically",
                 "hint": "This field is calculated automatically based on the configured operating dates"
             },
+            "operating-start-time": {
+                "label": "Start Time",
+                "placeholder": "Select start time",
+                "required": "Start time is required"
+            },
+            "operating-end-time": {
+                "label": "End Time",
+                "placeholder": "Select end time",
+                "required": "End time is required"
+            },
             "operating-dates": {
                 "label": "Operating Days",
                 "description": "Site operating period"
@@ -1069,11 +1105,13 @@
             },
             "breakfast": {
                 "label": "Breakfast",
-                "placeholder": "Breakfast"
+                "placeholder": "Breakfast",
+                "required": "Breakfast is required"
             },
             "breakfast-from": {
                 "label": "Breakfast From",
-                "placeholder": "Breakfast from"
+                "placeholder": "Breakfast from",
+                "required": "Breakfast start time is required"
             },
             "breakfast-to": {
                 "label": "Breakfast To",
@@ -1082,11 +1120,13 @@
             },
             "lunch": {
                 "label": "Lunch",
-                "placeholder": "Lunch"
+                "placeholder": "Lunch",
+                "required": "Lunch is required"
             },
             "lunch-from": {
                 "label": "Lunch From",
-                "placeholder": "Lunch from"
+                "placeholder": "Lunch from",
+                "required": "Lunch start time is required"
             },
             "lunch-to": {
                 "label": "Lunch To",
@@ -1107,11 +1147,13 @@
             },
             "snack-am": {
                 "label": "AM Snack",
-                "placeholder": "AM Snack"
+                "placeholder": "AM Snack",
+                "required": "AM Snack is required"
             },
             "snack-am-from": {
                 "label": "AM Snack From",
-                "placeholder": "AM Snack from"
+                "placeholder": "AM Snack from",
+                "required": "AM Snack start time is required"
             },
             "snack-am-to": {
                 "label": "AM Snack To",
@@ -1120,11 +1162,13 @@
             },
             "snack-pm": {
                 "label": "PM Snack",
-                "placeholder": "PM Snack"
+                "placeholder": "PM Snack",
+                "required": "PM Snack is required"
             },
             "snack-pm-from": {
                 "label": "PM Snack From",
-                "placeholder": "PM Snack from"
+                "placeholder": "PM Snack from",
+                "required": "PM Snack start time is required"
             },
             "snack-pm-to": {
                 "label": "PM Snack To",
@@ -1133,35 +1177,13 @@
             },
             "dinner": {
                 "label": "Dinner",
-                "placeholder": "Dinner"
+                "placeholder": "Dinner",
+                "required": "Dinner is required"
             },
             "dinner-from": {
                 "label": "Dinner From",
-            "pacna-fields": {
-                "title": "PACNA Specific Fields",
-                "description": "Specific information for PACNA program",
-                "organized-athletic-programs": {
-                    "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
-                    "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
-                },
-                "at-risk-service": {
-                    "label": "Is the site interested in participating in the at-risk snack and dinner service?",
-                    "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
-                },
-                "public-alliance-contract": {
-                    "label": "If you have a Public Alliance contract, please specify the type of contract",
-                    "placeholder": "Select an option",
-                    "required": "This field is required for PACNA"
-                },
-                "validation": {
-                    "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
-                    "one-true-warning": "This site may have additional restrictions in PACNA"
-                }
-            },
-
-                "placeholder": "Dinner from"
+                "placeholder": "Dinner from",
+                "required": "Dinner start time is required"
             },
             "dinner-to": {
                 "label": "Dinner To",
@@ -1170,63 +1192,83 @@
             },
             "snack-night": {
                 "label": "Night Snack",
-                "placeholder": "Night snack"
+                "placeholder": "Night snack",
+                "required": "Night Snack is required"
             },
             "snack-night-from": {
                 "label": "Night Snack From",
-                "placeholder": "Night snack from"
+                "placeholder": "Night snack from",
+                "required": "Night Snack start time is required"
             },
             "snack-night-to": {
                 "label": "Night Snack To",
-                "placeholder": "Night snack to"
+                "placeholder": "Night snack to",
+                "required": "Night Snack end time is required"
             },
             "dinner-extended": {
                 "label": "Extended Hours Dinner",
-                "placeholder": "Extended Hours Dinner"
+                "placeholder": "Extended Hours Dinner",
+                "required": "Extended Hours Dinner is required"
             },
             "dinner-extended-from": {
                 "label": "Extended Hours Dinner From",
-                "placeholder": "Extended Hours Dinner From"
+                "placeholder": "Extended Hours Dinner From",
+                "required": "Extended Hours Dinner start time is required"
             },
             "dinner-extended-to": {
                 "label": "Extended Hours Dinner To",
-                "placeholder": "Extended Hours Dinner To"
+                "placeholder": "Extended Hours Dinner To",
+                "required": "Extended Hours Dinner end time is required"
             },
             "dinner-at-risk": {
                 "label": "At-Risk Dinner",
-                "placeholder": "At-Risk Dinner"
+                "placeholder": "At-Risk Dinner",
+                "required": "At-Risk Dinner is required"
             },
             "dinner-at-risk-from": {
                 "label": "At-Risk Dinner From",
-                "placeholder": "At-Risk Dinner From"
+                "placeholder": "At-Risk Dinner From",
+                "required": "At-Risk Dinner start time is required"
             },
             "dinner-at-risk-to": {
                 "label": "At-Risk Dinner To",
-                "placeholder": "At-Risk Dinner To"
+                "placeholder": "At-Risk Dinner To",
+                "required": "At-Risk Dinner end time is required"
             },
             "snack-extended": {
                 "label": "Extended Hours Snack",
-                "placeholder": "Extended Hours Snack"
+                "placeholder": "Extended Hours Snack",
+                "required": "Extended Hours Snack is required"
             },
             "snack-extended-from": {
                 "label": "Extended Hours Snack From",
-                "placeholder": "Extended Hours Snack From"
+                "placeholder": "Extended Hours Snack From",
+                "required": "Extended Hours Snack start time is required"
             },
             "snack-extended-to": {
                 "label": "Extended Hours Snack To",
-                "placeholder": "Extended Hours Snack To"
+                "placeholder": "Extended Hours Snack To",
+                "required": "Extended Hours Snack end time is required"
             },
             "snack-at-risk": {
                 "label": "At-Risk Snack",
-                "placeholder": "At-Risk Snack"
+                "placeholder": "At-Risk Snack",
+                "required": "At-Risk Snack is required"
             },
             "snack-at-risk-from": {
                 "label": "At-Risk Snack From",
-                "placeholder": "At-Risk Snack From"
+                "placeholder": "At-Risk Snack From",
+                "required": "At-Risk Snack start time is required"
             },
             "snack-at-risk-to": {
                 "label": "At-Risk Snack To",
-                "placeholder": "At-Risk Snack To"
+                "placeholder": "At-Risk Snack To",
+                "required": "At-Risk Snack end time is required"
+            },
+            "is-affiliated-center": {
+                "label": "Is it an affiliated center or institution?",
+                "placeholder": "Select an option",
+                "required": "This field is required"
             },
             "satellites": {
                 "label": "Satellite Sites",

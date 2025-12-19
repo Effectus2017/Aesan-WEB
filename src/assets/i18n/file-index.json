@@ -11,6 +11,8 @@
   "./assets/i18n/sites/en.json",
   "./assets/i18n/schools/es.json",
   "./assets/i18n/schools/en.json",
+  "./assets/i18n/centers/es.json",
+  "./assets/i18n/centers/en.json",
   "./assets/i18n/users/es.json",
   "./assets/i18n/users/en.json",
   "./assets/i18n/validation-to-program/es.json",
@@ -66,5 +68,7 @@
   "./assets/i18n/message-template/es.json",
   "./assets/i18n/message-template/en.json",
   "./assets/i18n/template-variables/es.json",
-  "./assets/i18n/template-variables/en.json"
+  "./assets/i18n/template-variables/en.json",
+  "./assets/i18n/reports/es.json",
+  "./assets/i18n/reports/en.json"
 ]

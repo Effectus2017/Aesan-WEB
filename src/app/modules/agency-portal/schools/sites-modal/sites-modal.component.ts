@@ -19,6 +19,7 @@ import { SchoolSiteService } from '../../../../shared/services/school-site.servi
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
 import { PageEvent } from '@angular/material/paginator';
 import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils';
+import { PROGRAM_IDS } from '../../../../shared/const';
 
 @Component({
   selector: 'app-sites-modal',
@@ -163,6 +164,29 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     this.getAll(index * this.tableConfig.pageSize, this.searchForm.value);
   }
 
+  /**
+   * Determina la ruta de navegación basada en el programa de la agencia
+   * @returns 'sites-psav' si la agencia está en PSAV, 'sites-pdam' por defecto
+   */
+  private getTargetRoute(): string {
+    const programsRaw = localStorage.getItem('agencyPrograms');
+    let targetRoute = 'sites-pdam'; // Default
+
+    if (programsRaw) {
+      try {
+        const programs = JSON.parse(programsRaw);
+        const isPSAV = programs.some((p: any) => p?.id === PROGRAM_IDS.PSAV);
+        if (isPSAV) {
+          targetRoute = 'sites-psav';
+        }
+      } catch {
+        // Si hay error de parsing, usar ruta por defecto
+      }
+    }
+
+    return targetRoute;
+  }
+
   // Implementación de OnGenericTableHandler
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
@@ -173,7 +197,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     const siteId = element?.siteId || id; // Fallback al id si no se encuentra
 
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/edit/${siteId}`]);
+    const targetRoute = this.getTargetRoute();
+    this._customRouterService.navigate([`${targetRoute}/edit/${siteId}`]);
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -198,7 +223,8 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     const siteId = element?.siteId || id; // Fallback al id si no se encuentra
 
     this.dialogRef.close();
-    this._customRouterService.navigate([`sites/calendar/${siteId}`]);
+    const targetRoute = this.getTargetRoute();
+    this._customRouterService.navigate([`${targetRoute}/calendar/${siteId}`]);
   }
 
   onClearSearch(): void {
@@ -207,9 +233,10 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
   }
 
   onAddButtonClick(event?: Event): void {
-    // Cerrar el modal y navegar a sites/add con schoolId como query parameter
+    // Cerrar el modal y navegar a la ruta correcta según el programa con schoolId como query parameter
     this.dialogRef.close();
-    this._customRouterService.navigate(['sites/add'], {
+    const targetRoute = this.getTargetRoute();
+    this._customRouterService.navigate([`${targetRoute}/add`], {
       queryParams: { schoolId: this.data.schoolId }
     });
   }

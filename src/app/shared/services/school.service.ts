@@ -13,6 +13,7 @@ import { SchoolRequest } from "../models/Request/SchoolRequest";
 export class SchoolService {
   private _schools: BehaviorSubject<School[] | null> = new BehaviorSubject(null);
   private _school: BehaviorSubject<School | null> = new BehaviorSubject(null);
+  private _centers: BehaviorSubject<School[] | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/school`;
   private _httpClient = inject(HttpClient);
@@ -33,6 +34,14 @@ export class SchoolService {
    */
   get school$(): Observable<School | null> {
     return this._school.asObservable();
+  }
+
+  /**
+   * Obtiene todos los centros
+   * @returns Los centros
+   */
+  get centers$(): Observable<School[] | null> {
+    return this._centers.asObservable();
   }
 
   /**
@@ -63,6 +72,16 @@ export class SchoolService {
   getSchoolsByAgencyId(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-schools-by-agency`, getHttpOptions(queryParameters))
       .pipe(tap((response: any) => this._schools.next(response)));
+  }
+
+  /**
+   * Obtiene centros por ID de agencia
+   * @param queryParameters Los parámetros de consulta que incluyen el agencyId
+   * @returns Observable con los centros
+   */
+  getCentersByAgencyId(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-schools-by-agency`, getHttpOptions(queryParameters))
+      .pipe(tap((response: any) => this._centers.next(response)));
   }
 
   /**

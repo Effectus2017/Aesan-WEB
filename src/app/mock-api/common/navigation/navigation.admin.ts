@@ -18,6 +18,14 @@ export const adminNavigation: FuseNavigationItem[] = [
     roles: ['Administrator'],
   },
   {
+    id: 'reports',
+    title: 'navigation.reports',
+    type: 'basic',
+    icon: 'heroicons_solid:document-chart-bar',
+    link: '/reports',
+    roles: ['Administrator'],
+  },
+  {
     id: 'administration',
     title: 'navigation.administration.title',
     type: 'group',

@@ -1,0 +1,44 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col">
+      <div class="text-lg font-medium">
+        {{ 'centers.modal.edit' | transloco }}
+      </div>
+    </div>
+    <button mat-icon-button type="button" [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <form [formGroup]="centerForm" class="flex flex-col flex-auto min-h-0">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
+        <!-- Campo Nombre -->
+        <mat-form-field>
+          <input matInput formControlName="name" [placeholder]="'centers.modal.name' | transloco" autocomplete="on" [title]="'centers.modal.name' | transloco" [attr.aria-label]="'centers.modal.name' | transloco"/>
+          <mat-error *ngIf="centerForm.get('name')?.hasError('required')">
+            {{ 'global.validation.required' | transloco }}
+          </mat-error>
+          <mat-error *ngIf="centerForm.get('name')?.hasError('minlength')">
+            {{ 'global.validation.minLength' | transloco }}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="loading">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+      </div>
+      <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="centerForm.invalid || loading">
+        <span>{{ 'global.buttons.save' | transloco }}</span>
+      </button>
+    </div>
+  </form>
+</div>
+

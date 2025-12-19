@@ -39,6 +39,8 @@ export interface SiteRequest {
     operatingFromDate?: string;
     operatingToDate?: string;
     operatingDaysCalculated?: number;
+    operatingStartTime?: string;
+    operatingEndTime?: string;
 
     /**
      * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
@@ -112,6 +114,13 @@ export interface SiteRequest {
      * Socio-Económico (17), Híbrido (18)
      */
     publicAllianceContractId?: number;
+
+    /**
+     * ¿Es un centro o institución afiliada?
+     * Is it an affiliated center or institution?
+     * Solo para programa PACNA
+     */
+    isAffiliatedCenter?: boolean;
 
     /**
      * ID que indica si el sitio es un Centro (No) o un Hogar (Sí)

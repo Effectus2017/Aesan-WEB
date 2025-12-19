@@ -1,0 +1,41 @@
+{
+  "centers": {
+    "list": {
+      "title": "Centers List",
+      "search": {
+        "placeholder": "Search by name"
+      },
+      "buttons": {
+        "save": "Search"
+      },
+      "table": {
+        "columns": {
+          "centerCode": "Center Code",
+          "name": "Name",
+          "sites-count": "Sites Count",
+          "createdAt": "Created Date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit",
+          "sites": "Sites"
+        }
+      }
+    },
+    "modal": {
+      "create": "Create Center",
+      "edit": "Edit Center",
+      "name": "Center Name"
+    },
+    "sites": {
+      "modal": {
+        "title": "Center Sites",
+        "search": {
+          "placeholder": "Search sites by name"
+        }
+      }
+    }
+  }
+}
+

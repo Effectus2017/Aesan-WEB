@@ -1,0 +1,89 @@
+<div class="flex absolute inset-0 flex-col min-w-0 w-full h-full">
+  <!-- Header -->
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <!-- Filtros -->
+  <div class="p-6 bg-white border-b border-gray-200">
+    <div class="flex flex-col gap-4 items-end sm:flex-row">
+      <!-- Selector de Año -->
+      <div class="flex-1 w-full max-w-xs sm:max-w-xs">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'reports.school-hierarchy-tree.year' | transloco }}</mat-label>
+          <mat-select
+            [(ngModel)]="selectedYear"
+            (selectionChange)="onYearChange()"
+            data-cy="year-select">
+            <mat-option *ngFor="let year of availableYears" [value]="year">
+              {{ year }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Selector de Auspiciador -->
+      <div class="flex-1 w-full max-w-xs sm:max-w-xs">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'reports.school-hierarchy-tree.sponsor' | transloco }}</mat-label>
+          <mat-select
+            [(ngModel)]="selectedSponsorId"
+            (selectionChange)="onSponsorChange()"
+            data-cy="sponsor-select">
+            <mat-option [value]="undefined">{{ 'reports.school-hierarchy-tree.all-sponsors' | transloco }}</mat-option>
+            <mat-option *ngFor="let agency of agencies" [value]="agency.id">
+              {{ agency.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor del diagrama -->
+  <div class="overflow-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
+    <!-- Estado inicial: solicitar selección de auspiciador -->
+    <div *ngIf="!loading && !error && !hierarchyData && !selectedSponsorId" class="flex justify-center items-center h-full">
+      <div class="text-center">
+        <div class="mb-4 text-6xl text-blue-500">📋</div>
+        <h3 class="mb-2 text-lg font-semibold text-gray-800">
+          Seleccione un Auspiciador
+        </h3>
+        <p class="text-gray-600">
+          Por favor seleccione un auspiciador del menú superior para visualizar el árbol de jerarquía
+        </p>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading" class="flex justify-center items-center h-full">
+      <div class="flex flex-col gap-3 items-center">
+        <div class="w-12 h-12 rounded-full border-b-2 border-blue-600 animate-spin"></div>
+        <p class="text-gray-600">{{ 'reports.school-hierarchy-tree.loading' | transloco }}</p>
+      </div>
+    </div>
+
+    <!-- Error state -->
+    <div *ngIf="error && !loading" class="flex justify-center items-center h-full">
+      <div class="text-center">
+        <div class="mb-4 text-6xl text-red-500">⚠️</div>
+        <h3 class="mb-2 text-lg font-semibold text-gray-800">
+          {{ 'reports.school-hierarchy-tree.error-title' | transloco }}
+        </h3>
+        <p class="mb-4 text-gray-600">{{ error }}</p>
+        <button
+          (click)="loadHierarchy()"
+          class="px-4 py-2 text-white bg-blue-600 rounded-md transition-colors hover:bg-blue-700">
+          {{ 'reports.school-hierarchy-tree.retry' | transloco }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Diagrama -->
+    <div
+      *ngIf="!loading && !error && hierarchyData && selectedSponsorId"
+      #treeContainer
+      id="treeContainer"
+      class="relative bg-white rounded-lg border border-gray-200">
+    </div>
+  </div>
+</div>
+

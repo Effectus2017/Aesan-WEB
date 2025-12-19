@@ -154,7 +154,7 @@ export class AddStaffComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Código postal
       zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comentarios
-      comments: new FormControl(''),
+      comments: new FormControl('', [Validators.required]),
       // Sitio asignado
       site: new FormControl('', [Validators.required]),
       isPrimary: new FormControl(false),

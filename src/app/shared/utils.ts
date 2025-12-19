@@ -55,17 +55,17 @@ export function comparePostal(o1: any | null | undefined, o2: any | null | undef
   if ((o1 === null || o1 === undefined) && (o2 === null || o2 === undefined)) {
     return true;
   }
-  
+
   // Si uno es null/undefined y el otro no, son diferentes
   if (o1 === null || o1 === undefined || o2 === null || o2 === undefined) {
     return false;
   }
-  
+
   // Ambos tienen valor, comparar por Id
   if (o1.Id !== undefined && o2.Id !== undefined) {
     return o1.Id === o2.Id;
   }
-  
+
   return false;
 }
 
@@ -81,12 +81,12 @@ export function compareItems<T>(item1: T | null | undefined, item2: T | null | u
   if ((item1 === null || item1 === undefined) && (item2 === null || item2 === undefined)) {
     return true;
   }
-  
+
   // Si uno es null/undefined y el otro no, son diferentes
   if (item1 === null || item1 === undefined || item2 === null || item2 === undefined) {
     return false;
   }
-  
+
   // Ambos tienen valor, comparar por id
   return compareByProperty(item1, item2, 'id' as keyof T);
 }
@@ -102,12 +102,12 @@ export function compareMonitors(monitor1: any | null | undefined, monitor2: any 
   if ((monitor1 === null || monitor1 === undefined) && (monitor2 === null || monitor2 === undefined)) {
     return true;
   }
-  
+
   // Si uno es null/undefined y el otro no, son diferentes
   if (monitor1 === null || monitor1 === undefined || monitor2 === null || monitor2 === undefined) {
     return false;
   }
-  
+
   // Comparar por StaffId si ambos lo tienen
   if (monitor1.staffId && monitor2.staffId) {
     return monitor1.staffId === monitor2.staffId;
@@ -127,7 +127,7 @@ export function compareMonitors(monitor1: any | null | undefined, monitor2: any 
   if (monitor1.id && monitor2.id) {
     return monitor1.id === monitor2.id;
   }
-  
+
   // Si no hay id en ninguno, comparar directamente
   return false;
 }
@@ -144,12 +144,12 @@ export function compareByProperty<T extends { [key: string]: any }>(item1: T | n
   if ((item1 === null || item1 === undefined) && (item2 === null || item2 === undefined)) {
     return true;
   }
-  
+
   // Si uno es null/undefined y el otro no, son diferentes
   if (item1 === null || item1 === undefined || item2 === null || item2 === undefined) {
     return false;
   }
-  
+
   // Ambos tienen valor, comparar por la propiedad
   return item1[property] === item2[property];
 }
@@ -418,11 +418,11 @@ export function maxDigitsValidator(maxDigits: number): (control: AbstractControl
     const value = control.value.toString();
     const digitCount = value.replace(/\D/g, '').length;
 
-    return digitCount <= maxDigits ? null : { 
-      maxDigits: { 
-        requiredMaxDigits: maxDigits, 
-        actualDigits: digitCount 
-      } 
+    return digitCount <= maxDigits ? null : {
+      maxDigits: {
+        requiredMaxDigits: maxDigits,
+        actualDigits: digitCount
+      }
     };
   };
 }
@@ -440,10 +440,10 @@ export function alphanumericValidator(): (control: AbstractControl) => Validatio
     const value = control.value.toString();
     const alphanumericPattern = /^[A-Za-z0-9]+$/;
 
-    return alphanumericPattern.test(value) ? null : { 
-      alphanumeric: { 
-        message: 'Solo se permiten letras y números' 
-      } 
+    return alphanumericPattern.test(value) ? null : {
+      alphanumeric: {
+        message: 'Solo se permiten letras y números'
+      }
     };
   };
 }
@@ -469,7 +469,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
       document.body.appendChild(textArea);
       textArea.focus();
       textArea.select();
-      
+
       try {
         const successful = document.execCommand('copy');
         document.body.removeChild(textArea);
@@ -675,7 +675,7 @@ export function generateTimeOptions(dayStartTime: string = '00:00', dayEndTime: 
       const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
       const time12 = convert24To12(hour, minute);
       const timeMinutes = hour * 60 + minute;
-      
+
       // Solo incluir horarios dentro del rango del día de funcionamiento
       if (timeMinutes >= dayStartMinutes && timeMinutes <= dayEndMinutes) {
         options.push({
@@ -690,18 +690,51 @@ export function generateTimeOptions(dayStartTime: string = '00:00', dayEndTime: 
 }
 
 /**
- * Filtra opciones de hora para mostrar solo las que son mayores que la hora de inicio
+ * Filtra opciones de hora para mostrar solo las que están dentro del rango especificado
  * @param allOptions Array completo de opciones de hora
  * @param startTime Hora de inicio en formato HH:mm o Date
- * @param dayEndTime Hora de fin del día en formato HH:mm (opcional, por defecto '23:59')
+ * @param dayEndTime Hora de fin del día en formato HH:mm o Date (opcional, por defecto '23:59')
+ * @param operatingStartTime Hora de inicio del día de funcionamiento (opcional, para límite inferior adicional)
+ * @param operatingEndTime Hora de fin del día de funcionamiento (opcional, para límite superior adicional)
  * @returns Array filtrado de opciones de hora
  */
 export function filterEndTimeOptions(
   allOptions: TimeOption[],
   startTime: string | Date | null,
-  dayEndTime: string = '23:59'
+  dayEndTime: string | Date = '23:59',
+  operatingStartTime?: string | Date | null,
+  operatingEndTime?: string | Date | null
 ): TimeOption[] {
   if (!startTime) {
+    // Si no hay startTime, filtrar solo por operatingStartTime y operatingEndTime si están disponibles
+    if (operatingStartTime || operatingEndTime) {
+      let minTime = '00:00';
+      let maxTime = '23:59';
+
+      if (operatingStartTime) {
+        if (operatingStartTime instanceof Date) {
+          minTime = dateToTimeString(operatingStartTime);
+        } else {
+          minTime = operatingStartTime;
+        }
+      }
+
+      if (operatingEndTime) {
+        if (operatingEndTime instanceof Date) {
+          maxTime = dateToTimeString(operatingEndTime);
+        } else {
+          maxTime = operatingEndTime;
+        }
+      }
+
+      const minMinutes = timeToMinutes(minTime);
+      const maxMinutes = timeToMinutes(maxTime);
+
+      return allOptions.filter(option => {
+        const optionMinutes = timeToMinutes(option.value);
+        return optionMinutes >= minMinutes && optionMinutes <= maxMinutes;
+      });
+    }
     return allOptions;
   }
 
@@ -716,13 +749,103 @@ export function filterEndTimeOptions(
     return allOptions;
   }
 
-  const startMinutes = timeToMinutes(startTimeString);
-  const dayEndMinutes = timeToMinutes(dayEndTime);
+  // Determinar el límite superior: usar el más restrictivo entre dayEndTime y operatingEndTime
+  let maxTime: string;
+  if (dayEndTime instanceof Date) {
+    maxTime = dateToTimeString(dayEndTime);
+  } else {
+    maxTime = dayEndTime;
+  }
+
+  // Si hay operatingEndTime, usar el más restrictivo
+  if (operatingEndTime) {
+    let operatingEndTimeStr: string;
+    if (operatingEndTime instanceof Date) {
+      operatingEndTimeStr = dateToTimeString(operatingEndTime);
+    } else {
+      operatingEndTimeStr = operatingEndTime;
+    }
+    const maxMinutes = timeToMinutes(maxTime);
+    const operatingEndMinutes = timeToMinutes(operatingEndTimeStr);
+    // Usar el menor de los dos (más restrictivo)
+    maxTime = maxMinutes < operatingEndMinutes ? maxTime : operatingEndTimeStr;
+  }
+
+  // Determinar el límite inferior: usar el más restrictivo entre startTime y operatingStartTime
+  let minTime = startTimeString;
+  if (operatingStartTime) {
+    let operatingStartTimeStr: string;
+    if (operatingStartTime instanceof Date) {
+      operatingStartTimeStr = dateToTimeString(operatingStartTime);
+    } else {
+      operatingStartTimeStr = operatingStartTime;
+    }
+    const startMinutes = timeToMinutes(startTimeString);
+    const operatingStartMinutes = timeToMinutes(operatingStartTimeStr);
+    // Usar el mayor de los dos (más restrictivo)
+    minTime = startMinutes > operatingStartMinutes ? startTimeString : operatingStartTimeStr;
+  }
+
+  const startMinutes = timeToMinutes(minTime);
+  const maxMinutes = timeToMinutes(maxTime);
 
   return allOptions.filter(option => {
     const optionMinutes = timeToMinutes(option.value);
-    return optionMinutes > startMinutes && optionMinutes <= dayEndMinutes;
+    return optionMinutes > startMinutes && optionMinutes <= maxMinutes;
   });
+}
+
+/**
+ * Filtra las opciones de tiempo para campos "desde" basándose en las horas de funcionamiento
+ * @param timeOptions Lista completa de opciones de tiempo
+ * @param operatingStartTime Hora de inicio de funcionamiento (Date o string)
+ * @param operatingEndTime Hora de fin de funcionamiento (Date o string)
+ * @returns Lista filtrada de opciones de tiempo dentro del rango de funcionamiento
+ */
+export function filterStartTimeOptions(
+  timeOptions: TimeOption[],
+  operatingStartTime: Date | string | null | undefined,
+  operatingEndTime: Date | string | null | undefined
+): TimeOption[] {
+  if (!operatingStartTime || !operatingEndTime) {
+    return timeOptions;
+  }
+
+  return timeOptions.filter(option => {
+    const optionMinutes = timeToMinutes(option.value);
+    const startMinutes = operatingStartTime instanceof Date
+      ? dateToMinutes(operatingStartTime)
+      : timeToMinutes(operatingStartTime);
+    const endMinutes = operatingEndTime instanceof Date
+      ? dateToMinutes(operatingEndTime)
+      : timeToMinutes(operatingEndTime);
+    return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
+  });
+}
+
+/**
+ * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+ * @param timeOptions Lista completa de opciones de tiempo
+ * @param fromTime Hora "desde" (Date o string)
+ * @param dayEndTime Hora de fin del día (por defecto '23:59')
+ * @param operatingStartTime Hora de inicio de funcionamiento (opcional)
+ * @param operatingEndTime Hora de fin de funcionamiento (opcional)
+ * @returns Lista filtrada de opciones de tiempo
+ */
+export function getEndTimeOptions(
+  timeOptions: TimeOption[],
+  fromTime: Date | string | null | undefined,
+  dayEndTime: string | Date = '23:59',
+  operatingStartTime?: Date | string | null,
+  operatingEndTime?: Date | string | null
+): TimeOption[] {
+  return filterEndTimeOptions(
+    timeOptions,
+    fromTime,
+    dayEndTime,
+    operatingStartTime,
+    operatingEndTime
+  );
 }
 
 /**

@@ -1,0 +1,37 @@
+{
+  "reports": {
+    "title": "Reportes",
+    "list": {
+      "title": "Reportes",
+      "search": {
+        "placeholder": "Buscar reporte..."
+      },
+      "table": {
+        "columns": {
+          "name": "Nombre",
+          "description": "Descripción",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "open": "Abrir"
+        }
+      },
+      "reports": {
+        "schoolHierarchyTree": {
+          "name": "Árbol de Jerarquía de Escuelas",
+          "description": "Visualización jerárquica de auspiciadores, años, escuelas y sitios"
+        }
+      }
+    },
+    "school-hierarchy-tree": {
+      "title": "Árbol de Jerarquía de Escuelas",
+      "year": "Año",
+      "sponsor": "Auspiciador",
+      "all-sponsors": "Todos los Auspiciadores",
+      "loading": "Cargando estructura jerárquica...",
+      "error-title": "Error al cargar datos",
+      "retry": "Reintentar"
+    }
+  }
+}
+

@@ -57,6 +57,8 @@ export interface Site {
   operatingFromDate?: string;
   operatingToDate?: string;
   operatingDaysCalculated?: number;
+  operatingStartTime?: string;
+  operatingEndTime?: string;
 
   /**
    * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
@@ -156,6 +158,13 @@ export interface Site {
    */
   publicAllianceContractId?: number;
   publicAllianceContract?: OptionSelection;
+
+  /**
+   * ¿Es un centro o institución afiliada?
+   * Is it an affiliated center or institution?
+   * Solo para programa PACNA
+   */
+  isAffiliatedCenter?: boolean;
 
   /**
    * ID que indica si el sitio es un Centro (No) o un Hogar (Sí)

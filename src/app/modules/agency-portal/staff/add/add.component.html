@@ -241,6 +241,9 @@
             <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
               <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('site')?.hasError('required')">
+              {{ "staff.add.site.required" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -256,6 +259,9 @@
               rows="4"
               data-cy="comments-input"
             ></textarea>
+            <mat-error *ngIf="headerConfig.formGroup.get('comments')?.hasError('required')">
+              {{ "staff.add.comments.required" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>

@@ -658,7 +658,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
 
     switch (action) {
       case 'view':
-        this._customRouterService.navigate([`sites/view/${id}`]);
+        this._customRouterService.navigate([`sites-pdam/edit/${id}`]);
         break;
       case 'edit':
         this.openSiteEditModal(id);

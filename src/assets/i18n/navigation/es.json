@@ -42,8 +42,10 @@
         "sites": {
             "title": "Sitios",
             "centers": "Centros",
-            "homes": "Hogares"
+            "homes": "Sitios",
+            "centersAndHomes": "Centros/Sitios"
         },
+        "centers": "Centros",
         "schools": "Sitios",
         "administration": {
             "title": "Administración",
@@ -110,6 +112,24 @@
             "charts": {
                 "rationsByMonth": "Raciones servidas por meses",
                 "coordinatedVisits": "Visitas Coordinadas por Tipo de Visita"
+            },
+            "months": {
+                "january": "Enero",
+                "february": "Febrero",
+                "march": "Marzo",
+                "april": "Abril",
+                "may": "Mayo",
+                "june": "Junio",
+                "july": "Julio",
+                "august": "Agosto",
+                "september": "Septiembre",
+                "october": "Octubre",
+                "november": "Noviembre",
+                "december": "Diciembre"
+            },
+            "visitTypes": {
+                "initial": "Visita Inicial",
+                "followUp": "Visita de Seguimiento"
             },
             "table": {
                 "title": "Formularios",

@@ -4,7 +4,7 @@
         "list": {
             "title": "Lista de Sitios",
             "titleCenters": "Lista de Centros",
-            "titleHomes": "Lista de Hogares",
+            "titleHomes": "Lista de Sitios",
             "table": {
                 "columns": {
                     "id": "Id",
@@ -192,6 +192,16 @@
                 "label": "Total de Días de Funcionamiento",
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente"
+            },
+            "operating-start-time": {
+                "label": "Hora de Inicio",
+                "placeholder": "Seleccione la hora de inicio",
+                "required": "La hora de inicio es requerida"
+            },
+            "operating-end-time": {
+                "label": "Hora de Fin",
+                "placeholder": "Seleccione la hora de fin",
+                "required": "La hora de fin es requerida"
             },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
@@ -441,24 +451,33 @@
                 "organized-athletic-programs": {
                     "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
                 },
                 "at-risk-service": {
                     "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
                 },
                 "public-alliance-contract": {
                     "label": "De poseer un contrato Público Alianza, especifique su modalidad",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
+                },
+                "is-affiliated-center": {
+                    "label": "¿Es un centro o institución afiliada?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido"
                 },
                 "validation": {
                     "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
                     "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "¿Es un centro o institución afiliada?",
+                "placeholder": "Seleccione una opción",
+                "required": "Este campo es requerido"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -495,11 +514,13 @@
             },
             "community": {
                 "label": "Comunidad",
-                "placeholder": "Seleccione el tipo de comunidad"
+                "placeholder": "Seleccione el tipo de comunidad",
+                "required": "La comunidad es requerida"
             },
             "walkers": {
                 "label": "Caminantes",
-                "placeholder": "Seleccione el tipo de caminantes"
+                "placeholder": "Seleccione el tipo de caminantes",
+                "required": "Los caminantes son requeridos"
             },
             "services-field": {
                 "label": "Servicios",
@@ -512,11 +533,13 @@
             },
             "site-type": {
                 "label": "Tipo de Sitio",
-                "placeholder": "Seleccione el tipo de sitio"
+                "placeholder": "Seleccione el tipo de sitio",
+                "required": "El tipo de sitio es requerido"
             },
             "experience": {
                 "label": "Experiencia",
-                "placeholder": "Seleccione la experiencia"
+                "placeholder": "Seleccione la experiencia",
+                "required": "La experiencia es requerida"
             },
             "buttons": {
                 "save": "Guardar",
@@ -754,6 +777,9 @@
         "edit": {
             "title": "Editar Sitio",
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
+            "service-time-range-error": {
+                "message": "El horario del servicio debe estar dentro del rango de horas de operación del sitio"
+            },
             "information": "Información",
             "information-description": "Información del sitio",
             "person-in-charge": {
@@ -912,6 +938,16 @@
                 "description": "Total de días calculados automáticamente",
                 "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
             },
+            "operating-start-time": {
+                "label": "Hora de Inicio",
+                "placeholder": "Seleccione la hora de inicio",
+                "required": "La hora de inicio es requerida"
+            },
+            "operating-end-time": {
+                "label": "Hora de Fin",
+                "placeholder": "Seleccione la hora de fin",
+                "required": "La hora de fin es requerida"
+            },
             "operating-dates": {
                 "label": "Días de Funcionamiento",
                 "description": "Período de funcionamiento del sitio"
@@ -1016,11 +1052,13 @@
             },
             "breakfast": {
                 "label": "Desayuno",
-                "placeholder": "Desayuno"
+                "placeholder": "Desayuno",
+                "required": "El desayuno es requerido"
             },
             "breakfast-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio del desayuno es requerida"
             },
             "breakfast-to": {
                 "label": "Hasta",
@@ -1029,11 +1067,13 @@
             },
             "lunch": {
                 "label": "Almuerzo",
-                "placeholder": "Almuerzo"
+                "placeholder": "Almuerzo",
+                "required": "El almuerzo es requerido"
             },
             "lunch-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio del almuerzo es requerida"
             },
             "lunch-to": {
                 "label": "Hasta",
@@ -1054,11 +1094,13 @@
             },
             "snack-am": {
                 "label": "Merienda AM",
-                "placeholder": "Merienda AM"
+                "placeholder": "Merienda AM",
+                "required": "La merienda AM es requerida"
             },
             "snack-am-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda AM es requerida"
             },
             "snack-am-to": {
                 "label": "Hasta",
@@ -1067,11 +1109,13 @@
             },
             "snack-pm": {
                 "label": "Merienda PM",
-                "placeholder": "Merienda PM"
+                "placeholder": "Merienda PM",
+                "required": "La merienda PM es requerida"
             },
             "snack-pm-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda PM es requerida"
             },
             "snack-pm-to": {
                 "label": "Hasta",
@@ -1080,11 +1124,13 @@
             },
             "dinner": {
                 "label": "Cena",
-                "placeholder": "Cena"
+                "placeholder": "Cena",
+                "required": "La cena es requerida"
             },
             "dinner-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la cena es requerida"
             },
             "dinner-to": {
                 "label": "Hasta",
@@ -1093,63 +1139,78 @@
             },
             "snack-night": {
                 "label": "Merienda nocturna",
-                "placeholder": "Merienda nocturna"
+                "placeholder": "Merienda nocturna",
+                "required": "La merienda nocturna es requerida"
             },
             "snack-night-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda nocturna es requerida"
             },
             "snack-night-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la merienda nocturna es requerida"
             },
             "dinner-extended": {
                 "label": "Cena Horario Extendido",
-                "placeholder": "Cena Horario Extendido"
+                "placeholder": "Cena Horario Extendido",
+                "required": "La cena horario extendido es requerida"
             },
             "dinner-extended-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la cena horario extendido es requerida"
             },
             "dinner-extended-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la cena horario extendido es requerida"
             },
             "dinner-at-risk": {
                 "label": "Cena en Riesgo",
-                "placeholder": "Cena en Riesgo"
+                "placeholder": "Cena en Riesgo",
+                "required": "La cena en riesgo es requerida"
             },
             "dinner-at-risk-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la cena en riesgo es requerida"
             },
             "dinner-at-risk-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la cena en riesgo es requerida"
             },
             "snack-extended": {
                 "label": "Merienda Horario Extendido",
-                "placeholder": "Merienda Horario Extendido"
+                "placeholder": "Merienda Horario Extendido",
+                "required": "La merienda horario extendido es requerida"
             },
             "snack-extended-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda horario extendido es requerida"
             },
             "snack-extended-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la merienda horario extendido es requerida"
             },
             "snack-at-risk": {
                 "label": "Merienda en Riesgo",
-                "placeholder": "Merienda en Riesgo"
+                "placeholder": "Merienda en Riesgo",
+                "required": "La merienda en riesgo es requerida"
             },
             "snack-at-risk-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda en riesgo es requerida"
             },
             "snack-at-risk-to": {
                 "label": "Hasta",
-                "placeholder": "Hasta"
+                "placeholder": "Hasta",
+                "required": "La hora de fin de la merienda en riesgo es requerida"
             },
             "pacna-fields": {
                 "title": "Campos Específicos para PACNA",
@@ -1157,24 +1218,33 @@
                 "organized-athletic-programs": {
                     "label": "¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
                 },
                 "at-risk-service": {
                     "label": "¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
                 },
                 "public-alliance-contract": {
                     "label": "De poseer un contrato Público Alianza, especifique su modalidad",
                     "placeholder": "Seleccione una opción",
-                    "required": "Este campo es requerido para PACNA"
+                    "required": "Este campo es requerido"
+                },
+                "is-affiliated-center": {
+                    "label": "¿Es un centro o institución afiliada?",
+                    "placeholder": "Seleccione una opción",
+                    "required": "Este campo es requerido"
                 },
                 "validation": {
                     "both-true-error": "Los sitios con programas atléticos organizados y servicio en riesgo no son elegibles para PACNA",
                     "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "¿Es un centro o institución afiliada?",
+                "placeholder": "Seleccione una opción",
+                "required": "Este campo es requerido"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -1471,7 +1541,7 @@
                 "day-events": {
                     "title": "Eventos del día",
                     "totalEvents": "Total de eventos",
-                    "addService": "Agregar Evento",
+                    "addService": "Agregar Servicio",
                     "addEvent": "Agregar Evento"
                 }
             },

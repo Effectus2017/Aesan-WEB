@@ -117,7 +117,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
       formatter: (val: number) => val.toString()
     },
     xaxis: {
-      categories: rationsByMonthData.map(item => item.month),
+      categories: [], // Se llenará dinámicamente con traducciones
       min: 0,
       max: 200,
       tickAmount: 4
@@ -145,7 +145,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
       type: 'pie',
       height: 350
     },
-    labels: coordinatedVisitsData.map(item => item.name),
+    labels: [], // Se llenará dinámicamente con traducciones
     dataLabels: {
       enabled: true,
       formatter: (val: number) => `${val.toFixed(1)}%`
@@ -194,22 +194,14 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
       this.userName = nameParts.length > 0 ? nameParts.join(' ') : 'Usuario';
     }
 
-    // Formatear fecha actual
-    const now = DateTime.now();
-    const days = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'];
-    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    const dayName = days[now.weekday - 1];
-    const monthName = months[now.month - 1];
-    this.currentDate = `${dayName} ${now.day} de ${monthName} de ${now.year}`;
-
-    // Actualizar headerConfig con el nombre del usuario y la fecha
+    // Actualizar headerConfig con el nombre del usuario
     this.headerConfig.agency = this.userName;
-    this._translocoService.selectTranslate('agency.dashboard.today')
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(translation => {
-        this.headerConfig.subtitle = `${translation} ${this.currentDate}`;
-        this._changeDetectorRef.detectChanges();
-      });
+    
+    // Formatear y actualizar fecha según el idioma activo
+    this._updateDate();
+
+    // Suscribirse a cambios de idioma para actualizar todos los elementos traducibles
+    this._updateTranslationsOnLangChange();
 
     // Traducir títulos de los gráficos
     this._translocoService.selectTranslate('agency.dashboard.charts.rationsByMonth')
@@ -230,6 +222,12 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
         }
       });
 
+    // Traducir meses del gráfico de raciones
+    this._updateRationsChartLabels();
+    
+    // Traducir tipos de visita del gráfico de pie
+    this._updateVisitsChartLabels();
+
     // Inicializar datos de la tabla de formularios
     this.tableConfig.dataSource.data = agencyDashboardTableData;
     this.tableConfig.length = agencyDashboardTableData.length;
@@ -245,6 +243,76 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     }
 
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Actualiza la fecha formateada según el idioma activo
+   */
+  private _updateDate(): void {
+    const now = DateTime.now();
+    const currentLang = this._translocoService.getActiveLang() || 'es';
+    const locale = currentLang === 'es' ? 'es-PR' : 'en-US';
+    
+    // Formatear fecha usando Intl.DateTimeFormat para respetar el idioma
+    const formatter = new Intl.DateTimeFormat(locale, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    
+    this.currentDate = formatter.format(now.toJSDate());
+
+    // Actualizar headerConfig con la fecha traducida
+    this._translocoService.selectTranslate('agency.dashboard.today')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(translation => {
+        this.headerConfig.subtitle = `${translation} ${this.currentDate}`;
+        this._changeDetectorRef.detectChanges();
+      });
+  }
+
+  /**
+   * Actualiza las etiquetas del gráfico de raciones con traducciones
+   */
+  private _updateRationsChartLabels(): void {
+    this._translocoService.selectTranslateObject('agency.dashboard.months')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(translations => {
+        if (this.rationsChartOptions.xaxis) {
+          this.rationsChartOptions.xaxis.categories = rationsByMonthData.map(item => 
+            translations[item.monthKey] || item.monthKey
+          );
+          this._changeDetectorRef.detectChanges();
+        }
+      });
+  }
+
+  /**
+   * Actualiza las etiquetas del gráfico de visitas con traducciones
+   */
+  private _updateVisitsChartLabels(): void {
+    this._translocoService.selectTranslateObject('agency.dashboard.visitTypes')
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(translations => {
+        this.visitsChartOptions.labels = coordinatedVisitsData.map(item => 
+          translations[item.nameKey] || item.nameKey
+        );
+        this._changeDetectorRef.detectChanges();
+      });
+  }
+
+  /**
+   * Actualiza todos los elementos traducibles cuando cambia el idioma
+   */
+  private _updateTranslationsOnLangChange(): void {
+    this._translocoService.langChanges$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._updateDate();
+        this._updateRationsChartLabels();
+        this._updateVisitsChartLabels();
+      });
   }
 
   /**

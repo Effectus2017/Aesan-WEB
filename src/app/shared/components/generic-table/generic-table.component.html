@@ -55,7 +55,7 @@
         (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
       />
       } @case ('date') {
-      {{ col.key ? (getNestedValue(element, col.key) | date : "yyyy-MM-dd") : '' }}
+      {{ col.key ? (getNestedValue(element, col.key) | date : "MM/dd/yyyy") : '' }}
       } @case ('date-time') {
       {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
       } @case ('text') {
@@ -288,7 +288,7 @@
           (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
         />
         } @case ('date') {
-        {{ col.key ? (getNestedValue(element, col.key) | date : "yyyy-MM-dd") : '' }}
+        {{ col.key ? (getNestedValue(element, col.key) | date : "MM/dd/yyyy") : '' }}
         } @case ('date-time') {
         {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
         } @case ('text') {
