@@ -87,6 +87,9 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
+import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
+import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
+import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 
@@ -866,11 +869,11 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   private setupFormListeners(): void {
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
@@ -910,7 +913,14 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
-      this.updateCenterTypeFieldVisibility(organizationType);
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
+        this.headerConfig.formGroup,
+        organizationType,
+        'centerType',
+        this._changeDetectorRef,
+        (disabled) => { this.headerConfig.submitDisabled = disabled; }
+      );
+      this.showCenterTypeField = result.showCenterTypeField;
       this._changeDetectorRef.detectChanges();
     });
 
@@ -964,8 +974,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         fromControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
             this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
             // Forzar detección de cambios para actualizar las opciones en el template
             this._changeDetectorRef.detectChanges();
@@ -975,8 +985,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         toControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
             this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
           });
       }
@@ -1008,8 +1018,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // Filtrar opciones dentro del rango
     return this.timeOptions.filter(option => {
       const optionMinutes = timeToMinutes(option.value);
-      const startMinutes = timeToMinutes(operatingStartTime);
-      const endMinutes = timeToMinutes(operatingEndTime);
+      const startMinutes = dateToMinutes(operatingStartTime);
+      const endMinutes = dateToMinutes(operatingEndTime);
       return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
     });
   }
@@ -1036,74 +1046,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
    * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
    */
-  private validateAndAdjustTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
-
-    if (!fromTime) {
-      return;
-    }
-
-    if (!toTime) {
-      // Si no hay hora "hasta", establecer la siguiente hora válida
-      const nextValidTime = this.getNextValidTime(fromTime);
-      toControl.setValue(nextValidTime, { emitEvent: false });
-      return;
-    }
-
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
-
-    // Si la hora "hasta" es menor o igual a "desde", ajustarla
-    if (toMinutes <= fromMinutes) {
-      const nextValidTime = this.getNextValidTime(fromTime);
-      toControl.setValue(nextValidTime, { emitEvent: false });
-    }
-  }
-
-  /**
-   * Obtiene la siguiente hora válida (30 minutos después de la hora "desde")
-   */
-  private getNextValidTime(fromTime: Date): Date {
-    const nextTime = new Date(fromTime);
-    nextTime.setMinutes(nextTime.getMinutes() + 30);
-    // Si se pasa de medianoche, establecer a las 23:30
-    if (nextTime.getDate() !== fromTime.getDate()) {
-      nextTime.setHours(23);
-      nextTime.setMinutes(30);
-    }
-    return nextTime;
-  }
-
-  /**
-   * Valida que la hora "hasta" sea mayor que la hora "desde"
-   */
-  private validateTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
-
-    if (!fromTime || !toTime) {
-      toControl.setErrors(null);
-      return;
-    }
-
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
-
-    if (toMinutes <= fromMinutes) {
-      toControl.setErrors({ timeRangeInvalid: true });
-    } else {
-      // Si hay otros errores, mantenerlos, si no, limpiar
-      const currentErrors = toControl.errors;
-      if (currentErrors && Object.keys(currentErrors).length > 1) {
-        delete currentErrors['timeRangeInvalid'];
-        toControl.setErrors(Object.keys(currentErrors).length > 0 ? currentErrors : null);
-      } else {
-        toControl.setErrors(null);
-      }
-    }
-    toControl.updateValueAndValidity({ emitEvent: false });
-  }
 
   /**
    * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
@@ -1216,7 +1158,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
    */
   private revalidateAllServiceTimes(): void {
-    const services = [
+    const services: ServiceConfig[] = [
       { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
       { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
       { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
@@ -1229,103 +1171,16 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
     ];
 
-    services.forEach(({ service, from, to }) => {
-      const serviceControl = this.headerConfig.formGroup.get(service);
-      const fromControl = this.headerConfig.formGroup.get(from);
-      const toControl = this.headerConfig.formGroup.get(to);
-
-      if (serviceControl && fromControl && toControl && serviceControl.value === true) {
-        // Revalidar solo si el servicio está activo
-        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl, serviceControl);
+    TimeValidationUtil.revalidateAllServiceTimes(
+      this.headerConfig.formGroup,
+      services,
+      (serviceValue, fromControl, toControl, serviceControl) => {
+        this.updateServiceTimeValidations(serviceValue, fromControl, toControl, serviceControl);
       }
-    });
+    );
   }
 
   // Manejar cambio de non-profit para programa PDAM
-  private calculateOperatingDays(): void {
-    const fromDateValue = this.headerConfig.formGroup.get('operatingFromDate')?.value;
-    const toDateValue = this.headerConfig.formGroup.get('operatingToDate')?.value;
-
-    if (fromDateValue && toDateValue) {
-      try {
-        // Convert form values to Date objects if they aren't already
-        const fromDate = fromDateValue instanceof Date ? fromDateValue : new Date(fromDateValue);
-        const toDate = toDateValue instanceof Date ? toDateValue : new Date(toDateValue);
-
-        // Validate that the conversion was successful
-        if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {
-          console.warn('Invalid date values provided for operating days calculation');
-          this.headerConfig.formGroup.patchValue({
-            operatingDaysCalculated: null,
-          });
-          return;
-        }
-
-        const workingDays = this.calculateWorkingDays(fromDate, toDate);
-
-        this.headerConfig.formGroup.patchValue({
-          operatingDaysCalculated: workingDays,
-        });
-      } catch (error) {
-        console.error('Error calculating working days:', error);
-        this.headerConfig.formGroup.patchValue({
-          operatingDaysCalculated: null,
-        });
-      }
-    } else {
-      this.headerConfig.formGroup.patchValue({
-        operatingDaysCalculated: null,
-      });
-    }
-  }
-
-  /**
-   * Calcula los días laborables entre dos fechas (excluyendo fines de semana)
-   * @param startDate Fecha de inicio
-   * @param endDate Fecha de fin
-   * @returns Número de días laborables
-   */
-  private calculateWorkingDays(startDate: Date, endDate: Date): number {
-    // Validar que los parámetros sean Date objects válidos
-    if (!startDate || !endDate || !(startDate instanceof Date) || !(endDate instanceof Date)) {
-      console.warn('Invalid Date objects provided to calculateWorkingDays');
-      return 0;
-    }
-
-    // Validar fechas
-    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      console.warn('Invalid date values provided to calculateWorkingDays');
-      return 0;
-    }
-
-    // Normalizar fechas a medianoche para evitar problemas de zona horaria
-    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-    // Asegurar que las fechas estén en el orden correcto
-    const [earlier, later] = start <= end ? [start, end] : [end, start];
-
-    // Calcular semanas completas para optimización
-    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    const fullWeeks = Math.floor(totalDays / 7);
-    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
-
-    // Calcular días restantes
-    const remainingDays = totalDays % 7;
-    const startDayOfWeek = earlier.getDay();
-    let remainingWorkingDays = 0;
-
-    for (let i = 0; i < remainingDays; i++) {
-      const dayOfWeek = (startDayOfWeek + i) % 7;
-      // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
-      // Excluir sábado (6) y domingo (0)
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        remainingWorkingDays++;
-      }
-    }
-
-    return workingDaysInFullWeeks + remainingWorkingDays;
-  }
 
   /**
    * Valida si el sitio tiene al menos un año de servicio
@@ -1701,7 +1556,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     this.satellitesTableConfig.length = param.satellites?.length || 0;
 
     // Calcular días operativos automáticamente si es necesario
-    this.calculateOperatingDaysIfNeeded();
+    DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.headerConfig.formGroup);
 
     // Actualizar el estado del botón después de cargar todos los datos
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
@@ -1712,17 +1567,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Calcula los días operativos automáticamente si es necesario
    * Calculates operating days automatically if needed
    */
-  private calculateOperatingDaysIfNeeded(): void {
-    const operatingDaysCalculated = this.headerConfig.formGroup.get('operatingDaysCalculated')?.value;
-    const operatingFromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
-    const operatingToDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
-
-    // Si operatingDaysCalculated es null, 0 o undefined, pero existen las fechas, calcular automáticamente
-    if ((operatingDaysCalculated === null || operatingDaysCalculated === 0 || operatingDaysCalculated === undefined) &&
-        operatingFromDate && operatingToDate) {
-      this.calculateOperatingDays();
-    }
-  }
 
   /**
    * Envía el formulario de edición de escuela
@@ -2536,41 +2380,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   /**
    * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
    */
-  private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
-    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-
-    if (organizationType) {
-      this.showCenterTypeField = organizationType.requiresCenterType;
-
-      // Si no requiere tipo de centro, limpiar el valor y remover validación requerida
-      if (!organizationType.requiresCenterType) {
-        centerTypeControl?.setValue(null);
-        centerTypeControl?.clearValidators();
-        centerTypeControl?.updateValueAndValidity();
-      } else {
-        // Si requiere tipo de centro, agregar validación requerida
-        centerTypeControl?.setValidators([Validators.required]);
-        centerTypeControl?.updateValueAndValidity();
-      }
-
-      // Habilitar Tipo de Institución Residencial cuando el tipo de organización es "Institución Residencial"
-      this.showResidentialTypeField = organizationType.name === 'Institución Residencial' || organizationType.nameEN === 'Residential Institution';
-
-      // Si no es Institución Residencial, limpiar el valor del campo
-      if (!this.showResidentialTypeField) {
-        this.headerConfig.formGroup.get('typeOfResidential')?.setValue(null);
-      }
-    } else {
-      this.showCenterTypeField = false;
-      this.showResidentialTypeField = false;
-      centerTypeControl?.clearValidators();
-      centerTypeControl?.updateValueAndValidity();
-    }
-
-    // Actualizar el estado del botón después de cambiar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
 
   /**
    * Maneja el cambio del campo "¿Ofrece servicio a diferentes grupos de niños?"

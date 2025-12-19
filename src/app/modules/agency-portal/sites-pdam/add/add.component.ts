@@ -82,6 +82,9 @@ import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zi
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
+import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
+import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
+import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 
 @Component({
@@ -814,11 +817,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   private setupFormListeners(): void {
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
-      this.calculateOperatingDays();
+      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
@@ -836,7 +839,14 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
-      this.updateCenterTypeFieldVisibility(organizationType);
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
+        this.headerConfig.formGroup,
+        organizationType,
+        'centerType',
+        this._changeDetectorRef,
+        (disabled) => { this.headerConfig.submitDisabled = disabled; }
+      );
+      this.showCenterTypeField = result.showCenterTypeField;
       this._changeDetectorRef.detectChanges();
     });
 
@@ -891,8 +901,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         fromControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
             // Forzar detección de cambios para actualizar las opciones en el template
             this._changeDetectorRef.detectChanges();
           });
@@ -901,8 +911,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         toControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            this.validateAndAdjustTimeRange(fromControl, toControl);
-            this.validateTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
           });
       }
     });
@@ -930,8 +940,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Filtrar opciones dentro del rango
     return this.timeOptions.filter(option => {
       const optionMinutes = timeToMinutes(option.value);
-      const startMinutes = timeToMinutes(operatingStartTime);
-      const endMinutes = timeToMinutes(operatingEndTime);
+      const startMinutes = dateToMinutes(operatingStartTime);
+      const endMinutes = dateToMinutes(operatingEndTime);
       return optionMinutes >= startMinutes && optionMinutes <= endMinutes;
     });
   }
@@ -961,74 +971,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
    * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
    * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
    */
-  private validateAndAdjustTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
-
-    if (!fromTime) {
-      return;
-    }
-
-    if (!toTime) {
-      // Si no hay hora "hasta", establecer la siguiente hora válida
-      const nextValidTime = this.getNextValidTime(fromTime);
-      toControl.setValue(nextValidTime, { emitEvent: false });
-      return;
-    }
-
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
-
-    // Si la hora "hasta" es menor o igual a "desde", ajustarla
-    if (toMinutes <= fromMinutes) {
-      const nextValidTime = this.getNextValidTime(fromTime);
-      toControl.setValue(nextValidTime, { emitEvent: false });
-    }
-  }
-
-  /**
-   * Obtiene la siguiente hora válida (30 minutos después de la hora "desde")
-   */
-  private getNextValidTime(fromTime: Date): Date {
-    const nextTime = new Date(fromTime);
-    nextTime.setMinutes(nextTime.getMinutes() + 30);
-    // Si se pasa de medianoche, establecer a las 23:30
-    if (nextTime.getDate() !== fromTime.getDate()) {
-      nextTime.setHours(23);
-      nextTime.setMinutes(30);
-    }
-    return nextTime;
-  }
-
-  /**
-   * Valida que la hora "hasta" sea mayor que la hora "desde"
-   */
-  private validateTimeRange(fromControl: AbstractControl, toControl: AbstractControl): void {
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
-
-    if (!fromTime || !toTime) {
-      toControl.setErrors(null);
-      return;
-    }
-
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
-
-    if (toMinutes <= fromMinutes) {
-      toControl.setErrors({ timeRangeInvalid: true });
-    } else {
-      // Si hay otros errores, mantenerlos, si no, limpiar
-      const currentErrors = toControl.errors;
-      if (currentErrors && Object.keys(currentErrors).length > 1) {
-        delete currentErrors['timeRangeInvalid'];
-        toControl.setErrors(Object.keys(currentErrors).length > 0 ? currentErrors : null);
-      } else {
-        toControl.setErrors(null);
-      }
-    }
-    toControl.updateValueAndValidity({ emitEvent: false });
-  }
 
   /**
    * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
@@ -1061,42 +1003,23 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     fromControl: AbstractControl,
     toControl: AbstractControl
   ): void {
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
-    if (serviceValue === true) {
-      // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
-      const fromValidators = [Validators.required];
-      const toValidators = [Validators.required];
-
-      // Agregar validador de rango si hay horas de funcionamiento configuradas
-      if (operatingStartTime && operatingEndTime) {
-        fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
-        toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
-      }
-
-      fromControl.setValidators(fromValidators);
-      toControl.setValidators(toValidators);
-    } else {
-      // Si el servicio está en "No" o null, remover validaciones requeridas
-      fromControl.clearValidators();
-      toControl.clearValidators();
-    }
-
-    fromControl.updateValueAndValidity({ emitEvent: false });
-    toControl.updateValueAndValidity({ emitEvent: false });
-
-    // Actualizar el estado del botón de guardar después de cambiar las validaciones
-    // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
+    TimeValidationUtil.updateServiceTimeValidations(
+      this.headerConfig.formGroup,
+      serviceValue,
+      fromControl,
+      toControl,
+      'operatingStartTime',
+      'operatingEndTime',
+      this._changeDetectorRef,
+      (disabled) => { this.headerConfig.submitDisabled = disabled; }
+    );
   }
 
   /**
    * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
    */
   private revalidateAllServiceTimes(): void {
-    const services = [
+    const services: ServiceConfig[] = [
       { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
       { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
       { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
@@ -1109,16 +1032,13 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
     ];
 
-    services.forEach(({ service, from, to }) => {
-      const serviceControl = this.headerConfig.formGroup.get(service);
-      const fromControl = this.headerConfig.formGroup.get(from);
-      const toControl = this.headerConfig.formGroup.get(to);
-
-      if (serviceControl && fromControl && toControl && serviceControl.value === true) {
-        // Revalidar solo si el servicio está activo
-        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+    TimeValidationUtil.revalidateAllServiceTimes(
+      this.headerConfig.formGroup,
+      services,
+      (serviceValue, fromControl, toControl) => {
+        this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
       }
-    });
+    );
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -1153,100 +1073,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     }
   }
 
-  private calculateOperatingDays(): void {
-    const fromDate = this.headerConfig.formGroup.get('operatingFromDate')?.value;
-    const toDate = this.headerConfig.formGroup.get('operatingToDate')?.value;
-
-    if (fromDate && toDate) {
-      try {
-        const workingDays = this.calculateWorkingDays(fromDate, toDate);
-
-        this.headerConfig.formGroup.patchValue({
-          operatingDaysCalculated: workingDays,
-        });
-      } catch (error) {
-        console.error('Error calculating working days:', error);
-        this.headerConfig.formGroup.patchValue({
-          operatingDaysCalculated: null,
-        });
-      }
-    } else {
-      this.headerConfig.formGroup.patchValue({
-        operatingDaysCalculated: null,
-      });
-    }
-  }
-
-  /**
-   * Actualiza la visibilidad del campo Tipo de Centro basado en el tipo de organización seleccionado
-   */
-  private updateCenterTypeFieldVisibility(organizationType: OrganizationType): void {
-    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-
-    if (organizationType) {
-      this.showCenterTypeField = organizationType.requiresCenterType;
-
-      // Si no requiere tipo de centro, limpiar el valor y remover validación requerida
-      if (!organizationType.requiresCenterType) {
-        centerTypeControl?.setValue(null);
-        centerTypeControl?.clearValidators();
-        centerTypeControl?.updateValueAndValidity();
-      } else {
-        // Si requiere tipo de centro, agregar validación requerida
-        centerTypeControl?.setValidators([Validators.required]);
-        centerTypeControl?.updateValueAndValidity();
-      }
-    } else {
-      this.showCenterTypeField = false;
-      centerTypeControl?.clearValidators();
-      centerTypeControl?.updateValueAndValidity();
-    }
-
-    // Actualizar el estado del botón después de cambiar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
-   * Calcula los días laborables entre dos fechas (excluyendo fines de semana)
-   * @param startDate Fecha de inicio
-   * @param endDate Fecha de fin
-   * @returns Número de días laborables
-   */
-  private calculateWorkingDays(startDate: Date, endDate: Date): number {
-    // Validar fechas
-    if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-      return 0;
-    }
-
-    // Normalizar fechas a medianoche para evitar problemas de zona horaria
-    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
-
-    // Asegurar que las fechas estén en el orden correcto
-    const [earlier, later] = start <= end ? [start, end] : [end, start];
-
-    // Calcular semanas completas para optimización
-    const totalDays = Math.floor((later.getTime() - earlier.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-    const fullWeeks = Math.floor(totalDays / 7);
-    const workingDaysInFullWeeks = fullWeeks * 5; // 5 días laborables por semana
-
-    // Calcular días restantes
-    const remainingDays = totalDays % 7;
-    const startDayOfWeek = earlier.getDay();
-    let remainingWorkingDays = 0;
-
-    for (let i = 0; i < remainingDays; i++) {
-      const dayOfWeek = (startDayOfWeek + i) % 7;
-      // Contar solo días laborables (lunes = 1, martes = 2, ..., viernes = 5)
-      // Excluir sábado (6) y domingo (0)
-      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-        remainingWorkingDays++;
-      }
-    }
-
-    return workingDaysInFullWeeks + remainingWorkingDays;
-  }
 
   /**
    * Valida si el sitio tiene al menos un año de servicio
