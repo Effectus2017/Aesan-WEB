@@ -473,7 +473,11 @@
                     "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "¿Es un centro o institución afiliada?",
+                "placeholder": "Seleccione una opción",
+                "required": "Este campo es requerido"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"
@@ -1236,7 +1240,11 @@
                     "one-true-warning": "Este sitio puede tener restricciones adicionales en PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "¿Es un centro o institución afiliada?",
+                "placeholder": "Seleccione una opción",
+                "required": "Este campo es requerido"
+            },
             "satellites": {
                 "label": "Sitios Satélites",
                 "description": "Lista de sitios satélites asociados a este sitio principal"

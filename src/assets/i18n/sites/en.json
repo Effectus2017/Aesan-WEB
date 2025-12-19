@@ -465,7 +465,11 @@
                     "one-true-warning": "This site may have additional restrictions in PACNA"
                 }
             },
-
+            "is-affiliated-center": {
+                "label": "Is it an affiliated center or institution?",
+                "placeholder": "Select an option",
+                "required": "This field is required"
+            },
                 "description": "List of satellite sites associated with this main site"
             },
             "activate-deactivate": {
@@ -1260,6 +1264,11 @@
                 "label": "At-Risk Snack To",
                 "placeholder": "At-Risk Snack To",
                 "required": "At-Risk Snack end time is required"
+            },
+            "is-affiliated-center": {
+                "label": "Is it an affiliated center or institution?",
+                "placeholder": "Select an option",
+                "required": "This field is required"
             },
             "satellites": {
                 "label": "Satellite Sites",
