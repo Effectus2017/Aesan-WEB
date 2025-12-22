@@ -58,6 +58,7 @@ import { PermissionRequestDialogComponent } from '../../../../shared/components/
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
+import { PROGRAM_IDS } from 'app/shared/const';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -249,6 +250,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -436,6 +440,13 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+
   // School-related properties
   schoolId: number | null = null;
 
@@ -450,6 +461,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return nameA.localeCompare(nameB);
     });
   }
+
 
   constructor() {}
 
@@ -504,6 +516,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar días permitidos desde el resolver
+      if (resolvedData?.allowedOperatingDays) {
+        this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      }
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
@@ -880,6 +897,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? null,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,

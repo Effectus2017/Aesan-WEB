@@ -17,6 +17,7 @@ import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 
 // Resolver para la lista de sitios PACNA
@@ -98,6 +99,9 @@ export const initialDataSitesPacnaAddResolver: ResolveFn<any> = (route: Activate
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -145,6 +149,8 @@ export const initialDataSitesPacnaAddResolver: ResolveFn<any> = (route: Activate
     sponsorTypeService.getSponsorTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
+    // Obtener días permitidos para PACNA
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
   ]).pipe(
     map(([
       options,
@@ -161,6 +167,7 @@ export const initialDataSitesPacnaAddResolver: ResolveFn<any> = (route: Activate
       filteredSponsorTypes,
       filteredGroupTypes,
       filteredOrganizationTypes,
+      allowedOperatingDays,
     ]) => ({
       options: options.body,
       kitchenTypes: kitchenTypes.body,
@@ -175,6 +182,7 @@ export const initialDataSitesPacnaAddResolver: ResolveFn<any> = (route: Activate
       deliveryTypes: filteredDeliveryTypes.body,
       centerTypes: filteredCenterTypes.body,
       areaTypes: areaTypes.body,
+      allowedOperatingDays: allowedOperatingDays.body,
     }))
   );
 };
@@ -225,6 +233,9 @@ export const initialDataSitesPacnaEditResolver: ResolveFn<any> = (route: Activat
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud

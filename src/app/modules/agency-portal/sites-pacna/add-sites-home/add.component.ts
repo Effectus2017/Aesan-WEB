@@ -325,6 +325,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -608,6 +611,11 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+
   // School-related properties
   schoolId: number | null = null;
   childGroups: SiteChildGroupRequest[] = [];
@@ -743,7 +751,10 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
-
+      // Cargar días permitidos desde el resolver
+      if (resolvedData?.allowedOperatingDays) {
+        this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      }
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
@@ -796,8 +807,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         }
       }
 
-      // Determinar qué campos mostrar según los programas
-      this.determineVisibleFields(programs);
+      // Configurar validaciones y listeners
+      this.updateValidations();
+      this.setupGroupTypeListener();
     }
 
     // Transloco
@@ -1081,10 +1093,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(programs: any[]): void {
 
-    this.updateValidations();
-
+  private setupGroupTypeListener(): void {
     // Listener para cambios en groupType que afectan distributionType y siteLocation
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
@@ -1098,10 +1108,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         }
       }
       this._changeDetectorRef.detectChanges();
-      this._changeDetectorRef.detectChanges();
     });
-
-    this._changeDetectorRef.detectChanges();
   }
 
   private updateValidations(): void {
@@ -1461,6 +1468,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? null,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,

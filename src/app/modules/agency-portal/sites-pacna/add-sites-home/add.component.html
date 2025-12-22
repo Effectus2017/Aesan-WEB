@@ -446,6 +446,27 @@
           </mat-form-field>
         </div>
 
+        <!-- Días de la semana en que opera el sitio -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <mat-form-field data-cy="operating-days-of-week-field">
+            <mat-label>{{ "sites.add.operating-days-of-week.label" | transloco }}</mat-label>
+            <mat-select
+              [formControlName]="'operatingDaysOfWeek'"
+              multiple
+              required
+              data-cy="operating-days-of-week-select"
+            >
+              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day.id" data-cy="operating-day-option-{{day.id}}">
+                {{ (currentLang === 'en' ? day.nameEN : day.name) }}
+              </mat-option>
+            </mat-select>
+            <mat-hint>{{ "sites.add.operating-days-of-week.description" | transloco }}</mat-hint>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingDaysOfWeek')?.hasError('required')">
+              {{ "sites.add.operating-days-of-week.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
         <!-- Horas de funcionamiento -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
           <mat-form-field data-cy="operating-start-time-field">

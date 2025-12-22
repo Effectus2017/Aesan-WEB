@@ -57,6 +57,7 @@ export interface Site {
   operatingFromDate?: string;
   operatingToDate?: string;
   operatingDaysCalculated?: number;
+  operatingDaysOfWeek?: number[];
   operatingStartTime?: string;
   operatingEndTime?: string;
 

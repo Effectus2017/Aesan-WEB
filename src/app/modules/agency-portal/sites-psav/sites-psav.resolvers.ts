@@ -15,6 +15,7 @@ import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 // Resolver para la lista de sitios PSAV
 export const initialDataSitesPsavListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
@@ -77,6 +78,9 @@ export const initialDataSitesPsavAddResolver: ResolveFn<any> = (route: Activated
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -122,6 +126,8 @@ export const initialDataSitesPsavAddResolver: ResolveFn<any> = (route: Activated
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
+    // Obtener días permitidos para PSAV
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PSAV }),
   ]).pipe(
     map(([
       options,
@@ -136,6 +142,7 @@ export const initialDataSitesPsavAddResolver: ResolveFn<any> = (route: Activated
       filteredDeliveryTypes,
       filteredGroupTypes,
       filteredOrganizationTypes,
+      allowedOperatingDays,
     ]) => ({
       options: options.body,
       kitchenTypes: kitchenTypes.body,
@@ -150,6 +157,7 @@ export const initialDataSitesPsavAddResolver: ResolveFn<any> = (route: Activated
       deliveryTypes: filteredDeliveryTypes.body,
       centerTypes: [], // PSAV no tiene centerTypes
       areaTypes: areaTypes.body,
+      allowedOperatingDays: allowedOperatingDays.body,
     }))
   );
 };
@@ -194,6 +202,9 @@ export const initialDataSitesPsavEditResolver: ResolveFn<any> = (route: Activate
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -242,6 +253,8 @@ export const initialDataSitesPsavEditResolver: ResolveFn<any> = (route: Activate
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
+    // Obtener días permitidos para PSAV
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PSAV }),
   ]).pipe(
     map(([
       site,
@@ -257,6 +270,7 @@ export const initialDataSitesPsavEditResolver: ResolveFn<any> = (route: Activate
       filteredDeliveryTypes,
       filteredGroupTypes,
       filteredOrganizationTypes,
+      allowedOperatingDays,
     ]) => ({
       site: site.body,
       options: options.body,
@@ -272,6 +286,7 @@ export const initialDataSitesPsavEditResolver: ResolveFn<any> = (route: Activate
       deliveryTypes: filteredDeliveryTypes.body,
       centerTypes: [], // PSAV no tiene centerTypes
       areaTypes: areaTypes.body,
+      allowedOperatingDays: allowedOperatingDays.body,
     }))
   );
 };

@@ -188,6 +188,18 @@
                 "required": "La fecha hasta es requerida",
                 "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
             },
+            "operating-days-of-week": {
+                "label": "Días de Operación",
+                "description": "Seleccione los días de la semana en que operará el sitio",
+                "required": "Debe seleccionar al menos un día de operación",
+                "monday": "Lunes",
+                "tuesday": "Martes",
+                "wednesday": "Miércoles",
+                "thursday": "Jueves",
+                "friday": "Viernes",
+                "saturday": "Sábado",
+                "sunday": "Domingo"
+            },
             "operating-days-calculated": {
                 "label": "Total de Días de Funcionamiento",
                 "placeholder": "Total de días calculados de funcionamiento",

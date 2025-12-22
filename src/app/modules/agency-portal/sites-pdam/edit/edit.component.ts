@@ -289,6 +289,11 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
 
@@ -433,6 +438,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -852,12 +860,11 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
             : false;
         }
 
-        // Determinar qué campos mostrar según los programas
-        this.determineVisibleFields(programs);
-
+        // Configurar validaciones
         // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
         // para asegurar que las validaciones se apliquen correctamente
         this.updateValidations();
+        this.updatePersonInChargeValidations();
       }
     });
 
@@ -1263,21 +1270,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(programs: any[]): void {
-    this.isPDAM = programs.some((p) => p.id === PROGRAM_IDS.PDAM);
-    this.isPSAV = programs.some((p) => p.id === PROGRAM_IDS.PSAV);
-    this.isPACNA = programs.some((p) => p.id === PROGRAM_IDS.PACNA);
-    this.isPFHF = programs.some((p) => p.id === PROGRAM_IDS.PFHF);
-    this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
-    this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
-
-    // Actualizar validaciones de personInCharge según el programa
-    this.updatePersonInChargeValidations();
-
-    // updateValidations() se ejecuta después en la suscripción a agency$
-    this._changeDetectorRef.detectChanges();
-  }
-
   /**
    * Actualiza las validaciones de personInCharge según el programa
    * Solo se valida cuando isPDAM o isPSAV es true
@@ -1327,6 +1319,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       });
     }
   }
+
 
   private updateValidations(): void {
     // Si es Day Care Home, remover todas las validaciones requeridas
@@ -1533,6 +1526,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       operatingDaysCalculated: param.operatingDaysCalculated,
       operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
       operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
+      operatingDaysOfWeek: param.operatingDaysOfWeek || [],
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
@@ -1783,6 +1777,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       operatingFromDate: formValues.operatingFromDate ?? null,
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? [],
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,

@@ -118,6 +118,9 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -196,14 +199,16 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
           // Si tiene PDAM, usar el primer programa PDAM encontrado
           const pdamProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PDAM);
           if (pdamProgram) {
+            const siteCalendarService = inject(SiteCalendarService);
             return forkJoin([
               centerTypeService.getCenterTypesByProgram({ programId: pdamProgram.id }),
               deliveryTypeService.getDeliveryTypesByProgram({ programId: pdamProgram.id }),
               sponsorTypeService.getSponsorTypesByProgram({ programId: pdamProgram.id }),
               groupTypeService.getGroupTypesByProgram({ programId: pdamProgram.id }),
               organizationTypeService.getOrganizationTypesByProgram({ programId: pdamProgram.id }),
+              siteCalendarService.getAllowedDaysByProgramId({ programId: pdamProgram.id }),
             ]).pipe(
-              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
+              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes, allowedOperatingDays]) => ({
                 options: options.body,
                 kitchenTypes: kitchenTypes.body,
                 siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
@@ -219,6 +224,7 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                 centerTypes: filteredCenterTypes.body,
                 areaTypes: areaTypes.body,
                 programs: programs,
+                allowedOperatingDays: allowedOperatingDays.body,
               }))
             );
           } else {
@@ -252,14 +258,16 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
               // Si tiene PACNA, usar el primer programa PACNA encontrado
               const pacnaProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PACNA);
               if (pacnaProgram) {
+                const siteCalendarService = inject(SiteCalendarService);
                 return forkJoin([
                   centerTypeService.getCenterTypesByProgram({ programId: pacnaProgram.id }),
                   deliveryTypeService.getDeliveryTypesByProgram({ programId: pacnaProgram.id }),
                   sponsorTypeService.getSponsorTypesByProgram({ programId: pacnaProgram.id }),
                   groupTypeService.getGroupTypesByProgram({ programId: pacnaProgram.id }),
                   organizationTypeService.getOrganizationTypesByProgram({ programId: pacnaProgram.id }),
+                  siteCalendarService.getAllowedDaysByProgramId({ programId: pacnaProgram.id }),
                 ]).pipe(
-                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
+                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes, allowedOperatingDays]) => ({
                     options: options.body,
                     kitchenTypes: kitchenTypes.body,
                     groupTypes: filteredGroupTypes.body,
@@ -274,6 +282,7 @@ export const initialDataSitesAddResolver: ResolveFn<any> = (route: ActivatedRout
                     centerTypes: filteredCenterTypes.body,
                     areaTypes: areaTypes.body,
                     programs: programs,
+                    allowedOperatingDays: allowedOperatingDays.body,
                   }))
                 );
               }
@@ -358,6 +367,9 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
   // Auth service
   // Servicio de autenticación
   const authService = inject(AuthService);
+  // Site calendar service
+  // Servicio para calendario de sitios
+  const siteCalendarService = inject(SiteCalendarService);
 
   // Request parameters
   // Parámetros de la solicitud
@@ -437,14 +449,16 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
           // Si tiene PDAM, usar el primer programa PDAM encontrado
           const pdamProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PDAM);
           if (pdamProgram) {
+            const siteCalendarService = inject(SiteCalendarService);
             return forkJoin([
               centerTypeService.getCenterTypesByProgram({ programId: pdamProgram.id }),
               deliveryTypeService.getDeliveryTypesByProgram({ programId: pdamProgram.id }),
               sponsorTypeService.getSponsorTypesByProgram({ programId: pdamProgram.id }),
               groupTypeService.getGroupTypesByProgram({ programId: pdamProgram.id }),
               organizationTypeService.getOrganizationTypesByProgram({ programId: pdamProgram.id }),
+              siteCalendarService.getAllowedDaysByProgramId({ programId: pdamProgram.id }),
             ]).pipe(
-              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
+              map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes, allowedOperatingDays]) => ({
                 site: site.body,
                 options: options.body,
                 kitchenTypes: kitchenTypes.body,
@@ -461,6 +475,7 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                 centerTypes: filteredCenterTypes.body,
                 areaTypes: areaTypes.body,
                 programs: programs,
+                allowedOperatingDays: allowedOperatingDays.body,
               }))
             );
           } else {
@@ -471,8 +486,9 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                 groupTypeService.getGroupTypesByProgram({ programId: psavProgram.id }),
                 deliveryTypeService.getDeliveryTypesByProgram({ programId: psavProgram.id }),
                 organizationTypeService.getOrganizationTypesByProgram({ programId: psavProgram.id }),
+                siteCalendarService.getAllowedDaysByProgramId({ programId: psavProgram.id }),
               ]).pipe(
-                map(([filteredGroupTypes, filteredDeliveryTypes, filteredOrganizationTypes]) => ({
+                map(([filteredGroupTypes, filteredDeliveryTypes, filteredOrganizationTypes, allowedOperatingDays]) => ({
                   site: site.body,
                   options: options.body,
                   kitchenTypes: kitchenTypes.body,
@@ -489,20 +505,23 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                   centerTypes: [],
                   areaTypes: areaTypes.body,
                   programs: programs,
+                  allowedOperatingDays: allowedOperatingDays.body,
                 }))
               );
             } else {
               // Si tiene PACNA, usar el primer programa PACNA encontrado
               const pacnaProgram = programs.find((p: any) => p.id === PROGRAM_IDS.PACNA);
               if (pacnaProgram) {
+                const siteCalendarService = inject(SiteCalendarService);
                 return forkJoin([
                   centerTypeService.getCenterTypesByProgram({ programId: pacnaProgram.id }),
                   deliveryTypeService.getDeliveryTypesByProgram({ programId: pacnaProgram.id }),
                   sponsorTypeService.getSponsorTypesByProgram({ programId: pacnaProgram.id }),
                   groupTypeService.getGroupTypesByProgram({ programId: pacnaProgram.id }),
                   organizationTypeService.getOrganizationTypesByProgram({ programId: pacnaProgram.id }),
+                  siteCalendarService.getAllowedDaysByProgramId({ programId: pacnaProgram.id }),
                 ]).pipe(
-                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes]) => ({
+                  map(([filteredCenterTypes, filteredDeliveryTypes, filteredSponsorTypes, filteredGroupTypes, filteredOrganizationTypes, allowedOperatingDays]) => ({
                     site: site.body,
                     options: options.body,
                     kitchenTypes: kitchenTypes.body,
@@ -518,6 +537,7 @@ export const initialDataSitesEditResolver: ResolveFn<any> = (route: ActivatedRou
                     centerTypes: filteredCenterTypes.body,
                     areaTypes: areaTypes.body,
                     programs: programs,
+                    allowedOperatingDays: allowedOperatingDays.body,
                   }))
                 );
               }

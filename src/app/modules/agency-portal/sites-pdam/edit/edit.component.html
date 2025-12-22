@@ -478,6 +478,18 @@
 
         <!-- Horas de funcionamiento -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+          <mat-form-field data-cy="operating-days-of-week-field">
+            <mat-label>{{ "sites.operating-days-of-week.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'operatingDaysOfWeek'" required multiple data-cy="operating-days-of-week-select">
+              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day.id" data-cy="operating-days-of-week-option">
+                {{ currentLang === 'en' ? day.nameEN : day.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('operatingDaysOfWeek')?.hasError('required')">
+              {{ "sites.operating-days-of-week.required" | transloco }}
+            </mat-error>
+          </mat-form-field>
+
           <mat-form-field data-cy="operating-start-time-field">
             <mat-label>{{ "sites.edit.operating-start-time.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingStartTime'" required data-cy="operating-start-time-select" [compareWith]="compareByTimeWrapper">

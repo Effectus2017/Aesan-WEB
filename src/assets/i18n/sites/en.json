@@ -186,6 +186,18 @@
                 "required": "To date is required",
                 "description": "Date to when site operation ends"
             },
+            "operating-days-of-week": {
+                "label": "Operating Days",
+                "description": "Select the days of the week the site will operate",
+                "required": "You must select at least one operating day",
+                "monday": "Monday",
+                "tuesday": "Tuesday",
+                "wednesday": "Wednesday",
+                "thursday": "Thursday",
+                "friday": "Friday",
+                "saturday": "Saturday",
+                "sunday": "Sunday"
+            },
             "operating-days-calculated": {
                 "label": "Total Operating Days",
                 "placeholder": "Total calculated operating days",

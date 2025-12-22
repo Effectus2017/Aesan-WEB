@@ -75,6 +75,7 @@ import { ServiceByGroupDialogData } from 'app/shared/components/add-service-by-g
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-add-sites-center',
@@ -307,6 +308,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -587,6 +591,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+
   // School-related properties
   schoolId: number | null = null;
   childGroups: SiteChildGroupRequest[] = [];
@@ -672,6 +681,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
+      // Cargar días permitidos desde el resolver
+      if (resolvedData?.allowedOperatingDays) {
+        this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      }
+
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
       this._changeDetectorRef.markForCheck();
@@ -685,8 +699,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     if (agencyFromResolver) {
       this.agency = agencyFromResolver;
 
-      // Determinar qué campos mostrar según los programas
-      this.determineVisibleFields();
+      // Configurar validaciones y listeners
+      this.updateValidations();
+      this.setupGroupTypeListener();
     }
 
     // Transloco
@@ -941,10 +956,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(): void {
 
-    this.updateValidations();
-
+  private setupGroupTypeListener(): void {
     // Listener para cambios en groupType que afectan distributionType y siteLocation
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
@@ -958,10 +971,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         }
       }
       this._changeDetectorRef.detectChanges();
-      this._changeDetectorRef.detectChanges();
     });
-
-    this._changeDetectorRef.detectChanges();
   }
 
   private updateValidations(): void {
@@ -1153,6 +1163,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     const operatingToDate: string = formValues.operatingToDate;
     // Días de operación
     const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Días de la semana en que opera el sitio
+    // Days of the week the site operates
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek ?? null;
     // Horas de funcionamiento
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
@@ -1225,6 +1238,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: operatingDaysOfWeek ?? null,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,

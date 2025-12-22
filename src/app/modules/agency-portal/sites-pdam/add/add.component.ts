@@ -125,7 +125,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
   private _notificationService = inject(NotificationService);
-  private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
@@ -133,11 +132,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
   private _areaTypeService = inject(AreaTypeService);
-  private _centerTypeService = inject(CenterTypeService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
   private _customRouterService = inject(CustomRouterService);
 
   // catálogos
@@ -600,6 +597,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+
   // Propiedad para controlar la visibilidad de la sección de desarrollo
   isDevelopmentMode: boolean = !environment.production;
 
@@ -689,7 +691,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       }
       // Leer isDayCareHomeId de los query parameters
       if (params['isDayCareHomeId']) {
-        const isDayCareHomeId = +params['isDayCareHomeId'];
         // Determinar isDayCareHome basado en el ID
         // Necesitamos obtener las opciones para comparar
         // Por ahora, asumimos que si viene el parámetro, debemos determinar el valor
@@ -739,6 +740,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar días permitidos desde el resolver
+      if (resolvedData?.allowedOperatingDays) {
+        this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      }
+
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
       this._changeDetectorRef.markForCheck();
     }
@@ -747,7 +754,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
-        const programs = this.agency.programs || [];
 
         // Leer isDayCareHomeId de los query parameters
         const queryParams = this._route.snapshot.queryParams;
@@ -786,8 +792,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
           }
         }
 
-        // Determinar qué campos mostrar según los programas
-        this.determineVisibleFields(programs);
+        // Configurar listeners y validaciones
+        this.updateValidations();
+        this.setupGroupTypeListener();
       }
     });
 
@@ -1075,19 +1082,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(programs: any[]): void {
-    this.isPDAM = programs.some((p) => p.id === PROGRAM_IDS.PDAM);
-    this.isPSAV = programs.some((p) => p.id === PROGRAM_IDS.PSAV);
-    this.isPACNA = programs.some((p) => p.id === PROGRAM_IDS.PACNA);
-    this.isPFHF = programs.some((p) => p.id === PROGRAM_IDS.PFHF);
-    this.isPDFE = programs.some((p) => p.id === PROGRAM_IDS.PDFE);
-    this.isAESAN = programs.some((p) => p.id === PROGRAM_IDS.AESAN);
-
-    // Cargar tipos de centro según el programa
-    this.loadCenterTypesByProgram(programs);
-
-    this.updateValidations();
-
+  private setupGroupTypeListener(): void {
     // Listener para cambios en groupType que afectan distributionType y siteLocation
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
@@ -1101,18 +1096,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         }
       }
       this._changeDetectorRef.detectChanges();
-      this._changeDetectorRef.detectChanges();
     });
-
-    this._changeDetectorRef.detectChanges();
   }
 
-  // Método para cargar tipos de centro según los programas de la agencia
-  // Load center types by agency programs
-  private loadCenterTypesByProgram(programs: any[]): void {
-    // Los tipos de centro ya vienen filtrados desde el resolver
-    // No necesitamos cargar nada adicional aquí
-  }
+
 
   private updateValidations(): void {
     // Si es Day Care Home, remover todas las validaciones requeridas
@@ -1444,6 +1431,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? null,
       // Horas de funcionamiento
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,
