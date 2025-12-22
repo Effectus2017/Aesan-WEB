@@ -457,6 +457,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         label: 'sites.edit.settings.toggle-active',
         icon: 'heroicons_outline:power',
       },
+      {
+        id: 'calendar',
+        label: 'sites.edit.settings.calendar',
+        icon: 'heroicons_outline:calendar',
+      },
     ],
     // Submit button
     submitButtonShow: true,
@@ -960,6 +965,15 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     // const reviewDate = param.reviewDate;
     // const reviewJustification = param.reviewJustification;
 
+    // Obtener los días de operación seleccionados, con fallback a días permitidos
+    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
+    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0 
+      ? param.operatingDaysOfWeek.map((dayId: number) => {
+          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
+          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
+        })
+      : param.allowedOperatingDays || [];
+
     this.headerConfig.formGroup.patchValue({
       name: param.name,
       address: param.address || null,
@@ -979,6 +993,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingDaysCalculated: param.operatingDaysCalculated,
       operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
       operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
@@ -1148,13 +1163,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
-    // Validar operatingDaysOfWeek - debe ser un array no vacío
-    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
-    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
-      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
-      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
-      return;
-    }
+    // Obtener los días permitidos de la agencia
+    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
     // Persona a cargo
     const personInCharge = formValues.personInCharge ? {
@@ -1188,7 +1198,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
-      operatingDaysOfWeek: operatingDaysOfWeek,
+      operatingDaysOfWeek: operatingDaysOfWeekIds,
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,
       kitchenTypeId: kitchenTypeId,
@@ -1305,11 +1315,24 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     this._customRouterService.navigate(['schools']);
   }
 
+  /**
+   * Determina la ruta de navegación según el programa activo
+   * Determines navigation route based on active program
+   * @returns Array con la ruta de navegación
+   */
+  private getTargetRoute(): string[] {
+    // Este componente es específico para PSAV
+    return ['sites-psav'];
+  }
+
   // Método para manejar acciones del menú de settings
   onSettingsMenuAction(menuItemId: string): void {
     switch (menuItemId) {
       case 'toggle-active':
         this.onToggleActive();
+        break;
+      case 'calendar':
+        this.navigateToCalendar();
         break;
       default:
         console.warn(`Acción de menú no reconocida: ${menuItemId}`);
@@ -1384,6 +1407,15 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         this._changeDetectorRef.detectChanges();
       }
     });
+  }
+
+  // Método para navegar al calendario
+  private navigateToCalendar(): void {
+    const targetRoute = this.getTargetRoute();
+    const siteId = this.param?.id;
+    if (siteId) {
+      this._customRouterService.navigate([...targetRoute, 'calendar', siteId.toString()]);
+    }
   }
 
   // Método para agregar una escuela satélite

@@ -343,7 +343,7 @@
           <mat-form-field data-cy="operating-days-of-week-field">
             <mat-label>{{ "sites.add.operating-days-of-week.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingDaysOfWeek'" multiple required data-cy="operating-days-of-week-select">
-              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day.id" data-cy="operating-day-option-{{ day.id }}">
+              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day" data-cy="operating-day-option-{{ day.id }}">
                 {{ currentLang === "en" ? day.nameEN : day.name }}
               </mat-option>
             </mat-select>
@@ -366,7 +366,7 @@
           <mat-form-field data-cy="operating-end-time-field">
             <mat-label>{{ "sites.add.operating-end-time.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingEndTime'" required data-cy="operating-end-time-select" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of timeOptions" [value]="timeStringToDateWrapper(time.value)" data-cy="operating-end-time-option">
+              <mat-option *ngFor="let time of getEndTimeOptions('operatingStartTime')" [value]="timeStringToDateWrapper(time.value)" data-cy="operating-end-time-option">
                 {{ time.display }}
               </mat-option>
             </mat-select>

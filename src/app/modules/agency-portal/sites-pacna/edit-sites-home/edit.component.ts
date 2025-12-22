@@ -658,7 +658,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         id: 'toggle-active',
         label: 'sites.edit.settings.toggle-active',
         icon: 'heroicons_outline:power'
-      }
+      },
+      {
+        id: 'calendar',
+        label: 'sites.edit.settings.calendar',
+        icon: 'heroicons_outline:calendar',
+      },
     ],
     // Submit button
     submitButtonShow: true,
@@ -1400,6 +1405,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // const reviewDate = param.reviewDate;
     // const reviewJustification = param.reviewJustification;
 
+    // Obtener los días de operación seleccionados, con fallback a días permitidos
+    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
+    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0 
+      ? param.operatingDaysOfWeek.map((dayId: number) => {
+          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
+          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
+        })
+      : param.allowedOperatingDays || [];
+
     this.headerConfig.formGroup.patchValue({
       name: param.name,
       address: param.address || null,
@@ -1421,6 +1435,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       operatingDaysCalculated: param.operatingDaysCalculated,
       operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
       operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
@@ -1636,13 +1651,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
     const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
-    // Validar operatingDaysOfWeek - debe ser un array no vacío
-    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
-    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
-      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
-      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
-      return;
-    }
+    // Obtener los días permitidos de la agencia
+    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
@@ -1677,7 +1687,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       operatingFromDate: formValues.operatingFromDate ?? null,
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
-      operatingDaysOfWeek: operatingDaysOfWeek,
+      operatingDaysOfWeek: operatingDaysOfWeekIds,
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,
@@ -1958,6 +1968,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       case 'toggle-active':
         this.onToggleActive();
         break;
+      case 'calendar':
+        this.navigateToCalendar();
+        break;
       default:
         console.warn(`Acción de menú no reconocida: ${menuItemId}`);
     }
@@ -2022,6 +2035,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         this._changeDetectorRef.detectChanges();
       }
     });
+  }
+
+  // Método para navegar al calendario
+  private navigateToCalendar(): void {
+    const targetRoute = this.getTargetRoute();
+    const siteId = this.param?.id;
+    if (siteId) {
+      this._customRouter.navigate([...targetRoute, 'calendar', siteId.toString()]);
+    }
   }
 
   // Método para agregar una escuela satélite

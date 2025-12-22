@@ -330,7 +330,8 @@
             },
             "breakfast-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio del desayuno es requerida"
             },
             "breakfast-to": {
                 "label": "Hasta",
@@ -343,7 +344,8 @@
             },
             "lunch-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio del almuerzo es requerida"
             },
             "lunch-to": {
                 "label": "Hasta",
@@ -368,7 +370,8 @@
             },
             "snack-am-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda AM es requerida"
             },
             "snack-am-to": {
                 "label": "Hasta",
@@ -381,7 +384,8 @@
             },
             "snack-pm-from": {
                 "label": "Desde",
-                "placeholder": "Desde"
+                "placeholder": "Desde",
+                "required": "La hora de inicio de la merienda PM es requerida"
             },
             "snack-pm-to": {
                 "label": "Hasta",
@@ -564,7 +568,8 @@
             },
             "settings": {
                 "tooltip": "Configuración",
-                "toggle-active": "Activar/Desactivar"
+                "toggle-active": "Activar/Desactivar",
+                "calendar": "Calendario"
             },
             "status-modal": {
                 "title": "Cambiar Estatus del Sitio",
@@ -1408,7 +1413,8 @@
             },
             "settings": {
                 "tooltip": "Configuración",
-                "toggle-active": "Activar/Desactivar"
+                "toggle-active": "Activar/Desactivar",
+                "calendar": "Calendario"
             },
             "status-modal": {
                 "title": "Cambiar Estatus del Sitio",

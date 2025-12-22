@@ -18,6 +18,7 @@ import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-t
 import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/deadline-banner.component';
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
+import { AgencyCodeBannerComponent } from 'app/shared/components/agency-code-banner/agency-code-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/custom-shortcuts.component';
 
@@ -38,6 +39,7 @@ import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/cus
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
         AgencyStatusBannerComponent,
+        AgencyCodeBannerComponent,
         MessagesComponent,
         CustomShortcutsComponent
     ]
@@ -54,6 +56,7 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   showCurrentProgramBanner: boolean = true;
   showAgencyStatusBanner: boolean = true;
   showDeadlineBanner: boolean = true;
+  showAgencyCodeBanner: boolean = true;
 
   private _authService = inject(AuthService);
   private _agencyService = inject(AgencyService);
@@ -175,10 +178,12 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;
+      this.showAgencyCodeBanner = false;
       console.log('Compact Layout - Banner visibility after admin/monitor check:', {
         showCurrentProgramBanner: this.showCurrentProgramBanner,
         showAgencyStatusBanner: this.showAgencyStatusBanner,
-        showDeadlineBanner: this.showDeadlineBanner
+        showDeadlineBanner: this.showDeadlineBanner,
+        showAgencyCodeBanner: this.showAgencyCodeBanner
       });
       return;
     }
@@ -204,17 +209,20 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
           this.showCurrentProgramBanner = false;
           this.showAgencyStatusBanner = false;
           this.showDeadlineBanner = false;
+          this.showAgencyCodeBanner = false;
         } else {
           console.log('Compact Layout - Showing all banners for non-NUTRE agency');
           this.showCurrentProgramBanner = true;
           this.showAgencyStatusBanner = true;
           this.showDeadlineBanner = true;
+          this.showAgencyCodeBanner = true;
         }
 
         console.log('Compact Layout - Final banner visibility:', {
           showCurrentProgramBanner: this.showCurrentProgramBanner,
           showAgencyStatusBanner: this.showAgencyStatusBanner,
-          showDeadlineBanner: this.showDeadlineBanner
+          showDeadlineBanner: this.showDeadlineBanner,
+          showAgencyCodeBanner: this.showAgencyCodeBanner
         });
       }
     });

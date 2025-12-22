@@ -16,6 +16,7 @@ import { SiteLocation } from './SiteLocation';
 import { OptionSelection } from './OptionSelection';
 import { SiteSatellite } from './SiteSatellite';
 import { SchoolResponse } from './Response/SchoolResponse';
+import { DayOfWeekResponse } from './DayOfWeekResponse';
 
 export interface Site {
   id: number;
@@ -178,6 +179,8 @@ export interface Site {
   // Escuela relacionada
   school?: SchoolResponse;
   schoolName?: string; // Propiedad de conveniencia para mostrar el nombre de la escuela
+
+  allowedOperatingDays?: DayOfWeekResponse[];
 }
 
 

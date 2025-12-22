@@ -169,6 +169,11 @@ export class TimeValidationUtil {
       // Si el servicio está en "No" o null, remover validaciones requeridas
       fromControl.clearValidators();
       toControl.clearValidators();
+      // Limpiar valores si el servicio está en "No"
+      if (serviceValue === false) {
+        fromControl.setValue(null, { emitEvent: false });
+        toControl.setValue(null, { emitEvent: false });
+      }
     }
 
     fromControl.updateValueAndValidity({ emitEvent: false });

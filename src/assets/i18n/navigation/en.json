@@ -90,6 +90,10 @@
             "programWithDate": "Current Program: {{program}} - Completed: {{completedDate}}",
             "tooltip": "Current program in which the agency is located"
         },
+        "agencyCode": {
+            "banner": "Code: {{code}}",
+            "tooltip": "Sponsoring agency code"
+        },
         "agencyStatus": {
             "status": "Status: {{status}}",
             "tooltip": "Current status of the agency"
@@ -114,6 +118,7 @@
         "dashboard": {
             "welcome": "Welcome to NUTRE,",
             "today": "Today is",
+            "code": "Code",
             "kpis": {
                 "program": "Program in which participates",
                 "totalSites": "Total Sites",

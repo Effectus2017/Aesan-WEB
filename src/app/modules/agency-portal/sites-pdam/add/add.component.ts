@@ -950,13 +950,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
-    // Validar operatingDaysOfWeek - debe ser un array no vacío
-    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
-    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
-      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
-      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
-      return;
-    }
+    // Obtener los días permitidos de la agencia
+    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
@@ -1017,7 +1012,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       operatingDaysCalculated: operatingDaysCalculated ?? null,
       // Días de la semana en que opera el sitio
       // Days of the week the site operates
-      operatingDaysOfWeek: operatingDaysOfWeek,
+      operatingDaysOfWeek: operatingDaysOfWeekIds,
       // Horas de funcionamiento
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,

@@ -93,6 +93,10 @@
             "programWithDate": "Programa Actual: {{program}} - Completado: {{completedDate}}",
             "tooltip": "Programa actual en el cual se encuentra la agencia"
         },
+        "agencyCode": {
+            "banner": "Código: {{code}}",
+            "tooltip": "Código de la agencia auspiciadora"
+        },
         "agencyStatus": {
             "status": "Estado: {{status}}",
             "tooltip": "Estado actual de la agencia"
@@ -103,6 +107,7 @@
         "dashboard": {
             "welcome": "Bienvenido a NUTRE,",
             "today": "Hoy es",
+            "code": "Código",
             "kpis": {
                 "program": "Programa en el que participa",
                 "totalSites": "Total de Sitios",

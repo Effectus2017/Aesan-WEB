@@ -320,7 +320,8 @@
             },
             "breakfast-from": {
                 "label": "Breakfast From",
-                "placeholder": "Breakfast from"
+                "placeholder": "Breakfast from",
+                "required": "Breakfast start time is required"
             },
             "breakfast-to": {
                 "label": "Breakfast To",
@@ -333,7 +334,8 @@
             },
             "lunch-from": {
                 "label": "Lunch From",
-                "placeholder": "Lunch from"
+                "placeholder": "Lunch from",
+                "required": "Lunch start time is required"
             },
             "lunch-to": {
                 "label": "Lunch To",
@@ -358,7 +360,8 @@
             },
             "snack-am-from": {
                 "label": "AM Snack From",
-                "placeholder": "AM Snack from"
+                "placeholder": "AM Snack from",
+                "required": "AM Snack start time is required"
             },
             "snack-am-to": {
                 "label": "AM Snack To",
@@ -371,7 +374,8 @@
             },
             "snack-pm-from": {
                 "label": "PM Snack From",
-                "placeholder": "PM Snack from"
+                "placeholder": "PM Snack from",
+                "required": "PM Snack start time is required"
             },
             "snack-pm-to": {
                 "label": "PM Snack To",
@@ -570,7 +574,8 @@
             },
             "settings": {
                 "tooltip": "Settings",
-                "toggle-active": "Activate/Deactivate"
+                "toggle-active": "Activate/Deactivate",
+                "calendar": "Calendar"
             },
             "status-modal": {
                 "title": "Change Site Status",
@@ -1433,7 +1438,8 @@
             },
             "settings": {
                 "tooltip": "Settings",
-                "toggle-active": "Activate/Deactivate"
+                "toggle-active": "Activate/Deactivate",
+                "calendar": "Calendar"
             },
             "status-modal": {
                 "title": "Change Site Status",

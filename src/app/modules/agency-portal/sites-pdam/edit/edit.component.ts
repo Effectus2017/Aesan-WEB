@@ -8,16 +8,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
-import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
-import { EducationLevelService } from 'app/shared/services/education-level.service';
-import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { City } from 'app/shared/models/City';
@@ -27,12 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
-import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
-import { CenterTypeService } from 'app/shared/services/center-type.service';
-import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
@@ -47,12 +38,9 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterEndTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  dateToTimeString,
-  timeToMinutes,
   dateToMinutes,
   compareByTime,
   TimeOption,
@@ -65,8 +53,6 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
@@ -95,7 +81,6 @@ import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
-import { tr } from '@faker-js/faker/.';
 
 @Component({
   selector: 'app-sites-edit',
@@ -136,18 +121,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
-  private _operatingPolicyService = inject(OperatingPolicyService);
-  private _snackBar = inject(MatSnackBar);
-  private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
-  private _sponsorTypeService = inject(SponsorTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
-  private _deliveryTypeService = inject(DeliveryTypeService);
-  private _centerTypeService = inject(CenterTypeService);
-  private _organizationTypeService = inject(OrganizationTypeService);
-  private _educationLevelService = inject(EducationLevelService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -156,7 +133,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
-  private _fuseConfirmationService = inject(FuseConfirmationService);
 
   // Catálogos
   // Catalogs
@@ -230,14 +206,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // Lista de sitios
   // List of sites
 
-  // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = true;
-
   // Propiedad para controlar visibilidad del campo Tipo de Centro
   showCenterTypeField: boolean = false;
-
-  // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
-  showResidentialTypeField: boolean = false;
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
@@ -469,6 +439,11 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         label: 'sites.edit.settings.toggle-active',
         icon: 'heroicons_outline:power',
       },
+      {
+        id: 'calendar',
+        label: 'sites.edit.settings.calendar',
+        icon: 'heroicons_outline:calendar',
+      },
     ],
     // Submit button
     submitButtonShow: true,
@@ -589,7 +564,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.agency = result.body;
-        const programs = this.agency.programs || [];
 
         // Configurar validaciones
         this.updateValidations();
@@ -914,9 +888,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
   }
 
-  private calculateOperatingDays(): void {
-    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-  }
 
   /**
    * Valida si el sitio tiene al menos un año de servicio
@@ -1083,6 +1054,15 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // const reviewDate = param.reviewDate;
     // const reviewJustification = param.reviewJustification;
 
+    // Obtener los días de operación seleccionados, con fallback a días permitidos
+    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
+    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0
+      ? param.operatingDaysOfWeek.map((dayId: number) => {
+          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
+          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
+        })
+      : param.allowedOperatingDays || [];
+
     this.headerConfig.formGroup.patchValue({
       siteCode: param.siteCode || param.id?.toString() || '',
       name: param.name,
@@ -1105,7 +1085,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       operatingDaysCalculated: param.operatingDaysCalculated,
       operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
       operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
-      operatingDaysOfWeek: param.operatingDaysOfWeek || [],
+      operatingDaysOfWeek: operatingDaysOfWeek,
       serviceTime: param.serviceTime,
       //
       nonProfit: param.nonProfit,
@@ -1180,6 +1160,21 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Actualizar validaciones de distributionType basado en groupType
     this.updateDistributionTypeValidation();
 
+    // Inicializar showCenterTypeField basado en el organizationType cargado
+    // Esto es necesario porque valueChanges solo se dispara cuando el valor cambia, no cuando se establece con patchValue
+    if (organizationType) {
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
+        this.headerConfig.formGroup,
+        organizationType,
+        'centerType',
+        this._changeDetectorRef,
+        (disabled) => {
+          this.headerConfig.submitDisabled = disabled;
+        }
+      );
+      this.showCenterTypeField = result.showCenterTypeField;
+    }
+
     // Satélites
     this.satellitesTableConfig.dataSource.data = param.satellites || [];
     this.satellitesTableConfig.length = param.satellites?.length || 0;
@@ -1226,7 +1221,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const postalRegionId: number = formValues.postalRegion?.id;
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     const organizationTypeId: number = formValues.organizationType?.id;
-    const operatingDays: number = Number(formValues.operatingDays);
     const kitchenTypeId: number = formValues.kitchenType?.id;
     const siteLocationId: number = formValues.siteLocation?.id;
     const groupTypeId: number = formValues.groupType?.id;
@@ -1254,22 +1248,13 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const lunch = formValues.lunch;
     const breakfast = formValues.breakfast;
 
-    const communityId = formValues.community?.id;
-    const walkersId = formValues.walkers?.id;
-    const siteTypeId = formValues.siteType?.id;
-    const experienceId = formValues.experience?.id;
     // COMENTADO: Se va a cambiar de lugar
     // const reviewResultId = formValues.reviewResult?.id;
     // const reviewDate = formValues.reviewDate;
     // const reviewJustification = formValues.reviewJustification;
 
-    // Validar operatingDaysOfWeek - debe ser un array no vacío
-    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
-    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
-      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
-      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
-      return;
-    }
+    // Mapear objetos DayOfWeekResponse a IDs
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
     // Construir el objeto de actualización
     // Build the update object
@@ -1288,7 +1273,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       postalZipCode: formValues.postalZipCode || null,
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
-      //educationLevelIds: educationLevelIds,
       organizationTypeId: organizationTypeId,
       centerTypeId: centerTypeId,
       operatingFromDate: formValues.operatingFromDate ?? null,
@@ -1403,7 +1387,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
             break;
         }
       },
-      error: (err) => {
+      error: () => {
         this._notificationService.showErrorDialog();
         this.headerConfig.formGroup.enable();
       },
@@ -1452,6 +1436,9 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     switch (menuItemId) {
       case 'toggle-active':
         this.onToggleActive();
+        break;
+      case 'calendar':
+        this.navigateToCalendar();
         break;
       default:
         console.warn(`Acción de menú no reconocida: ${menuItemId}`);
@@ -1526,6 +1513,15 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         this._changeDetectorRef.detectChanges();
       }
     });
+  }
+
+  // Método para navegar al calendario
+  private navigateToCalendar(): void {
+    const targetRoute = this.getTargetRoute();
+    const siteId = this.param?.id;
+    if (siteId) {
+      this._customRouterService.navigate([...targetRoute, 'calendar', siteId.toString()]);
+    }
   }
 
   // Método para agregar una escuela satélite
@@ -1636,10 +1632,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
    */
   get shouldShowKitchenTypeField(): boolean {
-    // Solo para PDAM
-    if (!this.isPDAM) {
-      return false;
-    }
 
     // Verificar si el Tipo de Grupo seleccionado es "Comedor"
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;

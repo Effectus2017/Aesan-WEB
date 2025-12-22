@@ -16,6 +16,7 @@ import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/cus
 import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/deadline-banner.component';
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
+import { AgencyCodeBannerComponent } from 'app/shared/components/agency-code-banner/agency-code-banner.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
@@ -37,6 +38,7 @@ import { MessagesComponent } from 'app/layout/common/messages/messages.component
         DeadlineBannerComponent,
         CurrentProgramBannerComponent,
         AgencyStatusBannerComponent,
+        AgencyCodeBannerComponent,
         MessagesComponent,
         RouterOutlet
     ]
@@ -52,6 +54,7 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
   showCurrentProgramBanner: boolean = true;
   showAgencyStatusBanner: boolean = true;
   showDeadlineBanner: boolean = true;
+  showAgencyCodeBanner: boolean = true;
 
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
@@ -177,10 +180,12 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;
+      this.showAgencyCodeBanner = false;
       console.log('Modern Layout - Banner visibility after admin/monitor check:', {
         showCurrentProgramBanner: this.showCurrentProgramBanner,
         showAgencyStatusBanner: this.showAgencyStatusBanner,
-        showDeadlineBanner: this.showDeadlineBanner
+        showDeadlineBanner: this.showDeadlineBanner,
+        showAgencyCodeBanner: this.showAgencyCodeBanner
       });
       return;
     }
@@ -206,17 +211,20 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
           this.showCurrentProgramBanner = false;
           this.showAgencyStatusBanner = false;
           this.showDeadlineBanner = false;
+          this.showAgencyCodeBanner = false;
         } else {
           console.log('Modern Layout - Showing all banners for non-NUTRE agency');
           this.showCurrentProgramBanner = true;
           this.showAgencyStatusBanner = true;
           this.showDeadlineBanner = true;
+          this.showAgencyCodeBanner = true;
         }
 
         console.log('Modern Layout - Final banner visibility:', {
           showCurrentProgramBanner: this.showCurrentProgramBanner,
           showAgencyStatusBanner: this.showAgencyStatusBanner,
-          showDeadlineBanner: this.showDeadlineBanner
+          showDeadlineBanner: this.showDeadlineBanner,
+          showAgencyCodeBanner: this.showAgencyCodeBanner
         });
       }
     });

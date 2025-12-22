@@ -13,6 +13,7 @@ export interface Agency {
     sdrNumber?: number;
     uieNumber?: number;
     einNumber?: number;
+    agencyCode?: string;
     // Address
     address?: string;
     phone?: string;

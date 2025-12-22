@@ -19,8 +19,10 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AgencyService } from 'app/shared/services/agency.service';
 import { DateTime } from 'luxon';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, combineLatest } from 'rxjs';
+import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -75,11 +77,13 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   private _authService = inject(AuthService);
   private _translocoService = inject(TranslocoService);
   private _route = inject(ActivatedRoute);
+  private _agencyService = inject(AgencyService);
   private _unsubscribeAll = new Subject<void>();
 
   agencyDashboardCardsData = [...agencyDashboardCardsData];
   userName = 'Usuario';
   currentDate = '';
+  agencyCode: string | null = null;
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -197,6 +201,9 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     // Actualizar headerConfig con el nombre del usuario
     this.headerConfig.agency = this.userName;
     
+    // Cargar agencyCode de la agencia
+    this._loadAgencyCode();
+    
     // Formatear y actualizar fecha según el idioma activo
     this._updateDate();
 
@@ -246,6 +253,25 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   }
 
   /**
+   * Carga el agencyCode de la agencia actual
+   */
+  private _loadAgencyCode(): void {
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+        const agency = result.body || result;
+        if (agency && agency.agencyCode) {
+          this.agencyCode = agency.agencyCode;
+        } else {
+          this.agencyCode = null;
+        }
+        // Actualizar el subtítulo con el agencyCode
+        this._updateSubtitle();
+        this._changeDetectorRef.detectChanges();
+      }
+    });
+  }
+
+  /**
    * Actualiza la fecha formateada según el idioma activo
    */
   private _updateDate(): void {
@@ -263,11 +289,29 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     
     this.currentDate = formatter.format(now.toJSDate());
 
-    // Actualizar headerConfig con la fecha traducida
-    this._translocoService.selectTranslate('agency.dashboard.today')
+    // Actualizar el subtítulo con la fecha y el agencyCode
+    this._updateSubtitle();
+  }
+
+  /**
+   * Actualiza el subtítulo del header con la fecha y el agencyCode
+   */
+  private _updateSubtitle(): void {
+    // Obtener ambas traducciones usando combineLatest
+    const todayTranslation$ = this._translocoService.selectTranslate('agency.dashboard.today');
+    const codeTranslation$ = this._translocoService.selectTranslate('agency.dashboard.code');
+    
+    combineLatest([todayTranslation$, codeTranslation$])
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(translation => {
-        this.headerConfig.subtitle = `${translation} ${this.currentDate}`;
+      .subscribe(([todayTranslation, codeTranslation]) => {
+        let subtitle = `${todayTranslation} ${this.currentDate}`;
+        
+        // Agregar el agencyCode si existe
+        if (this.agencyCode) {
+          subtitle += ` - ${codeTranslation}: ${this.agencyCode}`;
+        }
+        
+        this.headerConfig.subtitle = subtitle;
         this._changeDetectorRef.detectChanges();
       });
   }

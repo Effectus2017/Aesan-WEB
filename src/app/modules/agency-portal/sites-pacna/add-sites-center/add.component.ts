@@ -1169,13 +1169,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
-    // Validar operatingDaysOfWeek - debe ser un array no vacío
-    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
-    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
-      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
-      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
-      return;
-    }
+    // Obtener los días permitidos de la agencia
+    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
     // Persona a cargo
     const personInCharge = formValues.personInCharge ? {
@@ -1247,7 +1242,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       operatingDaysCalculated: operatingDaysCalculated ?? null,
       // Días de la semana en que opera el sitio
       // Days of the week the site operates
-      operatingDaysOfWeek: operatingDaysOfWeek,
+      operatingDaysOfWeek: operatingDaysOfWeekIds,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,
