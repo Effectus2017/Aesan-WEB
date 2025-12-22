@@ -1000,7 +1000,15 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const residentialType = param.residentialType;
     const operatingPolicy = param.operatingPolicy;
     const educationLevels = param.educationLevels || [];
-    const organizationType = param.organizationType;
+    // Buscar el tipo de organización en el array para asegurar coincidencia correcta con compareById
+    // Find organization type in array to ensure correct matching with compareById and get all properties including requiresCenterType
+    let organizationType = param.organizationType;
+    if (organizationType) {
+      const organizationTypeFromArray = this.organizationTypes.find((option) => option.id === organizationType.id);
+      if (organizationTypeFromArray) {
+        organizationType = organizationTypeFromArray;
+      }
+    }
     // Buscar el tipo de centro en el array para asegurar coincidencia correcta con compareById
     // Find center type in array to ensure correct matching with compareById
     let centerType = param.centerType;
@@ -1133,18 +1141,19 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     // Inicializar showCenterTypeField basado en el organizationType cargado
     // Esto es necesario porque valueChanges solo se dispara cuando el valor cambia, no cuando se establece con patchValue
+    // Usar FieldVisibilityUtil para mantener consistencia con el listener
+    // Nota: organizationType ya fue buscado en el array organizationTypes arriba para obtener todas las propiedades incluyendo requiresCenterType
     if (organizationType) {
-      // Simplemente establecer showCenterTypeField basado en requiresCenterType
-      this.showCenterTypeField = organizationType.requiresCenterType;
-
-      // Configurar validaciones
-      const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-      if (organizationType.requiresCenterType) {
-        centerTypeControl?.setValidators([Validators.required]);
-      } else {
-        centerTypeControl?.clearValidators();
-      }
-      centerTypeControl?.updateValueAndValidity();
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
+        this.headerConfig.formGroup,
+        organizationType,
+        'centerType',
+        this._changeDetectorRef,
+        (disabled) => {
+          this.headerConfig.submitDisabled = disabled;
+        }
+      );
+      this.showCenterTypeField = result.showCenterTypeField;
     }
 
     // Satélites
