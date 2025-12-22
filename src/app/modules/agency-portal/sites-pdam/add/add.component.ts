@@ -324,6 +324,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
