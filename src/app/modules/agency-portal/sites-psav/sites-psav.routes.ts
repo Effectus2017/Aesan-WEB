@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PsavProgramGuard } from 'app/core/auth/guards/psav-program.guard';
 import { SitesPsavComponent } from './sites-psav.component';
-import { initialDataSitesPsavEditResolver, initialDataSitesPsavAddResolver, initialDataSitesPsavListResolver } from './sites-psav.resolvers';
+import { initialDataSitesPsavProgramResolver } from './sites-psav.resolvers';
 import { initialDataSiteCalendarResolver } from '../sites-pdam/sites.resolvers';
+import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
 
 export default [
   {
@@ -25,7 +26,8 @@ export default [
         canActivate: [PsavProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
-          data: initialDataSitesPsavAddResolver,
+          commonData: initialDataSitesCommonAddResolver,
+          programData: initialDataSitesPsavProgramResolver,
         },
       },
       {
@@ -34,7 +36,8 @@ export default [
         canActivate: [PsavProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {
-          data: initialDataSitesPsavEditResolver,
+          commonData: initialDataSitesCommonEditResolver,
+          programData: initialDataSitesPsavProgramResolver,
         },
       },
       {

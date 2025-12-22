@@ -45,6 +45,10 @@
                 }
             }
         },
+        "operating-days-of-week": {
+            "label": "Operating Days",
+            "required": "You must select at least one operating day"
+        },
         "add": {
             "title": "Add Site",
             "time-range-invalid": "End time must be greater than start time",
@@ -1007,6 +1011,11 @@
                 "placeholder": "Total calculated operating days",
                 "description": "Total days calculated automatically",
                 "hint": "This field is calculated automatically based on the configured operating dates"
+            },
+            "operating-days-of-week": {
+                "label": "Operating Days",
+                "description": "Select the days of the week the site will operate",
+                "required": "You must select at least one operating day"
             },
             "operating-start-time": {
                 "label": "Start Time",

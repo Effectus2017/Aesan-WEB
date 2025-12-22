@@ -461,17 +461,14 @@
         </div>
 
         <!-- Días de la semana en que opera el sitio -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <!-- Horas de funcionamiento -->
+        <!-- ✅ VERIFICADO: Horas de funcionamiento - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
           <mat-form-field data-cy="operating-days-of-week-field">
             <mat-label>{{ "sites.add.operating-days-of-week.label" | transloco }}</mat-label>
-            <mat-select
-              [formControlName]="'operatingDaysOfWeek'"
-              multiple
-              required
-              data-cy="operating-days-of-week-select"
-            >
-              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day.id" data-cy="operating-day-option-{{day.id}}">
-                {{ (currentLang === 'en' ? day.nameEN : day.name) }}
+            <mat-select [formControlName]="'operatingDaysOfWeek'" multiple required data-cy="operating-days-of-week-select">
+              <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day.id" data-cy="operating-day-option-{{ day.id }}">
+                {{ currentLang === "en" ? day.nameEN : day.name }}
               </mat-option>
             </mat-select>
             <mat-hint>{{ "sites.add.operating-days-of-week.description" | transloco }}</mat-hint>
@@ -479,10 +476,6 @@
               {{ "sites.add.operating-days-of-week.required" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
-
-        <!-- Horas de funcionamiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
           <mat-form-field data-cy="operating-start-time-field">
             <mat-label>{{ "sites.add.operating-start-time.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingStartTime'" required data-cy="operating-start-time-select" [compareWith]="compareByTimeWrapper">
@@ -494,7 +487,6 @@
               {{ "sites.add.operating-start-time.required" | transloco }}
             </mat-error>
           </mat-form-field>
-
           <mat-form-field data-cy="operating-end-time-field">
             <mat-label>{{ "sites.add.operating-end-time.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingEndTime'" required data-cy="operating-end-time-select" [compareWith]="compareByTimeWrapper">

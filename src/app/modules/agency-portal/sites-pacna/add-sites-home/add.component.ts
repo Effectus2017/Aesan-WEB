@@ -61,6 +61,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
@@ -614,7 +615,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   // Días de la semana disponibles para selección (filtrados según programa)
   // Available days of the week for selection (filtered by program)
   // Se cargan desde el backend, no hardcodeados
-  availableDaysOfWeek: { id: number; name: string; nameEN: string }[] = [];
+  availableDaysOfWeek: DayOfWeekResponse[] = [];
 
   // School-related properties
   schoolId: number | null = null;
@@ -706,7 +707,10 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         // Esto se ajustará cuando tengamos las opciones cargadas
       }
     });
-    const resolvedData = this._route.snapshot.data['data'];
+    // Combinar datos de resolvers comunes y específicos del programa
+    const commonData = this._route.snapshot.data['commonData'];
+    const programData = this._route.snapshot.data['programData'];
+    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
       // Yes No Options
@@ -752,9 +756,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
       // Cargar días permitidos desde el resolver
-      if (resolvedData?.allowedOperatingDays) {
-        this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
-      }
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 

@@ -56,6 +56,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { AreaType } from 'app/shared/models/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
@@ -297,6 +298,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   // Tipo de localización
   // Type of location
   locationTypes: AreaType[] = [];
+
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: DayOfWeekResponse[] = [];
 
   // Parámetro del sitio
   // Site parameter
@@ -689,7 +694,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     this.agencyId = this._authService.getAgencyId();
 
     // Obtener datos del resolver en lugar de suscribirse
-    const resolvedData = this._route.snapshot.data['data'];
+    // Combinar datos de resolvers comunes y específicos del programa
+    const commonData = this._route.snapshot.data['commonData'];
+    const programData = this._route.snapshot.data['programData'];
+    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
       // Yes No Options
@@ -744,6 +752,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.listPostalRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar días permitidos desde el resolver
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
       // Usar la sitio del resolver
       // Use site from resolver

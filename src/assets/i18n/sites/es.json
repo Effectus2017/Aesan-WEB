@@ -45,6 +45,10 @@
                 }
             }
         },
+        "operating-days-of-week": {
+            "label": "Días de Operación",
+            "required": "Debe seleccionar al menos un día de operación"
+        },
         "add": {
             "title": "Agregar Sitio",
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
@@ -949,6 +953,11 @@
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente",
                 "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
+            },
+            "operating-days-of-week": {
+                "label": "Días de Operación",
+                "description": "Seleccione los días de la semana en que operará el sitio",
+                "required": "Debe seleccionar al menos un día de operación"
             },
             "operating-start-time": {
                 "label": "Hora de Inicio",
