@@ -5,44 +5,6 @@
   <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="headerConfig.formGroup" #sitesEditForm="ngForm" data-cy="sites-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
-        <!-- DEVELOPMENT SECTION - Program Selection for Testing -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 p-4 mb-6 bg-yellow-50 rounded-lg border border-yellow-200 sm:grid-cols-1" *ngIf="isDevelopmentMode">
-          <p class="mb-4 text-sm text-yellow-700">{{ "sites.edit.dev-section.disclaimer" | transloco }}</p>
-
-          <div class="grid grid-cols-2 col-span-12 gap-4 sm:grid-cols-4">
-            <mat-checkbox [checked]="isPDAM" (change)="onDevPDAMChange($event.checked)" data-cy="dev-pdam-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.pdam" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isPSAV" (change)="onDevPSAVChange($event.checked)" data-cy="dev-psav-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.psav" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isPACNA" (change)="onDevPACNAChange($event.checked)" data-cy="dev-pacna-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.pacna" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isPFHF" (change)="onDevPFHFChange($event.checked)" data-cy="dev-pfhf-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.pfhf" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isPDFE" (change)="onDevPDFEChange($event.checked)" data-cy="dev-pdfe-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.pdfe" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isAESAN" (change)="onDevAESANChange($event.checked)" data-cy="dev-aesan-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.aesan" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="isDayCareHome" (change)="onDevDayCareHomeChange($event.checked)" data-cy="dev-daycare-home-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.daycare-home" | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox [checked]="showProvisionFieldsDev" (change)="onDevProvisionFieldsChange($event.checked)" data-cy="dev-provision-fields-checkbox" class="text-sm">
-              {{ "sites.edit.dev-section.provision-fields" | transloco }}
-            </mat-checkbox>
-          </div>
-        </div>
 
         <!-- Sponsor Information Section -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
@@ -218,8 +180,7 @@
 
         <!-- Tipo de Área / Type of Area -->
         <!-- Localización / Location -->
-        <!-- OCULTO PARA DAY CARE HOME: Solo se muestra para sitios que NO son Day Care Home -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="type-of-area-field">
             <mat-label>{{ "sites.edit.type-of-area.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
@@ -242,11 +203,11 @@
           <p class="mb-6 text-secondary">{{ "sites.edit.administrative-information.description" | transloco }}</p>
         </div>
 
-        <!-- ✅ VERIFICADO: Es una organización sin fines de lucro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Es una organización sin fines de lucro - Aplica a: PDAM ✅ -->
         <!-- ¿Es una organización sin fines de lucro? / Is it a non-profit organization? -->
-        <!-- ✅ VERIFICADO: Matrícula General - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Matrícula General - Aplica a: PDAM ✅ -->
         <!-- Matrícula General / General Enrollment -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="non-profit-field">
             <mat-label>{{ "sites.edit.non-profit.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
@@ -317,50 +278,6 @@
           </mat-form-field>
         </div>
 
-        <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && !shouldShowDayCareFields()">
-          <mat-form-field data-cy="organized-athletic-programs-field">
-            <mat-label>{{ "sites.edit.pacna-fields.organized-athletic-programs.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'organizedAthleticPrograms'" data-cy="organized-athletic-programs-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="organized-athletic-programs-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('organizedAthleticPrograms').hasError('required')">
-              {{ "sites.edit.pacna-fields.organized-athletic-programs.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && !shouldShowDayCareFields()">
-          <mat-form-field data-cy="at-risk-service-field">
-            <mat-label>{{ "sites.edit.pacna-fields.at-risk-service.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'atRiskService'" data-cy="at-risk-service-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="at-risk-service-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('atRiskService').hasError('required')">
-              {{ "sites.edit.pacna-fields.at-risk-service.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- De poseer un contrato Público Alianza, especifique su modalidad -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPACNA && !shouldShowDayCareFields()">
-          <mat-form-field data-cy="public-alliance-contract-field">
-            <mat-label>{{ "sites.edit.pacna-fields.public-alliance-contract.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'publicAllianceContractId'" data-cy="public-alliance-contract-select">
-              <mat-option *ngFor="let option of publicAllianceContractOptions" [value]="option.id" data-cy="public-alliance-contract-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('publicAllianceContractId').hasError('required')">
-              {{ "sites.edit.pacna-fields.public-alliance-contract.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
 
         <!-- ✅ VERIFICADO: Niveles educativos - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
         <!-- Niveles educativos (selección múltiple) -->
@@ -379,7 +296,7 @@
         <!-- Tipo de organización / Organization Type -->
         <!-- ✅ VERIFICADO: Tipo de Centro - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "sites.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
@@ -418,7 +335,7 @@
 
         <!-- TITULO -->
         <!-- Días de Funcionamiento -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.edit.operating-dates.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.operating-dates.description" | transloco }}</p>
         </div>
@@ -428,7 +345,7 @@
         <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ Day Care Home ❌ -->
         <!-- Días calculados -->
         <!-- ✅ VERIFICADO: Días de funcionamiento desde/hasta - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ Day Care Home ❌ -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="operating-from-date-field">
             <mat-label>{{ "sites.edit.operating-from-date.label" | transloco }}</mat-label>
             <input
@@ -479,7 +396,7 @@
         <!-- Días de la semana en que opera el sitio -->
         <!-- Horas de funcionamiento -->
         <!-- ✅ VERIFICADO: Horas de funcionamiento - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="operating-days-of-week-field">
             <mat-label>{{ "sites.edit.operating-days-of-week.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingDaysOfWeek'" multiple required data-cy="operating-days-of-week-select">
@@ -518,14 +435,14 @@
 
         <!-- TITULO -->
         <!-- Datos Operacionales -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-1" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.edit.operational-information.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.operational-information.description" | transloco }}</p>
         </div>
 
         <!-- ¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida? -->
         <!-- Solo para programas PDAM y PACNA (NO Day Care Home), no para PSAV -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM || (isPACNA && !shouldShowDayCareFields())">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <mat-form-field data-cy="service-time-field">
             <mat-label>{{ "sites.edit.service-time.label" | transloco }}</mat-label>
             <input
@@ -543,8 +460,8 @@
 
         <!-- ✅ VERIFICADO: Tipo de Auspiciador - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ -->
         <!-- Tipo de Auspiciador -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
-          <mat-form-field data-cy="sponsor-type-field" *ngIf="isPDAM || isPACNA">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <mat-form-field data-cy="sponsor-type-field">
             <mat-label>{{ "sites.edit.sponsor-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'sponsorType'" data-cy="sponsor-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of sponsorType" [value]="option" data-cy="sponsor-type-option">
@@ -554,13 +471,13 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Tipo de Grupo, Tipo de Entrega, Tipo de Cocina, Tipo de Solicitante - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: Tipo de Grupo, Tipo de Entrega, Tipo de Cocina, Tipo de Solicitante - Aplica a: PDAM ✅ -->
         <!-- Tipo de Grupo / Group Type -->
         <!-- Ubicacion del Sitio / Site Location  -->
         <!-- Tipo de Entrega / Delivery Type -->
         <!-- Tipo de Cocina / Kitchen Type -->
         <!-- Tipo de Solicitante / Type of Applicant -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-5 sm:col-span-12" *ngIf="!shouldShowDayCareFields()" appDynamicGrid="4">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-5 sm:col-span-12" appDynamicGrid="4">
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "sites.edit.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" (valueChange)="getKitchenTypesByGroupType($event)" data-cy="group-type-select" [compareWith]="compareById">
@@ -599,43 +516,11 @@
         </div>
 
         <!-- ✅ VERIFICADO: Comunidad, Caminantes, Tipo de Sitio, Experiencia - Aplica a: PDAM ❌ PSAV ✅ PACNA ❌ -->
-        <!-- Comunidad / Community -->
-        <!-- Caminantes / Walkers -->
-        <!-- Tipo de Sitio / Site Type -->
-        <!-- Experiencia / Experience -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="isPSAV">
-          <mat-form-field data-cy="community-field">
-            <mat-label>{{ "sites.edit.community.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of community" [value]="option" data-cy="community-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="walkers-field">
-            <mat-label>{{ "sites.edit.walkers.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="site-type-field">
-            <mat-label>{{ "sites.edit.site-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="experience-field">
-            <mat-label>{{ "sites.edit.experience.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
 
-        <!-- ✅ VERIFICADO: ¿Cuenta con un Almacén?, ¿Cuenta con un Salón Comedor? - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
+        <!-- ✅ VERIFICADO: ¿Cuenta con un Almacén?, ¿Cuenta con un Salón Comedor? - Aplica a: PDAM ✅ -->
         <!-- ¿Cuenta con un Almacén? / Has Warehouse -->
         <!-- ¿Cuenta con un Salón Comedor? / Has Dining Room -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" *ngIf="!shouldShowDayCareFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="has-warehouse-field">
             <mat-label>{{ "sites.edit.has-warehouse.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select">
@@ -654,208 +539,17 @@
           </mat-form-field>
         </div>
 
-        <!-- TITULO -->
-        <!-- Campos específicos para Day Care Home / Fields specific to Day Care Home -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="shouldShowDayCareFields()">
-          <p class="text-lg font-medium">{{ "sites.edit.daycare-home-fields.title" | transloco }}</p>
-          <p class="mb-6 text-secondary">{{ "sites.edit.daycare-home-fields.description" | transloco }}</p>
-        </div>
-
-        <!-- ¿Este hogar está autorizado a funcionar? / Is this home authorized to operate? -->
-        <!-- ¿Cuenta con la licencia del Departamento de la Familia? / Does it have a Family Department license? -->
-        <!-- Número de Niños Matriculados / Number of Enrolled Children -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="is-authorized-to-operate-field">
-            <mat-label>{{ "sites.edit.is-authorized-to-operate.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'isAuthorizedToOperate'" data-cy="is-authorized-to-operate-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-authorized-to-operate-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('isAuthorizedToOperate').hasError('required')">{{ "sites.edit.is-authorized-to-operate.required" | transloco }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="has-family-department-license-field">
-            <mat-label>{{ "sites.edit.has-family-department-license.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'hasFamilyDepartmentLicense'" data-cy="has-family-department-license-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-family-department-license-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('hasFamilyDepartmentLicense').hasError('required')">{{
-              "sites.edit.has-family-department-license.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="number-of-enrolled-children-field">
-            <mat-label>{{ "sites.edit.number-of-enrolled-children.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'numberOfEnrolledChildren'"
-              type="number"
-              min="0"
-              placeholder="{{ 'sites.edit.number-of-enrolled-children.placeholder' | transloco }}"
-              data-cy="number-of-enrolled-children-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('numberOfEnrolledChildren').hasError('required')">{{
-              "sites.edit.number-of-enrolled-children.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ¿Cuántos son hijos del proveedor? / How many are provider's children? -->
-        <!-- ¿Con cuántos de los participantes tiene lazos sanguíneos? / How many participants have blood ties? -->
-        <!-- ¿Con cuántos de los participantes no tiene lazos sanguíneos? / How many participants do not have blood ties? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="number-of-provider-children-field">
-            <mat-label>{{ "sites.edit.number-of-provider-children.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'numberOfProviderChildren'"
-              type="number"
-              min="0"
-              placeholder="{{ 'sites.edit.number-of-provider-children.placeholder' | transloco }}"
-              data-cy="number-of-provider-children-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('numberOfProviderChildren').hasError('required')">{{
-              "sites.edit.number-of-provider-children.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="number-of-participants-with-blood-ties-field">
-            <mat-label>{{ "sites.edit.number-of-participants-with-blood-ties.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'numberOfParticipantsWithBloodTies'"
-              type="number"
-              min="0"
-              placeholder="{{ 'sites.edit.number-of-participants-with-blood-ties.placeholder' | transloco }}"
-              data-cy="number-of-participants-with-blood-ties-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('numberOfParticipantsWithBloodTies').hasError('required')">{{
-              "sites.edit.number-of-participants-with-blood-ties.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="number-of-participants-without-blood-ties-field">
-            <mat-label>{{ "sites.edit.number-of-participants-without-blood-ties.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'numberOfParticipantsWithoutBloodTies'"
-              type="number"
-              min="0"
-              placeholder="{{ 'sites.edit.number-of-participants-without-blood-ties.placeholder' | transloco }}"
-              data-cy="number-of-participants-without-blood-ties-input"
-            />
-            <mat-error *ngIf="headerConfig.formGroup.get('numberOfParticipantsWithoutBloodTies').hasError('required')">{{
-              "sites.edit.number-of-participants-without-blood-ties.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ¿Los menores viven con usted? / Do the minors live with you? -->
-        <!-- Parentesco / Relationship Type -->
-        <!-- ¿Ofrece el servicio a niños inmigrantes? / Does it offer service to immigrant children? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="minors-live-with-provider-field">
-            <mat-label>{{ "sites.edit.minors-live-with-provider.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'minorsLiveWithProvider'" data-cy="minors-live-with-provider-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="minors-live-with-provider-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('minorsLiveWithProvider').hasError('required')">{{
-              "sites.edit.minors-live-with-provider.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="relationship-type-field">
-            <mat-label>{{ "sites.edit.relationship-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'relationshipType'" data-cy="relationship-type-select">
-              <mat-option *ngFor="let option of relationshipTypeOptions" [value]="option.id" data-cy="relationship-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('relationshipType').hasError('required')">{{ "sites.edit.relationship-type.required" | transloco }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="offers-service-to-immigrant-children-field">
-            <mat-label>{{ "sites.edit.offers-service-to-immigrant-children.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'offersServiceToImmigrantChildren'" data-cy="offers-service-to-immigrant-children-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-immigrant-children-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToImmigrantChildren').hasError('required')">{{
-              "sites.edit.offers-service-to-immigrant-children.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Tipo de Hogar / Home Type -->
-        <!-- ✅ VERIFICADO: Participantes / Participants - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
-        <!-- Participantes / Participants -->
-        <!-- ✅ VERIFICADO: ¿Ofrece servicio a diferentes grupos de niños? - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
-        <!-- ¿Ofrece servicio a diferentes grupos de niños? -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="home-type-field">
-            <mat-label>{{ "sites.edit.home-type.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'homeType'" data-cy="home-type-select">
-              <mat-option *ngFor="let option of homeTypeOptions" [value]="option.id" data-cy="home-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('homeType').hasError('required')">{{ "sites.edit.home-type.required" | transloco }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="participant-types-field">
-            <mat-label>{{ "sites.edit.participant-types.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'participantTypes'" multiple data-cy="participant-types-select">
-              <mat-option *ngFor="let option of participantTypeOptions" [value]="option.id" data-cy="participant-types-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('participantTypes').hasError('required')">{{ "sites.edit.participant-types.required" | transloco }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="offers-service-to-different-groups-field">
-            <mat-label>{{ "sites.edit.offers-service-to-different-groups.label" | transloco }}</mat-label>
-            <mat-select
-              [formControlName]="'offersServiceToDifferentGroups'"
-              data-cy="offers-service-to-different-groups-select"
-              (selectionChange)="onOffersServiceToDifferentGroupsChange($event.value)"
-            >
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-different-groups-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToDifferentGroups').hasError('required')">{{
-              "sites.edit.offers-service-to-different-groups.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- Fecha de Nacimiento del Proveedor / Provider Birth Date -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDayCareFields()">
-          <mat-form-field data-cy="administrator-birth-date-field">
-            <mat-label>{{ "sites.edit.administrator-birth-date.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'administratorBirthDate'"
-              [matDatepicker]="administratorBirthDatePicker"
-              placeholder="{{ 'sites.edit.administrator-birth-date.placeholder' | transloco }}"
-              data-cy="administrator-birth-date-input"
-            />
-            <mat-datepicker-toggle matSuffix [for]="administratorBirthDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #administratorBirthDatePicker></mat-datepicker>
-            <mat-error *ngIf="headerConfig.formGroup.get('administratorBirthDate').hasError('required')">{{
-              "sites.edit.administrator-birth-date.required" | transloco
-            }}</mat-error>
-          </mat-form-field>
-        </div>
 
         <!-- TITULO -->
         <!-- Servicios que operará y horario -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldHideIndividualServiceFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.edit.services-and-schedule.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.services-and-schedule.description" | transloco }}</p>
         </div>
 
         <!-- ✅ VERIFICADO: Desayuno - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Desayuno / Breakfast -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "sites.edit.breakfast.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
@@ -899,7 +593,7 @@
 
         <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda AM / Snack AM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "sites.edit.snack-am.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select">
@@ -943,7 +637,7 @@
 
         <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Almuerzo / Lunch -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "sites.edit.lunch.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'lunch'" data-cy="lunch-select">
@@ -987,7 +681,7 @@
 
         <!-- ✅ VERIFICADO: Merienda PM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda PM / Snack PM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldHideIndividualServiceFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "sites.edit.snack-pm.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select">
@@ -1029,281 +723,16 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Cena - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
-        <!-- Cena / Dinner -->
-        <!-- Horario desde para la cena -->
-        <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="(isPSAV || isPACNA) && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="dinner-field">
-            <mat-label>{{ "sites.edit.dinner.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinner').hasError('required')">{{ "sites.edit.dinner.required" | transloco }}</mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-from-field">
-            <mat-label>{{ "sites.edit.dinner-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerFrom" data-cy="dinner-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerFrom')?.hasError('required')">
-              {{ "sites.edit.dinner-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-to-field">
-            <mat-label>{{ "sites.edit.dinner-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerTo" data-cy="dinner-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('dinnerFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('required')">
-              {{ "sites.edit.dinner-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerFrom', 'dinnerTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Merienda nocturna - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
-        <!-- Merienda nocturna / Night Snack -->
-        <!-- Horario desde para la merienda nocturna -->
-        <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="snack-night-field">
-            <mat-label>{{ "sites.edit.snack-night.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNight')?.hasError('required')">
-              {{ "sites.edit.snack-night.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-night-from-field">
-            <mat-label>{{ "sites.edit.snack-night-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNightFrom" data-cy="snack-night-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightFrom')?.hasError('required')">
-              {{ "sites.edit.snack-night-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-night-to-field">
-            <mat-label>{{ "sites.edit.snack-night-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNightTo" data-cy="snack-night-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackNightFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('required')">
-              {{ "sites.edit.snack-night-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackNightFrom', 'snackNightTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Cena Horario Extendido - Aplica a: PACNA ✅ -->
-        <!-- Cena Horario Extendido / Dinner Extended -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="dinner-extended-field">
-            <mat-label>{{ "sites.edit.dinner-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtended')?.hasError('required')">
-              {{ "sites.edit.dinner-extended.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-extended-from-field">
-            <mat-label>{{ "sites.edit.dinner-extended-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtendedFrom" data-cy="dinner-extended-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedFrom')?.hasError('required')">
-              {{ "sites.edit.dinner-extended-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-extended-to-field">
-            <mat-label>{{ "sites.edit.dinner-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtendedTo" data-cy="dinner-extended-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('dinnerExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('required')">
-              {{ "sites.edit.dinner-extended-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerExtendedFrom', 'dinnerExtendedTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Cena en Riesgo - Aplica a: PACNA ✅ -->
-        <!-- Cena en Riesgo / Dinner At Risk -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="dinner-at-risk-field">
-            <mat-label>{{ "sites.edit.dinner-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRisk')?.hasError('required')">
-              {{ "sites.edit.dinner-at-risk.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-at-risk-from-field">
-            <mat-label>{{ "sites.edit.dinner-at-risk-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRiskFrom" data-cy="dinner-at-risk-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskFrom')?.hasError('required')">
-              {{ "sites.edit.dinner-at-risk-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-at-risk-to-field">
-            <mat-label>{{ "sites.edit.dinner-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRiskTo" data-cy="dinner-at-risk-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('dinnerAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('required')">
-              {{ "sites.edit.dinner-at-risk-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerAtRiskFrom', 'dinnerAtRiskTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Merienda Horario Extendido - Aplica a: PACNA ✅ -->
-        <!-- Merienda Horario Extendido / Snack Extended -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="snack-extended-field">
-            <mat-label>{{ "sites.edit.snack-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtended')?.hasError('required')">
-              {{ "sites.edit.snack-extended.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-extended-from-field">
-            <mat-label>{{ "sites.edit.snack-extended-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtendedFrom" data-cy="snack-extended-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedFrom')?.hasError('required')">
-              {{ "sites.edit.snack-extended-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-extended-to-field">
-            <mat-label>{{ "sites.edit.snack-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtendedTo" data-cy="snack-extended-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('required')">
-              {{ "sites.edit.snack-extended-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackExtendedFrom', 'snackExtendedTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Merienda en Riesgo - Aplica a: PACNA ✅ -->
-        <!-- Merienda en Riesgo / Snack At Risk -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPACNA && !shouldHideIndividualServiceFields()">
-          <mat-form-field data-cy="snack-at-risk-field">
-            <mat-label>{{ "sites.edit.snack-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRisk')?.hasError('required')">
-              {{ "sites.edit.snack-at-risk.required" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-at-risk-from-field">
-            <mat-label>{{ "sites.edit.snack-at-risk-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRiskFrom" data-cy="snack-at-risk-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskFrom')?.hasError('required')">
-              {{ "sites.edit.snack-at-risk-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.edit.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-at-risk-to-field">
-            <mat-label>{{ "sites.edit.snack-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRiskTo" data-cy="snack-at-risk-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('required')">
-              {{ "sites.edit.snack-at-risk-to.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAtRiskFrom', 'snackAtRiskTo')">
-              {{ "sites.edit.time-range-invalid" | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
 
         <!-- TITULO -->
-        <!-- Persona a Cargo (solo para PDAM y PSAV) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPDAM || isPSAV">
+        <!-- Persona a Cargo (solo para PDAM) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sites.edit.administrator-authorized.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.administrator-authorized.description" | transloco }}</p>
         </div>
 
-        <!-- Persona a Cargo - Campos individuales (solo para PDAM y PSAV) -->
-        <div [formGroup]="headerConfig.formGroup" *ngIf="(isPDAM || isPSAV) && !shouldShowDayCareFields()" class="grid grid-cols-1 col-span-12">
+        <!-- Persona a Cargo - Campos individuales (solo para PDAM) -->
+        <div [formGroup]="headerConfig.formGroup" class="grid grid-cols-1 col-span-12">
           <div formGroupName="personInCharge">
             <!-- Campos de nombre -->
             <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-4 sm:col-span-12">
@@ -1381,19 +810,6 @@
           </div>
         </div>
 
-        <!-- VERIFICADO: Tabla de Servicios por Grupos - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
-        <!-- Tabla de Servicios por Grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDifferentGroupsFields()">
-          <div class="mb-4">
-            <h3 class="mb-2 text-lg font-medium">{{ "sites.edit.services.table.title" | transloco }}</h3>
-            <p class="mb-4 text-sm text-gray-600">{{ "sites.edit.services.table.description" | transloco }}</p>
-
-            <!-- Tabla de servicios -->
-            <div class="rounded-lg shadow-md">
-              <app-generic-table [config]="servicesTableConfig" [handler]="this" #servicesTable></app-generic-table>
-            </div>
-          </div>
-        </div>
 
         <!-- Campos de Revisión -->
         <!-- COMENTADO: Se va a cambiar de lugar -->
