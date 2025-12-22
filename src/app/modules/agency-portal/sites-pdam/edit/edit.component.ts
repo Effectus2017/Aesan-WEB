@@ -1263,6 +1263,14 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // const reviewDate = formValues.reviewDate;
     // const reviewJustification = formValues.reviewJustification;
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Construir el objeto de actualización
     // Build the update object
     const siteRequest: SiteRequest = {
@@ -1286,7 +1294,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       operatingFromDate: formValues.operatingFromDate ?? null,
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
-      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? [],
+      operatingDaysOfWeek: operatingDaysOfWeek,
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,

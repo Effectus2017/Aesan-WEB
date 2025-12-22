@@ -1636,6 +1636,14 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
     const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
     const siteTypeId = formValues.siteType?.id;
@@ -1669,6 +1677,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       operatingFromDate: formValues.operatingFromDate ?? null,
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,

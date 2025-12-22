@@ -1148,6 +1148,14 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Persona a cargo
     const personInCharge = formValues.personInCharge ? {
       firstName: formValues.personInCharge.firstName ?? null,
@@ -1180,6 +1188,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,
       kitchenTypeId: kitchenTypeId,

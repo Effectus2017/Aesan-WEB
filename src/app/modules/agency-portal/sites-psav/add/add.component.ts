@@ -845,6 +845,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
       // School Id - ID de la escuela asociada (si viene del modal)
@@ -901,7 +909,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       operatingDaysCalculated: operatingDaysCalculated ?? null,
       // Días de la semana en que opera el sitio
       // Days of the week the site operates
-      operatingDaysOfWeek: formValues.operatingDaysOfWeek ?? null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,
