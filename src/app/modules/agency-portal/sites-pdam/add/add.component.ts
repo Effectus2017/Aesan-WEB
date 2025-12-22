@@ -36,7 +36,7 @@ import {
   timeToMinutes,
   dateToMinutes,
   compareByTime,
-  TimeOption
+  TimeOption,
 } from 'app/shared/utils';
 import { City } from 'app/shared/models/City';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -72,7 +72,6 @@ import { FieldVisibilityService } from 'app/shared/services/field-visibility.ser
 import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { MatTableDataSource } from '@angular/material/table';
-import { environment } from 'environments/environment';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -147,7 +146,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Estatus Options
   // Opciones de estatus (Activo/Inactivo)
   isActiveOptions: OptionSelection[] = [];
-
 
   // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
   // Organization type - Required field for site classification
@@ -431,7 +429,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   agencyId: number = 0;
   agency: Agency = null;
 
-
   // Propiedades para controlar visibilidad según programa
   isPDAM: boolean = true;
 
@@ -446,15 +443,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   // Se cargan desde el backend, no hardcodeados
   availableDaysOfWeek: DayOfWeekResponse[] = [];
 
-  // Propiedad para controlar la visibilidad de la sección de desarrollo
-  isDevelopmentMode: boolean = !environment.production;
-
-  // Propiedad para controlar visibilidad de campos de provisión en modo desarrollo
-  showProvisionFieldsDev: boolean = false;
-
   // School-related properties
   schoolId: number | null = null;
-
 
   constructor() {}
 
@@ -470,9 +460,8 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
-
     // Verificar si hay schoolId en query parameters
-    this._route.queryParams.subscribe(params => {
+    this._route.queryParams.subscribe((params) => {
       if (params['schoolId']) {
         this.schoolId = +params['schoolId'];
       }
@@ -501,10 +490,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this.sponsorType = resolvedData.sponsorTypes;
 
       // Filtrar operating policies según si la agencia es recurrente
-      this.operatingPolicies = this.filterOperatingPolicies(
-        resolvedData.operatingPolicies,
-        this.agency?.isRecurrent || false
-      );
+      this.operatingPolicies = this.filterOperatingPolicies(resolvedData.operatingPolicies, this.agency?.isRecurrent || false);
 
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
@@ -541,12 +527,10 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.setupFormListeners();
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
-    this.headerConfig.formGroup.statusChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-        this._changeDetectorRef.detectChanges();
-      });
+    this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+      this._changeDetectorRef.detectChanges();
+    });
   }
 
   private setupFormListeners(): void {
@@ -560,34 +544,33 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     });
 
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingStartTime')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.revalidateAllServiceTimes();
       });
 
-    this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingEndTime')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.revalidateAllServiceTimes();
       });
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
-      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
-        this.headerConfig.formGroup,
-        organizationType,
-        'centerType',
-        this._changeDetectorRef,
-        (disabled) => { this.headerConfig.submitDisabled = disabled; }
-      );
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(this.headerConfig.formGroup, organizationType, 'centerType', this._changeDetectorRef, (disabled) => {
+        this.headerConfig.submitDisabled = disabled;
+      });
       this.showCenterTypeField = result.showCenterTypeField;
       this._changeDetectorRef.detectChanges();
     });
 
     // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
-    this.headerConfig.formGroup.get('operatingPolicy')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingPolicy')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this._changeDetectorRef.detectChanges();
       });
@@ -620,29 +603,23 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
 
         // Suscribirse a cambios en el campo de servicio
-        serviceControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((value: boolean | null) => {
-            this.updateServiceTimeValidations(value, fromControl, toControl);
-          });
+        serviceControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value: boolean | null) => {
+          this.updateServiceTimeValidations(value, fromControl, toControl);
+        });
 
         // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-        fromControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
-            // Forzar detección de cambios para actualizar las opciones en el template
-            this._changeDetectorRef.detectChanges();
-          });
+        fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+          TimeValidationUtil.validateTimeRange(fromControl, toControl);
+          // Forzar detección de cambios para actualizar las opciones en el template
+          this._changeDetectorRef.detectChanges();
+        });
 
         // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-        toControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
-          });
+        toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+          TimeValidationUtil.validateTimeRange(fromControl, toControl);
+        });
       }
     });
   }
@@ -661,11 +638,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return filterStartTimeOptions(
-      this.timeOptions,
-      operatingStartTime,
-      operatingEndTime
-    );
+    return filterStartTimeOptions(this.timeOptions, operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -679,13 +652,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return getEndTimeOptions(
-      this.timeOptions,
-      fromTime,
-      '23:59',
-      operatingStartTime,
-      operatingEndTime
-    );
+    return getEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -726,11 +693,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
    * @param fromControl Control del campo "Hora desde"
    * @param toControl Control del campo "Hora hasta"
    */
-  private updateServiceTimeValidations(
-    serviceValue: boolean | null,
-    fromControl: AbstractControl,
-    toControl: AbstractControl
-  ): void {
+  private updateServiceTimeValidations(serviceValue: boolean | null, fromControl: AbstractControl, toControl: AbstractControl): void {
     TimeValidationUtil.updateServiceTimeValidations(
       this.headerConfig.formGroup,
       serviceValue,
@@ -739,7 +702,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       'operatingStartTime',
       'operatingEndTime',
       this._changeDetectorRef,
-      (disabled) => { this.headerConfig.submitDisabled = disabled; }
+      (disabled) => {
+        this.headerConfig.submitDisabled = disabled;
+      }
     );
   }
 
@@ -754,13 +719,9 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
     ];
 
-    TimeValidationUtil.revalidateAllServiceTimes(
-      this.headerConfig.formGroup,
-      services,
-      (serviceValue, fromControl, toControl) => {
-        this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
-      }
-    );
+    TimeValidationUtil.revalidateAllServiceTimes(this.headerConfig.formGroup, services, (serviceValue, fromControl, toControl) => {
+      this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
+    });
   }
 
   // Manejar cambio de non-profit para programa PDAM
@@ -776,7 +737,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     }
 
     const programs = this.agency?.programs || [];
-    const selectedProgram = programs.find(p => p.id === PROGRAM_IDS.PDAM);
+    const selectedProgram = programs.find((p) => p.id === PROGRAM_IDS.PDAM);
 
     // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
     if (selectedProgram && isPDAMProgram(selectedProgram)) {
@@ -786,11 +747,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
           message: this._translocoService.translate('sites.add.pdam-not-eligible.message'),
           cfrLink: {
             url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
-            text: this._translocoService.translate('sites.add.pdam-not-eligible.cfr-link-text')
-          }
+            text: this._translocoService.translate('sites.add.pdam-not-eligible.cfr-link-text'),
+          },
         },
         disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive']
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
       });
     }
   }
@@ -816,8 +777,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       this._changeDetectorRef.detectChanges();
     });
   }
-
-
 
   private updateValidations(): void {
     // Restaurar validaciones requeridas para PDAM
@@ -982,14 +941,14 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     // Tipo de localización
     const locationTypeId: number = formValues.locationType?.id;
 
-     // Fechas de operación
-     const operatingFromDate: string = formValues.operatingFromDate;
-     const operatingToDate: string = formValues.operatingToDate;
-     // Días de operación
-     const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
-     // Horas de funcionamiento
-     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
-     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+    // Fechas de operación
+    const operatingFromDate: string = formValues.operatingFromDate;
+    const operatingToDate: string = formValues.operatingToDate;
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
+    // Horas de funcionamiento
+    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
@@ -1109,15 +1068,17 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       hasDiningRoom: formValues.hasDiningRoom ?? null,
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
-      personInCharge: formValues.personInCharge ? {
-        firstName: formValues.personInCharge.firstName ?? null,
-        middleName: formValues.personInCharge.middleName ?? null,
-        fatherLastName: formValues.personInCharge.fatherLastName ?? null,
-        motherLastName: formValues.personInCharge.motherLastName ?? null,
-        sitePhone: formValues.personInCharge.sitePhone ?? null,
-        extension: formValues.personInCharge.extension ?? null,
-        mobilePhone: formValues.personInCharge.mobilePhone ?? null,
-      } : null,
+      personInCharge: formValues.personInCharge
+        ? {
+            firstName: formValues.personInCharge.firstName ?? null,
+            middleName: formValues.personInCharge.middleName ?? null,
+            fatherLastName: formValues.personInCharge.fatherLastName ?? null,
+            motherLastName: formValues.personInCharge.motherLastName ?? null,
+            sitePhone: formValues.personInCharge.sitePhone ?? null,
+            extension: formValues.personInCharge.extension ?? null,
+            mobilePhone: formValues.personInCharge.mobilePhone ?? null,
+          }
+        : null,
       // Matrícula General
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
@@ -1184,15 +1145,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       next: (result: any) => {
         switch (result.body) {
           case true:
-            this._notificationService.showSuccessDialogWithCallback(
-              'sites.add.success',
-              (result) => {
-                if (result === 'confirmed') {
-                  // Navegar a la ruta correcta según el programa
-                  this._customRouterService.navigate(['schools']);
-                }
+            this._notificationService.showSuccessDialogWithCallback('sites.add.success', (result) => {
+              if (result === 'confirmed') {
+                // Navegar a la ruta correcta según el programa
+                this._customRouterService.navigate(['schools']);
               }
-            );
+            });
             break;
           default:
             this._notificationService.showErrorDialog();
@@ -1255,12 +1213,12 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         inactiveDate: currentInactiveDate,
         inactiveJustification: currentInactiveJustification,
         isActiveOptions: this.isActiveOptions,
-        yesNoOptions: this.yesNoOptions
+        yesNoOptions: this.yesNoOptions,
       } as SiteStatusModalData,
       disableClose: false,
       width: '600px',
       maxWidth: '90vw',
-      panelClass: ['mat-dialog-container', 'dialog-responsive']
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -1403,8 +1361,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
             if (regionControl) {
               // Preservar el valor actual si ya está establecido y es válido
               const currentPostalRegion = regionControl.value;
-              const isValidCurrentRegion = currentPostalRegion &&
-                this.listPostalRegions.some(r => r.id === currentPostalRegion.id);
+              const isValidCurrentRegion = currentPostalRegion && this.listPostalRegions.some((r) => r.id === currentPostalRegion.id);
 
               if (this.listPostalRegions.length === 1) {
                 // Asignar automáticamente la única región encontrada para Dirección Postal
@@ -1444,26 +1401,32 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
         this.listPostalRegions = [...this.listRegions];
 
         // Buscar la región en la lista para asegurar que sea la misma referencia
-        const matchingRegion = this.listPostalRegions.find(r => r.id === physicalRegion.id);
+        const matchingRegion = this.listPostalRegions.find((r) => r.id === physicalRegion.id);
         const regionToSet = matchingRegion || physicalRegion;
 
         // Establecer los valores después de sincronizar la lista
-        this.headerConfig.formGroup.patchValue({
-          postalAddress: physicalAddress,
-          postalCity: physicalCity,
-          postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
-          postalZipCode: physicalZipCode,
-        }, { emitEvent: false }); // emitEvent: false para evitar que se dispare valueChange en postalCity
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false }
+        ); // emitEvent: false para evitar que se dispare valueChange en postalCity
 
         // Forzar detección de cambios para actualizar la vista
         this._changeDetectorRef.detectChanges();
       } else {
         // Si no hay ciudad o región, solo copiar lo que hay
-        this.headerConfig.formGroup.patchValue({
-          postalAddress: physicalAddress,
-          postalCity: physicalCity,
-          postalZipCode: physicalZipCode,
-        }, { emitEvent: false });
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false }
+        );
       }
 
       this.headerConfig.formGroup.updateValueAndValidity();
@@ -1631,8 +1594,6 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
 
   // ===== MÉTODOS PARA DESARROLLO - CONTROL MANUAL DE PROGRAMAS =====
 
-
-
   /**
    * Verifica si se debe mostrar el campo de Tipo de Cocina
    * Solo se muestra cuando:
@@ -1664,7 +1625,7 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
       return policies; // Mostrar todas las políticas
     }
     // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
-    return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
+    return policies.filter((p) => p.id !== 3 && p.id !== 4 && p.id !== 5);
   }
 
   /**
@@ -1675,24 +1636,11 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
   get shouldShowProvisionFields(): boolean {
     const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
 
-    // En modo desarrollo, si el checkbox está marcado, mostrar siempre
-    if (this.isDevelopmentMode && this.showProvisionFieldsDev) {
-      return true;
-    }
-
     // Verificar si la política seleccionada es 3, 4 o 5
     if (operatingPolicy && operatingPolicy.id) {
       return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
     }
 
     return false;
-  }
-
-  /**
-   * Maneja el cambio del checkbox de campos de provisión para desarrollo
-   */
-  onDevProvisionFieldsChange(checked: boolean): void {
-    this.showProvisionFieldsDev = checked;
-    this._changeDetectorRef.detectChanges();
   }
 }

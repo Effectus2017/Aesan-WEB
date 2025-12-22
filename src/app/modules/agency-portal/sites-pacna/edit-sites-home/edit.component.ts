@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -267,8 +267,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
   showResidentialTypeField: boolean = false;
 
-  // ViewChild para el contenedor del grid
-  @ViewChild('gridContainer') gridContainer!: ElementRef;
 
   // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
@@ -690,18 +688,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Compara dos objetos Date por su hora (wrapper para usar en template)
    */
   compareByTimeWrapper = compareByTime;
-
-  // Función para obtener la clase de grid dinámica
-  getGridColumnsClass(): string {
-    if (!this.gridContainer) {
-      return 'sm:grid-cols-4'; // valor por defecto
-    }
-
-    const visibleFields = this.gridContainer.nativeElement.querySelectorAll('mat-form-field');
-    const count = visibleFields.length;
-
-    return `sm:grid-cols-${count}`;
-  }
 
   // Estado de carga y variables de contexto
   // Loading state and context variables
