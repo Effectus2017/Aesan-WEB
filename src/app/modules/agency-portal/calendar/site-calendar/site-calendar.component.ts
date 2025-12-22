@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
@@ -14,11 +14,10 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import {
   CalendarView,
   CalendarEvent,
-  CalendarModule,
-  DateAdapter
-} from 'angular-calendar';
+  CalendarModule} from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SiteCalendarService, SiteOperatingDayRequest } from '../site-calendar.service';
+import { SiteCalendarService } from '../site-calendar.service';
+import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
 import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
 import { OperatingDayApiResponse } from 'app/shared/models/Response/OperatingDayApiResponse';
 import { QueryParameters } from 'app/shared/models/QueryParameters';

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -59,6 +59,7 @@ import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-servi
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
@@ -213,8 +214,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
   showResidentialTypeField: boolean = false;
 
-  // ViewChild para el contenedor del grid
-  @ViewChild('gridContainer') gridContainer!: ElementRef;
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
@@ -228,6 +227,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Tipo de localización
   // Type of location
   locationTypes: AreaType[] = [];
+
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: DayOfWeekResponse[] = [];
 
   // Parámetro del sitio
   // Site parameter
@@ -484,18 +487,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    */
   compareByTimeWrapper = compareByTime;
 
-  // Función para obtener la clase de grid dinámica
-  getGridColumnsClass(): string {
-    if (!this.gridContainer) {
-      return 'sm:grid-cols-4'; // valor por defecto
-    }
-
-    const visibleFields = this.gridContainer.nativeElement.querySelectorAll('mat-form-field');
-    const count = visibleFields.length;
-
-    return `sm:grid-cols-${count}`;
-  }
-
   // Estado de carga y variables de contexto
   // Loading state and context variables
   isLoading = false;
@@ -534,8 +525,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
-    // Obtener datos del resolver en lugar de suscribirse
-    const resolvedData = this._route.snapshot.data['data'];
+    // Combinar datos de resolvers comunes y específicos del programa
+    const commonData = this._route.snapshot.data['commonData'];
+    const programData = this._route.snapshot.data['programData'];
+    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
       // Yes No Options
@@ -577,6 +570,9 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       this.listPostalRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar días permitidos desde el resolver
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
       // Usar la sitio del resolver
       // Use site from resolver
@@ -1152,6 +1148,14 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Persona a cargo
     const personInCharge = formValues.personInCharge ? {
       firstName: formValues.personInCharge.firstName ?? null,
@@ -1184,6 +1188,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      operatingDaysOfWeek: operatingDaysOfWeek,
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,
       kitchenTypeId: kitchenTypeId,

@@ -5,6 +5,7 @@ import { environment } from '../../../../environments/environment';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { getHttpOptions } from 'app/shared/utils';
 import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +26,13 @@ export class SiteCalendarService {
   deleteOperatingDay(queryParameters: QueryParameters): Observable<any> {
     return this.http.delete(`${this.apiUrl}/operating-day`, getHttpOptions(queryParameters));
   }
-}
-export { SiteOperatingDayRequest };
 
+  /**
+   * Obtiene los días de la semana permitidos para un programa específico con sus nombres
+   * @param queryParameters Parámetros de consulta que incluyen el ID del programa
+   * @returns Observable con array de días permitidos con sus nombres en español e inglés
+   */
+  getAllowedDaysByProgramId(queryParameters: QueryParameters): Observable<any> {
+    return this.http.get(`${this.apiUrl}/get-allowed-days-by-program-id`, getHttpOptions(queryParameters));
+  }
+}

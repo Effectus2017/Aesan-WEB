@@ -41,6 +41,7 @@ export interface SiteRequest {
     operatingDaysCalculated?: number;
     operatingStartTime?: string;
     operatingEndTime?: string;
+    operatingDaysOfWeek?: number[]; // Días de la semana en que opera el sitio (1=Lunes, 2=Martes, ..., 7=Domingo)
 
     /**
      * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?

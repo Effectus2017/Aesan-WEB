@@ -45,6 +45,10 @@
                 }
             }
         },
+        "operating-days-of-week": {
+            "label": "Días de Operación",
+            "required": "Debe seleccionar al menos un día de operación"
+        },
         "add": {
             "title": "Agregar Sitio",
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
@@ -187,6 +191,18 @@
                 "placeholder": "Fecha hasta cuando funciona",
                 "required": "La fecha hasta es requerida",
                 "description": "Fecha hasta cuando finaliza el funcionamiento del sitio"
+            },
+            "operating-days-of-week": {
+                "label": "Días de Operación",
+                "description": "Seleccione los días de la semana en que operará el sitio",
+                "required": "Debe seleccionar al menos un día de operación",
+                "monday": "Lunes",
+                "tuesday": "Martes",
+                "wednesday": "Miércoles",
+                "thursday": "Jueves",
+                "friday": "Viernes",
+                "saturday": "Sábado",
+                "sunday": "Domingo"
             },
             "operating-days-calculated": {
                 "label": "Total de Días de Funcionamiento",
@@ -937,6 +953,11 @@
                 "placeholder": "Total de días calculados de funcionamiento",
                 "description": "Total de días calculados automáticamente",
                 "hint": "Este campo se calcula automáticamente basado en las fechas de funcionamiento configuradas"
+            },
+            "operating-days-of-week": {
+                "label": "Días de Operación",
+                "description": "Seleccione los días de la semana en que operará el sitio",
+                "required": "Debe seleccionar al menos un día de operación"
             },
             "operating-start-time": {
                 "label": "Hora de Inicio",

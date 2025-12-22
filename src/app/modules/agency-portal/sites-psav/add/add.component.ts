@@ -53,11 +53,13 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
+import { PROGRAM_IDS } from 'app/shared/const';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -249,6 +251,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -436,6 +441,13 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: DayOfWeekResponse[] = [];
+
   // School-related properties
   schoolId: number | null = null;
 
@@ -450,6 +462,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return nameA.localeCompare(nameB);
     });
   }
+
 
   constructor() {}
 
@@ -473,7 +486,10 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       }
     });
 
-    const resolvedData = this._route.snapshot.data['data'];
+    // Combinar datos de resolvers comunes y específicos del programa
+    const commonData = this._route.snapshot.data['commonData'];
+    const programData = this._route.snapshot.data['programData'];
+    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
       // Yes No Options
@@ -504,6 +520,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+
+      // Cargar días permitidos desde el resolver
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
@@ -826,6 +845,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Obtener los valores del formulario
     const siteRequest: SiteRequest = {
       // School Id - ID de la escuela asociada (si viene del modal)
@@ -880,6 +907,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: operatingDaysOfWeek,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,

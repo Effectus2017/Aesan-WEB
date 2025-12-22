@@ -283,15 +283,15 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'group',
     icon: 'heroicons_solid:user-group',
     children: [
-      {
-        id: 'staff.add',
-        title: 'navigation.staff.add',
-        type: 'basic',
-        icon: 'mat_solid:add',
-        link: '/staff/add',
-        roles: ['Agency-Administrator'],
-        permissions: ['staff.create'],
-      },
+    //   {
+    //     id: 'staff.add',
+    //     title: 'navigation.staff.add',
+    //     type: 'basic',
+    //     icon: 'mat_solid:add',
+    //     link: '/staff/add',
+    //     roles: ['Agency-Administrator'],
+    //     permissions: ['staff.create'],
+    //   },
       {
         id: 'staff.employees',
         title: 'navigation.staff.employees',

@@ -58,6 +58,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
@@ -75,6 +76,7 @@ import { ServiceByGroupDialogData } from 'app/shared/components/add-service-by-g
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-add-sites-center',
@@ -307,6 +309,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -587,6 +592,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
 
+  // Días de la semana disponibles para selección (filtrados según programa)
+  // Available days of the week for selection (filtered by program)
+  // Se cargan desde el backend, no hardcodeados
+  availableDaysOfWeek: DayOfWeekResponse[] = [];
+
   // School-related properties
   schoolId: number | null = null;
   childGroups: SiteChildGroupRequest[] = [];
@@ -627,7 +637,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         this.schoolId = +params['schoolId'];
       }
     });
-    const resolvedData = this._route.snapshot.data['data'];
+    // Combinar datos de resolvers comunes y específicos del programa
+    const commonData = this._route.snapshot.data['commonData'];
+    const programData = this._route.snapshot.data['programData'];
+    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
       // Yes No Options
@@ -672,6 +685,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.areaTypes = resolvedData.areaTypes;
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
+      // Cargar días permitidos desde el resolver
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
       this._changeDetectorRef.markForCheck();
@@ -685,8 +701,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     if (agencyFromResolver) {
       this.agency = agencyFromResolver;
 
-      // Determinar qué campos mostrar según los programas
-      this.determineVisibleFields();
+      // Configurar validaciones y listeners
+      this.updateValidations();
+      this.setupGroupTypeListener();
     }
 
     // Transloco
@@ -941,10 +958,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(): void {
 
-    this.updateValidations();
-
+  private setupGroupTypeListener(): void {
     // Listener para cambios en groupType que afectan distributionType y siteLocation
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
@@ -958,10 +973,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         }
       }
       this._changeDetectorRef.detectChanges();
-      this._changeDetectorRef.detectChanges();
     });
-
-    this._changeDetectorRef.detectChanges();
   }
 
   private updateValidations(): void {
@@ -1157,6 +1169,14 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
 
+    // Validar operatingDaysOfWeek - debe ser un array no vacío
+    const operatingDaysOfWeek: number[] = formValues.operatingDaysOfWeek;
+    if (!operatingDaysOfWeek || operatingDaysOfWeek.length === 0) {
+      this._notificationService.showError('Por favor, seleccione al menos un día de la semana de funcionamiento');
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.markAsTouched();
+      return;
+    }
+
     // Persona a cargo
     const personInCharge = formValues.personInCharge ? {
       firstName: formValues.personInCharge.firstName ?? null,
@@ -1225,6 +1245,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       operatingFromDate: operatingFromDate ?? null,
       operatingToDate: operatingToDate ?? null,
       operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: operatingDaysOfWeek,
       // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
       // Operating hours - Start and end times for operating days
       operatingStartTime: operatingStartTime ?? null,
