@@ -2053,18 +2053,4 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
   }
 
-  /**
-   * Verifica si se deben mostrar los campos de fecha de inicio de provisión
-   * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
-   */
-  get shouldShowProvisionFields(): boolean {
-    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
-
-    // Verificar si la política seleccionada es 3, 4 o 5
-    if (operatingPolicy && operatingPolicy.id) {
-      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
-    }
-
-    return false;
-  }
 }

@@ -222,37 +222,6 @@
             </mat-error>
           </mat-form-field>
         </div>
-
-        <!-- ✅ VERIFICADO: Fecha de Inicio, Año base, Año de renovación - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
-        <!-- Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III) -->
-        <!-- Fecha de Inicio de la provisión / Provision Start Date -->
-        <!-- Año base / Base Year -->
-        <!-- Año de renovación / Renewal Year -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowProvisionFields">
-          <mat-form-field data-cy="start-date-field">
-            <mat-label>{{ "sites.add.start-date.label" | transloco }}</mat-label>
-            <input
-              matInput
-              [formControlName]="'startDate'"
-              [matDatepicker]="startDatePicker"
-              placeholder="{{ 'sites.add.start-date.placeholder' | transloco }}"
-              data-cy="start-date-input"
-            />
-            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
-            <mat-datepicker #startDatePicker></mat-datepicker>
-          </mat-form-field>
-
-          <mat-form-field data-cy="base-year-field">
-            <mat-label>{{ "sites.add.base-year.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'baseYear'" placeholder="{{ 'sites.add.base-year.placeholder' | transloco }}" data-cy="base-year-input" />
-          </mat-form-field>
-
-          <mat-form-field data-cy="renewal-year-field">
-            <mat-label>{{ "sites.add.renewal-year.label" | transloco }}</mat-label>
-            <input matInput [formControlName]="'renewalYear'" placeholder="{{ 'sites.add.renewal-year.placeholder' | transloco }}" data-cy="renewal-year-input" />
-          </mat-form-field>
-        </div>
-
         <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="organized-athletic-programs-field">

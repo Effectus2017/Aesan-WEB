@@ -967,12 +967,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Obtener los días de operación seleccionados, con fallback a días permitidos
     // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
-    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0 
-      ? param.operatingDaysOfWeek.map((dayId: number) => {
-          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
-          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
-        })
-      : param.allowedOperatingDays || [];
+    const operatingDaysOfWeek = param.operatingDaysOfWeek;
 
     this.headerConfig.formGroup.patchValue({
       name: param.name,

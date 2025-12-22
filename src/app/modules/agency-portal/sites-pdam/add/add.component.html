@@ -227,7 +227,7 @@
         <!-- Fecha de Inicio de la provisión / Provision Start Date -->
         <!-- Año base / Base Year -->
         <!-- Año de renovación / Renewal Year -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="isPDAM && shouldShowProvisionFields">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowProvisionFields">
           <mat-form-field data-cy="start-date-field">
             <mat-label>{{ "sites.add.start-date.label" | transloco }}</mat-label>
             <input
@@ -303,7 +303,7 @@
 
         <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ -->
         <!-- Tipo de Centro / Center Type -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="isPDAM && showCenterTypeField">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="showCenterTypeField">
           <mat-form-field data-cy="center-field">
             <mat-label>{{ "sites.add.center.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">

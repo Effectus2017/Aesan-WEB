@@ -818,16 +818,16 @@ export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandl
     this.updatePersonInChargeValidations();
 
     // Restaurar validación de centerType solo si el organizationType actual lo requiere
-    const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
-    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-    if (centerTypeControl) {
-      if (organizationType?.requiresCenterType) {
-        centerTypeControl.setValidators([Validators.required]);
-      } else {
-        centerTypeControl.clearValidators();
-      }
-      centerTypeControl.updateValueAndValidity();
-    }
+    // const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
+    // const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+    // if (centerTypeControl) {
+    //   if (organizationType?.requiresCenterType) {
+    //     centerTypeControl.setValidators([Validators.required]);
+    //   } else {
+    //     centerTypeControl.clearValidators();
+    //   }
+    //   centerTypeControl.updateValueAndValidity();
+    // }
 
     // Actualizar el estado del botón después de restaurar las validaciones
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;

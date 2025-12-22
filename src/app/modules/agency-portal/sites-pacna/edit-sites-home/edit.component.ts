@@ -117,11 +117,11 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     MatTimepickerModule,
     GenericTableComponent,
     NumericOnlyDirective,
-    PhoneFormatDirective,
+    //PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective,
+    //DynamicGridDirective,
   ],
 })
 export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -252,25 +252,10 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Lista de sitios
   // List of sites
 
-
-  // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = false;
-  isPSAV: boolean = false;
-  isPACNA: boolean = false;
-  isPFHF: boolean = false;
-  isPDFE: boolean = false;
-  isAESAN: boolean = false;
-
-  // Propiedad para controlar visibilidad del campo Tipo de Centro
-  showCenterTypeField: boolean = false;
-
-  // Propiedad para controlar visibilidad del campo Tipo de Institución Residencial
-  showResidentialTypeField: boolean = false;
-
-
-  // Propiedad para controlar visibilidad cuando es Day Care Home
   isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
+
+
   showDifferentGroupsFields: boolean = false;
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
@@ -305,16 +290,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.servicesTableConfig;
 
-  // Función para mostrar campos específicos de Day Care Home (PACNA + isDayCareHome)
-  shouldShowDayCareFields(): boolean {
-    return this.isDayCareHome && this.isPACNA;
-  }
 
   /**
    * Determina si se deben mostrar campos adicionales para diferentes grupos
    */
   shouldShowDifferentGroupsFields(): boolean {
-    return this.showDifferentGroupsFields && this.isDayCareHome && this.isPACNA;
+    return this.showDifferentGroupsFields && this.isDayCareHome;
   }
 
   /**
@@ -836,9 +817,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
           : false;
       }
 
-      // Determinar qué campos mostrar según los programas
-      this.determineVisibleFields(programs);
-
       // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
       // para asegurar que las validaciones se apliquen correctamente
       this.updateValidations();
@@ -916,7 +894,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         this._changeDetectorRef,
         (disabled) => { this.headerConfig.submitDisabled = disabled; }
       );
-      this.showCenterTypeField = result.showCenterTypeField;
+      //this.showCenterTypeField = result.showCenterTypeField;
       this._changeDetectorRef.detectChanges();
     });
 
@@ -1175,59 +1153,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     );
   }
 
-  // Manejar cambio de non-profit para programa PDAM
-
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.edit.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  private determineVisibleFields(programs: any[]): void {
-    // Este componente es específico para PACNA, por lo que siempre es PACNA
-    this.isPACNA = true;
-    this.isPDAM = false;
-    this.isPSAV = false;
-    this.isPFHF = false;
-    this.isPDFE = false;
-    this.isAESAN = false;
-
-    // updateValidations() se ejecuta después en la suscripción a agency$
-    this._changeDetectorRef.detectChanges();
-  }
-
-
   private updateValidations(): void {
-    // Si es Day Care Home, remover todas las validaciones requeridas
-    if (this.isDayCareHome) {
+
       // Remover validaciones requeridas de todos los campos
       const fieldsToUpdate = [
         'name',
@@ -1257,10 +1189,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
           control.updateValueAndValidity();
         }
       });
-    } else {
-      // Restaurar validaciones requeridas cuando no es Day Care Home
-      this.restoreRequiredValidations();
-    }
+
   }
 
   private restoreRequiredValidations(): void {
@@ -1294,22 +1223,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       educationLevelsControl.updateValueAndValidity();
     }
 
-    // Campos específicos de PACNA - requeridos solo cuando es PACNA y no es Day Care Home
-    if (this.isPACNA && !this.isDayCareHome) {
-      const pacnaFields = {
-        organizedAthleticPrograms: [Validators.required],
-        atRiskService: [Validators.required],
-        publicAllianceContractId: [Validators.required],
-      };
 
-      Object.keys(pacnaFields).forEach((fieldName) => {
-        const control = this.headerConfig.formGroup.get(fieldName);
-        if (control) {
-          control.setValidators(pacnaFields[fieldName]);
-          control.updateValueAndValidity();
-        }
-      });
-    } else {
       // Limpiar validadores de campos PACNA si no es PACNA o es Day Care Home
       const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId'];
       pacnaFieldsToClear.forEach((fieldName) => {
@@ -1319,7 +1233,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
           control.updateValueAndValidity();
         }
       });
-    }
+
 
     // Restaurar validación de centerType solo si el organizationType actual lo requiere
     const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
@@ -1406,13 +1320,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // const reviewJustification = param.reviewJustification;
 
     // Obtener los días de operación seleccionados, con fallback a días permitidos
-    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
-    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0 
-      ? param.operatingDaysOfWeek.map((dayId: number) => {
-          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
-          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
-        })
-      : param.allowedOperatingDays || [];
+    // operatingDaysOfWeek ya viene como DayOfWeekResponse[] desde el backend
+    const operatingDaysOfWeek = param.operatingDaysOfWeek;
 
     this.headerConfig.formGroup.patchValue({
       name: param.name,
@@ -2155,11 +2064,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
    */
   get shouldShowKitchenTypeField(): boolean {
-    // Solo para PDAM
-    if (!this.isPDAM) {
-      return false;
-    }
-
     // Verificar si el Tipo de Grupo seleccionado es "Comedor"
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;
     if (groupType) {
@@ -2588,18 +2492,4 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
   }
 
-  /**
-   * Verifica si se deben mostrar los campos de fecha de inicio de provisión
-   * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
-   */
-  get shouldShowProvisionFields(): boolean {
-    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
-
-    // Verificar si la política seleccionada es 3, 4 o 5
-    if (operatingPolicy && operatingPolicy.id) {
-      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
-    }
-
-    return false;
-  }
 }

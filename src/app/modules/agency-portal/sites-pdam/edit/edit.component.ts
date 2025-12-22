@@ -10,7 +10,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, skip } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
@@ -551,7 +551,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
       // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      this.availableDaysOfWeek = (resolvedData.allowedOperatingDays as DayOfWeekResponse[]) || null;
 
       // Usar la sitio del resolver
       // Use site from resolver
@@ -634,13 +634,20 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       });
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
-    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
-      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(this.headerConfig.formGroup, organizationType, 'centerType', this._changeDetectorRef, (disabled) => {
-        this.headerConfig.submitDisabled = disabled;
+    // Usar skip(1) para evitar que se ejecute durante la inicialización con patchValue
+    this.headerConfig.formGroup
+      .get('organizationType')
+      ?.valueChanges.pipe(
+        skip(1), // Saltar el primer valor (inicialización)
+        takeUntil(this._unsubscribeAll)
+      )
+      .subscribe((organizationType: OrganizationType) => {
+        const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(this.headerConfig.formGroup, organizationType, 'centerType', this._changeDetectorRef, (disabled) => {
+          this.headerConfig.submitDisabled = disabled;
+        });
+        this.showCenterTypeField = result.showCenterTypeField;
+        this._changeDetectorRef.detectChanges();
       });
-      this.showCenterTypeField = result.showCenterTypeField;
-      this._changeDetectorRef.detectChanges();
-    });
 
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
@@ -888,35 +895,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
   }
 
-
-  /**
-   * Valida si el sitio tiene al menos un año de servicio
-   * Validates if the site has at least one year of service
-   * NOTE: Validation disabled - commented out for future reference
-   */
-  checkServiceTime(): void {
-    // const serviceTime = this.headerConfig.formGroup.get('serviceTime')?.value;
-    // if (serviceTime) {
-    //   const today = new Date();
-    //   const serviceDate = new Date(serviceTime);
-    //   const diffInMonths = (today.getFullYear() - serviceDate.getFullYear()) * 12 + (today.getMonth() - serviceDate.getMonth());
-    //   if (diffInMonths < 12) {
-    //     this._fuseConfirmationService.open({
-    //       title: this._translocoService.translate('sites.notification.title'),
-    //       message: this._translocoService.translate('sites.edit.service-time.not-eligible'),
-    //       actions: {
-    //         confirm: {
-    //           label: this._translocoService.translate('sites.notification.confirm'),
-    //         },
-    //         cancel: {
-    //           show: false,
-    //         },
-    //       },
-    //     });
-    //   }
-    // }
-  }
-
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
@@ -996,18 +974,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       educationLevelsControl.updateValueAndValidity();
     }
 
-    // Restaurar validación de centerType solo si el organizationType actual lo requiere
-    const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
-    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-    if (centerTypeControl) {
-      if (organizationType?.requiresCenterType) {
-        centerTypeControl.setValidators([Validators.required]);
-      } else {
-        centerTypeControl.clearValidators();
-      }
-      centerTypeControl.updateValueAndValidity();
-    }
-
     // Actualizar el estado del botón después de restaurar las validaciones
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
@@ -1029,11 +995,21 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const deliveryType = param.deliveryType;
     const sponsorType = param.sponsorType;
     const applicantType = param.applicantType;
+    // Buscar el tipo de residencial en el array para asegurar coincidencia correcta con compareById
+    // Find residential type in array to ensure correct matching with compareById
     const residentialType = param.residentialType;
     const operatingPolicy = param.operatingPolicy;
     const educationLevels = param.educationLevels || [];
     const organizationType = param.organizationType;
-    const centerType = param.centerType;
+    // Buscar el tipo de centro en el array para asegurar coincidencia correcta con compareById
+    // Find center type in array to ensure correct matching with compareById
+    let centerType = param.centerType;
+    if (centerType) {
+      const centerTypeFromArray = this.centerTypes.find((option) => option.id === centerType.id);
+      if (centerTypeFromArray) {
+        centerType = centerTypeFromArray;
+      }
+    }
     const areaType = param.areaType;
     const locationType = param.locationType;
 
@@ -1055,13 +1031,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // const reviewJustification = param.reviewJustification;
 
     // Obtener los días de operación seleccionados, con fallback a días permitidos
-    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
-    const operatingDaysOfWeek = param.operatingDaysOfWeek && param.operatingDaysOfWeek.length > 0
-      ? param.operatingDaysOfWeek.map((dayId: number) => {
-          const day = param.allowedOperatingDays?.find((d: DayOfWeekResponse) => d.id === dayId);
-          return day || { id: dayId, name: '', nameEN: '' } as DayOfWeekResponse;
-        })
-      : param.allowedOperatingDays || [];
+    // operatingDaysOfWeek ya viene como DayOfWeekResponse[] desde el backend
+    const operatingDaysOfWeek = param.operatingDaysOfWeek;
 
     this.headerConfig.formGroup.patchValue({
       siteCode: param.siteCode || param.id?.toString() || '',
@@ -1140,7 +1111,7 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       applicantType: applicantType,
       applicantTypeId: applicantType?.id,
       typeOfApplicant: applicantType,
-      residentialType: residentialType,
+      typeOfResidential: residentialType,
       operatingPolicy: operatingPolicy,
       areaType: areaType,
       locationType: locationType,
@@ -1163,21 +1134,22 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     // Inicializar showCenterTypeField basado en el organizationType cargado
     // Esto es necesario porque valueChanges solo se dispara cuando el valor cambia, no cuando se establece con patchValue
     if (organizationType) {
-      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
-        this.headerConfig.formGroup,
-        organizationType,
-        'centerType',
-        this._changeDetectorRef,
-        (disabled) => {
-          this.headerConfig.submitDisabled = disabled;
-        }
-      );
-      this.showCenterTypeField = result.showCenterTypeField;
+      // Simplemente establecer showCenterTypeField basado en requiresCenterType
+      this.showCenterTypeField = organizationType.requiresCenterType;
+
+      // Configurar validaciones
+      const centerTypeControl = this.headerConfig.formGroup.get('centerType');
+      if (organizationType.requiresCenterType) {
+        centerTypeControl?.setValidators([Validators.required]);
+      } else {
+        centerTypeControl?.clearValidators();
+      }
+      centerTypeControl?.updateValueAndValidity();
     }
 
     // Satélites
-    this.satellitesTableConfig.dataSource.data = param.satellites || [];
-    this.satellitesTableConfig.length = param.satellites?.length || 0;
+    //this.satellitesTableConfig.dataSource.data = param.satellites || [];
+    //this.satellitesTableConfig.length = param.satellites?.length || 0;
 
     // Calcular días operativos automáticamente si es necesario
     DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.headerConfig.formGroup);
@@ -1632,7 +1604,6 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
    * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
    */
   get shouldShowKitchenTypeField(): boolean {
-
     // Verificar si el Tipo de Grupo seleccionado es "Comedor"
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;
     if (groupType) {
