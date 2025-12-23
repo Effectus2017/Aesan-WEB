@@ -6,16 +6,6 @@
     <form [formGroup]="headerConfig.formGroup" #staffEditForm="ngForm" data-cy="staff-edit-form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
 
-        <!-- Indicador de Administrador del Sitio (solo lectura) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="param?.isSiteAdmin">
-            <mat-form-field data-cy="site-admin-indicator-field" appearance="outline">
-              <mat-label>{{ "staff.edit.siteAdministrator.label" | transloco }}</mat-label>
-              <input matInput [value]="'staff.edit.siteAdministrator.yes' | transloco" readonly />
-              <mat-icon matPrefix class="text-green-500">check_circle</mat-icon>
-            </mat-form-field>
-          </div>
-
-
         <!-- Información General -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
@@ -207,28 +197,30 @@
           </mat-form-field>
         </div>
 
-        <!-- Asignación de Escuela - COMENTADO: Ya no es necesario para empleados -->
-        <!--
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
-          <p class="text-lg font-medium">
-            {{ "staff.edit.site-assignment" | transloco }}
-          </p>
-          <p class="mb-6 text-secondary">
-            {{ "staff.edit.site-assignment-description" | transloco }}
-          </p>
-        </div>
-
+        <!-- Email -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="site-field">
-            <mat-label>{{ "staff.edit.site.label" | transloco }}</mat-label>
-            <mat-select formControlName="site" [placeholder]="'staff.edit.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
-              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option">
-                {{ site.siteCode }} - {{ site.name }}
-              </mat-option>
-            </mat-select>
+          <mat-form-field data-cy="email-field">
+            <mat-label>{{ "staff.edit.email.label" | transloco }}</mat-label>
+            <input
+              matInput
+              formControlName="email"
+              type="email"
+              [placeholder]="'staff.edit.email.placeholder' | transloco"
+              title="{{ 'staff.edit.email.label' | transloco }}"
+              [attr.aria-label]="'staff.edit.email.label' | transloco"
+              data-cy="email-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('required')">
+              {{ "staff.edit.email.required" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('email')">
+              {{ "staff.edit.email.invalid" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('email')?.hasError('emailExists')">
+              {{ "staff.edit.email.exists" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
-        -->
 
         <!-- Comentarios -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">

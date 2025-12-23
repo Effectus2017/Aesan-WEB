@@ -94,7 +94,7 @@
             "tooltip": "Programa actual en el cual se encuentra la agencia"
         },
         "agencyCode": {
-            "banner": "Código: {{code}}",
+            "banner": "{{code}}",
             "tooltip": "Código de la agencia auspiciadora"
         },
         "agencyStatus": {

@@ -372,6 +372,17 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Early Head Start, Head Start, N/A
       this.participatesInHeadStartProgramOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'headStartProgram');
 
+      // Establecer "N/A" como valor por defecto si el programa es PSAV
+      const currentProgram = this.signUpForm.get('program')?.value;
+      if (isPSAVProgram(currentProgram)) {
+        const naOption = this.participatesInHeadStartProgramOptions.find(
+          (option: OptionSelection) => option.name === 'N/A' || option.nameEN === 'N/A'
+        );
+        if (naOption) {
+          this.signUpForm.get('participatesInHeadStartProgramId')?.setValue(naOption);
+        }
+      }
+
       // Posición del Staff
       // Staff Position
       // Administrativo (19), Operativo (20), Miembro del Consejo (21)
@@ -462,6 +473,16 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         if (isPSAVProgram(currentProgram)) {
           participatesInHeadStartProgramControl.setValidators([Validators.required]);
+          
+          // Establecer "N/A" como valor por defecto si no hay valor seleccionado
+          if (!participatesInHeadStartProgramControl.value) {
+            const naOption = this.participatesInHeadStartProgramOptions.find(
+              (option: OptionSelection) => option.name === 'N/A' || option.nameEN === 'N/A'
+            );
+            if (naOption) {
+              participatesInHeadStartProgramControl.setValue(naOption);
+            }
+          }
         } else {
           participatesInHeadStartProgramControl.clearValidators();
           participatesInHeadStartProgramControl.setValue(null);

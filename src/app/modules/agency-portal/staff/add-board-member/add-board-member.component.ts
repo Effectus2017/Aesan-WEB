@@ -23,7 +23,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
@@ -71,7 +70,6 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _geoService = inject(GeoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -179,69 +177,39 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       this.currentLang = lang;
     });
 
-    // Cargar opciones SOLO UNA VEZ desde el resolver
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Guardar todas las opciones para filtrar en memoria
-        this.allOptionSelections = result.body.data;
-        // Status
-        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Posiciones de miembros de junta
-        this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
-        this.listPositions = this.listBoardMemberTitles;
-        // Listas para campos de Miembros de la Junta
-        this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
-        this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    // Obtener datos del resolver
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+    if (resolvedData) {
+      // Cargar opciones desde el resolver
+      this.allOptionSelections = resolvedData.options.data;
+      // Status
+      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      // Posiciones de miembros de junta
+      this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
+      this.listPositions = this.listBoardMemberTitles;
+      // Listas para campos de Miembros de la Junta
+      this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
+      this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
 
-        this._changeDetectorRef.detectChanges();
+      // Cargar datos desde el resolver
+      this.listStaffTypes = resolvedData.staffTypes;
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
+
+      // Asignar tipo de staff "Miembro de la Junta" (ID: 2) - este componente es únicamente para miembros de junta
+      this.boardMemberStaffType = this.listStaffTypes.find(staffType => staffType.id === 2);
+
+      if (this.boardMemberStaffType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: this.boardMemberStaffType
+        });
+
+        // Actualizar validaciones
+        this.updateValidations();
       }
-    });
 
-    // Cargar tipos de staff y pre-seleccionar "Miembro de la Junta"
-    this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffTypes = result.body;
-
-        // Pre-seleccionar "Miembro de la Junta"
-        const boardMemberType = this.listStaffTypes.find(staffType =>
-          staffType.name === 'Miembro de la Junta' || staffType.nameEn === 'Board Member'
-        );
-
-        if (boardMemberType) {
-          this.boardMemberStaffType = boardMemberType;
-          this.headerConfig.formGroup.patchValue({
-            staffType: boardMemberType
-          });
-
-          // Actualizar validaciones
-          this.updateValidations();
-        }
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cities
-    this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listCities = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Regions
-    this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listRegions = result.body;
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para miembros de la junta
-    // const resolvedData = this._activatedRoute.snapshot.data['data'];
-    // if (resolvedData && resolvedData.sites) {
-    //   this.listSites = resolvedData.sites;
-    // }
+      this._changeDetectorRef.detectChanges();
+    }
 
     // Suscribirse a cambios en la fecha de nacimiento para limpiar errores de validación
     this.headerConfig.formGroup.get('birthDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((birthDate: any) => {

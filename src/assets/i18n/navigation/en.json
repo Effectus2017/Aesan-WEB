@@ -91,7 +91,7 @@
             "tooltip": "Current program in which the agency is located"
         },
         "agencyCode": {
-            "banner": "Code: {{code}}",
+            "banner": "{{code}}",
             "tooltip": "Sponsoring agency code"
         },
         "agencyStatus": {

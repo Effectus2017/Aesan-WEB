@@ -23,7 +23,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
@@ -31,6 +30,8 @@ import { StaffClassificationService } from 'app/shared/services/staff-classifica
 import { StaffClassification } from 'app/shared/models/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
 import { Site } from 'app/shared/models/Site';
+import { UserService } from 'app/shared/services/user.service';
+import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 
 @Component({
   selector: 'app-add-employee',
@@ -63,12 +64,12 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
   private _activatedRoute = inject(ActivatedRoute);
+  private _userService = inject(UserService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -119,6 +120,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       contractEndDate: new FormControl(''),
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required]),
+      // Email
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService)]),
       // Comentarios
       comments: new FormControl('', [Validators.required]),
       // Sitio asignado - COMENTADO: Ya no es necesario para empleados
@@ -161,62 +164,35 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.currentLang = lang;
     });
 
-    // Cargar opciones SOLO UNA VEZ desde el resolver
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        // Guardar todas las opciones para filtrar en memoria
-        this.allOptionSelections = result.body.data;
-        // Status
-        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Poblar listas separadas
-        this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-        this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+    // Obtener datos del resolver
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+    if (resolvedData) {
+      // Cargar opciones desde el resolver
+      this.allOptionSelections = resolvedData.options.data;
+      // Status
+      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      // Poblar listas separadas
+      this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+      this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
 
-        this._changeDetectorRef.detectChanges();
-      }
-    });
+      // Cargar datos desde el resolver
+      this.listStaffTypes = resolvedData.staffTypes;
+      this.listStaffClassifications = resolvedData.staffClassifications;
 
-    // Cargar tipos de staff y pre-seleccionar "Empleado"
-    this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffTypes = result.body;
+      // Asignar tipo de staff "Empleado" (ID: 1) - este componente es únicamente para empleados
+      this.employeeStaffType = this.listStaffTypes.find(staffType => staffType.id === 1);
 
-        // Pre-seleccionar "Empleado"
-        const employeeType = this.listStaffTypes.find(staffType =>
-          staffType.name === 'Empleado' || staffType.nameEn === 'Employee'
-        );
+      if (this.employeeStaffType) {
+        this.headerConfig.formGroup.patchValue({
+          staffType: this.employeeStaffType
+        });
 
-        if (employeeType) {
-          this.employeeStaffType = employeeType;
-          this.headerConfig.formGroup.patchValue({
-            staffType: employeeType
-          });
-
-          // Actualizar validaciones
-          this.updateValidations();
-        }
-
-        this._changeDetectorRef.detectChanges();
-      }
-    });
-
-    // Cargar clasificaciones de staff
-    this._staffClassificationService.staffClassifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.listStaffClassifications = result.body;
-
-        // Actualizar validaciones después de cargar las clasificaciones
+        // Actualizar validaciones
         this.updateValidations();
-
-        this._changeDetectorRef.detectChanges();
       }
-    });
 
-    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para empleados
-    // const resolvedData = this._activatedRoute.snapshot.data['data'];
-    // if (resolvedData && resolvedData.sites) {
-    //   this.listSites = resolvedData.sites;
-    // }
+      this._changeDetectorRef.detectChanges();
+    }
 
     // Suscribirse a cambios en la clasificación
     this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
@@ -289,6 +265,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Comentarios
     const comments: string = formValues.comments || '';
 
+    // Email
+    const email: string = formValues.email || '';
+
     // Nombre
     const firstName: string = formValues.firstName || '';
 
@@ -335,6 +314,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       siteId: siteId,
       isPrimary: isPrimary,
       birthDate: birthDate,
+      email: email,
     };
 
     // Disable the form
@@ -393,6 +373,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
       const commentsControl = this.headerConfig.formGroup.get('comments');
       const birthDateControl = this.headerConfig.formGroup.get('birthDate');
+      const emailControl = this.headerConfig.formGroup.get('email');
 
       // Habilitar todos los campos
       firstNameControl?.enable({ emitEvent: false });
@@ -404,6 +385,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       contractEndDateControl?.enable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
       birthDateControl?.enable({ emitEvent: false });
+      emailControl?.enable({ emitEvent: false });
     }
 
     this._changeDetectorRef.detectChanges();
@@ -458,6 +440,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const firstNameControl = this.headerConfig.formGroup.get('firstName');
     const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
     const positionControl = this.headerConfig.formGroup.get('position');
+    const emailControl = this.headerConfig.formGroup.get('email');
 
     // Para empleados: clasificación requerida, fecha de nacimiento requerida
     staffClassificationControl?.setValidators([Validators.required]);
@@ -465,12 +448,15 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     firstNameControl?.setValidators([Validators.required]);
     fatherLastNameControl?.setValidators([Validators.required]);
     positionControl?.setValidators([Validators.required]);
+    emailControl?.setValidators([Validators.required, Validators.email]);
+    emailControl?.setAsyncValidators([emailExistsValidator(this._userService)]);
 
     staffClassificationControl?.updateValueAndValidity();
     birthDateControl?.updateValueAndValidity();
     firstNameControl?.updateValueAndValidity();
     fatherLastNameControl?.updateValueAndValidity();
     positionControl?.updateValueAndValidity();
+    emailControl?.updateValueAndValidity();
 
     // El campo de clasificación SIEMPRE debe estar habilitado
     staffClassificationControl?.enable({ emitEvent: false });
@@ -481,6 +467,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       fatherLastNameControl?.disable({ emitEvent: false });
       positionControl?.disable({ emitEvent: false });
       birthDateControl?.disable({ emitEvent: false });
+      emailControl?.disable({ emitEvent: false });
       const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
       const commentsControl = this.headerConfig.formGroup.get('comments');
@@ -493,6 +480,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       fatherLastNameControl?.enable({ emitEvent: false });
       positionControl?.enable({ emitEvent: false });
       birthDateControl?.enable({ emitEvent: false });
+      emailControl?.enable({ emitEvent: false });
       const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
       const commentsControl = this.headerConfig.formGroup.get('comments');
@@ -511,9 +499,11 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
-    if (this.selectedClassification?.name === 'Administrativo' || this.selectedClassification?.nameEn === 'Administrative') {
+    // Usar IDs en lugar de nombres para identificar clasificaciones
+    // ID 1: Administrativo, ID 2: Operacional (verificar en la base de datos si es necesario)
+    if (this.selectedClassification?.id === 1) {
       this.listPositions = this.listAdministrativePositions;
-    } else if (this.selectedClassification?.name === 'Operacional' || this.selectedClassification?.nameEn === 'Operational') {
+    } else if (this.selectedClassification?.id === 2) {
       this.listPositions = this.listOperationalPositions;
     } else {
       this.listPositions = [];

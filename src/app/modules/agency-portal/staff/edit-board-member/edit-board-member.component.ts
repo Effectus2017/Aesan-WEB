@@ -29,7 +29,6 @@ import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -87,7 +86,6 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   private _notificationService = inject(NotificationService);
   private _authService = inject(AuthService);
   private _translocoService = inject(TranslocoService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _geoService = inject(GeoService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
@@ -233,115 +231,6 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     return this._translocoService.translate('staff.edit.comments.boardMember.label');
   }
 
-  /**
-   * Determina si el botón de submit debe estar habilitado
-   */
-  get isSubmitButtonEnabled(): boolean {
-    const form = this.headerConfig.formGroup;
-
-    // Si el formulario está pendiente (validaciones asíncronas), deshabilitar temporalmente
-    if (form.pending) {
-      return false;
-    }
-
-    // Validaciones específicas para miembros de junta
-    const emailControl = form.get('email');
-    const email = emailControl?.value;
-    const postalAddress = form.get('postalAddress')?.value;
-    const cityControl = form.get('city');
-    const city = cityControl?.value;
-    const regionControl = form.get('region');
-    const region = regionControl?.value;
-    const zipCodeControl = form.get('zipCode');
-    const zipCode = zipCodeControl?.value;
-    const positionControl = form.get('position');
-    const position = positionControl?.value;
-    const firstName = form.get('firstName')?.value;
-    const fatherLastName = form.get('fatherLastName')?.value;
-    const birthDateControl = form.get('birthDate');
-    const birthDate = birthDateControl?.value;
-    const tenureDurationControl = form.get('tenureDuration');
-    const tenureDuration = tenureDurationControl?.value;
-    const tenureDurationUnitControl = form.get('tenureDurationUnit');
-    const tenureDurationUnit = tenureDurationUnitControl?.value;
-    const receivesProgramSalaryControl = form.get('receivesProgramSalary');
-    const receivesProgramSalary = receivesProgramSalaryControl?.value;
-
-    // Verificar que todos los campos requeridos tengan valores
-    if (!email || !postalAddress || !city || !region || !zipCode || !position || !firstName || !fatherLastName || !birthDate || !tenureDuration || !tenureDurationUnit || !receivesProgramSalary) {
-      return false;
-    }
-
-    // Si el email tiene valor pero el control está pending, esperar
-    if (email && emailControl?.pending) {
-      return false;
-    }
-
-    // Si el email tiene errores de validación (no solo pending), deshabilitar
-    if (email && emailControl?.invalid && !emailControl?.pending) {
-      return false;
-    }
-
-    // Verificar que los controles de objetos tengan IDs válidos
-    // Si tienen valores pero no tienen ID, no son válidos
-    if (city && !city.id) {
-      return false;
-    }
-    if (region && !region.id) {
-      return false;
-    }
-    if (position && !position.id) {
-      return false;
-    }
-    if (tenureDurationUnit && !tenureDurationUnit.id) {
-      return false;
-    }
-    if (receivesProgramSalary && !receivesProgramSalary.id) {
-      return false;
-    }
-
-    // Verificar validaciones básicas de campos de texto
-    if (emailControl?.hasError('email') || emailControl?.hasError('emailExists')) {
-      return false;
-    }
-    if (zipCodeControl?.hasError('puertoRicoZipCode')) {
-      return false;
-    }
-    if (birthDateControl?.hasError('minimumAge')) {
-      return false;
-    }
-
-    // Verificar errores de validación en campos requeridos habilitados
-    if (firstName && form.get('firstName')?.hasError('required')) {
-      return false;
-    }
-    if (fatherLastName && form.get('fatherLastName')?.hasError('required')) {
-      return false;
-    }
-    if (email && emailControl?.hasError('required')) {
-      return false;
-    }
-    if (postalAddress && form.get('postalAddress')?.hasError('required')) {
-      return false;
-    }
-    if (zipCode && zipCodeControl?.hasError('required')) {
-      return false;
-    }
-    if (birthDate && birthDateControl?.hasError('required')) {
-      return false;
-    }
-    if (tenureDuration && tenureDurationControl?.hasError('required')) {
-      return false;
-    }
-    if (tenureDurationUnit && tenureDurationUnitControl?.hasError('required')) {
-      return false;
-    }
-    if (receivesProgramSalary && receivesProgramSalaryControl?.hasError('required')) {
-      return false;
-    }
-
-    return true;
-  }
 
   ngOnInit(): void {
     // Obtener Agencia desde local storage desde AuthService
@@ -366,83 +255,56 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       this.currentLang = lang;
     });
 
-    // Cargar opciones
-    this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.allOptionSelections = result.body.data;
-        // Status
-        this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
-        // Posiciones de miembros de junta
-        this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
-        this.listPositions = this.listBoardMemberTitles;
-        // Listas para campos de Miembros de la Junta
-        this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
-        this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    // Obtener datos del resolver
+    const resolvedData = this._activatedRoute.snapshot.data['data'];
+    if (resolvedData) {
+      // Cargar opciones desde el resolver
+      this.allOptionSelections = resolvedData.options.data;
+      // Status
+      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      // Posiciones de miembros de junta
+      this.listBoardMemberTitles = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'boardMemberTitle');
+      this.listPositions = this.listBoardMemberTitles;
+      // Listas para campos de Miembros de la Junta
+      this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
+      this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
 
-        // Si el formulario ya está inicializado, actualizar los valores
-        if (this.param) {
-          const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
-          const receivesProgramSalaryControl = this.headerConfig.formGroup.get('receivesProgramSalary');
+      // Cargar datos desde el resolver
+      this.listStaffTypes = resolvedData.staffTypes;
+      this.listCities = resolvedData.cities;
+      this.listRegions = resolvedData.regions;
 
-          if (tenureDurationUnitControl && this.param.tenureDurationUnitId) {
-            const tenureUnit = this.listTenureDurationUnits.find(u => u.id === this.param.tenureDurationUnitId);
-            if (tenureUnit) {
-              tenureDurationUnitControl.setValue(tenureUnit);
-            }
-          }
+      // Cargar relaciones desde el resolver
+      this.relationshipsTableConfig.dataSource.data = resolvedData.relationships;
+      this.relationshipsTableConfig.length = resolvedData.relationships?.length || 0;
 
-          if (receivesProgramSalaryControl && this.param.receivesProgramSalaryId) {
-            const receivesSalary = this.listReceivesProgramSalary.find(s => s.id === this.param.receivesProgramSalaryId);
-            if (receivesSalary) {
-              receivesProgramSalaryControl.setValue(receivesSalary);
-            }
-          }
+      // Cargar staff desde el resolver
+      this.param = resolvedData.staff;
+      this.onSetForm(resolvedData.staff);
+    }
 
-          this._changeDetectorRef.detectChanges();
-        }
-
-        // Si ya se cargó el staff y hay un position establecido, actualizarlo con el objeto de la lista
-        if (this.param && this.listPositions.length > 0) {
-          const currentPosition = this.headerConfig.formGroup.get('position')?.value;
-          if (currentPosition?.id) {
-            const foundPosition = this.listPositions.find(p => p.id === currentPosition.id);
-            if (foundPosition && foundPosition !== currentPosition) {
-              this.headerConfig.formGroup.patchValue({ position: foundPosition });
-              this.updateSubmitButtonState();
-            }
-          }
-        }
-      }
-    });
-
-    // Staff Types
+    // Staff Types - Mantener suscripción como fallback si no hay datos del resolver
     this._staffTypeService.staffTypes$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result) && !this.listStaffTypes.length) {
         this.listStaffTypes = result.body;
       }
     });
 
-    // Cities
+    // Cities - Mantener suscripción como fallback si no hay datos del resolver
     this._geoService.cities$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body) && !this.listCities.length) {
         this.listCities = result.body;
       }
     });
 
-    // Regions
+    // Regions - Mantener suscripción como fallback si no hay datos del resolver
     this._geoService.regions$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result.body)) {
+      if (!isNullOrUndefinedEmptyStringNullArray(result.body) && !this.listRegions.length) {
         this.listRegions = result.body;
       }
     });
 
-    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para miembros de la junta
-    // const resolvedData = this._activatedRoute.snapshot.data['data'];
-    // if (resolvedData && resolvedData.sites) {
-    //   this.listSites = resolvedData.sites;
-    // }
-
-    // Subscribierse a obtener relaciones
+    // Subscribierse a obtener relaciones (para actualizaciones después de agregar/editar)
     this._staffRelationshipService.relationships$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.relationshipsTableConfig.dataSource.data = result.body;
@@ -450,21 +312,18 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       }
     });
 
-    // Subscribierse a obtener staff
+    // Subscribierse a obtener staff (para actualizaciones después de cambios)
     this._staffService.staff$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         this.onSetForm(result.body);
       }
     });
 
-    // Actualizar el estado inicial del botón de submit
-    this.updateSubmitButtonState();
-
-    // Suscribirse a cambios en el estado del formulario para actualizar el botón dinámicamente
+    // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
-        this.updateSubmitButtonState();
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
         this._changeDetectorRef.detectChanges();
       });
 
@@ -472,8 +331,11 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     this.headerConfig.formGroup.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
-        this.updateSubmitButtonState();
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
       });
+
+    // Establecer el estado inicial del botón
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
 
     // Única llamada a detectChanges al final de ngOnInit
     this._changeDetectorRef.detectChanges();
@@ -578,7 +440,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     this.headerConfig.formGroup.get('staffType')?.disable();
 
     // Actualizar el estado inicial del botón de submit
-    this.updateSubmitButtonState();
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
 
     // Cargar sitio actualmente asignado al staff - COMENTADO: Ya no es necesario para miembros de la junta
     // this.loadCurrentSiteAssignment(param.id);
@@ -915,8 +777,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     tenureDurationUnitControl?.enable({ emitEvent: false });
     receivesProgramSalaryControl?.enable({ emitEvent: false });
 
-    // Actualizar el estado del botón de submit
-    this.updateSubmitButtonState();
+    // Actualizar el estado del botón después de cambiar las validaciones
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -1051,12 +914,6 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     this._staffRelationshipService.getRelationshipsByStaffId(requestParameters).subscribe();
   }
 
-  /**
-   * Actualiza el estado del botón de submit basándose en la validez del formulario
-   */
-  private updateSubmitButtonState(): void {
-    this.headerConfig.submitDisabled = !this.isSubmitButtonEnabled;
-  }
 
   /**
    * Resetea todos los scrolls de la página
