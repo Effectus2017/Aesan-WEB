@@ -89,8 +89,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   listStaffTypes: StaffType[] = [];
   // Lista de Clasificaciones de Staff
   listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
+  // Lista de Sitios - COMENTADO: Ya no es necesario para empleados
+  // listSites: Site[] = [];
   // Resultado de revisión / Review result
   reviewResult: OptionSelection[] = [];
 
@@ -144,9 +144,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       birthDate: new FormControl('', [Validators.required]),
       // Comments
       comments: new FormControl(''),
-      // Sitio asignado
-      site: new FormControl(null),
-      isPrimary: new FormControl(false),
+      // Sitio asignado - COMENTADO: Ya no es necesario para empleados
+      // site: new FormControl(null),
+      // isPrimary: new FormControl(false),
       // Review result
       reviewResult: new FormControl(''),
       // Review date
@@ -280,11 +280,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       }
     });
 
-    // Sites - Cargar desde el resolver
-    const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.sites) {
-      this.listSites = resolvedData.sites;
-    }
+    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para empleados
+    // const resolvedData = this._activatedRoute.snapshot.data['data'];
+    // if (resolvedData && resolvedData.sites) {
+    //   this.listSites = resolvedData.sites;
+    // }
 
     // Suscribirse a cambios en la clasificación
     this.headerConfig.formGroup
@@ -354,8 +354,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       comments: param.comments,
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
-      site: param.site,
-      isPrimary: param.isPrimary,
+      // site: param.site, // COMENTADO: Ya no es necesario para empleados
+      // isPrimary: param.isPrimary, // COMENTADO: Ya no es necesario para empleados
     });
 
     // Actualizar validaciones
@@ -373,31 +373,32 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     // Actualizar el estado inicial del botón de submit
     this.updateSubmitButtonState();
 
-    // Cargar sitio actualmente asignado al staff
-    this.loadCurrentSiteAssignment(param.id);
+    // Cargar sitio actualmente asignado al staff - COMENTADO: Ya no es necesario para empleados
+    // this.loadCurrentSiteAssignment(param.id);
   }
 
   /**
    * Carga el sitio actualmente asignado al staff
+   * COMENTADO: Ya no es necesario para empleados
    */
-  private loadCurrentSiteAssignment(staffId: number): void {
-    this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
-      next: (siteStaffs) => {
-        if (siteStaffs && siteStaffs.length > 0) {
-          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
-          if (activeAssignment) {
-            this.headerConfig.formGroup.patchValue({
-              site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
-              isPrimary: activeAssignment.isPrimary || false,
-            });
-          }
-        }
-      },
-      error: (err) => {
-        console.error('Error loading site assignment:', err);
-      },
-    });
-  }
+  // private loadCurrentSiteAssignment(staffId: number): void {
+  //   this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
+  //     next: (siteStaffs) => {
+  //       if (siteStaffs && siteStaffs.length > 0) {
+  //         const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
+  //         if (activeAssignment) {
+  //           this.headerConfig.formGroup.patchValue({
+  //             site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
+  //             isPrimary: activeAssignment.isPrimary || false,
+  //           });
+  //         }
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Error loading site assignment:', err);
+  //     },
+  //   });
+  // }
 
   /**
    * Muestra el mensaje de éxito después de actualizar el staff
@@ -451,9 +452,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const fatherLastName: string = formValues.fatherLastName || '';
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado
-    const siteId: number = formValues.site?.id || null;
-    const isPrimary: boolean = formValues.isPrimary || false;
+    // Sitio asignado - COMENTADO: Ya no es necesario para empleados
+    // const siteId: number = formValues.site?.id || null;
+    // const isPrimary: boolean = formValues.isPrimary || false;
+    const siteId: number = null; // COMENTADO: Ya no es necesario para empleados
+    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para empleados
 
     // Loading
     this.isLoading = true;

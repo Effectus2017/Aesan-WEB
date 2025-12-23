@@ -114,8 +114,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
+  // Lista de Sitios - COMENTADO: Ya no es necesario para miembros de la junta
+  // listSites: Site[] = [];
 
   // Lista completa de opciones de selección
   listBoardMemberTitles: OptionSelection[] = [];
@@ -187,9 +187,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comments
       comments: new FormControl(''),
-      // Sitio asignado
-      site: new FormControl(null),
-      isPrimary: new FormControl(false),
+      // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
+      // site: new FormControl(null),
+      // isPrimary: new FormControl(false),
       // Campos específicos para Miembros de la Junta
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),
@@ -436,11 +436,11 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       }
     });
 
-    // Sites - Cargar desde el resolver
-    const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.sites) {
-      this.listSites = resolvedData.sites;
-    }
+    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para miembros de la junta
+    // const resolvedData = this._activatedRoute.snapshot.data['data'];
+    // if (resolvedData && resolvedData.sites) {
+    //   this.listSites = resolvedData.sites;
+    // }
 
     // Subscribierse a obtener relaciones
     this._staffRelationshipService.relationships$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
@@ -556,8 +556,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       region: region,
       zipCode: param.zipCode,
       comments: param.comments,
-      site: param.site,
-      isPrimary: param.isPrimary,
+      // site: param.site, // COMENTADO: Ya no es necesario para miembros de la junta
+      // isPrimary: param.isPrimary, // COMENTADO: Ya no es necesario para miembros de la junta
       tenureDuration: param.tenureDuration,
       tenureDurationUnit: param.tenureDurationUnitId ? this.listTenureDurationUnits.find(u => u.id === param.tenureDurationUnitId) : null,
       receivesProgramSalary: param.receivesProgramSalaryId ? this.listReceivesProgramSalary.find(s => s.id === param.receivesProgramSalaryId) : null,
@@ -580,8 +580,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     // Actualizar el estado inicial del botón de submit
     this.updateSubmitButtonState();
 
-    // Cargar sitio actualmente asignado al staff
-    this.loadCurrentSiteAssignment(param.id);
+    // Cargar sitio actualmente asignado al staff - COMENTADO: Ya no es necesario para miembros de la junta
+    // this.loadCurrentSiteAssignment(param.id);
 
     // Cargar relaciones
     this.loadStaffRelationships();
@@ -589,25 +589,26 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
   /**
    * Carga el sitio actualmente asignado al staff
+   * COMENTADO: Ya no es necesario para miembros de la junta
    */
-  private loadCurrentSiteAssignment(staffId: number): void {
-    this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
-      next: (siteStaffs) => {
-        if (siteStaffs && siteStaffs.length > 0) {
-          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
-          if (activeAssignment) {
-            this.headerConfig.formGroup.patchValue({
-              site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
-              isPrimary: activeAssignment.isPrimary || false,
-            });
-          }
-        }
-      },
-      error: (err) => {
-        console.error('Error loading site assignment:', err);
-      },
-    });
-  }
+  // private loadCurrentSiteAssignment(staffId: number): void {
+  //   this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
+  //     next: (siteStaffs) => {
+  //       if (siteStaffs && siteStaffs.length > 0) {
+  //         const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
+  //         if (activeAssignment) {
+  //           this.headerConfig.formGroup.patchValue({
+  //             site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
+  //             isPrimary: activeAssignment.isPrimary || false,
+  //           });
+  //         }
+  //       }
+  //     },
+  //     error: (err) => {
+  //       console.error('Error loading site assignment:', err);
+  //     },
+  //   });
+  // }
 
   /**
    * Muestra el mensaje de éxito después de actualizar el staff
@@ -667,9 +668,11 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const fatherLastName: string = formValues.fatherLastName || '';
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado
-    const siteId: number = formValues.site?.id || null;
-    const isPrimary: boolean = formValues.isPrimary || false;
+    // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
+    // const siteId: number = formValues.site?.id || null;
+    // const isPrimary: boolean = formValues.isPrimary || false;
+    const siteId: number = null; // COMENTADO: Ya no es necesario para miembros de la junta
+    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para miembros de la junta
 
     // Loading
     this.isLoading = true;

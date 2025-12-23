@@ -78,8 +78,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   listStaffTypes: StaffType[] = [];
   // Lista de Clasificaciones de Staff
   listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
+  // Lista de Sitios - COMENTADO: Ya no es necesario para empleados
+  // listSites: Site[] = [];
 
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
@@ -121,9 +121,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       birthDate: new FormControl('', [Validators.required]),
       // Comentarios
       comments: new FormControl('', [Validators.required]),
-      // Sitio asignado
-      site: new FormControl('', [Validators.required]),
-      isPrimary: new FormControl(false),
+      // Sitio asignado - COMENTADO: Ya no es necesario para empleados
+      // site: new FormControl('', [Validators.required]),
+      // isPrimary: new FormControl(false),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -212,11 +212,11 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       }
     });
 
-    // Sites - Cargar desde el resolver
-    const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.sites) {
-      this.listSites = resolvedData.sites;
-    }
+    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para empleados
+    // const resolvedData = this._activatedRoute.snapshot.data['data'];
+    // if (resolvedData && resolvedData.sites) {
+    //   this.listSites = resolvedData.sites;
+    // }
 
     // Suscribirse a cambios en la clasificación
     this.headerConfig.formGroup.get('staffClassification')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((classification: StaffClassification) => {
@@ -301,9 +301,11 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Apellido Materno
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado
-    const siteId: number = formValues.site?.id || null;
-    const isPrimary: boolean = formValues.isPrimary || false;
+    // Sitio asignado - COMENTADO: Ya no es necesario para empleados
+    // const siteId: number = formValues.site?.id || null;
+    // const isPrimary: boolean = formValues.isPrimary || false;
+    const siteId: number = null; // COMENTADO: Ya no es necesario para empleados
+    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para empleados
 
     // Loading
     this.isLoading = true;

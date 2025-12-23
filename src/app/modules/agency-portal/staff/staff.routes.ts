@@ -30,15 +30,6 @@ export default [
         }
       },
       {
-        path: 'add',
-        loadComponent: () => import('./add/add.component').then(c => c.AddStaffComponent),
-        canActivate: [PermissionGuard],
-        data: { permission: 'staff.create' },
-        resolve: {
-          data: initialDataStaffAddResolver
-        }
-      },
-      {
         path: 'add-employee',
         loadComponent: () => import('./add-employee/add-employee.component').then(c => c.AddEmployeeComponent),
         canActivate: [PermissionGuard],

@@ -207,7 +207,8 @@
           </mat-form-field>
         </div>
 
-        <!-- Asignación de Escuela -->
+        <!-- Asignación de Escuela - COMENTADO: Ya no es necesario para empleados -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
             {{ "staff.edit.site-assignment" | transloco }}
@@ -217,9 +218,7 @@
           </p>
         </div>
 
-        <!-- Campos de Sitio y Tipo de Asignación -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <!-- Sitio -->
           <mat-form-field data-cy="site-field">
             <mat-label>{{ "staff.edit.site.label" | transloco }}</mat-label>
             <mat-select formControlName="site" [placeholder]="'staff.edit.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
@@ -229,6 +228,7 @@
             </mat-select>
           </mat-form-field>
         </div>
+        -->
 
         <!-- Comentarios -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">

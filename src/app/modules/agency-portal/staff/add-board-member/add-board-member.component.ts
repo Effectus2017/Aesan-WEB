@@ -89,8 +89,8 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
   listCities: City[] = [];
   // Lista de Regiones
   listRegions: Region[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
+  // Lista de Sitios - COMENTADO: Ya no es necesario para miembros de la junta
+  // listSites: Site[] = [];
 
   // Lista de títulos de miembros de junta
   listBoardMemberTitles: OptionSelection[] = [];
@@ -135,9 +135,9 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comentarios
       comments: new FormControl('', [Validators.required]),
-      // Sitio asignado
-      site: new FormControl('', [Validators.required]),
-      isPrimary: new FormControl(false),
+      // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
+      // site: new FormControl('', [Validators.required]),
+      // isPrimary: new FormControl(false),
       // Campos específicos para Miembros de la Junta
       tenureDuration: new FormControl('', [Validators.required]),
       tenureDurationUnit: new FormControl('', [Validators.required]),
@@ -237,11 +237,11 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       }
     });
 
-    // Sites - Cargar desde el resolver
-    const resolvedData = this._activatedRoute.snapshot.data['data'];
-    if (resolvedData && resolvedData.sites) {
-      this.listSites = resolvedData.sites;
-    }
+    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para miembros de la junta
+    // const resolvedData = this._activatedRoute.snapshot.data['data'];
+    // if (resolvedData && resolvedData.sites) {
+    //   this.listSites = resolvedData.sites;
+    // }
 
     // Suscribirse a cambios en la fecha de nacimiento para limpiar errores de validación
     this.headerConfig.formGroup.get('birthDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((birthDate: any) => {
@@ -321,9 +321,11 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
     // Apellido Materno
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado
-    const siteId: number = formValues.site?.id || null;
-    const isPrimary: boolean = formValues.isPrimary || false;
+    // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
+    // const siteId: number = formValues.site?.id || null;
+    // const isPrimary: boolean = formValues.isPrimary || false;
+    const siteId: number = null; // COMENTADO: Ya no es necesario para miembros de la junta
+    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para miembros de la junta
 
     // Loading
     this.isLoading = true;
