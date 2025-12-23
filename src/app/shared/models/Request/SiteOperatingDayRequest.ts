@@ -6,8 +6,7 @@ export interface SiteOperatingDayRequest {
   endTime: string;
   isOperating: boolean;
   comment: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
+  isWeekend: boolean;
   isHoliday: boolean;
 }
 

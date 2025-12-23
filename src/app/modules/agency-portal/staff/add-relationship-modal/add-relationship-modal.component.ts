@@ -48,7 +48,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     }
 
     .animate-slide-in {
-      animation: fadeIn 2.0s ease-out;
+      animation: fadeIn 1.0s ease-out;
     }
   `]
 })

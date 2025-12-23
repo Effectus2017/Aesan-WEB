@@ -7,8 +7,7 @@ export interface OperatingDayApiResponse {
   startTime: string;
   endTime: string;
   comment: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
+  isWeekend: boolean;
   isHoliday: boolean;
   createdAt: string;
   updatedAt: string;

@@ -455,7 +455,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       {
         id: 'toggle-active',
         label: 'sites.edit.settings.toggle-active',
-        icon: 'heroicons_outline:power',
+        icon: 'mat_outline:check_box',
+        iconColor: 'text-green-500',
       },
       {
         id: 'calendar',

@@ -1504,11 +1504,13 @@
                     "weekend": "Weekend",
                     "normal": "Normal day",
                     "weekend-operating": "Operating weekend",
-                    "operating-day": "Operating day"
+                    "operating-day": "Operating day",
+                    "holiday": "Holiday"
                 },
                 "operating-day-title": "Operating day",
                 "service-fallback": "Service",
-                "confirm-delete-service": "Are you sure you want to delete this service?"
+                "confirm-delete-service": "Are you sure you want to delete this service?",
+                "cannot-edit-holiday": "Services cannot be edited on holidays"
             },
             "modals": {
                 "edit-day": {
@@ -1527,8 +1529,6 @@
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
-                    "weekendOverride": "Weekend",
-                    "excludeDay": "Business day that does not operate",
                     "isHoliday": "Is holiday"
                 },
                 "add-day": {
@@ -1547,8 +1547,6 @@
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
-                    "weekendOverride": "Weekend",
-                    "excludeDay": "Business day that does not operate",
                     "isHoliday": "Is holiday"
                 },
                 "edit-service": {

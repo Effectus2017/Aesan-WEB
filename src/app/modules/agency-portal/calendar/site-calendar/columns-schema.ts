@@ -32,15 +32,10 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.calendar.day-events.table.columns.actions',
     buttons: [
       {
-        key: 'edit',
+        key: 'edit-modal',
         label: 'sites.calendar.day-events.table.buttons.edit',
-        icon: 'heroicons_outline:pencil'
+        icon: 'mat_solid:edit'
       },
-    //   {
-    //     key: 'delete',
-    //     label: 'sites.calendar.day-events.table.buttons.delete',
-    //     icon: 'heroicons_outline:trash'
-    //   },
       {
         key: 'toggle',
         label: 'sites.calendar.day-events.table.buttons.toggle',

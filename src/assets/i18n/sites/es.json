@@ -1474,11 +1474,13 @@
                     "weekend": "Fin de semana",
                     "normal": "Día normal",
                     "weekend-operating": "Fin de semana operativo",
-                    "operating-day": "Día operativo"
+                    "operating-day": "Día operativo",
+                    "holiday": "Día Feriado"
                 },
                 "operating-day-title": "Día de funcionamiento",
                 "service-fallback": "Servicio",
-                "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?"
+                "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",
+                "cannot-edit-holiday": "No se pueden editar servicios en días feriados"
             },
             "modals": {
                 "edit-day": {
@@ -1497,8 +1499,6 @@
                         "label": "Comentario",
                         "placeholder": "Descripción del día de funcionamiento..."
                     },
-                    "weekendOverride": "Fin de semana",
-                    "excludeDay": "Día hábil que no funciona",
                     "isHoliday": "Feriado (No Operacional)"
                 },
                 "add-day": {
@@ -1517,8 +1517,6 @@
                         "label": "Comentario",
                         "placeholder": "Descripción del día de funcionamiento..."
                     },
-                    "weekendOverride": "Fin de semana",
-                    "excludeDay": "Día hábil que no funciona",
                     "isHoliday": "Feriado (No Operacional)"
                 },
                 "edit-service": {

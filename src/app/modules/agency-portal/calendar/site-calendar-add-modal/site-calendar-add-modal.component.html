@@ -55,19 +55,6 @@
 
         <!-- Opciones -->
         <div class="flex flex-col gap-3">
-          <!-- Explicación de "Sobrescribir fin de semana":
-               ¿Para qué sirve?
-               - Marcar fines de semana que sí operan (excepción)
-               - Diferenciarlos de los fines de semana cerrados
-               - Permitir horarios específicos en sábados/domingos -->
-          <mat-checkbox formControlName="isWeekendOverride">
-            {{ 'sites.calendar.modals.add-day.weekendOverride' | transloco }}
-          </mat-checkbox>
-
-          <mat-checkbox formControlName="isExcluded">
-            {{ 'sites.calendar.modals.add-day.excludeDay' | transloco }}
-          </mat-checkbox>
-
           <mat-checkbox formControlName="isHoliday">
             {{ 'sites.calendar.modals.add-day.isHoliday' | transloco }}
           </mat-checkbox>

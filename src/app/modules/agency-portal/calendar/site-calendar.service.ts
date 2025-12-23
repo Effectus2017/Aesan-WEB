@@ -19,8 +19,12 @@ export class SiteCalendarService {
     return this.http.get(`${this.apiUrl}/get-operating-days`, getHttpOptions(queryParameters));
   }
 
-  toggleOperatingDay(request: SiteOperatingDayRequest, queryParameters: QueryParameters): Observable<any> {
-    return this.http.post(`${this.apiUrl}/toggle-operating-day`, request, getHttpOptions(queryParameters));
+  createOperatingDay(request: SiteOperatingDayRequest, queryParameters: QueryParameters): Observable<any> {
+    return this.http.post(`${this.apiUrl}/create-operating-day`, request, getHttpOptions(queryParameters));
+  }
+
+  updateOperatingDay(request: SiteOperatingDayRequest, queryParameters: QueryParameters): Observable<any> {
+    return this.http.put(`${this.apiUrl}/update-operating-day`, request, getHttpOptions(queryParameters));
   }
 
   deleteOperatingDay(queryParameters: QueryParameters): Observable<any> {

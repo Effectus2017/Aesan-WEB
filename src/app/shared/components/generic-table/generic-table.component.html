@@ -194,7 +194,7 @@
         </div>
         }
 
-        @if (button.key === 'edit-modal') {
+        @if (button.key === 'edit-modal' && !(element?.isService && element?.operatingDayIsHoliday)) {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
             [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
@@ -426,7 +426,7 @@
             </div>
             }
 
-            @if (button.key === 'edit-modal') {
+            @if (button.key === 'edit-modal' && !(element?.isService && element?.operatingDayIsHoliday)) {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
                   [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"

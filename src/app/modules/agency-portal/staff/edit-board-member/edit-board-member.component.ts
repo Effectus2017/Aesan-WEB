@@ -207,7 +207,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       {
         id: 'toggle-active',
         label: 'staff.edit.settings.toggle-active',
-        icon: 'heroicons_outline:power'
+        icon: 'mat_outline:check_box',
+        iconColor: 'text-green-500',
       }
     ],
   };

@@ -30,7 +30,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
     }
 
     .animate-slide-in {
-      animation: fadeIn 2.0s ease-out;
+      animation: fadeIn 1.0s ease-out;
     }
   `]
 })
@@ -67,8 +67,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       startTime: ['08:00'],
       endTime: ['19:00'],
       comment: [''],
-      isWeekendOverride: [false],
-      isExcluded: [false],
+      isWeekend: [false],
       isHoliday: [false],
     });
 
@@ -79,8 +78,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       date: this.data.date.toISOString().split('T')[0],
       startTime: '08:00',
       endTime: '19:00',
-      isWeekendOverride: false,
-      isExcluded: false,
+      isWeekend: false,
       isHoliday: false,
       comment: '',
       createdAt: new Date(),
@@ -139,8 +137,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
         startTime: formData.startTime,
         endTime: formData.endTime,
         comment: formData.comment,
-        isWeekendOverride: formData.isWeekendOverride,
-        isExcluded: formData.isExcluded,
+        isWeekend: formData.isWeekend,
         isHoliday: formData.isHoliday,
       },
       isService: false // Identificar que es un día de funcionamiento
@@ -155,15 +152,19 @@ export class SiteCalendarTableModalComponent implements OnInit {
   }
 
   private getEventTitle(formData: any, date: Date): string {
+    // Verificar si es feriado primero
+    if (formData.isHoliday) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.holiday');
+    }
     // Usar la traducción para el título del día de funcionamiento
     return this.translocoService.translate('sites.calendar.day-events.operating-day-title');
   }
 
   private getEventType(formData: any): string {
-    if (formData.isExcluded) {
-      return this.translocoService.translate('sites.calendar.day-events.day-types.closed');
+    if (formData.isHoliday) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.holiday');
     }
-    if (formData.isWeekendOverride) {
+    if (formData.isWeekend) {
       return this.translocoService.translate('sites.calendar.day-events.day-types.weekend');
     }
     return this.translocoService.translate('sites.calendar.day-events.day-types.normal');
@@ -185,6 +186,14 @@ export class SiteCalendarTableModalComponent implements OnInit {
   // Método para actualizar la tabla con nuevos datos
   updateTableData(newEvents: CalendarEvent[]): void {
     console.log('Updating table data with new events:', newEvents);
+
+    // Obtener el operatingDay para verificar si es feriado
+    let operatingDay: any = null;
+    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
+      operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
+    }
+
+    const isHoliday = operatingDay?.isHoliday || false;
 
     // Separar días de funcionamiento de servicios
     const operatingDayEvents = newEvents.filter(event => !event.meta?.isService);
@@ -222,7 +231,8 @@ export class SiteCalendarTableModalComponent implements OnInit {
         comment: service.comment || '',
         meta: service,
         isService: true, // Identificar que es un servicio
-        isEnabled: service.isEnabled
+        isEnabled: service.isEnabled,
+        operatingDayIsHoliday: isHoliday // Indicar si el día es feriado
       };
     });
 
@@ -230,27 +240,57 @@ export class SiteCalendarTableModalComponent implements OnInit {
     const servicesTableData: any[] = [...servicesTableDataFromEvents];
 
     // Obtener servicios desde el handler si está disponible (para servicios que no están en eventos del calendario)
-    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
-      const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
-      if (operatingDay?.services && operatingDay.services.length > 0) {
-        const existingServiceIds = new Set(servicesTableData.map(s => s.id));
-        operatingDay.services.forEach((service: any) => {
-          if (!existingServiceIds.has(service.id)) {
-            servicesTableData.push({
-              id: service.id,
-              title: this.getServiceTitle(service),
-              startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
-              endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
-              type: this.getServiceTypeLabel(service),
-              comment: service.comment || '',
-              meta: service,
-              isService: true, // Identificar que es un servicio
-              isEnabled: service.isEnabled
-            });
-          }
-        });
-      }
+    if (operatingDay?.services && operatingDay.services.length > 0) {
+      const existingServiceIds = new Set(servicesTableData.map(s => s.id));
+      operatingDay.services.forEach((service: any) => {
+        if (!existingServiceIds.has(service.id)) {
+          servicesTableData.push({
+            id: service.id,
+            title: this.getServiceTitle(service),
+            startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
+            endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
+            type: this.getServiceTypeLabel(service),
+            comment: service.comment || '',
+            meta: service,
+            isService: true, // Identificar que es un servicio
+            isEnabled: service.isEnabled,
+            operatingDayIsHoliday: isHoliday // Indicar si el día es feriado
+          });
+        }
+      });
     }
+
+    // Crear un schema de columnas modificado que oculte el botón de editar para servicios en días feriados
+    const modifiedColumnsSchema = this.data.tableConfig.columnsSchema.map(col => {
+      if (col.key === 'actions' && col.buttons) {
+        return {
+          ...col,
+          buttons: col.buttons.map(button => {
+            // Si es el botón de editar, agregar una función action que verifique si debe ocultarse
+            if (button.key === 'edit-modal') {
+              return {
+                ...button,
+                action: (event: Event, element: any) => {
+                  // Si es un servicio en un día feriado, no hacer nada
+                  if (element?.isService && element?.operatingDayIsHoliday) {
+                    return;
+                  }
+                  // Si hay un handler, llamar al método onTableEditModal
+                  if (this.data.handler && typeof (this.data.handler as any).onTableEditModal === 'function') {
+                    (this.data.handler as any).onTableEditModal(event, element.id);
+                  }
+                }
+              };
+            }
+            return button;
+          })
+        };
+      }
+      return col;
+    });
+
+    // Actualizar el schema de columnas en la configuración de la tabla
+    this.data.tableConfig.columnsSchema = modifiedColumnsSchema;
 
     // Combinar días de funcionamiento primero, luego servicios
     const tableData = [...dayTableData, ...servicesTableData];

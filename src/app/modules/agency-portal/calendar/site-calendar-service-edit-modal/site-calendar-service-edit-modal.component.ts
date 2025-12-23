@@ -45,7 +45,7 @@ import {
     }
 
     .animate-slide-in {
-      animation: fadeIn 2.0s ease-out;
+      animation: fadeIn 1.0s ease-out;
     }
   `]
 })
@@ -66,10 +66,19 @@ export class SiteCalendarServiceEditModalComponent {
     this.generateTimeOptions();
     this.convertFormValuesTo24h();
     
+    // Si el día es feriado, deshabilitar todos los campos
+    if (this.isHolidayDay()) {
+      this.data.form.disable();
+    }
+    
     // Suscribirse a cambios en startTime para actualizar las opciones de endTime
     this.data.form.get('startTime')?.valueChanges.subscribe(() => {
       this.updateEndTimeOptions();
     });
+  }
+
+  isHolidayDay(): boolean {
+    return this.data.operatingDay?.isHoliday === true;
   }
 
   private initializeTimeConstraints(): void {
@@ -223,6 +232,11 @@ export class SiteCalendarServiceEditModalComponent {
   }
 
   onSave(): void {
+    // No permitir guardar si es día feriado
+    if (this.isHolidayDay()) {
+      return;
+    }
+    
     if (this.data.form.valid && !this.isEndTimeInvalid()) {
       this.dialogRef.close(this.data.form.value);
     }

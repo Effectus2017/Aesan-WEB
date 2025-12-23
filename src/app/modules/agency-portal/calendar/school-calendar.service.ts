@@ -13,8 +13,7 @@ export interface SchoolOperatingDay {
   operatingDate: Date;
   startTime: string;
   endTime: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
+  isWeekend: boolean;
   comment: string;
   createdAt: Date;
   updatedAt: Date;
@@ -25,8 +24,7 @@ export interface SchoolOperatingDayRequest {
   operatingDate: Date;
   startTime?: string;
   endTime?: string;
-  isWeekendOverride: boolean;
-  isExcluded: boolean;
+  isWeekend: boolean;
   comment?: string;
 }
 

@@ -94,6 +94,7 @@ export interface SettingsMenuItem {
   id: string;
   label: string;
   icon?: string;
+  iconColor?: string; // Clase CSS para el color del icono
   disabled?: boolean;
 }
 

@@ -20,6 +20,15 @@
           </p>
         </div>
 
+        <!-- Mensaje informativo para días feriados -->
+        <div *ngIf="isHolidayDay()" class="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+          <p class="text-sm text-purple-800 dark:text-purple-200">
+            <strong>{{ 'sites.calendar.day-events.day-types.holiday' | transloco }}</strong>
+            <br>
+            {{ 'sites.calendar.day-events.cannot-edit-holiday' | transloco }}
+          </p>
+        </div>
+
         <!-- Horarios -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <mat-form-field>
@@ -80,7 +89,7 @@
           {{ 'global.buttons.delete' | transloco }}
         </button> -->
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid()">
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid() || isHolidayDay()">
         {{ 'global.buttons.save' | transloco }}
       </button>
     </div>

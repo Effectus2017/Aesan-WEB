@@ -87,8 +87,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     startTime: ['', Validators.required],
     endTime: ['', Validators.required],
     comment: [''],
-    isWeekendOverride: [false],
-    isExcluded: [false],
     isHoliday: [false]
   });
 
@@ -339,6 +337,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openAddDayDialog(date: Date) {
+    // Detectar si es fin de semana (sábado = 6, domingo = 0)
+    const dayOfWeek = date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
     // Crear un día vacío para el modal
     const newDay: SiteOperatingDay = {
@@ -348,8 +349,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: '08:00',
       endTime: '18:00',
       isOperating: true,
-      isWeekendOverride: false,
-      isExcluded: false,
+      isWeekend: isWeekend, // Establecer automáticamente si es fin de semana
       isHoliday: false,
       comment: '',
       createdAt: new Date(),
@@ -361,8 +361,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: '08:00',
       endTime: '18:00',
       comment: '',
-      isWeekendOverride: false,
-      isExcluded: false,
+      isWeekend: isWeekend, // Establecer automáticamente si es fin de semana
       isHoliday: false
     });
 
@@ -389,8 +388,6 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: dayData.startTime || '08:00',
       endTime: dayData.endTime || '18:00',
       comment: dayData.comment || '',
-      isWeekendOverride: dayData.isWeekendOverride || false,
-      isExcluded: dayData.isExcluded || false,
       isHoliday: dayData.isHoliday || false
     });
 
@@ -424,8 +421,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: operatingDay.startTime || '08:00',
       endTime: operatingDay.endTime || '18:00',
       comment: operatingDay.comment || '',
-      isWeekendOverride: operatingDay.isWeekendOverride || false,
-      isExcluded: operatingDay.isExcluded || false,
+      isWeekend: operatingDay.isWeekend || false,
       isHoliday: operatingDay.isHoliday || false
     });
 
@@ -461,8 +457,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: operatingDay.startTime || '08:00',
       endTime: operatingDay.endTime || '18:00',
       comment: operatingDay.comment || '',
-      isWeekendOverride: operatingDay.isWeekendOverride || false,
-      isExcluded: operatingDay.isExcluded || false,
+      isWeekend: operatingDay.isWeekend || false,
       isHoliday: operatingDay.isHoliday || false
     });
 
@@ -496,21 +491,23 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const endTime = this.formatTimeForBackend(formData.endTime);
 
 
+    // Obtener isWeekend del operatingDay original (se establece automáticamente)
+    const isWeekend = operatingDay.isWeekend || false;
+
     const request: SiteOperatingDayRequest = {
       id: operatingDay.id,
       siteId: this.currentSiteId,
       operatingDate: operatingDay.date,
-      startTime: formData.isExcluded ? null : startTime,
-      endTime: formData.isExcluded ? null : endTime,
-      isOperating: !formData.isExcluded,
-      isWeekendOverride: formData.isWeekendOverride,
-      isExcluded: formData.isExcluded,
+      startTime: startTime,
+      endTime: endTime,
+      isOperating: true,
+      isWeekend: isWeekend,
       isHoliday: formData.isHoliday,
       comment: formData.comment
     };
 
     this.loading = true;
-    this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
+    this.siteCalendarService.updateOperatingDay(request, { siteId: this.siteId })
       .subscribe({
         next: () => {
           this.loadOperatingDays(); // Recargar datos
@@ -536,21 +533,23 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
 
+    // Obtener isWeekend del operatingDay original (se establece automáticamente)
+    const isWeekend = operatingDay.isWeekend || false;
+
     const request: SiteOperatingDayRequest = {
       id: operatingDay.id,
       siteId: this.currentSiteId,
       operatingDate: operatingDay.date,
       startTime: startTime,
       endTime: endTime,
-      isOperating: !formData.isExcluded,
-      isWeekendOverride: formData.isWeekendOverride,
-      isExcluded: formData.isExcluded,
+      isOperating: true,
+      isWeekend: isWeekend,
       isHoliday: formData.isHoliday,
       comment: formData.comment
     };
 
     this.loading = true;
-    this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
+    this.siteCalendarService.updateOperatingDay(request, { siteId: this.siteId })
       .subscribe({
         next: () => {
           // Recargar datos y luego actualizar el modal
@@ -584,19 +583,21 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
 
+    // Obtener isWeekend del newDay (se establece automáticamente si es fin de semana)
+    const isWeekend = operatingDay.isWeekend || false;
+
     const request: SiteOperatingDayRequest = {
       siteId: this.currentSiteId,
       operatingDate: operatingDay.date,
-      startTime: formData.isExcluded ? null : startTime,
-      endTime: formData.isExcluded ? null : endTime,
-      isOperating: !formData.isExcluded,
-      isWeekendOverride: formData.isWeekendOverride,
-      isExcluded: formData.isExcluded,
+      startTime: startTime,
+      endTime: endTime,
+      isOperating: true,
+      isWeekend: isWeekend,
       isHoliday: formData.isHoliday,
       comment: formData.comment
     };
     this.loading = true;
-    this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
+    this.siteCalendarService.createOperatingDay(request, { siteId: this.siteId })
       .subscribe({
         next: () => {
           this.loadOperatingDays(); // Recargar datos
@@ -866,8 +867,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       dayEvents.push({
         start: startDate,
         end: endDate,
-        title: day.isExcluded ? this.translocoService.translate('sites.calendar.day-events.day-types.closed') :
-               day.isWeekendOverride ? this.translocoService.translate('sites.calendar.day-events.day-types.weekend-operating') :
+        title: day.isHoliday ? this.translocoService.translate('sites.calendar.day-events.day-types.holiday') :
+               day.isWeekend ? this.translocoService.translate('sites.calendar.day-events.day-types.weekend-operating') :
                this.translocoService.translate('sites.calendar.day-events.day-types.operating-day'),
         color: this.getEventColor(day),
         draggable: draggable,
@@ -969,15 +970,15 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private getEventColor(day: SiteOperatingDay): any {
-    if (day.isExcluded) {
-      return { primary: '#f44336', secondary: '#ffcdd2' }; // Rojo para días excluidos
+    if (day.isHoliday) {
+      return { primary: '#9c27b0', secondary: '#e1bee7' }; // Morado para días feriados
     }
     // Explicación de "Sobrescribir fin de semana":
     // ¿Para qué sirve?
     // - Marcar fines de semana que sí operan (excepción)
     // - Diferenciarlos de los fines de semana cerrados
     // - Permitir horarios específicos en sábados/domingos
-    if (day.isWeekendOverride) {
+    if (day.isWeekend) {
       return { primary: '#ff9800', secondary: '#ffcc80' }; // Naranja para fines de semana
     }
     return { primary: '#4caf50', secondary: '#c8e6c9' }; // Verde para días normales
@@ -1120,14 +1121,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       startTime: operatingDay.startTime,
       endTime: operatingDay.endTime,
       isOperating: operatingDay.isOperating,
-      isWeekendOverride: operatingDay.isWeekendOverride,
-      isExcluded: operatingDay.isExcluded,
+      isWeekend: operatingDay.isWeekend,
       isHoliday: operatingDay.isHoliday,
       comment: operatingDay.comment
     };
 
     this.loading = true;
-    this.siteCalendarService.toggleOperatingDay(request, { siteId: this.siteId })
+    this.siteCalendarService.updateOperatingDay(request, { siteId: this.siteId })
       .subscribe({
         next: () => {
 
@@ -1268,6 +1268,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private getDayTitle(operatingDay: any, date: Date): string {
+    // Verificar si es feriado primero
+    if (operatingDay.isHoliday) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.holiday');
+    }
     // Usar la traducción para el título del día de funcionamiento
     return this.translocoService.translate('sites.calendar.day-events.operating-day-title');
   }
@@ -1301,10 +1305,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   getEventTypeLabel(operatingDay: SiteOperatingDay): string {
-    if (operatingDay.isExcluded) {
-      return this.translocoService.translate('sites.calendar.day-events.day-types.closed');
+    if (operatingDay.isHoliday) {
+      return this.translocoService.translate('sites.calendar.day-events.day-types.holiday');
     }
-    if (operatingDay.isWeekendOverride) {
+    if (operatingDay.isWeekend) {
       return this.translocoService.translate('sites.calendar.day-events.day-types.weekend');
     }
     return this.translocoService.translate('sites.calendar.day-events.day-types.normal');
@@ -1332,15 +1336,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método para abrir modal de edición de servicio
   openEditServiceDialog(service: SiteOperatingDayService): void {
-    // Preparar el formulario con los datos actuales del servicio
-    const serviceForm = this.fb.group({
-      startTime: [service.startTime || '', Validators.required],
-      endTime: [service.endTime || '', Validators.required],
-      comment: [service.comment || ''],
-      isEnabled: [service.isEnabled !== undefined ? service.isEnabled : true]
-    });
-
-    // Obtener el operatingDay para tener los horarios del día
+    // Obtener el operatingDay para verificar si es feriado
     let operatingDay: SiteOperatingDay | undefined;
 
     // Intentar obtenerlo desde diferentes fuentes
@@ -1350,6 +1346,21 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     } else if (this.selectedDate) {
       operatingDay = this.getOperatingDayForDate(this.selectedDate);
     }
+
+    // Si el día es feriado, no permitir editar servicios
+    if (operatingDay && operatingDay.isHoliday) {
+      const message = this.translocoService.translate('sites.calendar.day-events.cannot-edit-holiday');
+      alert(message || 'No se pueden editar servicios en días feriados');
+      return;
+    }
+
+    // Preparar el formulario con los datos actuales del servicio
+    const serviceForm = this.fb.group({
+      startTime: [service.startTime || '', Validators.required],
+      endTime: [service.endTime || '', Validators.required],
+      comment: [service.comment || ''],
+      isEnabled: [service.isEnabled !== undefined ? service.isEnabled : true]
+    });
 
     // También verificar si el servicio tiene dayStartTime y dayEndTime directamente
     // Si no hay operatingDay pero el servicio tiene los horarios del día, crear un objeto temporal
@@ -1477,6 +1488,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     }
   }
 
+  onTableEditModal(event: Event, id: any): void {
+    // Mismo comportamiento que onTableEdit para mantener consistencia
+    this.onTableEdit(event, id);
+  }
+
   onTableDelete(event: Event, id: any): void {
     // Verificar si es un servicio o un día de funcionamiento
     const tableData = this.tableConfig.dataSourceList.find(item => item.id === id);
@@ -1581,10 +1597,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       date: day.operatingDate ? new Date(day.operatingDate).toISOString().split('T')[0] : '',
       startTime: day.startTime || '',
       endTime: day.endTime || '',
-      isOperating: !day.isExcluded,
+      isOperating: true,
       comment: day.comment || '',
-      isWeekendOverride: day.isWeekendOverride || false,
-      isExcluded: day.isExcluded || false,
+      isWeekend: day.isWeekend || false,
       isHoliday: day.isHoliday || false,
       createdAt: day.createdAt ? new Date(day.createdAt) : new Date(),
       updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date(),
