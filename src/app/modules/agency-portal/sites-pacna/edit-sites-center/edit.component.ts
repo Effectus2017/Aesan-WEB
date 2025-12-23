@@ -1083,14 +1083,32 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       return;
     }
 
-    // Para PACNA, limpiar todas las validaciones de personInCharge
-    Object.keys(personInChargeGroup.controls).forEach((key) => {
-      const control = personInChargeGroup.get(key);
-      if (control) {
-        control.clearValidators();
-        control.updateValueAndValidity();
-      }
-    });
+    // Restaurar validaciones requeridas para PACNA
+    const firstNameControl = personInChargeGroup.get('firstName');
+    const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
+    const sitePhoneControl = personInChargeGroup.get('sitePhone');
+
+    if (firstNameControl) {
+      firstNameControl.setValidators([Validators.required]);
+      firstNameControl.updateValueAndValidity();
+    }
+
+    if (fatherLastNameControl) {
+      fatherLastNameControl.setValidators([Validators.required]);
+      fatherLastNameControl.updateValueAndValidity();
+    }
+
+    if (sitePhoneControl) {
+      sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+      sitePhoneControl.updateValueAndValidity();
+    }
+
+    // mobilePhone solo tiene validación de formato, no requerido
+    const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
+    if (mobilePhoneControl) {
+      mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
+      mobilePhoneControl.updateValueAndValidity();
+    }
   }
 
   private updateValidations(): void {

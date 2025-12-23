@@ -1247,9 +1247,51 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       centerTypeControl.updateValueAndValidity();
     }
 
+    // Actualizar validaciones de personInCharge para PACNA
+    this.updatePersonInChargeValidations();
+
     // Actualizar el estado del botón después de restaurar las validaciones
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
+  }
+
+  /**
+   * Actualiza las validaciones de personInCharge
+   * Para PACNA, se requieren validaciones de personInCharge
+   */
+  private updatePersonInChargeValidations(): void {
+    const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
+
+    if (!personInChargeGroup) {
+      return;
+    }
+
+    // Restaurar validaciones requeridas para PACNA
+    const firstNameControl = personInChargeGroup.get('firstName');
+    const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
+    const sitePhoneControl = personInChargeGroup.get('sitePhone');
+
+    if (firstNameControl) {
+      firstNameControl.setValidators([Validators.required]);
+      firstNameControl.updateValueAndValidity();
+    }
+
+    if (fatherLastNameControl) {
+      fatherLastNameControl.setValidators([Validators.required]);
+      fatherLastNameControl.updateValueAndValidity();
+    }
+
+    if (sitePhoneControl) {
+      sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
+      sitePhoneControl.updateValueAndValidity();
+    }
+
+    // mobilePhone solo tiene validación de formato, no requerido
+    const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
+    if (mobilePhoneControl) {
+      mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
+      mobilePhoneControl.updateValueAndValidity();
+    }
   }
 
   onSetForm(param: Site): void {
