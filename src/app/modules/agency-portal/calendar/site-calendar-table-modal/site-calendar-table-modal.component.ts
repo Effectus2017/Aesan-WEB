@@ -19,6 +19,20 @@ import { NotificationService } from 'app/shared/services/notification.service';
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslocoModule, GenericTableComponent, ReactiveFormsModule],
   templateUrl: './site-calendar-table-modal.component.html',
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class SiteCalendarTableModalComponent implements OnInit {
   private dialog: MatDialog = inject(MatDialog);

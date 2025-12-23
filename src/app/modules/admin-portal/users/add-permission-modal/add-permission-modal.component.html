@@ -10,11 +10,12 @@
   <!-- Form -->
   <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
     <!-- Loading for Initial Data -->
-    <div *ngIf="isInitialLoading" class="flex items-center justify-center py-8">
+    <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+      <mat-icon class="text-4xl text-secondary">admin_panel_settings</mat-icon>
       <div class="text-secondary">{{ "global.loading" | transloco }}</div>
     </div>
 
-    <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
+    <div *ngIf="!isInitialLoading" class="flex flex-col gap-6 animate-slide-in">
       <!-- Description -->
       <p class="text-secondary">
         {{ "users.permission.modal.add.description" | transloco : { userName: data.userName } }}

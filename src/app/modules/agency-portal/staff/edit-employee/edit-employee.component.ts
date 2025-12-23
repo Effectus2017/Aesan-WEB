@@ -90,8 +90,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   listStaffTypes: StaffType[] = [];
   // Lista de Clasificaciones de Staff
   listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios - COMENTADO: Ya no es necesario para empleados
-  // listSites: Site[] = [];
+  // Lista de Sitios
+  listSites: Site[] = [];
   // Resultado de revisión / Review result
   reviewResult: OptionSelection[] = [];
 
@@ -116,6 +116,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   // Parámetro del staff
   param: Staff | null = null;
+
+  // Email original para excluir de la validación en edición
+  originalEmail: string = '';
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.edit.title',
@@ -144,12 +147,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       // Birth date
       birthDate: new FormControl('', [Validators.required]),
       // Email
-      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService)]),
+      email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
       // Comments
       comments: new FormControl(''),
-      // Sitio asignado - COMENTADO: Ya no es necesario para empleados
-      // site: new FormControl(null),
-      // isPrimary: new FormControl(false),
+      // Sitio asignado (opcional)
+      site: new FormControl(null),
       // Review result
       reviewResult: new FormControl(''),
       // Review date
@@ -195,6 +197,14 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     return this._translocoService.translate('staff.edit.comments.employee.label');
   }
 
+  /**
+   * Actualiza el estado del botón de guardar
+   */
+  private updateSubmitButtonState(): void {
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
+  }
+
 
   ngOnInit(): void {
     // Obtener Agencia desde local storage desde AuthService
@@ -215,7 +225,20 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     }
 
     // Verificar permisos de administrador
-    this.checkAdminPermissions();
+    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+
+    if (this.canViewReviewFields) {
+      this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('reviewJustification')?.setValidators([Validators.required]);
+    } else {
+      this.headerConfig.formGroup.get('reviewResult')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewDate')?.clearValidators();
+      this.headerConfig.formGroup.get('reviewJustification')?.clearValidators();
+    }
+    this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -242,13 +265,12 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       // Cargar staff desde el resolver
       this.param = resolvedData.staff;
       this.onSetForm(resolvedData.staff);
-    }
 
-    // Sites - Cargar desde el resolver - COMENTADO: Ya no es necesario para empleados
-    // const resolvedData = this._activatedRoute.snapshot.data['data'];
-    // if (resolvedData && resolvedData.sites) {
-    //   this.listSites = resolvedData.sites;
-    // }
+      // Cargar sitios desde el resolver
+      if (resolvedData.sites) {
+        this.listSites = resolvedData.sites;
+      }
+    }
 
     // Suscribirse a cambios en la clasificación
     this.headerConfig.formGroup
@@ -262,25 +284,14 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     this.headerConfig.formGroup.statusChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
-        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-        this._changeDetectorRef.detectChanges();
-      });
-
-    // Suscribirse a cambios en los valores del formulario para actualizar el botón dinámicamente
-    this.headerConfig.formGroup.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+        this.updateSubmitButtonState();
       });
 
     // Establecer el estado inicial del botón
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this.updateSubmitButtonState();
 
     // Única llamada a detectChanges al final de ngOnInit
     this._changeDetectorRef.detectChanges();
-
-    // Reset completo de scroll
-    this.resetAllScrolls();
   }
 
   ngOnDestroy(): void {
@@ -290,6 +301,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   onSetForm(param: Staff): void {
     this.param = param;
+
+    // Guardar el email original para excluirlo de la validación
+    this.originalEmail = param.email || '';
 
     // Para empleados, las posiciones se cargarán según la clasificación
     this.listPositions = [];
@@ -332,16 +346,27 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       comments: param.comments,
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
+      site: param.site,
     });
 
-    // Actualizar validaciones (después de establecer selectedClassification y valores)
-    this.updateValidations();
+    // Actualizar el validador de email con el email original
+    const emailControl = this.headerConfig.formGroup.get('email');
+    if (emailControl) {
+      emailControl.clearAsyncValidators();
+      emailControl.setAsyncValidators([emailExistsValidator(this._userService, this.originalEmail)]);
+      emailControl.updateValueAndValidity();
+    }
+
+    // Cargar sitio actualmente asignado al staff
+    if (param.id) {
+      this.loadCurrentSiteAssignment(param.id);
+    }
 
     // 🔒 DESHABILITAR EL CONTROL staffType DEL FORMULARIO DESPUÉS de establecer el valor
     this.headerConfig.formGroup.get('staffType')?.disable();
 
     // Actualizar el estado del botón después de establecer valores
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this.updateSubmitButtonState();
 
   }
 
@@ -401,11 +426,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const fatherLastName: string = formValues.fatherLastName || '';
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado - COMENTADO: Ya no es necesario para empleados
-    // const siteId: number = formValues.site?.id || null;
-    // const isPrimary: boolean = formValues.isPrimary || false;
-    const siteId: number = null; // COMENTADO: Ya no es necesario para empleados
-    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para empleados
+    // Sitio asignado (opcional)
+    const siteId: number = formValues.site?.id || null;
+    const isPrimary: boolean = false;
 
     // Loading
     this.isLoading = true;
@@ -562,86 +585,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
 
-    // Si tiene clasificación, habilitar todos los campos
-    if (this.selectedClassification) {
-      const firstNameControl = this.headerConfig.formGroup.get('firstName');
-      const middleNameControl = this.headerConfig.formGroup.get('middleName');
-      const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
-      const motherLastNameControl = this.headerConfig.formGroup.get('motherLastName');
-      const positionControl = this.headerConfig.formGroup.get('position');
-      const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
-      const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
-      const commentsControl = this.headerConfig.formGroup.get('comments');
-      const birthDateControl = this.headerConfig.formGroup.get('birthDate');
-      const emailControl = this.headerConfig.formGroup.get('email');
-
-      // Habilitar todos los campos
-      firstNameControl?.enable({ emitEvent: false });
-      middleNameControl?.enable({ emitEvent: false });
-      fatherLastNameControl?.enable({ emitEvent: false });
-      motherLastNameControl?.enable({ emitEvent: false });
-      positionControl?.enable({ emitEvent: false });
-      contractStartDateControl?.enable({ emitEvent: false });
-      contractEndDateControl?.enable({ emitEvent: false });
-      commentsControl?.enable({ emitEvent: false });
-      birthDateControl?.enable({ emitEvent: false });
-      emailControl?.enable({ emitEvent: false });
-    }
-
     // Actualizar el estado del botón
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
-   * Actualiza las validaciones para empleados
-   */
-  updateValidations(): void {
-    const staffClassificationControl = this.headerConfig.formGroup.get('staffClassification');
-    const birthDateControl = this.headerConfig.formGroup.get('birthDate');
-    const firstNameControl = this.headerConfig.formGroup.get('firstName');
-    const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
-    const positionControl = this.headerConfig.formGroup.get('position');
-    const emailControl = this.headerConfig.formGroup.get('email');
-
-    // Para empleados: clasificación requerida, fecha de nacimiento requerida
-    staffClassificationControl?.setValidators([Validators.required]);
-    birthDateControl?.setValidators([Validators.required]);
-    firstNameControl?.setValidators([Validators.required]);
-    fatherLastNameControl?.setValidators([Validators.required]);
-    positionControl?.setValidators([Validators.required]);
-    emailControl?.setValidators([Validators.required, Validators.email]);
-    emailControl?.setAsyncValidators([emailExistsValidator(this._userService)]);
-
-    staffClassificationControl?.updateValueAndValidity();
-    birthDateControl?.updateValueAndValidity();
-    firstNameControl?.updateValueAndValidity();
-    fatherLastNameControl?.updateValueAndValidity();
-    positionControl?.updateValueAndValidity();
-    emailControl?.updateValueAndValidity();
-
-    // El campo de clasificación SIEMPRE debe estar habilitado
-    staffClassificationControl?.enable({ emitEvent: false });
-
-    // Si no hay clasificación seleccionada, deshabilitar campos dependientes
-    if (!this.selectedClassification) {
-      firstNameControl?.disable({ emitEvent: false });
-      fatherLastNameControl?.disable({ emitEvent: false });
-      positionControl?.disable({ emitEvent: false });
-      birthDateControl?.disable({ emitEvent: false });
-      emailControl?.disable({ emitEvent: false });
-    } else {
-      // Si hay clasificación seleccionada, habilitar todos los campos
-      firstNameControl?.enable({ emitEvent: false });
-      fatherLastNameControl?.enable({ emitEvent: false });
-      positionControl?.enable({ emitEvent: false });
-      birthDateControl?.enable({ emitEvent: false });
-      emailControl?.enable({ emitEvent: false });
-    }
-
-    // Actualizar el estado del botón
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this.updateSubmitButtonState();
   }
 
   /**
@@ -683,59 +628,32 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     this._changeDetectorRef.detectChanges();
   }
 
-  private checkAdminPermissions(): void {
-    const userRole = this._authService.getUserRole();
-    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
-
-    if (this.canViewReviewFields) {
-      this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('reviewDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('reviewJustification')?.setValidators([Validators.required]);
-    } else {
-      this.headerConfig.formGroup.get('reviewResult')?.clearValidators();
-      this.headerConfig.formGroup.get('reviewDate')?.clearValidators();
-      this.headerConfig.formGroup.get('reviewJustification')?.clearValidators();
-    }
-    this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
-  }
-
-
   /**
-   * Resetea todos los scrolls de la página
+   * Carga el sitio actualmente asignado al staff
    */
-  private resetAllScrolls(): void {
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-
-      if (this.formContainer?.nativeElement) {
-        this.formContainer.nativeElement.scrollTop = 0;
-      }
-
-      const mainFormContainer = document.querySelector('.overflow-y-auto[cdkScrollable]');
-      if (mainFormContainer) {
-        mainFormContainer.scrollTop = 0;
-      }
-
-      const scrollableElements = document.querySelectorAll('[style*="overflow"], [style*="scroll"], .mat-mdc-dialog-content, .mat-mdc-card-content, .mat-mdc-tab-body-content');
-
-      scrollableElements.forEach((element: any) => {
-        if (element.scrollTop !== undefined) {
-          element.scrollTop = 0;
+  private loadCurrentSiteAssignment(staffId: number): void {
+    const queryParameters: QueryParameters = {
+      staffId: staffId,
+    };
+    this._siteStaffService.getSitesByStaff(queryParameters).subscribe({
+      next: (siteStaffs: any) => {
+        if (siteStaffs && siteStaffs.length > 0) {
+          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
+          if (activeAssignment && this.listSites.length > 0) {
+            const site = this.listSites.find(s => s.id === activeAssignment.siteId);
+            if (site) {
+              this.headerConfig.formGroup.patchValue({
+                site: site,
+              });
+            }
+          }
         }
-        if (element.scrollLeft !== undefined) {
-          element.scrollLeft = 0;
-        }
-      });
-
-      document.body.scrollTop = 0;
-      document.documentElement.scrollTop = 0;
-
-      if (document.body.scrollTop !== 0) {
-        document.body.scrollTop = 0;
-      }
-    }, 300);
+      },
+      error: (err) => {
+        console.error('Error loading site assignment:', err);
+      },
+    });
   }
+
 }
 

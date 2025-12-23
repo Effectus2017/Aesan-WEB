@@ -37,6 +37,20 @@ import { filter } from 'rxjs/operators';
     MatButtonModule,
     TranslocoModule,
   ],
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

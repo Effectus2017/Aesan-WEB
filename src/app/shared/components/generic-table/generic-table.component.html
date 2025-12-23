@@ -1,4 +1,4 @@
-<div [class.p-6]="!config.fullScreen" [class.bg-white]="!config.fullScreen" [class.rounded-lg]="!config.fullScreen" [class.border]="!config.fullScreen" [class.border-gray-200]="!config.fullScreen" [class.shadow-sm]="!config.fullScreen">
+<div [class.p-6]="!config.fullScreen" [class.bg-card]="!config.fullScreen" [class.rounded-lg]="!config.fullScreen" [class.border]="!config.fullScreen" [class.shadow-sm]="!config.fullScreen">
   <!-- Header con menú de acciones -->
   <div class="flex justify-end items-center mb-2" *ngIf="config.addMenuShow">
     <div [matTooltip]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)" [matTooltipDisabled]="!getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)">

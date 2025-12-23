@@ -28,6 +28,19 @@ import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalend
   ],
   templateUrl: './site-calendar-edit-modal.component.html',
   styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+
     .time-picker-container {
       display: flex;
       flex-direction: column;

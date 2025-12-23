@@ -1499,7 +1499,7 @@
                     },
                     "weekendOverride": "Fin de semana",
                     "excludeDay": "Día hábil que no funciona",
-                    "isHoliday": "Es feriado"
+                    "isHoliday": "Feriado (No Operacional)"
                 },
                 "add-day": {
                     "title": "Agregar Día de Funcionamiento",
@@ -1519,7 +1519,7 @@
                     },
                     "weekendOverride": "Fin de semana",
                     "excludeDay": "Día hábil que no funciona",
-                    "isHoliday": "Es feriado"
+                    "isHoliday": "Feriado (No Operacional)"
                 },
                 "edit-service": {
                     "title": "Editar Servicio",

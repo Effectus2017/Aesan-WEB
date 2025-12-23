@@ -967,6 +967,11 @@
                 "placeholder": "Organization type",
                 "required": "Organization type is required"
             },
+            "center": {
+                "label": "Center Type",
+                "placeholder": "Site center type",
+                "required": "Center type is required"
+            },
             "non-profit": {
                 "label": "Is your entity a non-profit organization?",
                 "required": "This field is required"

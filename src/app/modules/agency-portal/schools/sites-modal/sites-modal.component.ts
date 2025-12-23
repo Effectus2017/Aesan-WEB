@@ -5,11 +5,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { TranslocoModule } from '@ngneat/transloco';
 import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { SITES_COLUMNS_SCHEMA } from './columns-schema';
-import { Site } from '../../../../shared/models/Site';
 import { SchoolSiteTableResponse } from '../../../../shared/models/Response/SchoolSiteTableResponse';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -17,7 +17,6 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
 import { CustomRouterService } from '../../../../shared/services/custom-router.service';
 import { SchoolSiteService } from '../../../../shared/services/school-site.service';
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
-import { PageEvent } from '@angular/material/paginator';
 import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils';
 import { PROGRAM_IDS } from '../../../../shared/const';
 
@@ -31,11 +30,26 @@ import { PROGRAM_IDS } from '../../../../shared/const';
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
+    MatPaginatorModule,
     TranslocoModule,
     GenericTableComponent,
     ReactiveFormsModule
   ],
-  templateUrl: './sites-modal.component.html'
+  templateUrl: './sites-modal.component.html',
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -60,7 +74,7 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
     handler: this,
     showPaginator: true,
     pageSize: 15,
-    pageSizeOptions: [5, 10, 15, 25],
+    pageSizeOptions: [10, 15, 25],
     addButtonShow: false,
     length: 0,
     fullScreen: true,

@@ -20,6 +20,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { FuseConfigService } from '@fuse/services/config';
 import { DateTime } from 'luxon';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
@@ -31,6 +32,7 @@ import {
   ApexNonAxisChartSeries,
   ApexPlotOptions,
   ApexResponsive,
+  ApexTheme,
   ApexTitleSubtitle,
   ApexXAxis,
   ApexYAxis
@@ -48,6 +50,7 @@ export type ChartOptions = {
   title: ApexTitleSubtitle;
   labels: string[];
   colors: string[];
+  theme: ApexTheme;
 };
 
 export type PieChartOptions = {
@@ -58,6 +61,7 @@ export type PieChartOptions = {
   colors: string[];
   legend: ApexLegend;
   title: ApexTitleSubtitle;
+  theme: ApexTheme;
 };
 
 @Component({
@@ -78,6 +82,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   private _translocoService = inject(TranslocoService);
   private _route = inject(ActivatedRoute);
   private _agencyService = inject(AgencyService);
+  private _fuseConfigService = inject(FuseConfigService);
   private _unsubscribeAll = new Subject<void>();
 
   agencyDashboardCardsData = [...agencyDashboardCardsData];
@@ -105,7 +110,8 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
       height: 350,
       toolbar: {
         show: false
-      }
+      },
+      background: 'transparent'
     },
     plotOptions: {
       bar: {
@@ -124,20 +130,32 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
       categories: [], // Se llenará dinámicamente con traducciones
       min: 0,
       max: 200,
-      tickAmount: 4
+      tickAmount: 4,
+      labels: {
+        style: {
+          colors: '#64748B'
+        }
+      }
     },
     yaxis: {
       labels: {
-        formatter: (val: number) => val.toString()
+        formatter: (val: number) => val.toString(),
+        style: {
+          colors: '#64748B'
+        }
       }
     },
     colors: ['#00BCD4'],
+    theme: {
+      mode: 'light'
+    },
     title: {
       text: 'agency.dashboard.charts.rationsByMonth',
       align: 'left',
       style: {
         fontSize: '16px',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        color: ''
       }
     }
   };
@@ -147,7 +165,8 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     series: coordinatedVisitsData.map(item => item.value),
     chart: {
       type: 'pie',
-      height: 350
+      height: 350,
+      background: 'transparent'
     },
     labels: [], // Se llenará dinámicamente con traducciones
     dataLabels: {
@@ -156,14 +175,21 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     },
     colors: ['#00BCD4', '#0097A7'],
     legend: {
-      position: 'bottom'
+      position: 'bottom',
+      labels: {
+        colors: '#64748B'
+      }
+    },
+    theme: {
+      mode: 'light'
     },
     title: {
       text: 'agency.dashboard.charts.coordinatedVisits',
       align: 'left',
       style: {
         fontSize: '16px',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        color: ''
       }
     }
   };
@@ -248,6 +274,10 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     } else {
       console.warn('No dashboard data found in resolver');
     }
+
+    // Suscribirse a cambios de tema para actualizar los gráficos
+    // Esto también inicializará el tema correctamente
+    this._subscribeToThemeChanges();
 
     this._changeDetectorRef.detectChanges();
   }
@@ -357,6 +387,65 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
         this._updateRationsChartLabels();
         this._updateVisitsChartLabels();
       });
+  }
+
+  /**
+   * Suscribe a los cambios de tema y actualiza los gráficos
+   */
+  private _subscribeToThemeChanges(): void {
+    this._fuseConfigService.config$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((config) => {
+        const isDarkMode = config.scheme === 'dark';
+        this._updateChartThemes(isDarkMode);
+      });
+  }
+
+  /**
+   * Actualiza los temas de los gráficos según el modo oscuro/claro
+   */
+  private _updateChartThemes(isDarkMode: boolean): void {
+    const themeMode = isDarkMode ? 'dark' : 'light';
+    const textColor = isDarkMode ? '#FFFFFF' : '#1E293B';
+    const axisColor = isDarkMode ? '#94A3B8' : '#64748B';
+
+    // Actualizar gráfico de raciones
+    if (this.rationsChartOptions) {
+      this.rationsChartOptions.theme = { mode: themeMode };
+      if (this.rationsChartOptions.chart) {
+        this.rationsChartOptions.chart.background = 'transparent';
+      }
+      if (this.rationsChartOptions.title?.style) {
+        this.rationsChartOptions.title.style.color = textColor;
+      }
+      if (this.rationsChartOptions.xaxis?.labels?.style) {
+        this.rationsChartOptions.xaxis.labels.style.colors = axisColor;
+      }
+      if (this.rationsChartOptions.yaxis?.labels?.style) {
+        this.rationsChartOptions.yaxis.labels.style.colors = axisColor;
+      }
+      // Crear nueva referencia para forzar actualización
+      this.rationsChartOptions = { ...this.rationsChartOptions };
+    }
+
+    // Actualizar gráfico de visitas
+    if (this.visitsChartOptions) {
+      this.visitsChartOptions.theme = { mode: themeMode };
+      if (this.visitsChartOptions.chart) {
+        this.visitsChartOptions.chart.background = 'transparent';
+      }
+      if (this.visitsChartOptions.title?.style) {
+        this.visitsChartOptions.title.style.color = textColor;
+      }
+      if (this.visitsChartOptions.legend?.labels) {
+        this.visitsChartOptions.legend.labels.colors = axisColor;
+      }
+      // Crear nueva referencia para forzar actualización
+      this.visitsChartOptions = { ...this.visitsChartOptions };
+    }
+
+    // Forzar actualización de los gráficos
+    this._changeDetectorRef.detectChanges();
   }
 
   /**

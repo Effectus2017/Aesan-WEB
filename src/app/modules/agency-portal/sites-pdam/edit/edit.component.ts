@@ -111,7 +111,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     DynamicGridDirective,
   ],
 })
-export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente
   // Subject to unsubscribe from all observables on component destroy
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -353,10 +353,10 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       operatingPolicy: [null],
       // Almacén - Campo requerido para indicar si el sitio tiene un almacén
       // Warehouse - Required field indicating if the site has a warehouse
-      hasWarehouse: [false],
+      hasWarehouse: [null],
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
-      hasDiningRoom: [false],
+      hasDiningRoom: [null],
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
       personInCharge: this._formBuilder.group({
@@ -1071,6 +1071,8 @@ export class EditSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       startDate: param.startDate,
       baseYear: param.baseYear,
       renewalYear: param.renewalYear,
+      hasWarehouse: param.hasWarehouse,
+      hasDiningRoom: param.hasDiningRoom,
       personInCharge: param.personInCharge
         ? {
             firstName: param.personInCharge.firstName || '',

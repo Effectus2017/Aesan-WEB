@@ -222,6 +222,26 @@
           </mat-form-field>
         </div>
 
+        <!-- Asignación de Sitio -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <p class="text-lg font-medium">
+            {{ "staff.edit.site-assignment" | transloco }}
+          </p>
+          <p class="mb-6 text-secondary">
+            {{ "staff.edit.site-assignment-description" | transloco }}
+          </p>
+        </div>
+
+        <!-- Campo de Sitio -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <mat-form-field data-cy="site-field">
+            <mat-label>{{ "staff.edit.site.label" | transloco }}</mat-label>
+            <mat-select formControlName="site" [placeholder]="'staff.edit.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
+              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
         <!-- Comentarios -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="comments-field">
@@ -229,7 +249,6 @@
             <textarea
               matInput
               formControlName="comments"
-              placeholder="{{ 'staff.edit.comments.placeholder' | transloco }}"
               title="{{ 'staff.edit.comments.label' | transloco }}"
               [attr.aria-label]="'staff.edit.comments.label' | transloco"
               rows="4"

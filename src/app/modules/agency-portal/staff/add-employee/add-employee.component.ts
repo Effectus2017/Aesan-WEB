@@ -79,8 +79,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   listStaffTypes: StaffType[] = [];
   // Lista de Clasificaciones de Staff
   listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios - COMENTADO: Ya no es necesario para empleados
-  // listSites: Site[] = [];
+  // Lista de Sitios
+  listSites: Site[] = [];
 
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
@@ -124,9 +124,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService)]),
       // Comentarios
       comments: new FormControl('', [Validators.required]),
-      // Sitio asignado - COMENTADO: Ya no es necesario para empleados
-      // site: new FormControl('', [Validators.required]),
-      // isPrimary: new FormControl(false),
+      // Sitio asignado (opcional)
+      site: new FormControl(null),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -178,6 +177,10 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
       this.listStaffClassifications = resolvedData.staffClassifications;
+      // Cargar sitios desde el resolver
+      if (resolvedData.sites) {
+        this.listSites = resolvedData.sites;
+      }
 
       // Asignar tipo de staff "Empleado" (ID: 1) - este componente es únicamente para empleados
       this.employeeStaffType = this.listStaffTypes.find(staffType => staffType.id === 1);
@@ -280,11 +283,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Apellido Materno
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado - COMENTADO: Ya no es necesario para empleados
-    // const siteId: number = formValues.site?.id || null;
-    // const isPrimary: boolean = formValues.isPrimary || false;
-    const siteId: number = null; // COMENTADO: Ya no es necesario para empleados
-    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para empleados
+    // Sitio asignado (opcional)
+    const siteId: number = formValues.site?.id || null;
+    const isPrimary: boolean = false;
 
     // Loading
     this.isLoading = true;
@@ -374,6 +375,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const commentsControl = this.headerConfig.formGroup.get('comments');
       const birthDateControl = this.headerConfig.formGroup.get('birthDate');
       const emailControl = this.headerConfig.formGroup.get('email');
+      const siteControl = this.headerConfig.formGroup.get('site');
 
       // Habilitar todos los campos
       firstNameControl?.enable({ emitEvent: false });
@@ -386,6 +388,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       commentsControl?.enable({ emitEvent: false });
       birthDateControl?.enable({ emitEvent: false });
       emailControl?.enable({ emitEvent: false });
+      siteControl?.enable({ emitEvent: false });
     }
 
     this._changeDetectorRef.detectChanges();
@@ -471,9 +474,11 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
       const commentsControl = this.headerConfig.formGroup.get('comments');
+      const siteControl = this.headerConfig.formGroup.get('site');
       contractStartDateControl?.disable({ emitEvent: false });
       contractEndDateControl?.disable({ emitEvent: false });
       commentsControl?.disable({ emitEvent: false });
+      siteControl?.disable({ emitEvent: false });
     } else {
       // Si hay clasificación seleccionada, habilitar todos los campos
       firstNameControl?.enable({ emitEvent: false });
@@ -484,9 +489,11 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
       const commentsControl = this.headerConfig.formGroup.get('comments');
+      const siteControl = this.headerConfig.formGroup.get('site');
       contractStartDateControl?.enable({ emitEvent: false });
       contractEndDateControl?.enable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
+      siteControl?.enable({ emitEvent: false });
     }
   }
 

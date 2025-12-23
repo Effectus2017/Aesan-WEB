@@ -132,7 +132,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       // Código postal
       zipCode: new FormControl('', [Validators.required, puertoRicoZipCodeValidator()]),
       // Comentarios
-      comments: new FormControl('', [Validators.required]),
+      comments: new FormControl(''),
       // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
       // site: new FormControl('', [Validators.required]),
       // isPrimary: new FormControl(false),

@@ -14,12 +14,13 @@
   <!-- Content - Scrollable area -->
   <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0">
     <!-- Loading State -->
-    <div *ngIf="isInitialLoading" class="flex justify-center items-center py-8">
+    <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+      <mat-icon class="text-4xl text-secondary">people</mat-icon>
       <div class="text-secondary">{{ "global.loading" | transloco }}</div>
     </div>
 
     <!-- Tabla de personal -->
-    <div *ngIf="!isInitialLoading" class="flex-1">
+    <div *ngIf="!isInitialLoading" class="flex-1 animate-slide-in">
       <app-generic-table
         [config]="tableConfig"
         [handler]="this"

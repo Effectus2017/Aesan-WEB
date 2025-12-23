@@ -278,7 +278,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-8">
           <mat-form-field data-cy="comments-field">
             <mat-label>{{ commentsLabel }}</mat-label>
-            <textarea matInput formControlName="comments" [placeholder]="'staff.add.comments.placeholder' | transloco" rows="4" data-cy="comments-input"></textarea>
+            <textarea matInput formControlName="comments" rows="4" data-cy="comments-input"></textarea>
             <mat-error *ngIf="headerConfig.formGroup.get('comments')?.hasError('required')">
               {{ "staff.add.comments.required" | transloco }}
             </mat-error>

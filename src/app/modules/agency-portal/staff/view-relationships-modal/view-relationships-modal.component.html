@@ -11,7 +11,8 @@
 
   <!-- Content -->
   <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
-    <div *ngIf="isLoading" class="flex items-center justify-center py-8">
+    <div *ngIf="isLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+      <mat-icon class="text-4xl text-secondary">people_outline</mat-icon>
       <div class="text-secondary">{{ "global.loading" | transloco }}</div>
     </div>
 
@@ -21,7 +22,7 @@
       <div class="text-secondary text-center">{{ "staff.boardMembers.list.viewRelationships.noRelationships.description" | transloco }}</div>
     </div>
 
-    <div *ngIf="!isLoading && hasRelationships" class="flex flex-col gap-4">
+    <div *ngIf="!isLoading && hasRelationships" class="flex flex-col gap-4 animate-slide-in">
       <app-generic-table [config]="relationshipsTableConfig"></app-generic-table>
     </div>
   </div>

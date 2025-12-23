@@ -36,7 +36,21 @@ import {
     ReactiveFormsModule,
     TranslocoModule
   ],
-  templateUrl: './site-calendar-service-add-modal.component.html'
+  templateUrl: './site-calendar-service-add-modal.component.html',
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class SiteCalendarServiceAddModalComponent {
   timeOptions: TimeOption[] = [];

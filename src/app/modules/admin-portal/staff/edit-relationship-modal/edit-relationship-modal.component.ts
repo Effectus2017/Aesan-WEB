@@ -39,6 +39,20 @@ import { NgZone } from '@angular/core';
     TranslocoModule,
   ],
   // changeDetection: ChangeDetectionStrategy.OnPush, // Comentado para evitar problemas
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class AdminEditRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

@@ -13,7 +13,7 @@ export default [
     children: [
       {
         path: 'add',
-        loadComponent: () => import('./add/add.component').then((c) => c.AddSiteComponent),
+        loadComponent: () => import('./add/add.component').then((c) => c.AddSitePdamComponent),
         canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
@@ -23,7 +23,7 @@ export default [
       },
       {
         path: 'edit/:id',
-        loadComponent: () => import('./edit/edit.component').then((c) => c.EditSiteComponent),
+        loadComponent: () => import('./edit/edit.component').then((c) => c.EditSitePdamComponent),
         canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {

@@ -8,10 +8,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
-import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
-import { EducationLevelService } from 'app/shared/services/education-level.service';
-import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
@@ -29,9 +25,6 @@ import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducati
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
-import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
-import { CenterTypeService } from 'app/shared/services/center-type.service';
-import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
@@ -46,12 +39,9 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterEndTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  dateToTimeString,
-  timeToMinutes,
   dateToMinutes,
   compareByTime,
   TimeOption
@@ -77,9 +67,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
-import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
-import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
@@ -92,7 +80,6 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
-import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 
 
 @Component({

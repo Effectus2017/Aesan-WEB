@@ -8,8 +8,8 @@
       <!-- Sección de KPIs -->
       <div class="grid grid-cols-1 gap-6 mb-8 sm:grid-cols-3">
         <ng-container *ngFor="let card of agencyDashboardCardsData">
-          <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm transition-shadow hover:shadow-md">
-            <div class="mb-2 text-sm font-medium text-gray-600">
+          <div class="p-6 bg-card rounded-lg border shadow-sm transition-shadow hover:shadow-md">
+            <div class="mb-2 text-sm font-medium text-secondary">
               {{ card.title | transloco }}
             </div>
             <div class="text-4xl font-bold" [ngClass]="card.color">
@@ -22,7 +22,7 @@
       <!-- Sección de Gráficos -->
       <div class="grid grid-cols-1 gap-6 mb-8 lg:grid-cols-2">
         <!-- Gráfico de Raciones por Mes -->
-        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="p-6 bg-card rounded-lg border shadow-sm">
           <apx-chart
             [series]="rationsChartOptions.series"
             [chart]="rationsChartOptions.chart"
@@ -31,12 +31,13 @@
             [xaxis]="rationsChartOptions.xaxis"
             [yaxis]="rationsChartOptions.yaxis"
             [colors]="rationsChartOptions.colors"
-            [title]="rationsChartOptions.title">
+            [title]="rationsChartOptions.title"
+            [theme]="rationsChartOptions.theme">
           </apx-chart>
         </div>
 
         <!-- Gráfico de Visitas Coordinadas -->
-        <div class="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+        <div class="p-6 bg-card rounded-lg border shadow-sm">
           <apx-chart
             [series]="visitsChartOptions.series"
             [chart]="visitsChartOptions.chart"
@@ -44,14 +45,15 @@
             [dataLabels]="visitsChartOptions.dataLabels"
             [colors]="visitsChartOptions.colors"
             [legend]="visitsChartOptions.legend"
-            [title]="visitsChartOptions.title">
+            [title]="visitsChartOptions.title"
+            [theme]="visitsChartOptions.theme">
           </apx-chart>
         </div>
       </div>
 
       <!-- Tabla de Formularios -->
       <div class="mb-8">
-        <h2 class="mb-4 text-xl font-bold text-gray-800">
+        <h2 class="mb-4 text-xl font-bold text-default">
           {{ 'agency.dashboard.table.title' | transloco }}
         </h2>
         <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>

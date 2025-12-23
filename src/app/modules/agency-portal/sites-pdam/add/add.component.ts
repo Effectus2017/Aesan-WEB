@@ -116,7 +116,7 @@ import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/compon
     LongitudeDirective,
   ],
 })
-export class AddSiteComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);

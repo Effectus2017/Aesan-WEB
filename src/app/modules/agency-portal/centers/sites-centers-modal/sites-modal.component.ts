@@ -35,7 +35,21 @@ import { PROGRAM_IDS } from '../../../../shared/const';
     GenericTableComponent,
     ReactiveFormsModule
   ],
-  templateUrl: './sites-modal.component.html'
+  templateUrl: './sites-modal.component.html',
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

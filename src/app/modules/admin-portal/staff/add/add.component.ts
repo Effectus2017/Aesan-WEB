@@ -681,6 +681,8 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       regionControl?.setValidators([Validators.required]);
       zipCodeControl?.setValidators([Validators.required, puertoRicoZipCodeValidator()]);
       postalAddressControl?.setValidators([Validators.required]);
+      // Comentarios NO es requerido para miembros de junta
+      commentsControl?.clearValidators();
       // Campos específicos para miembros de junta son requeridos
       const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');
       const tenureDurationUnitControl = this.headerConfig.formGroup.get('tenureDurationUnit');
@@ -736,6 +738,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     regionControl?.updateValueAndValidity();
     zipCodeControl?.updateValueAndValidity();
     postalAddressControl?.updateValueAndValidity();
+    commentsControl?.updateValueAndValidity();
 
     // Actualizar validaciones de campos específicos de miembros de junta
     const tenureDurationControl = this.headerConfig.formGroup.get('tenureDuration');

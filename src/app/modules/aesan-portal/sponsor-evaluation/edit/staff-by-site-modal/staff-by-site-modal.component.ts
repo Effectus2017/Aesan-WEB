@@ -32,6 +32,20 @@ export interface StaffBySiteModalData {
   ],
   templateUrl: './staff-by-site-modal.component.html',
   encapsulation: ViewEncapsulation.None,
+  styles: [`
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .animate-slide-in {
+      animation: fadeIn 2.0s ease-out;
+    }
+  `]
 })
 export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
