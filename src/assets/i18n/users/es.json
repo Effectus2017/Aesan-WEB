@@ -61,19 +61,19 @@
                 "required": "La confirmación de la contraseña es requerida",
                 "min-length": "Se requiere un mínimo de 8 caracteres"
             },
-            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Además, solo usando el botón 'Actualizar Contraseña', se actualizará la contraseña del usuario.",
+            "password-requirements": "NOTA: La contraseña debe tener un mínimo de 8 caracteres e incluir al menos una letra mayúscula, una letra minúscula, un número y un carácter especial. Además, solo usando el botón 'Guardar', se actualizará la contraseña del usuario.",
             "buttons": {
                 "cancel": "Cancelar",
                 "update": "Actualizar",
                 "save": "Guardar",
-                "update-password": "Actualizar",
+                "update-password": "Cambiar contraseña",
                 "force-password": "Forzar Cambio de Contraseña"
             },
             "agency": {
                 "readonly": "Auspiciador"
             },
             "update-password-modal": {
-                "title": "Actualizar Contraseña",
+                "title": "Cambiar Contraseña",
                 "subtitle": "Actualizar contraseña para {{ userName }}",
                 "password-mismatch": "Las contraseñas no coinciden"
             },

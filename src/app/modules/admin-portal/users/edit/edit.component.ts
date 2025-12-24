@@ -106,6 +106,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       {
         id: 'update-password',
         label: 'users.edit.buttons.update-password',
+        icon: 'heroicons_solid:key',
       },
     ],
   };
