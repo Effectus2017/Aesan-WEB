@@ -94,5 +94,93 @@ export class UserService {
       })
     );
   }
+
+  /**
+   * Verifica si un IUE (Identificador Único de Entidad) ya existe en el sistema.
+   * @param uieNumber El número IUE a verificar.
+   * @returns Un observable que emite un booleano (true si existe, false si no existe).
+   */
+  checkUieExists(uieNumber: string): Observable<boolean> {
+    // Validar que el número sea válido antes de hacer la petición
+    if (!uieNumber || uieNumber.trim() === '') {
+      return throwError(() => new Error('El número IUE es requerido'));
+    }
+    
+    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
+    // Number() maneja mejor los números grandes que parseInt()
+    const parsedNumber = Number(uieNumber.trim());
+    
+    // Verificar que sea un número válido
+    if (isNaN(parsedNumber)) {
+      return throwError(() => new Error('El número IUE debe ser un número válido'));
+    }
+    
+    const queryParameters: QueryParameters = {
+      uieNumber: parsedNumber,
+    };
+    return this._httpClient.get<boolean>(`${this.apiUrl}/check-uie-exists`, getHttpOptions(queryParameters)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Verifica si un SDR (Número de Registro del Departamento de Estado) ya existe en el sistema.
+   * @param sdrNumber El número SDR a verificar.
+   * @returns Un observable que emite un booleano (true si existe, false si no existe).
+   */
+  checkSdrExists(sdrNumber: string): Observable<boolean> {
+    // Validar que el número sea válido antes de hacer la petición
+    if (!sdrNumber || sdrNumber.trim() === '') {
+      return throwError(() => new Error('El número SDR es requerido'));
+    }
+    
+    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
+    const parsedNumber = Number(sdrNumber.trim());
+    
+    // Verificar que sea un número válido
+    if (isNaN(parsedNumber)) {
+      return throwError(() => new Error('El número SDR debe ser un número válido'));
+    }
+    
+    const queryParameters: QueryParameters = {
+      sdrNumber: parsedNumber,
+    };
+    return this._httpClient.get<boolean>(`${this.apiUrl}/check-sdr-exists`, getHttpOptions(queryParameters)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Verifica si un EIN (Número de Seguro Social Patronal) ya existe en el sistema.
+   * @param einNumber El número EIN a verificar.
+   * @returns Un observable que emite un booleano (true si existe, false si no existe).
+   */
+  checkEinExists(einNumber: string): Observable<boolean> {
+    // Validar que el número sea válido antes de hacer la petición
+    if (!einNumber || einNumber.trim() === '') {
+      return throwError(() => new Error('El número EIN es requerido'));
+    }
+    
+    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
+    const parsedNumber = Number(einNumber.trim());
+    
+    // Verificar que sea un número válido
+    if (isNaN(parsedNumber)) {
+      return throwError(() => new Error('El número EIN debe ser un número válido'));
+    }
+    
+    const queryParameters: QueryParameters = {
+      einNumber: parsedNumber,
+    };
+    return this._httpClient.get<boolean>(`${this.apiUrl}/check-ein-exists`, getHttpOptions(queryParameters)).pipe(
+      catchError((error) => {
+        return throwError(() => error);
+      })
+    );
+  }
 }
 

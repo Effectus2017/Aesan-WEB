@@ -1,6 +1,6 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-export const COLUMNS_SCHEMA: ColumnSchema[] = [
+export const AGENCY_STATUS_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
@@ -15,11 +15,6 @@ export const COLUMNS_SCHEMA: ColumnSchema[] = [
     key: 'isActive',
     type: 'text',
     label: 'agency-status.list.table.columns.isActive',
-  },
-  {
-    key: 'displayOrderUI',
-    type: 'text',
-    label: 'agency-status.list.table.columns.displayOrder',
   },
   {
     key: 'actions',

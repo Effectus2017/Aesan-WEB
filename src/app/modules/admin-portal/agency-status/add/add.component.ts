@@ -4,17 +4,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ActivatedRoute } from '@angular/router';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { AgencyStatusRequest } from 'app/shared/models/Request/AgencyStatusRequest';
 import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { TranslocoModule } from '@ngneat/transloco';
 
 @Component({
     selector: 'app-add-agency-status',
@@ -33,6 +35,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
         MatInputModule,
         MatSelectModule,
         GenericHeaderComponent,
+        TranslocoModule,
     ]
 })
 export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers {
@@ -42,17 +45,19 @@ export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers
   private _transloco = inject(TranslocoService);
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
+  private _route = inject(ActivatedRoute);
 
   currentLang: string;
   agencyStatuses: AgencyStatus[] = [];
   positionOptions: { label: string; value: number }[] = [];
+  listIsActive: OptionSelection[] = [];
 
   headerConfig: GenericHeaderConfig = {
     title: 'agency-status.add.title',
     formGroup: this._formBuilder.group({
       name: [null, Validators.required],
       nameEN: [null, Validators.required],
-      isActive: [true],
+      isActive: [null],
       position: [1, Validators.required],
     }),
     saveButtonShow: true,
@@ -66,17 +71,38 @@ export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers
 
   ngOnInit(): void {
     this.currentLang = this._transloco.getActiveLang();
-    this._agencyStatusService.getAllAgencyStatusFromDb({ take: 1000, skip: 0, alls: true }).subscribe((result: any) => {
-      this.agencyStatuses = (result.body?.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
+
+    // Obtener datos del resolver en lugar de suscribirse
+    const resolvedData = this._route.snapshot.data['data'];
+
+    if (resolvedData) {
+      this.agencyStatuses = (resolvedData.agencyStatuses?.data || []).sort((a, b) => a.displayOrder - b.displayOrder);
       this.positionOptions = this.agencyStatuses.map((_, idx) => ({
-        label: `Posición ${idx + 1}`,
+        label: this._transloco.translate('agency-status.add.position.option', { value: idx + 1 }),
         value: idx + 1,
       }));
-      this.positionOptions.push({ label: `Posición ${this.agencyStatuses.length + 1} (Último)`, value: this.agencyStatuses.length + 1 });
+      this.positionOptions.push({
+        label: this._transloco.translate('agency-status.add.position.last', { value: this.agencyStatuses.length + 1 }),
+        value: this.agencyStatuses.length + 1
+      });
       this.headerConfig.formGroup.get('position').setValue(this.positionOptions.length);
+
+      // Filtrar opciones de isActive
+      this.listIsActive = resolvedData.isActiveOptions?.data || [];
+
+      // Establecer valor por defecto buscando la opción con booleanValue === true
+      const defaultIsActive = this.listIsActive.find(opt => opt.booleanValue === true);
+      if (defaultIsActive) {
+        this.headerConfig.formGroup.patchValue({ isActive: defaultIsActive });
+      }
+
       this._cdr.markForCheck();
-    });
+    }
   }
+
+  compareById = (option1: OptionSelection, option2: OptionSelection): boolean => {
+    return option1?.id === option2?.id;
+  };
 
   onSave() {
 
@@ -97,16 +123,22 @@ export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers
       }
 
 
+      // Mapear el objeto OptionSelection seleccionado al valor booleano
+      const selectedIsActive = this.headerConfig.formGroup.get('isActive').value;
+      const isActiveValue = selectedIsActive?.booleanValue ?? true;
+
       const newStatus: AgencyStatusRequest = {
         name: this.headerConfig.formGroup.get('name').value,
         nameEN: this.headerConfig.formGroup.get('nameEN').value,
-        isActive: this.headerConfig.formGroup.get('isActive').value,
+        isActive: isActiveValue,
         displayOrder,
       };
 
 
       this._agencyStatusService.insertAgencyStatus(newStatus, {}).subscribe(() => {
-        this._snackBar.open('Estado creado correctamente', 'Cerrar', { duration: 3000 });
+        const message = this._transloco.translate('agency-status.add.success.message');
+        const closeButton = this._transloco.translate('agency-status.add.success.close');
+        this._snackBar.open(message, closeButton, { duration: 3000 });
         this._customRouterService.navigate([`agency-status/list`]);
       });
     }

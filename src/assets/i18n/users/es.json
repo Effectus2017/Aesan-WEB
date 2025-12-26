@@ -98,6 +98,10 @@
             "messages": {
                 "force-password": {
                     "title": "Cambio de Contraseña",
+                    "confirmation": {
+                        "title": "Forzar Cambio de Contraseña",
+                        "message": "Esta acción generará una nueva contraseña temporal para el usuario y se enviará por correo electrónico. El usuario deberá cambiar su contraseña en el próximo inicio de sesión. ¿Desea continuar?"
+                    },
                     "success": "Se ha generado una nueva contraseña temporera y se ha enviado por correo electrónico al usuario.",
                     "error": "Ha ocurrido un error al generar la contraseña temporera."
                 },

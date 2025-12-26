@@ -89,6 +89,9 @@
       "required": "El número de registro del departamento de estado es requerido",
       "maxDigits": "El número de registro del departamento de estado debe tener máximo 10 dígitos"
     },
+    "sdr": {
+      "exists": "Este Número de Registro del Departamento de Estado ya está registrado"
+    },
     "address": {
       "label": "Dirección",
       "placeholder": "Ingresa la dirección",
@@ -140,13 +143,15 @@
       "label": "Identificador Único de Entidad (IUE)",
       "placeholder": "Ingresa el Identificador Único de Entidad (IUE)",
       "required": "El Identificador Único de Entidad (IUE) es requerido",
-      "maxlength": "El Identificador Único de Entidad (IUE) debe tener máximo 12 caracteres"
+      "maxDigits": "El Identificador Único de Entidad (IUE) debe tener máximo 12 dígitos",
+      "exists": "Este Identificador Único de Entidad (IUE) ya está registrado"
     },
     "ein": {
       "label": "Número de Seguro Social Patronal (EIN)",
       "placeholder": "Ingresa el Número de Seguro Social Patronal (EIN)",
       "required": "El Número de Seguro Social Patronal (EIN) es requerido",
-      "maxDigits": "El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos"
+      "maxDigits": "El Número de Seguro Social Patronal (EIN) debe tener máximo 9 dígitos",
+      "exists": "Este Número de Seguro Social Patronal (EIN) ya está registrado"
     },
     "latitude": {
       "label": "Latitud",

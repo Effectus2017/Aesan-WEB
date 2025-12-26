@@ -1,0 +1,87 @@
+{
+  "agency-status": {
+    "list": {
+      "title": "Estados de Agencia",
+      "search": {
+        "placeholder": "Buscar estado de agencia"
+      },
+      "table": {
+        "columns": {
+          "name": "Nombre",
+          "nameEN": "Nombre (Inglés)",
+          "isActive": "Activo",
+          "displayOrder": "Orden de Visualización",
+          "actions": "Acciones"
+        },
+        "buttons": {
+          "edit": "Editar"
+        }
+      },
+      "buttons": {
+        "save": "Guardar"
+      }
+    },
+    "add": {
+      "title": "Agregar Estado de Agencia",
+      "name": {
+        "label": "Nombre (Español)",
+        "placeholder": "Nombre en español",
+        "error": "El nombre es obligatorio"
+      },
+      "nameEN": {
+        "label": "Nombre (Inglés)",
+        "placeholder": "Nombre en inglés",
+        "error": "El nombre en inglés es obligatorio"
+      },
+      "position": {
+        "label": "Posición en la lista",
+        "error": "La posición es obligatoria",
+        "option": "Posición {{value}}",
+        "last": "Posición {{value}} (Último)"
+      },
+      "isActive": {
+        "label": "Activo",
+        "error": "El estado activo es obligatorio"
+      },
+      "success": {
+        "message": "Estado creado correctamente",
+        "close": "Cerrar"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    },
+    "edit": {
+      "title": "Editar Estado de Agencia",
+      "name": {
+        "label": "Nombre (Español)",
+        "placeholder": "Nombre en español",
+        "error": "El nombre es obligatorio"
+      },
+      "nameEN": {
+        "label": "Nombre (Inglés)",
+        "placeholder": "Nombre en inglés",
+        "error": "El nombre en inglés es obligatorio"
+      },
+      "displayOrder": {
+        "label": "Orden de visualización",
+        "placeholder": "Orden de visualización",
+        "error": "El orden es obligatorio"
+      },
+      "isActive": {
+        "label": "Activo",
+        "error": "El estado activo es obligatorio"
+      },
+      "success": {
+        "message": "Estado actualizado correctamente",
+        "close": "Cerrar"
+      },
+      "buttons": {
+        "save": "Guardar",
+        "cancel": "Cancelar"
+      }
+    }
+  }
+}
+

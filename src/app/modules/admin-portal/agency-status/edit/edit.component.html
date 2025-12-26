@@ -1,34 +1,44 @@
-<div class="absolute inset-0 flex flex-col min-w-0">
+<div class="flex absolute inset-0 flex-col min-w-0">
   <!-- Header con título y botones -->
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-  <div class="flex-auto overflow-y-auto sm:p-6 sm:w-auto" cdkScrollable>
+  <div class="overflow-y-auto flex-auto sm:p-6 sm:w-auto" cdkScrollable>
     <form [formGroup]="form">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
-        <!-- Información del estado -->
+        <!-- Información del estado - Fila 1 -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Nombre (Español)</mat-label>
-            <input matInput formControlName="name" required placeholder="Nombre en español" />
-            <mat-error *ngIf="form.get('name').hasError('required')">El nombre es obligatorio</mat-error>
+            <mat-label>{{ 'agency-status.edit.name.label' | transloco }}</mat-label>
+            <input matInput formControlName="name" required [placeholder]="'agency-status.edit.name.placeholder' | transloco" />
+            <mat-error *ngIf="form.get('name').hasError('required')">{{ 'agency-status.edit.name.error' | transloco }}</mat-error>
           </mat-form-field>
 
           <mat-form-field appearance="fill">
-            <mat-label>Nombre (Inglés)</mat-label>
-            <input matInput formControlName="nameEN" required placeholder="Nombre en inglés" />
-            <mat-error *ngIf="form.get('nameEN').hasError('required')">El nombre en inglés es obligatorio</mat-error>
+            <mat-label>{{ 'agency-status.edit.nameEN.label' | transloco }}</mat-label>
+            <input matInput formControlName="nameEN" required [placeholder]="'agency-status.edit.nameEN.placeholder' | transloco" />
+            <mat-error *ngIf="form.get('nameEN').hasError('required')">{{ 'agency-status.edit.nameEN.error' | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Orden y opciones -->
+        <!-- Orden y opciones - Fila 2 -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-8">
           <mat-form-field appearance="fill">
-            <mat-label>Orden de visualización</mat-label>
-            <input matInput formControlName="displayOrder" type="number" required placeholder="Orden de visualización" />
-            <mat-error *ngIf="form.get('displayOrder').hasError('required')">El orden es obligatorio</mat-error>
+            <mat-label>{{ 'agency-status.edit.displayOrder.label' | transloco }}</mat-label>
+            <input matInput formControlName="displayOrder" type="number" required [placeholder]="'agency-status.edit.displayOrder.placeholder' | transloco" />
+            <mat-error *ngIf="form.get('displayOrder').hasError('required')">{{ 'agency-status.edit.displayOrder.error' | transloco }}</mat-error>
           </mat-form-field>
 
-          <mat-checkbox formControlName="isActive">Activo</mat-checkbox>
+          <mat-form-field appearance="fill">
+            <mat-label>{{ 'agency-status.edit.isActive.label' | transloco }}</mat-label>
+            <mat-select formControlName="isActive" [compareWith]="compareById">
+              <mat-option *ngFor="let option of listIsActive" [value]="option">
+                {{ currentLang === 'es' ? option.name : option.nameEN }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('isActive').hasError('required')">
+              {{ 'agency-status.edit.isActive.error' | transloco }}
+            </mat-error>
+          </mat-form-field>
         </div>
       </div>
     </form>

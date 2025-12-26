@@ -1,0 +1,87 @@
+{
+  "agency-status": {
+    "list": {
+      "title": "Agency Status",
+      "search": {
+        "placeholder": "Search agency status"
+      },
+      "table": {
+        "columns": {
+          "name": "Name",
+          "nameEN": "Name (English)",
+          "isActive": "Active",
+          "displayOrder": "Display Order",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "edit": "Edit"
+        }
+      },
+      "buttons": {
+        "save": "Save"
+      }
+    },
+    "add": {
+      "title": "Add Agency Status",
+      "name": {
+        "label": "Name (Spanish)",
+        "placeholder": "Name in Spanish",
+        "error": "Name is required"
+      },
+      "nameEN": {
+        "label": "Name (English)",
+        "placeholder": "Name in English",
+        "error": "Name in English is required"
+      },
+      "position": {
+        "label": "Position in list",
+        "error": "Position is required",
+        "option": "Position {{value}}",
+        "last": "Position {{value}} (Last)"
+      },
+      "isActive": {
+        "label": "Active",
+        "error": "Active status is required"
+      },
+      "success": {
+        "message": "Status created successfully",
+        "close": "Close"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    },
+    "edit": {
+      "title": "Edit Agency Status",
+      "name": {
+        "label": "Name (Spanish)",
+        "placeholder": "Name in Spanish",
+        "error": "Name is required"
+      },
+      "nameEN": {
+        "label": "Name (English)",
+        "placeholder": "Name in English",
+        "error": "Name in English is required"
+      },
+      "displayOrder": {
+        "label": "Display Order",
+        "placeholder": "Display order",
+        "error": "Display order is required"
+      },
+      "isActive": {
+        "label": "Active",
+        "error": "Active status is required"
+      },
+      "success": {
+        "message": "Status updated successfully",
+        "close": "Close"
+      },
+      "buttons": {
+        "save": "Save",
+        "cancel": "Cancel"
+      }
+    }
+  }
+}
+

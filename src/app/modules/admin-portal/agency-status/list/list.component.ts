@@ -14,7 +14,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { COLUMNS_SCHEMA } from './columns-schema';
+import { AGENCY_STATUS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -67,8 +67,8 @@ export class AgencyStatusListComponent implements OnInit, OnDestroy, OnGenericTa
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<AgencyStatus>(),
     dataSourceList: [],
-    columnsSchema: COLUMNS_SCHEMA,
-    displayedColumns: COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: AGENCY_STATUS_COLUMNS_SCHEMA,
+    displayedColumns: AGENCY_STATUS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,

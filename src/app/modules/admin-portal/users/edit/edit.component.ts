@@ -102,6 +102,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       {
         id: 'force-password',
         label: 'users.edit.buttons.force-password',
+        icon: 'heroicons_solid:lock-closed',
       },
       {
         id: 'update-password',
@@ -499,55 +500,81 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Para cuando se fuerza la contraseña
   onForcePassword() {
-    const requestParameters: QueryParameters = {
-      userId: this.id,
-    };
-
-    this._usersService.forcePassword(requestParameters).subscribe({
-      next: (result: any) => {
-        if (result.status === 200) {
-          this._fuseConfirmationService.open({
-            title: this._translocoService.translate('users.edit.messages.force-password.title'),
-            message: this._translocoService.translate('users.edit.messages.force-password.success'),
-            icon: {
-              show: true,
-              name: 'heroicons_outline:check-circle',
-              color: 'success',
-            },
-            actions: {
-              confirm: {
-                show: true,
-                label: this._translocoService.translate('dialog.success.confirm'),
-                color: 'primary',
-              },
-              cancel: {
-                show: false,
-              },
-            },
-          });
-        }
+    // Mostrar diálogo de confirmación antes de ejecutar la acción
+    this._fuseConfirmationService.open({
+      title: this._translocoService.translate('users.edit.messages.force-password.confirmation.title'),
+      message: this._translocoService.translate('users.edit.messages.force-password.confirmation.message'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
       },
-      error: () => {
-        this._fuseConfirmationService.open({
-          title: this._translocoService.translate('users.edit.messages.force-password.title'),
-          message: this._translocoService.translate('users.edit.messages.force-password.error'),
-          icon: {
-            show: true,
-            name: 'heroicons_outline:exclamation-circle',
-            color: 'error',
+      actions: {
+        confirm: {
+          show: true,
+          label: this._translocoService.translate('dialog.confirm.confirm'),
+          color: 'warn',
+        },
+        cancel: {
+          show: true,
+          label: this._translocoService.translate('dialog.confirm.cancel'),
+        },
+      },
+      dismissible: true,
+    }).afterClosed().subscribe((result) => {
+      // Solo ejecutar si el usuario confirmó
+      if (result === 'confirmed') {
+        const requestParameters: QueryParameters = {
+          userId: this.id,
+        };
+
+        this._usersService.forcePassword(requestParameters).subscribe({
+          next: (result: any) => {
+            if (result.status === 200) {
+              this._fuseConfirmationService.open({
+                title: this._translocoService.translate('users.edit.messages.force-password.title'),
+                message: this._translocoService.translate('users.edit.messages.force-password.success'),
+                icon: {
+                  show: true,
+                  name: 'heroicons_outline:check-circle',
+                  color: 'success',
+                },
+                actions: {
+                  confirm: {
+                    show: true,
+                    label: this._translocoService.translate('dialog.success.confirm'),
+                    color: 'primary',
+                  },
+                  cancel: {
+                    show: false,
+                  },
+                },
+              });
+            }
           },
-          actions: {
-            confirm: {
-              show: true,
-              label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary',
-            },
-            cancel: {
-              show: false,
-            },
+          error: () => {
+            this._fuseConfirmationService.open({
+              title: this._translocoService.translate('users.edit.messages.force-password.title'),
+              message: this._translocoService.translate('users.edit.messages.force-password.error'),
+              icon: {
+                show: true,
+                name: 'heroicons_outline:exclamation-circle',
+                color: 'error',
+              },
+              actions: {
+                confirm: {
+                  show: true,
+                  label: this._translocoService.translate('dialog.error.confirm'),
+                  color: 'primary',
+                },
+                cancel: {
+                  show: false,
+                },
+              },
+            });
           },
         });
-      },
+      }
     });
   }
 

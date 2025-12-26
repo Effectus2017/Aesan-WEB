@@ -344,6 +344,9 @@
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxDigits')">
                 {{ "sign-up.uie.maxDigits" | transloco }}
               </mat-error>
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('uieExists')">
+                {{ "sign-up.uie.exists" | transloco }}
+              </mat-error>
             </mat-form-field>
           </div>
 
@@ -369,6 +372,9 @@
               <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('maxDigits')">
                 {{ "sign-up.state-department-registration.maxDigits" | transloco }}
               </mat-error>
+              <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('sdrExists')">
+                {{ "sign-up.sdr.exists" | transloco }}
+              </mat-error>
             </mat-form-field>
 
             <!-- EIN *  -->
@@ -380,6 +386,9 @@
               </mat-error>
               <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('maxDigits')">
                 {{ "sign-up.ein.maxDigits" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('einExists')">
+                {{ "sign-up.ein.exists" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>

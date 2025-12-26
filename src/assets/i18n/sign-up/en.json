@@ -84,6 +84,9 @@
       "required": "The state department registration number is required",
       "maxDigits": "The state department registration number must have a maximum of 10 digits"
     },
+    "sdr": {
+      "exists": "This State Department Registration Number is already registered"
+    },
     "address": {
       "label": "Address",
       "placeholder": "Enter the address",
@@ -135,13 +138,15 @@
       "label": "Unique Entity Identifier (UEI)",
       "placeholder": "Enter the Unique Entity Identifier (UEI)",
       "required": "Unique Entity Identifier (UEI) is required",
-      "maxlength": "The Unique Entity Identifier (UEI) must have a maximum of 12 characters"
+      "maxDigits": "The Unique Entity Identifier (UEI) must have a maximum of 12 digits",
+      "exists": "This Unique Entity Identifier (UEI) is already registered"
     },
     "ein": {
       "label": "Employer Identification Number (EIN)",
       "placeholder": "Enter the Employer Identification Number (EIN)",
       "required": "Employer Identification Number (EIN) is required",
-      "maxDigits": "The Employer Identification Number (EIN) must have a maximum of 9 digits"
+      "maxDigits": "The Employer Identification Number (EIN) must have a maximum of 9 digits",
+      "exists": "This Employer Identification Number (EIN) is already registered"
     },
     "latitude": {
       "label": "Latitude",

@@ -118,13 +118,6 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/users',
       },
       {
-        id: 'users.add',
-        title: 'navigation.users.add',
-        type: 'basic',
-        icon: 'mat_solid:add',
-        link: '/users/add',
-      },
-      {
         id: 'roles.list',
         title: 'navigation.users.roles',
         type: 'basic',

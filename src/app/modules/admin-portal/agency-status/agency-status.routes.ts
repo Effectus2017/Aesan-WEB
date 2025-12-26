@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { AgencyStatusComponent } from './agency-status.component';
-import { initialDataAgencyStatusListResolver, initialDataAgencyStatusEditResolver } from './agency-status.resolvers';
+import { initialDataAgencyStatusListResolver, initialDataAgencyStatusAddResolver, initialDataAgencyStatusEditResolver } from './agency-status.resolvers';
 // (El componente de edición se agregará después)
 
 export default [
@@ -24,7 +24,10 @@ export default [
             },
             {
                 path: 'add',
-                loadComponent: () => import('./add/add.component').then(c => c.AddAgencyStatusComponent)
+                loadComponent: () => import('./add/add.component').then(c => c.AddAgencyStatusComponent),
+                resolve: {
+                    data: initialDataAgencyStatusAddResolver
+                }
             }
         ]
     },

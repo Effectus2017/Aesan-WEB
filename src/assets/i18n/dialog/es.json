@@ -12,6 +12,12 @@
       "messageSendError": "Error al enviar el mensaje",
       "confirm": "Aceptar"
     },
+    "confirm": {
+      "title": "Confirmar acción",
+      "message": "¿Está seguro que desea confirmar esta acción?",
+      "confirm": "Aceptar",
+      "cancel": "Cancelar"
+    },
     "permission-request": {
       "title": "Solicitar Permiso",
       "message": "Para seleccionar esta alternativa deberá solicitar un permiso a AESAN. ¿Desea solicitar el permiso?",

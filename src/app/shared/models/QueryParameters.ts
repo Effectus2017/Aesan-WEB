@@ -87,4 +87,9 @@ export interface QueryParameters {
   // Campos para actualizar fecha de registro completado
   AgencyId?: number; // ID de la agencia (con mayúscula para coincidir con backend)
   CompletedRegistrationDate?: string; // Fecha de registro completado en formato ISO
+
+  // Campos para verificar existencia de identificadores de agencia
+  uieNumber?: number | null; // Identificador Único de Entidad (IUE)
+  sdrNumber?: number | null; // Número de Registro del Departamento de Estado (SDR)
+  einNumber?: number | null; // Número de Seguro Social Patronal (EIN)
 }

@@ -50,6 +50,7 @@ import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUn
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
+import { uieExistsValidator, sdrExistsValidator, einExistsValidator } from 'app/shared/validators/agency-identifiers-exists.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
@@ -202,9 +203,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       program: [null, Validators.required],
 
       // Datos de la Agencia
-      sdrNumber: [null, [Validators.required, maxDigitsValidator(10)]],
-      uieNumber: [null, [Validators.required, maxDigitsValidator(12)]],
-      einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
+      // Validadores optimizados: solo validan cuando el campo tiene la cantidad exacta de dígitos
+      // y usan un debounce de 1000ms para reducir peticiones HTTP
+      sdrNumber: [null, [Validators.required, maxDigitsValidator(10)], [sdrExistsValidator(this._userService, 1000, 10)]],
+      uieNumber: [null, [Validators.required, maxDigitsValidator(12)], [uieExistsValidator(this._userService, 1000, 12)]],
+      einNumber: [null, [Validators.required, maxDigitsValidator(9)], [einExistsValidator(this._userService, 1000, 9)]],
 
       // Datos de la Agencia
 
