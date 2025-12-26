@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -17,6 +18,7 @@ import {
   CalendarModule} from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarService } from '../site-calendar.service';
+import { SiteService } from 'app/shared/services/site.service';
 import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
 import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
 import { OperatingDayApiResponse } from 'app/shared/models/Response/OperatingDayApiResponse';
@@ -34,6 +36,8 @@ import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayServi
 import { SiteCalendarServiceEditModalComponent } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal.component';
 import { SiteCalendarServiceEditModalData } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal-data.interface';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { Site } from 'app/shared/models/Site';
 
 @Component({
   selector: 'app-site-calendar',
@@ -42,6 +46,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
     CalendarModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
     MatDialogModule,
     MatFormFieldModule,
     MatInputModule,
@@ -58,6 +63,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
 
   private siteCalendarService: SiteCalendarService = inject(SiteCalendarService);
+  private siteService: SiteService = inject(SiteService);
   private siteOperatingDayServiceService: SiteOperatingDayServiceService = inject(SiteOperatingDayServiceService);
   private route: ActivatedRoute = inject(ActivatedRoute);
   private translocoService: TranslocoService = inject(TranslocoService);
@@ -65,6 +71,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private dialog: MatDialog = inject(MatDialog);
   private fb: FormBuilder = inject(FormBuilder);
   private notificationService: NotificationService = inject(NotificationService);
+  private customRouterService: CustomRouterService = inject(CustomRouterService);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
@@ -87,6 +94,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   isDarkMode: boolean = false;
   operatingFromDate?: Date;
   operatingToDate?: Date;
+  currentSite?: Site; // Información del sitio para determinar si es center o home
   editForm: FormGroup = this.fb.group({
     startTime: ['', Validators.required],
     endTime: ['', Validators.required],
@@ -145,6 +153,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       this.operatingDays = this.mapApiResponseToOperatingDays(apiDays);
       this.events = this.transformToCalendarEvents(this.operatingDays);
       this.siteName = resolvedData.operatingDays.siteName;
+      // Guardar información del sitio para determinar si es center o home
+      this.currentSite = resolvedData.site;
       // Extraer fechas límite de funcionamiento
       if (resolvedData.operatingDays.operatingFromDate) {
         this.operatingFromDate = new Date(resolvedData.operatingDays.operatingFromDate);
@@ -154,7 +164,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       }
       this.loading = false;
     } else {
-      this.loadOperatingDays();
+      // Si no hay datos del resolver, cargar el sitio y los días de funcionamiento
+      this.loadSiteAndOperatingDays();
     }
   }
 
@@ -823,6 +834,28 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
     const locale = this.currentLanguage === 'es' ? 'es-PR' : 'en-US';
     return date.toLocaleDateString(locale, options);
+  }
+
+  /**
+   * Carga la información del sitio y los días de funcionamiento
+   * Se usa cuando no hay datos del resolver
+   */
+  private loadSiteAndOperatingDays(): void {
+    this.loading = true;
+
+    // Cargar información del sitio primero
+    this.siteService.getSiteById({ id: this.currentSiteId })
+      .subscribe({
+        next: (siteResponse: any) => {
+          this.currentSite = siteResponse?.body;
+          // Luego cargar los días de funcionamiento
+          this.loadOperatingDays();
+        },
+        error: () => {
+          // Si falla cargar el sitio, intentar cargar los días de funcionamiento de todas formas
+          this.loadOperatingDays();
+        }
+      });
   }
 
   private loadOperatingDays() {
@@ -1756,6 +1789,35 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       updatedAt: day.updatedAt ? new Date(day.updatedAt) : new Date(),
       services: day.services || []
     }));
+  }
+
+  /**
+   * Navega al sitio correspondiente
+   * Determina la ruta correcta basándose en si es un center o un home
+   */
+  navigateToSite(): void {
+    if (!this.currentSiteId || this.currentSiteId === 0) {
+      return;
+    }
+
+    // Determinar la ruta basándose en si es un Day Care Home o un Center
+    let targetRoute: string;
+
+    // Verificar si es un Day Care Home
+    // isDayCareHomeId: 1 = Sí (Home), 2 = No (Center)
+    // isDayCareHome.booleanValue: true = Home, false = Center
+    const isDayCareHome = this.currentSite?.isDayCareHomeId === 1 ||
+                          this.currentSite?.isDayCareHome?.booleanValue === true;
+
+    if (isDayCareHome) {
+      // Es un Home (Day Care Home)
+      targetRoute = `sites-pacna/homes/edit/${this.currentSiteId}`;
+    } else {
+      // Es un Center
+      targetRoute = `sites-pacna/centers/edit/${this.currentSiteId}`;
+    }
+
+    this.customRouterService.navigate([targetRoute]);
   }
 
 }

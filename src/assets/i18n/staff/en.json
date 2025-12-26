@@ -207,7 +207,7 @@
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)",
         "employee": {
-          "label": "Employee description *",
+          "label": "Brief description of functions and main tasks of Administrative/Operational Employees",
           "placeholder": "Describe the employee"
         },
         "boardMember": {
@@ -431,13 +431,19 @@
         "label": "Comments",
         "placeholder": "Enter additional comments (optional)",
         "employee": {
-          "label": "Employee description *",
+          "label": "Brief description of functions and main tasks of Administrative/Operational Employees",
           "placeholder": "Describe the employee"
         },
         "boardMember": {
           "label": "Comments",
           "placeholder": "Additional comments about the board member"
         }
+      },
+      "site-assignment": "Site Assignment",
+      "site-assignment-description": "Specify the site where the staff will be assigned",
+      "site": {
+        "label": "Assigned Site",
+        "placeholder": "Select site (optional)"
       },
       "school-assignment": "Site Assignment",
       "school-assignment-description": "Specify the site where the staff will be assigned",

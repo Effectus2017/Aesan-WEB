@@ -102,11 +102,13 @@
             },
             "latitude": {
                 "label": "Latitude",
-                "placeholder": "Site latitude"
+                "placeholder": "Site latitude",
+                "required": "Latitude is required"
             },
             "longitude": {
                 "label": "Longitude",
-                "placeholder": "Site longitude"
+                "placeholder": "Site longitude",
+                "required": "Longitude is required"
             },
             "gps-coordinates": {
                 "tooltip": "Open GPS coordinates tool"
@@ -457,6 +459,8 @@
             },
             "satellites": {
                 "label": "Satellite Sites",
+                "description": "List of satellite sites associated with this main site"
+            },
             "pacna-fields": {
                 "title": "PACNA Specific Fields",
                 "description": "Specific information for PACNA program",
@@ -489,8 +493,6 @@
                 "label": "Is it an affiliated center or institution?",
                 "placeholder": "Select an option",
                 "required": "This field is required"
-            },
-                "description": "List of satellite sites associated with this main site"
             },
             "activate-deactivate": {
                 "label": "Activate/Deactivate",
@@ -928,11 +930,13 @@
             },
             "latitude": {
                 "label": "Latitude",
-                "placeholder": "Site latitude"
+                "placeholder": "Site latitude",
+                "required": "Latitude is required"
             },
             "longitude": {
                 "label": "Longitude",
-                "placeholder": "Site longitude"
+                "placeholder": "Site longitude",
+                "required": "Longitude is required"
             },
             "gps-coordinates": {
                 "tooltip": "Open GPS coordinates tool"
@@ -1296,6 +1300,34 @@
                 "placeholder": "At-Risk Snack To",
                 "required": "At-Risk Snack end time is required"
             },
+            "pacna-fields": {
+                "title": "PACNA Specific Fields",
+                "description": "Specific information for PACNA program",
+                "organized-athletic-programs": {
+                    "label": "Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required"
+                },
+                "at-risk-service": {
+                    "label": "Is the site interested in participating in the at-risk snack and dinner service?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required"
+                },
+                "public-alliance-contract": {
+                    "label": "If you have a Public Alliance contract, please specify the type of contract",
+                    "placeholder": "Select an option",
+                    "required": "This field is required"
+                },
+                "is-affiliated-center": {
+                    "label": "Is it an affiliated center or institution?",
+                    "placeholder": "Select an option",
+                    "required": "This field is required"
+                },
+                "validation": {
+                    "both-true-error": "Sites with organized athletic programs and at-risk service are not eligible for PACNA",
+                    "one-true-warning": "This site may have additional restrictions in PACNA"
+                }
+            },
             "is-affiliated-center": {
                 "label": "Is it an affiliated center or institution?",
                 "placeholder": "Select an option",
@@ -1491,6 +1523,7 @@
                 "not-available": "Not available"
             },
             "date-out-of-range": "The selected date is outside the site's operating days range",
+            "navigate-to-site": "Go to site",
             "day-events": {
                 "table": {
                     "columns": {

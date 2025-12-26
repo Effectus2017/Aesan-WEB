@@ -199,7 +199,8 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
         const programs = JSON.parse(programsRaw);
         const isPACNA = programs.some((p: any) => p?.id === PROGRAM_IDS.PACNA);
         if (isPACNA) {
-          targetRoute = 'sites-pacna';
+          // Este modal es específico para centers, así que siempre usar la ruta de centers
+          targetRoute = 'sites-pacna/centers';
         }
       } catch {
         // If parsing error, use default route
@@ -239,6 +240,7 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
         const programs = JSON.parse(programsRaw);
         const isPACNA = programs.some((p: any) => p?.id === PROGRAM_IDS.PACNA);
         if (isPACNA) {
+          // Para PACNA, la ruta del calendario no requiere especificar centers/homes
           targetRoute = 'sites-pacna';
         }
       } catch {

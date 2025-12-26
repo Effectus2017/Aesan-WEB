@@ -1461,6 +1461,7 @@
                 "not-available": "No disponibles"
             },
             "date-out-of-range": "La fecha seleccionada está fuera del rango de días de funcionamiento del sitio",
+            "navigate-to-site": "Ir al sitio",
             "day-events": {
                 "table": {
                     "columns": {

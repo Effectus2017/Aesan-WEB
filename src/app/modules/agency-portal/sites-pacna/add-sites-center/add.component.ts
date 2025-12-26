@@ -18,7 +18,6 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import {
   compare,
   compareById,
@@ -181,9 +180,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Pernoctan (17), No Pernoctan (18)
   typeOfResidential: OptionSelection[] = [];
 
-  // Política de funcionamiento
-  // Operating policies
-  operatingPolicies: OperatingPolicy[] = [];
 
   // Tipo de cocina
   // Type of kitchen
@@ -354,8 +350,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Pernoctan (17), No Pernoctan (18)
       typeOfResidential: [null],
       // Política de operación - Directrices operativas del sitio
-      // Operating policy - Site's operational guidelines
-      operatingPolicy: [null],
       // Disponibilidad de almacén - Indica si el sitio tiene instalaciones de almacenamiento
       // Warehouse availability - Indicates if site has storage facilities
       hasWarehouse: [null],
@@ -673,11 +667,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
 
-      // Filtrar operating policies según si la agencia es recurrente
-      this.operatingPolicies = this.filterOperatingPolicies(
-        resolvedData.operatingPolicies,
-        this.agency?.isRecurrent || false
-      );
 
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
@@ -762,12 +751,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.showCenterTypeField = result.showCenterTypeField;
     });
 
-    // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
-    this.headerConfig.formGroup.get('operatingPolicy')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._changeDetectorRef.detectChanges();
-      });
 
     // Configurar validaciones condicionales para servicios
     this.setupServiceValidations();
@@ -1169,8 +1152,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Type of residential - Required field for RCCI classification (Residential/Non-residential)
     // Pernoctan (17), No Pernoctan (18)
     const residentialTypeId: number = formValues.typeOfResidential?.id;
-    // Política de operación
-    const operatingPolicyId: number = formValues.operatingPolicy?.id;
 
     // Tipo de área
     const areaTypeId: number = formValues.areaType?.id;
@@ -1184,8 +1165,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Días de operación
     const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
     // Horas de funcionamiento
-    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
-    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+    const operatingStartTime: string | null = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string | null = toTimeString(formValues.operatingEndTime);
 
     // Obtener los días permitidos de la agencia
     const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
@@ -1293,9 +1274,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Tipo de localización - Campo requerido para clasificación
       // Location type - Required field for classification
       locationTypeId: locationTypeId,
-      // Política de operación - Campo requerido para operación
-      // Operating policy - Required field for operation
-      operatingPolicyId: operatingPolicyId,
       // Tipo de Institución Infantil Residencial (RCCI) - Campo requerido para clasificación RCCI (Pernoctan/No Pernoctan)
       // Type of Residential Institution (RCCI) - Required field for RCCI classification (Residential/Non-residential)
       residentialTypeId: residentialTypeId,
@@ -1580,8 +1558,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // Este componente es específico para PACNA
-    return ['sites-pacna'];
+    // Este componente es específico para PACNA Centers
+    // La lista de centros está en el módulo centers separado
+    return ['centers'];
   }
 
   // Método para manejar acciones del menú de settings
@@ -2059,16 +2038,5 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     return false;
   }
 
-  /**
-   * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
-   * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
-   */
-  private filterOperatingPolicies(policies: OperatingPolicy[], isRecurrent: boolean): OperatingPolicy[] {
-    if (isRecurrent) {
-      return policies; // Mostrar todas las políticas
-    }
-    // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
-    return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
-  }
 
 }

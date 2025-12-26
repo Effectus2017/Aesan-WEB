@@ -1417,8 +1417,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     // Días de operación
     const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
     // Horas de funcionamiento
-    const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
-    const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+    const operatingStartTime: string | null = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string | null = toTimeString(formValues.operatingEndTime);
 
     // Obtener los días permitidos de la agencia
     const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);

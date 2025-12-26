@@ -5,6 +5,7 @@ import { SitesPacnaComponent } from './sites-pacna.component';
 import { initialDataSitesPacnaListResolver, initialDataSitesPacnaProgramResolver, initialDataSitesPacnaProgramEditResolver } from './sites-pacna.resolvers';
 import { initialDataSiteCalendarResolver } from '../sites-pdam/sites.resolvers';
 import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
+import { initialDataSitesPacnaCenterAddResolver, initialDataSitesPacnaCenterEditResolver } from './sites-pacna.resolvers';
 
 export default [
   {
@@ -38,7 +39,7 @@ export default [
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
-          commonData: initialDataSitesCommonAddResolver,
+          commonData: initialDataSitesPacnaCenterAddResolver,
           programData: initialDataSitesPacnaProgramResolver,
         },
       },
@@ -48,7 +49,7 @@ export default [
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
         resolve: {
-          commonData: initialDataSitesCommonEditResolver,
+          commonData: initialDataSitesPacnaCenterEditResolver,
           programData: initialDataSitesPacnaProgramEditResolver,
         },
       },

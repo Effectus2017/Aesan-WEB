@@ -1205,17 +1205,17 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const postalRegionId: number = formValues.postalRegion?.id;
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     const organizationTypeId: number = formValues.organizationType?.id;
-    const kitchenTypeId: number = formValues.kitchenType?.id;
-    const siteLocationId: number = formValues.siteLocation?.id;
-    const groupTypeId: number = formValues.groupType?.id;
-    const deliveryTypeId: number = formValues.deliveryType?.id;
-    const sponsorTypeId: number = formValues.sponsorType?.id ?? null;
-    const applicantTypeId: number = formValues.typeOfApplicant?.id;
-    const centerTypeId: number = formValues.centerType?.id;
-    const residentialTypeId: number = formValues.typeOfResidential?.id;
-    const operatingPolicyId: number = formValues.operatingPolicy?.id;
-    const areaTypeId: number = formValues.areaType?.id;
-    const locationTypeId: number = formValues.locationType?.id;
+    const kitchenTypeId: number | null = formValues.kitchenType?.id ?? null;
+    const siteLocationId: number | null = formValues.siteLocation?.id ?? null;
+    const groupTypeId: number | null = formValues.groupType?.id ?? null;
+    const deliveryTypeId: number | null = formValues.deliveryType?.id ?? null;
+    const sponsorTypeId: number | null = formValues.sponsorType?.id ?? null;
+    const applicantTypeId: number | null = formValues.typeOfApplicant?.id ?? null;
+    const centerTypeId: number | null = formValues.centerType?.id ?? null;
+    const residentialTypeId: number | null = formValues.typeOfResidential?.id ?? null;
+    const operatingPolicyId: number | null = formValues.operatingPolicy?.id ?? null;
+    const areaTypeId: number | null = formValues.areaType?.id ?? null;
+    const locationTypeId: number | null = formValues.locationType?.id ?? null;
     // Horarios de servicios básicos
     const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
     const breakfastTo: string = toTimeString(formValues.breakfastTo);
@@ -1263,16 +1263,16 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
       operatingDaysOfWeek: operatingDaysOfWeek,
-      kitchenTypeId: kitchenTypeId,
-      siteLocationId: siteLocationId,
-      groupTypeId: groupTypeId,
-      deliveryTypeId: deliveryTypeId,
-      sponsorTypeId: sponsorTypeId,
-      applicantTypeId: applicantTypeId,
-      operatingPolicyId: operatingPolicyId,
-      residentialTypeId: residentialTypeId,
-      areaTypeId: areaTypeId,
-      locationTypeId: locationTypeId,
+      kitchenTypeId: kitchenTypeId ?? null,
+      siteLocationId: siteLocationId ?? null,
+      groupTypeId: groupTypeId ?? null,
+      deliveryTypeId: deliveryTypeId ?? null,
+      sponsorTypeId: sponsorTypeId ?? null,
+      applicantTypeId: applicantTypeId ?? null,
+      operatingPolicyId: operatingPolicyId ?? null,
+      residentialTypeId: residentialTypeId ?? null,
+      areaTypeId: areaTypeId ?? null,
+      locationTypeId: locationTypeId ?? null,
       nonProfit: formValues.nonProfit ?? null,
       startDate: formValues.startDate ?? null,
       baseYear: formValues.baseYear ?? null,

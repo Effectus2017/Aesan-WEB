@@ -23,6 +23,7 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -64,7 +65,6 @@ import { FieldVisibilityService } from 'app/shared/services/field-visibility.ser
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
@@ -191,9 +191,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   // Type of residential - Type of residential of the site
   typeOfResidential: OptionSelection[] = [];
 
-  // Política de funcionamiento
-  // Operating policies
-  operatingPolicies: OperatingPolicy[] = [];
 
   // Tipo de cocina
   // Type of kitchen
@@ -356,6 +353,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
@@ -394,8 +394,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // (tipo select - selección manual)
       locationType: [null, Validators.required],
       // Política de operación - Política de operación del sitio
-      // Operating policy - Operating policy of the site
-      operatingPolicy: [null],
       // Almacén - Campo requerido para indicar si el sitio tiene un almacén
       // Warehouse - Required field indicating if the site has a warehouse
       hasWarehouse: [false],
@@ -695,8 +693,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.publicAllianceContractOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
       // Estatus
       this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      // Política de operación - NO USAR ESTA LÍNEA, se usa la de abajo desde operatingPolicies
-      // this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
       // Tipo de cocina
       this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
@@ -725,8 +721,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.groupTypes = resolvedData.groupTypes;
       this.sponsorType = resolvedData.sponsorTypes;
 
-      // Filtrar operating policies según si la agencia es recurrente
-      this.operatingPolicies = this.filterOperatingPolicies(resolvedData.operatingPolicies, this.agency?.isRecurrent || false);
 
       this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
@@ -815,13 +809,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this._changeDetectorRef.detectChanges();
     });
 
-    // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
-    this.headerConfig.formGroup
-      .get('operatingPolicy')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._changeDetectorRef.detectChanges();
-      });
 
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
@@ -1200,7 +1187,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const sponsorType = param.sponsorType;
     const applicantType = param.applicantType;
     const residentialType = param.residentialType;
-    const operatingPolicy = param.operatingPolicy;
     const educationLevels = param.educationLevels || [];
     const organizationType = param.organizationType;
     const centerType = param.centerType;
@@ -1352,8 +1338,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       applicantType: applicantType,
       applicantTypeId: applicantType?.id,
       typeOfApplicant: applicantType,
-      residentialType: residentialType,
-      operatingPolicy: operatingPolicy,
+      typeOfResidential: residentialType,
       areaType: areaType,
       locationType: locationType,
       generalEnrollment: param.generalEnrollment,
@@ -1378,6 +1363,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // ¿Es un centro o institución afiliada?
       // Is it an affiliated center or institution?
       isAffiliatedCenter: param.isAffiliatedCenter ?? null,
+
+      // Cargar participantes existentes
+      // Load existing participants
+      participantTypes: param.participants
+        ?.filter(p => p.isActive)
+        .map(p => p.participantType.id) || [],
     });
 
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
@@ -1446,7 +1437,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const applicantTypeId: number = formValues.typeOfApplicant?.id;
     const centerTypeId: number = formValues.centerType?.id;
     const residentialTypeId: number = formValues.typeOfResidential?.id;
-    const operatingPolicyId: number = formValues.operatingPolicy?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
     // Horarios de servicios básicos
@@ -1487,6 +1477,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
     const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
+    // Horas de funcionamiento
+    const operatingStartTime: string | null = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string | null = toTimeString(formValues.operatingEndTime);
+
     // Mapear objetos DayOfWeekResponse a IDs
     const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
 
@@ -1523,13 +1517,14 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       operatingToDate: formValues.operatingToDate ?? null,
       operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
       operatingDaysOfWeek: operatingDaysOfWeekIds,
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       kitchenTypeId: kitchenTypeId,
       siteLocationId: siteLocationId,
       groupTypeId: groupTypeId,
       deliveryTypeId: deliveryTypeId,
       sponsorTypeId: sponsorTypeId,
       applicantTypeId: applicantTypeId,
-      operatingPolicyId: operatingPolicyId,
       residentialTypeId: residentialTypeId,
       areaTypeId: areaTypeId,
       locationTypeId: locationTypeId,
@@ -1580,6 +1575,19 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       isAffiliatedCenter: formValues.isAffiliatedCenter ?? null,
 
     };
+
+    // Agregar participantes (selección múltiple)
+    // Add participants (multiple selection)
+    if (formValues.participantTypes && Array.isArray(formValues.participantTypes) && formValues.participantTypes.length > 0) {
+      siteRequest.participants = formValues.participantTypes.map((participantTypeId: number) => {
+        const participantRequest: SiteParticipantRequest = {
+          siteId: this.param.id,
+          participantTypeId: participantTypeId,
+          isActive: true,
+        };
+        return participantRequest;
+      });
+    }
 
     // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====
     // Crear SiteEducationLevelRequest para cada nivel educativo seleccionado
@@ -1775,8 +1783,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // Este componente es específico para PACNA
-    return ['sites-pacna'];
+    // Este componente es específico para PACNA Centers
+    // La lista de centros está en el módulo centers separado
+    return ['centers'];
   }
 
   // Método para manejar acciones del menú de settings
@@ -2289,16 +2298,5 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     });
   }
 
-  /**
-   * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
-   * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
-   */
-  private filterOperatingPolicies(policies: OperatingPolicy[], isRecurrent: boolean): OperatingPolicy[] {
-    if (isRecurrent) {
-      return policies; // Mostrar todas las políticas
-    }
-    // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
-    return policies.filter((p) => p.id !== 3 && p.id !== 4 && p.id !== 5);
-  }
 
 }

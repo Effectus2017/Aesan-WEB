@@ -4,9 +4,18 @@
     <!-- Primera fila: Título y leyenda -->
     <div class="flex justify-between items-center">
       <div class="flex flex-col gap-2">
-        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-          {{ 'sites.calendar.title' | transloco }} - {{ siteName }}
-        </h3>
+        <div class="flex gap-3 items-center">
+          <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
+            {{ 'sites.calendar.title' | transloco }} - {{ siteName }}
+          </h3>
+          <button
+            mat-icon-button
+            (click)="navigateToSite()"
+            matTooltip="{{ 'sites.calendar.navigate-to-site' | transloco }}"
+            class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
+            <mat-icon>open_in_new</mat-icon>
+          </button>
+        </div>
         <!-- Fechas límite de funcionamiento -->
         <div class="flex gap-2 items-center text-sm text-gray-600 dark:text-gray-400">
           <mat-icon class="text-base">event</mat-icon>

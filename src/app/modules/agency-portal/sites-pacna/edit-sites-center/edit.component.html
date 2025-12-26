@@ -235,19 +235,6 @@
           </mat-form-field>
         </div>
 
-        <!-- ✅ VERIFICADO: Política de funcionamiento - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
-        <!-- Política de funcionamiento / Operating Policy -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="operating-policy-field">
-            <mat-label>{{ "sites.edit.operating-policy.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'operatingPolicy'" data-cy="operating-policy-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of operatingPolicies" [value]="option" data-cy="operating-policy-option">{{
-                currentLang === "en" ? option.nameEN : option.name
-              }}</mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
         <!-- ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="organized-athletic-programs-field">
@@ -293,11 +280,13 @@
           </mat-form-field>
         </div>
 
-
-
         <!-- Tipo de organización / Organization Type -->
         <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ Day Care Home ❌ -->
+        <!-- Tipo de organización / Organization Type -->
+        <!-- ✅ VERIFICADO: Tipo de Institución Residencial - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
+        <!-- Tipo de Institución Residencial / Residential Institution -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field data-cy="organization-type-field">
             <mat-label>{{ "sites.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
@@ -307,23 +296,6 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "sites.edit.organization-type.required" | transloco }}</mat-error>
           </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Tipo de organización - Aplica a: PDAM ✅ PSAV ❌ PACNA ✅ Day Care Home ❌ -->
-        <!-- Tipo de Centro / Center Type -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="center-field">
-            <mat-label>{{ "sites.edit.center.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "sites.edit.center.required" | transloco }}</mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- ✅ VERIFICADO: Tipo de Institución Residencial - Aplica a: PDAM ✅ PSAV ❌ PACNA ❌ -->
-        <!-- Tipo de Institución Residencial / Residential Institution -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="residential-type-field">
             <mat-label>{{ "sites.edit.residential-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfResidential'" data-cy="residential-type-select" [compareWith]="compareById">
@@ -331,6 +303,28 @@
                 currentLang === "en" ? option.nameEN : option.name
               }}</mat-option>
             </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Tipo de Centro / Center Type -->
+        <!-- ✅ VERIFICADO: Participantes / Participants - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
+        <!-- Participantes / Participants -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+          <mat-form-field data-cy="center-field">
+            <mat-label>{{ "sites.edit.center.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'centerType'" data-cy="center-select" [compareWith]="compareById">
+              <mat-option *ngFor="let option of centerTypes" [value]="option" data-cy="center-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('centerType').hasError('required')">{{ "sites.edit.center.required" | transloco }}</mat-error>
+          </mat-form-field>
+          <mat-form-field data-cy="participant-types-field">
+            <mat-label>{{ "sites.edit.participant-types.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'participantTypes'" multiple data-cy="participant-types-select">
+              <mat-option *ngFor="let option of participantTypeOptions" [value]="option.id" data-cy="participant-types-option">
+                {{ currentLang === "en" ? option.nameEN : option.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('participantTypes').hasError('required')">{{ "sites.edit.participant-types.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
@@ -516,7 +510,6 @@
           </mat-form-field>
         </div>
 
-
         <!-- ✅ VERIFICADO: ¿Cuenta con un Almacén?, ¿Cuenta con un Salón Comedor? - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Cuenta con un Almacén? / Has Warehouse -->
         <!-- ¿Cuenta con un Salón Comedor? / Has Dining Room -->
@@ -539,8 +532,6 @@
           </mat-form-field>
         </div>
 
-
-
         <!-- ¿Es un centro o institución afiliada? -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <mat-form-field data-cy="is-affiliated-center-field">
@@ -555,7 +546,6 @@
             </mat-error>
           </mat-form-field>
         </div>
-
 
         <!-- TITULO -->
         <!-- Servicios que operará y horario -->
@@ -1101,7 +1091,6 @@
             </div>
           </div>
         </div>
-
       </div>
     </form>
   </div>
