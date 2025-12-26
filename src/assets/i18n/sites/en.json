@@ -1482,8 +1482,15 @@
             "legend": {
                 "normal": "Normal days",
                 "weekend": "Weekends",
-                "excluded": "Excluded days"
+                "holiday": "Holiday",
+                "service": "Services"
             },
+            "operating-dates": {
+                "label": "Operating days",
+                "range": "{{from}} - {{to}}",
+                "not-available": "Not available"
+            },
+            "date-out-of-range": "The selected date is outside the site's operating days range",
             "day-events": {
                 "table": {
                     "columns": {
@@ -1518,7 +1525,9 @@
                     "date": "Date",
                     "startTime": {
                         "label": "Start Time",
-                        "required": "Start time is required"
+                        "required": "Start time is required",
+                        "conflict-warning": "Start time cannot be earlier than service start times",
+                        "conflicting-services": "The following services have an earlier start time"
                     },
                     "endTime": {
                         "label": "End Time",

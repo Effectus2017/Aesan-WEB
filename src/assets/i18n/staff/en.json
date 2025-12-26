@@ -470,6 +470,21 @@
         "label": "Review Justification",
         "placeholder": "Enter the justification for the review performed"
       },
+      "tenureDuration": {
+        "label": "Tenure Duration",
+        "placeholder": "Enter the tenure duration",
+        "required": "Tenure duration is required"
+      },
+      "tenureDurationUnit": {
+        "label": "Time Unit",
+        "placeholder": "Select the time unit",
+        "required": "Time unit is required"
+      },
+      "receivesProgramSalary": {
+        "label": "Does receive program salary?",
+        "placeholder": "Select an option",
+        "required": "This field is required"
+      },
       "relationships": {
         "label": "Staff Relationships",
         "description": "Manage relationships between staff members",

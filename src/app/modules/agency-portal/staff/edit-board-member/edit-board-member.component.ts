@@ -149,6 +149,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       {
         id: 'add',
         label: 'staff.edit.relationships.add',
+        icon: 'mat_outline:person_add',
       },
     ],
   };

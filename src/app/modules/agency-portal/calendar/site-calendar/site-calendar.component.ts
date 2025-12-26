@@ -33,6 +33,7 @@ import { SiteOperatingDayServiceService } from 'app/shared/services/site-operati
 import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
 import { SiteCalendarServiceEditModalComponent } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal.component';
 import { SiteCalendarServiceEditModalData } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal-data.interface';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'app-site-calendar',
@@ -63,6 +64,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private fuseConfigService: FuseConfigService = inject(FuseConfigService);
   private dialog: MatDialog = inject(MatDialog);
   private fb: FormBuilder = inject(FormBuilder);
+  private notificationService: NotificationService = inject(NotificationService);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
@@ -83,6 +85,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   selectedDate: Date | null = null;
   currentLanguage: string = 'es';
   isDarkMode: boolean = false;
+  operatingFromDate?: Date;
+  operatingToDate?: Date;
   editForm: FormGroup = this.fb.group({
     startTime: ['', Validators.required],
     endTime: ['', Validators.required],
@@ -141,6 +145,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       this.operatingDays = this.mapApiResponseToOperatingDays(apiDays);
       this.events = this.transformToCalendarEvents(this.operatingDays);
       this.siteName = resolvedData.operatingDays.siteName;
+      // Extraer fechas límite de funcionamiento
+      if (resolvedData.operatingDays.operatingFromDate) {
+        this.operatingFromDate = new Date(resolvedData.operatingDays.operatingFromDate);
+      }
+      if (resolvedData.operatingDays.operatingToDate) {
+        this.operatingToDate = new Date(resolvedData.operatingDays.operatingToDate);
+      }
       this.loading = false;
     } else {
       this.loadOperatingDays();
@@ -337,6 +348,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openAddDayDialog(date: Date) {
+    // Validar que la fecha esté dentro del rango de días de funcionamiento
+    if (!this.isDateWithinOperatingRange(date)) {
+      this.notificationService.showWarningDialog('sites.calendar.date-out-of-range');
+      return;
+    }
+
     // Detectar si es fin de semana (sábado = 6, domingo = 0)
     const dayOfWeek = date.getDay();
     const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
@@ -579,6 +596,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private addOperatingDay(operatingDay: SiteOperatingDay, formData: any) {
+    // Validar que la fecha esté dentro del rango antes de enviar al backend
+    const operatingDate = new Date(operatingDay.date);
+    if (!this.isDateWithinOperatingRange(operatingDate)) {
+      this.notificationService.showWarningDialog('sites.calendar.date-out-of-range');
+      return;
+    }
+
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
@@ -756,6 +780,51 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     }
   }
 
+  /**
+   * Obtiene el label formateado para las fechas límite de funcionamiento
+   * @returns String con las fechas formateadas o mensaje de no disponibles
+   */
+  getOperatingDatesLabel(): string {
+    if (!this.operatingFromDate || !this.operatingToDate) {
+      return this.translocoService.translate('sites.calendar.operating-dates.not-available') || 'No disponibles';
+    }
+
+    // Formatear fechas según el idioma activo
+    const fromDateStr = this.formatDateForDisplay(this.operatingFromDate);
+    const toDateStr = this.formatDateForDisplay(this.operatingToDate);
+
+    const rangeTemplate = this.translocoService.translate('sites.calendar.operating-dates.range');
+    if (rangeTemplate && rangeTemplate.includes('{{from}}') && rangeTemplate.includes('{{to}}')) {
+      return rangeTemplate
+        .replace('{{from}}', fromDateStr)
+        .replace('{{to}}', toDateStr);
+    }
+
+    // Fallback si la traducción no tiene el formato esperado
+    return `${fromDateStr} - ${toDateStr}`;
+  }
+
+  /**
+   * Formatea una fecha para mostrar según el idioma activo
+   * @param date Fecha a formatear
+   * @returns String con la fecha formateada
+   */
+  private formatDateForDisplay(date: Date): string {
+    if (!date || isNaN(date.getTime())) {
+      return '';
+    }
+
+    // Usar formato de fecha localizado
+    const options: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    };
+
+    const locale = this.currentLanguage === 'es' ? 'es-PR' : 'en-US';
+    return date.toLocaleDateString(locale, options);
+  }
+
   private loadOperatingDays() {
 
     this.loading = true;
@@ -777,6 +846,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           const data = response?.body || response;
           this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
+          // Extraer fechas límite de funcionamiento
+          if (data?.operatingFromDate) {
+            this.operatingFromDate = new Date(data.operatingFromDate);
+          }
+          if (data?.operatingToDate) {
+            this.operatingToDate = new Date(data.operatingToDate);
+          }
           this.loading = false;
         },
         error: () => {
@@ -805,6 +881,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           const data = response?.body || response;
           this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
+          // Extraer fechas límite de funcionamiento
+          if (data?.operatingFromDate) {
+            this.operatingFromDate = new Date(data.operatingFromDate);
+          }
+          if (data?.operatingToDate) {
+            this.operatingToDate = new Date(data.operatingToDate);
+          }
 
           // Actualizar la tabla del modal directamente si está abierto
           if (this.currentTableModal && this.selectedDate) {
@@ -1183,6 +1266,49 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     }
   }
 
+  /**
+   * Valida si una fecha está dentro del rango de días de funcionamiento del sitio
+   * @param date Fecha a validar
+   * @returns true si la fecha está dentro del rango, false si está fuera o si no hay fechas límite definidas
+   */
+  isDateWithinOperatingRange(date: Date): boolean {
+    if (!date || isNaN(date.getTime())) {
+      return false;
+    }
+
+    // Si no hay fechas límite definidas, permitir todas las fechas (comportamiento actual)
+    if (!this.operatingFromDate || !this.operatingToDate) {
+      return true;
+    }
+
+    // Normalizar fechas a medianoche para comparación
+    const checkDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const fromDate = new Date(this.operatingFromDate.getFullYear(), this.operatingFromDate.getMonth(), this.operatingFromDate.getDate());
+    const toDate = new Date(this.operatingToDate.getFullYear(), this.operatingToDate.getMonth(), this.operatingToDate.getDate());
+
+    return checkDate >= fromDate && checkDate <= toDate;
+  }
+
+  /**
+   * Filtro de fechas para el calendario
+   * Retorna false para fechas que deben ser deshabilitadas (fuera del rango)
+   * @param date Fecha a evaluar
+   * @returns true si la fecha debe estar habilitada, false si debe estar deshabilitada
+   */
+  dateFilter(date: Date | null): boolean {
+    if (!date) {
+      return true; // Permitir fechas nulas para que el calendario funcione normalmente
+    }
+
+    // Si no hay fechas límite definidas, permitir todas las fechas
+    if (!this.operatingFromDate || !this.operatingToDate) {
+      return true;
+    }
+
+    // Validar que la fecha esté dentro del rango
+    return this.isDateWithinOperatingRange(date);
+  }
+
   // Métodos para manejar eventos de la tabla
   getDayEvents(date: Date): CalendarEvent[] {
     return this.events.filter(event =>
@@ -1284,6 +1410,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     });
   }
 
+  // Método para obtener el día de funcionamiento por ID
+  getOperatingDayById(operatingDayId: number): SiteOperatingDay | undefined {
+    return this.operatingDays.find(day => day.id === operatingDayId);
+  }
+
   // Método para abrir modal de servicios desde la tabla (ya no se usa, los servicios se muestran en la tabla principal)
   openServicesModalFromTable(date: Date): void {
     const operatingDay = this.operatingDays.find(day => {
@@ -1337,22 +1468,38 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   // Método para abrir modal de edición de servicio
   openEditServiceDialog(service: SiteOperatingDayService): void {
     // Obtener el operatingDay para verificar si es feriado
+    // Priorizar búsqueda por ID, que es más preciso y evita errores de comparación de fechas
     let operatingDay: SiteOperatingDay | undefined;
 
-    // Intentar obtenerlo desde diferentes fuentes
-    if (service.operatingDate) {
+    // Prioridad 1: Buscar por operatingDayId (más preciso)
+    if (service.operatingDayId) {
+      operatingDay = this.getOperatingDayById(service.operatingDayId);
+    }
+
+    // Prioridad 2: Si no se encontró por ID, buscar por fecha del servicio
+    if (!operatingDay && service.operatingDate) {
       const serviceDate = new Date(service.operatingDate);
       operatingDay = this.getOperatingDayForDate(serviceDate);
-    } else if (this.selectedDate) {
+    }
+
+    // Prioridad 3: Si aún no se encontró, usar la fecha seleccionada como último recurso
+    if (!operatingDay && this.selectedDate) {
       operatingDay = this.getOperatingDayForDate(this.selectedDate);
     }
 
-    // Si el día es feriado, no permitir editar servicios
-    if (operatingDay && operatingDay.isHoliday) {
-      const message = this.translocoService.translate('sites.calendar.day-events.cannot-edit-holiday');
-      alert(message || 'No se pueden editar servicios en días feriados');
-      return;
+    // Validación adicional: verificar que el operatingDay obtenido corresponde al servicio
+    // Si se obtuvo por ID, ya está validado. Si se obtuvo por fecha, verificar que el ID coincida
+    if (operatingDay && service.operatingDayId && operatingDay.id !== service.operatingDayId) {
+      // Si hay discrepancia, intentar buscar nuevamente por ID
+      operatingDay = this.getOperatingDayById(service.operatingDayId);
     }
+
+    // Si el día es feriado, no permitir editar servicios
+    // if (operatingDay && operatingDay.isHoliday) {
+    //   const message = this.translocoService.translate('sites.calendar.day-events.cannot-edit-holiday');
+    //   alert(message || 'No se pueden editar servicios en días feriados');
+    //   return;
+    // }
 
     // Preparar el formulario con los datos actuales del servicio
     const serviceForm = this.fb.group({
@@ -1466,13 +1613,17 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       // Es un servicio, abrir modal de edición de servicio
       const service = tableData.meta as SiteOperatingDayService;
 
-      // Obtener el operatingDay para tener los horarios del día
+      // Obtener el operatingDay usando el operatingDayId del servicio (más preciso)
       let operatingDay: SiteOperatingDay | undefined;
-      if (service.operatingDate) {
+      if (service.operatingDayId) {
+        // Priorizar búsqueda por ID, que es más preciso
+        operatingDay = this.getOperatingDayById(service.operatingDayId);
+      } else if (service.operatingDate) {
+        // Fallback: buscar por fecha si no hay operatingDayId
         const serviceDate = new Date(service.operatingDate);
         operatingDay = this.getOperatingDayForDate(serviceDate);
       } else if (this.selectedDate) {
-        // Si no hay operatingDate en el servicio, usar la fecha seleccionada
+        // Último fallback: usar la fecha seleccionada
         operatingDay = this.getOperatingDayForDate(this.selectedDate);
       }
 

@@ -34,6 +34,7 @@ export interface CreateStaffRelationshipRequest {
   staffId: number;
   relatedStaffId: number;
   relationshipTypeId: number;
+  comment?: string;
 }
 
 export interface UpdateStaffRelationshipRequest {

@@ -14,10 +14,31 @@
     <div class="flex overflow-y-auto flex-col flex-auto p-6">
       <div class="flex flex-col gap-6 animate-slide-in">
         <!-- Información del día -->
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
-          <p class="text-sm text-gray-600 dark:text-gray-400">
-            <strong>{{ 'sites.calendar.modals.edit-day.date' | transloco }}:</strong> {{ getFormattedDate() }}
-          </p>
+        <div class="flex flex-col gap-3">
+          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+              <strong>{{ 'sites.calendar.modals.edit-day.date' | transloco }}:</strong> {{ getFormattedDate() }}
+            </p>
+          </div>
+          <!-- Advertencia de conflicto con servicios -->
+          <div *ngIf="hasStartTimeConflict() && conflictingServices.length > 0" class="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+            <div class="flex items-start gap-2">
+              <mat-icon class="text-red-500 text-lg flex-shrink-0">warning</mat-icon>
+              <div class="flex flex-col gap-1 flex-1">
+                <p class="text-sm font-medium text-red-600 dark:text-red-400">
+                  {{ 'sites.calendar.modals.edit-day.startTime.conflict-warning' | transloco }}
+                </p>
+                <p class="text-xs text-red-600 dark:text-red-400">
+                  {{ 'sites.calendar.modals.edit-day.startTime.conflicting-services' | transloco }}:
+                </p>
+                <ul class="list-disc list-inside text-xs text-red-600 dark:text-red-400 ml-2">
+                  <li *ngFor="let service of conflictingServices">
+                    {{ getServiceName(service) }} ({{ formatServiceTime(service.startTime) }})
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Horarios -->
@@ -77,7 +98,7 @@
           {{ 'global.buttons.delete' | transloco }}
         </button> -->
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid()">
         {{ 'global.buttons.save' | transloco }}
       </button>
     </div>

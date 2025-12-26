@@ -85,7 +85,7 @@
           {{ 'sites.calendar.modals.add-service.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid()">
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid()">
         {{ 'sites.calendar.modals.add-service.buttons.save' | transloco }}
       </button>
     </div>

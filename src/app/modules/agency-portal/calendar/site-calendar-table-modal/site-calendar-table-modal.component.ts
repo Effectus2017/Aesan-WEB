@@ -121,6 +121,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
     if (this.data.onEventAdded) {
       this.data.onEventAdded();
     }
+
+    // Si el día agregado es feriado, forzar detección de cambios para actualizar el estado del botón
+    if (formData.isHoliday) {
+      this.cdr.detectChanges();
+    }
   }
 
   private addEventToTable(operatingDay: any, formData: any): void {
@@ -566,6 +571,37 @@ export class SiteCalendarTableModalComponent implements OnInit {
   }
 
   /**
+   * Verifica si el día actual es feriado
+   */
+  isHolidayDay(): boolean {
+    // Primero verificar en los datos de la tabla (más actualizado, incluye cambios recientes)
+    if (this.data.tableConfig?.dataSourceList && this.data.tableConfig.dataSourceList.length > 0) {
+      const dayData = this.data.tableConfig.dataSourceList.find(item => !item.isService);
+      if (dayData?.meta?.isHoliday === true) {
+        return true;
+      }
+    }
+
+    // Luego verificar en el handler (datos del servidor)
+    if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
+      const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
+      if (operatingDay?.isHoliday === true) {
+        return true;
+      }
+    }
+
+    // Finalmente verificar en los eventos del día
+    if (this.data.events && this.data.events.length > 0) {
+      const dayEvent = this.data.events.find(event => event.meta && !event.meta.isService);
+      if (dayEvent?.meta?.isHoliday === true) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /**
    * Refresca los datos de la tabla obteniendo los servicios actualizados del handler
    */
   refreshTableData(): void {
@@ -574,5 +610,8 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
     // Actualizar la tabla con los eventos actuales y los servicios actualizados del handler
     this.updateTableData(currentEvents);
+
+    // Forzar detección de cambios para actualizar el estado del botón de agregar servicio
+    this.cdr.detectChanges();
   }
 }

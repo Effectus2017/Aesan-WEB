@@ -66,7 +66,7 @@
                 "cancel": "Cancel",
                 "update": "Update",
                 "save": "Save",
-                "update-password": "Update",
+                "update-password": "Change Password",
                 "force-password": "Force Password Change"
             },
             "agency": {
@@ -120,6 +120,11 @@
             },
             "emailConfirmed": {
                 "label": "Email Confirmed"
+            },
+            "avatar": {
+                "title": "Profile Picture",
+                "alt": "User profile picture",
+                "select": "Select Profile Picture"
             },
             "permissions-section": "Assigned Permissions",
             "permissions": {
@@ -234,6 +239,16 @@
                 "edit": "Edit",
                 "delete": "Delete",
                 "download": "Download"
+            }
+        },
+        "update": {
+            "success": {
+                "title": "User updated",
+                "message": "User updated successfully"
+            },
+            "error": {
+                "title": "Error",
+                "message": "Error updating user"
             }
         }
     }

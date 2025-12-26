@@ -77,6 +77,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
     relationshipType: new FormControl('', [Validators.required]),
+    comment: new FormControl('', [Validators.maxLength(500)]),
   });
 
   // Loading
@@ -186,6 +187,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
       staffId: this.data.currentStaffId,
       relatedStaffId: currentStaff.id,
       relationshipTypeId: relationshipType.id,
+      comment: formValues.comment || undefined,
     };
 
     this._staffRelationshipService.createRelationship(request, {}).subscribe({

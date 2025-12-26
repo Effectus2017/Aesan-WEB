@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,8 +8,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalendarEditModalData';
+import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-school-calendar-edit-modal',
@@ -65,8 +67,11 @@ import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalend
     }
   `]
 })
-export class SiteCalendarEditModalComponent {
+export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   timeOptions: { value: string; display: string }[] = [];
+  conflictingServices: SiteOperatingDayService[] = [];
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private translocoService: TranslocoService = inject(TranslocoService);
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarEditModalComponent>,
@@ -79,6 +84,23 @@ export class SiteCalendarEditModalComponent {
     });
     this.generateTimeOptions();
     this.convertFormValuesTo24h();
+  }
+
+  ngOnInit(): void {
+    // Suscribirse a cambios del campo startTime para validación en tiempo real
+    this.data.form.get('startTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.checkStartTimeConflict();
+      });
+
+    // Validar al inicializar
+    this.checkStartTimeConflict();
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
 
   private generateTimeOptions(): void {
@@ -198,7 +220,9 @@ export class SiteCalendarEditModalComponent {
   getFormattedDate(): string {
     // Usar parseDateSafe para evitar problemas de zona horaria
     const date = this.parseDateSafe(this.data.operatingDay.date);
-    return date.toLocaleDateString('es-ES', {
+    const currentLang = this.translocoService.getActiveLang() || 'es';
+    const locale = currentLang === 'es' ? 'es-ES' : 'en-US';
+    return date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -238,7 +262,134 @@ export class SiteCalendarEditModalComponent {
     this.dialogRef.close();
   }
 
+  /**
+   * Convierte una hora en formato HH:mm a minutos totales para comparación
+   */
+  private convertTimeToMinutes(timeString: string): number {
+    if (!timeString) return 0;
+
+    // Normalizar formato: remover segundos y espacios
+    let normalizedTime = timeString.trim();
+    
+    // Si tiene formato 12h (AM/PM), convertir a 24h primero
+    if (normalizedTime.includes('AM') || normalizedTime.includes('PM')) {
+      normalizedTime = this.convert12To24(normalizedTime);
+    }
+
+    // Remover segundos si existen
+    normalizedTime = this.removeSeconds(normalizedTime);
+
+    // Parsear HH:mm
+    const match = normalizedTime.match(/^(\d{1,2}):(\d{2})$/);
+    if (!match) return 0;
+
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    
+    return hours * 60 + minutes;
+  }
+
+  /**
+   * Verifica si hay conflicto entre la hora de inicio del día y los servicios
+   * Conflicto ocurre cuando algún servicio habilitado empieza ANTES que el día
+   * El día debe empezar ANTES o IGUAL que todos los servicios (el día no puede empezar después de un servicio)
+   */
+  hasStartTimeConflict(): boolean {
+    const startTime = this.data.form.get('startTime')?.value;
+    if (!startTime) return false;
+
+    const dayStartMinutes = this.convertTimeToMinutes(startTime);
+    const services = this.data.operatingDay.services || [];
+
+    // Filtrar solo servicios habilitados
+    const enabledServices = services.filter(service => service.isEnabled === true);
+
+    // Verificar si algún servicio empieza ANTES que el día (esto causa conflicto)
+    return enabledServices.some(service => {
+      if (!service.startTime) return false;
+      const serviceStartMinutes = this.convertTimeToMinutes(service.startTime);
+      // Conflicto si el servicio empieza antes que el día
+      return serviceStartMinutes < dayStartMinutes;
+    });
+  }
+
+  /**
+   * Obtiene los servicios que causan conflicto
+   * Un servicio causa conflicto si su hora de inicio es menor que la hora de inicio del día
+   * (es decir, servicios que empiezan antes que el día, lo cual no está permitido)
+   */
+  getConflictingServices(): SiteOperatingDayService[] {
+    const startTime = this.data.form.get('startTime')?.value;
+    if (!startTime) return [];
+
+    const dayStartMinutes = this.convertTimeToMinutes(startTime);
+    const services = this.data.operatingDay.services || [];
+
+    // Filtrar solo servicios habilitados cuya hora de inicio es menor que la hora de inicio del día
+    // Estos son los servicios que empiezan antes que el día, lo cual causa conflicto
+    return services.filter(service => {
+      if (!service.isEnabled || !service.startTime) return false;
+      const serviceStartMinutes = this.convertTimeToMinutes(service.startTime);
+      return serviceStartMinutes < dayStartMinutes;
+    });
+  }
+
+  /**
+   * Verifica y actualiza el estado de conflictos
+   */
+  private checkStartTimeConflict(): void {
+    this.conflictingServices = this.getConflictingServices();
+  }
+
+  /**
+   * Verifica si el formulario es válido (incluyendo validación de conflictos)
+   */
+  isFormValid(): boolean {
+    if (!this.data.form.valid) return false;
+    return !this.hasStartTimeConflict();
+  }
+
+  /**
+   * Formatea la hora de un servicio para mostrar
+   */
+  formatServiceTime(timeString: string): string {
+    if (!timeString) return '';
+    
+    // Normalizar formato
+    let normalizedTime = timeString.trim();
+    
+    // Si tiene formato 12h, mantenerlo
+    if (normalizedTime.includes('AM') || normalizedTime.includes('PM')) {
+      return normalizedTime;
+    }
+
+    // Si es formato 24h, convertir a 12h
+    const match = normalizedTime.match(/^(\d{1,2}):(\d{2})/);
+    if (match) {
+      const hours = parseInt(match[1], 10);
+      const minutes = match[2];
+      return this.convert24To12(hours, parseInt(minutes, 10));
+    }
+
+    return timeString;
+  }
+
+  /**
+   * Obtiene el nombre del servicio según el idioma
+   */
+  getServiceName(service: SiteOperatingDayService): string {
+    // Por ahora, usar serviceTypeName (en español) como predeterminado
+    // En el futuro se puede agregar detección de idioma
+    return service.serviceTypeName || service.serviceTypeNameEN || 'Servicio';
+  }
+
   onSave(): void {
+    // Validar antes de guardar
+    if (this.hasStartTimeConflict()) {
+      // No permitir guardar si hay conflicto
+      return;
+    }
+
     if (this.data.form.valid) {
       this.dialogRef.close(this.data.form.value);
     }

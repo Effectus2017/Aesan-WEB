@@ -81,104 +81,48 @@ export class UserService {
 
   /**
    * Verifica si un correo electrónico ya existe en el sistema.
-   * @param email El correo electrónico a verificar.
-   * @returns Un observable que emite un objeto con la propiedad exists (true/false).
+   * @param queryParameters Parámetros de consulta que incluyen el correo electrónico.
+   * @returns Un observable que emite un booleano (true si existe, false si no existe).
    */
-  checkEmailExists(email: string): Observable<{ exists: boolean }> {
-    const queryParameters: QueryParameters = {
-      email: email,
-    };
-    return this._httpClient.get<{ exists: boolean }>(`${this.apiUrl}/check-email-exists`, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
-      })
-    );
+  checkEmailExists(queryParameters: QueryParameters): Observable<boolean> {
+    return this._httpClient.get<boolean>(`${this.apiUrl}/check-email-exists`, getHttpOptions(queryParameters));
   }
 
   /**
    * Verifica si un IUE (Identificador Único de Entidad) ya existe en el sistema.
-   * @param uieNumber El número IUE a verificar.
+   * @param queryParameters Parámetros de consulta que incluyen el número IUE.
    * @returns Un observable que emite un booleano (true si existe, false si no existe).
    */
-  checkUieExists(uieNumber: string): Observable<boolean> {
-    // Validar que el número sea válido antes de hacer la petición
-    if (!uieNumber || uieNumber.trim() === '') {
-      return throwError(() => new Error('El número IUE es requerido'));
-    }
-    
-    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
-    // Number() maneja mejor los números grandes que parseInt()
-    const parsedNumber = Number(uieNumber.trim());
-    
-    // Verificar que sea un número válido
-    if (isNaN(parsedNumber)) {
-      return throwError(() => new Error('El número IUE debe ser un número válido'));
-    }
-    
-    const queryParameters: QueryParameters = {
-      uieNumber: parsedNumber,
-    };
+  checkUieExists(queryParameters: QueryParameters): Observable<boolean> {
     return this._httpClient.get<boolean>(`${this.apiUrl}/check-uie-exists`, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
+      tap((response: any) => {
+        console.log('IUE - Respuesta HTTP recibida:', response, 'Tipo:', typeof response);
       })
     );
   }
 
   /**
    * Verifica si un SDR (Número de Registro del Departamento de Estado) ya existe en el sistema.
-   * @param sdrNumber El número SDR a verificar.
+   * @param queryParameters Parámetros de consulta que incluyen el número SDR.
    * @returns Un observable que emite un booleano (true si existe, false si no existe).
    */
-  checkSdrExists(sdrNumber: string): Observable<boolean> {
-    // Validar que el número sea válido antes de hacer la petición
-    if (!sdrNumber || sdrNumber.trim() === '') {
-      return throwError(() => new Error('El número SDR es requerido'));
-    }
-    
-    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
-    const parsedNumber = Number(sdrNumber.trim());
-    
-    // Verificar que sea un número válido
-    if (isNaN(parsedNumber)) {
-      return throwError(() => new Error('El número SDR debe ser un número válido'));
-    }
-    
-    const queryParameters: QueryParameters = {
-      sdrNumber: parsedNumber,
-    };
+  checkSdrExists(queryParameters: QueryParameters): Observable<boolean> {
     return this._httpClient.get<boolean>(`${this.apiUrl}/check-sdr-exists`, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
+      tap((response: any) => {
+        console.log('SDR - Respuesta HTTP recibida:', response, 'Tipo:', typeof response);
       })
     );
   }
 
   /**
    * Verifica si un EIN (Número de Seguro Social Patronal) ya existe en el sistema.
-   * @param einNumber El número EIN a verificar.
+   * @param queryParameters Parámetros de consulta que incluyen el número EIN.
    * @returns Un observable que emite un booleano (true si existe, false si no existe).
    */
-  checkEinExists(einNumber: string): Observable<boolean> {
-    // Validar que el número sea válido antes de hacer la petición
-    if (!einNumber || einNumber.trim() === '') {
-      return throwError(() => new Error('El número EIN es requerido'));
-    }
-    
-    // Usar Number() en lugar de parseInt() para manejar números grandes correctamente
-    const parsedNumber = Number(einNumber.trim());
-    
-    // Verificar que sea un número válido
-    if (isNaN(parsedNumber)) {
-      return throwError(() => new Error('El número EIN debe ser un número válido'));
-    }
-    
-    const queryParameters: QueryParameters = {
-      einNumber: parsedNumber,
-    };
+  checkEinExists(queryParameters: QueryParameters): Observable<boolean> {
     return this._httpClient.get<boolean>(`${this.apiUrl}/check-ein-exists`, getHttpOptions(queryParameters)).pipe(
-      catchError((error) => {
-        return throwError(() => error);
+      tap((response: any) => {
+        console.log('EIN - Respuesta HTTP recibida:', response, 'Tipo:', typeof response);
       })
     );
   }

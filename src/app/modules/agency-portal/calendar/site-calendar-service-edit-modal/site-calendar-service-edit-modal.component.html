@@ -89,7 +89,7 @@
           {{ 'global.buttons.delete' | transloco }}
         </button> -->
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || isEndTimeInvalid() || isHolidayDay()">
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid()">
         {{ 'global.buttons.save' | transloco }}
       </button>
     </div>

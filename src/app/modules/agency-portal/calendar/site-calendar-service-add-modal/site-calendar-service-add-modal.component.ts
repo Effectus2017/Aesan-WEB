@@ -245,6 +245,33 @@ export class SiteCalendarServiceAddModalComponent {
     return endMinutes <= startMinutes;
   }
 
+  isFormValid(): boolean {
+    const startTime = this.data.form.get('startTime')?.value;
+    const endTime = this.data.form.get('endTime')?.value;
+    
+    // Verificar que startTime tenga un valor válido
+    if (!startTime || startTime === '' || startTime === null || startTime === undefined) {
+      return false;
+    }
+    
+    // Verificar que endTime tenga un valor válido
+    if (!endTime || endTime === '' || endTime === null || endTime === undefined) {
+      return false;
+    }
+    
+    // Verificar que el formulario sea válido
+    if (!this.data.form.valid) {
+      return false;
+    }
+    
+    // Verificar que endTime no sea inválido (debe ser mayor que startTime)
+    if (this.isEndTimeInvalid()) {
+      return false;
+    }
+    
+    return true;
+  }
+
   getServiceTypeName(serviceTypeId: number): string {
     const serviceType = this.filteredServiceTypes.find(st => st.id === serviceTypeId) || 
                        this.serviceTypes.find(st => st.id === serviceTypeId);

@@ -70,6 +70,28 @@ export class NotificationService {
     });
   }
 
+  /**
+   * Muestra un diálogo de advertencia usando FuseConfirmationService
+   * Utiliza inyección de dependencias interna para obtener los servicios necesarios
+   */
+  showWarningDialog(message: string = 'dialog.warning.message'): void {
+    this.fuseConfirmationService.open({
+      title: this.translocoService.translate('dialog.warning.title'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
+      },
+      message: this.translocoService.translate(message),
+      actions: {
+        confirm: {
+          label: this.translocoService.translate('dialog.warning.confirm'),
+          color: 'warn',
+        },
+      },
+    });
+  }
+
   // ============================================================================
   // NUEVOS MÉTODOS CON ACCESO A EVENTOS
   // ============================================================================

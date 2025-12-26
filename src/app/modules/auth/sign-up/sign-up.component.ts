@@ -706,9 +706,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Validar que el correo no exista antes de continuar
     const email = formValues.email?.trim();
     if (email) {
-      this._userService.checkEmailExists(email).subscribe({
-        next: (response: any) => {
-          const exists = response?.body?.exists || response?.exists || false;
+      const queryParameters: QueryParameters = {
+        email: email,
+      };
+      this._userService.checkEmailExists(queryParameters).subscribe({
+        next: (exists: boolean) => {
           if (exists) {
             // El correo existe, mostrar error y no continuar
             const emailControl = this.signUpForm.get('email');
@@ -1314,5 +1316,50 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     // Caso contrario, re-habilitar el formulario
     this.isEligible = true;
     enableAllControls(this.signUpForm);
+  }
+
+  /**
+   * Verifica si un campo numérico está válido y completo para mostrar el mensaje de éxito
+   * @param fieldName Nombre del campo en el formulario
+   * @param requiredDigits Cantidad exacta de dígitos requeridos
+   * @param errorKey Clave del error a verificar (ej: 'uieExists', 'sdrExists', 'einExists')
+   * @returns true si el campo está válido, completo y sin errores
+   */
+  isFieldValidAndComplete(fieldName: string, requiredDigits: number, errorKey: string): boolean {
+    const control = this.signUpForm.get(fieldName);
+    if (!control) return false;
+
+    const value = control.value;
+    const valueLength = value?.toString().length;
+
+    return (
+      control.valid &&
+      value &&
+      valueLength === requiredDigits &&
+      !control.hasError(errorKey) &&
+      (control.touched || control.dirty) &&
+      !control.pending
+    );
+  }
+
+  /**
+   * Verifica si el campo UIE está válido y completo
+   */
+  isUieValid(): boolean {
+    return this.isFieldValidAndComplete('uieNumber', 12, 'uieExists');
+  }
+
+  /**
+   * Verifica si el campo SDR está válido y completo
+   */
+  isSdrValid(): boolean {
+    return this.isFieldValidAndComplete('sdrNumber', 10, 'sdrExists');
+  }
+
+  /**
+   * Verifica si el campo EIN está válido y completo
+   */
+  isEinValid(): boolean {
+    return this.isFieldValidAndComplete('einNumber', 9, 'einExists');
   }
 }

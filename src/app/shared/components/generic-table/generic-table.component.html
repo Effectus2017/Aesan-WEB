@@ -19,6 +19,7 @@
           mat-menu-item
           [disabled]="item.disabled"
           (click)="onAddMenuAction(item.id)">
+          <mat-icon *ngIf="item.icon" [svgIcon]="item.icon" class="mr-2"></mat-icon>
           <span>{{ item.label | transloco }}</span>
         </button>
         }

@@ -42,6 +42,8 @@
         mat-flat-button
         type="button"
         [color]="'primary'"
+        [disabled]="isHolidayDay()"
+        [title]="isHolidayDay() ? ('sites.calendar.day-events.cannot-edit-holiday' | transloco) : ''"
         (click)="addService()">
         {{ 'sites.calendar.modals.day-events.addService' | transloco }}
       </button>

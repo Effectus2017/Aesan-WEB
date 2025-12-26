@@ -22,7 +22,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { FuseConfigService } from '@fuse/services/config';
 import { DateTime } from 'luxon';
-import { Subject, takeUntil, combineLatest } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import {
   ApexAxisChartSeries,
@@ -324,24 +324,13 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   }
 
   /**
-   * Actualiza el subtítulo del header con la fecha y el agencyCode
+   * Actualiza el subtítulo del header con la fecha
    */
   private _updateSubtitle(): void {
-    // Obtener ambas traducciones usando combineLatest
-    const todayTranslation$ = this._translocoService.selectTranslate('agency.dashboard.today');
-    const codeTranslation$ = this._translocoService.selectTranslate('agency.dashboard.code');
-    
-    combineLatest([todayTranslation$, codeTranslation$])
+    this._translocoService.selectTranslate('agency.dashboard.today')
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(([todayTranslation, codeTranslation]) => {
-        let subtitle = `${todayTranslation} ${this.currentDate}`;
-        
-        // Agregar el agencyCode si existe
-        if (this.agencyCode) {
-          subtitle += ` - ${codeTranslation}: ${this.agencyCode}`;
-        }
-        
-        this.headerConfig.subtitle = subtitle;
+      .subscribe((todayTranslation) => {
+        this.headerConfig.subtitle = `${todayTranslation} ${this.currentDate}`;
         this._changeDetectorRef.detectChanges();
       });
   }

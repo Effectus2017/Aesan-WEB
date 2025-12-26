@@ -1452,8 +1452,15 @@
             "legend": {
                 "normal": "Días normales",
                 "weekend": "Fines de semana",
-                "excluded": "Días excluidos"
+                "holiday": "Día Feriado",
+                "service": "Servicios"
             },
+            "operating-dates": {
+                "label": "Días de funcionamiento",
+                "range": "{{from}} - {{to}}",
+                "not-available": "No disponibles"
+            },
+            "date-out-of-range": "La fecha seleccionada está fuera del rango de días de funcionamiento del sitio",
             "day-events": {
                 "table": {
                     "columns": {
@@ -1488,7 +1495,9 @@
                     "date": "Fecha",
                     "startTime": {
                         "label": "Hora de Inicio",
-                        "required": "La hora de inicio es requerida"
+                        "required": "La hora de inicio es requerida",
+                        "conflict-warning": "La hora de inicio no puede ser menor que la hora de inicio de los servicios",
+                        "conflicting-services": "Los siguientes servicios tienen una hora de inicio anterior"
                     },
                     "endTime": {
                         "label": "Hora de Fin",

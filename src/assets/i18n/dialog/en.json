@@ -12,6 +12,11 @@
       "messageSendError": "Error sending message",
       "confirm": "OK"
     },
+    "warning": {
+      "title": "Warning",
+      "message": "A warning has been detected.",
+      "confirm": "OK"
+    },
     "permission-request": {
       "title": "Request Permission",
       "message": "To select this alternative you will need to request permission from AESAN. Do you want to request permission?",

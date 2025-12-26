@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,7 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarAddModalData } from 'app/shared/models/Response/SiteCalendarAddModalData';
 
 @Component({
@@ -67,6 +67,7 @@ import { SiteCalendarAddModalData } from 'app/shared/models/Response/SiteCalenda
 })
 export class SiteCalendarAddModalComponent {
   timeOptions: { value: string; display: string }[] = [];
+  private translocoService: TranslocoService = inject(TranslocoService);
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarAddModalComponent>,
@@ -104,7 +105,9 @@ export class SiteCalendarAddModalComponent {
     const date = this.parseDateSafe(
       this.data.operatingDay?.date || this.data.date
     );
-    return date.toLocaleDateString('es-ES', {
+    const currentLang = this.translocoService.getActiveLang() || 'es';
+    const locale = currentLang === 'es' ? 'es-ES' : 'en-US';
+    return date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',

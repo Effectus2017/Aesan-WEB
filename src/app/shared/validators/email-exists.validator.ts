@@ -2,6 +2,7 @@ import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/fo
 import { Observable, of } from 'rxjs';
 import { debounceTime, switchMap, map, catchError, first } from 'rxjs/operators';
 import { UserService } from '../services/user.service';
+import { QueryParameters } from '../models/QueryParameters';
 
 /**
  * Validador asíncrono que verifica si un correo electrónico ya existe en el sistema
@@ -60,11 +61,18 @@ export function emailExistsValidator(
         if (!emailValue || emailValue.trim() === '') {
           return of(null);
         }
-        return userService.checkEmailExists(emailValue).pipe(
+        
+        const queryParameters: QueryParameters = {
+          email: emailValue,
+        };
+        
+        return userService.checkEmailExists(queryParameters).pipe(
           first(), // Completar el Observable después de la primera emisión
           map((response: any) => {
-            const exists = response?.body?.exists || response?.exists || false;
-            return exists ? { emailExists: true } : null;
+            // Extraer el body del HttpResponse si viene como objeto completo
+            const exists = response?.body !== undefined ? response.body : response;
+            // Solo retornar el objeto cuando existe es true, null cuando es false
+            return exists === true ? { emailExists: true } : null;
           }),
           catchError(() => {
             // En caso de error de red, no bloquear (retornar null)

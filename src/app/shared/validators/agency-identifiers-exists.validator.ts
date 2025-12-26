@@ -2,6 +2,7 @@ import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/fo
 import { Observable, of } from 'rxjs';
 import { debounceTime, switchMap, map, catchError, first } from 'rxjs/operators';
 import { UserService } from '../services/user.service';
+import { QueryParameters } from '../models/QueryParameters';
 
 /**
  * Validador asíncrono que verifica si un IUE (Identificador Único de Entidad) ya existe en el sistema.
@@ -60,16 +61,26 @@ export function uieExistsValidator(
         if (!uieValue || uieValue.trim() === '') {
           return of(null);
         }
-        return userService.checkUieExists(uieValue).pipe(
-          first(), // Completar el Observable después de la primera emisión
-          map((exists: boolean) => {
-            // La respuesta del backend es directamente un booleano
-            // Log para debugging (remover en producción si es necesario)
-            if (exists) {
-              console.log(`IUE ${uieValue} ya existe en el sistema`);
-            }
 
-            return exists ? { uieExists: true } : null;
+        // Convertir a número (las validaciones ya se hicieron arriba)
+        const parsedNumber = Number(uieValue.trim());
+
+        const queryParameters: QueryParameters = {
+          uieNumber: parsedNumber,
+        };
+
+        return userService.checkUieExists(queryParameters).pipe(
+          first(), // Completar el Observable después de la primera emisión
+          map((response: any) => {
+            // Extraer el body del HttpResponse si viene como objeto completo
+            const exists = response?.body !== undefined ? response.body : response;
+            console.log('IUE - Valor recibido del backend:', exists, 'Tipo:', typeof exists);
+            console.log('IUE - exists === true:', exists === true);
+            console.log('IUE - exists === false:', exists === false);
+            // Solo retornar el objeto cuando existe es true, null cuando es false
+            const result = exists === true ? { uieExists: true } : null;
+            console.log('IUE - Resultado del validador:', result);
+            return result;
           }),
           catchError((error) => {
             // En caso de error de red, no bloquear (retornar null)
@@ -140,16 +151,26 @@ export function sdrExistsValidator(
         if (!sdrValue || sdrValue.trim() === '') {
           return of(null);
         }
-        return userService.checkSdrExists(sdrValue).pipe(
-          first(), // Completar el Observable después de la primera emisión
-          map((exists: boolean) => {
-            // La respuesta del backend es directamente un booleano
-            // Log para debugging (remover en producción si es necesario)
-            if (exists) {
-              console.log(`SDR ${sdrValue} ya existe en el sistema`);
-            }
 
-            return exists ? { sdrExists: true } : null;
+        // Convertir a número (las validaciones ya se hicieron arriba)
+        const parsedNumber = Number(sdrValue.trim());
+
+        const queryParameters: QueryParameters = {
+          sdrNumber: parsedNumber,
+        };
+
+        return userService.checkSdrExists(queryParameters).pipe(
+          first(), // Completar el Observable después de la primera emisión
+          map((response: any) => {
+            // Extraer el body del HttpResponse si viene como objeto completo
+            const exists = response?.body !== undefined ? response.body : response;
+            console.log('SDR - Valor recibido del backend:', exists, 'Tipo:', typeof exists);
+            console.log('SDR - exists === true:', exists === true);
+            console.log('SDR - exists === false:', exists === false);
+            // Solo retornar el objeto cuando existe es true, null cuando es false
+            const result = exists === true ? { sdrExists: true } : null;
+            console.log('SDR - Resultado del validador:', result);
+            return result;
           }),
           catchError((error) => {
             // En caso de error de red, no bloquear (retornar null)
@@ -220,16 +241,26 @@ export function einExistsValidator(
         if (!einValue || einValue.trim() === '') {
           return of(null);
         }
-        return userService.checkEinExists(einValue).pipe(
-          first(), // Completar el Observable después de la primera emisión
-          map((exists: boolean) => {
-            // La respuesta del backend es directamente un booleano
-            // Log para debugging (remover en producción si es necesario)
-            if (exists) {
-              console.log(`EIN ${einValue} ya existe en el sistema`);
-            }
 
-            return exists ? { einExists: true } : null;
+        // Convertir a número (las validaciones ya se hicieron arriba)
+        const parsedNumber = Number(einValue.trim());
+
+        const queryParameters: QueryParameters = {
+          einNumber: parsedNumber,
+        };
+
+        return userService.checkEinExists(queryParameters).pipe(
+          first(), // Completar el Observable después de la primera emisión
+          map((response: any) => {
+            // Extraer el body del HttpResponse si viene como objeto completo
+            const exists = response?.body !== undefined ? response.body : response;
+            console.log('EIN - Valor recibido del backend:', exists, 'Tipo:', typeof exists);
+            console.log('EIN - exists === true:', exists === true);
+            console.log('EIN - exists === false:', exists === false);
+            // Solo retornar el objeto cuando existe es true, null cuando es false
+            const result = exists === true ? { einExists: true } : null;
+            console.log('EIN - Resultado del validador:', result);
+            return result;
           }),
           catchError((error) => {
             // En caso de error de red, no bloquear (retornar null)

@@ -152,6 +152,38 @@ export class SiteCalendarServiceEditModalComponent {
     return endMinutes <= startMinutes;
   }
 
+  isFormValid(): boolean {
+    // No permitir guardar si es día feriado
+    if (this.isHolidayDay()) {
+      return false;
+    }
+    
+    const startTime = this.data.form.get('startTime')?.value;
+    const endTime = this.data.form.get('endTime')?.value;
+    
+    // Verificar que startTime tenga un valor válido
+    if (!startTime || startTime === '' || startTime === null || startTime === undefined) {
+      return false;
+    }
+    
+    // Verificar que endTime tenga un valor válido
+    if (!endTime || endTime === '' || endTime === null || endTime === undefined) {
+      return false;
+    }
+    
+    // Verificar que el formulario sea válido
+    if (!this.data.form.valid) {
+      return false;
+    }
+    
+    // Verificar que endTime no sea inválido (debe ser mayor que startTime)
+    if (this.isEndTimeInvalid()) {
+      return false;
+    }
+    
+    return true;
+  }
+
   private convertFormValuesTo24h(): void {
     // Convertir startTime de 12h a 24h si es necesario
     const startTime = this.data.form.get('startTime')?.value;

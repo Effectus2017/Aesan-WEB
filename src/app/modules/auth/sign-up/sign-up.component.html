@@ -347,6 +347,9 @@
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('uieExists')">
                 {{ "sign-up.uie.exists" | transloco }}
               </mat-error>
+              <mat-hint *ngIf="isUieValid()" class="!text-green-600">
+                {{ "sign-up.uie.valid" | transloco }}
+              </mat-hint>
             </mat-form-field>
           </div>
 
@@ -375,6 +378,9 @@
               <mat-error *ngIf="signUpForm.get('sdrNumber')?.hasError('sdrExists')">
                 {{ "sign-up.sdr.exists" | transloco }}
               </mat-error>
+              <mat-hint *ngIf="isSdrValid()" class="!text-green-600">
+                {{ "sign-up.sdr.valid" | transloco }}
+              </mat-hint>
             </mat-form-field>
 
             <!-- EIN *  -->
@@ -390,6 +396,9 @@
               <mat-error *ngIf="signUpForm.get('einNumber')?.hasError('einExists')">
                 {{ "sign-up.ein.exists" | transloco }}
               </mat-error>
+              <mat-hint *ngIf="isEinValid()" class="!text-green-600">
+                {{ "sign-up.ein.valid" | transloco }}
+              </mat-hint>
             </mat-form-field>
           </div>
 

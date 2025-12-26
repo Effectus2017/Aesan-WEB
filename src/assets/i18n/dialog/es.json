@@ -12,6 +12,11 @@
       "messageSendError": "Error al enviar el mensaje",
       "confirm": "Aceptar"
     },
+    "warning": {
+      "title": "Advertencia",
+      "message": "Se ha detectado una advertencia.",
+      "confirm": "Aceptar"
+    },
     "confirm": {
       "title": "Confirmar acción",
       "message": "¿Está seguro que desea confirmar esta acción?",

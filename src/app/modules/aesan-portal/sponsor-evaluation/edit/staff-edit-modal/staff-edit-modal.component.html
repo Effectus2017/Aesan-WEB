@@ -169,7 +169,7 @@
           <mat-label>{{ 'staff.edit.city.label' | transloco }}</mat-label>
           <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event)" [required]="fieldVisibilityService.isFieldRequired('city', currentStaffType)" [compareWith]="compareById">
             <mat-option *ngFor="let city of listCities" [value]="city">
-              {{ currentLang === 'es' ? city.name : city.nameEN }}
+              {{ city.name }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('city')?.hasError('required')">
@@ -184,7 +184,7 @@
           <mat-label>{{ 'staff.edit.region.label' | transloco }}</mat-label>
           <mat-select formControlName="region" [required]="fieldVisibilityService.isFieldRequired('region', currentStaffType)" [compareWith]="compareById">
             <mat-option *ngFor="let region of listRegions" [value]="region">
-              {{ currentLang === 'es' ? region.name : region.nameEN }}
+              {{ region.name }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('region')?.hasError('required')">
