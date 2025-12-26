@@ -23,15 +23,8 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { GroupTypeService } from 'app/shared/services/group-type.service';
-import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
-import { CenterType } from 'app/shared/models/CenterType';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
-import { SponsorType } from 'app/shared/models/SponsorType';
 import {
   compareById,
   isNullOrUndefinedEmptyStringNullArray,
@@ -60,13 +53,9 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
-import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
-import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
-import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 
@@ -78,8 +67,6 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
-import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
-import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 
 
 @Component({
@@ -124,8 +111,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   private _customRouter = inject(CustomRouterService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _groupTypeService = inject(GroupTypeService);
-  private _kitchenTypeService = inject(KitchenTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -133,7 +118,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   private _customRouterService = inject(CustomRouterService);
   private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
-  private _fieldVisibilityService = inject(FieldVisibilityService);
 
   // Catálogos
   // Catalogs
@@ -157,84 +141,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Opciones de Tipo de Participantes
   participantTypeOptions: OptionSelection[] = [];
 
-  // Public Alliance Contract Options
-  // Opciones de Contrato de Alianza Pública
-  publicAllianceContractOptions: OptionSelection[] = [];
-
-  // Tipo de OrganizaciÓn Sitio (1), Satélite (2), Institución Residencial (3), Otros (4)
-  // Organization type - Required field for site classification
-  organizationTypes: OrganizationType[] = [];
-
-  // Nivel educativo - Campo requerido para tipo de sitio
-  // Education level - Required field for site type
-  educationLevels: EducationLevelResponse[] = [];
-
-  // Centro - Campo requerido para clasificación del sitio
-  // Center - Required field for site classification
-  centerTypes: CenterType[] = [];
-
-  // Tipo de entrega
-  // Delivery type
-  deliveryTypes: DeliveryType[] = [];
-
-  // Tipo de patrocinador
-  // Sponsor type
-  sponsorType: SponsorType[] = [];
-
-  // Tipo de solicitante
-  // Type of applicant
-  typeOfApplicant: OptionSelection[] = [];
-
   // Estatus
   // Status
   isActive: OptionSelection[] = [];
-
-  // Tipo de residencial - Tipo de residencial del sitio
-  // Type of residential - Type of residential of the site
-  typeOfResidential: OptionSelection[] = [];
-
-  // Política de funcionamiento
-  // Operating policies
-  operatingPolicies: OperatingPolicy[] = [];
-
-  // Tipo de cocina
-  // Type of kitchen
-  kitchenTypes: OptionSelection[] = [];
-  isKitchenTypeDisabled: boolean = false;
-
-  // Site Location
-  // Site location - Determined by group type
-  siteLocations: OptionSelection[] = [];
-  isSiteLocationDisabled: boolean = false;
-
-  // Tipo de grupo
-  // Type of group
-  groupTypes: OptionSelection[] = [];
-
-  // Comunidad
-  // Community
-  community: OptionSelection[] = [];
-
-  // Caminantes / Walkers
-  // Walkers
-  walkers: OptionSelection[] = [];
-
-  // Tipo de distribución / Distribution type
-  // Distribution type
-  distributionType: OptionSelection[] = [];
-
-  // Tipo de sitio / Site type
-  // Site type
-  siteType: OptionSelection[] = [];
-
-  // Experiencia / Experience
-  // Experience
-  experience: OptionSelection[] = [];
-
-  // Resultado de revisión / Review result
-  // Review result
-  // COMENTADO: Se va a cambiar de lugar
-  // reviewResult: OptionSelection[] = [];
 
   // Lista de sitios
   // List of sites
@@ -242,11 +151,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
 
-
-  showDifferentGroupsFields: boolean = false;
-
-  // Opciones de hora para los campos "hasta" - se filtran dinámicamente
-  timeOptions: TimeOption[] = [];
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SiteChildGroupRequest[] = [];
@@ -282,16 +186,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Determina si se deben mostrar campos adicionales para diferentes grupos
    */
   shouldShowDifferentGroupsFields(): boolean {
-    return this.showDifferentGroupsFields && this.isDayCareHome;
+    return this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true;
   }
 
-  /**
-   * Determina si se deben ocultar los campos de servicios individuales
-   * cuando se están usando servicios por grupos
-   */
-  shouldHideIndividualServiceFields(): boolean {
-    return this.shouldShowDifferentGroupsFields();
-  }
 
   currentLang: string = 'es';
 
@@ -304,9 +201,21 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Type of location
   locationTypes: AreaType[] = [];
 
+  // Propiedades para controlar visibilidad según programa
+  isPDAM: boolean = false;
+  isPSAV: boolean = false;
+  isPACNA: boolean = false;
+  isPFHF: boolean = false;
+  isPDFE: boolean = false;
+  isAESAN: boolean = false;
+
+  // Opciones de hora para los campos "hasta" - se filtran dinámicamente
+  timeOptions: TimeOption[] = [];
+
+  // Días de la semana disponibles para selección (filtrados según programa)
   // Available days of the week for selection (filtered by program)
-  // Se cargan desde el backend, no hardcodeados
   availableDaysOfWeek: DayOfWeekResponse[] = [];
+
 
   // Parámetro del sitio
   // Site parameter
@@ -355,66 +264,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Código postal - Campo requerido para la ubicación del sitio
       // Postal ZIP code - Required field for site location
       postalZipCode: ['', puertoRicoZipCodeValidator()],
-      // Información Administrativa / Administrative Information
-      // Estado sin fines de lucro - Campo requerido que indica si el sitio es sin fines de lucro
-      // Non-profit - Required field indicating if the site is non-profit
-      nonProfit: [null, Validators.required],
-      // Fecha de inicio - Campo requerido para la fecha de inicio del sitio
-      // Start date - Required field for the start date of the site
-      startDate: [null],
-      // Año de base - Campo requerido para el año de base del contrato
-      // Base year - Required field for the base year of the contract
-      baseYear: [{ value: null, disabled: true }, [Validators.pattern(/^[\d]{4}$/)]],
-      // Año de renovación - Campo requerido para el año de renovación del contrato
-      // Renewal year - Required field for the renewal year of the contract
-      renewalYear: [{ value: null, disabled: true }, [Validators.pattern(/^[\d]{4}$/)]],
-      // Tipo de organización - Campo requerido para la clasificación del sitio
-      // Organization type - Required field for site classification
-      organizationType: [null, Validators.required],
-      // Centro - Campo requerido para la clasificación del sitio
-      // Center - Required field for site classification
-      centerType: [null, Validators.required],
-      // Niveles educativos - Campo requerido para el tipo de sitio (múltiple selección)
-      // Education levels - Required field for site type (multiple selection)
-      educationLevels: [[], Validators.required],
-      // Fechas de funcionamiento - Fechas desde y hasta cuando opera el sitio
-      // Operating dates - Dates from and to when the site operates
-      operatingFromDate: [null, Validators.required],
-      operatingToDate: [null, Validators.required],
-      operatingDaysCalculated: [{ value: null, disabled: true }],
-      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
-      // Operating hours - Start and end times for operating days
-      operatingStartTime: [null, Validators.required],
-      operatingEndTime: [null, Validators.required],
-
-      // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
-      // How long has the site been providing services with an established enrollment?
-      serviceTime: [null],
-      // Datos Operativos / Operational Data
-      // Tipo de cocina - Tipo de instalación de cocina
-      // Kitchen type - Type of kitchen facility
-      kitchenType: [null],
-      // Site Location - Determined by Group Type
-      // Site location - Determined by group type
-      siteLocation: [null],
-      // Tipo de grupo - Clasificación de grupos de estudiantes
-      // Group type - Classification of student groups
-      groupType: [null],
-      // Tipo de distribución - Método de distribución para sitios no congregados
-      // Distribution type - Distribution method for non-congregate sites
-      distributionType: [{ value: null, disabled: true }],
-      // Tipo de entrega - Método de entrega de servicio
-      // Delivery type - Method of service delivery
-      deliveryType: [null],
-      // Tipo de auspiciador - Tipo de patrocinio del sitio
-      // Sponsor type - Type of site sponsorship
-      sponsorType: [null],
-      // Tipo de solicitante - Tipo de solicitante del sitio
-      // Type of applicant - Type of applicant of the site
-      typeOfApplicant: [null],
-      // Tipo de residencial - Tipo de residencial del sitio
-      // Type of residential - Type of residential of the site
-      typeOfResidential: [null],
       // Tipo de área - Tipo de área del sitio
       // Type of area - Type of area of the site
       // (tipo select-SOLO DISABLED - se auto-selecciona según ciudad)
@@ -423,23 +272,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Location - Type of location of the site
       // (tipo select - selección manual)
       locationType: [null, Validators.required],
-      // Política de operación - Política de operación del sitio
-      // Operating policy - Operating policy of the site
-      operatingPolicy: [null],
-      // Almacén - Campo requerido para indicar si el sitio tiene un almacén
-      // Warehouse - Required field indicating if the site has a warehouse
-      hasWarehouse: [false],
-      // Comedor - Campo requerido para indicar si el sitio tiene un comedor
-      // Dining room - Required field indicating if the site has a dining room
-      hasDiningRoom: [false],
-      // Persona a Cargo (solo para PDAM y PSAV)
-      // Person in Charge (only for PDAM and PSAV)
+      // Persona a Cargo (Day Care Home)
+      // Person in Charge (Day Care Home)
       personInCharge: this._formBuilder.group({
-        firstName: [''],
+        firstName: ['', Validators.required],
         middleName: [''],
-        fatherLastName: [''],
+        fatherLastName: ['', Validators.required],
         motherLastName: [''],
-        sitePhone: ['', puertoRicoPhoneValidator()],
+        birthDate: [null, Validators.required],
+        sitePhone: ['', [Validators.required, puertoRicoPhoneValidator()]],
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
@@ -522,18 +363,24 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       snackAtRiskFrom: [null],
       // Horario hasta para la merienda en riesgo
       snackAtRiskTo: [null],
-      // Comunidad - Campo requerido para indicar la comunidad del sitio
-      // Community - Required field indicating the community of the site
-      community: [null],
-      // Caminantes - Campo requerido para indicar los caminantes del sitio
-      // Walkers - Required field indicating the walkers of the site
-      walkers: [null],
-      // Tipo de sitio - Campo requerido para indicar el tipo de sitio
-      // Site type - Required field indicating the site type
-      siteType: [null],
-      // Experiencia - Campo requerido para indicar la experiencia del sitio
-      // Experience - Required field indicating the experience of the site
-      experience: [null],
+      // Fecha desde que opera el sitio
+      // Date from which the site operates
+      operatingFromDate: [null, Validators.required],
+      // Fecha hasta que opera el sitio
+      // Date until which the site operates
+      operatingToDate: [null, Validators.required],
+      // Días calculados automáticamente
+      // Calculated days (automatically calculated)
+      operatingDaysCalculated: [{ value: null, disabled: true }],
+      // Días de la semana en que opera el sitio (selección múltiple)
+      // Days of the week the site operates (multiple selection)
+      operatingDaysOfWeek: [[], Validators.required],
+      // Hora de inicio de funcionamiento
+      // Operating start time
+      operatingStartTime: [null, Validators.required],
+      // Hora de fin de funcionamiento
+      // Operating end time
+      operatingEndTime: [null, Validators.required],
       // Estado activo/inactivo del sitio
       // Active/inactive status of the site
       isActive: [true],
@@ -553,23 +400,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Justificación de revisión - Justificación de la revisión
       // Review justification - Justification of the review
       // reviewJustification: [null],
-      // Matrícula General
-      // General Enrollment
-      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
 
-      // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
-
-      // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-      // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: [null],
-
-      // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
-      // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: [null],
-
-      // De poseer un contrato Público Alianza, especifique su modalidad
-      // If you have a Public Alliance contract, please specify the type of contract
-      publicAllianceContractId: [null],
 
       // Campos específicos para Day Care Home (PACNA)
       // ¿Este hogar está autorizado a funcionar?
@@ -608,9 +439,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // ¿Ofrece servicio a diferentes grupos de niños?
       // Does it offer service to different groups of children?
       offersServiceToDifferentGroups: [null],
-      // Fecha de Nacimiento del Proveedor
-      // Provider Birth Date
-      administratorBirthDate: [null],
       // Código de Sitio
       // Site Code
       siteCode: [{ value: '', disabled: true }],
@@ -693,10 +521,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     this.currentLang = this._translocoService.getActiveLang();
 
     // Generar opciones de hora
-    this.initializeTimeOptions();
-
-    // Configurar FieldVisibilityService SOLO para distributionType
-    this._fieldVisibilityService.setActiveConfig('sites');
+    this.timeOptions = generateTimeOptions();
 
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
@@ -710,59 +535,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     if (resolvedData) {
       // Yes No Options
       this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      // Tipo de residencial
-      this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
-      // Tipo de solicitante
-      this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
       // Opciones de Day Care Home
       this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
       this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
       this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.publicAllianceContractOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
       // Estatus
       this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Política de operación - NO USAR ESTA LÍNEA, se usa la de abajo desde operatingPolicies
-      // this.operatingPolicies = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'operatingPolicy');
-      // Tipo de cocina
-      this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
-      // Site Location
-      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
-      // Tipo de grupo
-      this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
-      // Comunidad
-      this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
-      );
-      // Caminantes / Walkers
-      this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      // Tipo de distribución / Distribution type
-      this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-      // Tipo de sitio / Site type
-      this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      // Experiencia / Experience
-      this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
-      );
-
-      // Resultado de revisión / Review result
-      // COMENTADO: Se va a cambiar de lugar
-      // this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-
-      // Catálogos
-      this.centerTypes = resolvedData.centerTypes;
-      this.organizationTypes = resolvedData.organizationTypes;
-      this.educationLevels = resolvedData.educationLevels;
-      this.kitchenTypes = resolvedData.kitchenTypes;
-      this.groupTypes = resolvedData.groupTypes;
-      this.sponsorType = resolvedData.sponsorTypes;
-
-      // Filtrar operating policies según si la agencia es recurrente
-      this.operatingPolicies = this.filterOperatingPolicies(
-        resolvedData.operatingPolicies,
-        this.agency?.isRecurrent || false
-      );
-
-      this.deliveryTypes = resolvedData.deliveryTypes;
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.listPostalRegions = resolvedData.regions;
@@ -770,7 +549,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
 
       // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
+      this.availableDaysOfWeek = resolvedData.allowedOperatingDays || [];
 
       // Usar la sitio del resolver
       // Use site from resolver
@@ -813,11 +592,22 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      this.community = this.sortOptionsAlphabetically(this.community);
-      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     this.setupFormListeners();
+
+    // Escuchar cambios en las fechas para calcular automáticamente los días
+    this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
+    this.headerConfig.formGroup.get('operatingToDate')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges
@@ -829,14 +619,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   private setupFormListeners(): void {
-    // Escuchar cambios en las fechas para calcular automáticamente los días
-    this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
-      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-    });
-
-    this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
-      DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-    });
 
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
     this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
@@ -850,41 +632,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       .subscribe(() => {
         this.revalidateAllServiceTimes();
       });
-
-    // Listener para cambios en groupType que afectan distributionType, siteLocation y kitchenType
-    this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
-      this.updateDistributionTypeValidation();
-      this.getSiteLocationByGroupType(groupType);
-      // Si no es "Comedor", limpiar el valor de kitchenType
-      if (groupType) {
-        const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-        if (!isComedor) {
-          this.headerConfig.formGroup.patchValue({ kitchenType: null });
-          this.kitchenTypes = [];
-        }
-      }
-      this._changeDetectorRef.detectChanges();
-    });
-
-    // Listener para cambios en operatingPolicy que afectan la visibilidad de campos de provisión
-    this.headerConfig.formGroup.get('operatingPolicy')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._changeDetectorRef.detectChanges();
-      });
-
-    // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
-    this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
-      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
-        this.headerConfig.formGroup,
-        organizationType,
-        'centerType',
-        this._changeDetectorRef,
-        (disabled) => { this.headerConfig.submitDisabled = disabled; }
-      );
-      //this.showCenterTypeField = result.showCenterTypeField;
-      this._changeDetectorRef.detectChanges();
-    });
 
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
@@ -936,10 +683,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         fromControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
             this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-            // Forzar detección de cambios para actualizar las opciones en el template
             this._changeDetectorRef.detectChanges();
           });
 
@@ -947,58 +691,27 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         toControl.valueChanges
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
             this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
           });
       }
     });
   }
 
-  /**
-   * Genera todas las opciones de hora (cada 30 minutos)
-   */
-  private initializeTimeOptions(): void {
-    this.timeOptions = generateTimeOptions();
-  }
 
   /**
-   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   * Convierte string HH:mm a objeto Date (wrapper para usar en template)
    */
-  /**
-   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
-   */
-  getStartTimeOptions(): TimeOption[] {
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
-    return filterStartTimeOptions(
-      this.timeOptions,
-      operatingStartTime,
-      operatingEndTime
-    );
-  }
-
   getEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     if (!fromControl) return this.timeOptions;
 
     const fromTime = fromControl.value;
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
     return getEndTimeOptions(
       this.timeOptions,
-      fromTime,
-      '23:59',
-      operatingStartTime,
-      operatingEndTime
+      fromTime
     );
   }
 
-  /**
-   * Convierte string HH:mm a objeto Date (wrapper para usar en template)
-   */
   timeStringToDateWrapper(timeString: string): Date | null {
     return timeStringToDate(timeString);
   }
@@ -1119,7 +832,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
    */
   private revalidateAllServiceTimes(): void {
-    const services: ServiceConfig[] = [
+    const services = [
       { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
       { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
       { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
@@ -1132,13 +845,16 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
     ];
 
-    TimeValidationUtil.revalidateAllServiceTimes(
-      this.headerConfig.formGroup,
-      services,
-      (serviceValue, fromControl, toControl, serviceControl) => {
+    services.forEach(({ service, from, to }) => {
+      const serviceControl = this.headerConfig.formGroup.get(service);
+      const fromControl = this.headerConfig.formGroup.get(from);
+      const toControl = this.headerConfig.formGroup.get(to);
+
+      if (serviceControl && fromControl && toControl) {
+        const serviceValue = serviceControl.value;
         this.updateServiceTimeValidations(serviceValue, fromControl, toControl, serviceControl);
       }
-    );
+    });
   }
 
   ngOnDestroy(): void {
@@ -1147,53 +863,31 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   private updateValidations(): void {
-
-      // Remover validaciones requeridas de todos los campos
-      const fieldsToUpdate = [
-        'name',
-        'address',
-        'city',
-        'region',
-        'zipCode',
-        'latitude',
-        'longitude',
-        'postalCity',
-        'postalRegion',
-        'nonProfit',
-        'organizationType',
-        'centerType',
-        'educationLevels',
-        'areaType',
-        // Campos específicos de PACNA
-        'organizedAthleticPrograms',
-        'atRiskService',
-        'publicAllianceContractId',
-      ];
-
-      fieldsToUpdate.forEach((fieldName) => {
-        const control = this.headerConfig.formGroup.get(fieldName);
-        if (control) {
-          control.clearValidators();
-          control.updateValueAndValidity();
-        }
-      });
-
-  }
-
-  private restoreRequiredValidations(): void {
-    // Restaurar validaciones requeridas para campos básicos
+    // Este formulario es exclusivo para Day Care Home, configurar validaciones requeridas
     const requiredFields = {
       name: [Validators.required],
       address: [Validators.required],
       city: [Validators.required],
       region: [Validators.required],
-      zipCode: [Validators.required, puertoRicoZipCodeValidator()], // Incluir validador personalizado
+      zipCode: [Validators.required, puertoRicoZipCodeValidator()],
       latitude: [Validators.required],
       longitude: [Validators.required],
+      postalAddress: [Validators.required],
       postalCity: [Validators.required],
-      nonProfit: [Validators.required],
-      organizationType: [Validators.required],
+      postalRegion: [Validators.required],
+      postalZipCode: [Validators.required, puertoRicoZipCodeValidator()],
       locationType: [Validators.required],
+      // Campos específicos de Day Care Home
+      isAuthorizedToOperate: [Validators.required],
+      hasFamilyDepartmentLicense: [Validators.required],
+      numberOfEnrolledChildren: [Validators.required],
+      numberOfProviderChildren: [Validators.required],
+      numberOfParticipantsWithBloodTies: [Validators.required],
+      numberOfParticipantsWithoutBloodTies: [Validators.required],
+      minorsLiveWithProvider: [Validators.required],
+      relationshipType: [Validators.required],
+      offersServiceToImmigrantChildren: [Validators.required],
+      homeType: [Validators.required],
     };
 
     Object.keys(requiredFields).forEach((fieldName) => {
@@ -1204,44 +898,10 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       }
     });
 
-    // educationLevels no es requerido para PACNA
-    const educationLevelsControl = this.headerConfig.formGroup.get('educationLevels');
-    if (educationLevelsControl) {
-      educationLevelsControl.clearValidators();
-      educationLevelsControl.updateValueAndValidity();
-    }
-
-
-      // Limpiar validadores de campos PACNA si no es PACNA o es Day Care Home
-      const pacnaFieldsToClear = ['organizedAthleticPrograms', 'atRiskService', 'publicAllianceContractId'];
-      pacnaFieldsToClear.forEach((fieldName) => {
-        const control = this.headerConfig.formGroup.get(fieldName);
-        if (control) {
-          control.clearValidators();
-          control.updateValueAndValidity();
-        }
-      });
-
-
-    // Restaurar validación de centerType solo si el organizationType actual lo requiere
-    const organizationType = this.headerConfig.formGroup.get('organizationType')?.value as OrganizationType;
-    const centerTypeControl = this.headerConfig.formGroup.get('centerType');
-    if (centerTypeControl) {
-      if (organizationType?.requiresCenterType) {
-        centerTypeControl.setValidators([Validators.required]);
-      } else {
-        centerTypeControl.clearValidators();
-      }
-      centerTypeControl.updateValueAndValidity();
-    }
-
-    // Actualizar validaciones de personInCharge para PACNA
+    // Configurar validaciones de personInCharge
     this.updatePersonInChargeValidations();
-
-    // Actualizar el estado del botón después de restaurar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
   }
+
 
   /**
    * Actualiza las validaciones de personInCharge
@@ -1254,10 +914,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       return;
     }
 
-    // Restaurar validaciones requeridas para PACNA
+    // Configurar validaciones requeridas para Day Care Home
     const firstNameControl = personInChargeGroup.get('firstName');
     const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
+    const birthDateControl = personInChargeGroup.get('birthDate');
     const sitePhoneControl = personInChargeGroup.get('sitePhone');
+    const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
 
     if (firstNameControl) {
       firstNameControl.setValidators([Validators.required]);
@@ -1269,13 +931,17 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       fatherLastNameControl.updateValueAndValidity();
     }
 
+    if (birthDateControl) {
+      birthDateControl.setValidators([Validators.required]);
+      birthDateControl.updateValueAndValidity();
+    }
+
     if (sitePhoneControl) {
       sitePhoneControl.setValidators([Validators.required, puertoRicoPhoneValidator()]);
       sitePhoneControl.updateValueAndValidity();
     }
 
     // mobilePhone solo tiene validación de formato, no requerido
-    const mobilePhoneControl = personInChargeGroup.get('mobilePhone');
     if (mobilePhoneControl) {
       mobilePhoneControl.setValidators([puertoRicoPhoneValidator()]);
       mobilePhoneControl.updateValueAndValidity();
@@ -1292,17 +958,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const postalCity = param.postalCity;
     const postalRegion = param.postalRegion;
 
-    const kitchenType = param.kitchenType;
-    const siteLocation = param.siteLocation;
-    const groupType = param.groupType;
-    const deliveryType = param.deliveryType;
-    const sponsorType = param.sponsorType;
-    const applicantType = param.applicantType;
-    const residentialType = param.residentialType;
-    const operatingPolicy = param.operatingPolicy;
-    const educationLevels = param.educationLevels || [];
-    const organizationType = param.organizationType;
-    const centerType = param.centerType;
     const areaType = param.areaType;
     const locationType = param.locationType;
 
@@ -1340,18 +995,14 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const snackAtRiskFrom: Date | null = siteService ? toTimeDate(siteService.snackAtRiskFrom) : null;
     const snackAtRiskTo: Date | null = siteService ? toTimeDate(siteService.snackAtRiskTo) : null;
 
-    const communityId = param.communityId;
-    const walkersId = param.walkersId;
-    const siteTypeId = param.siteTypeId;
-    const experienceId = param.experienceId;
-    // COMENTADO: Se va a cambiar de lugar
-    // const reviewResultId = param.reviewResultId;
-    // const reviewDate = param.reviewDate;
-    // const reviewJustification = param.reviewJustification;
-
-    // Obtener los días de operación seleccionados, con fallback a días permitidos
-    // operatingDaysOfWeek ya viene como DayOfWeekResponse[] desde el backend
-    const operatingDaysOfWeek = param.operatingDaysOfWeek;
+    // Días y horas de funcionamiento
+    const operatingDaysOfWeek: DayOfWeekResponse[] = param.operatingDaysOfWeek || [];
+    const operatingStartTime: Date | null = param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null;
+    const operatingEndTime: Date | null = param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null;
+    // Fechas de funcionamiento
+    const operatingFromDate: Date | null = param.operatingFromDate ? new Date(param.operatingFromDate) : null;
+    const operatingToDate: Date | null = param.operatingToDate ? new Date(param.operatingToDate) : null;
+    const operatingDaysCalculated: number | null = param.operatingDaysCalculated ?? null;
 
     this.headerConfig.formGroup.patchValue({
       name: param.name,
@@ -1366,26 +1017,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       postalZipCode: param.postalZipCode,
       latitude: param.latitude,
       longitude: param.longitude,
-      educationLevels: educationLevels,
-      organizationType: organizationType,
-      centerType: centerType,
-      operatingFromDate: param.operatingFromDate,
-      operatingToDate: param.operatingToDate,
-      operatingDaysCalculated: param.operatingDaysCalculated,
-      operatingStartTime: param.operatingStartTime ? toTimeDate(param.operatingStartTime) : null,
-      operatingEndTime: param.operatingEndTime ? toTimeDate(param.operatingEndTime) : null,
-      operatingDaysOfWeek: operatingDaysOfWeek,
-      serviceTime: param.serviceTime,
-      //
-      nonProfit: param.nonProfit,
-      startDate: param.startDate,
-      baseYear: param.baseYear,
-      renewalYear: param.renewalYear,
       personInCharge: param.personInCharge ? {
         firstName: param.personInCharge.firstName || '',
         middleName: param.personInCharge.middleName || '',
         fatherLastName: param.personInCharge.fatherLastName || '',
         motherLastName: param.personInCharge.motherLastName || '',
+        birthDate: param.dayCareHome?.administratorBirthDate || null,
         sitePhone: param.personInCharge.sitePhone || '',
         extension: param.personInCharge.extension || '',
         mobilePhone: param.personInCharge.mobilePhone || '',
@@ -1394,6 +1031,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         middleName: '',
         fatherLastName: '',
         motherLastName: '',
+        birthDate: null,
         sitePhone: '',
         extension: '',
         mobilePhone: '',
@@ -1430,48 +1068,21 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       snackAtRisk: siteService?.snackAtRisk ?? false,
       snackAtRiskFrom: snackAtRiskFrom,
       snackAtRiskTo: snackAtRiskTo,
-      community: this.community.find((o) => o.id === communityId),
-      walkers: this.walkers.find((o) => o.id === walkersId),
-      siteType: this.siteType.find((o) => o.id === siteTypeId),
-      experience: this.experience.find((o) => o.id === experienceId),
-      // COMENTADO: Se va a cambiar de lugar
-      // reviewResult: this.reviewResult.find((o) => o.id === reviewResultId),
-      // reviewDate: reviewDate,
-      // reviewJustification: reviewJustification,
+      // Fechas de funcionamiento
+      operatingFromDate: operatingFromDate,
+      operatingToDate: operatingToDate,
+      operatingDaysCalculated: operatingDaysCalculated,
+      // Días y horas de funcionamiento
+      operatingDaysOfWeek: operatingDaysOfWeek,
+      operatingStartTime: operatingStartTime,
+      operatingEndTime: operatingEndTime,
       isActive: param.isActive,
       inactiveJustification: param.inactiveJustification || null,
       inactiveDate: param.inactiveDate,
-      //
-      kitchenType: kitchenType,
-      siteLocation: siteLocation,
-      groupType: groupType,
-      deliveryType: deliveryType,
-      sponsorType: sponsorType,
-        applicantType: applicantType,
-        applicantTypeId: applicantType?.id,
-        typeOfApplicant: applicantType,
-      residentialType: residentialType,
-      operatingPolicy: operatingPolicy,
       areaType: areaType,
-      locationType: locationType,
-      generalEnrollment: param.generalEnrollment,
-      administratorBirthDate: param.dayCareHome?.administratorBirthDate,
+      locationType: param.locationType,
       siteCode: param.siteCode || '',
       relationshipType: param.relationshipType,
-
-      // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
-
-      // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-      // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: param.organizedAthleticPrograms ?? null,
-
-      // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
-      // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: param.atRiskService ?? null,
-
-      // De poseer un contrato Público Alianza, especifique su modalidad
-      // If you have a Public Alliance contract, please specify the type of contract
-      publicAllianceContractId: param.publicAllianceContractId ?? null,
     });
 
     // Establecer isDayCareHomeId del sitio si existe
@@ -1492,15 +1103,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // Ensure areaType field remains disabled
     this.headerConfig.formGroup.get('areaType')?.disable();
 
-    // Actualizar validaciones de distributionType basado en groupType
-    this.updateDistributionTypeValidation();
-
     // Satélites
     this.satellitesTableConfig.dataSource.data = param.satellites || [];
     this.satellitesTableConfig.length = param.satellites?.length || 0;
-
-    // Calcular días operativos automáticamente si es necesario
-    DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.headerConfig.formGroup);
 
     // Actualizar el estado del botón después de cargar todos los datos
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
@@ -1539,17 +1144,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const regionId: number = formValues.region?.id;
     const postalCityId: number = formValues.postalCity?.id;
     const postalRegionId: number = formValues.postalRegion?.id;
-    const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
-    const organizationTypeId: number = formValues.organizationType?.id;
-    const kitchenTypeId: number = formValues.kitchenType?.id;
-    const siteLocationId: number = formValues.siteLocation?.id;
-    const groupTypeId: number = formValues.groupType?.id;
-    const deliveryTypeId: number = formValues.deliveryType?.id;
-    const sponsorTypeId: number = formValues.sponsorType?.id ?? null;
-    const applicantTypeId: number = formValues.typeOfApplicant?.id;
-    const centerTypeId: number = formValues.centerType?.id;
-    const residentialTypeId: number = formValues.typeOfResidential?.id;
-    const operatingPolicyId: number = formValues.operatingPolicy?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
     // Horarios de servicios básicos
@@ -1590,18 +1184,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
     const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
+    // Días de operación
+    const operatingDaysCalculated: number = formValues.operatingDaysCalculated;
     // Obtener los días permitidos de la agencia
-    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
-
-    const communityId = formValues.community?.id;
-    const walkersId = formValues.walkers?.id;
-    const siteTypeId = formValues.siteType?.id;
-    const experienceId = formValues.experience?.id;
-    // COMENTADO: Se va a cambiar de lugar
-    // const reviewResultId = formValues.reviewResult?.id;
-    // const reviewDate = formValues.reviewDate;
-    // const reviewJustification = formValues.reviewJustification;
-
+    const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek?.map((day: DayOfWeekResponse) => day.id) || [];
+    // Horas de funcionamiento
+    const operatingStartTime: string | null = toTimeString(formValues.operatingStartTime);
+    const operatingEndTime: string | null = toTimeString(formValues.operatingEndTime);
 
     // Construir el objeto de actualización
     // Build the update object
@@ -1620,29 +1209,20 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       postalZipCode: formValues.postalZipCode || null,
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
-      //educationLevelIds: educationLevelIds,
-      organizationTypeId: organizationTypeId,
-      centerTypeId: centerTypeId,
-      operatingFromDate: formValues.operatingFromDate ?? null,
-      operatingToDate: formValues.operatingToDate ?? null,
-      operatingDaysCalculated: formValues.operatingDaysCalculated ?? null,
-      operatingDaysOfWeek: operatingDaysOfWeekIds,
-      kitchenTypeId: kitchenTypeId,
-      siteLocationId: siteLocationId,
-      groupTypeId: groupTypeId,
-      deliveryTypeId: deliveryTypeId,
-      sponsorTypeId: sponsorTypeId,
-      applicantTypeId: applicantTypeId,
-      operatingPolicyId: operatingPolicyId,
-      residentialTypeId: residentialTypeId,
       areaTypeId: areaTypeId,
       locationTypeId: locationTypeId,
-      nonProfit: formValues.nonProfit ?? null,
-      startDate: formValues.startDate ?? null,
-      baseYear: formValues.baseYear ?? null,
-      renewalYear: formValues.renewalYear ?? null,
-      hasWarehouse: formValues.hasWarehouse ?? null,
-      hasDiningRoom: formValues.hasDiningRoom ?? null,
+      // Fechas de funcionamiento
+      // Operating dates
+      operatingFromDate: formValues.operatingFromDate ?? null,
+      operatingToDate: formValues.operatingToDate ?? null,
+      operatingDaysCalculated: operatingDaysCalculated ?? null,
+      // Días de la semana en que opera el sitio
+      // Days of the week the site operates
+      operatingDaysOfWeek: operatingDaysOfWeekIds,
+      // Horas de funcionamiento - Horas de inicio y fin para los días de funcionamiento
+      // Operating hours - Start and end times for operating days
+      operatingStartTime: operatingStartTime ?? null,
+      operatingEndTime: operatingEndTime ?? null,
       personInCharge: formValues.personInCharge ? {
         firstName: formValues.personInCharge.firstName ?? null,
         middleName: formValues.personInCharge.middleName ?? null,
@@ -1652,48 +1232,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         extension: formValues.personInCharge.extension ?? null,
         mobilePhone: formValues.personInCharge.mobilePhone ?? null,
       } : null,
-      communityId: communityId ?? null,
-      walkersId: walkersId ?? null,
-      siteTypeId: siteTypeId ?? null,
-      experienceId: experienceId ?? null,
-      // COMENTADO: Se va a cambiar de lugar
-      // reviewResultId: reviewResultId ?? null,
-      // reviewDate: reviewDate ?? null,
-      // reviewJustification: reviewJustification ?? null,
-      // Campos requeridos por el stored procedure 104_UpdateSite
-      serviceTime: formValues.serviceTime ?? null,
       isActive: formValues.isActive ?? true,
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
-      generalEnrollment: formValues.generalEnrollment ?? null,
-      // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
-      // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
-      organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,
-      // ¿El sitio está interesado en participar en el servicio de merienda y cena en riesgo?
-      // Is the site interested in participating in the at-risk snack and dinner service?
-      atRiskService: formValues.atRiskService ?? null,
-
-      // De poseer un contrato Público Alianza, especifique su modalidad
-      // If you have a Public Alliance contract, please specify the type of contract
-      publicAllianceContractId: formValues.publicAllianceContractId ?? null,
-
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home
       isDayCareHomeId: this.isDayCareHomeId,
     };
-
-    // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====
-    // Crear SiteEducationLevelRequest para cada nivel educativo seleccionado
-    if (educationLevelIds.length > 0) {
-      siteRequest.educationLevels = educationLevelIds.map((id) => {
-        const educationLevelRequest: SiteEducationLevelRequest = {
-          siteId: this.param.id, // ID del sitio existente
-          educationLevelId: id,
-          isActive: true,
-        };
-        return educationLevelRequest;
-      });
-    }
 
     // ===== CREAR SCHOOL SERVICE REQUEST =====
     // Constantes para servicios básicos
@@ -1829,7 +1374,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         relationshipTypeId: formValues.relationshipType?.id ?? null,
         offersServiceToImmigrantChildren: formValues.offersServiceToImmigrantChildren ?? null,
         homeTypeId: formValues.homeType?.id ?? null,
-        administratorBirthDate: formValues.administratorBirthDate ?? null,
+        administratorBirthDate: formValues.personInCharge?.birthDate ?? null,
         offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups ?? null,
       };
     }
@@ -1865,19 +1410,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         this.isLoading = false;
         // Enable the form
         this.headerConfig.formGroup.enable();
-
-        const baseYearControl = this.headerConfig.formGroup.get('baseYear');
-        const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
-
-        // Disable the base year and renewal year fields
-        if (baseYearControl) {
-          baseYearControl.disable();
-          baseYearControl.setValue(null);
-        }
-        if (renewalYearControl) {
-          renewalYearControl.disable();
-          renewalYearControl.setValue(null);
-        }
       },
     });
   }
@@ -2045,65 +1577,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   // Método para obtener tipos de cocina según el tipo de grupo seleccionado
   // Get kitchen types by group type
-  getKitchenTypesByGroupType(groupType: OptionSelection): void {
-    if (!groupType) {
-      this.kitchenTypes = [];
-      this.isKitchenTypeDisabled = false;
-      return;
-    }
-
-    // Verificar si es "Comedor" - solo cargar tipos de cocina para Comedor
-    const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-
-    if (!isComedor) {
-      // Si no es "Comedor", limpiar el valor y las opciones
-      this.kitchenTypes = [];
-      this.headerConfig.formGroup.patchValue({ kitchenType: null });
-      this._changeDetectorRef.detectChanges();
-      return;
-    }
-
-    // Para "Comedor", usar la API para obtener los tipos de cocina válidos
-    this.isKitchenTypeDisabled = false;
-
-    const queryParameters: QueryParameters = {
-      groupTypeId: groupType.id,
-    };
-
-    this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({
-      next: (response) => {
-        if (response) {
-          this.kitchenTypes = response.body;
-
-          // Para "Comedor", limpiar la selección para que el usuario elija
-          this.headerConfig.formGroup.patchValue({ kitchenType: null });
-
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar los tipos de cocina:', error);
-      },
-    });
-  }
-
-  /**
-   * Verifica si se debe mostrar el campo de Tipo de Cocina
-   * Solo se muestra cuando:
-   * - El programa es PDAM
-   * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
-   */
-  get shouldShowKitchenTypeField(): boolean {
-    // Verificar si el Tipo de Grupo seleccionado es "Comedor"
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-    if (groupType) {
-      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-      return isComedor;
-    }
-
-    return false;
-  }
-
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
   getAreaTypeByCity(city: City): void {
@@ -2230,107 +1703,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   /**
    * Maneja la selección de tipo de entrega con notificación de permiso
    */
-  onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
-    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
-      this.showPermissionRequestDialog(selectedDeliveryType);
-    }
-  }
 
-  /**
-   * Muestra el diálogo de solicitud de permiso
-   */
-  private showPermissionRequestDialog(deliveryType: DeliveryType): void {
-    const dialogRef = this._dialog.open(PermissionRequestDialogComponent, {
-      width: '500px',
-      data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'yes') {
-        this.showPermissionRequestFormDialog(deliveryType);
-      } else if (result === 'no') {
-        // Si el usuario dice "No", deseleccionar el tipo de entrega
-        this.headerConfig.formGroup.patchValue({
-          deliveryType: null,
-        });
-      }
-    });
-  }
-
-  /**
-   * Muestra el formulario de solicitud de permiso
-   */
-  private showPermissionRequestFormDialog(deliveryType: DeliveryType): void {
-    const dialogRef = this._dialog.open(PermissionRequestFormDialogComponent, {
-      width: '600px',
-      data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
-        deliveryTypeNameEN: deliveryType.nameEN,
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result && result.action === 'submit') {
-        // Aquí se implementaría la lógica para enviar la solicitud de permiso
-        // Por ahora, solo mostramos un mensaje de confirmación
-        this._notificationService.showSuccess('Solicitud de permiso enviada correctamente');
-
-        // El usuario puede continuar con el tipo de entrega seleccionado
-        // No necesitamos hacer nada más aquí
-      } else if (result && result.action === 'cancel') {
-        // Si el usuario cancela, deseleccionar el tipo de entrega
-        this.headerConfig.formGroup.patchValue({
-          deliveryType: null,
-        });
-      }
-    });
-  }
-
-  /**
-   * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
-   */
-  shouldShowDistributionType(): boolean {
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-
-    // Obtener el tipo de grupo como string para el servicio
-    const groupTypeKey = this.getGroupTypeKey(groupType);
-
-    return this._fieldVisibilityService.shouldShowField('distributionType', groupTypeKey);
-  }
-
-  /**
-   * Actualiza las validaciones condicionales usando FieldVisibilityService
-   */
-  private updateDistributionTypeValidation(): void {
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-    const distributionTypeControl = this.headerConfig.formGroup.get('distributionType');
-
-    // Obtener el tipo de grupo como string para el servicio
-    const groupTypeKey = this.getGroupTypeKey(groupType);
-
-    const isRequired = this._fieldVisibilityService.isFieldRequired('distributionType', groupTypeKey);
-
-    if (isRequired) {
-      // Requerir distribución type
-      distributionTypeControl?.setValidators([Validators.required]);
-      distributionTypeControl?.enable();
-    } else {
-      // No requerir para otros tipos y deshabilitar el campo
-      distributionTypeControl?.clearValidators();
-      distributionTypeControl?.setValue(null); // Limpiar el valor
-      distributionTypeControl?.disable();
-      distributionTypeControl?.markAsUntouched(); // Limpiar estado de validación
-    }
-
-    distributionTypeControl?.updateValueAndValidity();
-
-    // Actualizar el estado del botón después de cambiar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
 
   /**
    * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
@@ -2340,7 +1713,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Maneja el cambio del campo "¿Ofrece servicio a diferentes grupos de niños?"
    */
   onOffersServiceToDifferentGroupsChange(checked: boolean): void {
-    this.showDifferentGroupsFields = checked;
     // Si no ofrece servicio a diferentes grupos, limpiar campos adicionales
     if (!checked) {
       this.clearDifferentGroupsFields();
@@ -2358,15 +1730,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     this.updateServicesTableDataSource();
   }
 
-  /**
-   * Convierte el objeto groupType a la clave usada en la configuración
-   */
-  private getGroupTypeKey(groupType: any): string {
-    if (!groupType) return '';
-
-    // Usar directamente el nombre del groupType
-    return groupType.name || groupType.nameEN || '';
-  }
 
   // ==========================================
   // MÉTODOS HANDLER PARA TABLA DE SERVICIOS
@@ -2477,49 +1840,4 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   // Método para obtener Site Location según el tipo de grupo seleccionado
   // Get site location by group type
-  getSiteLocationByGroupType(groupType: OptionSelection): void {
-    if (!groupType) {
-      this.siteLocations = [];
-      this.isSiteLocationDisabled = false; // Mantener habilitado
-      return;
-    }
-
-    // Para TODOS los tipos de grupo, usar la API para obtener el Site Location válido
-    this.isSiteLocationDisabled = false;
-
-    const queryParameters: QueryParameters = {
-      groupTypeId: groupType.id,
-    };
-
-    this._groupTypeService.getSiteLocationByGroupType(queryParameters).subscribe({
-      next: (response) => {
-        if (response) {
-          this.siteLocations = response.body;
-
-          // Auto-seleccionar el Site Location obtenido (solo hay uno por Group Type)
-          if (this.siteLocations && this.siteLocations.length > 0) {
-            this.headerConfig.formGroup.patchValue({ siteLocation: this.siteLocations[0] });
-          }
-
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar Site Location:', error);
-      },
-    });
-  }
-
-  /**
-   * Filtra las Políticas de Funcionamiento según si la agencia es recurrente
-   * Para agencias nuevas (isRecurrent = false), excluye Provisión I, II y III
-   */
-  private filterOperatingPolicies(policies: OperatingPolicy[], isRecurrent: boolean): OperatingPolicy[] {
-    if (isRecurrent) {
-      return policies; // Mostrar todas las políticas
-    }
-    // Para agencias nuevas, excluir IDs 3, 4, 5 (Provisión I, II, III)
-    return policies.filter(p => p.id !== 3 && p.id !== 4 && p.id !== 5);
-  }
-
 }
