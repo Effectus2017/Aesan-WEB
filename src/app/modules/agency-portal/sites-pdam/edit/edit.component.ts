@@ -24,6 +24,7 @@ import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
@@ -125,6 +126,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -596,6 +598,13 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
     this.headerConfig.formGroup
       .get('operatingStartTime')
@@ -611,10 +620,11 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         this.revalidateAllServiceTimes();
       });
 
-    // Listener para cambios en groupType que afectan distributionType, siteLocation y kitchenType
+    // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      this.loadDeliveryTypesByGroupType(groupType);
       // Si no es "Comedor", limpiar el valor de kitchenType
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
@@ -1166,6 +1176,11 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Calcular días operativos automáticamente si es necesario
     DateCalculationsUtil.calculateOperatingDaysIfNeeded(this.headerConfig.formGroup);
 
+    // Cargar deliveryTypes según el groupType inicial
+    if (groupType) {
+      this.loadDeliveryTypesByGroupType(groupType);
+    }
+
     // Actualizar el estado del botón después de cargar todos los datos
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
@@ -1626,6 +1641,41 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     return false;
   }
 
+  /**
+   * Carga los tipos de entrega según el tipo de grupo seleccionado
+   */
+  private loadDeliveryTypesByGroupType(groupType: any): void {
+    if (!groupType || !groupType.id) {
+      // Si no hay tipo de grupo, mantener los deliveryTypes actuales (no limpiar en edit)
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body) {
+          this.deliveryTypes = response.body;
+          // En modo edición, no limpiar el deliveryType seleccionado si aún es válido
+          const currentDeliveryType = this.headerConfig.formGroup.get('deliveryType')?.value;
+          if (currentDeliveryType) {
+            const isValid = this.deliveryTypes.some((dt: DeliveryType) => dt.id === currentDeliveryType.id);
+            if (!isValid) {
+              this.headerConfig.formGroup.patchValue({ deliveryType: null });
+            }
+          }
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar los tipos de entrega:', error);
+        this._notificationService.showError('Error al cargar los tipos de entrega');
+      },
+    });
+  }
+
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
   getAreaTypeByCity(city: City): void {
@@ -1756,7 +1806,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
    * Maneja la selección de tipo de entrega con notificación de permiso
    */
   onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
-    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+    if (selectedDeliveryType && selectedDeliveryType.requiresPermission) {
       this.showPermissionRequestDialog(selectedDeliveryType);
     }
   }

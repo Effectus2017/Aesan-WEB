@@ -43,7 +43,7 @@
             data-cy="relationship-type-select"
           >
             <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">
-              {{ type.name }}
+              {{ currentLang === "en" ? type.nameEN : type.name }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('relationshipType')?.hasError('required')">

@@ -26,6 +26,7 @@ import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupR
 import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
@@ -33,6 +34,8 @@ import { EducationLevelResponse } from 'app/shared/models/Response/EducationLeve
 import { CenterType } from 'app/shared/models/CenterType';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
+import { GroupType } from 'app/shared/models/GroupType';
+import { KitchenType } from 'app/shared/models/KitchenType';
 import {
   compareById,
   isNullOrUndefinedEmptyStringNullArray,
@@ -124,6 +127,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
@@ -779,6 +783,13 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
     this.headerConfig.formGroup
       .get('operatingStartTime')
@@ -794,10 +805,11 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         this.revalidateAllServiceTimes();
       });
 
-    // Listener para cambios en groupType que afectan distributionType, siteLocation y kitchenType
+    // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      this.loadDeliveryTypesByGroupType(groupType);
       // Si no es "Comedor", limpiar el valor de kitchenType
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
@@ -1345,6 +1357,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       administratorBirthDate: param.dayCareHome?.administratorBirthDate,
       siteCode: param.siteCode || '',
       relationshipType: param.relationshipType,
+      // Almacén - Campo para indicar si el sitio tiene un almacén
+      // Warehouse - Field indicating if the site has a warehouse
+      hasWarehouse: param.hasWarehouse ?? null,
+      // Comedor - Campo para indicar si el sitio tiene un comedor
+      // Dining room - Field indicating if the site has a dining room
+      hasDiningRoom: param.hasDiningRoom ?? null,
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -1386,6 +1404,21 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     // Calcular días operativos automáticamente si es necesario
     this.calculateOperatingDaysIfNeeded();
+
+    // Si el groupType es "Comedor", cargar las opciones válidas de kitchenTypes
+    // y preservar el kitchenType original del sitio
+    if (groupType) {
+      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+      if (isComedor && kitchenType) {
+        // Llamar a getKitchenTypesByGroupType preservando el kitchenType original
+        this.getKitchenTypesByGroupType(groupType, true, kitchenType);
+      } else if (isComedor) {
+        // Si es Comedor pero no hay kitchenType, cargar las opciones sin preservar
+        this.getKitchenTypesByGroupType(groupType, false);
+      }
+      // Cargar deliveryTypes según el groupType
+      this.loadDeliveryTypesByGroupType(groupType);
+    }
 
     // Actualizar el estado del botón después de cargar todos los datos
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
@@ -1940,7 +1973,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
   // Método para obtener tipos de cocina según el tipo de grupo seleccionado
   // Get kitchen types by group type
-  getKitchenTypesByGroupType(groupType: OptionSelection): void {
+  getKitchenTypesByGroupType(groupType: OptionSelection | GroupType | null, preserveValue: boolean = false, kitchenTypeToPreserve?: OptionSelection | KitchenType): void {
     if (!groupType) {
       this.kitchenTypes = [];
       this.isKitchenTypeDisabled = false;
@@ -1970,8 +2003,22 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         if (response) {
           this.kitchenTypes = response.body;
 
-          // Para "Comedor", limpiar la selección para que el usuario elija
-          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          if (preserveValue && kitchenTypeToPreserve) {
+            // Si se debe preservar el valor, buscar el kitchenType en las nuevas opciones
+            const matchingKitchenType = this.kitchenTypes.find(
+              (kt) => kt.id === kitchenTypeToPreserve.id
+            );
+            if (matchingKitchenType) {
+              // Si se encuentra, setear el kitchenType preservado
+              this.headerConfig.formGroup.patchValue({ kitchenType: matchingKitchenType });
+            } else {
+              // Si no se encuentra en las opciones válidas, limpiar
+              this.headerConfig.formGroup.patchValue({ kitchenType: null });
+            }
+          } else {
+            // Si no se debe preservar, limpiar la selección para que el usuario elija
+            this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          }
 
           this._changeDetectorRef.detectChanges();
         }
@@ -2002,6 +2049,41 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
+  /**
+   * Carga los tipos de entrega según el tipo de grupo seleccionado
+   */
+  private loadDeliveryTypesByGroupType(groupType: any): void {
+    if (!groupType || !groupType.id) {
+      // Si no hay tipo de grupo, mantener los deliveryTypes actuales (no limpiar en edit)
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body) {
+          this.deliveryTypes = response.body;
+          // En modo edición, no limpiar el deliveryType seleccionado si aún es válido
+          const currentDeliveryType = this.headerConfig.formGroup.get('deliveryType')?.value;
+          if (currentDeliveryType) {
+            const isValid = this.deliveryTypes.some((dt: DeliveryType) => dt.id === currentDeliveryType.id);
+            if (!isValid) {
+              this.headerConfig.formGroup.patchValue({ deliveryType: null });
+            }
+          }
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar los tipos de entrega:', error);
+        this._notificationService.showError('Error al cargar los tipos de entrega');
+      },
+    });
+  }
+
   getAreaTypeByCity(city: City): void {
     if (!city) {
       return;
@@ -2130,7 +2212,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
    * Maneja la selección de tipo de entrega con notificación de permiso
    */
   onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
-    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+    if (selectedDeliveryType && selectedDeliveryType.requiresPermission) {
       this.showPermissionRequestDialog(selectedDeliveryType);
     }
   }

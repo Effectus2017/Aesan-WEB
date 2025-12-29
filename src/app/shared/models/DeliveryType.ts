@@ -4,7 +4,7 @@ export interface DeliveryType {
   nameEN: string;
   isActive: boolean;
   displayOrder: number;
-  selectionNotification: boolean;
+  requiresPermission?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

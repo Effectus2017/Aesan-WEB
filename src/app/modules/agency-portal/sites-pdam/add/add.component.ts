@@ -49,6 +49,7 @@ import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducati
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -128,6 +129,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _agencyService = inject(AgencyService);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
@@ -543,6 +545,13 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
     this.headerConfig.formGroup
       .get('operatingStartTime')
@@ -762,10 +771,11 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   private setupGroupTypeListener(): void {
-    // Listener para cambios en groupType que afectan distributionType y siteLocation
+    // Listener para cambios en groupType que afectan distributionType, siteLocation y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      this.loadDeliveryTypesByGroupType(groupType);
       // Si no es "Comedor", limpiar el valor de kitchenType
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
@@ -1308,6 +1318,38 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
+  /**
+   * Carga los tipos de entrega según el tipo de grupo seleccionado
+   */
+  private loadDeliveryTypesByGroupType(groupType: any): void {
+    if (!groupType || !groupType.id) {
+      // Si no hay tipo de grupo, limpiar deliveryTypes
+      this.deliveryTypes = [];
+      this.headerConfig.formGroup.patchValue({ deliveryType: null });
+      this._changeDetectorRef.detectChanges();
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body) {
+          this.deliveryTypes = response.body;
+          // Limpiar la selección actual de deliveryType para que el usuario elija uno nuevo
+          this.headerConfig.formGroup.patchValue({ deliveryType: null });
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar los tipos de entrega:', error);
+        this._notificationService.showError('Error al cargar los tipos de entrega');
+      },
+    });
+  }
+
   getAreaTypeByCity(city: City): void {
     if (!city) {
       return;
@@ -1447,7 +1489,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
    * Maneja la selección de tipo de entrega con notificación de permiso
    */
   onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
-    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+    if (selectedDeliveryType && selectedDeliveryType.requiresPermission) {
       this.showPermissionRequestDialog(selectedDeliveryType);
     }
   }

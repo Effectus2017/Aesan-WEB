@@ -3,11 +3,12 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
+import { NgIf } from '@angular/common';
 
 export interface CfrInfoData {
   title: string;
   message: string;
-  cfrLink: {
+  cfrLink?: {
     url: string;
     text: string;
   };
@@ -23,7 +24,8 @@ export interface CfrInfoData {
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
-    TranslocoModule
+    TranslocoModule,
+    NgIf
   ]
 })
 export class CfrInfoDialogComponent {

@@ -476,7 +476,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
         if (isPSAVProgram(currentProgram)) {
           participatesInHeadStartProgramControl.setValidators([Validators.required]);
-          
+
           // Establecer "N/A" como valor por defecto si no hay valor seleccionado
           if (!participatesInHeadStartProgramControl.value) {
             const naOption = this.participatesInHeadStartProgramOptions.find(
@@ -703,47 +703,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Validar que el correo no exista antes de continuar
-    const email = formValues.email?.trim();
-    if (email) {
-      const queryParameters: QueryParameters = {
-        email: email,
-      };
-      this._userService.checkEmailExists(queryParameters).subscribe({
-        next: (exists: boolean) => {
-          if (exists) {
-            // El correo existe, mostrar error y no continuar
-            const emailControl = this.signUpForm.get('email');
-            if (emailControl) {
-              emailControl.setErrors({ emailExists: true });
-              emailControl.markAsTouched();
-            }
-            // Mostrar dialog en lugar de snackbar
-            this._dialog.open(CfrInfoDialogComponent, {
-              data: {
-                title: this._translocoService.translate('sign-up.email.exists-title'),
-                message: this._translocoService.translate('sign-up.email.exists'),
-                cfrLink: null, // No hay link CFR para este mensaje
-              },
-              disableClose: false,
-              panelClass: ['mat-dialog-container', 'dialog-responsive'],
-            });
-            this.signUpForm.enable();
-            return;
-          }
-          // El correo no existe, continuar con el registro
-          this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
-        },
-        error: (error) => {
-          // En caso de error de red, permitir continuar (no bloquear)
-          console.error('Error al verificar correo:', error);
-          this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
-        },
-      });
-    } else {
-      // Si no hay email, continuar normalmente (la validación del formulario ya lo maneja)
-      this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
-    }
+    // Continuar con el registro (el validador asíncrono emailExistsValidator ya verificó el email)
+    // El backend también verificará el email como última línea de defensa
+    this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
   }
 
   /**

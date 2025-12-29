@@ -6,5 +6,4 @@ export interface DeliveryTypeRequest {
     nameEN: string;
     isActive: boolean;
     displayOrder: number;
-    selectionNotification: boolean;
 }

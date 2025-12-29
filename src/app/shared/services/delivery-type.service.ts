@@ -58,4 +58,8 @@ export class DeliveryTypeService {
   getDeliveryTypesByProgram(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-delivery-types-by-program`, getHttpOptions(queryParameters));
   }
+
+  getDeliveryTypesByGroupType(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-delivery-types-by-group-type`, getHttpOptions(queryParameters));
+  }
 }

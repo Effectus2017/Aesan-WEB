@@ -46,6 +46,7 @@ import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupR
 import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
+import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -60,6 +61,7 @@ import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -99,6 +101,7 @@ import { PROGRAM_IDS } from 'app/shared/const';
     MatTimepickerModule,
     MatIconModule,
     NumericOnlyDirective,
+    PhoneFormatDirective,
     DynamicGridDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
@@ -117,6 +120,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   private _authService = inject(AuthService);
   private _groupTypeService = inject(GroupTypeService);
   private _kitchenTypeService = inject(KitchenTypeService);
+  private _deliveryTypeService = inject(DeliveryTypeService);
   private _areaTypeService = inject(AreaTypeService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
@@ -509,12 +513,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Nombre Completo de la Persona a Cargo (Day Care Home)
       // Administrator Authorized Name (Day Care Home)
       administratorAuthorizedName: [null],
-      // Teléfono del Sitio (Day Care Home)
-      // Site Phone (Day Care Home)
-      sitePhone: [null],
-      // Teléfono Móvil (Day Care Home)
-      // Mobile Phone (Day Care Home)
-      mobilePhone: [null],
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
@@ -739,6 +737,13 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
     this.headerConfig.formGroup.get('organizationType')?.valueChanges.subscribe((organizationType: OrganizationType) => {
       const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
@@ -943,10 +948,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
 
   private setupGroupTypeListener(): void {
-    // Listener para cambios en groupType que afectan distributionType y siteLocation
+    // Listener para cambios en groupType que afectan distributionType, siteLocation y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
+      this.loadDeliveryTypesByGroupType(groupType);
       // Si no es "Comedor", limpiar el valor de kitchenType
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
@@ -1676,6 +1682,38 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     });
   }
 
+  /**
+   * Carga los tipos de entrega según el tipo de grupo seleccionado
+   */
+  private loadDeliveryTypesByGroupType(groupType: any): void {
+    if (!groupType || !groupType.id) {
+      // Si no hay tipo de grupo, limpiar deliveryTypes
+      this.deliveryTypes = [];
+      this.headerConfig.formGroup.patchValue({ deliveryType: null });
+      this._changeDetectorRef.detectChanges();
+      return;
+    }
+
+    const queryParameters: QueryParameters = {
+      groupTypeId: groupType.id,
+    };
+
+    this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({
+      next: (response) => {
+        if (response && response.body) {
+          this.deliveryTypes = response.body;
+          // Limpiar la selección actual de deliveryType para que el usuario elija uno nuevo
+          this.headerConfig.formGroup.patchValue({ deliveryType: null });
+          this._changeDetectorRef.detectChanges();
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar los tipos de entrega:', error);
+        this._notificationService.showError('Error al cargar los tipos de entrega');
+      },
+    });
+  }
+
   // Método para obtener el tipo de área según la ciudad seleccionada
   // Get area type by city
   getAreaTypeByCity(city: City): void {
@@ -1812,7 +1850,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
    * Maneja la selección de tipo de entrega con notificación de permiso
    */
   onDeliveryTypeChange(selectedDeliveryType: DeliveryType): void {
-    if (selectedDeliveryType && selectedDeliveryType.selectionNotification) {
+    if (selectedDeliveryType && selectedDeliveryType.requiresPermission) {
       this.showPermissionRequestDialog(selectedDeliveryType);
     }
   }

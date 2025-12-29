@@ -67,6 +67,7 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
+import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 
 
 @Component({
@@ -166,13 +167,14 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       {
         id: 'add',
         label: 'sites.add.services.add-service',
+        icon: 'mat_outline:add',
       },
     ],
     handler: this,
     showPaginator: true,
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
-    fullScreen: true,
+    fullScreen: false,
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
@@ -609,6 +611,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+      });
+
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -680,35 +689,55 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
           });
 
         // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-        fromControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-            this._changeDetectorRef.detectChanges();
-          });
+        fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+          TimeValidationUtil.validateTimeRange(fromControl, toControl);
+          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+          // Forzar detección de cambios para actualizar las opciones en el template
+          this._changeDetectorRef.detectChanges();
+        });
 
         // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-        toControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-          });
+        toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+          TimeValidationUtil.validateTimeRange(fromControl, toControl);
+          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+        });
       }
     });
   }
 
+  /**
+   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
+   */
+  getStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    return filterStartTimeOptions(
+      this.timeOptions,
+      operatingStartTime,
+      operatingEndTime
+    );
+  }
 
   /**
-   * Convierte string HH:mm a objeto Date (wrapper para usar en template)
+   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    */
   getEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     if (!fromControl) return this.timeOptions;
 
     const fromTime = fromControl.value;
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
     return getEndTimeOptions(
       this.timeOptions,
-      fromTime
+      fromTime,
+      '23:59',
+      operatingStartTime,
+      operatingEndTime
     );
   }
 
@@ -1110,6 +1139,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // Actualizar el estado del botón después de cargar todos los datos
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
     this._changeDetectorRef.detectChanges();
+
+    // Revalidar todos los servicios para aplicar validadores de rango de horarios
+    this.revalidateAllServiceTimes();
   }
 
   /**

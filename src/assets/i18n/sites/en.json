@@ -4,7 +4,7 @@
         "list": {
             "title": "Site List",
             "titleCenters": "Centers List",
-            "titleHomes": "Homes List",
+            "titleHomes": "List of Homes",
             "table": {
                 "columns": {
                     "id": "Id",

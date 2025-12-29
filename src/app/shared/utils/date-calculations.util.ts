@@ -1,4 +1,5 @@
 import { FormGroup } from '@angular/forms';
+import { DayOfWeekResponse } from '../models/DayOfWeekResponse';
 
 /**
  * Utilidades para cálculos de fechas y días operativos
@@ -48,21 +49,100 @@ export class DateCalculationsUtil {
   }
 
   /**
+   * Convierte el día de la semana de JavaScript al formato del sistema
+   * Converts JavaScript day of week to system format
+   * JavaScript: 0=Domingo, 1=Lunes, 2=Martes, ..., 6=Sábado
+   * Sistema: 1=Lunes, 2=Martes, 3=Miércoles, 4=Jueves, 5=Viernes, 6=Sábado, 7=Domingo
+   * @param jsDay Día de la semana en formato JavaScript (0-6)
+   * @returns Día de la semana en formato del sistema (1-7)
+   */
+  private static convertJsDayToSystemDay(jsDay: number): number {
+    // JavaScript: 0=Domingo, 1=Lunes, ..., 6=Sábado
+    // Sistema: 1=Lunes, 2=Martes, ..., 7=Domingo
+    return jsDay === 0 ? 7 : jsDay;
+  }
+
+  /**
+   * Calcula los días operativos basándose en los días seleccionados de la semana
+   * Calculates operating days based on selected days of the week
+   * @param startDate Fecha de inicio / Start date
+   * @param endDate Fecha de fin / End date
+   * @param selectedDays Array de IDs de días seleccionados (1=Lunes, 2=Martes, ..., 7=Domingo) o array de DayOfWeekResponse
+   * @returns Número de días operativos que coinciden con los días seleccionados
+   */
+  static calculateOperatingDaysBySelectedDays(
+    startDate: Date,
+    endDate: Date,
+    selectedDays: number[] | DayOfWeekResponse[]
+  ): number {
+    // Validar fechas
+    if (!startDate || !endDate || isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return 0;
+    }
+
+    // Validar días seleccionados
+    if (!selectedDays || selectedDays.length === 0) {
+      return 0;
+    }
+
+    // Extraer IDs de días (puede ser array de números o array de DayOfWeekResponse)
+    const selectedDayIds: number[] = selectedDays.map((day) => {
+      if (typeof day === 'number') {
+        return day;
+      } else {
+        return day.id;
+      }
+    });
+
+    // Normalizar fechas a medianoche para evitar problemas de zona horaria
+    const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+    const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+    // Asegurar que las fechas estén en el orden correcto
+    const [earlier, later] = start <= end ? [start, end] : [end, start];
+
+    let operatingDaysCount = 0;
+    const currentDate = new Date(earlier);
+
+    // Iterar sobre cada fecha en el rango
+    while (currentDate <= later) {
+      // Obtener el día de la semana en formato JavaScript (0-6)
+      const jsDay = currentDate.getDay();
+      // Convertir al formato del sistema (1-7)
+      const systemDay = this.convertJsDayToSystemDay(jsDay);
+
+      // Si el día está en la lista de días seleccionados, contarlo
+      if (selectedDayIds.includes(systemDay)) {
+        operatingDaysCount++;
+      }
+
+      // Avanzar al siguiente día
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    return operatingDaysCount;
+  }
+
+  /**
    * Calcula los días operativos basado en fechas del formulario y actualiza el campo resultante
    * Calculates operating days based on form dates and updates the result field
+   * Considera los días seleccionados en operatingDaysOfWeek si están disponibles
    * @param formGroup FormGroup que contiene los campos de fecha / FormGroup containing date fields
    * @param fromField Nombre del campo de fecha inicio / Start date field name
    * @param toField Nombre del campo de fecha fin / End date field name
    * @param resultField Nombre del campo donde guardar el resultado / Result field name
+   * @param operatingDaysOfWeekField Nombre del campo que contiene los días seleccionados / Field name containing selected days
    */
   static calculateOperatingDays(
     formGroup: FormGroup,
     fromField: string = 'operatingFromDate',
     toField: string = 'operatingToDate',
-    resultField: string = 'operatingDaysCalculated'
+    resultField: string = 'operatingDaysCalculated',
+    operatingDaysOfWeekField: string = 'operatingDaysOfWeek'
   ): void {
     const fromDateValue = formGroup.get(fromField)?.value;
     const toDateValue = formGroup.get(toField)?.value;
+    const operatingDaysOfWeekValue = formGroup.get(operatingDaysOfWeekField)?.value;
 
     if (fromDateValue && toDateValue) {
       try {
@@ -79,13 +159,25 @@ export class DateCalculationsUtil {
           return;
         }
 
-        const workingDays = this.calculateWorkingDays(fromDate, toDate);
+        let operatingDays: number;
+
+        // Si hay días seleccionados, calcular basándose en esos días
+        if (operatingDaysOfWeekValue && Array.isArray(operatingDaysOfWeekValue) && operatingDaysOfWeekValue.length > 0) {
+          operatingDays = this.calculateOperatingDaysBySelectedDays(
+            fromDate,
+            toDate,
+            operatingDaysOfWeekValue
+          );
+        } else {
+          // Si no hay días seleccionados, usar el cálculo de días laborables (comportamiento anterior)
+          operatingDays = this.calculateWorkingDays(fromDate, toDate);
+        }
 
         formGroup.patchValue({
-          [resultField]: workingDays,
+          [resultField]: operatingDays,
         });
       } catch (error) {
-        console.error('Error calculating working days:', error);
+        console.error('Error calculating operating days:', error);
         formGroup.patchValue({
           [resultField]: null,
         });
