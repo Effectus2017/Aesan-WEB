@@ -112,11 +112,10 @@ import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
     MatIconModule,
     NumericOnlyDirective,
     PhoneFormatDirective,
-    DynamicGridDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective,
-  ],
+    LongitudeDirective
+],
 })
 export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -504,7 +503,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     return this.showDifferentGroupsFields;
   }
 
-  /**
+   /**
    * Ordena las opciones de community alfabéticamente según el idioma actual
    */
   private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
