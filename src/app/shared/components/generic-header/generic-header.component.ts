@@ -13,13 +13,15 @@ import { RouterLink, RouterModule } from '@angular/router';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from './generic-header.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
     selector: 'app-generic-header',
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, TranslocoModule]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, TranslocoModule, DisableIfAgencyRestrictedDirective, DisableIfNoPermissionDirective]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;

@@ -1175,6 +1175,24 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     // Validar y limpiar el servicio antes de agregarlo
     const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
 
+    // Validar y sincronizar grupos si hay servicios por grupos
+    if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
+      // Validar que todos los servicios tengan groupName
+      const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
+      if (servicesWithoutGroup.length > 0) {
+        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        return;
+      }
+
+      // Sincronizar grupos desde servicios antes de enviar
+      this.syncChildGroupsFromServices();
+      
+      // Validar que haya grupos si hay servicios
+      if (this.childGroups.length === 0) {
+        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        return;
+      }
+    }
 
     // Agregar servicios al SiteRequest
     if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
@@ -1525,9 +1543,15 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     console.log('Offers service to different groups:', checked);
     console.log('Show different groups fields:', this.showDifferentGroupsFields);
 
+    // Deshabilitar/habilitar servicios del sitio principal según el estado
+    this.toggleMainSiteServices(checked);
+
     // Si no ofrece servicio a diferentes grupos, limpiar campos adicionales
     if (!checked) {
       this.clearDifferentGroupsFields();
+    } else {
+      // Si ofrece servicio a diferentes grupos, limpiar los servicios principales
+      this.clearMainSiteServices();
     }
   }
 
@@ -1541,6 +1565,74 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.servicesByGroups = [];
     this.updateServicesTableDataSource();
     console.log('Clearing different groups fields');
+  }
+
+  /**
+   * Deshabilita o habilita los campos de servicios del sitio principal
+   * @param disabled true para deshabilitar (cuando hay múltiples grupos), false para habilitar
+   */
+  private toggleMainSiteServices(disabled: boolean): void {
+    const serviceFields = [
+      'breakfast', 'breakfastFrom', 'breakfastTo',
+      'lunch', 'lunchFrom', 'lunchTo',
+      'snackAM', 'snackAMFrom', 'snackAMTo',
+      'snackPM', 'snackPMFrom', 'snackPMTo',
+      'dinner', 'dinnerFrom', 'dinnerTo',
+      'snackNight', 'snackNightFrom', 'snackNightTo',
+      'dinnerExtended', 'dinnerExtendedFrom', 'dinnerExtendedTo',
+      'dinnerAtRisk', 'dinnerAtRiskFrom', 'dinnerAtRiskTo',
+      'snackExtended', 'snackExtendedFrom', 'snackExtendedTo',
+      'snackAtRisk', 'snackAtRiskFrom', 'snackAtRiskTo'
+    ];
+
+    serviceFields.forEach(field => {
+      const control = this.headerConfig.formGroup.get(field);
+      if (control) {
+        if (disabled) {
+          control.disable({ emitEvent: false });
+        } else {
+          control.enable({ emitEvent: false });
+        }
+      }
+    });
+  }
+
+  /**
+   * Limpia los campos de servicios del sitio principal
+   */
+  private clearMainSiteServices(): void {
+    this.headerConfig.formGroup.patchValue({
+      breakfast: false,
+      breakfastFrom: null,
+      breakfastTo: null,
+      lunch: false,
+      lunchFrom: null,
+      lunchTo: null,
+      snackAM: false,
+      snackAMFrom: null,
+      snackAMTo: null,
+      snackPM: false,
+      snackPMFrom: null,
+      snackPMTo: null,
+      dinner: false,
+      dinnerFrom: null,
+      dinnerTo: null,
+      snackNight: false,
+      snackNightFrom: null,
+      snackNightTo: null,
+      dinnerExtended: false,
+      dinnerExtendedFrom: null,
+      dinnerExtendedTo: null,
+      dinnerAtRisk: false,
+      dinnerAtRiskFrom: null,
+      dinnerAtRiskTo: null,
+      snackExtended: false,
+      snackExtendedFrom: null,
+      snackExtendedTo: null,
+      snackAtRisk: false,
+      snackAtRiskFrom: null,
+      snackAtRiskTo: null
+    }, { emitEvent: false });
   }
 
   // ==========================================
@@ -1580,6 +1672,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         result.id = newId;
         this.servicesByGroups.push(result);
         this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices(); // Sincronizar grupos
       }
     });
   }
@@ -1613,6 +1706,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         if (index !== -1) {
           this.servicesByGroups[index] = result;
           this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices(); // Sincronizar grupos
         }
       }
     });
@@ -1638,6 +1732,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       if (index !== -1) {
         this.servicesByGroups.splice(index, 1);
         this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices(); // Sincronizar grupos
         this._notificationService.showSuccess('sites.add.services.success.deleted');
       }
     }
@@ -1650,7 +1745,38 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
   }
 
-
-
+  /**
+   * Extrae grupos únicos desde servicesByGroups y los sincroniza a childGroups
+   * Si un grupo ya existe (mismo groupName), actualiza numberOfChildren si es mayor
+   */
+  private syncChildGroupsFromServices(): void {
+    const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
+    
+    // Extraer grupos únicos desde servicesByGroups
+    this.servicesByGroups.forEach(service => {
+      if (service.groupName) {
+        const existingGroup = uniqueGroups.get(service.groupName);
+        if (!existingGroup) {
+          uniqueGroups.set(service.groupName, {
+            groupName: service.groupName,
+            numberOfChildren: service.numberOfChildren || 0
+          });
+        } else {
+          // Si el grupo ya existe, usar el mayor numberOfChildren
+          if ((service.numberOfChildren || 0) > existingGroup.numberOfChildren) {
+            existingGroup.numberOfChildren = service.numberOfChildren || 0;
+          }
+        }
+      }
+    });
+    
+    // Sincronizar a childGroups
+    this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
+      siteId: 0, // Se asignará cuando se cree el sitio
+      groupName: group.groupName,
+      groupNameEN: group.groupName, // Por ahora usar el mismo nombre
+      numberOfChildren: group.numberOfChildren
+    }));
+  }
 
 }

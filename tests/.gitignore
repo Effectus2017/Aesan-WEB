@@ -1,0 +1,16 @@
+# Estado de autenticación (puede contener tokens sensibles)
+.auth/
+*.json
+
+# Screenshots de tests fallidos
+screenshots/
+*.png
+
+# Videos de tests fallidos
+test-results/
+*.webm
+
+# Traces de Playwright
+trace.zip
+*.zip
+

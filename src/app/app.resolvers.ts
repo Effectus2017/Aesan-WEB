@@ -4,11 +4,13 @@ import { forkJoin, map, switchMap, tap } from 'rxjs';
 import { AgencyService } from './shared/services/agency.service';
 import { QueryParameters } from './shared/models/QueryParameters';
 import { AuthService } from './core/auth/auth.service';
+import { AgencyStatusStorageService } from './shared/services/agency-status-storage.service';
 
 export const initialDataResolver = () => {
   const navigationService = inject(NavigationService);
   const agencyService = inject(AgencyService);
   const authService = inject(AuthService);
+  const agencyStatusStorageService = inject(AgencyStatusStorageService);
 
   const agencyId = authService.getAgencyId();
 
@@ -37,6 +39,13 @@ export const initialDataResolver = () => {
         } else {
           localStorage.removeItem('agencyIsDayCareHome');
         }
+
+        // Calcular y guardar estado de restricción de la agencia
+        const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
+        const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration 
+          || agency?.body?.deadlineToCompleteRegistration;
+        const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
+        agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
       }),
       map(([navigation, agency]) => ({
         navigation: navigation, // NavigationService devuelve Navigation directamente
@@ -57,6 +66,7 @@ export const initialDataAgencyPortalResolver = () => {
   const navigationService = inject(NavigationService);
   const agencyService = inject(AgencyService);
   const authService = inject(AuthService);
+  const agencyStatusStorageService = inject(AgencyStatusStorageService);
 
   const agencyId = authService.getAgencyId();
 
@@ -87,6 +97,13 @@ export const initialDataAgencyPortalResolver = () => {
       } else {
         localStorage.removeItem('agencyIsDayCareHome');
       }
+
+      // Calcular y guardar estado de restricción de la agencia
+      const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
+      const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration 
+        || agency?.body?.deadlineToCompleteRegistration;
+      const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
+      agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
     }),
     map(([navigation, agency]) => {
       return {
@@ -96,3 +113,29 @@ export const initialDataAgencyPortalResolver = () => {
     })
   );
 };
+
+/**
+ * Verifica si la fecha límite ha expirado
+ * @param deadlineDate Fecha límite en formato string
+ * @returns true si la fecha expiró, false en caso contrario
+ */
+function _isDeadlineExpired(deadlineDate: string): boolean {
+  const deadline = new Date(deadlineDate);
+  const now = new Date();
+
+  // Validar que la fecha sea válida
+  if (isNaN(deadline.getTime())) {
+    console.error('[Resolvers] Invalid deadline date:', deadlineDate);
+    return false;
+  }
+
+  // Reset time to start of day for accurate day calculation
+  deadline.setHours(0, 0, 0, 0);
+  now.setHours(0, 0, 0, 0);
+
+  const timeDiff = deadline.getTime() - now.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  // La fecha expiró si daysDiff <= 0
+  return daysDiff <= 0;
+}

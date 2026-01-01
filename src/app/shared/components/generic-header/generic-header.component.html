@@ -27,7 +27,7 @@
           type="button"
           mat-raised-button
           color="primary"
-          [disabled]="isButtonDisabledByPermission(config.clearButtonPermission)"
+          [appDisableIfNoPermission]="config.clearButtonPermission"
           (click)="onClean($event)">
           <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:clear"></mat-icon>
         </button>
@@ -48,7 +48,7 @@
         mat-raised-button
         color="primary"
         type="button"
-        [disabled]="isButtonDisabledByPermission(config.searchButtonPermission)"
+        [appDisableIfNoPermission]="config.searchButtonPermission"
         (click)="onSearch()"
         data-cy="generic-header-search-button">
         <mat-icon class="ml-2 icon-size-5" svgIcon="mat_outline:search"></mat-icon>
@@ -64,7 +64,8 @@
         class="text-white bg-[#F1A621]"
         mat-raised-button
         [color]="'primary'"
-        [disabled]="isButtonDisabledByPermission(config.goToAddButtonPermission)"
+        [appDisableIfNoPermission]="config.goToAddButtonPermission"
+        [appDisableIfAgencyRestricted]
         (click)="onAdd()">
         <mat-icon class="mr-2 icon-size-5" [svgIcon]="'mat_outline:add'"></mat-icon>
       </button>
@@ -77,7 +78,7 @@
       <button
         type="button"
         [title]="getButtonTooltip(config.cancelButtonTooltip, config.cancelButtonDisabledTooltip, config.cancelButtonPermission) || 'Cancelar'"
-        [disabled]="isButtonDisabledByPermission(config.cancelButtonPermission)"
+        [appDisableIfNoPermission]="config.cancelButtonPermission"
         (click)="onCancel($event)"
         mat-button>
         {{ config.cancelButtonText | transloco }}
@@ -93,7 +94,7 @@
         [title]="getButtonTooltip(config.saveButtonTooltip, config.saveButtonDisabledTooltip, config.saveButtonPermission) || 'Guardar'"
         mat-raised-button
         color="primary"
-        [disabled]="isButtonDisabledByPermission(config.saveButtonPermission)"
+        [appDisableIfNoPermission]="config.saveButtonPermission"
         (click)="onSave()">
         {{ config.saveButtonText | transloco }}
       </button>
@@ -118,7 +119,8 @@
         mat-raised-button
         color="primary"
         class="ml-2"
-        [disabled]="isLoading || config.submitDisabled || isButtonDisabledByPermission(config.submitButtonPermission)"
+        [disabled]="isLoading || config.submitDisabled"
+        [appDisableIfNoPermission]="config.submitButtonPermission"
         (click)="onSubmit()"
         data-cy="generic-header-submit-button"
       >
@@ -138,6 +140,7 @@
           [color]="config.customButtonColor"
           class="ml-2 {{ config.customButtonClass }}"
           [disabled]="isLoading || config.customButtonDisabled"
+          [appDisableIfAgencyRestricted]
           (click)="onCustom()"
           mat-raised-button
           data-cy="generic-header-custom-button"
@@ -185,7 +188,7 @@
       <button
         type="button"
         [title]="getButtonTooltip(config.settingsButtonTooltip, config.settingsButtonDisabledTooltip, config.settingsButtonPermission) || 'Settings'"
-        [disabled]="isButtonDisabledByPermission(config.settingsButtonPermission)"
+        [appDisableIfNoPermission]="config.settingsButtonPermission"
         mat-icon-button
         [matMenuTriggerFor]="settingsMenu">
         <mat-icon [svgIcon]="'mat_outline:more_vert'"></mat-icon>

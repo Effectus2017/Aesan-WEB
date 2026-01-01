@@ -1,7 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
+import * as path from 'path';
 
 /**
+ * Configuración de Playwright con soporte para MCP (Model Context Protocol)
+ * 
+ * Características habilitadas:
+ * - Estado de autenticación persistente para evitar re-login en cada test
+ * - Configuración optimizada para uso con MCP
+ * - Proyectos separados para tests autenticados y no autenticados
+ * 
  * @see https://playwright.dev/docs/test-configuration
+ * @see https://github.com/microsoft/playwright-mcp
  */
 export default defineConfig({
   testDir: './tests',
@@ -15,6 +24,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
+  
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -28,22 +38,70 @@ export default defineConfig({
 
     /* Record video on failure */
     video: 'retain-on-failure',
+
+    /* Ignorar errores de HTTPS para desarrollo local */
+    ignoreHTTPSErrors: true,
+
+    /* Timeout para acciones */
+    actionTimeout: 30000,
+    navigationTimeout: 30000,
   },
 
   /* Configure projects for major browsers */
   projects: [
+    // Setup: Proyecto que ejecuta el login y guarda el estado de autenticación
     {
-      name: 'chromium',
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
 
+    // Chromium con autenticación: Usa el estado guardado por setup
     {
-      name: 'firefox',
+      name: 'chromium-authenticated',
+      use: {
+        ...devices['Desktop Chrome'],
+        // Cargar estado de autenticación si existe
+        storageState: path.join(__dirname, 'tests', '.auth', 'user.json'),
+      },
+      dependencies: ['setup'],
+    },
+
+    // Chromium sin autenticación: Para tests que no requieren login
+    {
+      name: 'chromium-unauthenticated',
+      use: { ...devices['Desktop Chrome'] },
+    },
+
+    // Firefox con autenticación
+    {
+      name: 'firefox-authenticated',
+      use: {
+        ...devices['Desktop Firefox'],
+        storageState: path.join(__dirname, 'tests', '.auth', 'user.json'),
+      },
+      dependencies: ['setup'],
+    },
+
+    // Firefox sin autenticación
+    {
+      name: 'firefox-unauthenticated',
       use: { ...devices['Desktop Firefox'] },
     },
 
+    // WebKit con autenticación
     {
-      name: 'webkit',
+      name: 'webkit-authenticated',
+      use: {
+        ...devices['Desktop Safari'],
+        storageState: path.join(__dirname, 'tests', '.auth', 'user.json'),
+      },
+      dependencies: ['setup'],
+    },
+
+    // WebKit sin autenticación
+    {
+      name: 'webkit-unauthenticated',
       use: { ...devices['Desktop Safari'] },
     },
 

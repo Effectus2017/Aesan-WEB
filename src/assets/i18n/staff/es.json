@@ -157,8 +157,7 @@
         "label": "Correo Electrónico",
         "placeholder": "Ingrese el correo electrónico",
         "required": "El correo electrónico es requerido",
-        "invalid": "El correo electrónico no es válido",
-        "exists": "El correo electrónico ya existe"
+        "invalid": "El correo electrónico no es válido"
       },
       "postalAddress": {
         "label": "Dirección Postal",
@@ -344,8 +343,7 @@
         "label": "Correo Electrónico",
         "placeholder": "Ingrese el correo electrónico",
         "required": "El correo electrónico es requerido",
-        "invalid": "El correo electrónico no es válido",
-        "exists": "El correo electrónico ya existe"
+        "invalid": "El correo electrónico no es válido"
       },
       "city": {
         "label": "Municipio",
