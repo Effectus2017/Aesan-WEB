@@ -22,7 +22,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
+import { compareById, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
 import { Region } from 'app/shared/models/Region';
@@ -30,7 +30,6 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
 import { ActivatedRoute } from '@angular/router';
-import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';

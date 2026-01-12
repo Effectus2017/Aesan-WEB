@@ -55,16 +55,19 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
       {
         key: 'edit',
         label: 'sites.list.table.buttons.edit',
+        permission: 'site.edit',
       },
       {
         key: 'calendar',
         label: 'sites.list.table.buttons.calendar',
         icon: 'heroicons_outline:calendar',
+        permission: 'site.view',
       },
       {
         key: 'satellites',
         label: 'sites.list.table.buttons.satellites',
         icon: 'heroicons_outline:building-office-2',
+        permission: 'site.view',
       },
     ],
   },

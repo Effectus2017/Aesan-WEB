@@ -50,11 +50,13 @@ export const SITES_PACNA_COLUMNS_SCHEMA: ColumnSchema[] = [
       {
         key: 'edit',
         label: 'sites.list.table.buttons.edit',
+        permission: 'site.edit',
       },
       {
         key: 'calendar',
         label: 'sites.list.table.buttons.calendar',
         icon: 'heroicons_outline:calendar',
+        permission: 'site.view',
       },
     ],
   },

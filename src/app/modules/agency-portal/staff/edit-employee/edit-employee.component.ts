@@ -38,6 +38,8 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
   selector: 'app-edit-employee',
@@ -61,8 +63,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     MatTooltipModule,
     MatIconModule,
     MatTimepickerModule,
-    MatDialogModule,
-  ],
+    MatDialogModule
+],
 })
 export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
@@ -73,11 +75,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   private _translocoService = inject(TranslocoService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _staffTypeService = inject(StaffTypeService);
-  private _staffClassificationService = inject(StaffClassificationService);
   private _matDialog = inject(MatDialog);
   public fieldVisibilityService = inject(FieldVisibilityService);
-  private _siteService = inject(SiteService);
   private _siteStaffService = inject(SiteStaffService);
   private _activatedRoute = inject(ActivatedRoute);
   private _userService = inject(UserService);

@@ -1552,6 +1552,11 @@
                 "confirm-delete-service": "Are you sure you want to delete this service?",
                 "cannot-edit-holiday": "Services cannot be edited on holidays"
             },
+            "errors": {
+                "agency-completed": "Cannot add an operating day because the agency registration has already been completed.",
+                "agency-expired": "Cannot add an operating day because the deadline to complete the registration has expired.",
+                "agency-restricted": "Cannot add an operating day because the agency is restricted."
+            },
             "modals": {
                 "edit-day": {
                     "title": "Edit Operating Day",
@@ -1636,9 +1641,9 @@
                     }
                 },
                 "day-events": {
-                    "title": "Day Events",
+                    "title": "Day Services",
                     "totalEvents": "Total events",
-                    "addService": "Add Event",
+                    "addService": "Add",
                     "addEvent": "Add Event"
                 }
             },

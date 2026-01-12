@@ -61,7 +61,7 @@
         {{ 'global.buttons.close' | transloco }}
       </button>
     </div>
-    <button mat-flat-button type="button" [color]="'primary'" (click)="onAddButtonClick()">
+    <button mat-flat-button type="button" [color]="'primary'" (click)="onAddButtonClick()" [appDisableIfNoPermission]="'site.create'" [appDisableIfAgencyRestricted]="true">
       {{ 'global.buttons.add' | transloco }}
     </button>
   </div>

@@ -50,6 +50,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
   selector: 'app-edit-board-member',
@@ -76,8 +78,8 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
     GenericTableComponent,
     MatDialogModule,
     PuertoRicoZipCodeDirective,
-    NumericOnlyDirective,
-  ],
+    NumericOnlyDirective
+],
 })
 export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);

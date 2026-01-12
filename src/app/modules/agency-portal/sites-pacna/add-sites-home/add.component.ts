@@ -1186,7 +1186,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
       // Sincronizar grupos desde servicios antes de enviar
       this.syncChildGroupsFromServices();
-      
+
       // Validar que haya grupos si hay servicios
       if (this.childGroups.length === 0) {
         this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
@@ -1751,7 +1751,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
    */
   private syncChildGroupsFromServices(): void {
     const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
-    
+
     // Extraer grupos únicos desde servicesByGroups
     this.servicesByGroups.forEach(service => {
       if (service.groupName) {
@@ -1769,7 +1769,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         }
       }
     });
-    
+
     // Sincronizar a childGroups
     this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
       siteId: 0, // Se asignará cuando se cree el sitio

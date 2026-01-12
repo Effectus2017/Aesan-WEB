@@ -41,10 +41,14 @@ export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
       {
         key: 'edit',
         label: 'staff.employees.list.buttons.edit',
+        permission: 'staff.edit',
+        disableAgencyRestriction: true,
       },
       {
         key: 'delete',
         label: 'staff.employees.list.buttons.delete',
+        permission: 'staff.delete',
+        disableAgencyRestriction: false,
       },
     ],
   }

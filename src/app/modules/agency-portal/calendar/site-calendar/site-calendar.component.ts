@@ -38,6 +38,7 @@ import { SiteCalendarServiceEditModalData } from '../site-calendar-service-edit-
 import { NotificationService } from 'app/shared/services/notification.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { Site } from 'app/shared/models/Site';
+import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 
 @Component({
   selector: 'app-site-calendar',
@@ -72,11 +73,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private fb: FormBuilder = inject(FormBuilder);
   private notificationService: NotificationService = inject(NotificationService);
   private customRouterService: CustomRouterService = inject(CustomRouterService);
+  private agencyStatusStorageService: AgencyStatusStorageService = inject(AgencyStatusStorageService);
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private document = inject<Document>(DOCUMENT);
   private readonly darkThemeClass = 'dark-theme';
   private currentTableModal: any = null; // Referencia al modal de tabla actual
+  private isCalculatingInitialDate: boolean = false; // Bandera para evitar bucles infinitos
+  private hasCalculatedInitialDate: boolean = false; // Bandera para saber si ya se calculó el viewDate inicial
 
 
   // Exponer CalendarView para uso en template
@@ -162,6 +166,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       if (resolvedData.operatingDays.operatingToDate) {
         this.operatingToDate = new Date(resolvedData.operatingDays.operatingToDate);
       }
+      // Calcular el mes inicial basado en las fechas de funcionamiento
+      this.calculateInitialViewDate();
       this.loading = false;
     } else {
       // Si no hay datos del resolver, cargar el sitio y los días de funcionamiento
@@ -191,6 +197,71 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       this.document.body.classList.add(this.darkThemeClass);
     } else {
       this.document.body.classList.remove(this.darkThemeClass);
+    }
+  }
+
+  /**
+   * Calcula el mes inicial correcto basado en las fechas de funcionamiento
+   * - Si la fecha actual está dentro del rango → usar fecha actual
+   * - Si la fecha actual está antes del rango → usar fecha de inicio
+   * - Si la fecha actual está después del rango → usar fecha de fin (último mes)
+   */
+  private calculateInitialViewDate(): void {
+    // Evitar bucles infinitos
+    if (this.isCalculatingInitialDate) {
+      return;
+    }
+
+    const today = new Date();
+
+    // Si no hay fechas límite, usar fecha actual
+    if (!this.operatingFromDate || !this.operatingToDate) {
+      this.viewDate = new Date(today);
+      this.hasCalculatedInitialDate = true;
+      return;
+    }
+
+    // Normalizar fechas a medianoche para comparación
+    const todayNormalized = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const fromDate = new Date(this.operatingFromDate.getFullYear(), this.operatingFromDate.getMonth(), this.operatingFromDate.getDate());
+    const toDate = new Date(this.operatingToDate.getFullYear(), this.operatingToDate.getMonth(), this.operatingToDate.getDate());
+
+    // Determinar qué fecha usar
+    let targetDate: Date;
+    if (todayNormalized >= fromDate && todayNormalized <= toDate) {
+      // Fecha actual está dentro del rango → usar fecha actual
+      targetDate = new Date(today);
+    } else if (todayNormalized < fromDate) {
+      // Fecha actual está antes del rango → usar fecha de inicio
+      targetDate = new Date(this.operatingFromDate);
+    } else {
+      // Fecha actual está después del rango → usar fecha de fin (último mes)
+      targetDate = new Date(this.operatingToDate);
+    }
+
+    // Solo actualizar si el mes/año cambió
+    const currentMonth = this.viewDate.getMonth();
+    const currentYear = this.viewDate.getFullYear();
+    const targetMonth = targetDate.getMonth();
+    const targetYear = targetDate.getFullYear();
+
+    if (currentMonth !== targetMonth || currentYear !== targetYear) {
+      this.viewDate = targetDate;
+
+      // Marcar que estamos calculando para evitar bucles
+      this.isCalculatingInitialDate = true;
+      this.hasCalculatedInitialDate = true;
+
+      // Recargar datos para el mes calculado
+      this.loadOperatingDays();
+
+      // Resetear la bandera después de un breve delay para permitir que loadOperatingDays complete
+      setTimeout(() => {
+        this.isCalculatingInitialDate = false;
+      }, 100);
+    } else {
+      // Si no cambió el mes, marcar como calculado de todas formas
+      this.hasCalculatedInitialDate = true;
     }
   }
 
@@ -359,6 +430,23 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openAddDayDialog(date: Date) {
+    // Verificar si la agencia está restringida antes de continuar
+    if (this.agencyStatusStorageService.isAgencyRestricted()) {
+      const status = this.agencyStatusStorageService.getAgencyRestrictedStatus();
+      let messageKey = '';
+
+      if (status?.isCompleted) {
+        messageKey = 'sites.calendar.errors.agency-completed';
+      } else if (status?.isExpired) {
+        messageKey = 'sites.calendar.errors.agency-expired';
+      } else {
+        messageKey = 'sites.calendar.errors.agency-restricted';
+      }
+
+      this.notificationService.showWarningDialog(messageKey);
+      return;
+    }
+
     // Validar que la fecha esté dentro del rango de días de funcionamiento
     if (!this.isDateWithinOperatingRange(date)) {
       this.notificationService.showWarningDialog('sites.calendar.date-out-of-range');
@@ -886,6 +974,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           if (data?.operatingToDate) {
             this.operatingToDate = new Date(data.operatingToDate);
           }
+
+          // Calcular el mes inicial solo la primera vez que se cargan las fechas límite
+          if (!this.hasCalculatedInitialDate && this.operatingFromDate && this.operatingToDate) {
+            this.calculateInitialViewDate();
+          }
+
           this.loading = false;
         },
         error: () => {

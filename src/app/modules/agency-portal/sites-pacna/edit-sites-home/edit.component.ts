@@ -69,7 +69,6 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 
-
 @Component({
   selector: 'app-edit-sites-home',
   templateUrl: './edit.component.html',
@@ -92,12 +91,10 @@ import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
     MatTimepickerModule,
     GenericTableComponent,
     NumericOnlyDirective,
-    //PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective,
-    //DynamicGridDirective,
-  ],
+    LongitudeDirective
+],
 })
 export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente

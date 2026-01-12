@@ -30,6 +30,7 @@ export interface ButtonConfig {
   disabled?: boolean;            // Estado de deshabilitado manual
   disabledTooltip?: string;      // Tooltip cuando está deshabilitado
   action?: (event: Event, element: any) => void; // Acción personalizada del botón
+  disableAgencyRestriction?: boolean; // Si es true, no se aplica la directiva appDisableIfAgencyRestricted
 }
 
 export interface FileSizeConfig {

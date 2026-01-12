@@ -12,20 +12,22 @@ import { SchoolService } from '../../../../shared/services/school.service';
 import { SchoolRequest } from "app/shared/models/Request/SchoolRequest";
 import { AuthService } from '../../../../core/auth/auth.service';
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
   selector: 'app-add-center-modal',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     TranslocoModule,
-    ReactiveFormsModule
-  ],
+    DisableIfNoPermissionDirective
+],
   templateUrl: './add-center-modal.component.html'
 })
 export class AddCenterModalComponent implements OnInit, OnDestroy {

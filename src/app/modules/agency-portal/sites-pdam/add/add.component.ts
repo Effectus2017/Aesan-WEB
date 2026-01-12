@@ -16,7 +16,6 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Agency } from 'app/shared/models/Agency';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
@@ -28,12 +27,9 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterEndTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  dateToTimeString,
-  timeToMinutes,
   dateToMinutes,
   compareByTime,
   TimeOption,
@@ -46,7 +42,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
@@ -54,7 +49,6 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CenterType } from 'app/shared/models/CenterType';
-import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
@@ -70,15 +64,11 @@ import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cf
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
-import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
-import { MatTableDataSource } from '@angular/material/table';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
-import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
@@ -114,8 +104,8 @@ import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/compon
     DynamicGridDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective,
-  ],
+    LongitudeDirective
+],
 })
 export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _unsubscribeAll: Subject<any> = new Subject<any>();

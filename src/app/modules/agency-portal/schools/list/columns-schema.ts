@@ -37,11 +37,15 @@ export const SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit-modal',
         label: 'schools.list.table.buttons.edit',
         icon: 'mat_solid:edit',
+        permission: 'school.edit',
       },
       {
         key: 'sites',
         label: 'schools.list.table.buttons.sites',
         icon: 'heroicons_outline:building-office-2',
+        permission: 'site.view',
+
+        disableAgencyRestriction: true,
       },
     ],
   },

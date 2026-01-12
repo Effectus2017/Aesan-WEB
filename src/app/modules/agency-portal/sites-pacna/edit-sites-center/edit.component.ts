@@ -82,7 +82,6 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
-import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-edit-sites-center',
@@ -109,8 +108,8 @@ import { PROGRAM_IDS } from 'app/shared/const';
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective,
-  ],
+    DynamicGridDirective
+],
 })
 export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   // Subject para suscribirse a todos los observables al destruir el componente

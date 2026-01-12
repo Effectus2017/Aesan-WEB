@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,14 +8,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
-import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { City } from 'app/shared/models/City';
@@ -38,11 +35,9 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterEndTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  timeToMinutes,
   dateToMinutes,
   compareByTime,
   TimeOption,
@@ -55,8 +50,6 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 
-import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
@@ -68,7 +61,6 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
-import { environment } from 'environments/environment';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
@@ -112,8 +104,8 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from 'app/shared/components/site-sat
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective,
-  ],
+    DynamicGridDirective
+],
 })
 export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   // Subject para suscribirse a todos los observables al destruir el componente

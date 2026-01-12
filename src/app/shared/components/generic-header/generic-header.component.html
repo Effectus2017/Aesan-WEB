@@ -95,6 +95,7 @@
         mat-raised-button
         color="primary"
         [appDisableIfNoPermission]="config.saveButtonPermission"
+        [appDisableIfAgencyRestricted]="true"
         (click)="onSave()">
         {{ config.saveButtonText | transloco }}
       </button>
@@ -121,6 +122,7 @@
         class="ml-2"
         [disabled]="isLoading || config.submitDisabled"
         [appDisableIfNoPermission]="config.submitButtonPermission"
+        [appDisableIfAgencyRestricted]="true"
         (click)="onSubmit()"
         data-cy="generic-header-submit-button"
       >

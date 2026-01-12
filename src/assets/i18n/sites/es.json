@@ -1490,6 +1490,11 @@
                 "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",
                 "cannot-edit-holiday": "No se pueden editar servicios en días feriados"
             },
+            "errors": {
+                "agency-completed": "No se puede agregar un día de funcionamiento porque el registro de la agencia ya ha sido completado.",
+                "agency-expired": "No se puede agregar un día de funcionamiento porque la fecha límite para completar el registro ha expirado.",
+                "agency-restricted": "No se puede agregar un día de funcionamiento porque la agencia está restringida."
+            },
             "modals": {
                 "edit-day": {
                     "title": "Editar Día de Funcionamiento",
@@ -1574,9 +1579,9 @@
                     }
                 },
                 "day-events": {
-                    "title": "Eventos del día",
+                    "title": "Servicios del día",
                     "totalEvents": "Total de eventos",
-                    "addService": "Agregar Servicio",
+                    "addService": "Agregar",
                     "addEvent": "Agregar Evento"
                 }
             },

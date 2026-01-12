@@ -37,11 +37,13 @@ export const CENTERS_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit-modal',
         label: 'centers.list.table.buttons.edit',
         icon: 'mat_solid:edit',
+        permission: 'school.edit',
       },
       {
         key: 'sites',
         label: 'centers.list.table.buttons.sites',
         icon: 'heroicons_outline:building-office-2',
+        permission: 'site.view',
       },
     ],
   },

@@ -10,12 +10,13 @@ import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './gener
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, takeUntil } from 'rxjs';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 
 @Component({
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule]
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule, DisableIfAgencyRestrictedDirective]
 })
 export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCheck {
   @Input() config: GenericTableConfig;

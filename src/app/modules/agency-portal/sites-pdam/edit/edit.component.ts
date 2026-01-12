@@ -82,6 +82,8 @@ import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
   selector: 'app-sites-edit',
@@ -109,8 +111,8 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective,
-  ],
+    DynamicGridDirective
+],
 })
 export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente

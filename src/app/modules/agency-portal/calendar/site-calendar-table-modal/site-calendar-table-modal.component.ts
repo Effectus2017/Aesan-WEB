@@ -13,11 +13,12 @@ import { SiteOperatingDayServiceService } from 'app/shared/services/site-operati
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SiteCalendarTableModalData } from './site-calendar-table-modal-data.interface';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 
 @Component({
   selector: 'app-school-calendar-table-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslocoModule, GenericTableComponent, ReactiveFormsModule],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslocoModule, GenericTableComponent, ReactiveFormsModule, DisableIfAgencyRestrictedDirective],
   templateUrl: './site-calendar-table-modal.component.html',
   styles: [`
     @keyframes fadeIn {

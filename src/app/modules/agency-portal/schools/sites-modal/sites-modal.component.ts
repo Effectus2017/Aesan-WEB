@@ -19,12 +19,15 @@ import { SchoolSiteService } from '../../../../shared/services/school-site.servi
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
 import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils';
 import { PROGRAM_IDS } from '../../../../shared/const';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 
 @Component({
   selector: 'app-sites-modal',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
@@ -33,8 +36,9 @@ import { PROGRAM_IDS } from '../../../../shared/const';
     MatPaginatorModule,
     TranslocoModule,
     GenericTableComponent,
-    ReactiveFormsModule
-  ],
+    DisableIfNoPermissionDirective,
+    DisableIfAgencyRestrictedDirective
+],
   templateUrl: './sites-modal.component.html',
   styles: [`
     @keyframes fadeIn {

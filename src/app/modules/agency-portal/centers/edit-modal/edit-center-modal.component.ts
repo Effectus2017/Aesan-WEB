@@ -12,20 +12,23 @@ import { SchoolService } from '../../../../shared/services/school.service';
 import { SchoolRequest } from "app/shared/models/Request/SchoolRequest";
 import { AuthService } from '../../../../core/auth/auth.service';
 import { QueryParameters } from '../../../../shared/models/QueryParameters';
+import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
+import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 
 @Component({
   selector: 'app-edit-center-modal',
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     TranslocoModule,
-    ReactiveFormsModule
-  ],
+    DisableIfNoPermissionDirective
+],
   templateUrl: './edit-center-modal.component.html'
 })
 export class EditCenterModalComponent implements OnInit, OnDestroy {

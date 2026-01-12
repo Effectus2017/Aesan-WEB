@@ -69,6 +69,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
     customButtonClass: 'text-white bg-[#F1A621]',
     customButtonIcon: 'mat_outline:add',
     customButtonIconEnabled: true,
+    customButtonPermission: 'staff.create',
     searchInputPlaceholder: 'staff.boardMembers.list.search.placeholder'
   };
 

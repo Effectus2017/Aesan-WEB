@@ -25,12 +25,10 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterEndTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
   dateToMinutes,
-  timeToMinutes,
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
@@ -65,7 +63,6 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
-import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
@@ -77,7 +74,6 @@ import { ServiceByGroupDialogData } from 'app/shared/components/add-service-by-g
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
-import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-add-sites-center',
