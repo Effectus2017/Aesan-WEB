@@ -70,6 +70,27 @@
         "cfr-link-text": "7 CFR 225.2"
       }
     },
+    "board-meetings-per-year": {
+      "label": "How many meetings are held during the year?",
+      "required": "This field is required",
+      "min-value": "The number of meetings must be greater than 1",
+      "not-eligible": {
+        "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: **7 CFR**",
+        "cfr-link-text": "7 CFR"
+      }
+    },
+    "board-meets-regularly": {
+      "label": "Does the Board of Directors meet regularly?",
+      "required": "This field is required",
+      "not-eligible": {
+        "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: **7 CFR**",
+        "cfr-link-text": "7 CFR"
+      }
+    },
+    "board-executive-authority": {
+      "label": "Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director?",
+      "required": "This field is required"
+    },
     "sponsor-information": "Sponsor Information",
     "sponsor-information-description": "Here you can add the sponsor information",
     "agency": {

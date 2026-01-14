@@ -56,6 +56,7 @@ export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHand
       optionKey: [null, Validators.required],
       booleanValue: [null, Validators.required],
       isActive: [true],
+      isDefaultValue: [false],
       displayOrder: [0, Validators.required],
       position: [1, Validators.required],
     }),
@@ -96,6 +97,7 @@ export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHand
       optionKey: data.optionKey,
       booleanValue: data.booleanValue,
       isActive: data.isActive,
+      isDefaultValue: data.isDefaultValue || false,
       displayOrder: data.displayOrder,
     });
 
@@ -132,6 +134,7 @@ export class EditOptionSelectionComponent implements OnInit, OnGenericHeaderHand
       optionKey: formValues.optionKey,
       booleanValue: formValues.booleanValue,
       isActive: formValues.isActive,
+      isDefaultValue: formValues.isDefaultValue || false,
       displayOrder,
     };
 

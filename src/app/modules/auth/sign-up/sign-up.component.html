@@ -260,7 +260,10 @@
           <!-- If you have a Public Alliance contract, please specify the type of contract -->
           <!-- Socio-Económico (17), Híbrido (18) -->
           <!-- Este campo NO se debe mostrar para PSAV, solo para PDAM y PACNA -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+          <!-- ¿Es usted una Entidad Auspiciadora de Hogares? -->
+          <!-- Are you a Day Care Homes? -->
+          <!-- No, Sí, Ambos - Ahora usa OptionSelection -->
+          <div class="grid grid-cols-1 col-span-12 gap-4" appDynamicGrid="2">
             <mat-form-field data-cy="public-alliance-contract-field" *ngIf="signUpForm && !isPSAVProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.public-alliance-contract.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'publicAllianceContractId'" data-cy="public-alliance-contract-input">
@@ -272,12 +275,7 @@
                 {{ "sign-up.public-alliance-contract.required" | transloco }}
               </mat-error>
             </mat-form-field>
-          </div>
 
-          <!-- ¿Es usted una Entidad Auspiciadora de Hogares? -->
-          <!-- Are you a Day Care Homes? -->
-          <!-- No, Sí, Ambos - Ahora usa OptionSelection -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
             <mat-form-field data-cy="is-day-care-home-field" *ngIf="signUpForm && isPACNAProgram(signUpForm.get('program')?.value)">
               <mat-label>{{ "sign-up.is-day-care-home.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'isDayCareHomeId'" [compareWith]="compareItems" data-cy="is-day-care-home-input">
@@ -287,6 +285,63 @@
               </mat-select>
               <mat-error *ngIf="signUpForm.get('isDayCareHomeId')?.hasError('required') && (signUpForm.get('isDayCareHomeId')?.touched || signUpForm.get('isDayCareHomeId')?.dirty)">
                 {{ "sign-up.is-day-care-home.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- ¿Cuántas reuniones se realizan durante el año? y ¿La Junta de Directores se reúne regularmente? (Solo para PACNA) -->
+          <!-- How many meetings are held during the year? and Does the Board of Directors meet regularly? (Only for PACNA) -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2" *ngIf="isPACNAProgram(signUpForm.get('program')?.value)">
+            <mat-form-field data-cy="board-meetings-per-year-field">
+              <mat-label>{{ "sign-up.board-meetings-per-year.label" | transloco }}</mat-label>
+              <input
+                matInput
+                inputmode="numeric"
+                pattern="[0-9]*"
+                [formControlName]="'boardMeetingsPerYear'"
+                (blur)="checkBoardMeetingsPerYear()"
+                appNumericOnly
+                data-cy="board-meetings-per-year-input"
+              />
+              <mat-error *ngIf="signUpForm.get('boardMeetingsPerYear')?.hasError('required') && (signUpForm.get('boardMeetingsPerYear')?.touched || signUpForm.get('boardMeetingsPerYear')?.dirty)">
+                {{ "sign-up.board-meetings-per-year.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('boardMeetingsPerYear')?.value !== null && signUpForm.get('boardMeetingsPerYear')?.value !== undefined && signUpForm.get('boardMeetingsPerYear')?.value <= 1 && (signUpForm.get('boardMeetingsPerYear')?.touched || signUpForm.get('boardMeetingsPerYear')?.dirty)">
+                {{ "sign-up.board-meetings-per-year.min-value" | transloco }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field data-cy="board-meets-regularly-field">
+              <mat-label>{{ "sign-up.board-meets-regularly.label" | transloco }}</mat-label>
+              <mat-select [formControlName]="'boardMeetsRegularly'" (selectionChange)="checkBoardMeetsRegularly()" data-cy="board-meets-regularly-select">
+                <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="board-meets-regularly-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="signUpForm.get('boardMeetsRegularly')?.hasError('required') && (signUpForm.get('boardMeetsRegularly')?.touched || signUpForm.get('boardMeetsRegularly')?.dirty)">
+                {{ "sign-up.board-meets-regularly.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- ¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo? (Solo para PACNA) -->
+          <!-- Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director? (Only for PACNA) -->
+          <!-- Contratar, Despedir, N/A (selección múltiple) -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="isPACNAProgram(signUpForm.get('program')?.value)">
+            <mat-form-field data-cy="board-executive-authority-field">
+              <mat-label>{{ "sign-up.board-executive-authority.label" | transloco }}</mat-label>
+              <mat-select
+                [formControlName]="'boardExecutiveAuthority'"
+                multiple
+                [compareWith]="compareItems"
+                data-cy="board-executive-authority-select"
+              >
+                <mat-option *ngFor="let option of boardExecutiveAuthorityOptions" [value]="option.id" data-cy="board-executive-authority-option">
+                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="signUpForm.get('boardExecutiveAuthority')?.hasError('required') && (signUpForm.get('boardExecutiveAuthority')?.touched || signUpForm.get('boardExecutiveAuthority')?.dirty)">
+                {{ "sign-up.board-executive-authority.required" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>

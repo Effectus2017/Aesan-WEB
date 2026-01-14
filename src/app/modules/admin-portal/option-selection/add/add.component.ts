@@ -52,6 +52,7 @@ export class AddOptionSelectionComponent implements OnInit, OnGenericHeaderHandl
       nameEN: [null, Validators.required],
       optionKey: [null, Validators.required],
       isActive: [true],
+      isDefaultValue: [false],
       position: [1, Validators.required],
     }),
     saveButtonShow: true,
@@ -100,6 +101,7 @@ export class AddOptionSelectionComponent implements OnInit, OnGenericHeaderHandl
         optionKey: formValues.optionKey,
         booleanValue: formValues.booleanValue,
         isActive: formValues.isActive,
+        isDefaultValue: formValues.isDefaultValue || false,
         displayOrder,
       };
 

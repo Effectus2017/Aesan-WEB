@@ -169,6 +169,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Early Head Start, Head Start, N/A
   participatesInHeadStartProgramOptions: OptionSelection[] = [];
 
+  // ¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo? (Solo para PACNA)
+  // Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director? (Only for PACNA)
+  // Contratar, Despedir, N/A
+  boardExecutiveAuthorityOptions: OptionSelection[] = [];
+
   // Posición del Staff
   // Staff Position
   // Administrativo (19), Operativo (20), Miembro del Consejo (21)
@@ -320,6 +325,19 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Does your Entity currently participate in any of the following programs? (Only for PSAV)
       // Early Head Start, Head Start, N/A
       participatesInHeadStartProgramId: [null],
+
+      // ¿Cuántas reuniones se realizan durante el año? (Solo para PACNA)
+      // How many meetings are held during the year? (Only for PACNA)
+      boardMeetingsPerYear: [null],
+
+      // ¿La Junta de Directores se reúne regularmente? (Solo para PACNA)
+      // Does the Board of Directors meet regularly? (Only for PACNA)
+      boardMeetsRegularly: [null],
+
+      // ¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo? (Solo para PACNA)
+      // Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director? (Only for PACNA)
+      // Contratar, Despedir, N/A (selección múltiple)
+      boardExecutiveAuthority: [[]],
     });
   }
 
@@ -375,16 +393,21 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Early Head Start, Head Start, N/A
       this.participatesInHeadStartProgramOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'headStartProgram');
 
-      // Establecer "N/A" como valor por defecto si el programa es PSAV
+      // Establecer el valor por defecto si el programa es PSAV
       const currentProgram = this.signUpForm.get('program')?.value;
       if (isPSAVProgram(currentProgram)) {
-        const naOption = this.participatesInHeadStartProgramOptions.find(
-          (option: OptionSelection) => option.name === 'N/A' || option.nameEN === 'N/A'
+        const defaultOption = this.participatesInHeadStartProgramOptions.find(
+          (option: OptionSelection) => option.isDefaultValue === true
         );
-        if (naOption) {
-          this.signUpForm.get('participatesInHeadStartProgramId')?.setValue(naOption);
+        if (defaultOption) {
+          this.signUpForm.get('participatesInHeadStartProgramId')?.setValue(defaultOption);
         }
       }
+
+      // ¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo? (Solo para PACNA)
+      // Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director? (Only for PACNA)
+      // Contratar, Despedir, N/A
+      this.boardExecutiveAuthorityOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'boardExecutiveAuthority');
 
       // Posición del Staff
       // Staff Position
@@ -477,13 +500,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         if (isPSAVProgram(currentProgram)) {
           participatesInHeadStartProgramControl.setValidators([Validators.required]);
 
-          // Establecer "N/A" como valor por defecto si no hay valor seleccionado
+          // Establecer el valor por defecto si no hay valor seleccionado
           if (!participatesInHeadStartProgramControl.value) {
-            const naOption = this.participatesInHeadStartProgramOptions.find(
-              (option: OptionSelection) => option.name === 'N/A' || option.nameEN === 'N/A'
+            const defaultOption = this.participatesInHeadStartProgramOptions.find(
+              (option: OptionSelection) => option.isDefaultValue === true
             );
-            if (naOption) {
-              participatesInHeadStartProgramControl.setValue(naOption);
+            if (defaultOption) {
+              participatesInHeadStartProgramControl.setValue(defaultOption);
             }
           }
         } else {
@@ -513,6 +536,39 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         if (!isPACNAProgram(currentProgram)) {
           this.signUpForm.get('extendedHours').setValue(null);
         }
+
+        // --- Lógica para boardMeetingsPerYear ---
+        const boardMeetingsPerYearControl = this.signUpForm.get('boardMeetingsPerYear');
+        if (isPACNAProgram(currentProgram)) {
+          boardMeetingsPerYearControl.setValidators([Validators.required]);
+        } else {
+          boardMeetingsPerYearControl.clearValidators();
+          boardMeetingsPerYearControl.setValue(null);
+        }
+        boardMeetingsPerYearControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // --- Lógica para boardMeetsRegularly ---
+        const boardMeetsRegularlyControl = this.signUpForm.get('boardMeetsRegularly');
+        if (isPACNAProgram(currentProgram)) {
+          boardMeetsRegularlyControl.setValidators([Validators.required]);
+        } else {
+          boardMeetsRegularlyControl.clearValidators();
+          boardMeetsRegularlyControl.setValue(null);
+        }
+        boardMeetsRegularlyControl.updateValueAndValidity();
+        // --- Fin lógica ---
+
+        // --- Lógica para boardExecutiveAuthority ---
+        const boardExecutiveAuthorityControl = this.signUpForm.get('boardExecutiveAuthority');
+        if (isPACNAProgram(currentProgram)) {
+          boardExecutiveAuthorityControl.setValidators([Validators.required]);
+        } else {
+          boardExecutiveAuthorityControl.clearValidators();
+          boardExecutiveAuthorityControl.setValue([]);
+        }
+        boardExecutiveAuthorityControl.updateValueAndValidity();
+        // --- Fin lógica ---
 
         // Verificar el registro de educación básica si ya tiene un valor
         const basicEducationRegistry = this.signUpForm.get('basicEducationRegistry').value;
@@ -573,6 +629,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this.signUpForm.get('typeOfEntityId').valueChanges.subscribe(() => {
       this.checkTypeOfEntity();
     });
+
+    // No suscribirse a valueChanges para boardMeetingsPerYear
+    // La validación se ejecuta solo en el evento blur del input
+
+    // No suscribirse a valueChanges para boardMeetsRegularly
+    // La validación se ejecuta solo en el evento selectionChange del mat-select
   }
 
   ngOnDestroy(): void {
@@ -749,6 +811,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const participatesInHeadStartProgramId =
       formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
     const servicesOfferedSince: string | null = formValues.servicesOfferedSince ? new Date(formValues.servicesOfferedSince).toISOString() : null;
+    const boardMeetingsPerYear = formValues.boardMeetingsPerYear == null ? null : formValues.boardMeetingsPerYear;
+    const boardMeetsRegularly = formValues.boardMeetsRegularly == null ? null : formValues.boardMeetsRegularly;
+    const boardExecutiveAuthority = formValues.boardExecutiveAuthority == null || formValues.boardExecutiveAuthority.length === 0 ? null : formValues.boardExecutiveAuthority;
 
     const firstName = formValues.firstName;
     const middleName = formValues.middleName;
@@ -837,6 +902,16 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Early Head Start, Head Start, N/A
         participatesInHeadStartProgramId: participatesInHeadStartProgramId,
         servicesOfferedSince: servicesOfferedSince ?? undefined,
+        // ¿Cuántas reuniones se realizan durante el año? (Solo para PACNA)
+        // How many meetings are held during the year? (Only for PACNA)
+        boardMeetingsPerYear: boardMeetingsPerYear,
+        // ¿La Junta de Directores se reúne regularmente? (Solo para PACNA)
+        // Does the Board of Directors meet regularly? (Only for PACNA)
+        boardMeetsRegularly: boardMeetsRegularly,
+        // ¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo? (Solo para PACNA)
+        // Does the Board of Directors have the authority to perform any of the following functions towards the Executive Director? (Only for PACNA)
+        // Contratar, Despedir, N/A
+        boardExecutiveAuthority: boardExecutiveAuthority,
       },
       staff: {
         // Datos del Contacto
@@ -1142,7 +1217,95 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
   // Copiar Dirección Física
   // Si el checkbox está marcado, copiar los valores de la dirección física a la postal
-  // Si el checkbox no está marcado, limpiar los campos de la dirección postal
+    // Check Board Meetings Per Year
+    // Validar que sea > 1, si no, bloquear formulario y mostrar notificación
+  checkBoardMeetingsPerYear(): void {
+    const selectedProgram = this.signUpForm.value.program;
+    const boardMeetingsPerYear = this.signUpForm.get('boardMeetingsPerYear')?.value;
+
+    // No validar si no hay programa seleccionado o si boardMeetingsPerYear es null/undefined
+    if (!selectedProgram || boardMeetingsPerYear === null || boardMeetingsPerYear === undefined) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Solo validar para PACNA
+    if (!isPACNAProgram(selectedProgram)) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Verificar elegibilidad: debe ser > 1
+    if (boardMeetingsPerYear <= 1) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.notification.title'),
+          message: this._translocoService.translate('sign-up.board-meetings-per-year.not-eligible.message'),
+          cfrLink: {
+            url: '', // Pendiente validar URL exacta
+            text: this._translocoService.translate('sign-up.board-meetings-per-year.not-eligible.cfr-link-text'),
+          },
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
+      });
+      return;
+    }
+
+    // Si pasa la validación, habilitar el formulario
+    this.isEligible = true;
+    enableAllControls(this.signUpForm);
+  }
+
+  // Check Board Meets Regularly
+  // Si es false, bloquear formulario y mostrar notificación con mensaje de 7 CFR
+  checkBoardMeetsRegularly(): void {
+    const selectedProgram = this.signUpForm.value.program;
+    const boardMeetsRegularly = this.signUpForm.get('boardMeetsRegularly')?.value;
+
+    // No validar si no hay programa seleccionado o si boardMeetsRegularly es null/undefined
+    if (!selectedProgram || boardMeetsRegularly === null || boardMeetsRegularly === undefined) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Solo validar para PACNA
+    if (!isPACNAProgram(selectedProgram)) {
+      this.isEligible = true;
+      enableAllControls(this.signUpForm);
+      return;
+    }
+
+    // Verificar elegibilidad: si es false, bloquear
+    if (boardMeetsRegularly === false) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.notification.title'),
+          message: this._translocoService.translate('sign-up.board-meets-regularly.not-eligible.message'),
+          cfrLink: {
+            url: '', // Pendiente validar URL exacta
+            text: this._translocoService.translate('sign-up.board-meets-regularly.not-eligible.cfr-link-text'),
+          },
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
+      });
+      return;
+    }
+
+    // Si pasa la validación, habilitar el formulario
+    this.isEligible = true;
+    enableAllControls(this.signUpForm);
+  }
+
+    // Si el checkbox no está marcado, limpiar los campos de la dirección postal
   onCheckboxChange(event: any): void {
     if (event.checked) {
       // Obtener los valores de la dirección física
@@ -1272,6 +1435,25 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       this.isEligible = false;
       disableAllControlsExcept(this.signUpForm, 'program');
       this.openCfrInfoByKey('cfr-info-dialog.cfr-226-15-a');
+      return;
+    }
+
+    // En PSAV, si está "En Proceso" (id 3), bloquear y mostrar CFR info
+    if (isPSAVProgram(selectedProgram) && statusId === 3) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.pdam-psav-not-eligible.title'),
+          message: this._translocoService.translate('sign-up.pdam-psav-not-eligible.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.14',
+            text: this._translocoService.translate('sign-up.pdam-psav-not-eligible.cfr-link-text'),
+          },
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
+      });
       return;
     }
 
