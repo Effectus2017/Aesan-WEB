@@ -1189,7 +1189,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           title: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.title'),
           message: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.message'),
           cfrLink: {
-            url: '', // Pendiente validar URL exacta
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-225/subpart-A/section-225.2',
             text: this._translocoService.translate('sign-up.participates-in-head-start-program.not-eligible.cfr-link-text'),
           },
         },

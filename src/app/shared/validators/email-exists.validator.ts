@@ -37,6 +37,12 @@ export function emailExistsValidator(
   debounceTimeMs: number = 500
 ): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
+    // Si el control no ha sido tocado o modificado por el usuario, no validar
+    // Esto evita que se ejecute la validación al cargar el formulario
+    if (!control.touched && !control.dirty) {
+      return of(null);
+    }
+
     // Si no hay valor, retornar null (no hay error)
     if (!control.value || typeof control.value !== 'string' || control.value.trim() === '') {
       return of(null);
