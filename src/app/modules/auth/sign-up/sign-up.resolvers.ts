@@ -28,7 +28,7 @@ export const initialSignUpResolver: ResolveFn<any> = () => {
       names: 'PDAM,PSAV,PACNA',
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram',
+      optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority',
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',

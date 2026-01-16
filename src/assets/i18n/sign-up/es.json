@@ -75,6 +75,27 @@
         "cfr-link-text": "7 CFR 225.2"
       }
     },
+    "board-meetings-per-year": {
+      "label": "¿Cuántas reuniones se realizan durante el año?",
+      "required": "Este campo es requerido",
+      "min-value": "El número de reuniones debe ser mayor a 1",
+      "not-eligible": {
+        "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: **7 CFR**",
+        "cfr-link-text": "7 CFR"
+      }
+    },
+    "board-meets-regularly": {
+      "label": "¿La Junta de Directores se reúne regularmente?",
+      "required": "Este campo es requerido",
+      "not-eligible": {
+        "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: **7 CFR**",
+        "cfr-link-text": "7 CFR"
+      }
+    },
+    "board-executive-authority": {
+      "label": "¿La Junta de Directores tiene la autoridad para realizar alguna de las siguientes funciones hacia el Director Ejecutivo?",
+      "required": "Este campo es requerido"
+    },
     "sponsor-information": "Información del Auspiciador",
     "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
     "agency": {

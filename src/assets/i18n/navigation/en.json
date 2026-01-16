@@ -111,6 +111,7 @@
             "center-types": "Center Types",
             "residential-types": "Residential Types",
             "email-templates": "Email Templates",
+            "email-logs": "Email Logs",
             "message-templates": "Message Templates"
         }
     },

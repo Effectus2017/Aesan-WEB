@@ -1,0 +1,71 @@
+{
+    "email-logs": {
+        "list": {
+            "title": "Registro de Correos Electrónicos",
+            "search": {
+                "placeholder": "Buscar por correo electrónico"
+            },
+            "columns": {
+                "recipientEmail": "Correo Destinatario",
+                "subject": "Asunto",
+                "emailType": "Tipo de Correo",
+                "status": "Estado",
+                "attemptedAt": "Fecha de Intento",
+                "sentAt": "Fecha de Envío",
+                "retryCount": "Reintentos"
+            },
+            "filters": {
+                "status": {
+                    "label": "Estado",
+                    "all": "Todos",
+                    "sent": "Enviado",
+                    "failed": "Fallido",
+                    "pending": "Pendiente"
+                },
+                "emailType": {
+                    "label": "Tipo de Correo",
+                    "all": "Todos",
+                    "welcomeAgency": "Bienvenida Agencia",
+                    "approvalSponsor": "Aprobación Auspiciador",
+                    "denialSponsor": "Denegación Auspiciador",
+                    "agencyAssignment": "Asignación de Agencia",
+                    "agencyUnassignment": "Desasignación de Agencia",
+                    "passwordChanged": "Cambio de Contraseña",
+                    "passwordReset": "Restablecimiento de Contraseña",
+                    "temporaryPassword": "Contraseña Temporera",
+                    "generic": "Genérico"
+                },
+                "showOnlyFailed": "Solo mostrar fallidos"
+            },
+            "status": {
+                "sent": "Enviado",
+                "failed": "Fallido",
+                "pending": "Pendiente"
+            },
+            "buttons": {
+                "view": "Ver",
+                "resend": "Reenviar"
+            },
+            "resend": {
+                "title": "Reenviar Correo",
+                "message": "¿Está seguro que desea reenviar el correo a {{ email }}?",
+                "confirm": "Reenviar",
+                "cancel": "Cancelar",
+                "success": "Correo reenviado exitosamente.",
+                "error": "Error al reenviar el correo."
+            },
+            "details": {
+                "title": "Detalles del Correo",
+                "recipientEmail": "Correo Destinatario",
+                "subject": "Asunto",
+                "emailType": "Tipo de Correo",
+                "status": "Estado",
+                "attemptedAt": "Fecha de Intento",
+                "sentAt": "Fecha de Envío",
+                "retryCount": "Reintentos",
+                "errorMessage": "Mensaje de Error",
+                "close": "Cerrar"
+            }
+        }
+    }
+}

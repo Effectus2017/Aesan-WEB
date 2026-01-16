@@ -1,0 +1,71 @@
+{
+    "email-logs": {
+        "list": {
+            "title": "Email Logs",
+            "search": {
+                "placeholder": "Search by email"
+            },
+            "columns": {
+                "recipientEmail": "Recipient Email",
+                "subject": "Subject",
+                "emailType": "Email Type",
+                "status": "Status",
+                "attemptedAt": "Attempted At",
+                "sentAt": "Sent At",
+                "retryCount": "Retry Count"
+            },
+            "filters": {
+                "status": {
+                    "label": "Status",
+                    "all": "All",
+                    "sent": "Sent",
+                    "failed": "Failed",
+                    "pending": "Pending"
+                },
+                "emailType": {
+                    "label": "Email Type",
+                    "all": "All",
+                    "welcomeAgency": "Welcome Agency",
+                    "approvalSponsor": "Approval Sponsor",
+                    "denialSponsor": "Denial Sponsor",
+                    "agencyAssignment": "Agency Assignment",
+                    "agencyUnassignment": "Agency Unassignment",
+                    "passwordChanged": "Password Changed",
+                    "passwordReset": "Password Reset",
+                    "temporaryPassword": "Temporary Password",
+                    "generic": "Generic"
+                },
+                "showOnlyFailed": "Show only failed"
+            },
+            "status": {
+                "sent": "Sent",
+                "failed": "Failed",
+                "pending": "Pending"
+            },
+            "buttons": {
+                "view": "View",
+                "resend": "Resend"
+            },
+            "resend": {
+                "title": "Resend Email",
+                "message": "Are you sure you want to resend the email to {{ email }}?",
+                "confirm": "Resend",
+                "cancel": "Cancel",
+                "success": "Email resent successfully.",
+                "error": "Error resending email."
+            },
+            "details": {
+                "title": "Email Details",
+                "recipientEmail": "Recipient Email",
+                "subject": "Subject",
+                "emailType": "Email Type",
+                "status": "Status",
+                "attemptedAt": "Attempted At",
+                "sentAt": "Sent At",
+                "retryCount": "Retry Count",
+                "errorMessage": "Error Message",
+                "close": "Close"
+            }
+        }
+    }
+}

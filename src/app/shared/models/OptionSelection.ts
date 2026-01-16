@@ -6,4 +6,5 @@ export interface OptionSelection {
     booleanValue: boolean;
     isActive: boolean;
     displayOrder: number;
+    isDefaultValue: boolean;
 }
