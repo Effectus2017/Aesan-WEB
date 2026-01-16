@@ -95,6 +95,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/email-template',
       },
       {
+        id: 'administration.email-logs',
+        title: 'navigation.administration.email-logs',
+        type: 'basic',
+        icon: 'heroicons_solid:envelope-open',
+        link: '/email-logs',
+      },
+      {
         id: 'administration.message-templates',
         title: 'navigation.administration.message-templates',
         type: 'basic',

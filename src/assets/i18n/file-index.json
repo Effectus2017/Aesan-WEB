@@ -74,5 +74,7 @@
   "./assets/i18n/roles/es.json",
   "./assets/i18n/roles/en.json",
   "./assets/i18n/agency-status/es.json",
-  "./assets/i18n/agency-status/en.json"
+  "./assets/i18n/agency-status/en.json",
+  "./assets/i18n/email-logs/es.json",
+  "./assets/i18n/email-logs/en.json"
 ]

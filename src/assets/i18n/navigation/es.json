@@ -60,6 +60,7 @@
             "staff-types": "Tipos de Personal",
             "residential-types": "Tipos Residenciales",
             "email-templates": "Templates de Email",
+            "email-logs": "Registro de Correos",
             "message-templates": "Templates de Mensajes"
         },
         "household": "Hogares",
