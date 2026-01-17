@@ -337,6 +337,17 @@
           "updateRelationship": "Error updating relationship",
           "deleteRelationship": "Error deleting relationship",
           "loadingData": "Error loading data"
+        },
+        "warning": {
+          "noAvailableStaff": "No staff members available to relate. All staff members are already related or only the current user remains."
+        }
+      },
+      "delete": {
+        "confirm": {
+          "title": "Confirm deletion",
+          "message": "Are you sure you want to delete this relationship?",
+          "confirm": "Delete",
+          "cancel": "Cancel"
         }
       }
     },
@@ -567,7 +578,8 @@
         "general": "Error updating staff",
         "incompleteFields": "Please complete all required fields",
         "classificationRequired": "Classification is required for employees",
-        "contactLocationRequired": "Contact and location fields are required for board members"
+        "contactLocationRequired": "Contact and location fields are required for board members",
+        "staffTypeRequired": "Staff type is required and cannot be 0"
       },
       "status-modal": {
         "title": "Change Staff Status",

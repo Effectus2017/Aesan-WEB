@@ -48,9 +48,12 @@ export class AgencyStatusService {
    * Obtiene todos los estados de agencia de la base de datos
    * @param queryParameters Los parámetros de consulta
    * @returns Los estados de agencia
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
    */
   getAllAgencyStatusFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencyStatuses.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-agency-status-from-db`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => this._agencyStatuses.next(response))
+    );
   }
 
   /**

@@ -1,0 +1,58 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header -->
+  <div
+    class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col">
+      <div class="text-lg font-medium">
+        {{ 'keyboard-shortcuts.modal.title' | transloco }}
+      </div>
+      <div class="text-sm opacity-90">
+        {{ 'keyboard-shortcuts.modal.subtitle' | transloco }}
+      </div>
+    </div>
+    <button
+      mat-icon-button
+      [mat-dialog-close]="null"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon
+        class="text-current"
+        [svgIcon]="'heroicons_outline:x-mark'"
+        aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
+    <!-- Lista simple de shortcuts -->
+    <div class="flex flex-col gap-4">
+      <div *ngFor="let shortcut of shortcuts" class="flex items-start gap-4 py-3 border-b border-gray-200 dark:border-gray-700 last:border-0">
+        <div class="flex-shrink-0">
+          <span class="inline-flex items-center px-3 py-1 rounded-md font-mono font-semibold text-sm bg-black/8 text-black/87 dark:bg-white/10 dark:text-white/87">
+            {{ shortcut.key }}
+          </span>
+        </div>
+        <div class="flex-1">
+          <p class="text-base">
+            {{ shortcut.action | transloco }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div
+    class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="text-sm text-secondary mb-4 sm:mb-0">
+      {{ 'keyboard-shortcuts.modal.footer.hint' | transloco }}
+    </div>
+    <button
+      mat-flat-button
+      [color]="'primary'"
+      (click)="close()">
+      {{ 'global.buttons.close' | transloco }}
+    </button>
+  </div>
+</div>

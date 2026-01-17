@@ -69,9 +69,12 @@ export class GeoService {
    * Obtiene todas las ciudades.
    * @param queryParameters Los parámetros de consulta para filtrar las ciudades.
    * @returns Un observable que emite todas las ciudades.
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
    */
   getCitiesFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-cities-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._cities.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-cities-from-db`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => this._cities.next(response))
+    );
   }
 
   /**
@@ -87,9 +90,12 @@ export class GeoService {
    * Obtiene todas las regiones.
    * @param queryParameters Los parámetros de consulta para filtrar las regiones.
    * @returns Un observable que emite todas las regiones.
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
    */
   getRegionsFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-regions-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._regions.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-regions-from-db`, getHttpOptions(queryParameters)).pipe(
+      tap((response: any) => this._regions.next(response))
+    );
   }
 
   /**

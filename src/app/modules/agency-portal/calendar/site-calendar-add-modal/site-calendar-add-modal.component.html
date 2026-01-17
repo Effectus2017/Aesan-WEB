@@ -69,7 +69,7 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
+      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
         {{ 'global.buttons.add' | transloco }}
       </button>
     </div>

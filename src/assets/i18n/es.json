@@ -7,7 +7,8 @@
             "edit": "Editar",
             "delete": "Eliminar",
             "add": "Agregar",
-            "addPermission": "Agregar Permiso"
+            "addPermission": "Agregar Permiso",
+            "clear": "Limpiar"
         },
         "tooltips": {
             "addPermission": "Agregar un nuevo permiso al usuario",
@@ -169,6 +170,51 @@
                     "deleteDisabled": "No tiene permisos para eliminar tipos de patrocinador"
                 }
             }
+        }
+    },
+    "keyboard-shortcuts": {
+        "modal": {
+            "title": "Atajos de Teclado",
+            "subtitle": "Lista de todos los atajos disponibles",
+            "search": {
+                "placeholder": "Buscar atajos..."
+            },
+            "category": {
+                "label": "Categoría",
+                "all": "Todas"
+            },
+            "table": {
+                "action": "Acción",
+                "shortcut": "Atajo",
+                "description": "Descripción",
+                "category": "Categoría"
+            },
+            "no-data": {
+                "title": "No hay atajos disponibles",
+                "message": "Los atajos de teclado aparecerán aquí cuando se configuren en los botones."
+            },
+            "footer": {
+                "hint": "Pasa el cursor sobre los botones para ver sus atajos de teclado"
+            }
+        },
+        "categories": {
+            "formularios": "Formularios",
+            "modales": "Modales",
+            "crud": "CRUD",
+            "navegacion": "Navegación",
+            "acciones": "Acciones",
+            "sitios": "Sitios",
+            "calendario": "Calendario",
+            "general": "General"
+        },
+        "button": {
+            "tooltip": "Ver atajos de teclado",
+            "menu-item": "Atajos de teclado"
+        },
+        "list": {
+            "enter-save": "Presionando Enter para Guardar",
+            "escape-close": "Esc para salir",
+            "ctrl-a-add": "Ctrl + A para agregar un nuevo elemento"
         }
     }
 }

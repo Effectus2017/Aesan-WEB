@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { UntypedFormBuilder, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -562,7 +562,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     // Validar que staffTypeId sea válido
     if (!staffTypeId) {
-      this._notificationService.showErrorDialog('El tipo de personal es requerido y no puede ser 0.');
+      this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.staffTypeRequired'));
       this.isLoading = false;
       return;
     }
@@ -790,18 +790,90 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
    * Abre el modal para agregar una nueva relación
    */
   onAddRelationship(): void {
-    const dialogRef = this._matDialog.open(AddRelationshipModalComponent, {
-      width: '500px',
-      maxWidth: '90vw',
-      data: {
-        currentStaffId: this.headerConfig.formGroup.get('id')?.value,
-      },
-    });
+    const currentStaffId = this.headerConfig.formGroup.get('id')?.value;
+    const agencyId = this._authService.getAgencyId();
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadStaffRelationships();
-      }
+    // Consultar personas disponibles y relaciones existentes antes de abrir el modal
+    const staffQueryParams: QueryParameters = {
+      take: 25,
+      skip: 0,
+      name: null,
+      alls: false,
+      excludeRelated: false,
+      isList: false,
+      staffTypeId: null,
+      agencyId: agencyId,
+    };
+
+    const relationshipQueryParams: QueryParameters = {
+      id: currentStaffId,
+      isActive: true,
+    };
+
+    // Consultar tanto el staff como las relaciones existentes
+    forkJoin({
+      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
+      relationships: this._staffRelationshipService.getRelationshipsByStaffId(relationshipQueryParams)
+    }).subscribe({
+      next: (response) => {
+        // Verificar que la respuesta de staff tenga datos
+        const staffData = response?.staff?.body?.data;
+
+        if (!staffData || !Array.isArray(staffData) || staffData.length === 0) {
+          // Si no hay datos, mostrar mensaje y no abrir modal
+          this._notificationService.showWarningDialog(
+            this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff')
+          );
+          return;
+        }
+
+        // Obtener IDs de personas ya relacionadas
+        // La respuesta de getRelationshipsByStaffId viene en response.body directamente
+        const relationshipsData = response?.relationships?.body || response?.relationships || [];
+        const relationships = Array.isArray(relationshipsData) ? relationshipsData : [];
+        const relatedStaffIds = new Set<number>();
+
+        relationships.forEach((rel: any) => {
+          if (rel.relatedStaff?.id) {
+            relatedStaffIds.add(rel.relatedStaff.id);
+          }
+          if (rel.staff?.id && rel.staff.id !== currentStaffId) {
+            relatedStaffIds.add(rel.staff.id);
+          }
+        });
+
+        // Filtrar el usuario actual y las personas ya relacionadas
+        const availableStaff = staffData.filter(
+          (staff: Staff) => staff.id !== currentStaffId && !relatedStaffIds.has(staff.id)
+        );
+
+        // Si no hay personas disponibles después de filtrar, mostrar mensaje y no abrir modal
+        if (availableStaff.length === 0) {
+          this._notificationService.showWarningDialog(
+            this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff')
+          );
+          return;
+        }
+        // Si hay personas disponibles, abrir el modal normalmente
+        const dialogRef = this._matDialog.open(AddRelationshipModalComponent, {
+          width: '500px',
+          maxWidth: '90vw',
+          data: {
+            currentStaffId: currentStaffId,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.loadStaffRelationships();
+          }
+        });
+      },
+      error: (error) => {
+        this._notificationService.showErrorDialog(
+          this._translocoService.translate('staff.relationship.modal.error.loadingData')
+        );
+      },
     });
   }
 
@@ -868,15 +940,15 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     // Mostrar confirmación antes de eliminar
     const dialogRef = this._fuseConfirmationService.open({
-      title: 'Confirmar eliminación',
-      message: '¿Está seguro de que desea eliminar esta relación?',
+      title: this._translocoService.translate('staff.relationship.delete.confirm.title'),
+      message: this._translocoService.translate('staff.relationship.delete.confirm.message'),
       actions: {
         confirm: {
-          label: 'Eliminar',
+          label: this._translocoService.translate('staff.relationship.delete.confirm.confirm'),
           color: 'warn',
         },
         cancel: {
-          label: 'Cancelar',
+          label: this._translocoService.translate('staff.relationship.delete.confirm.cancel'),
         },
       },
     });
@@ -898,13 +970,17 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     this._staffRelationshipService.deactivateRelationship(queryParams).subscribe({
       next: (response) => {
-        this._notificationService.showSuccess('Relación eliminada exitosamente');
+        this._notificationService.showSuccessDialog(
+          this._translocoService.translate('staff.relationship.modal.success.deleteRelationship')
+        );
         // Recargar la lista si es necesario
         this.loadStaffRelationships();
       },
       error: (error) => {
         console.error('Error deleting relationship:', error);
-        this._notificationService.showError('Error al eliminar la relación');
+        this._notificationService.showErrorDialog(
+          this._translocoService.translate('staff.relationship.modal.error.deleteRelationship')
+        );
       },
     });
   }

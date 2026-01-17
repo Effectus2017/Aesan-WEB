@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { FuseConfigService } from '@fuse/services/config';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
+import { KeyboardShortcutsComponent } from 'app/layout/common/keyboard-shortcuts/keyboard-shortcuts.component';
 import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -33,6 +34,7 @@ import { TranslocoModule } from '@ngneat/transloco';
         MatDividerModule,
         MatTooltipModule,
         ThemeToggleComponent,
+        KeyboardShortcutsComponent,
         NgClass,
         TranslocoModule
     ]

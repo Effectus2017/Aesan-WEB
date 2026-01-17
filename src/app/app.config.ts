@@ -1,4 +1,3 @@
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject } from '@angular/core';
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
@@ -20,6 +19,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import localeEn from '@angular/common/locales/en';
+import { provideHttpClientWithInterceptors } from './core/http/http.config';
 
 // Registrar locales para Angular
 registerLocaleData(localeEs, 'es');
@@ -28,7 +28,8 @@ registerLocaleData(localeEn, 'en');
 export const appConfig: ApplicationConfig = {
   providers: [
     provideAnimations(),
-    provideHttpClient(),
+    // Configuración consolidada de HTTP Client con todos los interceptores
+    provideHttpClientWithInterceptors(),
 
     provideRouter(
         appRoutes,

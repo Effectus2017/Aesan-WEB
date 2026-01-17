@@ -7,7 +7,8 @@
             "edit": "Edit",
             "delete": "Delete",
             "add": "Add",
-            "addPermission": "Add Permission"
+            "addPermission": "Add Permission",
+            "clear": "Clear"
         },
         "tooltips": {
             "addPermission": "Add a new permission to the user",
@@ -175,6 +176,51 @@
                     "deleteDisabled": "You don't have permissions to delete sponsor types"
                 }
             }
+        }
+    },
+    "keyboard-shortcuts": {
+        "modal": {
+            "title": "Keyboard Shortcuts",
+            "subtitle": "List of all available shortcuts",
+            "search": {
+                "placeholder": "Search shortcuts..."
+            },
+            "category": {
+                "label": "Category",
+                "all": "All"
+            },
+            "table": {
+                "action": "Action",
+                "shortcut": "Shortcut",
+                "description": "Description",
+                "category": "Category"
+            },
+            "no-data": {
+                "title": "No shortcuts available",
+                "message": "Keyboard shortcuts will appear here when configured on buttons."
+            },
+            "footer": {
+                "hint": "Hover over buttons to see their keyboard shortcuts"
+            }
+        },
+        "categories": {
+            "formularios": "Forms",
+            "modales": "Modals",
+            "crud": "CRUD",
+            "navegacion": "Navigation",
+            "acciones": "Actions",
+            "sitios": "Sites",
+            "calendario": "Calendar",
+            "general": "General"
+        },
+        "button": {
+            "tooltip": "View keyboard shortcuts",
+            "menu-item": "Keyboard Shortcuts"
+        },
+        "list": {
+            "enter-save": "Press Enter to Save",
+            "escape-close": "Esc to exit",
+            "ctrl-a-add": "Ctrl + A to add a new item"
         }
     }
 }

@@ -1,4 +1,4 @@
-<div class="flex flex-col -m-6 max-h-screen min-w-120">
+<div class="flex flex-col -m-6 max-h-screen min-w-120" [appKeyboardShortcut]="null" [compatibilityMode]="true">
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="flex flex-col">
@@ -51,7 +51,7 @@
         {{ 'global.buttons.close' | transloco }}
       </button>
     </div>
-    <button mat-flat-button type="button" [color]="'primary'" (click)="onAddButtonClick()">
+    <button #addButton data-add-button mat-flat-button type="button" [color]="'primary'" (click)="onAddButtonClick()">
       {{ 'global.buttons.add' | transloco }}
     </button>
   </div>

@@ -60,7 +60,8 @@ export const provideFuse = (config: FuseProviderConfig): Array<Provider | Enviro
             multi   : true,
         },
 
-        provideHttpClient(withInterceptors([fuseLoadingInterceptor])),
+        // HTTP Client ahora se configura en http.config.ts
+        // fuseLoadingInterceptor se incluye en la configuración consolidada
         {
             provide : ENVIRONMENT_INITIALIZER,
             useValue: () => inject(FuseLoadingService),
@@ -93,6 +94,8 @@ export const provideFuse = (config: FuseProviderConfig): Array<Provider | Enviro
     if ( config?.mockApi?.services )
     {
         providers.push(
+            // Nota: mockApiInterceptor debe agregarse a la configuración HTTP consolidada si se usa
+            // Por ahora se mantiene aquí para compatibilidad con mock API
             provideHttpClient(withInterceptors([mockApiInterceptor])),
             {
                 provide   : APP_INITIALIZER,
