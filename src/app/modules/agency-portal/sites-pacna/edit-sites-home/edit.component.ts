@@ -57,6 +57,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
@@ -91,6 +92,7 @@ import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
     MatTimepickerModule,
     GenericTableComponent,
     NumericOnlyDirective,
+    PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective
@@ -1108,7 +1110,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       areaType: areaType,
       locationType: param.locationType,
       siteCode: param.siteCode || '',
-      relationshipType: param.relationshipType,
     });
 
     // Establecer isDayCareHomeId del sitio si existe
@@ -1149,9 +1150,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         numberOfParticipantsWithBloodTies: param.dayCareHome.numberOfParticipantsWithBloodTies,
         numberOfParticipantsWithoutBloodTies: param.dayCareHome.numberOfParticipantsWithoutBloodTies,
         minorsLiveWithProvider: param.dayCareHome.minorsLiveWithProvider,
-        relationshipType: param.dayCareHome.relationshipType?.id,
+        relationshipType: param.dayCareHome.relationshipType,
         offersServiceToImmigrantChildren: param.dayCareHome.offersServiceToImmigrantChildren,
-        homeType: param.dayCareHome.homeType?.id,
+        homeType: param.dayCareHome.homeType,
         participantTypes: participantTypeIds,
         offersServiceToDifferentGroups: param.dayCareHome.offersServiceToDifferentGroups,
       }, { emitEvent: false });
@@ -1544,24 +1545,30 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       siteRequest.childGroups = this.childGroups;
     }
 
-    // Agregar información de Day Care Home
-    if (this.isDayCareHome) {
-      siteRequest.dayCareHome = {
-        siteId: this.param.id, // ID del sitio existente
-        isAuthorizedToOperate: formValues.isAuthorizedToOperate ?? null,
-        hasFamilyDepartmentLicense: formValues.hasFamilyDepartmentLicense ?? null,
-        numberOfEnrolledChildren: formValues.numberOfEnrolledChildren ?? null,
-        numberOfProviderChildren: formValues.numberOfProviderChildren ?? null,
-        numberOfParticipantsWithBloodTies: formValues.numberOfParticipantsWithBloodTies ?? null,
-        numberOfParticipantsWithoutBloodTies: formValues.numberOfParticipantsWithoutBloodTies ?? null,
-        minorsLiveWithProvider: formValues.minorsLiveWithProvider ?? null,
-        relationshipTypeId: formValues.relationshipType?.id ?? null,
-        offersServiceToImmigrantChildren: formValues.offersServiceToImmigrantChildren ?? null,
-        homeTypeId: formValues.homeType?.id ?? null,
-        administratorBirthDate: formValues.personInCharge?.birthDate ?? null,
-        offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups ?? null,
-      };
+    // Agregar tipos de participantes
+    if (formValues.participantTypes && formValues.participantTypes.length > 0) {
+      siteRequest.participants = formValues.participantTypes.map((id: number) => ({
+        participantTypeId: id
+      }));
     }
+
+    // Agregar información de Day Care Home
+    // Este formulario es exclusivo para Day Care Home
+    siteRequest.dayCareHome = {
+      siteId: this.param.id, // ID del sitio existente
+      isAuthorizedToOperate: formValues.isAuthorizedToOperate ?? null,
+      hasFamilyDepartmentLicense: formValues.hasFamilyDepartmentLicense ?? null,
+      numberOfEnrolledChildren: formValues.numberOfEnrolledChildren ?? null,
+      numberOfProviderChildren: formValues.numberOfProviderChildren ?? null,
+      numberOfParticipantsWithBloodTies: formValues.numberOfParticipantsWithBloodTies ?? null,
+      numberOfParticipantsWithoutBloodTies: formValues.numberOfParticipantsWithoutBloodTies ?? null,
+      minorsLiveWithProvider: formValues.minorsLiveWithProvider ?? null,
+      relationshipTypeId: formValues.relationshipType?.id ?? null,
+      offersServiceToImmigrantChildren: formValues.offersServiceToImmigrantChildren ?? null,
+      homeTypeId: formValues.homeType?.id ?? null,
+      administratorBirthDate: formValues.personInCharge?.birthDate ?? null,
+      offersServiceToDifferentGroups: formValues.offersServiceToDifferentGroups ?? null,
+    };
 
     this.isLoading = true;
     this.headerConfig.formGroup.disable();

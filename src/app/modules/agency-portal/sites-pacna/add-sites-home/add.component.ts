@@ -1247,6 +1247,13 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       siteRequest.childGroups = this.childGroups;
     }
 
+    // Agregar tipos de participantes
+    if (formValues.participantTypes && formValues.participantTypes.length > 0) {
+      siteRequest.participants = formValues.participantTypes.map((id: number) => ({
+        participantTypeId: id
+      }));
+    }
+
     // Agregar información de Day Care Home
     // Este formulario es exclusivo para Day Care Home
     siteRequest.dayCareHome = {

@@ -1507,7 +1507,13 @@
             },
             "status-updated-successfully": "Site status updated successfully",
             "status-update-error": "Error updating site status",
-            "success": "Site updated successfully"
+            "success": "Site updated successfully",
+            "services": {
+                "table": {
+                    "title": "Services by Groups",
+                    "description": "Configure specific service schedules for each child group"
+                }
+            }
         },
         "calendar": {
             "title": "Operating Calendar",

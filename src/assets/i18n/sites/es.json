@@ -1445,7 +1445,13 @@
             },
             "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
             "status-update-error": "Error al actualizar el estatus del sitio",
-            "success": "Sitio actualizado exitosamente"
+            "success": "Sitio actualizado exitosamente",
+            "services": {
+                "table": {
+                    "title": "Servicios por Grupos",
+                    "description": "Configure los horarios de servicios específicos para cada grupo de niños"
+                }
+            }
         },
         "calendar": {
             "title": "Calendario de Funcionamiento",

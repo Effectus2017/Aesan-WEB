@@ -26,7 +26,7 @@
         <!-- Cantidad de Niños -->
         <mat-form-field>
           <mat-label>{{ "sites.add.services.modal.number-of-children.label" | transloco }}</mat-label>
-          <input matInput type="number" formControlName="numberOfChildren" min="1" required />
+          <input matInput type="text" formControlName="numberOfChildren" required numericOnly />
           <mat-error *ngIf="serviceForm.get('numberOfChildren').hasError('required')">
             {{ "sites.add.services.modal.number-of-children.required" | transloco }}
           </mat-error>

@@ -1,5 +1,5 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,9 +10,12 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgIf, NgFor } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { toTimeString } from 'app/shared/utils';
+import { toTimeString, timeStringToDate } from 'app/shared/utils';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { provideNativeDateAdapter } from '@angular/material/core';
+import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
+import { Subject, takeUntil } from 'rxjs';
+import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 
 export interface ServiceByGroupDialogData {
   id?: number;
@@ -75,17 +78,20 @@ export interface ServiceByGroupDialogData {
     NgIf,
     NgFor,
     MatIconModule,
+    NumericOnlyDirective,
   ],
 })
-export class AddServiceByGroupModalComponent implements OnInit {
+export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   serviceForm: FormGroup;
   currentLang: string = 'es';
   yesNoOptions: OptionSelection[] = [];
+  private _unsubscribeAll: Subject<void> = new Subject<void>();
 
   constructor(
     private _formBuilder: FormBuilder,
     public dialogRef: MatDialogRef<AddServiceByGroupModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiceByGroupDialogData
+    @Inject(MAT_DIALOG_DATA) public data: ServiceByGroupDialogData,
+    private _changeDetectorRef: ChangeDetectorRef
   ) {
     // Inicializar opciones Sí/No desde el data
     this.yesNoOptions = data?.yesNoOptions || [];
@@ -97,42 +103,85 @@ export class AddServiceByGroupModalComponent implements OnInit {
 
       // Servicios básicos
       breakfast: [data?.breakfast || false],
-      breakfastFrom: [data?.breakfastFrom || null],
-      breakfastTo: [data?.breakfastTo || null],
+      breakfastFrom: [data?.breakfastFrom ? timeStringToDate(data.breakfastFrom) : null],
+      breakfastTo: [data?.breakfastTo ? timeStringToDate(data.breakfastTo) : null],
       lunch: [data?.lunch || false],
-      lunchFrom: [data?.lunchFrom || null],
-      lunchTo: [data?.lunchTo || null],
+      lunchFrom: [data?.lunchFrom ? timeStringToDate(data.lunchFrom) : null],
+      lunchTo: [data?.lunchTo ? timeStringToDate(data.lunchTo) : null],
       snackAM: [data?.snackAM || false],
-      snackAMFrom: [data?.snackAMFrom || null],
-      snackAMTo: [data?.snackAMTo || null],
+      snackAMFrom: [data?.snackAMFrom ? timeStringToDate(data.snackAMFrom) : null],
+      snackAMTo: [data?.snackAMTo ? timeStringToDate(data.snackAMTo) : null],
       dinner: [data?.dinner || false],
-      dinnerFrom: [data?.dinnerFrom || null],
-      dinnerTo: [data?.dinnerTo || null],
+      dinnerFrom: [data?.dinnerFrom ? timeStringToDate(data.dinnerFrom) : null],
+      dinnerTo: [data?.dinnerTo ? timeStringToDate(data.dinnerTo) : null],
       snackPM: [data?.snackPM || false],
-      snackPMFrom: [data?.snackPMFrom || null],
-      snackPMTo: [data?.snackPMTo || null],
+      snackPMFrom: [data?.snackPMFrom ? timeStringToDate(data.snackPMFrom) : null],
+      snackPMTo: [data?.snackPMTo ? timeStringToDate(data.snackPMTo) : null],
       snackNight: [data?.snackNight || false],
-      snackNightFrom: [data?.snackNightFrom || null],
-      snackNightTo: [data?.snackNightTo || null],
+      snackNightFrom: [data?.snackNightFrom ? timeStringToDate(data.snackNightFrom) : null],
+      snackNightTo: [data?.snackNightTo ? timeStringToDate(data.snackNightTo) : null],
 
       // Servicios PACNA
       dinnerExtended: [data?.dinnerExtended || false],
-      dinnerExtendedFrom: [data?.dinnerExtendedFrom || null],
-      dinnerExtendedTo: [data?.dinnerExtendedTo || null],
+      dinnerExtendedFrom: [data?.dinnerExtendedFrom ? timeStringToDate(data.dinnerExtendedFrom) : null],
+      dinnerExtendedTo: [data?.dinnerExtendedTo ? timeStringToDate(data.dinnerExtendedTo) : null],
       dinnerAtRisk: [data?.dinnerAtRisk || false],
-      dinnerAtRiskFrom: [data?.dinnerAtRiskFrom || null],
-      dinnerAtRiskTo: [data?.dinnerAtRiskTo || null],
+      dinnerAtRiskFrom: [data?.dinnerAtRiskFrom ? timeStringToDate(data.dinnerAtRiskFrom) : null],
+      dinnerAtRiskTo: [data?.dinnerAtRiskTo ? timeStringToDate(data.dinnerAtRiskTo) : null],
       snackExtended: [data?.snackExtended || false],
-      snackExtendedFrom: [data?.snackExtendedFrom || null],
-      snackExtendedTo: [data?.snackExtendedTo || null],
+      snackExtendedFrom: [data?.snackExtendedFrom ? timeStringToDate(data.snackExtendedFrom) : null],
+      snackExtendedTo: [data?.snackExtendedTo ? timeStringToDate(data.snackExtendedTo) : null],
       snackAtRisk: [data?.snackAtRisk || false],
-      snackAtRiskFrom: [data?.snackAtRiskFrom || null],
-      snackAtRiskTo: [data?.snackAtRiskTo || null],
+      snackAtRiskFrom: [data?.snackAtRiskFrom ? timeStringToDate(data.snackAtRiskFrom) : null],
+      snackAtRiskTo: [data?.snackAtRiskTo ? timeStringToDate(data.snackAtRiskTo) : null],
     });
   }
 
   ngOnInit(): void {
-    // No se necesita inicialización adicional
+    // Configurar suscripciones para ajustar automáticamente la hora "hasta" cuando cambia la hora "desde"
+    const timePairs = [
+      { from: 'breakfastFrom', to: 'breakfastTo' },
+      { from: 'lunchFrom', to: 'lunchTo' },
+      { from: 'snackAMFrom', to: 'snackAMTo' },
+      { from: 'dinnerFrom', to: 'dinnerTo' },
+      { from: 'snackPMFrom', to: 'snackPMTo' },
+      { from: 'snackNightFrom', to: 'snackNightTo' },
+      { from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    timePairs.forEach(({ from, to }) => {
+      const fromControl = this.serviceForm.get(from);
+      const toControl = this.serviceForm.get(to);
+
+      if (fromControl && toControl) {
+        // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
+        fromControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
+            // Forzar detección de cambios para actualizar las opciones en el template
+            this._changeDetectorRef.detectChanges();
+          });
+
+        // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
+        toControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe(() => {
+            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+            TimeValidationUtil.validateTimeRange(fromControl, toControl);
+          });
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Cancelar todas las suscripciones
+    this._unsubscribeAll.next();
+    this._unsubscribeAll.complete();
   }
 
 
