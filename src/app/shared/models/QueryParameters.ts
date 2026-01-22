@@ -55,6 +55,7 @@ export interface QueryParameters {
   isActive?: boolean;
   inactiveJustification?: string;
   inactiveDate?: string | null; // Formato YYYY-MM-DD (solo fecha, sin hora)
+  providedRationsService?: boolean | null; // ¿Brindó servicio de raciones durante su periodo de funcionamiento?
 
   // Campos para Staff
   staffId?: number;

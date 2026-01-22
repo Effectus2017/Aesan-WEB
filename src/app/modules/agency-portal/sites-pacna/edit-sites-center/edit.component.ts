@@ -58,7 +58,11 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { ServiceByGroupDialogData } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { ServiceByGroupDialogData, AddServiceByGroupModalComponent } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { MatTableDataSource } from '@angular/material/table';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
@@ -108,10 +112,11 @@ import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validat
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective
+    DynamicGridDirective,
+    GenericTableComponent
 ],
 })
-export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // Subject para suscribirse a todos los observables al destruir el componente
   // Subject to unsubscribe from all observables on component destroy
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -249,11 +254,73 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   // Lista de servicios por grupos (en memoria hasta el envío)
   servicesByGroups: ServiceByGroupDialogData[] = [];
 
+  // Tabla de servicios por grupos
+  servicesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: SERVICES_COLUMNS_SCHEMA,
+    displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'sites.add.services.add-service',
+        icon: 'mat_outline:add',
+      },
+    ],
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25, 50],
+    pageSize: 10,
+    fullScreen: false,
+  };
+
+  // Configuración de tabla requerida por OnGenericTableHandler
+  tableConfig: GenericTableConfig = this.servicesTableConfig;
+
   /**
    * Determina si se deben mostrar campos adicionales para diferentes grupos
+   * Se muestra cuando la capacidad del salón comedor es menor que la matrícula general
    */
   shouldShowDifferentGroupsFields(): boolean {
-    return this.showDifferentGroupsFields;
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+  }
+
+  /**
+   * Determina si se debe mostrar el campo de capacidad de salón comedor
+   */
+  shouldShowDiningRoomCapacity(): boolean {
+    return this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+  }
+
+  /**
+   * Determina si se deben mostrar servicios por grupos cuando la capacidad es menor que la matrícula
+   * Esta función se usa para mostrar servicios por grupos cuando diningRoomCapacity < generalEnrollment
+   */
+  shouldShowServicesByGroupsForDiningRoom(): boolean {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+  }
+
+  /**
+   * Valida que la capacidad del salón comedor no sea mayor que la matrícula general
+   */
+  private validateDiningRoomCapacity(): void {
+    const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const capacity = capacityControl?.value;
+
+    if (capacity && enrollment && capacity > enrollment) {
+      capacityControl?.setErrors({ max: true });
+    } else if (capacityControl?.hasError('max')) {
+      const errors = { ...capacityControl.errors };
+      delete errors['max'];
+      capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
   }
 
   /**
@@ -403,6 +470,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
       hasDiningRoom: [false],
+      // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
+      // Dining room capacity - Only visible when hasDiningRoom is true
+      diningRoomCapacity: [null, [Validators.min(1)]],
       // Persona a Cargo (solo para PDAM y PSAV)
       // Person in Charge (only for PDAM and PSAV)
       personInCharge: this._formBuilder.group({
@@ -826,6 +896,37 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     // Configurar validaciones condicionales para servicios
     this.setupServiceValidations();
+
+    // Listener para cambios en hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((hasDiningRoom: boolean) => {
+        const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+        if (hasDiningRoom === false) {
+          capacityControl?.setValue(null, { emitEvent: false });
+          capacityControl?.clearValidators();
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        } else if (hasDiningRoom === true) {
+          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para cambios en diningRoomCapacity y generalEnrollment
+    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   /**
@@ -1362,6 +1463,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Comedor - Campo para indicar si el sitio tiene un comedor
       // Dining room - Field indicating if the site has a dining room
       hasDiningRoom: param.hasDiningRoom ?? null,
+      diningRoomCapacity: param.diningRoomCapacity,
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -1417,6 +1519,75 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       }
       // Cargar deliveryTypes según el groupType
       this.loadDeliveryTypesByGroupType(groupType);
+    }
+
+    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general
+    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment) {
+      const servicesByGroups = param.services?.filter(service => service.childGroup != null) || [];
+      if (servicesByGroups.length > 0) {
+        const uniqueGroups = new Map<number, { groupName: string; numberOfChildren: number }>();
+        servicesByGroups.forEach(service => {
+          if (service.childGroup?.id) {
+            if (!uniqueGroups.has(service.childGroup.id)) {
+              uniqueGroups.set(service.childGroup.id, {
+                groupName: service.childGroup.name || `Grupo ${uniqueGroups.size + 1}`,
+                numberOfChildren: 0
+              });
+            }
+          }
+        });
+
+        // Cargar grupos únicos
+        this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
+          siteId: param.id,
+          groupName: group.groupName,
+          groupNameEN: group.groupName,
+          numberOfChildren: group.numberOfChildren
+        }));
+
+        // Mapear servicios por grupos
+        this.servicesByGroups = servicesByGroups.map((service, index) => {
+          const childGroup = uniqueGroups.get(service.childGroup?.id || 0);
+          const groupName = childGroup?.groupName || service.childGroup?.name || `Grupo ${index + 1}`;
+
+          return {
+            id: index + 1,
+            groupName: groupName,
+            numberOfChildren: childGroup?.numberOfChildren || 0,
+            breakfast: service.breakfast ?? false,
+            breakfastFrom: service.breakfastFrom || undefined,
+            breakfastTo: service.breakfastTo || undefined,
+            lunch: service.lunch ?? false,
+            lunchFrom: service.lunchFrom || undefined,
+            lunchTo: service.lunchTo || undefined,
+            snackAM: service.snackAM ?? false,
+            snackAMFrom: service.snackAMFrom || undefined,
+            snackAMTo: service.snackAMTo || undefined,
+            snackPM: service.snackPM ?? false,
+            snackPMFrom: service.snackPMFrom || undefined,
+            snackPMTo: service.snackPMTo || undefined,
+            dinner: service.dinner ?? false,
+            dinnerFrom: service.dinnerFrom || undefined,
+            dinnerTo: service.dinnerTo || undefined,
+            snackNight: service.snackNight ?? false,
+            snackNightFrom: service.snackNightFrom || undefined,
+            snackNightTo: service.snackNightTo || undefined,
+            dinnerExtended: service.dinnerExtended ?? false,
+            dinnerExtendedFrom: service.dinnerExtendedFrom || undefined,
+            dinnerExtendedTo: service.dinnerExtendedTo || undefined,
+            dinnerAtRisk: service.dinnerAtRisk ?? false,
+            dinnerAtRiskFrom: service.dinnerAtRiskFrom || undefined,
+            dinnerAtRiskTo: service.dinnerAtRiskTo || undefined,
+            snackExtended: service.snackExtended ?? false,
+            snackExtendedFrom: service.snackExtendedFrom || undefined,
+            snackExtendedTo: service.snackExtendedTo || undefined,
+            snackAtRisk: service.snackAtRisk ?? false,
+            snackAtRiskFrom: service.snackAtRiskFrom || undefined,
+            snackAtRiskTo: service.snackAtRiskTo || undefined,
+          };
+        });
+        this.updateServicesTableDataSource();
+      }
     }
 
     // Actualizar el estado del botón después de cargar todos los datos
@@ -1566,6 +1737,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       renewalYear: formValues.renewalYear ?? null,
       hasWarehouse: formValues.hasWarehouse ?? null,
       hasDiningRoom: formValues.hasDiningRoom ?? null,
+      diningRoomCapacity: formValues.diningRoomCapacity ?? null,
       personInCharge: formValues.personInCharge
         ? {
             firstName: formValues.personInCharge.firstName ?? null,
@@ -1702,7 +1874,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
 
     // Agregar servicios al SiteRequest
-    if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
+    // Se usa servicios por grupos si:
+    // 1. offersServiceToDifferentGroups es true (Day Care Home), O
+    // 2. La capacidad del salón comedor es menor que la matrícula general
+    const shouldUseServicesByGroups = (formValues.offersServiceToDifferentGroups || this.shouldShowServicesByGroupsForDiningRoom()) && this.servicesByGroups.length > 0;
+    
+    if (shouldUseServicesByGroups) {
       // Si ofrece servicios a diferentes grupos, crear múltiples servicios (uno por grupo)
       siteRequest.services = this.servicesByGroups.map((serviceData) => {
         const serviceRequest: SiteServiceRequest = {
@@ -1749,9 +1926,14 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       siteRequest.services = [cleanedServiceRequest];
     }
 
-    // Agregar grupos de niños si OffersServiceToDifferentGroups = true
-    if (formValues.offersServiceToDifferentGroups && this.childGroups.length > 0) {
-      siteRequest.childGroups = this.childGroups;
+    // Agregar grupos de niños si se están usando servicios por grupos
+    // (ya sea por offersServiceToDifferentGroups o por capacidad < matrícula)
+    if (shouldUseServicesByGroups) {
+      // Sincronizar grupos desde servicios antes de enviar
+      this.syncChildGroupsFromServices();
+      if (this.childGroups.length > 0) {
+        siteRequest.childGroups = this.childGroups;
+      }
     }
 
     this.isLoading = true;
@@ -2332,6 +2514,140 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     this.childGroups = [];
     this.nextGroupNumber = 1;
     this.servicesByGroups = [];
+    this.updateServicesTableDataSource();
+  }
+
+  /**
+   * Actualiza el dataSource de la tabla de servicios por grupos
+   */
+  private updateServicesTableDataSource(): void {
+    this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+  }
+
+  /**
+   * Maneja las acciones del menú de agregar
+   */
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onTableAdd();
+    }
+  }
+
+  /**
+   * Maneja el evento de agregar servicio desde la tabla
+   */
+  onTableAdd(): void {
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        isEdit: false,
+        yesNoOptions: this.yesNoOptions,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
+        result.id = newId;
+        this.servicesByGroups.push(result);
+        this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices();
+      }
+    });
+  }
+
+  /**
+   * Maneja el evento de editar servicio desde la tabla
+   */
+  onTableEdit(event: Event, id: number): void {
+    const serviceToEdit = this.servicesByGroups.find((s) => s.id === id);
+    if (!serviceToEdit) {
+      this._notificationService.showError('sites.add.services.error.service-not-found');
+      return;
+    }
+
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        ...serviceToEdit,
+        isEdit: true,
+        yesNoOptions: this.yesNoOptions,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups[index] = result;
+          this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices();
+        }
+      }
+    });
+  }
+
+  /**
+   * Maneja el evento de eliminar servicio desde la tabla
+   */
+  onTableDelete(event: Event, id: number): void {
+    const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
+    if (!serviceToDelete) {
+      this._notificationService.showError('sites.add.services.error.service-not-found');
+      return;
+    }
+
+    const confirmMessage = this._translocoService.translate('sites.add.services.confirm-delete', {
+      groupName: serviceToDelete.groupName,
+    });
+
+    if (confirm(confirmMessage)) {
+      const index = this.servicesByGroups.findIndex((s) => s.id === id);
+      if (index !== -1) {
+        this.servicesByGroups.splice(index, 1);
+        this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices();
+        this._notificationService.showSuccess('sites.add.services.success.deleted');
+      }
+    }
+  }
+
+  /**
+   * Sincroniza los grupos de niños desde los servicios por grupos
+   */
+  private syncChildGroupsFromServices(): void {
+    const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
+    
+    this.servicesByGroups.forEach(service => {
+      if (service.groupName) {
+        if (!uniqueGroups.has(service.groupName)) {
+          uniqueGroups.set(service.groupName, {
+            groupName: service.groupName,
+            numberOfChildren: service.numberOfChildren || 0
+          });
+        } else {
+          const existing = uniqueGroups.get(service.groupName);
+          if (existing && (service.numberOfChildren || 0) > existing.numberOfChildren) {
+            existing.numberOfChildren = service.numberOfChildren || 0;
+          }
+        }
+      }
+    });
+
+    this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
+      siteId: this.param?.id,
+      groupName: group.groupName,
+      groupNameEN: group.groupName,
+      numberOfChildren: group.numberOfChildren
+    }));
   }
 
   /**
@@ -2370,7 +2686,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
             this.headerConfig.formGroup.patchValue({ siteLocation: this.siteLocations[0] });
           }
 
-          this._changeDetectorRef.detectChanges();
+          if (this._changeDetectorRef) {
+            this._changeDetectorRef.detectChanges();
+          }
         }
       },
       error: (error) => {

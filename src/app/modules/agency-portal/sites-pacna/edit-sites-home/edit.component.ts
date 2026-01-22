@@ -185,9 +185,19 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   /**
    * Determina si se deben mostrar campos adicionales para diferentes grupos
+   * Se muestra cuando:
+   * 1. Es Day Care Home y offersServiceToDifferentGroups es true, O
+   * 2. Tiene salón comedor y la capacidad es menor que la matrícula general
    */
   shouldShowDifferentGroupsFields(): boolean {
-    return this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true;
+    const isDayCareHomeWithDifferentGroups = this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true;
+    
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const hasDiningRoomWithCapacityLessThanEnrollment = hasDiningRoom && capacity && enrollment && capacity < enrollment;
+    
+    return isDayCareHomeWithDifferentGroups || hasDiningRoomWithCapacityLessThanEnrollment;
   }
 
 
@@ -440,6 +450,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // ¿Ofrece servicio a diferentes grupos de niños?
       // Does it offer service to different groups of children?
       offersServiceToDifferentGroups: [null],
+      // Comedor - Campo para indicar si el sitio tiene un comedor
+      // Dining room - Field indicating if the site has a dining room
+      hasDiningRoom: [null],
+      // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
+      // Dining room capacity - Only visible when hasDiningRoom is true
+      diningRoomCapacity: [null, [Validators.min(1)]],
+      // Matrícula General - Para comparar con la capacidad del salón comedor
+      // General Enrollment - To compare with dining room capacity
+      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
       // Código de Sitio
       // Site Code
       siteCode: [{ value: '', disabled: true }],
@@ -646,6 +665,37 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     // Configurar validaciones condicionales para servicios
     this.setupServiceValidations();
+
+    // Listener para cambios en hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((hasDiningRoom: boolean) => {
+        const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+        if (hasDiningRoom === false) {
+          capacityControl?.setValue(null, { emitEvent: false });
+          capacityControl?.clearValidators();
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        } else if (hasDiningRoom === true) {
+          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para cambios en diningRoomCapacity y generalEnrollment
+    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   /**
@@ -1155,6 +1205,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         homeType: param.dayCareHome.homeType,
         participantTypes: participantTypeIds,
         offersServiceToDifferentGroups: param.dayCareHome.offersServiceToDifferentGroups,
+        hasDiningRoom: param.hasDiningRoom,
+        diningRoomCapacity: param.diningRoomCapacity,
+        generalEnrollment: param.generalEnrollment,
       }, { emitEvent: false });
 
       // Si offersServiceToDifferentGroups es true, deshabilitar servicios principales
@@ -1401,6 +1454,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       isActive: formValues.isActive ?? true,
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
+      hasDiningRoom: formValues.hasDiningRoom ?? null,
+      diningRoomCapacity: formValues.diningRoomCapacity ?? null,
+      generalEnrollment: formValues.generalEnrollment ?? null,
       // Indica si la agencia es Day Care Home
       // Indicates if the agency is Day Care Home
       isDayCareHomeId: this.isDayCareHomeId,
@@ -1643,6 +1699,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const currentIsActive = this.headerConfig.formGroup.get('isActive')?.value ?? true;
     const currentInactiveDate = this.headerConfig.formGroup.get('inactiveDate')?.value ?? null;
     const currentInactiveJustification = this.headerConfig.formGroup.get('inactiveJustification')?.value ?? null;
+    const currentProvidedRationsService = this.param?.providedRationsService ?? null;
 
     const dialogRef = this._dialog.open(SiteStatusModalComponent, {
       data: {
@@ -1650,6 +1707,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         isActive: currentIsActive,
         inactiveDate: currentInactiveDate,
         inactiveJustification: currentInactiveJustification,
+        providedRationsService: currentProvidedRationsService,
         isActiveOptions: this.isActive,
         yesNoOptions: this.yesNoOptions
       } as SiteStatusModalData,
@@ -1899,6 +1957,23 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   /**
    * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
    */
+
+  /**
+   * Valida que la capacidad del salón comedor no sea mayor que la matrícula general
+   */
+  private validateDiningRoomCapacity(): void {
+    const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const capacity = capacityControl?.value;
+
+    if (capacity && enrollment && capacity > enrollment) {
+      capacityControl?.setErrors({ max: true });
+    } else if (capacityControl?.hasError('max')) {
+      const errors = { ...capacityControl.errors };
+      delete errors['max'];
+      capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+  }
 
   /**
    * Maneja el cambio del campo "¿Ofrece servicio a diferentes grupos de niños?"

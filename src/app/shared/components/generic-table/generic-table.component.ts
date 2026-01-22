@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnDestroy, OnChanges, DoCheck, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, OnChanges, DoCheck, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, inject, ContentChild, TemplateRef } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,6 +22,9 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   @Input() config: GenericTableConfig;
   @Input() handler: OnGenericTableHandler;
   @Input() darkMode: boolean = false;
+  @Input() viewMode: 'table' | 'cards' | 'auto' = 'table';
+
+  @ContentChild('cardTemplate') cardTemplate: TemplateRef<any>;
 
   private _authService = inject(AuthService);
   public _translocoService = inject(TranslocoService);
@@ -30,6 +33,9 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   private _lastDataLength = 0;
 
   ngOnInit(): void {
+    if (this.config?.initialViewMode) {
+      this.viewMode = this.config.initialViewMode;
+    }
     this._subscribeToDataSource();
     this._updateLastDataLength();
   }

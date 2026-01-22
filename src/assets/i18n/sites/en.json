@@ -288,6 +288,12 @@
                 "placeholder": "Has Dining Room?",
                 "required": "Has Dining Room?"
             },
+            "dining-room-capacity": {
+                "label": "Dining Room Capacity",
+                "placeholder": "Enter the dining room capacity",
+                "min-error": "Capacity must be greater than 0",
+                "max-error": "Capacity cannot be greater than general enrollment"
+            },
             "administrator-authorized": {
                 "label": "Representative Information",
                 "description": "Representative information"
@@ -1109,6 +1115,12 @@
                 "label": "Has Dining Room?",
                 "placeholder": "Has Dining Room?",
                 "required": "Has Dining Room?"
+            },
+            "dining-room-capacity": {
+                "label": "Dining Room Capacity",
+                "placeholder": "Enter the dining room capacity",
+                "min-error": "Capacity must be greater than 0",
+                "max-error": "Capacity cannot be greater than general enrollment"
             },
             "administrator-authorized": {
                 "label": "Representative Information",

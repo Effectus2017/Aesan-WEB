@@ -288,6 +288,12 @@
                 "placeholder": "¿Cuenta con un Salón Comedor?",
                 "required": "¿Cuenta con un Salón Comedor?"
             },
+            "dining-room-capacity": {
+                "label": "Capacidad de Salón Comedor",
+                "placeholder": "Ingrese la capacidad del salón comedor",
+                "min-error": "La capacidad debe ser mayor a 0",
+                "max-error": "La capacidad no puede ser mayor que la matrícula general"
+            },
             "administrator-authorized": {
                 "label": "Información del Representante",
                 "description": "Información del representante del sitio"
@@ -1042,6 +1048,12 @@
                 "label": "¿Cuenta con un Salón Comedor?",
                 "placeholder": "¿Cuenta con un Salón Comedor?",
                 "required": "¿Cuenta con un Salón Comedor?"
+            },
+            "dining-room-capacity": {
+                "label": "Capacidad de Salón Comedor",
+                "placeholder": "Ingrese la capacidad del salón comedor",
+                "min-error": "La capacidad debe ser mayor a 0",
+                "max-error": "La capacidad no puede ser mayor que la matrícula general"
             },
             "administrator-authorized": {
                 "label": "Información del Representante",

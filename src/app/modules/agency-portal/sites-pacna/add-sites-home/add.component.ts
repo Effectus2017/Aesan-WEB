@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgForOf, NgIf, DatePipe } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -42,6 +42,7 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { MatTimepickerModule } from '@angular/material/timepicker';
+import { MatMenuModule } from '@angular/material/menu';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
@@ -90,12 +91,13 @@ import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
     MatTooltipModule,
     MatIconModule,
     MatTimepickerModule,
-    MatIconModule,
+    MatMenuModule,
     NumericOnlyDirective,
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective
+    LongitudeDirective,
+    DatePipe
 ],
 })
 export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -459,6 +461,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
+    initialViewMode: 'cards'
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
@@ -1688,6 +1691,10 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
    * Maneja el evento de editar servicio desde la tabla
    */
   onTableEdit(event: Event, id: number): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const serviceToEdit = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToEdit) {
       this._notificationService.showError('sites.add.services.error.service-not-found');
@@ -1723,6 +1730,10 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
    * Maneja el evento de eliminar servicio desde la tabla
    */
   onTableDelete(event: Event, id: number): void {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToDelete) {
       this._notificationService.showError('sites.add.services.error.service-not-found');

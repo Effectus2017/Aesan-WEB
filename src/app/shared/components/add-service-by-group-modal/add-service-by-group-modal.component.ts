@@ -138,6 +138,53 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Lista de configuraciones de servicios para validación dinámica
+    const serviceConfigs = [
+      { boolean: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+      { boolean: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+      { boolean: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+      { boolean: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+      { boolean: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+      { boolean: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+      { boolean: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+      { boolean: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+      { boolean: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+      { boolean: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+    ];
+
+    serviceConfigs.forEach(({ boolean, from, to }) => {
+      const booleanControl = this.serviceForm.get(boolean);
+      const fromControl = this.serviceForm.get(from);
+      const toControl = this.serviceForm.get(to);
+
+      if (booleanControl && fromControl && toControl) {
+        // Función para actualizar validadores
+        const updateValidators = (isChecked: boolean) => {
+          if (isChecked) {
+            fromControl.setValidators([Validators.required]);
+            toControl.setValidators([Validators.required]);
+          } else {
+            fromControl.clearValidators();
+            toControl.clearValidators();
+            fromControl.setValue(null, { emitEvent: false });
+            toControl.setValue(null, { emitEvent: false });
+          }
+          fromControl.updateValueAndValidity({ emitEvent: false });
+          toControl.updateValueAndValidity({ emitEvent: false });
+        };
+
+        // Suscribirse a cambios en el checkbox
+        booleanControl.valueChanges
+          .pipe(takeUntil(this._unsubscribeAll))
+          .subscribe((isChecked) => {
+            updateValidators(isChecked);
+          });
+
+        // Inicializar estado actual
+        updateValidators(booleanControl.value);
+      }
+    });
+
     // Configurar suscripciones para ajustar automáticamente la hora "hasta" cuando cambia la hora "desde"
     const timePairs = [
       { from: 'breakfastFrom', to: 'breakfastTo' },
@@ -196,35 +243,38 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
    * Guarda los cambios y cierra el diálogo
    */
   onSubmit(): void {
-    if (this.serviceForm.valid) {
-      const formValue = this.serviceForm.value;
-
-      // Convertir horarios a string usando toTimeString
-      const processedData = {
-        ...formValue,
-        breakfastFrom: formValue.breakfastFrom ? toTimeString(formValue.breakfastFrom) : null,
-        breakfastTo: formValue.breakfastTo ? toTimeString(formValue.breakfastTo) : null,
-        lunchFrom: formValue.lunchFrom ? toTimeString(formValue.lunchFrom) : null,
-        lunchTo: formValue.lunchTo ? toTimeString(formValue.lunchTo) : null,
-        snackAMFrom: formValue.snackAMFrom ? toTimeString(formValue.snackAMFrom) : null,
-        snackAMTo: formValue.snackAMTo ? toTimeString(formValue.snackAMTo) : null,
-        dinnerFrom: formValue.dinnerFrom ? toTimeString(formValue.dinnerFrom) : null,
-        dinnerTo: formValue.dinnerTo ? toTimeString(formValue.dinnerTo) : null,
-        snackPMFrom: formValue.snackPMFrom ? toTimeString(formValue.snackPMFrom) : null,
-        snackPMTo: formValue.snackPMTo ? toTimeString(formValue.snackPMTo) : null,
-        snackNightFrom: formValue.snackNightFrom ? toTimeString(formValue.snackNightFrom) : null,
-        snackNightTo: formValue.snackNightTo ? toTimeString(formValue.snackNightTo) : null,
-        dinnerExtendedFrom: formValue.dinnerExtendedFrom ? toTimeString(formValue.dinnerExtendedFrom) : null,
-        dinnerExtendedTo: formValue.dinnerExtendedTo ? toTimeString(formValue.dinnerExtendedTo) : null,
-        dinnerAtRiskFrom: formValue.dinnerAtRiskFrom ? toTimeString(formValue.dinnerAtRiskFrom) : null,
-        dinnerAtRiskTo: formValue.dinnerAtRiskTo ? toTimeString(formValue.dinnerAtRiskTo) : null,
-        snackExtendedFrom: formValue.snackExtendedFrom ? toTimeString(formValue.snackExtendedFrom) : null,
-        snackExtendedTo: formValue.snackExtendedTo ? toTimeString(formValue.snackExtendedTo) : null,
-        snackAtRiskFrom: formValue.snackAtRiskFrom ? toTimeString(formValue.snackAtRiskFrom) : null,
-        snackAtRiskTo: formValue.snackAtRiskTo ? toTimeString(formValue.snackAtRiskTo) : null,
-      };
-
-      this.dialogRef.close(processedData);
+    if (this.serviceForm.invalid) {
+      this.serviceForm.markAllAsTouched();
+      return;
     }
+
+    const formValue = this.serviceForm.value;
+
+    // Convertir horarios a string usando toTimeString
+    const processedData = {
+      ...formValue,
+      breakfastFrom: formValue.breakfastFrom ? toTimeString(formValue.breakfastFrom) : null,
+      breakfastTo: formValue.breakfastTo ? toTimeString(formValue.breakfastTo) : null,
+      lunchFrom: formValue.lunchFrom ? toTimeString(formValue.lunchFrom) : null,
+      lunchTo: formValue.lunchTo ? toTimeString(formValue.lunchTo) : null,
+      snackAMFrom: formValue.snackAMFrom ? toTimeString(formValue.snackAMFrom) : null,
+      snackAMTo: formValue.snackAMTo ? toTimeString(formValue.snackAMTo) : null,
+      dinnerFrom: formValue.dinnerFrom ? toTimeString(formValue.dinnerFrom) : null,
+      dinnerTo: formValue.dinnerTo ? toTimeString(formValue.dinnerTo) : null,
+      snackPMFrom: formValue.snackPMFrom ? toTimeString(formValue.snackPMFrom) : null,
+      snackPMTo: formValue.snackPMTo ? toTimeString(formValue.snackPMTo) : null,
+      snackNightFrom: formValue.snackNightFrom ? toTimeString(formValue.snackNightFrom) : null,
+      snackNightTo: formValue.snackNightTo ? toTimeString(formValue.snackNightTo) : null,
+      dinnerExtendedFrom: formValue.dinnerExtendedFrom ? toTimeString(formValue.dinnerExtendedFrom) : null,
+      dinnerExtendedTo: formValue.dinnerExtendedTo ? toTimeString(formValue.dinnerExtendedTo) : null,
+      dinnerAtRiskFrom: formValue.dinnerAtRiskFrom ? toTimeString(formValue.dinnerAtRiskFrom) : null,
+      dinnerAtRiskTo: formValue.dinnerAtRiskTo ? toTimeString(formValue.dinnerAtRiskTo) : null,
+      snackExtendedFrom: formValue.snackExtendedFrom ? toTimeString(formValue.snackExtendedFrom) : null,
+      snackExtendedTo: formValue.snackExtendedTo ? toTimeString(formValue.snackExtendedTo) : null,
+      snackAtRiskFrom: formValue.snackAtRiskFrom ? toTimeString(formValue.snackAtRiskFrom) : null,
+      snackAtRiskTo: formValue.snackAtRiskTo ? toTimeString(formValue.snackAtRiskTo) : null,
+    };
+
+    this.dialogRef.close(processedData);
   }
 }

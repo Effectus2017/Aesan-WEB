@@ -361,6 +361,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
       hasDiningRoom: [null],
+      // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
+      // Dining room capacity - Only visible when hasDiningRoom is true
+      diningRoomCapacity: [null, [Validators.min(1)]],
       // Persona a Cargo (solo para PDAM)
       // Person in Charge (only for PDAM)
       personInCharge: this._formBuilder.group({
@@ -667,6 +670,39 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Configurar validaciones condicionales para servicios
     this.setupServiceValidations();
+
+    // Listener para cambios en hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((hasDiningRoom: boolean) => {
+        const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+        if (hasDiningRoom === false) {
+          // Si cambia a false, limpiar el campo de capacidad
+          capacityControl?.setValue(null, { emitEvent: false });
+          capacityControl?.clearValidators();
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        } else if (hasDiningRoom === true) {
+          // Si cambia a true, agregar validación mínima
+          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para cambios en diningRoomCapacity y generalEnrollment para validar
+    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   /**
@@ -1086,6 +1122,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       renewalYear: param.renewalYear,
       hasWarehouse: param.hasWarehouse,
       hasDiningRoom: param.hasDiningRoom,
+      diningRoomCapacity: param.diningRoomCapacity,
       personInCharge: param.personInCharge
         ? {
             firstName: param.personInCharge.firstName || '',
@@ -1296,6 +1333,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       renewalYear: formValues.renewalYear ?? null,
       hasWarehouse: formValues.hasWarehouse ?? null,
       hasDiningRoom: formValues.hasDiningRoom ?? null,
+      diningRoomCapacity: formValues.diningRoomCapacity ?? null,
       personInCharge: formValues.personInCharge
         ? {
             firstName: formValues.personInCharge.firstName ?? null,
@@ -1974,6 +2012,41 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
    * Verifica si se deben mostrar los campos de fecha de inicio de provisión
    * Solo se muestran cuando la política de funcionamiento es 3, 4 o 5 (Provisión I, II, III)
    */
+  /**
+   * Determina si se debe mostrar el campo de capacidad de salón comedor
+   */
+  shouldShowDiningRoomCapacity(): boolean {
+    return this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+  }
+
+  /**
+   * Determina si se deben mostrar servicios por grupos
+   * Solo se muestra cuando la capacidad es menor que la matrícula general
+   */
+  shouldShowServicesByGroups(): boolean {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+  }
+
+  /**
+   * Valida que la capacidad del salón comedor no sea mayor que la matrícula general
+   */
+  private validateDiningRoomCapacity(): void {
+    const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const capacity = capacityControl?.value;
+
+    if (capacity && enrollment && capacity > enrollment) {
+      capacityControl?.setErrors({ max: true });
+    } else if (capacityControl?.hasError('max')) {
+      const errors = { ...capacityControl.errors };
+      delete errors['max'];
+      capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+  }
+
   get shouldShowProvisionFields(): boolean {
     const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
 

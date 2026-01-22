@@ -466,7 +466,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       staffTypeId: staffTypeId,
       staffClassificationId: staffClassificationId,
       comments: comments,
-      isActive: true,
+      isActive: formValues.status?.booleanValue ?? true, // Usar el valor del dropdown o true por defecto
       agencyId: this.agencyId,
       firstName: firstName,
       middleName: middleName,

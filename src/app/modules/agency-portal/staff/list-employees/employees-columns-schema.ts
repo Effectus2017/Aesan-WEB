@@ -44,12 +44,6 @@ export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
         permission: 'staff.edit',
         disableAgencyRestriction: true,
       },
-      {
-        key: 'delete',
-        label: 'staff.employees.list.buttons.delete',
-        permission: 'staff.delete',
-        disableAgencyRestriction: false,
-      },
     ],
   }
 ];

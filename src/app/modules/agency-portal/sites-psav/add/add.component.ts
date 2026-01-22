@@ -297,6 +297,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
       hasDiningRoom: [null],
+      // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
+      // Dining room capacity - Only visible when hasDiningRoom is true
+      diningRoomCapacity: [null, [Validators.min(1)]],
       // Persona a Cargo (solo para PDAM y PSAV)
       // Person in Charge (only for PDAM and PSAV)
       personInCharge: this._formBuilder.group({
@@ -604,6 +607,37 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     // Configurar validaciones condicionales para servicios
     this.setupServiceValidations();
+
+    // Listener para cambios en hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((hasDiningRoom: boolean) => {
+        const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+        if (hasDiningRoom === false) {
+          capacityControl?.setValue(null, { emitEvent: false });
+          capacityControl?.clearValidators();
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        } else if (hasDiningRoom === true) {
+          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para cambios en diningRoomCapacity y generalEnrollment
+    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   /**
@@ -955,6 +989,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Tiene comedor - Indicador de infraestructura
       // Has dining room - Infrastructure indicator
       hasDiningRoom: formValues.hasDiningRoom ?? null,
+      diningRoomCapacity: formValues.diningRoomCapacity ?? null,
       // Persona a Cargo
       // Person in Charge
       personInCharge: formValues.personInCharge ? {
@@ -1430,6 +1465,41 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   /**
    * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
    */
+  /**
+   * Determina si se debe mostrar el campo de capacidad de salón comedor
+   */
+  shouldShowDiningRoomCapacity(): boolean {
+    return this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+  }
+
+  /**
+   * Determina si se deben mostrar servicios por grupos
+   * Solo se muestra cuando la capacidad es menor que la matrícula general
+   */
+  shouldShowServicesByGroups(): boolean {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+  }
+
+  /**
+   * Valida que la capacidad del salón comedor no sea mayor que la matrícula general
+   */
+  private validateDiningRoomCapacity(): void {
+    const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const capacity = capacityControl?.value;
+
+    if (capacity && enrollment && capacity > enrollment) {
+      capacityControl?.setErrors({ max: true });
+    } else if (capacityControl?.hasError('max')) {
+      const errors = { ...capacityControl.errors };
+      delete errors['max'];
+      capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+  }
+
   shouldShowDistributionType(): boolean {
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;
     // Obtener el tipo de grupo como string para el servicio

@@ -34,7 +34,7 @@
     <p class="text-lg text-secondary dark:text-gray-400">{{ 'global.table.empty' | transloco }}</p>
   </div>
   } @else {
-  <table class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
+  <table *ngIf="viewMode === 'table'" class="hidden w-full sm:table" mat-table [dataSource]="config.dataSource" [trackBy]="trackByFn">
   <ng-container [matColumnDef]="getColumnDef(col)" *ngFor="let col of config.columnsSchema">
     <th mat-header-cell *matHeaderCellDef>
       {{ col.label | transloco }}
@@ -263,11 +263,20 @@
   <tr mat-header-row *matHeaderRowDef="config.displayedColumns"></tr>
   <tr class="h-16 order-row" mat-row *matRowDef="let row; columns: config.displayedColumns"></tr>
   </table>
+
+  <!-- CARD VIEW MODE -->
+  @if (viewMode === 'cards') {
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+    @for (element of config.dataSource.connect() | async; track trackByFn($index, element)) {
+    <ng-container *ngTemplateOutlet="cardTemplate; context: { $implicit: element }"></ng-container>
+    }
+  </div>
+  }
   }
 </div>
 
 <!-- Lista para móviles -->
-<div class="w-full sm:hidden">
+<div class="w-full sm:hidden" *ngIf="viewMode === 'table'">
   @if (isEmpty) {
   <div class="flex flex-col justify-center items-center px-4 py-12">
     <mat-icon [svgIcon]="'heroicons_outline:inbox'" class="mb-4 text-6xl text-gray-400 dark:text-gray-500"></mat-icon>

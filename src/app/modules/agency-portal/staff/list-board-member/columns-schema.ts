@@ -50,11 +50,6 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
         permission: 'staff.edit',
       },
       {
-        key: 'delete',
-        label: 'staff.boardMembers.list.buttons.delete',
-        permission: 'staff.delete',
-      },
-      {
         key: 'view',
         label: 'staff.boardMembers.list.buttons.view',
         permission: 'staff.view',

@@ -513,7 +513,7 @@
         <!-- ✅ VERIFICADO: ¿Cuenta con un Almacén?, ¿Cuenta con un Salón Comedor? - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- ¿Cuenta con un Almacén? / Has Warehouse -->
         <!-- ¿Cuenta con un Salón Comedor? / Has Dining Room -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12" appDynamicGrid="2">
           <mat-form-field data-cy="has-warehouse-field">
             <mat-label>{{ "sites.edit.has-warehouse.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select">
@@ -529,6 +529,24 @@
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
             </mat-select>
+          </mat-form-field>
+          <mat-form-field *ngIf="shouldShowDiningRoomCapacity()" data-cy="dining-room-capacity-field">
+            <mat-label>{{ "sites.edit.dining-room-capacity.label" | transloco }}</mat-label>
+            <input
+              numericOnly
+              matInput
+              type="text"
+              formControlName="diningRoomCapacity"
+              min="1"
+              placeholder="{{ 'sites.edit.dining-room-capacity.placeholder' | transloco }}"
+              data-cy="dining-room-capacity-input"
+            />
+            <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('min')">
+              {{ "sites.edit.dining-room-capacity.min-error" | transloco }}
+            </mat-error>
+            <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('max')">
+              {{ "sites.edit.dining-room-capacity.max-error" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
@@ -1004,6 +1022,19 @@
               {{ "sites.edit.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
+        </div>
+
+        <!-- Tabla de Servicios por Grupos - Cuando la capacidad del salón comedor es menor que la matrícula -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDifferentGroupsFields()">
+          <div class="mb-4">
+            <h3 class="mb-2 text-lg font-medium">{{ "sites.edit.services.table.title" | transloco }}</h3>
+            <p class="mb-4 text-sm text-gray-600">{{ "sites.edit.services.table.description" | transloco }}</p>
+
+            <!-- Tabla de servicios -->
+            <div class="rounded-lg shadow-md bg-card">
+              <app-generic-table [config]="servicesTableConfig" [handler]="this" #servicesTable></app-generic-table>
+            </div>
+          </div>
         </div>
 
         <!-- TITULO -->
