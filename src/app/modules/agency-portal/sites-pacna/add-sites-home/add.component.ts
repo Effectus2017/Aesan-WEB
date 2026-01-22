@@ -461,7 +461,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    initialViewMode: 'cards'
+    viewMode: 'cards'
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)

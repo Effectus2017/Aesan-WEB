@@ -174,6 +174,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
+    viewMode: 'cards'
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
@@ -191,12 +192,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    */
   shouldShowDifferentGroupsFields(): boolean {
     const isDayCareHomeWithDifferentGroups = this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true;
-    
+
     const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
     const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
     const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const hasDiningRoomWithCapacityLessThanEnrollment = hasDiningRoom && capacity && enrollment && capacity < enrollment;
-    
+
     return isDayCareHomeWithDifferentGroups || hasDiningRoomWithCapacityLessThanEnrollment;
   }
 

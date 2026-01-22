@@ -144,7 +144,7 @@ export interface GenericTableConfig<T = any> {
    * 'auto': Muestra tabla en desktop y tarjetas en móvil.
    * @default 'table'
    */
-  initialViewMode?: 'table' | 'cards' | 'auto';
+  viewMode?: 'table' | 'cards' | 'auto';
 }
 
 export interface OnGenericTableHandler {

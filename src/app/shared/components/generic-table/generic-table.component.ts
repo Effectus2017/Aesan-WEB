@@ -33,8 +33,8 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   private _lastDataLength = 0;
 
   ngOnInit(): void {
-    if (this.config?.initialViewMode) {
-      this.viewMode = this.config.initialViewMode;
+    if (this.config?.viewMode) {
+      this.viewMode = this.config.viewMode;
     }
     this._subscribeToDataSource();
     this._updateLastDataLength();
