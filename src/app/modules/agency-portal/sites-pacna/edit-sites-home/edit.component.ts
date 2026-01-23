@@ -2182,15 +2182,30 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       groupName: serviceToDelete.groupName,
     });
 
-    if (confirm(confirmMessage)) {
-      const index = this.servicesByGroups.findIndex((s) => s.id === id);
-      if (index !== -1) {
-        this.servicesByGroups.splice(index, 1);
-        this.updateServicesTableDataSource();
-        this.syncChildGroupsFromServices(); // Sincronizar grupos
-        this._notificationService.showSuccess('sites.add.services.success.deleted');
+    this._notificationService.showConfirmationDialogWithCallback({
+      message: confirmMessage,
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
+      },
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
+        }
       }
-    }
+    }, (result) => {
+      if (result === 'confirmed') {
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups.splice(index, 1);
+          this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices(); // Sincronizar grupos
+
+        }
+      }
+    });
   }
 
   /**

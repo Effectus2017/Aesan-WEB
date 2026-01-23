@@ -23,6 +23,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'app-employee-list',
@@ -54,6 +55,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  private _notificationService = inject(NotificationService);
 
   headerConfig: GenericHeaderConfig = {
     title: 'employees.list.title',
@@ -130,16 +132,31 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       employeeId: id
     };
 
-    if (confirm('¿Está seguro de que desea eliminar este empleado?')) {
-      this._employeeService.deleteEmployee(queryParams).subscribe({
-        next: () => {
-          this.getAll(0, this.headerConfig.formGroup.value);
-        },
-        error: (error) => {
-          console.error('Error deleting employee:', error);
+    this._notificationService.showConfirmationDialogWithCallback({
+      message: '¿Está seguro de que desea eliminar este empleado?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
+      },
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
         }
-      });
-    }
+      }
+    }, (result) => {
+      if (result === 'confirmed') {
+        this._employeeService.deleteEmployee(queryParams).subscribe({
+          next: () => {
+            this.getAll(0, this.headerConfig.formGroup.value);
+          },
+          error: (error) => {
+            console.error('Error deleting employee:', error);
+          }
+        });
+      }
+    });
   }
 
   onTableConvertToUser(event: Event, id: number): void {
@@ -149,15 +166,30 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       userId: ''
     };
 
-    if (confirm('¿Está seguro de que desea convertir este empleado en usuario?')) {
-      this._employeeService.convertEmployeeToUser(queryParams).subscribe({
-        next: () => {
-          this.getAll(0, this.headerConfig.formGroup.value);
-        },
-        error: (error) => {
-          console.error('Error converting employee to user:', error);
+    this._notificationService.showConfirmationDialogWithCallback({
+      message: '¿Está seguro de que desea convertir este empleado en usuario?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:check',
+        color: 'primary'
+      },
+      actions: {
+        confirm: {
+          label: 'Aceptar',
+          color: 'primary'
         }
-      });
-    }
+      }
+    }, (result) => {
+      if (result === 'confirmed') {
+        this._employeeService.convertEmployeeToUser(queryParams).subscribe({
+          next: () => {
+            this.getAll(0, this.headerConfig.formGroup.value);
+          },
+          error: (error) => {
+            console.error('Error converting employee to user:', error);
+          }
+        });
+      }
+    });
   }
 }

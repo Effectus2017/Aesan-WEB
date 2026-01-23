@@ -17,6 +17,7 @@ import {
   timeToMinutes,
   TimeOption
 } from 'app/shared/utils';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'app-site-calendar-service-edit-modal',
@@ -59,7 +60,8 @@ export class SiteCalendarServiceEditModalComponent {
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceEditModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceEditModalData,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private notificationService: NotificationService
   ) {
     console.log('Service edit modal constructor - data:', this.data);
     this.initializeTimeConstraints();
@@ -74,6 +76,31 @@ export class SiteCalendarServiceEditModalComponent {
     // Suscribirse a cambios en startTime para actualizar las opciones de endTime
     this.data.form.get('startTime')?.valueChanges.subscribe(() => {
       this.updateEndTimeOptions();
+    });
+  }
+
+  // ... (rest of the methods) ...
+
+  onDelete(): void {
+    const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
+    
+    this.notificationService.showConfirmationDialogWithCallback({
+      message: confirmMessage,
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
+      },
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
+        }
+      }
+    }, (result) => {
+      if (result === 'confirmed') {
+        this.dialogRef.close({ action: 'delete' });
+      }
     });
   }
 
@@ -274,10 +301,5 @@ export class SiteCalendarServiceEditModalComponent {
     }
   }
 
-  onDelete(): void {
-    const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
-    if (confirm(confirmMessage)) {
-      this.dialogRef.close({ action: 'delete' });
-    }
-  }
+
 }

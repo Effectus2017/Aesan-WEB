@@ -213,6 +213,18 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
     }
   }
 
+  /**
+   * Maneja las acciones generales de la tarjeta (edit/delete)
+   */
+  onActionClick(event: MouseEvent, action: string, item: any): void {
+    event.stopPropagation();
+    if (action === 'edit' && this.handler?.onTableEdit) {
+      this.handler.onTableEdit(event, item.id);
+    } else if (action === 'delete' && this.handler?.onTableDelete) {
+      this.handler.onTableDelete(event, item.id);
+    }
+  }
+
   onButtonClick(event: Event, button: ButtonConfig, element: any): void {
     event.preventDefault();
     event.stopPropagation();

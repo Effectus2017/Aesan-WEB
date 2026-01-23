@@ -1769,6 +1769,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       event.preventDefault();
       event.stopPropagation();
     }
+    console.log('Solicitud de eliminar servicio, ID:', id); // Debug log para verificar versión
     const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
     if (!serviceToDelete) {
       this._notificationService.showError('sites.add.services.error.service-not-found');
@@ -1780,15 +1781,30 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       groupName: serviceToDelete.groupName,
     });
 
-    if (confirm(confirmMessage)) {
-      const index = this.servicesByGroups.findIndex((s) => s.id === id);
-      if (index !== -1) {
-        this.servicesByGroups.splice(index, 1);
-        this.updateServicesTableDataSource();
-        this.syncChildGroupsFromServices(); // Sincronizar grupos
-        this._notificationService.showSuccess('sites.add.services.success.deleted');
+    this._notificationService.showConfirmationDialogWithCallback({
+      message: confirmMessage,
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
+      },
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
+        }
       }
-    }
+    }, (result) => {
+      if (result === 'confirmed') {
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups.splice(index, 1);
+          this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices(); // Sincronizar grupos
+
+        }
+      }
+    });
   }
 
   /**

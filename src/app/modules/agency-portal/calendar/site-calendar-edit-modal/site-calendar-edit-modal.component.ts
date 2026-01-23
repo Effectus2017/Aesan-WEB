@@ -12,6 +12,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalendarEditModalData';
 import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
 import { Subject, takeUntil } from 'rxjs';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
   selector: 'app-school-calendar-edit-modal',
@@ -395,11 +396,27 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
     }
   }
 
+  private _notificationService = inject(NotificationService);
+
   onDelete(): void {
-    // Confirmar eliminación
-    if (confirm('¿Estás seguro de que quieres eliminar este horario?')) {
-      this.dialogRef.close({ action: 'delete' });
-    }
+    this._notificationService.showConfirmationDialogWithCallback({
+      message: '¿Estás seguro de que quieres eliminar este horario?',
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
+      },
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
+        }
+      }
+    }, (result) => {
+      if (result === 'confirmed') {
+        this.dialogRef.close({ action: 'delete' });
+      }
+    });
   }
 
 }
