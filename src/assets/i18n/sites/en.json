@@ -773,7 +773,9 @@
                     "number-of-children": {
                         "label": "Number of Children",
                         "required": "Number of children is required",
-                        "min": "Must be at least 1"
+                        "min": "Must be at least 1",
+                        "exceeds-capacity": "The number of children cannot exceed the dining room capacity",
+                        "exceeds-enrollment": "The total sum of children in all groups cannot exceed the general enrollment"
                     },
                     "basic-services": {
                         "title": "Basic Services"

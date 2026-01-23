@@ -706,7 +706,9 @@
                     "number-of-children": {
                         "label": "Cantidad de Niños",
                         "required": "La cantidad de niños es requerida",
-                        "min": "Debe ser al menos 1"
+                        "min": "Debe ser al menos 1",
+                        "exceeds-capacity": "La cantidad de niños no puede exceder la capacidad del salón comedor",
+                        "exceeds-enrollment": "La suma total de niños en todos los grupos no puede exceder la matrícula general"
                     },
                     "basic-services": {
                         "title": "Servicios Básicos"

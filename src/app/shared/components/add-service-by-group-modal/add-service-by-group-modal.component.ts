@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,7 +10,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgIf, NgFor } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { toTimeString, timeStringToDate } from 'app/shared/utils';
+import { toTimeString, timeStringToDate, generateTimeOptions, filterStartTimeOptions, getEndTimeOptions, compareByTime, TimeOption } from 'app/shared/utils';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -22,6 +22,9 @@ export interface ServiceByGroupDialogData {
   groupName?: string;
   numberOfChildren?: number;
   yesNoOptions?: OptionSelection[];
+  generalEnrollment?: number;
+  diningRoomCapacity?: number;
+  existingGroups?: Array<{ id?: number; numberOfChildren?: number }>;
 
   // Servicios básicos
   breakfast?: boolean;
@@ -58,6 +61,15 @@ export interface ServiceByGroupDialogData {
   snackAtRiskTo?: string;
 
   isEdit?: boolean;
+  
+  // Flags para identificar el programa
+  isPDAM?: boolean;
+  isPACNA?: boolean;
+  isPSAV?: boolean;
+  
+  // Horas de funcionamiento para limitar opciones de tiempo
+  operatingStartTime?: Date | string | null;
+  operatingEndTime?: Date | string | null;
 }
 
 @Component({
@@ -73,7 +85,6 @@ export interface ServiceByGroupDialogData {
     MatSelectModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatTimepickerModule,
     TranslocoModule,
     NgIf,
     NgFor,
@@ -85,7 +96,11 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   serviceForm: FormGroup;
   currentLang: string = 'es';
   yesNoOptions: OptionSelection[] = [];
+  timeOptions: TimeOption[] = [];
   private _unsubscribeAll: Subject<void> = new Subject<void>();
+  
+  // Wrappers para compatibilidad con mat-select
+  compareByTimeWrapper = compareByTime;
 
   constructor(
     private _formBuilder: FormBuilder,
@@ -96,10 +111,18 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
     // Inicializar opciones Sí/No desde el data
     this.yesNoOptions = data?.yesNoOptions || [];
 
+    // Crear validador personalizado para numberOfChildren
+    const numberOfChildrenValidator = this.createNumberOfChildrenValidator(
+      data?.generalEnrollment,
+      data?.diningRoomCapacity,
+      data?.existingGroups,
+      data?.id
+    );
+
     this.serviceForm = this._formBuilder.group({
       id: [data?.id || 0],
       groupName: [data?.groupName || '', Validators.required],
-      numberOfChildren: [data?.numberOfChildren || 0, [Validators.required, Validators.min(1)]],
+      numberOfChildren: [data?.numberOfChildren || 0, [Validators.required, Validators.min(1), numberOfChildrenValidator]],
 
       // Servicios básicos
       breakfast: [data?.breakfast || false],
@@ -138,6 +161,24 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    // Inicializar opciones de tiempo
+    this.timeOptions = generateTimeOptions();
+    
+    // Actualizar validador cuando cambia numberOfChildren para revalidar
+    const numberOfChildrenControl = this.serviceForm.get('numberOfChildren');
+    if (numberOfChildrenControl) {
+      numberOfChildrenControl.valueChanges
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe(() => {
+          // Marcar como touched para mostrar errores inmediatamente
+          numberOfChildrenControl.markAsTouched();
+          // Usar emitEvent: false para evitar bucle infinito
+          numberOfChildrenControl.updateValueAndValidity({ emitEvent: false });
+          // Forzar detección de cambios para actualizar los mensajes de error
+          this._changeDetectorRef.markForCheck();
+        });
+    }
+
     // Lista de configuraciones de servicios para validación dinámica
     const serviceConfigs = [
       { boolean: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
@@ -229,6 +270,116 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
     // Cancelar todas las suscripciones
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
+  }
+
+  /**
+   * Determina si se debe mostrar el servicio de Cena
+   * Se muestra para PACNA y PSAV, no para PDAM
+   */
+  shouldShowDinner(): boolean {
+    return this.data?.isPACNA === true || this.data?.isPSAV === true;
+  }
+
+  /**
+   * Determina si se debe mostrar el servicio de Merienda Nocturna
+   * Se muestra solo para PACNA
+   */
+  shouldShowSnackNight(): boolean {
+    return this.data?.isPACNA === true;
+  }
+
+  /**
+   * Determina si se deben mostrar los servicios adicionales de PACNA
+   * (dinnerExtended, dinnerAtRisk, snackExtended, snackAtRisk)
+   * Se muestran solo para PACNA
+   */
+  shouldShowPACNAServices(): boolean {
+    return this.data?.isPACNA === true;
+  }
+
+  /**
+   * Wrapper para convertir string de tiempo a Date
+   */
+  timeStringToDateWrapper(timeString: string): Date | null {
+    return timeStringToDate(timeString);
+  }
+
+  /**
+   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
+   */
+  getStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.data?.operatingStartTime;
+    const operatingEndTime = this.data?.operatingEndTime;
+
+    return filterStartTimeOptions(this.timeOptions, operatingStartTime, operatingEndTime);
+  }
+
+  /**
+   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   */
+  getEndTimeOptions(fromField: string): TimeOption[] {
+    const fromControl = this.serviceForm.get(fromField);
+    if (!fromControl) return this.timeOptions;
+
+    const fromTime = fromControl.value;
+    const operatingStartTime = this.data?.operatingStartTime;
+    const operatingEndTime = this.data?.operatingEndTime;
+
+    return getEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
+  }
+
+  /**
+   * Crea un validador personalizado para la cantidad de niños
+   * Valida que:
+   * 1. La cantidad no exceda la capacidad del salón comedor
+   * 2. La suma de todos los grupos no exceda la matrícula general
+   */
+  private createNumberOfChildrenValidator(
+    generalEnrollment?: number,
+    diningRoomCapacity?: number,
+    existingGroups?: Array<{ id?: number; numberOfChildren?: number }>,
+    currentGroupId?: number
+  ): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value || control.value === 0) {
+        return null; // El validador 'required' ya maneja esto
+      }
+
+      const numberOfChildren = Number(control.value);
+
+      // Validar contra la capacidad del salón comedor
+      if (diningRoomCapacity && numberOfChildren > diningRoomCapacity) {
+        return {
+          exceedsCapacity: {
+            value: numberOfChildren,
+            maxCapacity: diningRoomCapacity
+          }
+        };
+      }
+
+      // Validar contra la matrícula general
+      if (generalEnrollment) {
+        // Calcular la suma de todos los grupos existentes (excluyendo el grupo actual si está en edición)
+        const otherGroupsTotal = (existingGroups || [])
+          .filter(group => group.id !== currentGroupId)
+          .reduce((sum, group) => sum + (group.numberOfChildren || 0), 0);
+
+        const totalWithCurrent = otherGroupsTotal + numberOfChildren;
+
+        if (totalWithCurrent > generalEnrollment) {
+          return {
+            exceedsEnrollment: {
+              value: numberOfChildren,
+              otherGroupsTotal: otherGroupsTotal,
+              total: totalWithCurrent,
+              maxEnrollment: generalEnrollment
+            }
+          };
+        }
+      }
+
+      return null;
+    };
   }
 
 

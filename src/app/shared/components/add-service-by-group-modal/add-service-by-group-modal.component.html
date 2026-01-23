@@ -27,11 +27,17 @@
         <mat-form-field>
           <mat-label>{{ "sites.add.services.modal.number-of-children.label" | transloco }}</mat-label>
           <input matInput type="text" formControlName="numberOfChildren" required numericOnly />
-          <mat-error *ngIf="serviceForm.get('numberOfChildren').hasError('required')">
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('required') && serviceForm.get('numberOfChildren')?.touched">
             {{ "sites.add.services.modal.number-of-children.required" | transloco }}
           </mat-error>
-          <mat-error *ngIf="serviceForm.get('numberOfChildren').hasError('min')">
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('min') && serviceForm.get('numberOfChildren')?.touched">
             {{ "sites.add.services.modal.number-of-children.min" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('exceedsCapacity') && (serviceForm.get('numberOfChildren')?.touched || serviceForm.get('numberOfChildren')?.dirty)">
+            {{ "sites.add.services.modal.number-of-children.exceeds-capacity" | transloco }} ({{ serviceForm.get('numberOfChildren')?.errors?.['exceedsCapacity']?.maxCapacity }})
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('exceedsEnrollment') && (serviceForm.get('numberOfChildren')?.touched || serviceForm.get('numberOfChildren')?.dirty)">
+            {{ "sites.add.services.modal.number-of-children.exceeds-enrollment" | transloco }} ({{ serviceForm.get('numberOfChildren')?.errors?.['exceedsEnrollment']?.maxEnrollment }})
           </mat-error>
         </mat-form-field>
       </div>
@@ -51,16 +57,20 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="breakfastFrom" [matTimepicker]="pickerBreakfastFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastFrom" />
-            <mat-timepicker #pickerBreakfastFrom />
+            <mat-select formControlName="breakfastFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('breakfastFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="breakfastTo" [matTimepicker]="pickerBreakfastTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastTo" />
-            <mat-timepicker #pickerBreakfastTo />
+            <mat-select formControlName="breakfastTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('breakfastFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('breakfastTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
@@ -77,16 +87,20 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="lunchFrom" [matTimepicker]="pickerLunchFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
-            <mat-timepicker #pickerLunchFrom />
+            <mat-select formControlName="lunchFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('lunchFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="lunchTo" [matTimepicker]="pickerLunchTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
-            <mat-timepicker #pickerLunchTo />
+            <mat-select formControlName="lunchTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('lunchFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('lunchTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
@@ -103,22 +117,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAMFrom" [matTimepicker]="pickerSnackAMFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMFrom" />
-            <mat-timepicker #pickerSnackAMFrom />
+            <mat-select formControlName="snackAMFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackAMFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAMTo" [matTimepicker]="pickerSnackAMTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
-            <mat-timepicker #pickerSnackAMTo />
+            <mat-select formControlName="snackAMTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackAMFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackAMTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Cena -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowDinner()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.dinner.label" | transloco }}</mat-label>
             <mat-select formControlName="dinner">
@@ -129,16 +147,20 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerFrom" [matTimepicker]="pickerDinnerFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerFrom" />
-            <mat-timepicker #pickerDinnerFrom />
+            <mat-select formControlName="dinnerFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerTo" [matTimepicker]="pickerDinnerTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerTo" />
-            <mat-timepicker #pickerDinnerTo />
+            <mat-select formControlName="dinnerTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
@@ -155,22 +177,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackPMFrom" [matTimepicker]="pickerSnackPMFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMFrom" />
-            <mat-timepicker #pickerSnackPMFrom />
+            <mat-select formControlName="snackPMFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackPMFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackPMTo" [matTimepicker]="pickerSnackPMTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMTo" />
-            <mat-timepicker #pickerSnackPMTo />
+            <mat-select formControlName="snackPMTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackPMFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackPMTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Merienda Nocturna -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowSnackNight()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.snack-night.label" | transloco }}</mat-label>
             <mat-select formControlName="snackNight">
@@ -181,22 +207,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackNightFrom" [matTimepicker]="pickerSnackNightFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightFrom" />
-            <mat-timepicker #pickerSnackNightFrom />
+            <mat-select formControlName="snackNightFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackNightFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackNightTo" [matTimepicker]="pickerSnackNightTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightTo" />
-            <mat-timepicker #pickerSnackNightTo />
+            <mat-select formControlName="snackNightTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackNightFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackNightTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Cena Horario Extendido -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowPACNAServices()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.dinner-extended.label" | transloco }}</mat-label>
             <mat-select formControlName="dinnerExtended">
@@ -207,22 +237,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerExtendedFrom" [matTimepicker]="pickerDinnerExtendedFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedFrom" />
-            <mat-timepicker #pickerDinnerExtendedFrom />
+            <mat-select formControlName="dinnerExtendedFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerExtendedFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerExtendedTo" [matTimepicker]="pickerDinnerExtendedTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedTo" />
-            <mat-timepicker #pickerDinnerExtendedTo />
+            <mat-select formControlName="dinnerExtendedTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerExtendedTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Cena en Riesgo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowPACNAServices()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.dinner-at-risk.label" | transloco }}</mat-label>
             <mat-select formControlName="dinnerAtRisk">
@@ -233,22 +267,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerAtRiskFrom" [matTimepicker]="pickerDinnerAtRiskFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskFrom" />
-            <mat-timepicker #pickerDinnerAtRiskFrom />
+            <mat-select formControlName="dinnerAtRiskFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerAtRiskFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerAtRiskTo" [matTimepicker]="pickerDinnerAtRiskTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskTo" />
-            <mat-timepicker #pickerDinnerAtRiskTo />
+            <mat-select formControlName="dinnerAtRiskTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('dinnerAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('dinnerAtRiskTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Merienda Horario Extendido -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowPACNAServices()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.snack-extended.label" | transloco }}</mat-label>
             <mat-select formControlName="snackExtended">
@@ -259,22 +297,26 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackExtendedFrom" [matTimepicker]="pickerSnackExtendedFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedFrom" />
-            <mat-timepicker #pickerSnackExtendedFrom />
+            <mat-select formControlName="snackExtendedFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackExtendedFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackExtendedTo" [matTimepicker]="pickerSnackExtendedTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedTo" />
-            <mat-timepicker #pickerSnackExtendedTo />
+            <mat-select formControlName="snackExtendedTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackExtendedTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
 
         <!-- Merienda en Riesgo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4" *ngIf="shouldShowPACNAServices()">
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.snack-at-risk.label" | transloco }}</mat-label>
             <mat-select formControlName="snackAtRisk">
@@ -285,16 +327,20 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAtRiskFrom" [matTimepicker]="pickerSnackAtRiskFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskFrom" />
-            <mat-timepicker #pickerSnackAtRiskFrom />
+            <mat-select formControlName="snackAtRiskFrom" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackAtRiskFrom').hasError('required')">Requerido</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAtRiskTo" [matTimepicker]="pickerSnackAtRiskTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskTo" />
-            <mat-timepicker #pickerSnackAtRiskTo />
+            <mat-select formControlName="snackAtRiskTo" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions('snackAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
             <mat-error *ngIf="serviceForm.get('snackAtRiskTo').hasError('required')">Requerido</mat-error>
           </mat-form-field>
         </div>
@@ -309,7 +355,7 @@
           {{ "global.buttons.cancel" | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" color="primary">
+      <button mat-flat-button type="submit" color="primary" [disabled]="serviceForm.invalid">
         {{ "global.buttons.save" | transloco }}
       </button>
     </div>

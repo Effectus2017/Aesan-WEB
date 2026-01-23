@@ -12,6 +12,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
+import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { MatTableDataSource } from '@angular/material/table';
+import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
+import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
@@ -104,10 +110,11 @@ import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/compon
     DynamicGridDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective
+    LongitudeDirective,
+    GenericTableComponent
 ],
 })
-export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
@@ -198,6 +205,37 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Lenguaje actual
   currentLang: string = 'es';
+
+  // Propiedades para manejar grupos de niños específicos
+  childGroups: SiteChildGroupRequest[] = [];
+  nextGroupNumber: number = 1;
+
+  // Tabla de servicios por grupos
+  servicesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>([]),
+    columnsSchema: SERVICES_COLUMNS_SCHEMA,
+    displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add',
+        label: 'sites.add.services.add-service',
+        icon: 'mat_outline:add',
+      },
+    ],
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [5, 10, 25, 50],
+    pageSize: 10,
+    fullScreen: false,
+    viewMode: 'cards'
+  };
+
+  // Lista de servicios por grupos (en memoria hasta el envío)
+  servicesByGroups: ServiceByGroupDialogData[] = [];
+
+  // Configuración de tabla requerida por OnGenericTableHandler
+  tableConfig: GenericTableConfig = this.servicesTableConfig;
 
   // Header config and reactive form
   // Configuración del header y formulario reactivo
@@ -603,6 +641,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
+        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
       });
 
@@ -610,7 +649,15 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
+        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para calcular grupos automáticamente cuando cambia hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.calculateGroupsFromDiningRoomCapacity();
       });
   }
 
@@ -1173,8 +1220,64 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       });
     }
 
+    // Validar y sincronizar grupos si hay servicios por grupos
+    if (this.servicesByGroups.length > 0) {
+      // Validar que todos los servicios tengan groupName
+      const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
+      if (servicesWithoutGroup.length > 0) {
+        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        return;
+      }
+
+      // Sincronizar grupos desde servicios antes de enviar
+      this.syncChildGroupsFromServices();
+
+      // Validar que haya grupos si hay servicios
+      if (this.childGroups.length === 0) {
+        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        return;
+      }
+    }
+
     // Agregar servicios al SiteRequest
-    siteRequest.services = [cleanedServiceRequest];
+    if (this.servicesByGroups.length > 0) {
+      // Si hay servicios por grupos, crear múltiples servicios (uno por grupo)
+      siteRequest.services = this.servicesByGroups.map((serviceData) => {
+        const serviceRequest: SiteServiceRequest = {
+          siteId: 0, // Se asignará cuando se cree el sitio
+          childGroupId: null, // Se asignará cuando se cree el grupo
+          // Servicios básicos
+          breakfast: serviceData.breakfast || false,
+          breakfastFrom: serviceData.breakfastFrom || null,
+          breakfastTo: serviceData.breakfastTo || null,
+          lunch: serviceData.lunch || false,
+          lunchFrom: serviceData.lunchFrom || null,
+          lunchTo: serviceData.lunchTo || null,
+          snackAM: serviceData.snackAM || false,
+          snackAMFrom: serviceData.snackAMFrom || null,
+          snackAMTo: serviceData.snackAMTo || null,
+          snackPM: serviceData.snackPM || false,
+          snackPMFrom: serviceData.snackPMFrom || null,
+          snackPMTo: serviceData.snackPMTo || null,
+          dinner: serviceData.dinner || false,
+          dinnerFrom: serviceData.dinnerFrom || null,
+          dinnerTo: serviceData.dinnerTo || null,
+          snackNight: serviceData.snackNight || false,
+          snackNightFrom: serviceData.snackNightFrom || null,
+          snackNightTo: serviceData.snackNightTo || null,
+        };
+        // Validar y limpiar cada servicio
+        return validateAndCleanSiteService(serviceRequest);
+      });
+    } else {
+      // Servicio general (sin grupos específicos)
+      siteRequest.services = [cleanedServiceRequest];
+    }
+
+    // Agregar grupos de niños si hay grupos
+    if (this.childGroups.length > 0) {
+      siteRequest.childGroups = this.childGroups;
+    }
 
     this.isLoading = true;
 
@@ -1680,6 +1783,14 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   /**
+   * Determina si se deben mostrar campos adicionales para diferentes grupos
+   * Se muestra cuando la capacidad del salón comedor es menor que la matrícula general
+   */
+  shouldShowDifferentGroupsFields(): boolean {
+    return true; // Tabla siempre habilitada
+  }
+
+  /**
    * Determina si se deben mostrar servicios por grupos
    * Solo se muestra cuando la capacidad es menor que la matrícula general
    */
@@ -1704,6 +1815,238 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const errors = { ...capacityControl.errors };
       delete errors['max'];
       capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+  }
+
+  // ===== MÉTODOS PARA MANEJO DE TABLA DE SERVICIOS POR GRUPOS =====
+
+  onAddMenuAction(menuItemId: string): void {
+    if (menuItemId === 'add') {
+      this.onTableAdd();
+    }
+  }
+
+  onTableAdd(): void {
+    const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        isEdit: false,
+        yesNoOptions: this.yesNoOptions,
+        generalEnrollment: generalEnrollment,
+        diningRoomCapacity: diningRoomCapacity,
+        existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        isPDAM: true,
+        isPACNA: false,
+        isPSAV: false,
+        operatingStartTime: operatingStartTime,
+        operatingEndTime: operatingEndTime,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        const newId = this.servicesByGroups.length > 0 
+          ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 
+          : 1;
+        result.id = newId;
+        this.servicesByGroups.push(result);
+        this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices();
+      }
+    });
+  }
+
+  onTableEdit(event: Event, id: number): void {
+    const serviceToEdit = this.servicesByGroups.find((s) => s.id === id);
+    if (!serviceToEdit) {
+      this._notificationService.showError('sites.add.services.error.service-not-found');
+      return;
+    }
+
+    const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        ...serviceToEdit,
+        isEdit: true,
+        yesNoOptions: this.yesNoOptions,
+        generalEnrollment: generalEnrollment,
+        diningRoomCapacity: diningRoomCapacity,
+        existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        isPDAM: true,
+        isPACNA: false,
+        isPSAV: false,
+        operatingStartTime: operatingStartTime,
+        operatingEndTime: operatingEndTime,
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      if (result) {
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups[index] = result;
+          this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices();
+        }
+      }
+    });
+  }
+
+  onTableDelete(event: Event, id: number): void {
+    const serviceToDelete = this.servicesByGroups.find((s) => s.id === id);
+    if (!serviceToDelete) {
+      this._notificationService.showError('sites.add.services.error.service-not-found');
+      return;
+    }
+
+    const confirmMessage = this._translocoService.translate('sites.add.services.confirm-delete', {
+      groupName: serviceToDelete.groupName,
+    });
+
+    if (confirm(confirmMessage)) {
+      const index = this.servicesByGroups.findIndex((s) => s.id === id);
+      if (index !== -1) {
+        this.servicesByGroups.splice(index, 1);
+        this.updateServicesTableDataSource();
+        this.syncChildGroupsFromServices();
+        this._notificationService.showSuccess('sites.add.services.success.deleted');
+      }
+    }
+  }
+
+  private updateServicesTableDataSource(): void {
+    this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+    this._changeDetectorRef.detectChanges();
+  }
+
+  private syncChildGroupsFromServices(): void {
+    const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
+
+    this.servicesByGroups.forEach(service => {
+      if (service.groupName) {
+        const existingGroup = uniqueGroups.get(service.groupName);
+        if (!existingGroup) {
+          uniqueGroups.set(service.groupName, {
+            groupName: service.groupName,
+            numberOfChildren: service.numberOfChildren || 0
+          });
+        } else {
+          if ((service.numberOfChildren || 0) > existingGroup.numberOfChildren) {
+            existingGroup.numberOfChildren = service.numberOfChildren || 0;
+          }
+        }
+      }
+    });
+
+    this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
+      siteId: 0, // Se asignará cuando se cree el sitio
+      groupName: group.groupName,
+      groupNameEN: group.groupName,
+      numberOfChildren: group.numberOfChildren
+    }));
+  }
+
+  /**
+   * Calcula y crea automáticamente los grupos necesarios en servicesByGroups
+   * cuando la capacidad del comedor es menor que la matrícula
+   */
+  private calculateGroupsFromDiningRoomCapacity(): void {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+
+    if (!hasDiningRoom || !capacity || !enrollment || capacity >= enrollment) {
+      this.cleanAutoCalculatedGroups();
+      return;
+    }
+
+    const numberOfGroups = Math.ceil(enrollment / capacity);
+    let remainingChildren = enrollment;
+    const calculatedGroups: Array<{ groupName: string; numberOfChildren: number }> = [];
+    
+    for (let i = 1; i <= numberOfGroups; i++) {
+      const childrenInGroup = i === numberOfGroups 
+        ? remainingChildren
+        : Math.min(capacity, remainingChildren);
+      
+      calculatedGroups.push({
+        groupName: `Grupo ${i}`,
+        numberOfChildren: childrenInGroup
+      });
+      
+      remainingChildren -= childrenInGroup;
+    }
+
+    calculatedGroups.forEach((calculatedGroup) => {
+      const existingService = this.servicesByGroups.find(
+        s => s.groupName === calculatedGroup.groupName
+      );
+
+      if (existingService) {
+        if (existingService.numberOfChildren !== calculatedGroup.numberOfChildren) {
+          existingService.numberOfChildren = calculatedGroup.numberOfChildren;
+        }
+      } else {
+        const newId = this.servicesByGroups.length > 0 
+          ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 
+          : 1;
+
+        this.servicesByGroups.push({
+          id: newId,
+          groupName: calculatedGroup.groupName,
+          numberOfChildren: calculatedGroup.numberOfChildren,
+          breakfast: false,
+          lunch: false,
+          snackAM: false,
+          snackPM: false,
+          dinner: false,
+          snackNight: false,
+        } as ServiceByGroupDialogData);
+      }
+    });
+
+    this.servicesByGroups = this.servicesByGroups.filter(service => {
+      if (!service.groupName || !service.groupName.startsWith('Grupo ')) {
+        return true;
+      }
+      return calculatedGroups.some(cg => cg.groupName === service.groupName);
+    });
+
+    this.updateServicesTableDataSource();
+    this.syncChildGroupsFromServices();
+    this.nextGroupNumber = numberOfGroups + 1;
+  }
+
+  /**
+   * Limpia los grupos automáticos cuando ya no se cumple la condición
+   */
+  private cleanAutoCalculatedGroups(): void {
+    const beforeLength = this.servicesByGroups.length;
+    this.servicesByGroups = this.servicesByGroups.filter(
+      service => !service.groupName || !service.groupName.startsWith('Grupo ')
+    );
+
+    if (this.servicesByGroups.length !== beforeLength) {
+      this.updateServicesTableDataSource();
+      this.syncChildGroupsFromServices();
     }
   }
 

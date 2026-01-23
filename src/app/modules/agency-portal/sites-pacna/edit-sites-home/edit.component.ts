@@ -191,14 +191,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * 2. Tiene salón comedor y la capacidad es menor que la matrícula general
    */
   shouldShowDifferentGroupsFields(): boolean {
-    const isDayCareHomeWithDifferentGroups = this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true;
-
-    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
-    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
-    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
-    const hasDiningRoomWithCapacityLessThanEnrollment = hasDiningRoom && capacity && enrollment && capacity < enrollment;
-
-    return isDayCareHomeWithDifferentGroups || hasDiningRoomWithCapacityLessThanEnrollment;
+    return true; // Tabla siempre habilitada
   }
 
 
@@ -688,6 +681,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
+        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
       });
 
@@ -695,7 +689,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
+        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para calcular grupos automáticamente cuando cambia hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.calculateGroupsFromDiningRoomCapacity();
       });
   }
 
@@ -2089,10 +2091,18 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   }
 
   onTableAdd(): void {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {
         isEdit: false,
         yesNoOptions: this.yesNoOptions,
+        isPDAM: false,
+        isPACNA: true,
+        isPSAV: false,
+        operatingStartTime: operatingStartTime,
+        operatingEndTime: operatingEndTime,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2124,11 +2134,19 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       return;
     }
 
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {
         ...serviceToEdit,
         isEdit: true,
         yesNoOptions: this.yesNoOptions,
+        isPDAM: false,
+        isPACNA: true,
+        isPSAV: false,
+        operatingStartTime: operatingStartTime,
+        operatingEndTime: operatingEndTime,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2214,6 +2232,121 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       groupNameEN: group.groupName, // Por ahora usar el mismo nombre
       numberOfChildren: group.numberOfChildren
     }));
+  }
+
+  /**
+   * Calcula y crea automáticamente los grupos necesarios en servicesByGroups
+   * cuando la capacidad del comedor es menor que la matrícula
+   */
+  private calculateGroupsFromDiningRoomCapacity(): void {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+
+    // Solo calcular si se cumplen las condiciones
+    if (!hasDiningRoom || !capacity || !enrollment || capacity >= enrollment) {
+      // Si ya no se cumple la condición, limpiar grupos automáticos si existen
+      this.cleanAutoCalculatedGroups();
+      return;
+    }
+
+    // No sobrescribir si es Day Care Home con diferentes grupos manuales
+    if (this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true) {
+      return;
+    }
+
+    // Calcular número de grupos necesarios
+    const numberOfGroups = Math.ceil(enrollment / capacity);
+    
+    // Distribuir niños: primeros grupos con capacidad máxima, último con el resto
+    let remainingChildren = enrollment;
+    const calculatedGroups: Array<{ groupName: string; numberOfChildren: number }> = [];
+    
+    for (let i = 1; i <= numberOfGroups; i++) {
+      const childrenInGroup = i === numberOfGroups 
+        ? remainingChildren  // Último grupo toma el resto
+        : Math.min(capacity, remainingChildren);  // Otros grupos con capacidad máxima
+      
+      calculatedGroups.push({
+        groupName: `Grupo ${i}`,
+        numberOfChildren: childrenInGroup
+      });
+      
+      remainingChildren -= childrenInGroup;
+    }
+
+    // Crear o actualizar grupos en servicesByGroups
+    calculatedGroups.forEach((calculatedGroup) => {
+      const existingService = this.servicesByGroups.find(
+        s => s.groupName === calculatedGroup.groupName
+      );
+
+      if (existingService) {
+        // Actualizar numberOfChildren si es diferente
+        if (existingService.numberOfChildren !== calculatedGroup.numberOfChildren) {
+          existingService.numberOfChildren = calculatedGroup.numberOfChildren;
+        }
+      } else {
+        // Crear nuevo grupo en servicesByGroups (sin servicios configurados)
+        const newId = this.servicesByGroups.length > 0 
+          ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 
+          : 1;
+
+        this.servicesByGroups.push({
+          id: newId,
+          groupName: calculatedGroup.groupName,
+          numberOfChildren: calculatedGroup.numberOfChildren,
+          // Todos los servicios en false/null (el usuario los configurará editando)
+          breakfast: false,
+          lunch: false,
+          snackAM: false,
+          snackPM: false,
+          dinner: false,
+          snackNight: false,
+          dinnerExtended: false,
+          dinnerAtRisk: false,
+          snackExtended: false,
+          snackAtRisk: false,
+        } as ServiceByGroupDialogData);
+      }
+    });
+
+    // Eliminar grupos automáticos que ya no son necesarios
+    this.servicesByGroups = this.servicesByGroups.filter(service => {
+      // Mantener grupos que no son automáticos (no empiezan con "Grupo ")
+      if (!service.groupName || !service.groupName.startsWith('Grupo ')) {
+        return true;
+      }
+      // Mantener solo los grupos que están en calculatedGroups
+      return calculatedGroups.some(cg => cg.groupName === service.groupName);
+    });
+
+    // Actualizar tabla y sincronizar childGroups
+    this.updateServicesTableDataSource();
+    this.syncChildGroupsFromServices();
+    this.nextGroupNumber = numberOfGroups + 1;
+  }
+
+  /**
+   * Limpia los grupos automáticos cuando ya no se cumple la condición
+   */
+  private cleanAutoCalculatedGroups(): void {
+    // Solo limpiar si no es Day Care Home con diferentes grupos
+    if (this.isDayCareHome && this.headerConfig.formGroup.get('offersServiceToDifferentGroups')?.value === true) {
+      return;
+    }
+
+    // Eliminar grupos que empiezan con "Grupo " (grupos automáticos)
+    const beforeLength = this.servicesByGroups.length;
+    this.servicesByGroups = this.servicesByGroups.filter(
+      service => !service.groupName || !service.groupName.startsWith('Grupo ')
+    );
+
+    // Si se eliminaron grupos, actualizar tabla
+    if (this.servicesByGroups.length !== beforeLength) {
+      this.updateServicesTableDataSource();
+      this.syncChildGroupsFromServices();
+    }
   }
 
   // Método para obtener Site Location según el tipo de grupo seleccionado

@@ -9,7 +9,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, Observable, of } from 'rxjs';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 
 @Component({
@@ -24,29 +24,59 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   @Input() darkMode: boolean = false;
   @Input() viewMode: 'table' | 'cards' | 'auto' = 'table';
 
-  @ContentChild('cardTemplate') cardTemplate: TemplateRef<any>;
+  @ContentChild(TemplateRef) cardTemplate: TemplateRef<any>;
+  @Input() customCardTemplate: TemplateRef<any> | null = null;
 
   private _authService = inject(AuthService);
   public _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _unsubscribeAll = new Subject<void>();
   private _lastDataLength = 0;
+  private _lastIsEmpty: boolean | undefined = undefined;
+
+  public data$: Observable<any[]>;
+
+  // Helper helper for custom templates that might be hardcoded/fallback
+  public timeStringToDateWrapper(timeString: string): Date | null {
+    if (!timeString) return null;
+    const date = new Date();
+    const parts = timeString.split(':');
+    if (parts.length >= 2) {
+      date.setHours(parseInt(parts[0], 10));
+      date.setMinutes(parseInt(parts[1], 10));
+    }
+    return date;
+  }
 
   ngOnInit(): void {
     if (this.config?.viewMode) {
       this.viewMode = this.config.viewMode;
     }
+    this._initDataSource();
     this._subscribeToDataSource();
     this._updateLastDataLength();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    // Debug logging
+    if (changes['config']) {
+      console.log('GenericTableComponent: config changed', this.config);
+    }
+
     // Si el config cambia, re-suscribirse al dataSource
-    if (changes['config'] && this.config?.dataSource) {
-      this._unsubscribeAll.next();
-      this._subscribeToDataSource();
-      this._updateLastDataLength();
-      this._changeDetectorRef.markForCheck();
+    if (changes['config']) {
+      if (this.config?.viewMode) {
+        this.viewMode = this.config.viewMode;
+        console.log('GenericTableComponent: viewMode updated from config', this.viewMode);
+      }
+      
+      if (this.config?.dataSource) {
+        this._unsubscribeAll.next();
+        this._initDataSource();
+        this._subscribeToDataSource();
+        this._updateLastDataLength();
+        this._changeDetectorRef.markForCheck();
+      }
     }
   }
 
@@ -56,6 +86,14 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
     if (currentLength !== this._lastDataLength) {
       this._lastDataLength = currentLength;
       this._changeDetectorRef.markForCheck();
+    }
+    // Forzar detección de cambios para el getter isEmpty
+    if (this.config?.dataSource) {
+      const isEmpty = !this.config.dataSource.data || this.config.dataSource.data.length === 0;
+      if (isEmpty !== this._lastIsEmpty) {
+        this._lastIsEmpty = isEmpty;
+        this._changeDetectorRef.markForCheck();
+      }
     }
   }
 
@@ -78,6 +116,16 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
 
   private _updateLastDataLength(): void {
     this._lastDataLength = this.config?.dataSource?.data?.length || 0;
+  }
+
+  private _initDataSource(): void {
+    if (this.config?.dataSource) {
+      this.data$ = this.config.dataSource.connect();
+    } else if (this.config?.dataSourceList) {
+      this.data$ = of(this.config.dataSourceList);
+    } else {
+      this.data$ = of([]);
+    }
   }
 
   /**

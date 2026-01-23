@@ -476,14 +476,16 @@
         <!-- TITULO -->
         <!-- Servicios que operará y horario -->
         <!-- Servicios que operará y horario - Solo mostrar si NO se están usando servicios por grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" style="display: none;">
           <p class="text-lg font-medium">{{ "sites.edit.services-and-schedule.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.services-and-schedule.description" | transloco }}</p>
         </div>
 
         <!-- ✅ VERIFICADO: Desayuno - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Desayuno / Breakfast -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "sites.edit.breakfast.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
@@ -527,7 +529,8 @@
 
         <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda AM / Snack AM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "sites.edit.snack-am.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select">
@@ -571,7 +574,8 @@
 
         <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Almuerzo / Lunch -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "sites.edit.lunch.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'lunch'" data-cy="lunch-select">
@@ -615,7 +619,8 @@
 
         <!-- ✅ VERIFICADO: Merienda PM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda PM / Snack PM -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "sites.edit.snack-pm.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select">
@@ -661,7 +666,8 @@
         <!-- Cena / Dinner -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-field">
             <mat-label>{{ "sites.edit.dinner.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
@@ -705,7 +711,8 @@
         <!-- Merienda nocturna / Night Snack -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "sites.edit.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
@@ -749,7 +756,8 @@
 
         <!-- ✅ VERIFICADO: Cena Horario Extendido - Aplica a: PACNA ✅ -->
         <!-- Cena Horario Extendido / Dinner Extended -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-extended-field">
             <mat-label>{{ "sites.edit.dinner-extended.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select">
@@ -793,7 +801,8 @@
 
         <!-- ✅ VERIFICADO: Cena en Riesgo - Aplica a: PACNA ✅ -->
         <!-- Cena en Riesgo / Dinner At Risk -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-at-risk-field">
             <mat-label>{{ "sites.edit.dinner-at-risk.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select">
@@ -837,7 +846,8 @@
 
         <!-- ✅ VERIFICADO: Merienda Horario Extendido - Aplica a: PACNA ✅ -->
         <!-- Merienda Horario Extendido / Snack Extended -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-extended-field">
             <mat-label>{{ "sites.edit.snack-extended.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select">
@@ -881,7 +891,8 @@
 
         <!-- ✅ VERIFICADO: Merienda en Riesgo - Aplica a: PACNA ✅ -->
         <!-- Merienda en Riesgo / Snack At Risk -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="!shouldShowDifferentGroupsFields()">
+        <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-at-risk-field">
             <mat-label>{{ "sites.edit.snack-at-risk.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select">
@@ -925,7 +936,7 @@
 
         <!-- VERIFICADO: Tabla de Servicios por Grupos - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <!-- Tabla de Servicios por Grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12" *ngIf="shouldShowDifferentGroupsFields()">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
           <div class="mb-4">
             <h3 class="mb-2 text-lg font-medium">{{ "sites.edit.services.table.title" | transloco }}</h3>
             <p class="mb-4 text-sm text-gray-600">{{ "sites.edit.services.table.description" | transloco }}</p>
