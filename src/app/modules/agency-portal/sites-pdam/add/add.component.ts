@@ -208,7 +208,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Propiedades para manejar grupos de niños específicos
   childGroups: SiteChildGroupRequest[] = [];
-  nextGroupNumber: number = 1;
+
 
   // Tabla de servicios por grupos
   servicesTableConfig: GenericTableConfig = {
@@ -641,7 +641,6 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
-        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
       });
 
@@ -649,16 +648,10 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
-        this.calculateGroupsFromDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
       });
 
-    // Listener para calcular grupos automáticamente cuando cambia hasDiningRoom
-    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.calculateGroupsFromDiningRoomCapacity();
-      });
+
   }
 
   /**
@@ -1975,95 +1968,11 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       siteId: 0, // Se asignará cuando se cree el sitio
       groupName: group.groupName,
       groupNameEN: group.groupName,
-      numberOfChildren: group.numberOfChildren
+      numberOfChildren7: group.numberOfChildren
     }));
   }
 
-  /**
-   * Calcula y crea automáticamente los grupos necesarios en servicesByGroups
-   * cuando la capacidad del comedor es menor que la matrícula
-   */
-  private calculateGroupsFromDiningRoomCapacity(): void {
-    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
-    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
-    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
 
-    if (!hasDiningRoom || !capacity || !enrollment || capacity >= enrollment) {
-      this.cleanAutoCalculatedGroups();
-      return;
-    }
-
-    const numberOfGroups = Math.ceil(enrollment / capacity);
-    let remainingChildren = enrollment;
-    const calculatedGroups: Array<{ groupName: string; numberOfChildren: number }> = [];
-    
-    for (let i = 1; i <= numberOfGroups; i++) {
-      const childrenInGroup = i === numberOfGroups 
-        ? remainingChildren
-        : Math.min(capacity, remainingChildren);
-      
-      calculatedGroups.push({
-        groupName: `Grupo ${i}`,
-        numberOfChildren: childrenInGroup
-      });
-      
-      remainingChildren -= childrenInGroup;
-    }
-
-    calculatedGroups.forEach((calculatedGroup) => {
-      const existingService = this.servicesByGroups.find(
-        s => s.groupName === calculatedGroup.groupName
-      );
-
-      if (existingService) {
-        if (existingService.numberOfChildren !== calculatedGroup.numberOfChildren) {
-          existingService.numberOfChildren = calculatedGroup.numberOfChildren;
-        }
-      } else {
-        const newId = this.servicesByGroups.length > 0 
-          ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 
-          : 1;
-
-        this.servicesByGroups.push({
-          id: newId,
-          groupName: calculatedGroup.groupName,
-          numberOfChildren: calculatedGroup.numberOfChildren,
-          breakfast: false,
-          lunch: false,
-          snackAM: false,
-          snackPM: false,
-          dinner: false,
-          snackNight: false,
-        } as ServiceByGroupDialogData);
-      }
-    });
-
-    this.servicesByGroups = this.servicesByGroups.filter(service => {
-      if (!service.groupName || !service.groupName.startsWith('Grupo ')) {
-        return true;
-      }
-      return calculatedGroups.some(cg => cg.groupName === service.groupName);
-    });
-
-    this.updateServicesTableDataSource();
-    this.syncChildGroupsFromServices();
-    this.nextGroupNumber = numberOfGroups + 1;
-  }
-
-  /**
-   * Limpia los grupos automáticos cuando ya no se cumple la condición
-   */
-  private cleanAutoCalculatedGroups(): void {
-    const beforeLength = this.servicesByGroups.length;
-    this.servicesByGroups = this.servicesByGroups.filter(
-      service => !service.groupName || !service.groupName.startsWith('Grupo ')
-    );
-
-    if (this.servicesByGroups.length !== beforeLength) {
-      this.updateServicesTableDataSource();
-      this.syncChildGroupsFromServices();
-    }
-  }
 
   get shouldShowKitchenTypeField(): boolean {
     // Solo para PDAM
