@@ -1968,7 +1968,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       siteId: 0, // Se asignará cuando se cree el sitio
       groupName: group.groupName,
       groupNameEN: group.groupName,
-      numberOfChildren7: group.numberOfChildren
+      numberOfChildren: group.numberOfChildren
     }));
   }
 
