@@ -8,6 +8,7 @@ import { PROGRAM_IDS } from 'app/shared/const';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
+import { ServiceTypeService } from 'app/shared/services/service-type.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 // Resolver para la lista de sitios PSAV
@@ -39,20 +40,25 @@ export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: Activ
   const groupTypeService = inject(GroupTypeService);
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
 
   return forkJoin([
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PSAV }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
   ]).pipe(
-    map(([deliveryTypes, groupTypes, organizationTypes, allowedOperatingDays]) => ({
-      centerTypes: [], // PSAV no tiene centerTypes
-      deliveryTypes: deliveryTypes.body,
-      sponsorTypes: [], // PSAV no tiene sponsorTypes
-      groupTypes: groupTypes.body,
-      organizationTypes: organizationTypes.body,
-      allowedOperatingDays: allowedOperatingDays.body,
-    }))
+    map(
+      ([deliveryTypes, groupTypes, organizationTypes, allowedOperatingDays, serviceTypes]) => ({
+        centerTypes: [], // PSAV no tiene centerTypes
+        deliveryTypes: deliveryTypes.body,
+        sponsorTypes: [], // PSAV no tiene sponsorTypes
+        groupTypes: groupTypes.body,
+        organizationTypes: organizationTypes.body,
+        allowedOperatingDays: allowedOperatingDays.body,
+        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+      })
+    )
   );
 };

@@ -1361,8 +1361,16 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
             break;
         }
       },
-      error: () => {
-        this._notificationService.showErrorDialog();
+      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+        if (
+          err?.status === 400 &&
+          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
+          err?.error?.message
+        ) {
+          this._notificationService.showError(err.error.message);
+        } else {
+          this._notificationService.showErrorDialog();
+        }
         this.headerConfig.formGroup.enable();
       },
       complete: () => {

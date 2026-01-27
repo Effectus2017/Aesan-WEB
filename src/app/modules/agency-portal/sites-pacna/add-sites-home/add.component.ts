@@ -1359,8 +1359,16 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
             break;
         }
       },
-      error: () => {
-        this._notificationService.showErrorDialog();
+      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+        if (
+          err?.status === 400 &&
+          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
+          err?.error?.message
+        ) {
+          this._notificationService.showError(err.error.message);
+        } else {
+          this._notificationService.showErrorDialog();
+        }
         this.headerConfig.formGroup.enable();
       },
       complete: () => {
@@ -1726,7 +1734,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   onTableAdd(): void {
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
+    const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {
         isEdit: false,
@@ -1736,6 +1744,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         isPSAV: false,
         operatingStartTime: operatingStartTime,
         operatingEndTime: operatingEndTime,
+        serviceTypes: programData?.serviceTypes ?? [],
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -1773,7 +1782,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
+    const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {
         ...serviceToEdit,
@@ -1784,6 +1793,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         isPSAV: false,
         operatingStartTime: operatingStartTime,
         operatingEndTime: operatingEndTime,
+        serviceTypes: programData?.serviceTypes ?? [],
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',

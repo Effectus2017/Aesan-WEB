@@ -12,10 +12,26 @@ import { NgIf, NgFor } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { toTimeString, timeStringToDate, generateTimeOptions, filterStartTimeOptions, getEndTimeOptions, compareByTime, TimeOption } from 'app/shared/utils';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeIds, ServiceTypes } from 'app/shared/constants/service-type.constants';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { Subject, takeUntil } from 'rxjs';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
+
+/** Mapeo ServiceTypeId -> nombres de controles del formulario (AESAN-257). */
+const SERVICE_TYPE_ID_TO_FORM_KEY: Record<number, { bool: string; from: string; to: string }> = {
+  1: { bool: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+  2: { bool: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+  3: { bool: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+  4: { bool: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+  5: { bool: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+  6: { bool: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+  7: { bool: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+  8: { bool: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+  9: { bool: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+  10: { bool: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+};
 
 export interface ServiceByGroupDialogData {
   id?: number;
@@ -62,11 +78,14 @@ export interface ServiceByGroupDialogData {
 
   isEdit?: boolean;
   
-  // Flags para identificar el programa
+  // Flags para identificar el programa (fallback cuando no hay serviceTypes)
   isPDAM?: boolean;
   isPACNA?: boolean;
   isPSAV?: boolean;
-  
+
+  /** Tipos de servicio por programa desde el backend (AESAN-257). Si existe, el modal muestra solo estos. */
+  serviceTypes?: ServiceTypeByProgram[];
+
   // Horas de funcionamiento para limitar opciones de tiempo
   operatingStartTime?: Date | string | null;
   operatingEndTime?: Date | string | null;
@@ -273,28 +292,61 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Determina si se debe mostrar el servicio de Cena
-   * Se muestra para PACNA y PSAV, no para PDAM
+   * Determina si se debe mostrar el servicio de Cena (fallback cuando no hay serviceTypes).
+   * Se muestra para PACNA y PSAV, no para PDAM.
    */
   shouldShowDinner(): boolean {
     return this.data?.isPACNA === true || this.data?.isPSAV === true;
   }
 
   /**
-   * Determina si se debe mostrar el servicio de Merienda Nocturna
-   * Se muestra solo para PACNA
+   * Determina si se debe mostrar el servicio de Merienda Nocturna (fallback cuando no hay serviceTypes).
+   * Se muestra solo para PACNA.
    */
   shouldShowSnackNight(): boolean {
     return this.data?.isPACNA === true;
   }
 
   /**
-   * Determina si se deben mostrar los servicios adicionales de PACNA
-   * (dinnerExtended, dinnerAtRisk, snackExtended, snackAtRisk)
-   * Se muestran solo para PACNA
+   * Determina si se deben mostrar los servicios adicionales de PACNA (fallback cuando no hay serviceTypes).
    */
   shouldShowPACNAServices(): boolean {
     return this.data?.isPACNA === true;
+  }
+
+  /** TrackBy para el ngFor de servicios por item.st.id. */
+  trackByServiceId(_index: number, item: { st: { id: number } }): number {
+    return item.st.id;
+  }
+
+  /**
+   * Lista de servicios a mostrar con sus claves de formulario.
+   * Si data.serviceTypes existe y tiene elementos, se usa (orden por displayOrder).
+   * Si no, se usa fallback con ServiceTypes + reglas isPDAM/isPACNA/isPSAV (AESAN-257).
+   */
+  getVisibleServiceTypesWithKeys(): Array<{ st: { id: number; name: string; nameEN: string; displayOrder: number }; formKey: { bool: string; from: string; to: string } }> {
+    const formKey = (id: number) => SERVICE_TYPE_ID_TO_FORM_KEY[id];
+    if (this.data?.serviceTypes && this.data.serviceTypes.length > 0) {
+      return [...this.data.serviceTypes]
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .filter((st) => formKey(st.id))
+        .map((st) => ({ st, formKey: formKey(st.id)! }));
+    }
+    const pacnaServiceIds: number[] = [
+      ServiceTypeIds.DinnerExtended,
+      ServiceTypeIds.DinnerAtRisk,
+      ServiceTypeIds.SnackExtended,
+      ServiceTypeIds.SnackAtRisk,
+    ];
+    const fallback = ServiceTypes.filter((st) => {
+      if (st.id === ServiceTypeIds.Dinner) return this.shouldShowDinner();
+      if (st.id === ServiceTypeIds.SnackNight) return this.shouldShowSnackNight();
+      if (pacnaServiceIds.includes(st.id)) return this.shouldShowPACNAServices();
+      return true;
+    });
+    return fallback
+      .sort((a, b) => a.displayOrder - b.displayOrder)
+      .map((st) => ({ st, formKey: formKey(st.id)! }));
   }
 
   /**

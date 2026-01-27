@@ -38,7 +38,7 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
-        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -103,7 +103,7 @@ export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: Activa
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
-        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
     // Types of kitchen
     // Tipos de cocina
