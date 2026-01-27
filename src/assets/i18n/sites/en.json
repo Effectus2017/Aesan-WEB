@@ -777,6 +777,10 @@
                         "exceeds-capacity": "The number of children cannot exceed the dining room capacity",
                         "exceeds-enrollment": "The total sum of children in all groups cannot exceed the general enrollment"
                     },
+                    "validation": {
+                        "missing-strong-service": "For this program you must include at least one of the following services: {{names}}. Include at least one in your selection.",
+                        "insufficient-time-between": "Between {{nameA}} and {{nameB}} there must be at least {{minMinutes}} minutes. Adjust the schedules."
+                    },
                     "basic-services": {
                         "title": "Basic Services"
                     },

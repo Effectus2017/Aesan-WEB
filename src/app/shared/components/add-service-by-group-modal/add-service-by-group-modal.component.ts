@@ -10,7 +10,17 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { TranslocoModule } from '@ngneat/transloco';
 import { NgIf, NgFor } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { toTimeString, timeStringToDate, generateTimeOptions, filterStartTimeOptions, getEndTimeOptions, compareByTime, TimeOption } from 'app/shared/utils';
+import {
+  toTimeString,
+  timeStringToDate,
+  generateTimeOptions,
+  filterStartTimeOptions,
+  getEndTimeOptions,
+  compareByTime,
+  TimeOption,
+  dateToMinutes,
+  timeToMinutes,
+} from 'app/shared/utils';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
 import { ServiceTypeIds, ServiceTypes } from 'app/shared/constants/service-type.constants';
@@ -91,6 +101,12 @@ export interface ServiceByGroupDialogData {
   operatingEndTime?: Date | string | null;
 }
 
+/** Errores de validación de servicios fuertes y tiempo entre servicios (AESAN-257). */
+export interface ServiceValidationErrors {
+  missingStrongService?: { strongServiceNames: string };
+  insufficientTimeBetween?: { nameA: string; nameB: string; minMinutes: number };
+}
+
 @Component({
   selector: 'app-add-service-by-group-modal',
   templateUrl: './add-service-by-group-modal.component.html',
@@ -117,7 +133,10 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   yesNoOptions: OptionSelection[] = [];
   timeOptions: TimeOption[] = [];
   private _unsubscribeAll: Subject<void> = new Subject<void>();
-  
+
+  /** Errores de validación de servicios fuertes y tiempo mínimo entre servicios. */
+  serviceValidationErrors: ServiceValidationErrors | null = null;
+
   // Wrappers para compatibilidad con mat-select
   compareByTimeWrapper = compareByTime;
 
@@ -238,6 +257,7 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
           .pipe(takeUntil(this._unsubscribeAll))
           .subscribe((isChecked) => {
             updateValidators(isChecked);
+            this.refreshServiceValidationErrors();
           });
 
         // Inicializar estado actual
@@ -270,8 +290,8 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
           .subscribe(() => {
             TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
             TimeValidationUtil.validateTimeRange(fromControl, toControl);
-            // Forzar detección de cambios para actualizar las opciones en el template
-            this._changeDetectorRef.detectChanges();
+            this.refreshServiceValidationErrors();
+            this._changeDetectorRef.markForCheck();
           });
 
         // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
@@ -280,9 +300,51 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
           .subscribe(() => {
             TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
             TimeValidationUtil.validateTimeRange(fromControl, toControl);
+            this.refreshServiceValidationErrors();
+            this._changeDetectorRef.markForCheck();
           });
       }
     });
+
+    // Validación inicial por si se abre con datos ya inválidos (ej. mismos horarios en dos servicios)
+    this.refreshServiceValidationErrors();
+  }
+
+  /**
+   * Actualiza serviceValidationErrors con las validaciones de servicios fuertes y tiempo mínimo
+   * entre servicios. Se llama al cambiar horas o al activar/desactivar servicios para que el
+   * cartel se muestre en tiempo real (AESAN-257).
+   */
+  private refreshServiceValidationErrors(): void {
+    const serviceTypes = this.data?.serviceTypes ?? [];
+    if (serviceTypes.length === 0) {
+      this.serviceValidationErrors = null;
+      this._changeDetectorRef.markForCheck();
+      return;
+    }
+    const strongError = this.validateStrongServices();
+    const timeError = this.validateTimeBetweenServices();
+    if (strongError != null || timeError != null) {
+      this.serviceValidationErrors = {};
+      if (strongError != null) {
+        this.serviceValidationErrors.missingStrongService = { strongServiceNames: strongError };
+      }
+      if (timeError != null) {
+        this.serviceValidationErrors.insufficientTimeBetween = timeError;
+      }
+    } else {
+      this.serviceValidationErrors = null;
+    }
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Indica si hay errores de validación de servicios (fuertes o tiempo mínimo) que bloquean guardar. */
+  hasServiceValidationErrors(): boolean {
+    if (!this.serviceValidationErrors) return false;
+    return !!(
+      this.serviceValidationErrors.missingStrongService ||
+      this.serviceValidationErrors.insufficientTimeBetween
+    );
   }
 
   ngOnDestroy(): void {
@@ -367,6 +429,36 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Opciones de "Desde" para un servicio concreto. Solo se restringe por servicios que terminan
+   * *antes* del candidato T: para cada opción T, se excluye si existe otro servicio A con
+   * A.To < T y T < A.To + A.minMinutes. Así Desayuno no se limita por Almuerzo; Almuerzo sí por Desayuno (AESAN-257).
+   */
+  getStartTimeOptionsForItem(
+    item: { st: { id: number }; formKey: { bool: string; from: string; to: string } }
+  ): TimeOption[] {
+    const options = this.getStartTimeOptions();
+    const serviceTypes = this.data?.serviceTypes ?? [];
+    if (serviceTypes.length === 0) return options;
+
+    const items = this.getVisibleServiceTypesWithKeys();
+    return options.filter((opt) => {
+      const t = timeToMinutes(opt.value);
+      for (const other of items) {
+        if (other.st.id === item.st.id) continue;
+        const boolVal = this.serviceForm.get(other.formKey.bool)?.value;
+        const toVal = this.serviceForm.get(other.formKey.to)?.value;
+        if (!boolVal || !toVal) continue;
+        const otherTo =
+          toVal instanceof Date ? dateToMinutes(toVal) : timeToMinutes(typeof toVal === 'string' ? toVal : String(toVal));
+        const minMinutes = (other.st as ServiceTypeByProgram).minimumMinutesToNextService ?? 0;
+        // "other" termina antes de t → exige t >= otherTo + minMinutes
+        if (otherTo < t && t < otherTo + minMinutes) return false;
+      }
+      return true;
+    });
+  }
+
+  /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    */
   getEndTimeOptions(fromField: string): TimeOption[] {
@@ -443,12 +535,108 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Construye la lista de servicios activos (marcados y con from/to) en orden de visualización
+   * (displayOrder). El "servicio previo" es siempre el anterior en la lista: es ese el que fija
+   * el mínimo de minutos que debe pasar antes del siguiente (AESAN-257).
+   */
+  private getActiveServiceSlots(): Array<{
+    typeId: number;
+    name: string;
+    from: Date;
+    to: Date;
+    minimumMinutesToNextService: number | null;
+  }> {
+    const items = this.getVisibleServiceTypesWithKeys();
+    const slots: Array<{
+      typeId: number;
+      name: string;
+      from: Date;
+      to: Date;
+      minimumMinutesToNextService: number | null;
+    }> = [];
+    for (const { st, formKey } of items) {
+      const boolVal = this.serviceForm.get(formKey.bool)?.value;
+      const fromVal = this.serviceForm.get(formKey.from)?.value;
+      const toVal = this.serviceForm.get(formKey.to)?.value;
+      if (boolVal && fromVal instanceof Date && toVal instanceof Date) {
+        const stProgram = st as ServiceTypeByProgram;
+        slots.push({
+          typeId: st.id,
+          name: st.name,
+          from: fromVal,
+          to: toVal,
+          minimumMinutesToNextService: stProgram.minimumMinutesToNextService ?? null,
+        });
+      }
+    }
+    return slots;
+  }
+
+  /**
+   * Valida que haya al menos un servicio fuerte seleccionado (AESAN-257).
+   * Solo aplica cuando data.serviceTypes existe y tiene tipos con isStrongService.
+   */
+  private validateStrongServices(): string | null {
+    const serviceTypes = this.data?.serviceTypes ?? [];
+    const strongTypes = serviceTypes.filter((st) => st.isStrongService);
+    if (strongTypes.length === 0) return null;
+    const strongIds = new Set(strongTypes.map((st) => st.id));
+    const slots = this.getActiveServiceSlots();
+    const hasStrong = slots.some((s) => strongIds.has(s.typeId));
+    if (hasStrong) return null;
+    const names = strongTypes.map((st) => st.name).join(', ');
+    return names;
+  }
+
+  /**
+   * Valida que entre cada par de servicios consecutivos (en orden de visualización) se respete
+   * el mínimo de minutos del servicio previo: nameA es el anterior en la lista y fija minMinutes (AESAN-257).
+   */
+  private validateTimeBetweenServices(): { nameA: string; nameB: string; minMinutes: number } | null {
+    const slots = this.getActiveServiceSlots();
+    for (let i = 0; i < slots.length - 1; i++) {
+      const minMinutes = slots[i].minimumMinutesToNextService ?? 0;
+      if (minMinutes <= 0) continue;
+      const toA = dateToMinutes(slots[i].to);
+      const fromB = dateToMinutes(slots[i + 1].from);
+      const gapMinutes = fromB - toA;
+      if (gapMinutes < minMinutes) {
+        return {
+          nameA: slots[i].name,
+          nameB: slots[i + 1].name,
+          minMinutes,
+        };
+      }
+    }
+    return null;
+  }
+
+  /**
    * Guarda los cambios y cierra el diálogo
    */
   onSubmit(): void {
+    this.serviceValidationErrors = null;
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
+    }
+
+    const serviceTypes = this.data?.serviceTypes ?? [];
+    if (serviceTypes.length > 0) {
+      const strongError = this.validateStrongServices();
+      const timeError = this.validateTimeBetweenServices();
+      if (strongError != null || timeError != null) {
+        this.serviceValidationErrors = {};
+        if (strongError != null) {
+          this.serviceValidationErrors.missingStrongService = { strongServiceNames: strongError };
+        }
+        if (timeError != null) {
+          this.serviceValidationErrors.insufficientTimeBetween = timeError;
+        }
+        this.serviceForm.markAllAsTouched();
+        this._changeDetectorRef.markForCheck();
+        return;
+      }
     }
 
     const formValue = this.serviceForm.value;

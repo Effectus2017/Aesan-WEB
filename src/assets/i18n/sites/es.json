@@ -710,6 +710,10 @@
                         "exceeds-capacity": "La cantidad de niños no puede exceder la capacidad del salón comedor",
                         "exceeds-enrollment": "La suma total de niños en todos los grupos no puede exceder la matrícula general"
                     },
+                    "validation": {
+                        "missing-strong-service": "Para este programa debe incluir al menos uno de los siguientes servicios: {{names}}. Incluya al menos uno en su selección.",
+                        "insufficient-time-between": "Entre {{nameA}} y {{nameB}} debe haber al menos {{minMinutes}} minutos. Ajuste los horarios."
+                    },
                     "basic-services": {
                         "title": "Servicios Básicos"
                     },

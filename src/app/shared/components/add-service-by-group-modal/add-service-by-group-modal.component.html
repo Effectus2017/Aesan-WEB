@@ -42,6 +42,19 @@
         </mat-form-field>
       </div>
 
+      <!-- Cartel de validación: tiempo mínimo entre servicios y servicios fuertes requeridos -->
+      <div *ngIf="serviceValidationErrors && (serviceValidationErrors.missingStrongService || serviceValidationErrors.insufficientTimeBetween)" class="flex items-start gap-3 rounded-lg border border-amber-500/50 bg-amber-50 p-4 dark:border-amber-600/50 dark:bg-amber-950/40" role="alert">
+        <mat-icon class="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" [attr.aria-hidden]="true">warning</mat-icon>
+        <div class="min-w-0 flex-1 space-y-1 text-sm text-amber-800 dark:text-amber-200">
+          <p *ngIf="serviceValidationErrors.missingStrongService" class="font-medium">
+            {{ "sites.add.services.modal.validation.missing-strong-service" | transloco: { names: serviceValidationErrors.missingStrongService.strongServiceNames } }}
+          </p>
+          <p *ngIf="serviceValidationErrors.insufficientTimeBetween">
+            {{ "sites.add.services.modal.validation.insufficient-time-between" | transloco: { nameA: serviceValidationErrors.insufficientTimeBetween.nameA, nameB: serviceValidationErrors.insufficientTimeBetween.nameB, minMinutes: serviceValidationErrors.insufficientTimeBetween.minMinutes } }}
+          </p>
+        </div>
+      </div>
+
       <!-- Servicios (desde backend vía serviceTypes o fallback por programa) -->
       <div class="border-t pt-4">
         <div *ngFor="let item of getVisibleServiceTypesWithKeys(); trackBy: trackByServiceId" class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
@@ -60,7 +73,7 @@
                 {{ time.display }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="serviceForm.get(item.formKey.from)?.hasError('required')">{{ "global.required" | transloco }}</mat-error>
+            <mat-error *ngIf="serviceForm.get(item.formKey.from)?.hasError('required')">{{ "global.validation.required" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
@@ -69,7 +82,7 @@
                 {{ time.display }}
               </mat-option>
             </mat-select>
-            <mat-error *ngIf="serviceForm.get(item.formKey.to)?.hasError('required')">{{ "global.required" | transloco }}</mat-error>
+            <mat-error *ngIf="serviceForm.get(item.formKey.to)?.hasError('required')">{{ "global.validation.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -83,7 +96,7 @@
           {{ "global.buttons.cancel" | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" color="primary" [disabled]="serviceForm.invalid">
+      <button mat-flat-button type="submit" color="primary" [disabled]="serviceForm.invalid || hasServiceValidationErrors()">
         {{ "global.buttons.save" | transloco }}
       </button>
     </div>
