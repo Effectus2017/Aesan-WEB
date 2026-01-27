@@ -473,18 +473,23 @@
           </mat-form-field>
         </div>
 
+        <!-- COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos -->
         <!-- TITULO -->
         <!-- Servicios que operará y horario -->
         <!-- Servicios que operará y horario - Solo mostrar si NO se están usando servicios por grupos -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" style="display: none;">
           <p class="text-lg font-medium">{{ "sites.edit.services-and-schedule.label" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sites.edit.services-and-schedule.description" | transloco }}</p>
         </div>
+        -->
 
+        <!-- COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos -->
         <!-- ✅ VERIFICADO: Desayuno - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Desayuno / Breakfast -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "sites.edit.breakfast.label" | transloco }}</mat-label>
@@ -530,6 +535,7 @@
         <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda AM / Snack AM -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "sites.edit.snack-am.label" | transloco }}</mat-label>
@@ -571,10 +577,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Almuerzo / Lunch -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "sites.edit.lunch.label" | transloco }}</mat-label>
@@ -616,10 +624,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Merienda PM - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Merienda PM / Snack PM -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "sites.edit.snack-pm.label" | transloco }}</mat-label>
@@ -661,12 +671,14 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Cena - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Cena / Dinner -->
         <!-- Horario desde para la cena -->
         <!-- Horario hasta para la cena -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-field">
             <mat-label>{{ "sites.edit.dinner.label" | transloco }}</mat-label>
@@ -706,12 +718,14 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Merienda nocturna - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Merienda nocturna / Night Snack -->
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-night-field">
             <mat-label>{{ "sites.edit.snack-night.label" | transloco }}</mat-label>
@@ -753,10 +767,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Cena Horario Extendido - Aplica a: PACNA ✅ -->
         <!-- Cena Horario Extendido / Dinner Extended -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-extended-field">
             <mat-label>{{ "sites.edit.dinner-extended.label" | transloco }}</mat-label>
@@ -798,10 +814,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Cena en Riesgo - Aplica a: PACNA ✅ -->
         <!-- Cena en Riesgo / Dinner At Risk -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="dinner-at-risk-field">
             <mat-label>{{ "sites.edit.dinner-at-risk.label" | transloco }}</mat-label>
@@ -843,10 +861,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Merienda Horario Extendido - Aplica a: PACNA ✅ -->
         <!-- Merienda Horario Extendido / Snack Extended -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-extended-field">
             <mat-label>{{ "sites.edit.snack-extended.label" | transloco }}</mat-label>
@@ -888,10 +908,12 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- ✅ VERIFICADO: Merienda en Riesgo - Aplica a: PACNA ✅ -->
         <!-- Merienda en Riesgo / Snack At Risk -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
+        <!--
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-at-risk-field">
             <mat-label>{{ "sites.edit.snack-at-risk.label" | transloco }}</mat-label>
@@ -933,6 +955,7 @@
             </mat-error>
           </mat-form-field>
         </div>
+        -->
 
         <!-- VERIFICADO: Tabla de Servicios por Grupos - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ (Day Care Home ✅) -->
         <!-- Tabla de Servicios por Grupos -->

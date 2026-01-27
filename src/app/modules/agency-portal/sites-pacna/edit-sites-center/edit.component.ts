@@ -75,6 +75,10 @@ import { Agency } from 'app/shared/models/Agency';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
+import {
+  SiteChangesCancellationsModalComponent,
+  SiteChangesCancellationsModalData,
+} from 'app/shared/components/site-changes-cancellations-modal/site-changes-cancellations-modal.component';
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -481,85 +485,86 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
+      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
       // Desayuno - Campo requerido para indicar si el sitio tiene desayuno
       // Breakfast - Required field indicating if the site has breakfast
-      breakfast: [false],
+      // breakfast: [false],
       // Desayuno desde - Campo requerido para indicar la hora de inicio del desayuno
       // Breakfast from - Required field indicating the start time of breakfast
-      breakfastFrom: [null],
+      // breakfastFrom: [null],
       // Desayuno hasta - Campo requerido para indicar la hora de fin del desayuno
       // Breakfast to - Required field indicating the end time of breakfast
-      breakfastTo: [null],
+      // breakfastTo: [null],
       // Almuerzo - Campo requerido para indicar si el sitio tiene almuerzo
       // Lunch - Required field indicating if the site has lunch
-      lunch: [false],
+      // lunch: [false],
       // Almuerzo desde - Campo requerido para indicar la hora de inicio del almuerzo
       // Lunch from - Required field indicating the start time of lunch
-      lunchFrom: [null],
+      // lunchFrom: [null],
       // Almuerzo hasta - Campo requerido para indicar la hora de fin del almuerzo
       // Lunch to - Required field indicating the end time of lunch
-      lunchTo: [null],
+      // lunchTo: [null],
       // Merienda AM - Campo requerido para indicar si el sitio tiene merienda AM
       // Snack AM - Required field indicating if the site has snack AM
-      snackAM: [false],
+      // snackAM: [false],
       // Merienda AM desde - Campo requerido para indicar la hora de inicio de la merienda AM
       // Snack AM from - Required field indicating the start time of snack AM
-      snackAMFrom: [null],
+      // snackAMFrom: [null],
       // Merienda AM hasta - Campo requerido para indicar la hora de fin de la merienda AM
       // Snack AM to - Required field indicating the end time of snack AM
-      snackAMTo: [null],
+      // snackAMTo: [null],
       // Merienda PM - Campo requerido para indicar si el sitio tiene merienda PM
       // Snack PM - Required field indicating if the site has snack PM
-      snackPM: [false],
+      // snackPM: [false],
       // Merienda PM desde - Campo requerido para indicar la hora de inicio de la merienda PM
       // Snack PM from - Required field indicating the start time of snack PM
-      snackPMFrom: [null],
+      // snackPMFrom: [null],
       // Merienda PM hasta - Campo requerido para indicar la hora de fin de la merienda PM
       // Snack PM to - Required field indicating the end time of snack PM
-      snackPMTo: [null],
+      // snackPMTo: [null],
       // Cena - Campo requerido para indicar si el sitio tiene cena
       // Dinner - Required field indicating if the site has dinner
-      dinner: [false],
+      // dinner: [false],
       // Cena desde - Campo requerido para indicar la hora de inicio de la cena
       // Dinner from - Required field indicating the start time of dinner
-      dinnerFrom: [null],
+      // dinnerFrom: [null],
       // Cena hasta - Campo requerido para indicar la hora de fin de la cena
       // Dinner to - Required field indicating the end time of dinner
-      dinnerTo: [null],
+      // dinnerTo: [null],
       // Merienda nocturna - Campo requerido para indicar si el sitio tiene merienda nocturna
       // Snack night - Required field indicating if the site has snack night
-      snackNight: [false],
+      // snackNight: [false],
       // Merienda nocturna desde - Campo requerido para indicar la hora de inicio de la merienda nocturna
       // Snack night from - Required field indicating the start time of snack night
-      snackNightFrom: [null],
+      // snackNightFrom: [null],
       // Merienda nocturna hasta - Campo requerido para indicar la hora de fin de la merienda nocturna
       // Snack night to - Required field indicating the end time of snack night
-      snackNightTo: [null],
+      // snackNightTo: [null],
       // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
       // Cena Horario Extendido (si, no)
-      dinnerExtended: [false],
+      // dinnerExtended: [false],
       // Horario desde para la cena horario extendido
-      dinnerExtendedFrom: [null],
+      // dinnerExtendedFrom: [null],
       // Horario hasta para la cena horario extendido
-      dinnerExtendedTo: [null],
+      // dinnerExtendedTo: [null],
       // Cena en Riesgo (si, no)
-      dinnerAtRisk: [false],
+      // dinnerAtRisk: [false],
       // Horario desde para la cena en riesgo
-      dinnerAtRiskFrom: [null],
+      // dinnerAtRiskFrom: [null],
       // Horario hasta para la cena en riesgo
-      dinnerAtRiskTo: [null],
+      // dinnerAtRiskTo: [null],
       // Merienda Horario Extendido (si, no)
-      snackExtended: [false],
+      // snackExtended: [false],
       // Horario desde para la merienda horario extendido
-      snackExtendedFrom: [null],
+      // snackExtendedFrom: [null],
       // Horario hasta para la merienda horario extendido
-      snackExtendedTo: [null],
+      // snackExtendedTo: [null],
       // Merienda en Riesgo (si, no)
-      snackAtRisk: [false],
+      // snackAtRisk: [false],
       // Horario desde para la merienda en riesgo
-      snackAtRiskFrom: [null],
+      // snackAtRiskFrom: [null],
       // Horario hasta para la merienda en riesgo
-      snackAtRiskTo: [null],
+      // snackAtRiskTo: [null],
       // Comunidad - Campo requerido para indicar la comunidad del sitio
       // Community - Required field indicating the community of the site
       community: [null],
@@ -856,20 +861,21 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    this.headerConfig.formGroup
-      .get('operatingStartTime')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.revalidateAllServiceTimes();
-      });
+    // this.headerConfig.formGroup
+    //   .get('operatingStartTime')
+    //   ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
+    //   .subscribe(() => {
+    //     this.revalidateAllServiceTimes();
+    //   });
 
-    this.headerConfig.formGroup
-      .get('operatingEndTime')
-      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.revalidateAllServiceTimes();
-      });
+    // this.headerConfig.formGroup
+    //   .get('operatingEndTime')
+    //   ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
+    //   .subscribe(() => {
+    //     this.revalidateAllServiceTimes();
+    //   });
 
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
@@ -891,8 +897,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // Configurar validaciones condicionales para servicios
-    this.setupServiceValidations();
+    // this.setupServiceValidations();
 
     // Listener para cambios en hasDiningRoom
     this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
@@ -927,60 +934,61 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Configura validaciones condicionales para todos los servicios
    * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
    * Si hay horarios seleccionados, el campo si/no del servicio es requerido
    */
-  private setupServiceValidations(): void {
-    // Lista de servicios con sus campos From y To correspondientes
-    const services = [
-      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
-      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
-      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
-      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
-      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
-    ];
+  // private setupServiceValidations(): void {
+  //   // Lista de servicios con sus campos From y To correspondientes
+  //   const services = [
+  //     { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+  //     { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+  //     { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+  //     { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+  //     { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+  //     { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+  //     { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+  //     { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+  //     { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+  //     { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+  //   ];
 
-    // Configurar suscripciones para cada servicio
-    services.forEach(({ service, from, to }) => {
-      const serviceControl = this.headerConfig.formGroup.get(service);
-      const fromControl = this.headerConfig.formGroup.get(from);
-      const toControl = this.headerConfig.formGroup.get(to);
+  //   // Configurar suscripciones para cada servicio
+  //   services.forEach(({ service, from, to }) => {
+  //     const serviceControl = this.headerConfig.formGroup.get(service);
+  //     const fromControl = this.headerConfig.formGroup.get(from);
+  //     const toControl = this.headerConfig.formGroup.get(to);
 
-      if (serviceControl && fromControl && toControl) {
-        // Validación inicial
-        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl, serviceControl);
-        this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+  //     if (serviceControl && fromControl && toControl) {
+  //       // Validación inicial
+  //       this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl, serviceControl);
+  //       this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
 
-        // Suscribirse a cambios en el campo de servicio
-        serviceControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value: boolean | null) => {
-          this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
-          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-        });
+  //       // Suscribirse a cambios en el campo de servicio
+  //       serviceControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value: boolean | null) => {
+  //         this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
+  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+  //       });
 
-        // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-        fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-          TimeValidationUtil.validateTimeRange(fromControl, toControl);
-          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-          // Forzar detección de cambios para actualizar las opciones en el template
-          this._changeDetectorRef.detectChanges();
-        });
+  //       // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
+  //       fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+  //         TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+  //         TimeValidationUtil.validateTimeRange(fromControl, toControl);
+  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+  //         // Forzar detección de cambios para actualizar las opciones en el template
+  //         this._changeDetectorRef.detectChanges();
+  //       });
 
-        // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-        toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-          TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-          TimeValidationUtil.validateTimeRange(fromControl, toControl);
-          this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-        });
-      }
-    });
-  }
+  //       // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
+  //       toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+  //         TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+  //         TimeValidationUtil.validateTimeRange(fromControl, toControl);
+  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
+  //       });
+  //     }
+  //   });
+  // }
 
   /**
    * Genera todas las opciones de hora (cada 30 minutos)
@@ -993,19 +1001,24 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    */
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
    */
-  getStartTimeOptions(): TimeOption[] {
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+  // getStartTimeOptions(): TimeOption[] {
+  //   const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+  //   const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return filterStartTimeOptions(
-      this.timeOptions,
-      operatingStartTime,
-      operatingEndTime
-    );
-  }
+  //   return filterStartTimeOptions(
+  //     this.timeOptions,
+  //     operatingStartTime,
+  //     operatingEndTime
+  //   );
+  // }
 
+  /**
+   * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   * NOTA: Este método también se usa para operatingEndTime, por lo que NO se comenta
+   */
   getEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     if (!fromControl) return this.timeOptions;
@@ -1032,128 +1045,132 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
    */
-  isEndTimeInvalid(fromField: string, toField: string): boolean {
-    const fromControl = this.headerConfig.formGroup.get(fromField);
-    const toControl = this.headerConfig.formGroup.get(toField);
+  // isEndTimeInvalid(fromField: string, toField: string): boolean {
+  //   const fromControl = this.headerConfig.formGroup.get(fromField);
+  //   const toControl = this.headerConfig.formGroup.get(toField);
 
-    if (!fromControl || !toControl) return false;
+  //   if (!fromControl || !toControl) return false;
 
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
+  //   const fromTime = fromControl.value;
+  //   const toTime = toControl.value;
 
-    if (!fromTime || !toTime) return false;
+  //   if (!fromTime || !toTime) return false;
 
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
+  //   const fromMinutes = dateToMinutes(fromTime);
+  //   const toMinutes = dateToMinutes(toTime);
 
-    return toMinutes <= fromMinutes;
-  }
+  //   return toMinutes <= fromMinutes;
+  // }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Actualiza la validación requerida del campo servicio basado en si hay horarios seleccionados
    * Si hay un horario "desde" o "hasta", el campo si/no del servicio es requerido
    */
-  private updateServiceRequiredValidation(serviceControl: AbstractControl, fromControl: AbstractControl, toControl: AbstractControl): void {
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
-    // Verificar si hay horarios (pueden ser Date, string, o null/undefined)
-    const hasFromTime = fromTime !== null && fromTime !== undefined && fromTime !== '';
-    const hasToTime = toTime !== null && toTime !== undefined && toTime !== '';
+  // private updateServiceRequiredValidation(serviceControl: AbstractControl, fromControl: AbstractControl, toControl: AbstractControl): void {
+  //   const fromTime = fromControl.value;
+  //   const toTime = toControl.value;
+  //   // Verificar si hay horarios (pueden ser Date, string, o null/undefined)
+  //   const hasFromTime = fromTime !== null && fromTime !== undefined && fromTime !== '';
+  //   const hasToTime = toTime !== null && toTime !== undefined && toTime !== '';
 
-    if (hasFromTime || hasToTime) {
-      // Si hay algún horario seleccionado, el campo si/no es requerido
-      serviceControl.setValidators([Validators.required]);
-      serviceControl.updateValueAndValidity({ emitEvent: false });
-    } else {
-      // Si no hay horarios, remover la validación requerida solo si el servicio no está en "Sí"
-      const serviceValue = serviceControl.value;
-      if (serviceValue !== true) {
-        serviceControl.clearValidators();
-        serviceControl.updateValueAndValidity({ emitEvent: false });
-      }
-    }
+  //   if (hasFromTime || hasToTime) {
+  //     // Si hay algún horario seleccionado, el campo si/no es requerido
+  //     serviceControl.setValidators([Validators.required]);
+  //     serviceControl.updateValueAndValidity({ emitEvent: false });
+  //   } else {
+  //     // Si no hay horarios, remover la validación requerida solo si el servicio no está en "Sí"
+  //     const serviceValue = serviceControl.value;
+  //     if (serviceValue !== true) {
+  //       serviceControl.clearValidators();
+  //       serviceControl.updateValueAndValidity({ emitEvent: false });
+  //     }
+  //   }
 
-    // Actualizar el estado del botón después de cambiar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
+  //   // Actualizar el estado del botón después de cambiar las validaciones
+  //   this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+  //   this._changeDetectorRef.detectChanges();
+  // }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Actualiza las validaciones de los campos de hora según el estado del servicio
    * @param serviceValue Valor del servicio (true = Sí, false/null = No)
    * @param fromControl Control del campo "Hora desde"
    * @param toControl Control del campo "Hora hasta"
    * @param serviceControl Control del campo servicio (opcional, para actualizar validación del servicio)
    */
-  private updateServiceTimeValidations(serviceValue: boolean | null, fromControl: AbstractControl, toControl: AbstractControl, serviceControl?: AbstractControl): void {
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+  // private updateServiceTimeValidations(serviceValue: boolean | null, fromControl: AbstractControl, toControl: AbstractControl, serviceControl?: AbstractControl): void {
+  //   const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+  //   const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    if (serviceValue === true) {
-      // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
-      const fromValidators = [Validators.required];
-      const toValidators = [Validators.required];
+  //   if (serviceValue === true) {
+  //     // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
+  //     const fromValidators = [Validators.required];
+  //     const toValidators = [Validators.required];
 
-      // Agregar validador de rango si hay horas de funcionamiento configuradas
-      if (operatingStartTime && operatingEndTime) {
-        fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
-        toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
-      }
+  //     // Agregar validador de rango si hay horas de funcionamiento configuradas
+  //     if (operatingStartTime && operatingEndTime) {
+  //       fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
+  //       toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
+  //     }
 
-      fromControl.setValidators(fromValidators);
-      toControl.setValidators(toValidators);
-    } else {
-      // Si el servicio está en "No" o null, remover validaciones requeridas
-      fromControl.clearValidators();
-      toControl.clearValidators();
-      // Limpiar valores si el servicio está en "No"
-      if (serviceValue === false) {
-        fromControl.setValue(null, { emitEvent: false });
-        toControl.setValue(null, { emitEvent: false });
-        // Si el servicio está en "No", remover también la validación requerida del servicio
-        if (serviceControl) {
-          serviceControl.clearValidators();
-          serviceControl.updateValueAndValidity({ emitEvent: false });
-        }
-      }
-    }
+  //     fromControl.setValidators(fromValidators);
+  //     toControl.setValidators(toValidators);
+  //   } else {
+  //     // Si el servicio está en "No" o null, remover validaciones requeridas
+  //     fromControl.clearValidators();
+  //     toControl.clearValidators();
+  //     // Limpiar valores si el servicio está en "No"
+  //     if (serviceValue === false) {
+  //       fromControl.setValue(null, { emitEvent: false });
+  //       toControl.setValue(null, { emitEvent: false });
+  //       // Si el servicio está en "No", remover también la validación requerida del servicio
+  //       if (serviceControl) {
+  //         serviceControl.clearValidators();
+  //         serviceControl.updateValueAndValidity({ emitEvent: false });
+  //       }
+  //     }
+  //   }
 
-    fromControl.updateValueAndValidity({ emitEvent: false });
-    toControl.updateValueAndValidity({ emitEvent: false });
+  //   fromControl.updateValueAndValidity({ emitEvent: false });
+  //   toControl.updateValueAndValidity({ emitEvent: false });
 
-    // Actualizar el estado del botón de guardar después de cambiar las validaciones
-    // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
+  //   // Actualizar el estado del botón de guardar después de cambiar las validaciones
+  //   // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
+  //   this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+  //   this._changeDetectorRef.detectChanges();
+  // }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
    */
-  private revalidateAllServiceTimes(): void {
-    const services: ServiceConfig[] = [
-      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-      { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
-      { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
-      { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
-      { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
-      { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
-    ];
+  // private revalidateAllServiceTimes(): void {
+  //   const services: ServiceConfig[] = [
+  //     { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+  //     { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+  //     { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+  //     { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+  //     { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+  //     { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
+  //     { service: 'dinnerExtended', from: 'dinnerExtendedFrom', to: 'dinnerExtendedTo' },
+  //     { service: 'dinnerAtRisk', from: 'dinnerAtRiskFrom', to: 'dinnerAtRiskTo' },
+  //     { service: 'snackExtended', from: 'snackExtendedFrom', to: 'snackExtendedTo' },
+  //     { service: 'snackAtRisk', from: 'snackAtRiskFrom', to: 'snackAtRiskTo' },
+  //   ];
 
-    TimeValidationUtil.revalidateAllServiceTimes(
-      this.headerConfig.formGroup,
-      services,
-      (serviceValue, fromControl, toControl, serviceControl) => {
-        this.updateServiceTimeValidations(serviceValue, fromControl, toControl, serviceControl);
-      }
-    );
-  }
+  //   TimeValidationUtil.revalidateAllServiceTimes(
+  //     this.headerConfig.formGroup,
+  //     services,
+  //     (serviceValue, fromControl, toControl, serviceControl) => {
+  //       this.updateServiceTimeValidations(serviceValue, fromControl, toControl, serviceControl);
+  //     }
+  //   );
+  // }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
@@ -1302,38 +1319,42 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const areaType = param.areaType;
     const locationType = param.locationType;
 
-    // Obtener datos de servicios desde la primera entrada del array services
-    const siteService = param.services && param.services.length > 0 ? param.services[0] : null;
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
+    // Obtener datos de servicios desde el primer grupo (si existe)
+    // Si hay grupos con servicios, usar el primer servicio del primer grupo
+    // const siteService = param.childGroups && param.childGroups.length > 0 && param.childGroups[0].services && param.childGroups[0].services.length > 0
+    //   ? param.childGroups[0].services[0]
+    //   : null;
 
     // Horarios de servicios básicos
-    const breakfastFrom: Date | null = siteService ? toTimeDate(siteService.breakfastFrom) : null;
-    const breakfastTo: Date | null = siteService ? toTimeDate(siteService.breakfastTo) : null;
-    const lunchFrom: Date | null = siteService ? toTimeDate(siteService.lunchFrom) : null;
-    const lunchTo: Date | null = siteService ? toTimeDate(siteService.lunchTo) : null;
-    const snackAMFrom: Date | null = siteService ? toTimeDate(siteService.snackAMFrom) : null;
-    const snackAMTo: Date | null = siteService ? toTimeDate(siteService.snackAMTo) : null;
-    const snackPMFrom: Date | null = siteService ? toTimeDate(siteService.snackPMFrom) : null;
-    const snackPMTo: Date | null = siteService ? toTimeDate(siteService.snackPMTo) : null;
+    // const breakfastFrom: Date | null = siteService ? toTimeDate(siteService.breakfastFrom) : null;
+    // const breakfastTo: Date | null = siteService ? toTimeDate(siteService.breakfastTo) : null;
+    // const lunchFrom: Date | null = siteService ? toTimeDate(siteService.lunchFrom) : null;
+    // const lunchTo: Date | null = siteService ? toTimeDate(siteService.lunchTo) : null;
+    // const snackAMFrom: Date | null = siteService ? toTimeDate(siteService.snackAMFrom) : null;
+    // const snackAMTo: Date | null = siteService ? toTimeDate(siteService.snackAMTo) : null;
+    // const snackPMFrom: Date | null = siteService ? toTimeDate(siteService.snackPMFrom) : null;
+    // const snackPMTo: Date | null = siteService ? toTimeDate(siteService.snackPMTo) : null;
 
     // Campos adicionales
-    const dinnerFrom: Date | null = siteService ? toTimeDate(siteService.dinnerFrom) : null;
-    const dinnerTo: Date | null = siteService ? toTimeDate(siteService.dinnerTo) : null;
-    const snackNightFrom: Date | null = siteService ? toTimeDate(siteService.snackNightFrom) : null;
-    const snackNightTo: Date | null = siteService ? toTimeDate(siteService.snackNightTo) : null;
+    // const dinnerFrom: Date | null = siteService ? toTimeDate(siteService.dinnerFrom) : null;
+    // const dinnerTo: Date | null = siteService ? toTimeDate(siteService.dinnerTo) : null;
+    // const snackNightFrom: Date | null = siteService ? toTimeDate(siteService.snackNightFrom) : null;
+    // const snackNightTo: Date | null = siteService ? toTimeDate(siteService.snackNightTo) : null;
 
     // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
     // Horarios de cena horario extendido
-    const dinnerExtendedFrom: Date | null = siteService ? toTimeDate(siteService.dinnerExtendedFrom) : null;
-    const dinnerExtendedTo: Date | null = siteService ? toTimeDate(siteService.dinnerExtendedTo) : null;
+    // const dinnerExtendedFrom: Date | null = siteService ? toTimeDate(siteService.dinnerExtendedFrom) : null;
+    // const dinnerExtendedTo: Date | null = siteService ? toTimeDate(siteService.dinnerExtendedTo) : null;
     // Horarios de cena en riesgo
-    const dinnerAtRiskFrom: Date | null = siteService ? toTimeDate(siteService.dinnerAtRiskFrom) : null;
-    const dinnerAtRiskTo: Date | null = siteService ? toTimeDate(siteService.dinnerAtRiskTo) : null;
+    // const dinnerAtRiskFrom: Date | null = siteService ? toTimeDate(siteService.dinnerAtRiskFrom) : null;
+    // const dinnerAtRiskTo: Date | null = siteService ? toTimeDate(siteService.dinnerAtRiskTo) : null;
     // Horarios de merienda horario extendido
-    const snackExtendedFrom: Date | null = siteService ? toTimeDate(siteService.snackExtendedFrom) : null;
-    const snackExtendedTo: Date | null = siteService ? toTimeDate(siteService.snackExtendedTo) : null;
+    // const snackExtendedFrom: Date | null = siteService ? toTimeDate(siteService.snackExtendedFrom) : null;
+    // const snackExtendedTo: Date | null = siteService ? toTimeDate(siteService.snackExtendedTo) : null;
     // Horarios de merienda en riesgo
-    const snackAtRiskFrom: Date | null = siteService ? toTimeDate(siteService.snackAtRiskFrom) : null;
-    const snackAtRiskTo: Date | null = siteService ? toTimeDate(siteService.snackAtRiskTo) : null;
+    // const snackAtRiskFrom: Date | null = siteService ? toTimeDate(siteService.snackAtRiskFrom) : null;
+    // const snackAtRiskTo: Date | null = siteService ? toTimeDate(siteService.snackAtRiskTo) : null;
 
     const communityId = param.communityId;
     const walkersId = param.walkersId;
@@ -1395,38 +1416,39 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
             extension: '',
             mobilePhone: '',
           },
+      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
       // Servicios básicos
-      breakfast: siteService?.breakfast ?? false,
-      breakfastFrom: breakfastFrom,
-      breakfastTo: breakfastTo,
-      lunch: siteService?.lunch ?? false,
-      lunchFrom: lunchFrom,
-      lunchTo: lunchTo,
-      snackAM: siteService?.snackAM ?? false,
-      snackAMFrom: snackAMFrom,
-      snackAMTo: snackAMTo,
-      snackPM: siteService?.snackPM ?? false,
-      snackPMFrom: snackPMFrom,
-      snackPMTo: snackPMTo,
-      dinner: siteService?.dinner ?? false,
-      dinnerFrom: dinnerFrom,
-      dinnerTo: dinnerTo,
-      snackNight: siteService?.snackNight ?? false,
-      snackNightFrom: snackNightFrom,
-      snackNightTo: snackNightTo,
+      // breakfast: siteService?.breakfast ?? false,
+      // breakfastFrom: breakfastFrom,
+      // breakfastTo: breakfastTo,
+      // lunch: siteService?.lunch ?? false,
+      // lunchFrom: lunchFrom,
+      // lunchTo: lunchTo,
+      // snackAM: siteService?.snackAM ?? false,
+      // snackAMFrom: snackAMFrom,
+      // snackAMTo: snackAMTo,
+      // snackPM: siteService?.snackPM ?? false,
+      // snackPMFrom: snackPMFrom,
+      // snackPMTo: snackPMTo,
+      // dinner: siteService?.dinner ?? false,
+      // dinnerFrom: dinnerFrom,
+      // dinnerTo: dinnerTo,
+      // snackNight: siteService?.snackNight ?? false,
+      // snackNightFrom: snackNightFrom,
+      // snackNightTo: snackNightTo,
       // Servicios adicionales para PACNA
-      dinnerExtended: siteService?.dinnerExtended ?? false,
-      dinnerExtendedFrom: dinnerExtendedFrom,
-      dinnerExtendedTo: dinnerExtendedTo,
-      dinnerAtRisk: siteService?.dinnerAtRisk ?? false,
-      dinnerAtRiskFrom: dinnerAtRiskFrom,
-      dinnerAtRiskTo: dinnerAtRiskTo,
-      snackExtended: siteService?.snackExtended ?? false,
-      snackExtendedFrom: snackExtendedFrom,
-      snackExtendedTo: snackExtendedTo,
-      snackAtRisk: siteService?.snackAtRisk ?? false,
-      snackAtRiskFrom: snackAtRiskFrom,
-      snackAtRiskTo: snackAtRiskTo,
+      // dinnerExtended: siteService?.dinnerExtended ?? false,
+      // dinnerExtendedFrom: dinnerExtendedFrom,
+      // dinnerExtendedTo: dinnerExtendedTo,
+      // dinnerAtRisk: siteService?.dinnerAtRisk ?? false,
+      // dinnerAtRiskFrom: dinnerAtRiskFrom,
+      // dinnerAtRiskTo: dinnerAtRiskTo,
+      // snackExtended: siteService?.snackExtended ?? false,
+      // snackExtendedFrom: snackExtendedFrom,
+      // snackExtendedTo: snackExtendedTo,
+      // snackAtRisk: siteService?.snackAtRisk ?? false,
+      // snackAtRiskFrom: snackAtRiskFrom,
+      // snackAtRiskTo: snackAtRiskTo,
       community: this.community.find((o) => o.id === communityId),
       walkers: this.walkers.find((o) => o.id === walkersId),
       siteType: this.siteType.find((o) => o.id === siteTypeId),
@@ -1520,17 +1542,31 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general
     if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment) {
-      const servicesByGroups = param.services?.filter(service => service.childGroup != null) || [];
-      if (servicesByGroups.length > 0) {
-        const uniqueGroups = new Map<number, { groupName: string; numberOfChildren: number }>();
-        servicesByGroups.forEach(service => {
-          if (service.childGroup?.id) {
-            if (!uniqueGroups.has(service.childGroup.id)) {
-              uniqueGroups.set(service.childGroup.id, {
-                groupName: service.childGroup.name || `Grupo ${uniqueGroups.size + 1}`,
-                numberOfChildren: 0
+      // Obtener todos los servicios desde los grupos
+      const allServices: any[] = [];
+      if (param.childGroups && param.childGroups.length > 0) {
+        param.childGroups.forEach(group => {
+          if (group.services && group.services.length > 0) {
+            group.services.forEach(service => {
+              allServices.push({
+                ...service,
+                groupId: group.id,
+                groupName: group.groupName
               });
-            }
+            });
+          }
+        });
+      }
+
+      if (allServices.length > 0) {
+        // Obtener grupos únicos desde param.childGroups
+        const uniqueGroups = new Map<number, { groupName: string; numberOfChildren: number }>();
+        param.childGroups.forEach(group => {
+          if (!uniqueGroups.has(group.id)) {
+            uniqueGroups.set(group.id, {
+              groupName: group.groupName,
+              numberOfChildren: group.numberOfChildren || 0
+            });
           }
         });
 
@@ -1543,14 +1579,14 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         }));
 
         // Mapear servicios por grupos
-        this.servicesByGroups = servicesByGroups.map((service, index) => {
-          const childGroup = uniqueGroups.get(service.childGroup?.id || 0);
-          const groupName = childGroup?.groupName || service.childGroup?.name || `Grupo ${index + 1}`;
+        this.servicesByGroups = allServices.map((service, index) => {
+          const groupName = service.groupName || `Grupo ${index + 1}`;
+          const group = uniqueGroups.get(service.groupId);
 
           return {
             id: index + 1,
             groupName: groupName,
-            numberOfChildren: childGroup?.numberOfChildren || 0,
+            numberOfChildren: group?.numberOfChildren || 0,
             breakfast: service.breakfast ?? false,
             breakfastFrom: service.breakfastFrom || undefined,
             breakfastTo: service.breakfastTo || undefined,
@@ -1639,43 +1675,44 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const residentialTypeId: number = formValues.typeOfResidential?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // Horarios de servicios básicos
-    const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
-    const breakfastTo: string = toTimeString(formValues.breakfastTo);
-    const lunchFrom: string = toTimeString(formValues.lunchFrom);
-    const lunchTo: string = toTimeString(formValues.lunchTo);
-    const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
-    const snackAMTo: string = toTimeString(formValues.snackAMTo);
-    const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
-    const snackPMTo: string = toTimeString(formValues.snackPMTo);
+    // const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
+    // const breakfastTo: string = toTimeString(formValues.breakfastTo);
+    // const lunchFrom: string = toTimeString(formValues.lunchFrom);
+    // const lunchTo: string = toTimeString(formValues.lunchTo);
+    // const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
+    // const snackAMTo: string = toTimeString(formValues.snackAMTo);
+    // const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
+    // const snackPMTo: string = toTimeString(formValues.snackPMTo);
 
     // Servicios básicos
-    const snackAM = formValues.snackAM;
-    const snackPM = formValues.snackPM;
-    const lunch = formValues.lunch;
-    const breakfast = formValues.breakfast;
+    // const snackAM = formValues.snackAM;
+    // const snackPM = formValues.snackPM;
+    // const lunch = formValues.lunch;
+    // const breakfast = formValues.breakfast;
 
     // Campos adicionales
-    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
-    const dinnerTo: string = toTimeString(formValues.dinnerTo);
-    const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
-    const snackNightTo: string = toTimeString(formValues.snackNightTo);
-    const dinner = formValues.dinner;
-    const snackNight = formValues.snackNight;
+    // const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
+    // const dinnerTo: string = toTimeString(formValues.dinnerTo);
+    // const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
+    // const snackNightTo: string = toTimeString(formValues.snackNightTo);
+    // const dinner = formValues.dinner;
+    // const snackNight = formValues.snackNight;
 
     // NUEVOS CAMPOS PARA PACNA - Servicios adicionales
     // Horario de cena horario extendido
-    const dinnerExtendedFrom: string = toTimeString(formValues.dinnerExtendedFrom);
-    const dinnerExtendedTo: string = toTimeString(formValues.dinnerExtendedTo);
+    // const dinnerExtendedFrom: string = toTimeString(formValues.dinnerExtendedFrom);
+    // const dinnerExtendedTo: string = toTimeString(formValues.dinnerExtendedTo);
     // Horario de cena en riesgo
-    const dinnerAtRiskFrom: string = toTimeString(formValues.dinnerAtRiskFrom);
-    const dinnerAtRiskTo: string = toTimeString(formValues.dinnerAtRiskTo);
+    // const dinnerAtRiskFrom: string = toTimeString(formValues.dinnerAtRiskFrom);
+    // const dinnerAtRiskTo: string = toTimeString(formValues.dinnerAtRiskTo);
     // Horario de merienda horario extendido
-    const snackExtendedFrom: string = toTimeString(formValues.snackExtendedFrom);
-    const snackExtendedTo: string = toTimeString(formValues.snackExtendedTo);
+    // const snackExtendedFrom: string = toTimeString(formValues.snackExtendedFrom);
+    // const snackExtendedTo: string = toTimeString(formValues.snackExtendedTo);
     // Horario de merienda en riesgo
-    const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
-    const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
+    // const snackAtRiskFrom: string = toTimeString(formValues.snackAtRiskFrom);
+    // const snackAtRiskTo: string = toTimeString(formValues.snackAtRiskTo);
 
     // Horas de funcionamiento
     const operatingStartTime: string | null = toTimeString(formValues.operatingStartTime);
@@ -1803,131 +1840,177 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       });
     }
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // ===== CREAR SCHOOL SERVICE REQUEST =====
     // Constantes para servicios básicos
-    const breakfastService = breakfast ?? null;
-    const lunchService = lunch ?? null;
-    const snackAMService = snackAM ?? null;
-    const snackPMService = snackPM ?? null;
-    const dinnerService = dinner ?? null;
-    const snackNightService = snackNight ?? null;
+    // const breakfastService = breakfast ?? null;
+    // const lunchService = lunch ?? null;
+    // const snackAMService = snackAM ?? null;
+    // const snackPMService = snackPM ?? null;
+    // const dinnerService = dinner ?? null;
+    // const snackNightService = snackNight ?? null;
 
     // Constantes para servicios adicionales PACNA
-    const dinnerExtendedService = formValues.dinnerExtended ?? null;
-    const dinnerAtRiskService = formValues.dinnerAtRisk ?? null;
-    const snackExtendedService = formValues.snackExtended ?? null;
-    const snackAtRiskService = formValues.snackAtRisk ?? null;
+    // const dinnerExtendedService = formValues.dinnerExtended ?? null;
+    // const dinnerAtRiskService = formValues.dinnerAtRisk ?? null;
+    // const snackExtendedService = formValues.snackExtended ?? null;
+    // const snackAtRiskService = formValues.snackAtRisk ?? null;
 
     // Crear SiteServiceRequest
-    const siteService = this.param.services && this.param.services.length > 0 ? this.param.services[0] : null;
-    const siteServiceRequest: SiteServiceRequest = {
-      id: siteService?.id, // ID del servicio existente para actualizar
-      childGroupId: null, // Servicio general
+    // Obtener el primer servicio del primer grupo (si existe)
+    // const siteService = this.param.childGroups && this.param.childGroups.length > 0 && this.param.childGroups[0].services && this.param.childGroups[0].services.length > 0
+    //   ? this.param.childGroups[0].services[0]
+    //   : null;
+    // const siteServiceRequest: SiteServiceRequest = {
+    //   id: siteService?.id, // ID del servicio existente para actualizar
+    //   childGroupId: null, // Servicio general
 
-      // Servicios básicos
-      breakfast: breakfastService,
-      breakfastFrom: breakfastFrom ?? null,
-      breakfastTo: breakfastTo ?? null,
+    //   // Servicios básicos
+    //   breakfast: breakfastService,
+    //   breakfastFrom: breakfastFrom ?? null,
+    //   breakfastTo: breakfastTo ?? null,
 
-      lunch: lunchService,
-      lunchFrom: lunchFrom ?? null,
-      lunchTo: lunchTo ?? null,
+    //   lunch: lunchService,
+    //   lunchFrom: lunchFrom ?? null,
+    //   lunchTo: lunchTo ?? null,
 
-      snackAM: snackAMService,
-      snackAMFrom: snackAMFrom ?? null,
-      snackAMTo: snackAMTo ?? null,
+    //   snackAM: snackAMService,
+    //   snackAMFrom: snackAMFrom ?? null,
+    //   snackAMTo: snackAMTo ?? null,
 
-      dinner: dinnerService,
-      dinnerFrom: dinnerFrom ?? null,
-      dinnerTo: dinnerTo ?? null,
+    //   dinner: dinnerService,
+    //   dinnerFrom: dinnerFrom ?? null,
+    //   dinnerTo: dinnerTo ?? null,
 
-      snackPM: snackPMService,
-      snackPMFrom: snackPMFrom ?? null,
-      snackPMTo: snackPMTo ?? null,
+    //   snackPM: snackPMService,
+    //   snackPMFrom: snackPMFrom ?? null,
+    //   snackPMTo: snackPMTo ?? null,
 
-      snackNight: snackNightService,
-      snackNightFrom: snackNightFrom ?? null,
-      snackNightTo: snackNightTo ?? null,
+    //   snackNight: snackNightService,
+    //   snackNightFrom: snackNightFrom ?? null,
+    //   snackNightTo: snackNightTo ?? null,
 
-      // Servicios adicionales para PACNA
-      dinnerExtended: dinnerExtendedService,
-      dinnerExtendedFrom: dinnerExtendedFrom ?? null,
-      dinnerExtendedTo: dinnerExtendedTo ?? null,
+    //   // Servicios adicionales para PACNA
+    //   dinnerExtended: dinnerExtendedService,
+    //   dinnerExtendedFrom: dinnerExtendedFrom ?? null,
+    //   dinnerExtendedTo: dinnerExtendedTo ?? null,
 
-      dinnerAtRisk: dinnerAtRiskService,
-      dinnerAtRiskFrom: dinnerAtRiskFrom ?? null,
-      dinnerAtRiskTo: dinnerAtRiskTo ?? null,
+    //   dinnerAtRisk: dinnerAtRiskService,
+    //   dinnerAtRiskFrom: dinnerAtRiskFrom ?? null,
+    //   dinnerAtRiskTo: dinnerAtRiskTo ?? null,
 
-      snackExtended: snackExtendedService,
-      snackExtendedFrom: snackExtendedFrom ?? null,
-      snackExtendedTo: snackExtendedTo ?? null,
+    //   snackExtended: snackExtendedService,
+    //   snackExtendedFrom: snackExtendedFrom ?? null,
+    //   snackExtendedTo: snackExtendedTo ?? null,
 
-      snackAtRisk: snackAtRiskService,
-      snackAtRiskFrom: snackAtRiskFrom ?? null,
-      snackAtRiskTo: snackAtRiskTo ?? null,
-    };
+    //   snackAtRisk: snackAtRiskService,
+    //   snackAtRiskFrom: snackAtRiskFrom ?? null,
+    //   snackAtRiskTo: snackAtRiskTo ?? null,
+    // };
 
     // Validar y limpiar el servicio antes de agregarlo
-    const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
+    // const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
 
-    // Agregar servicios al SiteRequest
+    // Agregar grupos de niños con sus servicios si se están usando servicios por grupos
     // Se usa servicios por grupos si:
     // 1. offersServiceToDifferentGroups es true (Day Care Home), O
     // 2. La capacidad del salón comedor es menor que la matrícula general
     const shouldUseServicesByGroups = (formValues.offersServiceToDifferentGroups || this.shouldShowServicesByGroupsForDiningRoom()) && this.servicesByGroups.length > 0;
     
     if (shouldUseServicesByGroups) {
-      // Si ofrece servicios a diferentes grupos, crear múltiples servicios (uno por grupo)
-      siteRequest.services = this.servicesByGroups.map((serviceData) => {
-        const serviceRequest: SiteServiceRequest = {
-          siteId: this.param.id, // ID del sitio existente
-          childGroupId: null, // Se asignará cuando se cree el grupo
-          // Servicios básicos
-          breakfast: serviceData.breakfast ?? false,
-          breakfastFrom: serviceData.breakfastFrom || null,
-          breakfastTo: serviceData.breakfastTo || null,
-          lunch: serviceData.lunch ?? false,
-          lunchFrom: serviceData.lunchFrom || null,
-          lunchTo: serviceData.lunchTo || null,
-          snackAM: serviceData.snackAM ?? false,
-          snackAMFrom: serviceData.snackAMFrom || null,
-          snackAMTo: serviceData.snackAMTo || null,
-          dinner: serviceData.dinner ?? false,
-          dinnerFrom: serviceData.dinnerFrom || null,
-          dinnerTo: serviceData.dinnerTo || null,
-          snackPM: serviceData.snackPM ?? false,
-          snackPMFrom: serviceData.snackPMFrom || null,
-          snackPMTo: serviceData.snackPMTo || null,
-          snackNight: serviceData.snackNight ?? false,
-          snackNightFrom: serviceData.snackNightFrom || null,
-          snackNightTo: serviceData.snackNightTo || null,
-          // Servicios PACNA
-          dinnerExtended: serviceData.dinnerExtended ?? false,
-          dinnerExtendedFrom: serviceData.dinnerExtendedFrom || null,
-          dinnerExtendedTo: serviceData.dinnerExtendedTo || null,
-          dinnerAtRisk: serviceData.dinnerAtRisk ?? false,
-          dinnerAtRiskFrom: serviceData.dinnerAtRiskFrom || null,
-          dinnerAtRiskTo: serviceData.dinnerAtRiskTo || null,
-          snackExtended: serviceData.snackExtended ?? false,
-          snackExtendedFrom: serviceData.snackExtendedFrom || null,
-          snackExtendedTo: serviceData.snackExtendedTo || null,
-          snackAtRisk: serviceData.snackAtRisk ?? false,
-          snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
-          snackAtRiskTo: serviceData.snackAtRiskTo || null,
-        };
-        // Validar y limpiar cada servicio
-        return validateAndCleanSiteService(serviceRequest);
-      });
-    } else {
-      // Servicio general (sin grupos específicos)
-      siteRequest.services = [cleanedServiceRequest];
-    }
+      // Validar que todos los servicios tengan groupName
+      const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
+      if (servicesWithoutGroup.length > 0) {
+        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        return;
+      }
 
-    // Agregar grupos de niños si se están usando servicios por grupos
-    // (ya sea por offersServiceToDifferentGroups o por capacidad < matrícula)
-    if (shouldUseServicesByGroups) {
       // Sincronizar grupos desde servicios antes de enviar
       this.syncChildGroupsFromServices();
+
+      // Validar que haya grupos si hay servicios
+      if (this.childGroups.length === 0) {
+        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        return;
+      }
+
+      // Agrupar servicios por groupName y crear childGroups con servicios dentro
+      const groupsMap = new Map<string, { group: SiteChildGroupRequest; services: SiteServiceRequest[] }>();
+
+      // Primero, crear el mapa de grupos desde childGroups
+      this.childGroups.forEach(group => {
+        groupsMap.set(group.groupName, {
+          group: {
+            siteId: this.param.id,
+            groupName: group.groupName,
+            groupNameEN: group.groupNameEN || group.groupName,
+            numberOfChildren: group.numberOfChildren,
+            services: []
+          },
+          services: []
+        });
+      });
+
+      // Luego, agregar servicios a cada grupo correspondiente
+      this.servicesByGroups.forEach((serviceData) => {
+        const groupName = serviceData.groupName;
+        if (groupName && groupsMap.has(groupName)) {
+          const serviceRequest: SiteServiceRequest = {
+            siteId: this.param.id,
+            // childGroupId se asignará en el backend cuando se cree el grupo
+            // Servicios básicos
+            breakfast: serviceData.breakfast ?? false,
+            breakfastFrom: serviceData.breakfastFrom || null,
+            breakfastTo: serviceData.breakfastTo || null,
+            lunch: serviceData.lunch ?? false,
+            lunchFrom: serviceData.lunchFrom || null,
+            lunchTo: serviceData.lunchTo || null,
+            snackAM: serviceData.snackAM ?? false,
+            snackAMFrom: serviceData.snackAMFrom || null,
+            snackAMTo: serviceData.snackAMTo || null,
+            dinner: serviceData.dinner ?? false,
+            dinnerFrom: serviceData.dinnerFrom || null,
+            dinnerTo: serviceData.dinnerTo || null,
+            snackPM: serviceData.snackPM ?? false,
+            snackPMFrom: serviceData.snackPMFrom || null,
+            snackPMTo: serviceData.snackPMTo || null,
+            snackNight: serviceData.snackNight ?? false,
+            snackNightFrom: serviceData.snackNightFrom || null,
+            snackNightTo: serviceData.snackNightTo || null,
+            // Servicios PACNA
+            dinnerExtended: serviceData.dinnerExtended ?? false,
+            dinnerExtendedFrom: serviceData.dinnerExtendedFrom || null,
+            dinnerExtendedTo: serviceData.dinnerExtendedTo || null,
+            dinnerAtRisk: serviceData.dinnerAtRisk ?? false,
+            dinnerAtRiskFrom: serviceData.dinnerAtRiskFrom || null,
+            dinnerAtRiskTo: serviceData.dinnerAtRiskTo || null,
+            snackExtended: serviceData.snackExtended ?? false,
+            snackExtendedFrom: serviceData.snackExtendedFrom || null,
+            snackExtendedTo: serviceData.snackExtendedTo || null,
+            snackAtRisk: serviceData.snackAtRisk ?? false,
+            snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
+            snackAtRiskTo: serviceData.snackAtRiskTo || null,
+          };
+          // Validar y limpiar cada servicio
+          const cleanedService = validateAndCleanSiteService(serviceRequest);
+          groupsMap.get(groupName)!.services.push(cleanedService);
+        }
+      });
+
+      // Convertir el mapa a array de childGroups con servicios dentro
+      siteRequest.childGroups = Array.from(groupsMap.values()).map(item => ({
+        ...item.group,
+        services: item.services
+      }));
+    } else {
+      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
+      // Si no hay servicios por grupos, mantener la estructura anterior para compatibilidad
+      // Agregar servicios al SiteRequest (compatibilidad hacia atrás)
+      // if (cleanedServiceRequest) {
+      //   siteRequest.services = [cleanedServiceRequest];
+      // }
+
+      // Agregar grupos de niños si existen (sin servicios dentro)
       if (this.childGroups.length > 0) {
         siteRequest.childGroups = this.childGroups;
       }
@@ -2036,17 +2119,21 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.action === 'redirect-to-changes-form') {
-        // Redirigir al formulario de cambios y cancelaciones
-        // TODO: Cuando se implemente el formulario, usar la ruta correcta
-        // Por ejemplo: this._customRouter.navigate(['sites/changes-cancellations', result.siteId], {
-        //   queryParams: {
-        //     inactiveDate: result.inactiveDate,
-        //     prefill: true
-        //   }
-        // });
-
-        // Por ahora, mostrar mensaje de que el formulario está en desarrollo
-        this._notificationService.showInfo('sites.edit.status-modal.changes-form-not-implemented');
+        const changesDialogRef = this._dialog.open(
+          SiteChangesCancellationsModalComponent,
+          {
+            data: {
+              siteId: result.siteId,
+              endOfOperationDate: result.inactiveDate ?? null,
+            } as SiteChangesCancellationsModalData,
+            width: '600px',
+            maxWidth: '90vw',
+            panelClass: ['mat-dialog-container', 'dialog-responsive'],
+          }
+        );
+        changesDialogRef.afterClosed().subscribe(() => {
+          // Por ahora no se actualiza el formulario ni se llama al backend
+        });
         return;
       }
 

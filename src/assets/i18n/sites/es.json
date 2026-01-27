@@ -1457,6 +1457,16 @@
                 "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento",
                 "changes-form-not-implemented": "El formulario de cambios y cancelaciones está en desarrollo"
             },
+            "changes-cancellations-modal": {
+                "title": "Formulario de cambios y cancelaciones",
+                "end-of-operation-date": {
+                    "label": "Fecha de finalización de funcionamiento",
+                    "placeholder": "Seleccione la fecha",
+                    "required": "La fecha de finalización de funcionamiento es requerida"
+                },
+                "cancel": "Cancelar",
+                "save": "Guardar"
+            },
             "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
             "status-update-error": "Error al actualizar el estatus del sitio",
             "success": "Sitio actualizado exitosamente",

@@ -1519,6 +1519,16 @@
                 "rations-service-notification": "You must complete the changes and cancellations form with the new operating end date",
                 "changes-form-not-implemented": "The changes and cancellations form is under development"
             },
+            "changes-cancellations-modal": {
+                "title": "Changes and cancellations form",
+                "end-of-operation-date": {
+                    "label": "End of operation date",
+                    "placeholder": "Select the date",
+                    "required": "The end of operation date is required"
+                },
+                "cancel": "Cancel",
+                "save": "Save"
+            },
             "status-updated-successfully": "Site status updated successfully",
             "status-update-error": "Error updating site status",
             "success": "Site updated successfully",

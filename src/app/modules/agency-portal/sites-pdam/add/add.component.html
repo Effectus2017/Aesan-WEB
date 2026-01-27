@@ -544,16 +544,17 @@
           </mat-form-field>
         </div>
 
+        <!-- COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos -->
         <!-- TITULO -->
         <!-- Servicios que operará y horario -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-
+        <!--
         <!-- ✅ VERIFICADO: Desayuno - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Desayuno / Breakfast -->
         <!-- Horario desde para el desayuno -->
         <!-- Horario hasta para el desayuno -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="breakfast-field">
             <mat-label>{{ "sites.add.breakfast.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
@@ -590,14 +591,14 @@
               {{ "sites.add.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- ✅ VERIFICADO: Merienda AM - Aplica a: PDAM ✅ -->
         <!-- Merienda AM / Snack AM -->
         <!-- Horario desde para la merienda AM -->
         <!-- Horario hasta para la merienda AM -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-am-field">
             <mat-label>{{ "sites.add.snack-am.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select">
@@ -634,14 +635,14 @@
               {{ "sites.add.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- ✅ VERIFICADO: Almuerzo - Aplica a: PDAM ✅ PSAV ✅ PACNA ✅ -->
         <!-- Almuerzo / Lunch -->
         <!-- Horario desde para el almuerzo -->
         <!-- Horario hasta para el almuerzo -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="lunch-field">
             <mat-label>{{ "sites.add.lunch.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'lunch'" data-cy="lunch-select">
@@ -678,14 +679,14 @@
               {{ "sites.add.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
 
         <!-- ✅ VERIFICADO: Merienda PM - Aplica a: PDAM ✅ -->
         <!-- Merienda PM / Snack PM -->
         <!-- Horario desde para la merienda PM -->
         <!-- Horario hasta para la merienda PM -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
+        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
           <mat-form-field data-cy="snack-pm-field">
             <mat-label>{{ "sites.add.snack-pm.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select">
@@ -722,7 +723,8 @@
               {{ "sites.add.time-range-invalid" | transloco }}
             </mat-error>
           </mat-form-field>
-        </div>
+        </div> -->
+
 
         <!-- Tabla de Servicios por Grupos -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">

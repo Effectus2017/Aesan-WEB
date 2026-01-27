@@ -1,0 +1,45 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'sites.edit.changes-cancellations-modal.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-4">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.changes-cancellations-modal.end-of-operation-date.label' | transloco }}</mat-label>
+          <input
+            matInput
+            [matDatepicker]="pickerEndOfOperation"
+            formControlName="endOfOperationDate"
+            [placeholder]="'sites.edit.changes-cancellations-modal.end-of-operation-date.placeholder' | transloco"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerEndOfOperation"></mat-datepicker-toggle>
+          <mat-datepicker #pickerEndOfOperation></mat-datepicker>
+          @if (form.get('endOfOperationDate')?.hasError('required')) {
+          <mat-error>
+            {{ 'sites.edit.changes-cancellations-modal.end-of-operation-date.required' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+          {{ 'sites.edit.changes-cancellations-modal.cancel' | transloco }}
+        </button>
+      </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid">
+        {{ 'sites.edit.changes-cancellations-modal.save' | transloco }}
+      </button>
+    </div>
+  </form>
+</div>
