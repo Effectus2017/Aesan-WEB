@@ -1,6 +1,32 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { PROGRAM_IDS } from 'app/shared/const';
 
+/**
+ * Función helper para obtener el valor de isDayCareHome de manera robusta
+ * Retorna: true | false | null
+ */
+const getIsDayCareHomeBoolean = (): boolean | null => {
+  // Primero intentar leer desde localStorage como string
+  const isDayCareHomeValue = localStorage.getItem('agencyIsDayCareHome');
+  if (isDayCareHomeValue === 'true') return true;
+  if (isDayCareHomeValue === 'false') return false;
+  if (isDayCareHomeValue === 'null') return null;
+
+  // Si no está en localStorage, intentar leerlo del objeto completo
+  const agencyRaw = localStorage.getItem('agency');
+  if (agencyRaw) {
+    try {
+      const agency = JSON.parse(agencyRaw);
+      const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
+      return isDayCareHomeOption?.booleanValue ?? null;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
+
 export const agencyNavigation: FuseNavigationItem[] = [
   {
     id: 'dashboard.agency',
@@ -85,28 +111,9 @@ export const agencyNavigation: FuseNavigationItem[] = [
 
         if (!hasPACNA) return true;
 
-        // Leer isDayCareHome booleanValue - puede estar guardado como string "true"/"false"/"null"
-        const isDayCareHomeValue = localStorage.getItem('agencyIsDayCareHome');
-        // Ocultar si es null (mostrar grupo en su lugar) o si no es true
-        if (isDayCareHomeValue === 'null') return true;
-        if (isDayCareHomeValue === 'true') {
-          return false; // Mostrar el ítem
-        }
-
-        // Si no está guardado como string, intentar leerlo del objeto completo
-        const agencyRaw = localStorage.getItem('agency');
-        if (agencyRaw) {
-          const agency = JSON.parse(agencyRaw);
-          const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
-          if (isDayCareHomeOption?.booleanValue === null || isDayCareHomeOption?.booleanValue === undefined) {
-            return true; // Ocultar si es null (mostrar grupo)
-          }
-          if (isDayCareHomeOption?.booleanValue === true) {
-            return false; // Mostrar el ítem
-          }
-        }
-
-        return true; // Ocultar si no es true
+        const isDayCareHome = getIsDayCareHomeBoolean();
+        // Solo mostrar si es explícitamente true
+        return isDayCareHome !== true;
       } catch {
         return true;
       }
@@ -131,28 +138,9 @@ export const agencyNavigation: FuseNavigationItem[] = [
 
         if (!hasPACNA) return true;
 
-        // Leer isDayCareHome booleanValue - debe ser "false"
-        const isDayCareHomeValue = localStorage.getItem('agencyIsDayCareHome');
-        // Ocultar si es null (mostrar grupo en su lugar) o si no es false
-        if (isDayCareHomeValue === 'null') return true;
-        if (isDayCareHomeValue === 'false') {
-          return false; // Mostrar el ítem
-        }
-
-        // Si no está guardado como string, intentar leerlo del objeto completo
-        const agencyRaw = localStorage.getItem('agency');
-        if (agencyRaw) {
-          const agency = JSON.parse(agencyRaw);
-          const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
-          if (isDayCareHomeOption?.booleanValue === null || isDayCareHomeOption?.booleanValue === undefined) {
-            return true; // Ocultar si es null (mostrar grupo)
-          }
-          if (isDayCareHomeOption?.booleanValue === false) {
-            return false; // Mostrar el ítem
-          }
-        }
-
-        return true; // Ocultar si no es false
+        const isDayCareHome = getIsDayCareHomeBoolean();
+        // Solo mostrar si es explícitamente false
+        return isDayCareHome !== false;
       } catch {
         return true;
       }
@@ -176,23 +164,9 @@ export const agencyNavigation: FuseNavigationItem[] = [
 
         if (!hasPACNA) return true;
 
-        // Leer isDayCareHome booleanValue - debe ser "null"
-        const isDayCareHomeValue = localStorage.getItem('agencyIsDayCareHome');
-        if (isDayCareHomeValue === 'null') {
-          return false; // Mostrar el grupo
-        }
-
-        // Si no está guardado como string, intentar leerlo del objeto completo
-        const agencyRaw = localStorage.getItem('agency');
-        if (agencyRaw) {
-          const agency = JSON.parse(agencyRaw);
-          const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
-          if (isDayCareHomeOption?.booleanValue === null || isDayCareHomeOption?.booleanValue === undefined) {
-            return false; // Mostrar el grupo
-          }
-        }
-
-        return true; // Ocultar si no es null
+        const isDayCareHome = getIsDayCareHomeBoolean();
+        // Solo mostrar si es explícitamente null
+        return isDayCareHome !== null;
       } catch {
         return true;
       }

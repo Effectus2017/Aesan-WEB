@@ -56,6 +56,7 @@ export class OptionSelectionService {
    * Fetches all option selections from the API
    * @param queryParameters Query parameters for filtering/pagination
    * @returns Observable with the list of option selections
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
    */
   getAllOptionSelections(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient

@@ -26,24 +26,41 @@
         <!-- Cantidad de Niños -->
         <mat-form-field>
           <mat-label>{{ "sites.add.services.modal.number-of-children.label" | transloco }}</mat-label>
-          <input matInput type="number" formControlName="numberOfChildren" min="1" required />
-          <mat-error *ngIf="serviceForm.get('numberOfChildren').hasError('required')">
+          <input matInput type="text" formControlName="numberOfChildren" required numericOnly />
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('required') && serviceForm.get('numberOfChildren')?.touched">
             {{ "sites.add.services.modal.number-of-children.required" | transloco }}
           </mat-error>
-          <mat-error *ngIf="serviceForm.get('numberOfChildren').hasError('min')">
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('min') && serviceForm.get('numberOfChildren')?.touched">
             {{ "sites.add.services.modal.number-of-children.min" | transloco }}
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('exceedsCapacity') && (serviceForm.get('numberOfChildren')?.touched || serviceForm.get('numberOfChildren')?.dirty)">
+            {{ "sites.add.services.modal.number-of-children.exceeds-capacity" | transloco }} ({{ serviceForm.get('numberOfChildren')?.errors?.['exceedsCapacity']?.maxCapacity }})
+          </mat-error>
+          <mat-error *ngIf="serviceForm.get('numberOfChildren')?.hasError('exceedsEnrollment') && (serviceForm.get('numberOfChildren')?.touched || serviceForm.get('numberOfChildren')?.dirty)">
+            {{ "sites.add.services.modal.number-of-children.exceeds-enrollment" | transloco }} ({{ serviceForm.get('numberOfChildren')?.errors?.['exceedsEnrollment']?.maxEnrollment }})
           </mat-error>
         </mat-form-field>
       </div>
 
-      <!-- Servicios -->
+      <!-- Cartel de validación: tiempo mínimo entre servicios y servicios fuertes requeridos -->
+      <div *ngIf="serviceValidationErrors && (serviceValidationErrors.missingStrongService || serviceValidationErrors.insufficientTimeBetween)" class="flex items-start gap-3 rounded-lg border border-amber-500/50 bg-amber-50 p-4 dark:border-amber-600/50 dark:bg-amber-950/40" role="alert">
+        <mat-icon class="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" [attr.aria-hidden]="true">warning</mat-icon>
+        <div class="min-w-0 flex-1 space-y-1 text-sm text-amber-800 dark:text-amber-200">
+          <p *ngIf="serviceValidationErrors.missingStrongService" class="font-medium">
+            {{ "sites.add.services.modal.validation.missing-strong-service" | transloco: { names: serviceValidationErrors.missingStrongService.strongServiceNames } }}
+          </p>
+          <p *ngIf="serviceValidationErrors.insufficientTimeBetween">
+            {{ "sites.add.services.modal.validation.insufficient-time-between" | transloco: { nameA: serviceValidationErrors.insufficientTimeBetween.nameA, nameB: serviceValidationErrors.insufficientTimeBetween.nameB, minMinutes: serviceValidationErrors.insufficientTimeBetween.minMinutes } }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Servicios (desde backend vía serviceTypes o fallback por programa) -->
       <div class="border-t pt-4">
-
-        <!-- Desayuno -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
+        <div *ngFor="let item of getVisibleServiceTypesWithKeys(); trackBy: trackByServiceId" class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
           <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.breakfast.label" | transloco }}</mat-label>
-            <mat-select formControlName="breakfast">
+            <mat-label>{{ currentLang === "en" ? item.st.nameEN : item.st.name }}</mat-label>
+            <mat-select [formControlName]="item.formKey.bool">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
                 {{ currentLang === "en" ? option.nameEN : option.name }}
               </mat-option>
@@ -51,231 +68,21 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="breakfastFrom" [matTimepicker]="pickerBreakfastFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastFrom" />
-            <mat-timepicker #pickerBreakfastFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="breakfastTo" [matTimepicker]="pickerBreakfastTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerBreakfastTo" />
-            <mat-timepicker #pickerBreakfastTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Almuerzo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.lunch.label" | transloco }}</mat-label>
-            <mat-select formControlName="lunch">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+            <mat-select [formControlName]="item.formKey.from" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="lunchFrom" [matTimepicker]="pickerLunchFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchFrom" />
-            <mat-timepicker #pickerLunchFrom />
+            <mat-error *ngIf="serviceForm.get(item.formKey.from)?.hasError('required')">{{ "global.validation.required" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="lunchTo" [matTimepicker]="pickerLunchTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerLunchTo" />
-            <mat-timepicker #pickerLunchTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Merienda AM -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.snack-am.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAM">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+            <mat-select [formControlName]="item.formKey.to" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getEndTimeOptions(item.formKey.from)" [value]="timeStringToDateWrapper(time.value)">
+                {{ time.display }}
               </mat-option>
             </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAMFrom" [matTimepicker]="pickerSnackAMFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMFrom" />
-            <mat-timepicker #pickerSnackAMFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAMTo" [matTimepicker]="pickerSnackAMTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAMTo" />
-            <mat-timepicker #pickerSnackAMTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Cena -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.dinner.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinner">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerFrom" [matTimepicker]="pickerDinnerFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerFrom" />
-            <mat-timepicker #pickerDinnerFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerTo" [matTimepicker]="pickerDinnerTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerTo" />
-            <mat-timepicker #pickerDinnerTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Merienda PM -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.snack-pm.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackPM">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackPMFrom" [matTimepicker]="pickerSnackPMFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMFrom" />
-            <mat-timepicker #pickerSnackPMFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackPMTo" [matTimepicker]="pickerSnackPMTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackPMTo" />
-            <mat-timepicker #pickerSnackPMTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Merienda Nocturna -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.snack-night.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNight">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackNightFrom" [matTimepicker]="pickerSnackNightFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightFrom" />
-            <mat-timepicker #pickerSnackNightFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackNightTo" [matTimepicker]="pickerSnackNightTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackNightTo" />
-            <mat-timepicker #pickerSnackNightTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Cena Horario Extendido -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.dinner-extended.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtended">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerExtendedFrom" [matTimepicker]="pickerDinnerExtendedFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedFrom" />
-            <mat-timepicker #pickerDinnerExtendedFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerExtendedTo" [matTimepicker]="pickerDinnerExtendedTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerExtendedTo" />
-            <mat-timepicker #pickerDinnerExtendedTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Cena en Riesgo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.dinner-at-risk.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRisk">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerAtRiskFrom" [matTimepicker]="pickerDinnerAtRiskFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskFrom" />
-            <mat-timepicker #pickerDinnerAtRiskFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="dinnerAtRiskTo" [matTimepicker]="pickerDinnerAtRiskTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerDinnerAtRiskTo" />
-            <mat-timepicker #pickerDinnerAtRiskTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Merienda Horario Extendido -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.snack-extended.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtended">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackExtendedFrom" [matTimepicker]="pickerSnackExtendedFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedFrom" />
-            <mat-timepicker #pickerSnackExtendedFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackExtendedTo" [matTimepicker]="pickerSnackExtendedTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackExtendedTo" />
-            <mat-timepicker #pickerSnackExtendedTo />
-          </mat-form-field>
-        </div>
-
-        <!-- Merienda en Riesgo -->
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.snack-at-risk.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRisk">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.from.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAtRiskFrom" [matTimepicker]="pickerSnackAtRiskFrom" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskFrom" />
-            <mat-timepicker #pickerSnackAtRiskFrom />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ "sites.add.services.modal.to.label" | transloco }}</mat-label>
-            <input matInput formControlName="snackAtRiskTo" [matTimepicker]="pickerSnackAtRiskTo" />
-            <mat-timepicker-toggle matIconSuffix [for]="pickerSnackAtRiskTo" />
-            <mat-timepicker #pickerSnackAtRiskTo />
+            <mat-error *ngIf="serviceForm.get(item.formKey.to)?.hasError('required')">{{ "global.validation.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -289,7 +96,7 @@
           {{ "global.buttons.cancel" | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" color="primary" [disabled]="serviceForm.invalid">
+      <button mat-flat-button type="submit" color="primary" [disabled]="serviceForm.invalid || hasServiceValidationErrors()">
         {{ "global.buttons.save" | transloco }}
       </button>
     </div>

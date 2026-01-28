@@ -20,6 +20,7 @@ import { QueryParameters } from '../../../../shared/models/QueryParameters';
 import { PageEvent } from '@angular/material/paginator';
 import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils';
 import { PROGRAM_IDS } from '../../../../shared/const';
+import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 
 @Component({
   selector: 'app-sites-center-modal',
@@ -33,7 +34,8 @@ import { PROGRAM_IDS } from '../../../../shared/const';
     MatInputModule,
     TranslocoModule,
     GenericTableComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    KeyboardShortcutDirective
   ],
   templateUrl: './sites-modal.component.html',
   styles: [`

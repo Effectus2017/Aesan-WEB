@@ -11,6 +11,7 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
+import { ServiceTypeService } from 'app/shared/services/service-type.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { GeoService } from 'app/shared/services/geo.service';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
@@ -61,6 +62,7 @@ export const initialDataSitesPacnaProgramResolver: ResolveFn<any> = (route: Acti
   const groupTypeService = inject(GroupTypeService);
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
 
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
@@ -69,15 +71,27 @@ export const initialDataSitesPacnaProgramResolver: ResolveFn<any> = (route: Acti
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
   ]).pipe(
-    map(([centerTypes, deliveryTypes, sponsorTypes, groupTypes, organizationTypes, allowedOperatingDays]) => ({
-      centerTypes: centerTypes.body,
-      deliveryTypes: deliveryTypes.body,
-      sponsorTypes: sponsorTypes.body,
-      groupTypes: groupTypes.body,
-      organizationTypes: organizationTypes.body,
-      allowedOperatingDays: allowedOperatingDays.body,
-    }))
+    map(
+      ([
+        centerTypes,
+        deliveryTypes,
+        sponsorTypes,
+        groupTypes,
+        organizationTypes,
+        allowedOperatingDays,
+        serviceTypes,
+      ]) => ({
+        centerTypes: centerTypes.body,
+        deliveryTypes: deliveryTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        groupTypes: groupTypes.body,
+        organizationTypes: organizationTypes.body,
+        allowedOperatingDays: allowedOperatingDays.body,
+        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+      })
+    )
   );
 };
 
@@ -89,6 +103,7 @@ export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: 
   const groupTypeService = inject(GroupTypeService);
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
 
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
@@ -97,15 +112,27 @@ export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: 
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
   ]).pipe(
-    map(([centerTypes, deliveryTypes, sponsorTypes, groupTypes, organizationTypes, allowedOperatingDays]) => ({
-      centerTypes: centerTypes.body,
-      deliveryTypes: deliveryTypes.body,
-      sponsorTypes: sponsorTypes.body,
-      groupTypes: groupTypes.body,
-      organizationTypes: organizationTypes.body,
-      allowedOperatingDays: allowedOperatingDays.body,
-    }))
+    map(
+      ([
+        centerTypes,
+        deliveryTypes,
+        sponsorTypes,
+        groupTypes,
+        organizationTypes,
+        allowedOperatingDays,
+        serviceTypes,
+      ]) => ({
+        centerTypes: centerTypes.body,
+        deliveryTypes: deliveryTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        groupTypes: groupTypes.body,
+        organizationTypes: organizationTypes.body,
+        allowedOperatingDays: allowedOperatingDays.body,
+        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+      })
+    )
   );
 };
 
@@ -134,7 +161,7 @@ export const initialDataSitesPacnaCenterAddResolver: ResolveFn<any> = (route: Ac
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
-        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -194,7 +221,7 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
-        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
     // Types of kitchen
     // Tipos de cocina

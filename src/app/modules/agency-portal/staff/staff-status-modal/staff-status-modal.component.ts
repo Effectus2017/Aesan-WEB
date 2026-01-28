@@ -118,7 +118,9 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
           this._changeDetectorRef.detectChanges();
 
           // Mostrar notificación de éxito
-          this._notificationService.showSuccess('staff.edit.status-updated-successfully');
+          this._notificationService.showSuccessDialog(
+            this._translocoService.translate('staff.edit.status-updated-successfully')
+          );
 
           // Cerrar el modal con los datos actualizados
           this.dialogRef.close({
@@ -131,7 +133,9 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
           this._changeDetectorRef.detectChanges();
 
           // Mostrar notificación de error
-          this._notificationService.showError('staff.edit.status-update-error');
+          this._notificationService.showErrorDialog(
+            this._translocoService.translate('staff.edit.status-update-error')
+          );
           console.error('Error al actualizar el estatus del staff:', error);
         }
       });

@@ -1575,19 +1575,33 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   private deleteService(serviceId: number): void {
     const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
-    if (!confirm(confirmMessage)) {
-      return;
-    }
-
-    this.siteOperatingDayServiceService.deleteService(serviceId).subscribe({
-      next: () => {
-        this.loadOperatingDays();
-        if (this.selectedDate) {
-          this.updateDayEventsTable(this.selectedDate);
-        }
+    
+    this.notificationService.showConfirmationDialogWithCallback({
+      message: confirmMessage,
+      icon: {
+        show: true,
+        name: 'heroicons_outline:trash',
+        color: 'warn'
       },
-      error: (error) => {
-        console.error('Error al eliminar servicio:', error);
+      actions: {
+        confirm: {
+          label: 'users.list.actions.delete',
+          color: 'warn'
+        }
+      }
+    }, (result) => {
+      if (result === 'confirmed') {
+        this.siteOperatingDayServiceService.deleteService(serviceId).subscribe({
+          next: () => {
+            this.loadOperatingDays();
+            if (this.selectedDate) {
+              this.updateDayEventsTable(this.selectedDate);
+            }
+          },
+          error: (error) => {
+            console.error('Error al eliminar servicio:', error);
+          }
+        });
       }
     });
   }

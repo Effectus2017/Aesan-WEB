@@ -10,6 +10,7 @@ import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
+import { ServiceTypeService } from 'app/shared/services/service-type.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 // Resolver para el calendario del sitio
@@ -72,6 +73,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
   const groupTypeService = inject(GroupTypeService);
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
 
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
@@ -80,14 +82,26 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
     groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PDAM }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
   ]).pipe(
-    map(([centerTypes, deliveryTypes, sponsorTypes, groupTypes, organizationTypes, allowedOperatingDays]) => ({
-      centerTypes: centerTypes.body,
-      deliveryTypes: deliveryTypes.body,
-      sponsorTypes: sponsorTypes.body,
-      groupTypes: groupTypes.body,
-      organizationTypes: organizationTypes.body,
-      allowedOperatingDays: allowedOperatingDays.body,
-    }))
+    map(
+      ([
+        centerTypes,
+        deliveryTypes,
+        sponsorTypes,
+        groupTypes,
+        organizationTypes,
+        allowedOperatingDays,
+        serviceTypes,
+      ]) => ({
+        centerTypes: centerTypes.body,
+        deliveryTypes: deliveryTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        groupTypes: groupTypes.body,
+        organizationTypes: organizationTypes.body,
+        allowedOperatingDays: allowedOperatingDays.body,
+        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+      })
+    )
   );
 };

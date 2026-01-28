@@ -133,7 +133,18 @@ export interface GenericTableConfig<T = any> {
   /**
    * Permiso requerido para mostrar el menú de agregar.
    */
+  /**
+   * Permiso requerido para mostrar el menú de agregar.
+   */
   addMenuPermission?: string;
+  /**
+   * Modo de visualización inicial de la tabla.
+   * 'table': Muestra la tabla tradicional.
+   * 'cards': Muestra una vista de tarjetas (grid).
+   * 'auto': Muestra tabla en desktop y tarjetas en móvil.
+   * @default 'table'
+   */
+  viewMode?: 'table' | 'cards' | 'auto';
 }
 
 export interface OnGenericTableHandler {

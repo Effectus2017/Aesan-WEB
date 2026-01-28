@@ -61,6 +61,7 @@ export interface SiteRequest {
     operatingPolicyId?: number;
     hasWarehouse?: boolean;
     hasDiningRoom?: boolean;
+    diningRoomCapacity?: number;
 
     // Persona a Cargo
     personInCharge?: SitePersonInChargeRequest;

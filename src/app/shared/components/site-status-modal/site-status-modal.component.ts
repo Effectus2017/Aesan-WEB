@@ -22,6 +22,7 @@ export interface SiteStatusModalData {
   isActive: boolean;
   inactiveDate: Date | null;
   inactiveJustification: string | null;
+  providedRationsService?: boolean | null; // ¿Brindó servicio de raciones durante su periodo de funcionamiento?
   isActiveOptions: OptionSelection[];
   yesNoOptions: OptionSelection[]; // Opciones para Sí/No de la pregunta de raciones
 }
@@ -65,7 +66,7 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     // Crear el formulario reactivo
     this.form = this.fb.group({
       isActive: [this.data.isActive, Validators.required],
-      providedRationsService: [null, Validators.required], // Nueva pregunta
+      providedRationsService: [this.data.providedRationsService ?? null, Validators.required], // Nueva pregunta
       inactiveDate: [this.data.inactiveDate || null],
       inactiveJustification: [this.data.inactiveJustification || '']
     });
@@ -258,6 +259,9 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
         : null,
       inactiveDate: this.form.get('isActive')?.value === false
         ? inactiveDateOnly
+        : null,
+      providedRationsService: this.form.get('isActive')?.value === false
+        ? this.form.get('providedRationsService')?.value
         : null
     };
 

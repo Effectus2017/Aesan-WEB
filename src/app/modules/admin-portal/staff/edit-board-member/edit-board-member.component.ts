@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { UntypedFormBuilder, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -784,18 +784,96 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
    * Abre el modal para agregar una nueva relación
    */
   onAddRelationship(): void {
-    const dialogRef = this._matDialog.open(AdminAddRelationshipModalComponent, {
-      width: '500px',
-      maxWidth: '90vw',
-      data: {
-        currentStaffId: this.headerConfig.formGroup.get('id')?.value,
-      },
-    });
+    const currentStaffId = this.headerConfig.formGroup.get('id')?.value;
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.loadStaffRelationships();
-      }
+    // Consultar personas disponibles y relaciones existentes antes de abrir el modal
+    const staffQueryParams: QueryParameters = {
+      take: 25,
+      skip: 0,
+      name: null,
+      alls: false,
+      excludeRelated: false,
+      isList: false,
+      staffTypeId: null,
+      agencyId: null, // Admin portal no filtra por agencia
+    };
+
+    const relationshipQueryParams: QueryParameters = {
+      id: currentStaffId,
+      isActive: true,
+    };
+
+    // Consultar tanto el staff como las relaciones existentes
+    forkJoin({
+      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
+      relationships: this._staffRelationshipService.getRelationshipsByStaffId(relationshipQueryParams)
+    }).subscribe({
+      next: (response) => {
+        // Verificar que la respuesta de staff tenga datos
+        const staffData = response?.staff?.body?.data;
+
+        if (!staffData || !Array.isArray(staffData) || staffData.length === 0) {
+          // Si no hay datos, mostrar mensaje y no abrir modal
+          let warningMessage = this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff');
+          // Si no se encuentra la traducción, usar el mensaje por defecto
+          if (warningMessage === 'staff.relationship.modal.warning.noAvailableStaff') {
+            warningMessage = 'No hay personas disponibles para relacionar. Todas las personas ya están relacionadas o solo queda el usuario actual.';
+          }
+          this._notificationService.showWarningDialog(warningMessage);
+          return;
+        }
+
+        // Obtener IDs de personas ya relacionadas
+        // La respuesta de getRelationshipsByStaffId viene en response.body directamente
+        const relationshipsData = response?.relationships?.body || response?.relationships || [];
+        const relationships = Array.isArray(relationshipsData) ? relationshipsData : [];
+        const relatedStaffIds = new Set<number>();
+
+        relationships.forEach((rel: any) => {
+          if (rel.relatedStaff?.id) {
+            relatedStaffIds.add(rel.relatedStaff.id);
+          }
+          if (rel.staff?.id && rel.staff.id !== currentStaffId) {
+            relatedStaffIds.add(rel.staff.id);
+          }
+        });
+
+        // Filtrar el usuario actual y las personas ya relacionadas
+        const availableStaff = staffData.filter(
+          (staff: Staff) => staff.id !== currentStaffId && !relatedStaffIds.has(staff.id)
+        );
+
+        // Si no hay personas disponibles después de filtrar, mostrar mensaje y no abrir modal
+        if (availableStaff.length === 0) {
+          let warningMessage = this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff');
+          // Si no se encuentra la traducción, usar el mensaje por defecto
+          if (warningMessage === 'staff.relationship.modal.warning.noAvailableStaff') {
+            warningMessage = 'No hay personas disponibles para relacionar. Todas las personas ya están relacionadas o solo queda el usuario actual.';
+          }
+          this._notificationService.showWarningDialog(warningMessage);
+          return;
+        }
+
+        // Si hay personas disponibles, abrir el modal normalmente
+        const dialogRef = this._matDialog.open(AdminAddRelationshipModalComponent, {
+          width: '500px',
+          maxWidth: '90vw',
+          data: {
+            currentStaffId: currentStaffId,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.loadStaffRelationships();
+          }
+        });
+      },
+      error: (error) => {
+        this._notificationService.showErrorDialog(
+          this._translocoService.translate('staff.relationship.modal.error.loadingData')
+        );
+      },
     });
   }
 

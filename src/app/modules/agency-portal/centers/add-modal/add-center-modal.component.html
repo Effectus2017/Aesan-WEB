@@ -12,7 +12,7 @@
   </div>
 
   <!-- Content -->
-  <form [formGroup]="centerForm" class="flex flex-col flex-auto min-h-0">
+  <form [formGroup]="centerForm" class="flex flex-col flex-auto min-h-0" (ngSubmit)="onSave()">
     <div class="flex overflow-y-auto flex-col flex-auto p-6">
       <div class="flex flex-col gap-6">
         <!-- Campo Nombre -->
@@ -35,7 +35,7 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="centerForm.invalid || loading" [appDisableIfNoPermission]="'school.create'">
+      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="centerForm.invalid || loading" [appDisableIfNoPermission]="'school.create'">
         <span *ngIf="loading">{{ 'global.buttons.save' | transloco }}</span>
         <span *ngIf="!loading">{{ 'global.buttons.add' | transloco }}</span>
       </button>

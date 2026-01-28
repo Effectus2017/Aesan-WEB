@@ -288,6 +288,12 @@
                 "placeholder": "Has Dining Room?",
                 "required": "Has Dining Room?"
             },
+            "dining-room-capacity": {
+                "label": "Dining Room Capacity",
+                "placeholder": "Enter the dining room capacity",
+                "min-error": "Capacity must be greater than 0",
+                "max-error": "Capacity cannot be greater than general enrollment"
+            },
             "administrator-authorized": {
                 "label": "Representative Information",
                 "description": "Representative information"
@@ -758,7 +764,7 @@
             "services": {
                 "add-service": "Add Service",
                 "modal": {
-                    "title": "Configure Service by Group",
+                    "title": "Configure Services",
                      "group": {
                          "label": "Group Name",
                          "placeholder": "Enter group name",
@@ -767,7 +773,13 @@
                     "number-of-children": {
                         "label": "Number of Children",
                         "required": "Number of children is required",
-                        "min": "Must be at least 1"
+                        "min": "Must be at least 1",
+                        "exceeds-capacity": "The number of children cannot exceed the dining room capacity",
+                        "exceeds-enrollment": "The total sum of children in all groups cannot exceed the general enrollment"
+                    },
+                    "validation": {
+                        "missing-strong-service": "For this program you must include at least one of the following services: {{names}}. Include at least one in your selection.",
+                        "insufficient-time-between": "Between {{nameA}} and {{nameB}} there must be at least {{minMinutes}} minutes. Adjust the schedules."
                     },
                     "basic-services": {
                         "title": "Basic Services"
@@ -813,8 +825,8 @@
                     }
                 },
                 "table": {
-                    "title": "Services by Groups",
-                    "description": "Configure specific service schedules for each child group",
+                    "title": "Services",
+                    "description": "Configure service schedules",
                     "filter-placeholder": "Filter services...",
                     "no-data": "No services configured",
                     "loading": "Loading services...",
@@ -1109,6 +1121,12 @@
                 "label": "Has Dining Room?",
                 "placeholder": "Has Dining Room?",
                 "required": "Has Dining Room?"
+            },
+            "dining-room-capacity": {
+                "label": "Dining Room Capacity",
+                "placeholder": "Enter the dining room capacity",
+                "min-error": "Capacity must be greater than 0",
+                "max-error": "Capacity cannot be greater than general enrollment"
             },
             "administrator-authorized": {
                 "label": "Representative Information",
@@ -1505,9 +1523,25 @@
                 "rations-service-notification": "You must complete the changes and cancellations form with the new operating end date",
                 "changes-form-not-implemented": "The changes and cancellations form is under development"
             },
+            "changes-cancellations-modal": {
+                "title": "Changes and cancellations form",
+                "end-of-operation-date": {
+                    "label": "End of operation date",
+                    "placeholder": "Select the date",
+                    "required": "The end of operation date is required"
+                },
+                "cancel": "Cancel",
+                "save": "Save"
+            },
             "status-updated-successfully": "Site status updated successfully",
             "status-update-error": "Error updating site status",
-            "success": "Site updated successfully"
+            "success": "Site updated successfully",
+            "services": {
+                "table": {
+                    "title": "Services",
+                    "description": "Configure service schedules"
+                }
+            }
         },
         "calendar": {
             "title": "Operating Calendar",

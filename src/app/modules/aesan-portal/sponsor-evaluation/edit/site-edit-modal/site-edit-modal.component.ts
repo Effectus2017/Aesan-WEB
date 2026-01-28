@@ -989,8 +989,12 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Recalcular Total de Días de Funcionamiento antes de guardar
+    DateCalculationsUtil.calculateOperatingDays(this.form);
+
     this.isLoading = true;
-    const formValues = this.form.value;
+    // Usar getRawValue() para incluir campos deshabilitados (operatingDaysCalculated)
+    const formValues = this.form.getRawValue();
 
     const siteRequest: SiteRequest = {
       id: this.data.site.id,

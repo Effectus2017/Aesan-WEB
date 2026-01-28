@@ -273,6 +273,17 @@
           "updateRelationship": "Error al actualizar la relación",
           "deleteRelationship": "Error al eliminar la relación",
           "loadingData": "Error al cargar los datos"
+        },
+        "warning": {
+          "noAvailableStaff": "No hay personas disponibles para relacionar. Todas las personas ya están relacionadas o solo queda el usuario actual."
+        }
+      },
+      "delete": {
+        "confirm": {
+          "title": "Confirmar eliminación",
+          "message": "¿Está seguro de que desea eliminar esta relación?",
+          "confirm": "Eliminar",
+          "cancel": "Cancelar"
         }
       }
     },
@@ -419,7 +430,7 @@
           },
         "table": {
           "columns": {
-            "relatedStaffFullName": "Nombre del Personal Relacionado",
+            "relatedStaffFullName": "Nombre Completo del Personal Relacionado",
             "relationshipType": "Tipo de Relación",
             "comment": "Comentario",
             "relatedStaffPosition": "Cargo del Personal Relacionado",
@@ -500,7 +511,8 @@
         "general": "Error al actualizar el personal",
         "incompleteFields": "Por favor, complete todos los campos requeridos",
         "classificationRequired": "La clasificación es requerida para empleados",
-        "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta"
+        "contactLocationRequired": "Los campos de contacto y ubicación son requeridos para miembros de junta",
+        "staffTypeRequired": "El tipo de personal es requerido y no puede ser 0"
       },
       "status-modal": {
         "title": "Cambiar Estado del Personal",

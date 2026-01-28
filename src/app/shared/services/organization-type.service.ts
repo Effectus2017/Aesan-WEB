@@ -33,6 +33,12 @@ export class OrganizationTypeService {
     );
   }
 
+  /**
+   * Obtiene todos los tipos de organización de la base de datos
+   * @param queryParameters Los parámetros de consulta
+   * @returns Los tipos de organización
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
+   */
   getAllOrganizationTypesFromDb(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-all-organization-types-from-db`, getHttpOptions(queryParameters)).pipe(
       tap((response: any) => this._organizationTypes.next(response))

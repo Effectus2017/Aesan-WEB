@@ -40,6 +40,7 @@ export class StaffTypeService {
    * Obtiene todos los tipos de staff desde la base de datos
    * @param queryParams Parámetros de consulta (paginación, filtros, etc.)
    * @returns Observable con la lista de tipos de staff y el conteo total
+   * @note El caché se maneja automáticamente mediante el interceptor HTTP
    */
   getAllStaffTypesFromDb(queryParams: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-all-staff-types-from-db`, getHttpOptions(queryParams))

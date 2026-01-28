@@ -8,10 +8,10 @@ import { DeliveryType } from './DeliveryType';
 import { SponsorType } from './SponsorType';
 import { CenterType } from './CenterType';
 import { AreaType } from './AreaType';
-import { SiteServiceResponse } from './Response/SiteServiceResponse';
 import { SiteDayCareHomeResponse } from './Response/SiteDayCareHomeResponse';
 import { SiteParticipantResponse } from './Response/SiteParticipantResponse';
 import { SitePersonInChargeResponse } from './Response/SitePersonInChargeResponse';
+import { SiteChildGroupResponse } from './Response/SiteChildGroupResponse';
 import { SiteLocation } from './SiteLocation';
 import { OptionSelection } from './OptionSelection';
 import { SiteSatellite } from './SiteSatellite';
@@ -80,12 +80,13 @@ export interface Site {
 
   hasWarehouse?: boolean;
   hasDiningRoom?: boolean;
+  diningRoomCapacity?: number;
 
   // ===== RELACIONES CON MODELOS RESPONSE =====
   personInCharge?: SitePersonInChargeResponse;
-  services?: SiteServiceResponse[];
   dayCareHome?: SiteDayCareHomeResponse;
   participants?: SiteParticipantResponse[];
+  childGroups?: SiteChildGroupResponse[];
 
   // Campos adicionales
   communityId?: number;
@@ -125,6 +126,12 @@ export interface Site {
   isActive?: boolean;
   inactiveJustification?: string;
   inactiveDate?: string;
+  /**
+   * ¿Brindó servicio de raciones durante su periodo de funcionamiento?
+   * Did it provide ration service during its operating period?
+   * Solo se usa cuando el sitio está inactivo
+   */
+  providedRationsService?: boolean | null;
 
   // Satélites
   satellites?: SiteSatellite[];

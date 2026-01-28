@@ -124,6 +124,26 @@ export class DateCalculationsUtil {
   }
 
   /**
+   * Convierte un valor de fecha (Date o string YYYY-MM-DD / ISO) a Date en hora local.
+   * Evita desfases por UTC cuando el backend envía "YYYY-MM-DD".
+   */
+  private static toLocalDate(value: Date | string): Date {
+    if (value instanceof Date) {
+      return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+    }
+    const s = String(value).trim();
+    const dateOnlyMatch = s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if (dateOnlyMatch) {
+      const y = Number(dateOnlyMatch[1]);
+      const m = Number(dateOnlyMatch[2]);
+      const d = Number(dateOnlyMatch[3]);
+      return new Date(y, m - 1, d);
+    }
+    const parsed = new Date(value);
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  }
+
+  /**
    * Calcula los días operativos basado en fechas del formulario y actualiza el campo resultante
    * Calculates operating days based on form dates and updates the result field
    * Considera los días seleccionados en operatingDaysOfWeek si están disponibles
@@ -146,9 +166,9 @@ export class DateCalculationsUtil {
 
     if (fromDateValue && toDateValue) {
       try {
-        // Convert form values to Date objects if they aren't already
-        const fromDate = fromDateValue instanceof Date ? fromDateValue : new Date(fromDateValue);
-        const toDate = toDateValue instanceof Date ? toDateValue : new Date(toDateValue);
+        // Convert form values to Date in local time (avoids UTC offset with "YYYY-MM-DD" strings)
+        const fromDate = this.toLocalDate(fromDateValue);
+        const toDate = this.toLocalDate(toDateValue);
 
         // Validate that the conversion was successful
         if (isNaN(fromDate.getTime()) || isNaN(toDate.getTime())) {

@@ -15,13 +15,14 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
+import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 
 @Component({
     selector: 'app-generic-header',
     templateUrl: './generic-header.component.html',
     animations: fuseAnimations,
     standalone: true,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, TranslocoModule, DisableIfAgencyRestrictedDirective, DisableIfNoPermissionDirective]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatIconModule, MatButtonModule, MatTooltipModule, MatMenuModule, NgIf, RouterModule, TranslocoModule, DisableIfAgencyRestrictedDirective, DisableIfNoPermissionDirective, KeyboardShortcutDirective]
 })
 export class GenericHeaderComponent {
   @Input() config: GenericHeaderConfig;

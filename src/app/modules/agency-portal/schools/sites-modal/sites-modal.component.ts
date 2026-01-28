@@ -21,6 +21,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from '../../../../shared/utils'
 import { PROGRAM_IDS } from '../../../../shared/const';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 
 @Component({
   selector: 'app-sites-modal',
@@ -37,7 +38,8 @@ import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disabl
     TranslocoModule,
     GenericTableComponent,
     DisableIfNoPermissionDirective,
-    DisableIfAgencyRestrictedDirective
+    DisableIfAgencyRestrictedDirective,
+    KeyboardShortcutDirective
 ],
   templateUrl: './sites-modal.component.html',
   styles: [`

@@ -297,6 +297,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
       hasDiningRoom: [null],
+      // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
+      // Dining room capacity - Only visible when hasDiningRoom is true
+      diningRoomCapacity: [null, [Validators.min(1)]],
       // Persona a Cargo (solo para PDAM y PSAV)
       // Person in Charge (only for PDAM and PSAV)
       personInCharge: this._formBuilder.group({
@@ -308,42 +311,43 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
+      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
       // Desayuno (si, no)
       // Breakfast (yes, no)
-      breakfast: [false],
+      // breakfast: [false],
       // Horario desde para el desayuno
       // Breakfast schedule from
-      breakfastFrom: [null],
+      // breakfastFrom: [null],
       // Horario hasta para el desayuno
       // Breakfast schedule to
-      breakfastTo: [null],
+      // breakfastTo: [null],
       // Almuerzo (si, no)
       // Lunch (yes, no)
-      lunch: [false],
+      // lunch: [false],
       // Horario desde para el almuerzo
       // Lunch schedule from
-      lunchFrom: [null],
+      // lunchFrom: [null],
       // Horario hasta para el almuerzo
       // Lunch schedule to
-      lunchTo: [null],
+      // lunchTo: [null],
       // Merienda AM (si, no)
       // Snack AM (yes, no)
-      snackAM: [false],
+      // snackAM: [false],
       // Horario desde para la merienda AM
       // Snack AM schedule from
-      snackAMFrom: [null],
+      // snackAMFrom: [null],
       // Horario hasta para la merienda AM
       // Snack AM schedule to
-      snackAMTo: [null],
+      // snackAMTo: [null],
       // Merienda PM (si, no)
       // Snack PM (yes, no)
-      snackPM: [false],
+      // snackPM: [false],
       // Horario desde para la merienda PM
       // Snack PM schedule from
-      snackPMFrom: [null],
+      // snackPMFrom: [null],
       // Horario hasta para la merienda PM
       // Snack PM schedule to
-      snackPMTo: [null],
+      // snackPMTo: [null],
       // Comunidad
       // Community
       community: [null, Validators.required],
@@ -358,13 +362,13 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       experience: [null, Validators.required],
       // Cena (si, no)
       // Dinner (yes, no)
-      dinner: [false],
+      // dinner: [false],
       // Horario desde para la cena
       // Dinner schedule from
-      dinnerFrom: [null],
+      // dinnerFrom: [null],
       // Horario hasta para la cena
       // Dinner schedule to
-      dinnerTo: [null],
+      // dinnerTo: [null],
       // ¿Este hogar está autorizado a funcionar?
       // Is this home authorized to operate?
       isAuthorizedToOperate: [null],
@@ -577,18 +581,19 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.revalidateAllServiceTimes();
-      });
+    // this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
+    //   .pipe(takeUntil(this._unsubscribeAll))
+    //   .subscribe(() => {
+    //     this.revalidateAllServiceTimes();
+    //   });
 
-    this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this.revalidateAllServiceTimes();
-      });
+    // this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
+    //   .pipe(takeUntil(this._unsubscribeAll))
+    //   .subscribe(() => {
+    //     this.revalidateAllServiceTimes();
+    //   });
 
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges
@@ -602,61 +607,94 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         this._changeDetectorRef.detectChanges();
       });
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // Configurar validaciones condicionales para servicios
-    this.setupServiceValidations();
+    // this.setupServiceValidations();
+
+    // Listener para cambios en hasDiningRoom
+    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((hasDiningRoom: boolean) => {
+        const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+        if (hasDiningRoom === false) {
+          capacityControl?.setValue(null, { emitEvent: false });
+          capacityControl?.clearValidators();
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        } else if (hasDiningRoom === true) {
+          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.updateValueAndValidity({ emitEvent: false });
+        }
+        this._changeDetectorRef.detectChanges();
+      });
+
+    // Listener para cambios en diningRoomCapacity y generalEnrollment
+    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
+
+    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.validateDiningRoomCapacity();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Configura validaciones condicionales para todos los servicios
    * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
    */
-  private setupServiceValidations(): void {
-    // Lista de servicios con sus campos From y To correspondientes
-    const services = [
-      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-    ];
+  // private setupServiceValidations(): void {
+  //   // Lista de servicios con sus campos From y To correspondientes
+  //   const services = [
+  //     { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+  //     { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+  //     { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+  //     { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+  //     { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+  //   ];
 
-    // Configurar suscripciones para cada servicio
-    services.forEach(({ service, from, to }) => {
-      const serviceControl = this.headerConfig.formGroup.get(service);
-      const fromControl = this.headerConfig.formGroup.get(from);
-      const toControl = this.headerConfig.formGroup.get(to);
+  //   // Configurar suscripciones para cada servicio
+  //   services.forEach(({ service, from, to }) => {
+  //     const serviceControl = this.headerConfig.formGroup.get(service);
+  //     const fromControl = this.headerConfig.formGroup.get(from);
+  //     const toControl = this.headerConfig.formGroup.get(to);
 
-      if (serviceControl && fromControl && toControl) {
-        // Validación inicial
-        this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
+  //     if (serviceControl && fromControl && toControl) {
+  //       // Validación inicial
+  //       this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
 
-        // Suscribirse a cambios en el campo de servicio
-        serviceControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe((value: boolean | null) => {
-            this.updateServiceTimeValidations(value, fromControl, toControl);
-          });
+  //       // Suscribirse a cambios en el campo de servicio
+  //       serviceControl.valueChanges
+  //         .pipe(takeUntil(this._unsubscribeAll))
+  //         .subscribe((value: boolean | null) => {
+  //           this.updateServiceTimeValidations(value, fromControl, toControl);
+  //         });
 
-        // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-        fromControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
-            // Forzar detección de cambios para actualizar las opciones en el template
-            this._changeDetectorRef.detectChanges();
-          });
+  //       // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
+  //       fromControl.valueChanges
+  //         .pipe(takeUntil(this._unsubscribeAll))
+  //         .subscribe(() => {
+  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
+  //           // Forzar detección de cambios para actualizar las opciones en el template
+  //           this._changeDetectorRef.detectChanges();
+  //         });
 
-        // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-        toControl.valueChanges
-          .pipe(takeUntil(this._unsubscribeAll))
-          .subscribe(() => {
-            TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-            TimeValidationUtil.validateTimeRange(fromControl, toControl);
-          });
-      }
-    });
-  }
+  //       // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
+  //       toControl.valueChanges
+  //         .pipe(takeUntil(this._unsubscribeAll))
+  //         .subscribe(() => {
+  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
+  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
+  //         });
+  //     }
+  //   });
+  // }
 
   /**
    * Genera todas las opciones de hora (cada 30 minutos)
@@ -666,21 +704,23 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
    */
-  getStartTimeOptions(): TimeOption[] {
-    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+  // getStartTimeOptions(): TimeOption[] {
+  //   const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+  //   const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
-    return filterStartTimeOptions(
-      this.timeOptions,
-      operatingStartTime,
-      operatingEndTime
-    );
-  }
+  //   return filterStartTimeOptions(
+  //     this.timeOptions,
+  //     operatingStartTime,
+  //     operatingEndTime
+  //   );
+  // }
 
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
+   * NOTA: Este método también se usa para operatingEndTime, por lo que NO se comenta
    */
   getEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
@@ -712,68 +752,71 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
    */
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
    */
-  isEndTimeInvalid(fromField: string, toField: string): boolean {
-    const fromControl = this.headerConfig.formGroup.get(fromField);
-    const toControl = this.headerConfig.formGroup.get(toField);
+  // isEndTimeInvalid(fromField: string, toField: string): boolean {
+    // const fromControl = this.headerConfig.formGroup.get(fromField);
+    // const toControl = this.headerConfig.formGroup.get(toField);
 
-    if (!fromControl || !toControl) return false;
+    // if (!fromControl || !toControl) return false;
 
-    const fromTime = fromControl.value;
-    const toTime = toControl.value;
+    // const fromTime = fromControl.value;
+    // const toTime = toControl.value;
 
-    if (!fromTime || !toTime) return false;
+    // if (!fromTime || !toTime) return false;
 
-    const fromMinutes = dateToMinutes(fromTime);
-    const toMinutes = dateToMinutes(toTime);
+    // const fromMinutes = dateToMinutes(fromTime);
+    // const toMinutes = dateToMinutes(toTime);
 
-    return toMinutes <= fromMinutes;
-  }
+    // return toMinutes <= fromMinutes;
+  // }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Actualiza las validaciones de los campos de hora según el estado del servicio
    * @param serviceValue Valor del servicio (true = Sí, false/null = No)
    * @param fromControl Control del campo "Hora desde"
    * @param toControl Control del campo "Hora hasta"
    */
-  private updateServiceTimeValidations(
-    serviceValue: boolean | null,
-    fromControl: AbstractControl,
-    toControl: AbstractControl
-  ): void {
-    TimeValidationUtil.updateServiceTimeValidations(
-      this.headerConfig.formGroup,
-      serviceValue,
-      fromControl,
-      toControl,
-      'operatingStartTime',
-      'operatingEndTime',
-      this._changeDetectorRef,
-      (disabled) => { this.headerConfig.submitDisabled = disabled; }
-    );
-  }
+  // private updateServiceTimeValidations(
+//     serviceValue: boolean | null,
+//     fromControl: AbstractControl,
+//     toControl: AbstractControl
+//   ): void {
+//     TimeValidationUtil.updateServiceTimeValidations(
+//       this.headerConfig.formGroup,
+//       serviceValue,
+//       fromControl,
+//       toControl,
+//       'operatingStartTime',
+//       'operatingEndTime',
+//       this._changeDetectorRef,
+//       (disabled) => { this.headerConfig.submitDisabled = disabled; }
+//     );
+  // }
 
   /**
+   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
    * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
    */
-  private revalidateAllServiceTimes(): void {
-    const services: ServiceConfig[] = [
-      { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-      { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-      { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-      { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-      { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-    ];
+  // private revalidateAllServiceTimes(): void {
+    // const services: ServiceConfig[] = [
+    //   { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
+    //   { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
+    //   { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
+    //   { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
+    //   { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
+    // ];
 
-    TimeValidationUtil.revalidateAllServiceTimes(
-      this.headerConfig.formGroup,
-      services,
-      (serviceValue, fromControl, toControl) => {
-        this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
-      }
-    );
-  }
+    // TimeValidationUtil.revalidateAllServiceTimes(
+    //   this.headerConfig.formGroup,
+    //   services,
+    //   (serviceValue, fromControl, toControl) => {
+    //     this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
+    //   }
+    // );
+  // }
 
   // Manejar cambio de non-profit
   nonProfitChange(): void {
@@ -798,6 +841,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
+
+    // Recalcular Total de Días de Funcionamiento antes de guardar
+    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
 
     // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
     const formValues = this.headerConfig.formGroup.getRawValue();
@@ -955,6 +1001,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Tiene comedor - Indicador de infraestructura
       // Has dining room - Infrastructure indicator
       hasDiningRoom: formValues.hasDiningRoom ?? null,
+      diningRoomCapacity: formValues.diningRoomCapacity ?? null,
       // Persona a Cargo
       // Person in Charge
       personInCharge: formValues.personInCharge ? {
@@ -999,45 +1046,46 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       programIds: this.agency?.programs?.map((p: any) => p.id) || [],
     };
 
+    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
     // ===== CREAR SITE SERVICE REQUEST =====
     // Constantes para servicios básicos
-    const breakfast = formValues.breakfast ?? null;
-    const lunch = formValues.lunch ?? null;
-    const snackAM = formValues.snackAM ?? null;
-    const snackPM = formValues.snackPM ?? null;
-    const dinner = formValues.dinner ?? null;
+    // const breakfast = formValues.breakfast ?? null;
+    // const lunch = formValues.lunch ?? null;
+    // const snackAM = formValues.snackAM ?? null;
+    // const snackPM = formValues.snackPM ?? null;
+    // const dinner = formValues.dinner ?? null;
 
     // Crear SiteServiceRequest
-    const siteServiceRequest: SiteServiceRequest = {
-      childGroupId: null, // Servicio general
+    // const siteServiceRequest: SiteServiceRequest = {
+    //   childGroupId: null, // Servicio general
 
-      // Servicios básicos
-      breakfast: breakfast,
-      breakfastFrom: breakfastFrom ?? null,
-      breakfastTo: breakfastTo ?? null,
+    //   // Servicios básicos
+    //   breakfast: breakfast,
+    //   breakfastFrom: breakfastFrom ?? null,
+    //   breakfastTo: breakfastTo ?? null,
 
-      lunch: lunch,
-      lunchFrom: lunchFrom ?? null,
-      lunchTo: lunchTo ?? null,
+    //   lunch: lunch,
+    //   lunchFrom: lunchFrom ?? null,
+    //   lunchTo: lunchTo ?? null,
 
-      snackAM: snackAM,
-      snackAMFrom: snackAMFrom ?? null,
-      snackAMTo: snackAMTo ?? null,
+    //   snackAM: snackAM,
+    //   snackAMFrom: snackAMFrom ?? null,
+    //   snackAMTo: snackAMTo ?? null,
 
-      dinner: dinner,
-      dinnerFrom: dinnerFrom ?? null,
-      dinnerTo: dinnerTo ?? null,
+    //   dinner: dinner,
+    //   dinnerFrom: dinnerFrom ?? null,
+    //   dinnerTo: dinnerTo ?? null,
 
-      snackPM: snackPM,
-      snackPMFrom: snackPMFrom ?? null,
-      snackPMTo: snackPMTo ?? null,
-    };
+    //   snackPM: snackPM,
+    //   snackPMFrom: snackPMFrom ?? null,
+    //   snackPMTo: snackPMTo ?? null,
+    // };
 
     // Validar y limpiar el servicio antes de agregarlo
-    const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
+    // const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
 
     // Agregar servicios al SiteRequest
-    siteRequest.services = [cleanedServiceRequest];
+    // siteRequest.services = [cleanedServiceRequest];
 
 
     this.isLoading = true;
@@ -1064,8 +1112,16 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
         }
       },
-      error: () => {
-        this._notificationService.showErrorDialog();
+      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+        if (
+          err?.status === 400 &&
+          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
+          err?.error?.message
+        ) {
+          this._notificationService.showError(err.error.message);
+        } else {
+          this._notificationService.showErrorDialog();
+        }
         this.headerConfig.formGroup.enable();
       },
       complete: () => {
@@ -1430,6 +1486,41 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   /**
    * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
    */
+  /**
+   * Determina si se debe mostrar el campo de capacidad de salón comedor
+   */
+  shouldShowDiningRoomCapacity(): boolean {
+    return this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+  }
+
+  /**
+   * Determina si se deben mostrar servicios por grupos
+   * Solo se muestra cuando la capacidad es menor que la matrícula general
+   */
+  shouldShowServicesByGroups(): boolean {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+  }
+
+  /**
+   * Valida que la capacidad del salón comedor no sea mayor que la matrícula general
+   */
+  private validateDiningRoomCapacity(): void {
+    const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
+    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const capacity = capacityControl?.value;
+
+    if (capacity && enrollment && capacity > enrollment) {
+      capacityControl?.setErrors({ max: true });
+    } else if (capacityControl?.hasError('max')) {
+      const errors = { ...capacityControl.errors };
+      delete errors['max'];
+      capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);
+    }
+  }
+
   shouldShowDistributionType(): boolean {
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;
     // Obtener el tipo de grupo como string para el servicio

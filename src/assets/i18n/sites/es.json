@@ -288,6 +288,12 @@
                 "placeholder": "¿Cuenta con un Salón Comedor?",
                 "required": "¿Cuenta con un Salón Comedor?"
             },
+            "dining-room-capacity": {
+                "label": "Capacidad de Salón Comedor",
+                "placeholder": "Ingrese la capacidad del salón comedor",
+                "min-error": "La capacidad debe ser mayor a 0",
+                "max-error": "La capacidad no puede ser mayor que la matrícula general"
+            },
             "administrator-authorized": {
                 "label": "Información del Representante",
                 "description": "Información del representante del sitio"
@@ -691,7 +697,7 @@
             "services": {
                 "add-service": "Agregar Servicio",
                 "modal": {
-                    "title": "Configurar Servicio por Grupo",
+                    "title": "Configurar Servicios",
                      "group": {
                          "label": "Nombre del Grupo",
                          "placeholder": "Ingrese el nombre del grupo",
@@ -700,7 +706,13 @@
                     "number-of-children": {
                         "label": "Cantidad de Niños",
                         "required": "La cantidad de niños es requerida",
-                        "min": "Debe ser al menos 1"
+                        "min": "Debe ser al menos 1",
+                        "exceeds-capacity": "La cantidad de niños no puede exceder la capacidad del salón comedor",
+                        "exceeds-enrollment": "La suma total de niños en todos los grupos no puede exceder la matrícula general"
+                    },
+                    "validation": {
+                        "missing-strong-service": "Para este programa debe incluir al menos uno de los siguientes servicios: {{names}}. Incluya al menos uno en su selección.",
+                        "insufficient-time-between": "Entre {{nameA}} y {{nameB}} debe haber al menos {{minMinutes}} minutos. Ajuste los horarios."
                     },
                     "basic-services": {
                         "title": "Servicios Básicos"
@@ -746,8 +758,8 @@
                     }
                 },
                 "table": {
-                    "title": "Servicios por Grupos",
-                    "description": "Configure los horarios de servicios específicos para cada grupo de niños",
+                    "title": "Servicios",
+                    "description": "Configure los horarios de servicios",
                     "filter-placeholder": "Filtrar servicios...",
                     "no-data": "No hay servicios configurados",
                     "loading": "Cargando servicios...",
@@ -1042,6 +1054,12 @@
                 "label": "¿Cuenta con un Salón Comedor?",
                 "placeholder": "¿Cuenta con un Salón Comedor?",
                 "required": "¿Cuenta con un Salón Comedor?"
+            },
+            "dining-room-capacity": {
+                "label": "Capacidad de Salón Comedor",
+                "placeholder": "Ingrese la capacidad del salón comedor",
+                "min-error": "La capacidad debe ser mayor a 0",
+                "max-error": "La capacidad no puede ser mayor que la matrícula general"
             },
             "administrator-authorized": {
                 "label": "Información del Representante",
@@ -1443,9 +1461,25 @@
                 "rations-service-notification": "Deberá completar el formulario de cambios y cancelaciones con la nueva fecha de finalización de funcionamiento",
                 "changes-form-not-implemented": "El formulario de cambios y cancelaciones está en desarrollo"
             },
+            "changes-cancellations-modal": {
+                "title": "Formulario de cambios y cancelaciones",
+                "end-of-operation-date": {
+                    "label": "Fecha de finalización de funcionamiento",
+                    "placeholder": "Seleccione la fecha",
+                    "required": "La fecha de finalización de funcionamiento es requerida"
+                },
+                "cancel": "Cancelar",
+                "save": "Guardar"
+            },
             "status-updated-successfully": "El estatus del sitio se actualizó correctamente",
             "status-update-error": "Error al actualizar el estatus del sitio",
-            "success": "Sitio actualizado exitosamente"
+            "success": "Sitio actualizado exitosamente",
+            "services": {
+                "table": {
+                    "title": "Servicios",
+                    "description": "Configure los horarios de servicios"
+                }
+            }
         },
         "calendar": {
             "title": "Calendario de Funcionamiento",

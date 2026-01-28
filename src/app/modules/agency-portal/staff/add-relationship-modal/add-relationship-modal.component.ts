@@ -149,7 +149,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
         // Procesar respuesta de staff
         if (!isNullOrUndefinedEmptyStringNullArray(response.staff)) {
           // Filtrar el usuario actual para evitar auto-relaciones
-          this.listStaff = response.staff.body.data;
+          this.listStaff = response.staff.body.data.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
         }
 
         // Procesar respuesta de relationship types

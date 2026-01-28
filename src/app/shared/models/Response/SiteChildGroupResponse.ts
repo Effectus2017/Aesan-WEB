@@ -1,9 +1,11 @@
-export interface SchoolChildGroupResponse {
+import { SiteServiceResponse } from './SiteServiceResponse';
+
+export interface SiteChildGroupResponse {
   id: number;
-  schoolId: number;
+  siteId: number;
   groupName: string;
-  groupNameEN: string;
   numberOfChildren: number;
   createdAt: string;
   updatedAt?: string;
+  services?: SiteServiceResponse[];
 }

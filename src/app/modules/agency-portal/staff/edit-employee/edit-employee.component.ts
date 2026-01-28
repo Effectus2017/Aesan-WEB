@@ -442,7 +442,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Validar que staffTypeId sea válido
     if (!staffTypeId) {
-      this._notificationService.showErrorDialog('El tipo de personal es requerido y no puede ser 0.');
+      this._notificationService.showErrorDialog(this._translocoService.translate('staff.edit.error.staffTypeRequired'));
       this.isLoading = false;
       return;
     }
@@ -466,7 +466,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       staffTypeId: staffTypeId,
       staffClassificationId: staffClassificationId,
       comments: comments,
-      isActive: true,
+      isActive: formValues.status?.booleanValue ?? true, // Usar el valor del dropdown o true por defecto
       agencyId: this.agencyId,
       firstName: firstName,
       middleName: middleName,
