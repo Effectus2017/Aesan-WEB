@@ -19,7 +19,7 @@ export const agencyDashboardCardsData = [
   {
     id: 'presupuestoAprobado',
     title: 'agency.dashboard.kpis.approvedBudget',
-    value: '$50,987.35',
+    value: '$0',
     color: 'text-teal-600',
     bgColor: 'bg-teal-500',
     fullWidth: false
@@ -29,17 +29,17 @@ export const agencyDashboardCardsData = [
 // Datos para el gráfico de raciones por mes
 // Nota: Los meses se traducirán dinámicamente en el componente
 export const rationsByMonthData = [
-  { monthKey: 'january', value: 195 },
-  { monthKey: 'february', value: 190 },
-  { monthKey: 'march', value: 198 },
-  { monthKey: 'april', value: 160 }
+  { monthKey: 'january', value: 0 },
+  { monthKey: 'february', value: 0 },
+  { monthKey: 'march', value: 0 },
+  { monthKey: 'april', value: 0 }
 ];
 
 // Datos para el gráfico de visitas coordinadas
 // Nota: Los nombres se traducirán dinámicamente en el componente
 export const coordinatedVisitsData = [
-  { nameKey: 'initial', value: 74.4 },
-  { nameKey: 'followUp', value: 24.6 }
+  { nameKey: 'initial', value: 0 },
+  { nameKey: 'followUp', value: 0 }
 ];
 
 // Datos para la tabla de formularios

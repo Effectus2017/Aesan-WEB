@@ -697,7 +697,7 @@
             "services": {
                 "add-service": "Agregar Servicio",
                 "modal": {
-                    "title": "Configurar Servicio por Grupo",
+                    "title": "Configurar Servicios",
                      "group": {
                          "label": "Nombre del Grupo",
                          "placeholder": "Ingrese el nombre del grupo",
@@ -758,8 +758,8 @@
                     }
                 },
                 "table": {
-                    "title": "Servicios por Grupos",
-                    "description": "Configure los horarios de servicios específicos para cada grupo de niños",
+                    "title": "Servicios",
+                    "description": "Configure los horarios de servicios",
                     "filter-placeholder": "Filtrar servicios...",
                     "no-data": "No hay servicios configurados",
                     "loading": "Cargando servicios...",
@@ -1476,8 +1476,8 @@
             "success": "Sitio actualizado exitosamente",
             "services": {
                 "table": {
-                    "title": "Servicios por Grupos",
-                    "description": "Configure los horarios de servicios específicos para cada grupo de niños"
+                    "title": "Servicios",
+                    "description": "Configure los horarios de servicios"
                 }
             }
         },

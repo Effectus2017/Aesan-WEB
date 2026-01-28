@@ -764,7 +764,7 @@
             "services": {
                 "add-service": "Add Service",
                 "modal": {
-                    "title": "Configure Service by Group",
+                    "title": "Configure Services",
                      "group": {
                          "label": "Group Name",
                          "placeholder": "Enter group name",
@@ -825,8 +825,8 @@
                     }
                 },
                 "table": {
-                    "title": "Services by Groups",
-                    "description": "Configure specific service schedules for each child group",
+                    "title": "Services",
+                    "description": "Configure service schedules",
                     "filter-placeholder": "Filter services...",
                     "no-data": "No services configured",
                     "loading": "Loading services...",
@@ -1538,8 +1538,8 @@
             "success": "Site updated successfully",
             "services": {
                 "table": {
-                    "title": "Services by Groups",
-                    "description": "Configure specific service schedules for each child group"
+                    "title": "Services",
+                    "description": "Configure service schedules"
                 }
             }
         },

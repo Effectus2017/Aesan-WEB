@@ -969,6 +969,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
+    // Recalcular Total de Días de Funcionamiento antes de guardar
+    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+
     // Usar getRawValue() para obtener todos los valores, incluyendo campos deshabilitados
     const formValues = this.headerConfig.formGroup.getRawValue();
     // Ciudad
