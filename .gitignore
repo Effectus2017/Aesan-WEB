@@ -63,3 +63,4 @@ node_modules/
 /playwright/.cache/
 /tests/.auth/
 /tests/screenshots/
+.cursorrules

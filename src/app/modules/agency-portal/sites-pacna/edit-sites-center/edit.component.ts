@@ -58,7 +58,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
-import { ServiceByGroupDialogData, AddServiceByGroupModalComponent } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { ServiceByGroupDialogData, ServiceByGroupDialogResult, AddServiceByGroupModalComponent } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -90,6 +90,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
+import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
 
 @Component({
   selector: 'app-edit-sites-center',
@@ -256,7 +257,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   nextGroupNumber: number = 1;
 
   // Lista de servicios por grupos (en memoria hasta el envío)
-  servicesByGroups: ServiceByGroupDialogData[] = [];
+  servicesByGroups: ServiceByGroupDialogResult[] = [];
 
   // Tabla de servicios por grupos
   servicesTableConfig: GenericTableConfig = {
@@ -1540,87 +1541,37 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.loadDeliveryTypesByGroupType(groupType);
     }
 
-    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general
-    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment) {
-      // Obtener todos los servicios desde los grupos
-      const allServices: any[] = [];
-      if (param.childGroups && param.childGroups.length > 0) {
-        param.childGroups.forEach(group => {
-          if (group.services && group.services.length > 0) {
-            group.services.forEach(service => {
-              allServices.push({
-                ...service,
-                groupId: group.id,
-                groupName: group.groupName
-              });
-            });
-          }
-        });
-      }
+    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general (formato normalizado: serviceSlots por grupo)
+    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment && param.childGroups && param.childGroups.length > 0) {
+      const paramGroups = param.childGroups as Array<{ id?: number; groupName?: string; numberOfChildren?: number; serviceSlots?: Array<{ serviceTypeId: number; isOffered: boolean; from?: string; to?: string }> }>;
+      this.childGroups = paramGroups.map(group => ({
+        id: group.id,
+        siteId: param.id,
+        groupName: group.groupName ?? '',
+        groupNameEN: group.groupName ?? '',
+        numberOfChildren: group.numberOfChildren ?? 0,
+        serviceSlots: (group.serviceSlots ?? []).map(slot => ({
+          serviceTypeId: slot.serviceTypeId,
+          isOffered: slot.isOffered,
+          from: slot.from,
+          to: slot.to,
+        })),
+      }));
+      this.nextGroupNumber = this.childGroups.length + 1;
 
-      if (allServices.length > 0) {
-        // Obtener grupos únicos desde param.childGroups
-        const uniqueGroups = new Map<number, { groupName: string; numberOfChildren: number }>();
-        param.childGroups.forEach(group => {
-          if (!uniqueGroups.has(group.id)) {
-            uniqueGroups.set(group.id, {
-              groupName: group.groupName,
-              numberOfChildren: group.numberOfChildren || 0
-            });
-          }
-        });
-
-        // Cargar grupos únicos
-        this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
-          siteId: param.id,
-          groupName: group.groupName,
-          groupNameEN: group.groupName,
-          numberOfChildren: group.numberOfChildren
-        }));
-
-        // Mapear servicios por grupos
-        this.servicesByGroups = allServices.map((service, index) => {
-          const groupName = service.groupName || `Grupo ${index + 1}`;
-          const group = uniqueGroups.get(service.groupId);
-
-          return {
-            id: index + 1,
-            groupName: groupName,
-            numberOfChildren: group?.numberOfChildren || 0,
-            breakfast: service.breakfast ?? false,
-            breakfastFrom: service.breakfastFrom || undefined,
-            breakfastTo: service.breakfastTo || undefined,
-            lunch: service.lunch ?? false,
-            lunchFrom: service.lunchFrom || undefined,
-            lunchTo: service.lunchTo || undefined,
-            snackAM: service.snackAM ?? false,
-            snackAMFrom: service.snackAMFrom || undefined,
-            snackAMTo: service.snackAMTo || undefined,
-            snackPM: service.snackPM ?? false,
-            snackPMFrom: service.snackPMFrom || undefined,
-            snackPMTo: service.snackPMTo || undefined,
-            dinner: service.dinner ?? false,
-            dinnerFrom: service.dinnerFrom || undefined,
-            dinnerTo: service.dinnerTo || undefined,
-            snackNight: service.snackNight ?? false,
-            snackNightFrom: service.snackNightFrom || undefined,
-            snackNightTo: service.snackNightTo || undefined,
-            dinnerExtended: service.dinnerExtended ?? false,
-            dinnerExtendedFrom: service.dinnerExtendedFrom || undefined,
-            dinnerExtendedTo: service.dinnerExtendedTo || undefined,
-            dinnerAtRisk: service.dinnerAtRisk ?? false,
-            dinnerAtRiskFrom: service.dinnerAtRiskFrom || undefined,
-            dinnerAtRiskTo: service.dinnerAtRiskTo || undefined,
-            snackExtended: service.snackExtended ?? false,
-            snackExtendedFrom: service.snackExtendedFrom || undefined,
-            snackExtendedTo: service.snackExtendedTo || undefined,
-            snackAtRisk: service.snackAtRisk ?? false,
-            snackAtRiskFrom: service.snackAtRiskFrom || undefined,
-            snackAtRiskTo: service.snackAtRiskTo || undefined,
-          };
-        });
-        this.updateServicesTableDataSource();
-      }
+      this.servicesByGroups = paramGroups.map((group, index) => ({
+        id: group.id ?? index + 1,
+        groupName: group.groupName ?? '',
+        numberOfChildren: group.numberOfChildren ?? 0,
+        serviceSlots: (group.serviceSlots ?? []).map(slot => ({
+          serviceTypeId: slot.serviceTypeId,
+          isOffered: slot.isOffered,
+          from: slot.from,
+          to: slot.to,
+        })),
+      }));
+      this.updateServicesTableDataSource();
+      this.syncChildGroupsFromServices();
     }
 
     // Actualizar el estado del botón después de cargar todos los datos
@@ -1921,99 +1872,18 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const shouldUseServicesByGroups = (formValues.offersServiceToDifferentGroups || this.shouldShowServicesByGroupsForDiningRoom()) && this.servicesByGroups.length > 0;
     
     if (shouldUseServicesByGroups) {
-      // Validar que todos los servicios tengan groupName
       const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
         this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
         return;
       }
-
-      // Sincronizar grupos desde servicios antes de enviar
       this.syncChildGroupsFromServices();
-
-      // Validar que haya grupos si hay servicios
       if (this.childGroups.length === 0) {
         this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
         return;
       }
-
-      // Agrupar servicios por groupName y crear childGroups con servicios dentro
-      const groupsMap = new Map<string, { group: SiteChildGroupRequest; services: SiteServiceRequest[] }>();
-
-      // Primero, crear el mapa de grupos desde childGroups
-      this.childGroups.forEach(group => {
-        groupsMap.set(group.groupName, {
-          group: {
-            siteId: this.param.id,
-            groupName: group.groupName,
-            groupNameEN: group.groupNameEN || group.groupName,
-            numberOfChildren: group.numberOfChildren,
-            services: []
-          },
-          services: []
-        });
-      });
-
-      // Luego, agregar servicios a cada grupo correspondiente
-      this.servicesByGroups.forEach((serviceData) => {
-        const groupName = serviceData.groupName;
-        if (groupName && groupsMap.has(groupName)) {
-          const serviceRequest: SiteServiceRequest = {
-            siteId: this.param.id,
-            // childGroupId se asignará en el backend cuando se cree el grupo
-            // Servicios básicos
-            breakfast: serviceData.breakfast ?? false,
-            breakfastFrom: serviceData.breakfastFrom || null,
-            breakfastTo: serviceData.breakfastTo || null,
-            lunch: serviceData.lunch ?? false,
-            lunchFrom: serviceData.lunchFrom || null,
-            lunchTo: serviceData.lunchTo || null,
-            snackAM: serviceData.snackAM ?? false,
-            snackAMFrom: serviceData.snackAMFrom || null,
-            snackAMTo: serviceData.snackAMTo || null,
-            dinner: serviceData.dinner ?? false,
-            dinnerFrom: serviceData.dinnerFrom || null,
-            dinnerTo: serviceData.dinnerTo || null,
-            snackPM: serviceData.snackPM ?? false,
-            snackPMFrom: serviceData.snackPMFrom || null,
-            snackPMTo: serviceData.snackPMTo || null,
-            snackNight: serviceData.snackNight ?? false,
-            snackNightFrom: serviceData.snackNightFrom || null,
-            snackNightTo: serviceData.snackNightTo || null,
-            // Servicios PACNA
-            dinnerExtended: serviceData.dinnerExtended ?? false,
-            dinnerExtendedFrom: serviceData.dinnerExtendedFrom || null,
-            dinnerExtendedTo: serviceData.dinnerExtendedTo || null,
-            dinnerAtRisk: serviceData.dinnerAtRisk ?? false,
-            dinnerAtRiskFrom: serviceData.dinnerAtRiskFrom || null,
-            dinnerAtRiskTo: serviceData.dinnerAtRiskTo || null,
-            snackExtended: serviceData.snackExtended ?? false,
-            snackExtendedFrom: serviceData.snackExtendedFrom || null,
-            snackExtendedTo: serviceData.snackExtendedTo || null,
-            snackAtRisk: serviceData.snackAtRisk ?? false,
-            snackAtRiskFrom: serviceData.snackAtRiskFrom || null,
-            snackAtRiskTo: serviceData.snackAtRiskTo || null,
-          };
-          // Validar y limpiar cada servicio
-          const cleanedService = validateAndCleanSiteService(serviceRequest);
-          groupsMap.get(groupName)!.services.push(cleanedService);
-        }
-      });
-
-      // Convertir el mapa a array de childGroups con servicios dentro
-      siteRequest.childGroups = Array.from(groupsMap.values()).map(item => ({
-        ...item.group,
-        services: item.services
-      }));
+      siteRequest.childGroups = this.childGroups;
     } else {
-      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-      // Si no hay servicios por grupos, mantener la estructura anterior para compatibilidad
-      // Agregar servicios al SiteRequest (compatibilidad hacia atrás)
-      // if (cleanedServiceRequest) {
-      //   siteRequest.services = [cleanedServiceRequest];
-      // }
-
-      // Agregar grupos de niños si existen (sin servicios dentro)
       if (this.childGroups.length > 0) {
         siteRequest.childGroups = this.childGroups;
       }
@@ -2612,11 +2482,30 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     this.updateServicesTableDataSource();
   }
 
-  /**
-   * Actualiza el dataSource de la tabla de servicios por grupos
-   */
+  /** Mapeo serviceTypeId → clave de columna desde programData.serviceTypes (code en camelCase). */
+  private getServiceTypeIdToTableKey(): Record<number, string> {
+    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes;
+    const map: Record<number, string> = {};
+    if (serviceTypes?.length) {
+      serviceTypes.forEach((st) => {
+        const key = st.code.charAt(0).toLowerCase() + st.code.slice(1);
+        map[st.id] = key;
+      });
+    }
+    return map;
+  }
+
   private updateServicesTableDataSource(): void {
-    this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+    const idToKey = this.getServiceTypeIdToTableKey();
+    const displayRows = this.servicesByGroups.map((row) => {
+      const slots = row.serviceSlots ?? [];
+      const booleans: Record<string, boolean> = {};
+      for (const [id, key] of Object.entries(idToKey)) {
+        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      }
+      return { ...row, ...booleans };
+    });
+    this.servicesTableConfig.dataSource.data = displayRows;
   }
 
   /**
@@ -2645,6 +2534,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         operatingStartTime: operatingStartTime,
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
+        existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2653,11 +2543,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
         const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
-        result.id = newId;
-        this.servicesByGroups.push(result);
+        this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
         this.syncChildGroupsFromServices();
       }
@@ -2679,7 +2568,10 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
     const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
       data: {
-        ...serviceToEdit,
+        id: serviceToEdit.id,
+        groupName: serviceToEdit.groupName,
+        numberOfChildren: serviceToEdit.numberOfChildren,
+        serviceSlots: serviceToEdit.serviceSlots ?? [],
         isEdit: true,
         yesNoOptions: this.yesNoOptions,
         isPDAM: false,
@@ -2688,6 +2580,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         operatingStartTime: operatingStartTime,
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
+        existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2696,11 +2589,11 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
         const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
-          this.servicesByGroups[index] = result;
+          this.servicesByGroups[index] = { ...result, id };
           this.updateServicesTableDataSource();
           this.syncChildGroupsFromServices();
         }
@@ -2748,37 +2641,16 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     });
   }
 
-  /**
-   * Sincroniza los grupos de niños desde los servicios por grupos
-   */
   private syncChildGroupsFromServices(): void {
-    const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
-    
-    this.servicesByGroups.forEach(service => {
-      if (service.groupName) {
-        if (!uniqueGroups.has(service.groupName)) {
-          uniqueGroups.set(service.groupName, {
-            groupName: service.groupName,
-            numberOfChildren: service.numberOfChildren || 0
-          });
-        } else {
-          const existing = uniqueGroups.get(service.groupName);
-          if (existing && (service.numberOfChildren || 0) > existing.numberOfChildren) {
-            existing.numberOfChildren = service.numberOfChildren || 0;
-          }
-        }
-      }
-    });
-
-    this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
-      siteId: this.param?.id,
-      groupName: group.groupName,
-      groupNameEN: group.groupName,
-      numberOfChildren: group.numberOfChildren
+    this.childGroups = this.servicesByGroups.map(service => ({
+      id: service.id,
+      siteId: this.param?.id ?? 0,
+      groupName: service.groupName,
+      groupNameEN: service.groupName,
+      numberOfChildren: service.numberOfChildren,
+      serviceSlots: service.serviceSlots ?? [],
     }));
   }
-
-
 
   /**
    * Convierte el objeto groupType a la clave usada en la configuración

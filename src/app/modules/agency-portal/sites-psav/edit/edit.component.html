@@ -804,6 +804,17 @@
           </div>
         </div>
 
+        <!-- Tabla de Servicios por Grupos -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+          <div class="mb-4">
+            <h3 class="mb-2 text-lg font-medium">{{ "sites.edit.services.table.title" | transloco }}</h3>
+            <p class="mb-4 text-sm text-gray-600">{{ "sites.edit.services.table.description" | transloco }}</p>
+            <div class="rounded-lg shadow-md bg-card">
+              <app-generic-table [config]="servicesTableConfig" [handler]="this" #servicesTable></app-generic-table>
+            </div>
+          </div>
+        </div>
+
         <!-- Satélites -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="satellitesTableConfig.dataSource.data.length > 0">
           <p class="text-lg font-medium">{{ "sites.edit.satellites.label" | transloco }}</p>

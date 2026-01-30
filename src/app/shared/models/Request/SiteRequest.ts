@@ -1,4 +1,3 @@
-import { SiteServiceRequest } from './SiteServiceRequest';
 import { SiteDayCareHomeRequest } from './SiteDayCareHomeRequest';
 import { SiteParticipantRequest } from './SiteParticipantRequest';
 import { SiteEducationLevelRequest } from './SiteEducationLevelRequest';
@@ -139,7 +138,6 @@ export interface SiteRequest {
     programIds?: number[];
 
     // ===== RELACIONES CON MODELOS REQUEST =====
-    services?: SiteServiceRequest[];
     dayCareHome?: SiteDayCareHomeRequest;
     participants?: SiteParticipantRequest[];
     educationLevels?: SiteEducationLevelRequest[];

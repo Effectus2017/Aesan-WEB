@@ -56,7 +56,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import { SiteChildGroupServiceSlotRequest } from 'app/shared/models/Request/SiteChildGroupServiceSlotRequest';
+import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
@@ -77,6 +78,7 @@ import {
   SiteChangesCancellationsModalComponent,
   SiteChangesCancellationsModalData,
 } from 'app/shared/components/site-changes-cancellations-modal/site-changes-cancellations-modal.component';
+import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -503,7 +505,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
-  servicesByGroups: ServiceByGroupDialogData[] = [];
+  servicesByGroups: ServiceByGroupDialogResult[] = [];
 
   // Required by OnGenericTableHandler interface
   get tableConfig(): GenericTableConfig {
@@ -1263,92 +1265,26 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     //this.satellitesTableConfig.dataSource.data = param.satellites || [];
     //this.satellitesTableConfig.length = param.satellites?.length || 0;
 
-    // Cargar servicios por grupos si existen
+    // Cargar grupos con serviceSlots desde param.childGroups
     if (param.childGroups && param.childGroups.length > 0) {
-      // Obtener todos los servicios desde los grupos
-      const allServices: any[] = [];
-      param.childGroups.forEach(group => {
-        if (group.services && group.services.length > 0) {
-          group.services.forEach(service => {
-            allServices.push({
-              ...service,
-              groupId: group.id,
-              groupName: group.groupName
-            });
-          });
-        }
-      });
+      this.childGroups = param.childGroups.map(group => ({
+        id: group.id,
+        siteId: this.param.id,
+        groupName: group.groupName,
+        groupNameEN: group.groupName ?? group.groupName,
+        numberOfChildren: group.numberOfChildren || 0,
+        serviceSlots: ((group as { serviceSlots?: SiteChildGroupServiceSlotRequest[] }).serviceSlots ?? []) as SiteChildGroupServiceSlotRequest[],
+      }));
+      this.nextGroupNumber = this.childGroups.length + 1;
 
-      if (allServices.length > 0) {
-        // Obtener grupos únicos desde param.childGroups
-        const uniqueGroups = new Map<number, { groupName: string; numberOfChildren: number }>();
-        param.childGroups.forEach(group => {
-          if (!uniqueGroups.has(group.id)) {
-            uniqueGroups.set(group.id, {
-              groupName: group.groupName,
-              numberOfChildren: group.numberOfChildren || 0
-            });
-          }
-        });
-
-        // Cargar grupos únicos
-        this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
-          siteId: this.param.id,
-          groupName: group.groupName,
-          groupNameEN: group.groupName,
-          numberOfChildren: group.numberOfChildren
-        }));
-        this.nextGroupNumber = this.childGroups.length + 1;
-
-        // Mapear servicios a ServiceByGroupDialogData
-        this.servicesByGroups = allServices.map((service, index) => {
-          const groupName = service.groupName || `Grupo ${index + 1}`;
-          const group = uniqueGroups.get(service.groupId);
-
-          return {
-            id: index + 1,
-            groupName: groupName,
-            numberOfChildren: group?.numberOfChildren || 0,
-            breakfast: service.breakfast ?? false,
-            breakfastFrom: service.breakfastFrom || undefined,
-            breakfastTo: service.breakfastTo || undefined,
-            lunch: service.lunch ?? false,
-            lunchFrom: service.lunchFrom || undefined,
-            lunchTo: service.lunchTo || undefined,
-            snackAM: service.snackAM ?? false,
-            snackAMFrom: service.snackAMFrom || undefined,
-            snackAMTo: service.snackAMTo || undefined,
-            snackPM: service.snackPM ?? false,
-            snackPMFrom: service.snackPMFrom || undefined,
-            snackPMTo: service.snackPMTo || undefined,
-          };
-        });
-        this.updateServicesTableDataSource();
-
-        // Actualizar numberOfChildren desde los servicios mapeados
-        this.servicesByGroups.forEach(service => {
-          if (service.groupName && service.numberOfChildren) {
-            const groupId = Array.from(uniqueGroups.entries()).find(([_, g]) => g.groupName === service.groupName)?.[0];
-            if (groupId) {
-              const group = uniqueGroups.get(groupId);
-              if (group && (service.numberOfChildren || 0) > group.numberOfChildren) {
-                group.numberOfChildren = service.numberOfChildren || 0;
-              }
-            }
-          }
-        });
-
-        // Actualizar childGroups con la información correcta de numberOfChildren
-        this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
-          siteId: this.param.id,
-          groupName: group.groupName,
-          groupNameEN: group.groupName,
-          numberOfChildren: group.numberOfChildren
-        }));
-
-        // Sincronizar grupos desde servicios para asegurar consistencia
-        this.syncChildGroupsFromServices();
-      }
+      this.servicesByGroups = param.childGroups.map((group, index) => ({
+        id: group.id ?? index + 1,
+        groupName: group.groupName,
+        numberOfChildren: group.numberOfChildren || 0,
+        serviceSlots: (group as { serviceSlots?: { serviceTypeId: number; isOffered: boolean; from?: string; to?: string }[] }).serviceSlots ?? [],
+      }));
+      this.updateServicesTableDataSource();
+      this.syncChildGroupsFromServices();
     }
 
     // Calcular días operativos automáticamente si es necesario
@@ -1570,43 +1506,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       }
     }
 
-    // Agregar servicios al SiteRequest
-    if (this.servicesByGroups.length > 0) {
-      // Si hay servicios por grupos, crear múltiples servicios (uno por grupo)
-      siteRequest.services = this.servicesByGroups.map((serviceData) => {
-        const serviceRequest: SiteServiceRequest = {
-          siteId: this.param?.id || 0,
-          childGroupId: null, // Se asignará cuando se cree el grupo
-          // Servicios básicos
-          breakfast: serviceData.breakfast || false,
-          breakfastFrom: serviceData.breakfastFrom || null,
-          breakfastTo: serviceData.breakfastTo || null,
-          lunch: serviceData.lunch || false,
-          lunchFrom: serviceData.lunchFrom || null,
-          lunchTo: serviceData.lunchTo || null,
-          snackAM: serviceData.snackAM || false,
-          snackAMFrom: serviceData.snackAMFrom || null,
-          snackAMTo: serviceData.snackAMTo || null,
-          snackPM: serviceData.snackPM || false,
-          snackPMFrom: serviceData.snackPMFrom || null,
-          snackPMTo: serviceData.snackPMTo || null,
-          dinner: serviceData.dinner || false,
-          dinnerFrom: serviceData.dinnerFrom || null,
-          dinnerTo: serviceData.dinnerTo || null,
-          snackNight: serviceData.snackNight || false,
-          snackNightFrom: serviceData.snackNightFrom || null,
-          snackNightTo: serviceData.snackNightTo || null,
-        };
-        // Validar y limpiar cada servicio
-        return validateAndCleanSiteService(serviceRequest);
-      });
-    } else {
-      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-      // Servicio general (sin grupos específicos)
-      // siteRequest.services = [cleanedServiceRequest];
-    }
-
-    // Agregar grupos de niños si hay grupos
+    // Agregar grupos de niños con serviceSlots (los servicios van dentro de cada grupo)
     if (this.childGroups.length > 0) {
       siteRequest.childGroups = this.childGroups;
     }
@@ -2307,13 +2207,12 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
         const newId = this.servicesByGroups.length > 0
           ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1
           : 1;
-        result.id = newId;
-        this.servicesByGroups.push(result);
+        this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
         this.syncChildGroupsFromServices();
       }
@@ -2335,7 +2234,10 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
       const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
         data: {
-          ...serviceToEdit,
+          id: serviceToEdit.id,
+          groupName: serviceToEdit.groupName,
+          numberOfChildren: serviceToEdit.numberOfChildren,
+          serviceSlots: serviceToEdit.serviceSlots ?? [],
           isEdit: true,
           yesNoOptions: this.yesNoOptions,
           generalEnrollment: generalEnrollment,
@@ -2355,11 +2257,11 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         disableClose: true,
       });
 
-      dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogData) => {
+      dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
         if (result) {
           const index = this.servicesByGroups.findIndex((s) => s.id === id);
           if (index !== -1) {
-            this.servicesByGroups[index] = result;
+            this.servicesByGroups[index] = { ...result, id };
             this.updateServicesTableDataSource();
             this.syncChildGroupsFromServices();
           }
@@ -2405,35 +2307,41 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     });
   }
 
+  /** Mapeo serviceTypeId → clave de columna desde programData.serviceTypes (code en camelCase). */
+  private getServiceTypeIdToTableKey(): Record<number, string> {
+    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes;
+    const map: Record<number, string> = {};
+    if (serviceTypes?.length) {
+      serviceTypes.forEach((st) => {
+        const key = st.code.charAt(0).toLowerCase() + st.code.slice(1);
+        map[st.id] = key;
+      });
+    }
+    return map;
+  }
+
   private updateServicesTableDataSource(): void {
-    this.servicesTableConfig.dataSource.data = [...this.servicesByGroups];
+    const idToKey = this.getServiceTypeIdToTableKey();
+    const displayRows = this.servicesByGroups.map((row) => {
+      const slots = row.serviceSlots ?? [];
+      const booleans: Record<string, boolean> = {};
+      for (const [id, key] of Object.entries(idToKey)) {
+        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      }
+      return { ...row, ...booleans };
+    });
+    this.servicesTableConfig.dataSource.data = displayRows;
     this._changeDetectorRef.detectChanges();
   }
 
   private syncChildGroupsFromServices(): void {
-    const uniqueGroups = new Map<string, { groupName: string; numberOfChildren: number }>();
-
-    this.servicesByGroups.forEach(service => {
-      if (service.groupName) {
-        const existingGroup = uniqueGroups.get(service.groupName);
-        if (!existingGroup) {
-          uniqueGroups.set(service.groupName, {
-            groupName: service.groupName,
-            numberOfChildren: service.numberOfChildren || 0
-          });
-        } else {
-          if ((service.numberOfChildren || 0) > existingGroup.numberOfChildren) {
-            existingGroup.numberOfChildren = service.numberOfChildren || 0;
-          }
-        }
-      }
-    });
-
-    this.childGroups = Array.from(uniqueGroups.values()).map(group => ({
+    this.childGroups = this.servicesByGroups.map(service => ({
+      id: service.id,
       siteId: this.param?.id || 0,
-      groupName: group.groupName,
-      groupNameEN: group.groupName,
-      numberOfChildren: group.numberOfChildren
+      groupName: service.groupName,
+      groupNameEN: service.groupName,
+      numberOfChildren: service.numberOfChildren,
+      serviceSlots: service.serviceSlots ?? [],
     }));
   }
 

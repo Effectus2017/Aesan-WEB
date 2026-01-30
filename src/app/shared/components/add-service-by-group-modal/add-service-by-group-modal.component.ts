@@ -23,6 +23,7 @@ import {
 } from 'app/shared/utils';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { SiteChildGroupServiceSlotRequest } from 'app/shared/models/Request/SiteChildGroupServiceSlotRequest';
 import { ServiceTypeIds, ServiceTypes } from 'app/shared/constants/service-type.constants';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
@@ -96,9 +97,20 @@ export interface ServiceByGroupDialogData {
   /** Tipos de servicio por programa desde el backend (AESAN-257). Si existe, el modal muestra solo estos. */
   serviceTypes?: ServiceTypeByProgram[];
 
+  /** Slots de servicio por ServiceTypeId (nuevo formato). Si se pasa, el formulario se rellena desde aquí en lugar del formato ancho. */
+  serviceSlots?: SiteChildGroupServiceSlotRequest[];
+
   // Horas de funcionamiento para limitar opciones de tiempo
   operatingStartTime?: Date | string | null;
   operatingEndTime?: Date | string | null;
+}
+
+/** Resultado al cerrar el modal con guardar: datos del grupo y lista de slots (serviceSlots). */
+export interface ServiceByGroupDialogResult {
+  id?: number;
+  groupName: string;
+  numberOfChildren: number;
+  serviceSlots: SiteChildGroupServiceSlotRequest[];
 }
 
 /** Errores de validación de servicios fuertes y tiempo entre servicios (AESAN-257). */
@@ -196,6 +208,18 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
       snackAtRiskFrom: [data?.snackAtRiskFrom ? timeStringToDate(data.snackAtRiskFrom) : null],
       snackAtRiskTo: [data?.snackAtRiskTo ? timeStringToDate(data.snackAtRiskTo) : null],
     });
+
+    // Si se pasan serviceSlots (nuevo formato), rellenar el formulario desde ellos
+    if (data?.serviceSlots && data.serviceSlots.length > 0) {
+      for (const slot of data.serviceSlots) {
+        const formKey = SERVICE_TYPE_ID_TO_FORM_KEY[slot.serviceTypeId];
+        if (formKey) {
+          this.serviceForm.get(formKey.bool)?.setValue(!!slot.isOffered, { emitEvent: false });
+          this.serviceForm.get(formKey.from)?.setValue(slot.from ? timeStringToDate(slot.from) : null, { emitEvent: false });
+          this.serviceForm.get(formKey.to)?.setValue(slot.to ? timeStringToDate(slot.to) : null, { emitEvent: false });
+        }
+      }
+    }
   }
 
   ngOnInit(): void {
@@ -641,31 +665,28 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
 
     const formValue = this.serviceForm.value;
 
-    // Convertir horarios a string usando toTimeString
-    const processedData = {
-      ...formValue,
-      breakfastFrom: formValue.breakfastFrom ? toTimeString(formValue.breakfastFrom) : null,
-      breakfastTo: formValue.breakfastTo ? toTimeString(formValue.breakfastTo) : null,
-      lunchFrom: formValue.lunchFrom ? toTimeString(formValue.lunchFrom) : null,
-      lunchTo: formValue.lunchTo ? toTimeString(formValue.lunchTo) : null,
-      snackAMFrom: formValue.snackAMFrom ? toTimeString(formValue.snackAMFrom) : null,
-      snackAMTo: formValue.snackAMTo ? toTimeString(formValue.snackAMTo) : null,
-      dinnerFrom: formValue.dinnerFrom ? toTimeString(formValue.dinnerFrom) : null,
-      dinnerTo: formValue.dinnerTo ? toTimeString(formValue.dinnerTo) : null,
-      snackPMFrom: formValue.snackPMFrom ? toTimeString(formValue.snackPMFrom) : null,
-      snackPMTo: formValue.snackPMTo ? toTimeString(formValue.snackPMTo) : null,
-      snackNightFrom: formValue.snackNightFrom ? toTimeString(formValue.snackNightFrom) : null,
-      snackNightTo: formValue.snackNightTo ? toTimeString(formValue.snackNightTo) : null,
-      dinnerExtendedFrom: formValue.dinnerExtendedFrom ? toTimeString(formValue.dinnerExtendedFrom) : null,
-      dinnerExtendedTo: formValue.dinnerExtendedTo ? toTimeString(formValue.dinnerExtendedTo) : null,
-      dinnerAtRiskFrom: formValue.dinnerAtRiskFrom ? toTimeString(formValue.dinnerAtRiskFrom) : null,
-      dinnerAtRiskTo: formValue.dinnerAtRiskTo ? toTimeString(formValue.dinnerAtRiskTo) : null,
-      snackExtendedFrom: formValue.snackExtendedFrom ? toTimeString(formValue.snackExtendedFrom) : null,
-      snackExtendedTo: formValue.snackExtendedTo ? toTimeString(formValue.snackExtendedTo) : null,
-      snackAtRiskFrom: formValue.snackAtRiskFrom ? toTimeString(formValue.snackAtRiskFrom) : null,
-      snackAtRiskTo: formValue.snackAtRiskTo ? toTimeString(formValue.snackAtRiskTo) : null,
-    };
+    // Construir serviceSlots desde el formulario (formato normalizado por ServiceTypeId)
+    const serviceSlots: SiteChildGroupServiceSlotRequest[] = [];
+    const items = this.getVisibleServiceTypesWithKeys();
+    for (const { st, formKey } of items) {
+      const boolVal = this.serviceForm.get(formKey.bool)?.value;
+      const fromVal = this.serviceForm.get(formKey.from)?.value;
+      const toVal = this.serviceForm.get(formKey.to)?.value;
+      const isOffered = !!boolVal && fromVal instanceof Date && toVal instanceof Date;
+      serviceSlots.push({
+        serviceTypeId: st.id,
+        isOffered,
+        from: isOffered && fromVal ? toTimeString(fromVal) : undefined,
+        to: isOffered && toVal ? toTimeString(toVal) : undefined,
+      });
+    }
 
-    this.dialogRef.close(processedData);
+    const result: ServiceByGroupDialogResult = {
+      id: formValue.id,
+      groupName: formValue.groupName,
+      numberOfChildren: formValue.numberOfChildren,
+      serviceSlots,
+    };
+    this.dialogRef.close(result);
   }
 }

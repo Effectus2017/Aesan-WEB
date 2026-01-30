@@ -1,12 +1,12 @@
-import { SiteServiceRequest } from './SiteServiceRequest';
+import { SiteChildGroupServiceSlotRequest } from './SiteChildGroupServiceSlotRequest';
 
 export interface SiteChildGroupRequest {
   id?: number;
-  siteId: number;
+  siteId?: number;
   groupName: string;
-  groupNameEN: string;
+  groupNameEN?: string;
   numberOfChildren: number;
-  services?: SiteServiceRequest[];
+  serviceSlots?: SiteChildGroupServiceSlotRequest[];
 }
 
 export interface SiteChildGroupResponse {
