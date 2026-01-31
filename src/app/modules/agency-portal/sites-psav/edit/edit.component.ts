@@ -1317,10 +1317,22 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const fromVal = s?.from ?? s?.fromTime;
+        const toVal = s?.to ?? s?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
+        }
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
     this._changeDetectorRef.detectChanges();

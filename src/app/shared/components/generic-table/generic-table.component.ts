@@ -177,6 +177,68 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
     return undefined;
   }
 
+  /**
+   * Columnas del schema que representan servicios (tipo boolean, excluyendo groupName y numberOfChildren).
+   * Usado en vista cards para mostrar servicios activos de forma dinámica (PDAM, PACNA, PSAV).
+   */
+  getServiceColumns(): { key: string; label: string }[] {
+    if (!this.config?.columnsSchema?.length) return [];
+    const exclude = new Set(['groupName', 'numberOfChildren']);
+    return this.config.columnsSchema
+      .filter((col) => col.type === 'boolean' && typeof col.key === 'string' && !exclude.has(col.key as string))
+      .map((col) => ({ key: col.key as string, label: col.label }));
+  }
+
+  /**
+   * Indica si el elemento tiene al menos un servicio activo (alguna columna boolean de servicio en true).
+   */
+  hasAnyActiveService(element: any): boolean {
+    const serviceCols = this.getServiceColumns();
+    return serviceCols.some((col) => !!element?.[col.key]);
+  }
+
+  /**
+   * Slots de servicio ofrecidos en el elemento (desde serviceSlots cuando no hay columnas boolean rellenadas).
+   * Usado como fallback para mostrar servicios dentro de la card (PDAM, PACNA, PSAV).
+   */
+  getActiveServiceSlots(element: any): { from?: string; to?: string; label?: string; serviceTypeName?: string }[] {
+    const slots = element?.serviceSlots ?? [];
+    if (!Array.isArray(slots)) return [];
+    return slots
+      .filter((s: { isOffered?: boolean }) => !!s?.isOffered)
+      .map((s: { from?: string; to?: string; fromTime?: string; toTime?: string; serviceTypeName?: string; label?: string }) => ({
+        from: s?.from ?? s?.fromTime,
+        to: s?.to ?? s?.toTime,
+        label: s?.serviceTypeName ?? s?.label,
+        serviceTypeName: s?.serviceTypeName,
+      }));
+  }
+
+  /**
+   * True si hay que mostrar servicios desde serviceSlots (fallback) porque no hay booleanos rellenados.
+   */
+  shouldShowServiceSlotsFallback(element: any): boolean {
+    return !this.hasAnyActiveService(element) && this.getActiveServiceSlots(element).length > 0;
+  }
+
+  /** Estilos (icono + clases) por índice para slots en fallback; repite los 10 estilos. */
+  private readonly fallbackSlotStyles: { icon: string; bg: string; border: string; text: string; textMedium: string }[] = [
+    { icon: '🥣', bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-100 dark:border-blue-800', text: 'text-blue-800 dark:text-blue-300', textMedium: 'text-blue-600 dark:text-blue-400' },
+    { icon: '🍛', bg: 'bg-orange-50 dark:bg-orange-900/20', border: 'border-orange-100 dark:border-orange-800', text: 'text-orange-800 dark:text-orange-300', textMedium: 'text-orange-600 dark:text-orange-400' },
+    { icon: '🍎', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-100 dark:border-green-800', text: 'text-green-800 dark:text-green-300', textMedium: 'text-green-600 dark:text-green-400' },
+    { icon: '🍪', bg: 'bg-green-50 dark:bg-green-900/20', border: 'border-green-100 dark:border-green-800', text: 'text-green-800 dark:text-green-300', textMedium: 'text-green-600 dark:text-green-400' },
+    { icon: '🌙', bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-100 dark:border-purple-800', text: 'text-purple-800 dark:text-purple-300', textMedium: 'text-purple-600 dark:text-purple-400' },
+    { icon: '🥛', bg: 'bg-indigo-50 dark:bg-indigo-900/20', border: 'border-indigo-100 dark:border-indigo-800', text: 'text-indigo-800 dark:text-indigo-300', textMedium: 'text-indigo-600 dark:text-indigo-400' },
+    { icon: '🕰️', bg: 'bg-pink-50 dark:bg-pink-900/20', border: 'border-pink-100 dark:border-pink-800', text: 'text-pink-800 dark:text-pink-300', textMedium: 'text-pink-600 dark:text-pink-400' },
+    { icon: '🍝', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-100 dark:border-red-800', text: 'text-red-800 dark:text-red-300', textMedium: 'text-red-600 dark:text-red-400' },
+    { icon: '🍪', bg: 'bg-teal-50 dark:bg-teal-900/20', border: 'border-teal-100 dark:border-teal-800', text: 'text-teal-800 dark:text-teal-300', textMedium: 'text-teal-600 dark:text-teal-400' },
+    { icon: '🥪', bg: 'bg-red-50 dark:bg-red-900/20', border: 'border-red-100 dark:border-red-800', text: 'text-red-800 dark:text-red-300', textMedium: 'text-red-600 dark:text-red-400' },
+  ];
+
+  getFallbackSlotStyle(index: number): { icon: string; bg: string; border: string; text: string; textMedium: string } {
+    return this.fallbackSlotStyles[index % this.fallbackSlotStyles.length];
+  }
+
   // Functions
   trackByFn(index: number, item: any): any {
     return item.id || index;

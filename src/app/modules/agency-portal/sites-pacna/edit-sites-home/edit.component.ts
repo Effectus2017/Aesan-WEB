@@ -23,6 +23,8 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
+import { normalizeServiceSlotFromResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -1233,34 +1235,32 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
         // this.toggleMainSiteServices(true);
 
-        // Cargar servicios por grupos si existen (formato normalizado: serviceSlots por grupo)
-        if (param.childGroups && param.childGroups.length > 0) {
-          const paramGroups = param.childGroups as Array<{ id?: number; groupName?: string; numberOfChildren?: number; serviceSlots?: Array<{ serviceTypeId: number; isOffered: boolean; from?: string; to?: string }> }>;
-          this.childGroups = paramGroups.map(group => ({
-            id: group.id,
-            siteId: this.param.id,
-            groupName: group.groupName ?? '',
-            groupNameEN: group.groupName ?? '',
-            numberOfChildren: group.numberOfChildren ?? 0,
-            serviceSlots: (group.serviceSlots ?? []).map(slot => ({
-              serviceTypeId: slot.serviceTypeId,
-              isOffered: slot.isOffered,
-              from: slot.from,
-              to: slot.to,
-            })),
-          }));
+        // Cargar servicios por grupos si existen
+        const paramGroups: SiteChildGroupResponse[] = param.childGroups ?? [];
+        if (paramGroups.length > 0) {
+          this.childGroups = paramGroups.map(
+            (group): SiteChildGroupRequest => ({
+              id: group.id,
+              siteId: this.param!.id,
+              groupName: group.groupName ?? '',
+              groupNameEN: group.groupName ?? '',
+              numberOfChildren: group.numberOfChildren ?? 0,
+              serviceSlots: (group.serviceSlots ?? []).map((slot) => {
+                const base = normalizeServiceSlotFromResponse(slot);
+                return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
+              }),
+            })
+          );
           this.nextGroupNumber = this.childGroups.length + 1;
 
           this.servicesByGroups = paramGroups.map((group, index) => ({
             id: group.id ?? index + 1,
             groupName: group.groupName ?? '',
             numberOfChildren: group.numberOfChildren ?? 0,
-            serviceSlots: (group.serviceSlots ?? []).map(slot => ({
-              serviceTypeId: slot.serviceTypeId,
-              isOffered: slot.isOffered,
-              from: slot.from,
-              to: slot.to,
-            })),
+            serviceSlots: (group.serviceSlots ?? []).map((slot) => {
+              const base = normalizeServiceSlotFromResponse(slot);
+              return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
+            }),
           }));
           this.updateServicesTableDataSource();
           this.syncChildGroupsFromServices();
@@ -2047,6 +2047,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2094,6 +2096,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2155,11 +2159,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     });
   }
 
-  /** Mapeo serviceTypeId → clave de columna desde programData.serviceTypes (code en camelCase). */
+  /** Mapeo serviceTypeId → clave de columna (breakfast, lunch, snackAM, etc.) desde programData.serviceTypes (resolver, datos desde BD). */
   private getServiceTypeIdToTableKey(): Record<number, string> {
-    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes;
+    const programData = this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined;
+    const serviceTypes = programData?.serviceTypes ?? [];
     const map: Record<number, string> = {};
-    if (serviceTypes?.length) {
+    if (Array.isArray(serviceTypes) && serviceTypes.length > 0) {
       serviceTypes.forEach((st) => {
         const key = st.code.charAt(0).toLowerCase() + st.code.slice(1);
         map[st.id] = key;
@@ -2170,13 +2175,33 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   private updateServicesTableDataSource(): void {
     const idToKey = this.getServiceTypeIdToTableKey();
+    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes ?? [];
+    const currentLang = this._translocoService?.getActiveLang() ?? 'es';
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
+      const enrichedSlots = slots.map((slot) => {
+        const st = serviceTypes.find((s) => Number(s.id) === Number(slot.serviceTypeId));
+        const slotWithName = slot as { serviceTypeName?: string };
+        const label = slotWithName.serviceTypeName ?? (currentLang === 'en' ? st?.nameEN : st?.name) ?? st?.name ?? st?.code;
+        return { ...slot, serviceTypeName: label };
+      });
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const fromVal = s?.from ?? s?.fromTime;
+        const toVal = s?.to ?? s?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
+        }
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, serviceSlots: enrichedSlots, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
   }

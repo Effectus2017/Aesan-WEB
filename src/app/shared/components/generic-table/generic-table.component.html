@@ -418,10 +418,23 @@
                       {{ timeStringToDateWrapper(element.snackAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackAtRiskTo) | date:'shortTime' }}
                     </div>
                   </div>
+
+                  <!-- Fallback: cuando no hay booleanos (p. ej. programData vacío) pero sí serviceSlots con isOffered -->
+                  <ng-container *ngIf="shouldShowServiceSlotsFallback(element)">
+                    <div *ngFor="let slot of getActiveServiceSlots(element); let i = index" class="flex flex-col rounded-lg p-2.5 min-w-[140px] flex-1 border" [ngClass]="getFallbackSlotStyle(i).bg + ' ' + getFallbackSlotStyle(i).border">
+                      <div class="flex gap-1.5 items-center mb-1">
+                        <span class="text-lg">{{ getFallbackSlotStyle(i).icon }}</span>
+                        <span class="text-sm font-semibold" [ngClass]="getFallbackSlotStyle(i).text">{{ (slot.label || slot.serviceTypeName) || 'Servicio' }}</span>
+                      </div>
+                      <div *ngIf="slot.from || slot.to" class="pl-6 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i).textMedium">
+                        {{ timeStringToDateWrapper(slot.from) | date:'shortTime' }} - {{ timeStringToDateWrapper(slot.to) | date:'shortTime' }}
+                      </div>
+                    </div>
+                  </ng-container>
                 </div>
 
-                <!-- Mensaje Empty State si no hay servicios -->
-                <div *ngIf="!element.breakfast && !element.lunch && !element.snackAM && !element.snackPM && !element.dinner && !element.snackNight && !element.dinnerExtended && !element.dinnerAtRisk && !element.snackExtended && !element.snackAtRisk"
+                <!-- Mensaje Empty State solo cuando no hay servicios ni por booleanos ni por serviceSlots -->
+                <div *ngIf="!element.breakfast && !element.lunch && !element.snackAM && !element.snackPM && !element.dinner && !element.snackNight && !element.dinnerExtended && !element.dinnerAtRisk && !element.snackExtended && !element.snackAtRisk && getActiveServiceSlots(element).length === 0"
                      class="py-4 text-sm italic text-center text-gray-400">
                   Sin servicios activos
                 </div>

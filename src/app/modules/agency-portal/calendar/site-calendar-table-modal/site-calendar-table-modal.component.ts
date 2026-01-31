@@ -218,6 +218,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
     const dayTableData = uniqueOperatingDayEvents.map((event) => ({
       id: event.meta?.id,
       title: this.getEventTitle(event.meta, this.data.date), // Usar fecha formateada
+      groupName: (event.meta as any)?.childGroupName ?? '',
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventType(event.meta),
@@ -232,6 +233,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       return {
         id: service.id,
         title: this.getServiceTitle(service),
+        groupName: service.childGroupName ?? '',
         startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
         endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
         type: this.getServiceTypeLabel(service),
@@ -254,6 +256,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
           servicesTableData.push({
             id: service.id,
             title: this.getServiceTitle(service),
+            groupName: service.childGroupName ?? '',
             startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
             endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
             type: this.getServiceTypeLabel(service),
@@ -319,7 +322,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
     // Usar el nombre del servicio según el idioma actual
     const currentLang = this.translocoService.getActiveLang() || 'es';
     const serviceName = currentLang === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
-    return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
+    const baseName = serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
+    if (service?.childGroupName) {
+      return `${service.childGroupName} - ${baseName}`;
+    }
+    return baseName;
   }
 
   private getServiceTypeLabel(service: any): string {
@@ -416,13 +423,19 @@ export class SiteCalendarTableModalComponent implements OnInit {
   }
 
   addService(): void {
+    if (!this.hasChildGroups()) {
+      return;
+    }
     // Obtener el operatingDay desde el handler del componente padre
     if (this.data.handler && typeof (this.data.handler as any).getOperatingDayForDate === 'function') {
       const operatingDay = (this.data.handler as any).getOperatingDayForDate(this.data.date);
 
       if (operatingDay) {
-        // Crear formulario para agregar servicio
+        const childGroups = this.data.childGroups ?? [];
+        const defaultChildGroupId = childGroups.length > 0 ? childGroups[0].id : null;
+        // Crear formulario para agregar servicio (childGroupId es obligatorio)
         const serviceForm = this.formBuilder.group({
+          childGroupId: [defaultChildGroupId, Validators.required],
           serviceTypeId: ['', Validators.required],
           startTime: ['', Validators.required],
           endTime: ['', Validators.required],
@@ -437,6 +450,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
             form: serviceForm,
             operatingDay: operatingDay,
             siteId: this.data.siteId,
+            childGroups,
             // Obtener programas desde localStorage
             programs: this.getAgencyPrograms(),
             // Obtener isDayCareHome desde localStorage o desde la agencia
@@ -471,9 +485,10 @@ export class SiteCalendarTableModalComponent implements OnInit {
               return '00:00:00';
             };
 
-            // Crear el servicio
+            // Crear el servicio (childGroupId es obligatorio en la API)
             const request = {
               operatingDayId: operatingDay.id,
+              childGroupId: result.childGroupId,
               serviceTypeId: result.serviceTypeId,
               startTime: formatTimeForApi(result.startTime),
               endTime: formatTimeForApi(result.endTime),
@@ -601,6 +616,23 @@ export class SiteCalendarTableModalComponent implements OnInit {
     }
 
     return false;
+  }
+
+  /** Indica si el sitio tiene grupos configurados (necesarios para agregar servicios) */
+  hasChildGroups(): boolean {
+    const groups = this.data.childGroups ?? [];
+    return groups.length > 0;
+  }
+
+  /** Título del botón "Agregar servicio" según estado (feriado o sin grupos) */
+  getAddServiceButtonTitle(): string {
+    if (this.isHolidayDay()) {
+      return this.translocoService.translate('sites.calendar.day-events.cannot-edit-holiday') ?? '';
+    }
+    if (!this.hasChildGroups()) {
+      return this.translocoService.translate('sites.calendar.modals.add-service.group.noGroups') ?? '';
+    }
+    return '';
   }
 
   /**

@@ -209,14 +209,17 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
       snackAtRiskTo: [data?.snackAtRiskTo ? timeStringToDate(data.snackAtRiskTo) : null],
     });
 
-    // Si se pasan serviceSlots (nuevo formato), rellenar el formulario desde ellos
+    // Si se pasan serviceSlots (nuevo formato), rellenar el formulario desde ellos.
+    // La API devuelve fromTime/toTime; el modal acepta from/to o fromTime/toTime.
     if (data?.serviceSlots && data.serviceSlots.length > 0) {
       for (const slot of data.serviceSlots) {
         const formKey = SERVICE_TYPE_ID_TO_FORM_KEY[slot.serviceTypeId];
         if (formKey) {
+          const fromStr = slot.from ?? (slot as { fromTime?: string }).fromTime;
+          const toStr = slot.to ?? (slot as { toTime?: string }).toTime;
           this.serviceForm.get(formKey.bool)?.setValue(!!slot.isOffered, { emitEvent: false });
-          this.serviceForm.get(formKey.from)?.setValue(slot.from ? timeStringToDate(slot.from) : null, { emitEvent: false });
-          this.serviceForm.get(formKey.to)?.setValue(slot.to ? timeStringToDate(slot.to) : null, { emitEvent: false });
+          this.serviceForm.get(formKey.from)?.setValue(fromStr ? timeStringToDate(fromStr) : null, { emitEvent: false });
+          this.serviceForm.get(formKey.to)?.setValue(toStr ? timeStringToDate(toStr) : null, { emitEvent: false });
         }
       }
     }

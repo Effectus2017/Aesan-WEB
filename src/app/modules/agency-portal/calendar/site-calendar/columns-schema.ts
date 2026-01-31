@@ -7,6 +7,11 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.calendar.day-events.table.columns.title'
   },
   {
+    key: 'groupName',
+    type: 'text',
+    label: 'sites.calendar.day-events.table.columns.groupName'
+  },
+  {
     key: 'startTime',
     type: 'text',
     label: 'sites.calendar.day-events.table.columns.startTime'

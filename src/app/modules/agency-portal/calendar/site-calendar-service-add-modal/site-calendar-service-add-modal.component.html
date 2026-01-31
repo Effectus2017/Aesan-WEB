@@ -20,6 +20,22 @@
           </p>
         </div>
 
+        <!-- Grupo (obligatorio) -->
+        <mat-form-field *ngIf="childGroups.length > 0">
+          <mat-label>{{ 'sites.calendar.modals.add-service.group.label' | transloco }}</mat-label>
+          <mat-select formControlName="childGroupId" required>
+            <mat-option *ngFor="let group of childGroups" [value]="group.id">
+              {{ currentLanguage === 'es' ? group.groupName : (group.groupNameEN ?? group.groupName) }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="data.form.get('childGroupId')?.hasError('required')">
+            {{ 'sites.calendar.modals.add-service.group.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+        <p *ngIf="childGroups.length === 0" class="text-sm text-amber-600 dark:text-amber-400">
+          {{ 'sites.calendar.modals.add-service.group.noGroups' | transloco }}
+        </p>
+
         <!-- Tipo de Servicio -->
         <mat-form-field>
           <mat-label>{{ 'sites.calendar.modals.add-service.serviceType.label' | transloco }}</mat-label>

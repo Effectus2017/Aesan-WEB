@@ -2322,13 +2322,33 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
   private updateServicesTableDataSource(): void {
     const idToKey = this.getServiceTypeIdToTableKey();
+    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes ?? [];
+    const currentLang = this._translocoService?.getActiveLang() ?? 'es';
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
+      const enrichedSlots = slots.map((slot) => {
+        const st = serviceTypes.find((s) => Number(s.id) === Number(slot.serviceTypeId));
+        const slotWithName = slot as { serviceTypeName?: string };
+        const label = slotWithName.serviceTypeName ?? (currentLang === 'en' ? st?.nameEN : st?.name) ?? st?.name ?? st?.code;
+        return { ...slot, serviceTypeName: label };
+      });
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const fromVal = s?.from ?? s?.fromTime;
+        const toVal = s?.to ?? s?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
+        }
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, serviceSlots: enrichedSlots, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
     this._changeDetectorRef.detectChanges();

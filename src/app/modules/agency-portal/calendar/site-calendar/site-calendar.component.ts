@@ -1462,6 +1462,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     const dayTableData = uniqueOperatingDayEvents.map(event => ({
       id: event.meta?.id,
       title: this.getDayTitle(event.meta, date), // Usar fecha formateada
+      groupName: (event.meta as any)?.childGroupName ?? '',
       startTime: event.meta?.startTime ? this.formatTimeValue(event.meta.startTime) : 'N/A',
       endTime: event.meta?.endTime ? this.formatTimeValue(event.meta.endTime) : 'N/A',
       type: this.getEventTypeLabel(event.meta),
@@ -1476,6 +1477,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       return {
         id: service.id,
         title: this.getServiceTitle(service),
+        groupName: service.childGroupName ?? '',
         startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
         endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
         type: this.getServiceTypeLabel(service),
@@ -1500,6 +1502,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           servicesTableData.push({
             id: service.id,
             title: this.getServiceTitle(service),
+            groupName: service.childGroupName ?? '',
             startTime: service.startTime ? this.formatTimeValue(service.startTime) : 'N/A',
             endTime: service.endTime ? this.formatTimeValue(service.endTime) : 'N/A',
             type: this.getServiceTypeLabel(service),
@@ -1555,7 +1558,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private getServiceTitle(service: any): string {
     // Usar el nombre del servicio según el idioma actual
     const serviceName = this.currentLanguage === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
-    return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
+    const baseName = serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
+    if (service?.childGroupName) {
+      return `${service.childGroupName} - ${baseName}`;
+    }
+    return baseName;
   }
 
   private getServiceTypeLabel(service: any): string {
@@ -1828,6 +1835,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       tableConfig: this.tableConfig,
       handler: this,
       siteId: this.currentSiteId,
+      childGroups: this.currentSite?.childGroups ?? [],
       onEventAdded: () => {
         // Callback para actualizar la tabla cuando se agrega un evento
         // No recargar aquí para evitar llamadas duplicadas

@@ -1500,6 +1500,7 @@
                 "table": {
                     "columns": {
                         "title": "Título",
+                        "groupName": "Grupo",
                         "startTime": "Desde",
                         "endTime": "Hasta",
                         "type": "Tipo",
@@ -1589,6 +1590,11 @@
                 "add-service": {
                     "title": "Agregar Servicio",
                     "date": "Fecha",
+                    "group": {
+                        "label": "Grupo",
+                        "required": "Debe seleccionar un grupo",
+                        "noGroups": "No hay grupos configurados para este sitio. Configure los grupos del sitio primero."
+                    },
                     "serviceType": {
                         "label": "Tipo de Servicio",
                         "required": "El tipo de servicio es requerido"

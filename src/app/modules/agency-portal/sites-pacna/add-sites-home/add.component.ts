@@ -1669,6 +1669,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -1719,6 +1721,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -1785,11 +1789,12 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     });
   }
 
-  /** Mapeo serviceTypeId → clave de columna desde programData.serviceTypes (code en camelCase). */
+  /** Mapeo serviceTypeId → clave de columna (breakfast, lunch, snackAM, etc.) desde programData.serviceTypes (resolver, datos desde BD). */
   private getServiceTypeIdToTableKey(): Record<number, string> {
-    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes;
+    const programData = this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined;
+    const serviceTypes = programData?.serviceTypes ?? [];
     const map: Record<number, string> = {};
-    if (serviceTypes?.length) {
+    if (Array.isArray(serviceTypes) && serviceTypes.length > 0) {
       serviceTypes.forEach((st) => {
         const key = st.code.charAt(0).toLowerCase() + st.code.slice(1);
         map[st.id] = key;
@@ -1803,10 +1808,19 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        if (slot?.from != null) {
+          fromTo[key + 'From'] = slot.from;
+        }
+        if (slot?.to != null) {
+          fromTo[key + 'To'] = slot.to;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
   }

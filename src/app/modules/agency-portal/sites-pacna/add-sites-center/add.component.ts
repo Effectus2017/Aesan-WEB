@@ -2143,10 +2143,22 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const fromVal = s?.from ?? s?.fromTime;
+        const toVal = s?.to ?? s?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
+        }
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
   }
@@ -2179,6 +2191,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2226,6 +2240,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',

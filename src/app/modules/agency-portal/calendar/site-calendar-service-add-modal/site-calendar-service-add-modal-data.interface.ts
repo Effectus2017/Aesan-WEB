@@ -1,10 +1,13 @@
 import { FormGroup } from '@angular/forms';
 import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
+import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
 
 export interface SiteCalendarServiceAddModalData {
   form: FormGroup;
   operatingDay: SiteOperatingDay;
   siteId: number;
+  /** Grupos del sitio; el usuario debe seleccionar uno al agregar un servicio */
+  childGroups?: SiteChildGroupResponse[];
   // Información para filtrar servicios según programa y day care
   programs?: number[]; // IDs de programas de la agencia
   isDayCareHome?: boolean; // Si es day care home (PACNA)

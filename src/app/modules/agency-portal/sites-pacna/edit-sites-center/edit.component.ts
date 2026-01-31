@@ -23,6 +23,8 @@ import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
 import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
+import { normalizeServiceSlotFromResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
@@ -1541,34 +1543,32 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.loadDeliveryTypesByGroupType(groupType);
     }
 
-    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general (formato normalizado: serviceSlots por grupo)
-    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment && param.childGroups && param.childGroups.length > 0) {
-      const paramGroups = param.childGroups as Array<{ id?: number; groupName?: string; numberOfChildren?: number; serviceSlots?: Array<{ serviceTypeId: number; isOffered: boolean; from?: string; to?: string }> }>;
-      this.childGroups = paramGroups.map(group => ({
-        id: group.id,
-        siteId: param.id,
-        groupName: group.groupName ?? '',
-        groupNameEN: group.groupName ?? '',
-        numberOfChildren: group.numberOfChildren ?? 0,
-        serviceSlots: (group.serviceSlots ?? []).map(slot => ({
-          serviceTypeId: slot.serviceTypeId,
-          isOffered: slot.isOffered,
-          from: slot.from,
-          to: slot.to,
-        })),
-      }));
+    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general
+    const paramGroups: SiteChildGroupResponse[] = param.childGroups ?? [];
+    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment && paramGroups.length > 0) {
+      this.childGroups = paramGroups.map(
+        (group): SiteChildGroupRequest => ({
+          id: group.id,
+          siteId: param.id,
+          groupName: group.groupName ?? '',
+          groupNameEN: group.groupName ?? '',
+          numberOfChildren: group.numberOfChildren ?? 0,
+          serviceSlots: (group.serviceSlots ?? []).map((slot) => {
+            const base = normalizeServiceSlotFromResponse(slot);
+            return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
+          }),
+        })
+      );
       this.nextGroupNumber = this.childGroups.length + 1;
 
       this.servicesByGroups = paramGroups.map((group, index) => ({
         id: group.id ?? index + 1,
         groupName: group.groupName ?? '',
         numberOfChildren: group.numberOfChildren ?? 0,
-        serviceSlots: (group.serviceSlots ?? []).map(slot => ({
-          serviceTypeId: slot.serviceTypeId,
-          isOffered: slot.isOffered,
-          from: slot.from,
-          to: slot.to,
-        })),
+        serviceSlots: (group.serviceSlots ?? []).map((slot) => {
+          const base = normalizeServiceSlotFromResponse(slot);
+          return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
+        }),
       }));
       this.updateServicesTableDataSource();
       this.syncChildGroupsFromServices();
@@ -2497,13 +2497,33 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
   private updateServicesTableDataSource(): void {
     const idToKey = this.getServiceTypeIdToTableKey();
+    const serviceTypes = (this._route.snapshot.data['programData'] as { serviceTypes?: ServiceTypeByProgram[] } | undefined)?.serviceTypes ?? [];
+    const currentLang = this._translocoService?.getActiveLang() ?? 'es';
     const displayRows = this.servicesByGroups.map((row) => {
       const slots = row.serviceSlots ?? [];
+      const enrichedSlots = slots.map((slot) => {
+        const st = serviceTypes.find((s) => Number(s.id) === Number(slot.serviceTypeId));
+        const slotWithName = slot as { serviceTypeName?: string };
+        const label = slotWithName.serviceTypeName ?? (currentLang === 'en' ? st?.nameEN : st?.name) ?? st?.name ?? st?.code;
+        return { ...slot, serviceTypeName: label };
+      });
       const booleans: Record<string, boolean> = {};
-      for (const [id, key] of Object.entries(idToKey)) {
-        booleans[key] = slots.some((s) => s.serviceTypeId === Number(id) && s.isOffered);
+      const fromTo: Record<string, string | undefined> = {};
+      for (const [idStr, key] of Object.entries(idToKey)) {
+        const id = Number(idStr);
+        const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
+        booleans[key] = !!slot;
+        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const fromVal = s?.from ?? s?.fromTime;
+        const toVal = s?.to ?? s?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
+        }
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
+        }
       }
-      return { ...row, ...booleans };
+      return { ...row, serviceSlots: enrichedSlots, ...booleans, ...fromTo };
     });
     this.servicesTableConfig.dataSource.data = displayRows;
   }
@@ -2535,6 +2555,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',
@@ -2581,6 +2603,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         operatingEndTime: operatingEndTime,
         serviceTypes: programData?.serviceTypes ?? [],
         existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        generalEnrollment: this.headerConfig.formGroup.get('generalEnrollment')?.value,
+        diningRoomCapacity: this.headerConfig.formGroup.get('diningRoomCapacity')?.value,
       } as ServiceByGroupDialogData,
       width: '90vw',
       maxWidth: '1200px',

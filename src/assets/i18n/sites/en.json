@@ -1562,6 +1562,7 @@
                 "table": {
                     "columns": {
                         "title": "Title",
+                        "groupName": "Group",
                         "startTime": "From",
                         "endTime": "To",
                         "type": "Type",
@@ -1651,6 +1652,11 @@
                 "add-service": {
                     "title": "Add Service",
                     "date": "Date",
+                    "group": {
+                        "label": "Group",
+                        "required": "You must select a group",
+                        "noGroups": "No groups configured for this site. Configure site groups first."
+                    },
                     "serviceType": {
                         "label": "Service Type",
                         "required": "Service type is required"

@@ -245,9 +245,20 @@ export class SiteCalendarServiceAddModalComponent {
     return endMinutes <= startMinutes;
   }
 
+  /** Grupos del sitio para el selector (childGroupId obligatorio) */
+  get childGroups(): { id: number; groupName: string; groupNameEN?: string }[] {
+    return this.data.childGroups ?? [];
+  }
+
   isFormValid(): boolean {
+    const childGroupId = this.data.form.get('childGroupId')?.value;
     const startTime = this.data.form.get('startTime')?.value;
     const endTime = this.data.form.get('endTime')?.value;
+    
+    // childGroupId es obligatorio: los servicios siempre están asociados a un grupo
+    if (childGroupId === null || childGroupId === undefined || childGroupId === '') {
+      return false;
+    }
     
     // Verificar que startTime tenga un valor válido
     if (!startTime || startTime === '' || startTime === null || startTime === undefined) {

@@ -7,7 +7,8 @@ export interface SiteOperatingDayService {
   serviceTypeId: number;
   serviceTypeName?: string;
   serviceTypeNameEN?: string;
-  childGroupId?: number;
+  /** ID del grupo de niños (requerido). */
+  childGroupId: number;
   childGroupName?: string;
   startTime: string;
   endTime: string;
