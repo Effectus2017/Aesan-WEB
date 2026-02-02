@@ -35,7 +35,7 @@ export default [
         path: 'calendar/:id',
         loadComponent: () => import('../calendar/site-calendar/site-calendar.component').then((c) => c.SiteCalendarComponent),
         canActivate: [PdamProgramGuard, PermissionGuard],
-        data: { permission: 'site.edit' },
+        data: { permission: 'site.view' },
         resolve: {
           data: initialDataSiteCalendarResolver,
         },
