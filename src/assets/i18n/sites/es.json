@@ -1617,6 +1617,9 @@
                         "placeholder": "Comentario del servicio..."
                     },
                     "enabled": "Servicio Habilitado",
+                    "validation": {
+                        "time-overlap": "El horario se solapa con {{nameA}} y {{nameB}}. Elija un horario que no esté en uso."
+                    },
                     "buttons": {
                         "cancel": "Cancelar",
                         "save": "Guardar"

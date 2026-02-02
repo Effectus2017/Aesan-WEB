@@ -14,5 +14,12 @@ export interface SiteCalendarServiceAddModalData {
   // Horas de funcionamiento del sitio (opcional, para validación de rango)
   operatingStartTime?: string; // Hora de inicio del día de funcionamiento del sitio
   operatingEndTime?: string; // Hora de fin del día de funcionamiento del sitio
+  /** Servicios ya existentes ese día por grupo; para excluir tipos y validar tiempo mínimo */
+  existingServiceSlots?: Array<{
+    childGroupId: number;
+    serviceTypeId: number;
+    startTime?: string;
+    endTime?: string;
+  }>;
 }
 

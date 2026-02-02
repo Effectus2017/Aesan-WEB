@@ -12,12 +12,16 @@ interface CacheEntry {
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutos por defecto
 const cache = new Map<string, CacheEntry>();
 
-// Endpoints que NO deben cachearse (tiempo real)
+// Endpoints que NO deben cachearse (tiempo real o datos que cambian al crear/editar)
 const EXCLUDED_ENDPOINTS = [
   '/messages',
   '/notifications',
   '/realtime',
   '/signalr',
+  '/get-operating-days', // días de funcionamiento y servicios del calendario (cambian al agregar/editar servicios)
+  '/site/', // sitios (cambian al agregar/editar sitios)
+  '/staff/', // personal (cambian al agregar/editar personal)
+  '/site-staff/', // personal por sitio (cambian al agregar/editar personal en un sitio)
 ];
 
 /**

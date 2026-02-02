@@ -17,6 +17,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 import { getServiceTypeStyle, ServiceTypeStyle } from 'app/shared/constants/service-type-styles.constants';
+import { normalizeTime } from 'app/shared/utils';
 
 /** Una fila de día de funcionamiento para la vista agrupada (Opción B) */
 export interface DayRow {
@@ -540,6 +541,16 @@ export class SiteCalendarTableModalComponent implements OnInit {
       if (operatingDay) {
         const childGroups = this.data.childGroups ?? [];
         const defaultChildGroupId = childGroups.length > 0 ? childGroups[0].id : null;
+        // Construir lista de servicios existentes del día para excluir tipos y validar tiempo mínimo
+        const existingServiceSlots =
+          (operatingDay as { services?: Array<{ childGroupId: number; serviceTypeId: number; startTime?: string; endTime?: string }> }).services?.map(
+            (s: { childGroupId: number; serviceTypeId: number; startTime?: string; endTime?: string }) => ({
+              childGroupId: s.childGroupId,
+              serviceTypeId: s.serviceTypeId,
+              startTime: s.startTime ? normalizeTime(String(s.startTime)) : undefined,
+              endTime: s.endTime ? normalizeTime(String(s.endTime)) : undefined
+            })
+          ) ?? [];
         // Crear formulario para agregar servicio (childGroupId es obligatorio)
         const serviceForm = this.formBuilder.group({
           childGroupId: [defaultChildGroupId, Validators.required],
@@ -558,10 +569,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
             operatingDay: operatingDay,
             siteId: this.data.siteId,
             childGroups,
-            // Obtener programas desde localStorage
             programs: this.getAgencyPrograms(),
-            // Obtener isDayCareHome desde localStorage o desde la agencia
-            isDayCareHome: this.getIsDayCareHome()
+            isDayCareHome: this.getIsDayCareHome(),
+            operatingStartTime: operatingDay.startTime ?? undefined,
+            operatingEndTime: operatingDay.endTime ?? undefined,
+            existingServiceSlots
           } as SiteCalendarServiceAddModalData
         });
 
@@ -607,29 +619,37 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
             this.siteOperatingDayServiceService.createService(request).subscribe({
               next: () => {
-                // Usar loadOperatingDaysAndUpdateModal si está disponible (actualiza el modal automáticamente)
-                if (this.data.handler && typeof (this.data.handler as any).loadOperatingDaysAndUpdateModal === 'function') {
-                  (this.data.handler as any).loadOperatingDaysAndUpdateModal();
-                }
-                // Si no está disponible, usar loadOperatingDays y luego actualizar manualmente
-                else if (this.data.handler && typeof (this.data.handler as any).loadOperatingDays === 'function') {
-                  (this.data.handler as any).loadOperatingDays();
-                  // Actualizar tabla local después de un pequeño delay para asegurar que los datos se hayan cargado
-                  setTimeout(() => {
-                    this.refreshTableData();
-                  }, 300);
-                }
-                // Si no hay handler, actualizar directamente
-                else {
+                const refreshTable = (): void => {
                   this.refreshTableData();
+                  if (this.data.onEventUpdated) {
+                    this.data.onEventUpdated();
+                  }
+                };
+                const handler = this.data.handler as {
+                  loadOperatingDaysAndUpdateModal?: () => { subscribe: (cb: { next?: () => void; error?: () => void }) => void };
+                  loadOperatingDays?: () => void;
+                } | undefined;
+                if (handler?.loadOperatingDaysAndUpdateModal) {
+                  handler.loadOperatingDaysAndUpdateModal().subscribe({
+                    next: () => {
+                      refreshTable();
+                      this.notificationService.showSuccess('Servicio agregado correctamente');
+                    },
+                    error: () => {
+                      refreshTable();
+                      this.notificationService.showSuccess('Servicio agregado correctamente');
+                    }
+                  });
+                } else if (handler?.loadOperatingDays) {
+                  handler.loadOperatingDays();
+                  setTimeout(() => {
+                    refreshTable();
+                    this.notificationService.showSuccess('Servicio agregado correctamente');
+                  }, 500);
+                } else {
+                  refreshTable();
+                  this.notificationService.showSuccess('Servicio agregado correctamente');
                 }
-
-                // Llamar callback para actualizar la tabla del modal padre
-                if (this.data.onEventUpdated) {
-                  this.data.onEventUpdated();
-                }
-
-                this.notificationService.showSuccess('Servicio agregado correctamente');
               },
               error: (error) => {
                 console.error('Error al crear servicio:', error);
@@ -743,16 +763,14 @@ export class SiteCalendarTableModalComponent implements OnInit {
   }
 
   /**
-   * Refresca los datos de la tabla obteniendo los servicios actualizados del handler
+   * Refresca los datos de la tabla obteniendo los eventos actualizados del handler (si está disponible).
    */
   refreshTableData(): void {
-    // Obtener los eventos actuales (días de funcionamiento)
-    const currentEvents = this.data.events || [];
+    const handler = this.data.handler as { getDayEvents?: (date: Date) => CalendarEvent[] } | undefined;
+    const newEvents =
+      handler?.getDayEvents?.(this.data.date) ?? this.data.events ?? [];
 
-    // Actualizar la tabla con los eventos actuales y los servicios actualizados del handler
-    this.updateTableData(currentEvents);
-
-    // Forzar detección de cambios para actualizar el estado del botón de agregar servicio
+    this.updateTableData(newEvents);
     this.cdr.detectChanges();
   }
 }

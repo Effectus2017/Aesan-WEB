@@ -25,7 +25,8 @@ import { OperatingDayApiResponse } from 'app/shared/models/Response/OperatingDay
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { FuseConfigService } from '@fuse/services/config';
 import { SiteCalendarEditModalComponent } from '../site-calendar-edit-modal/site-calendar-edit-modal.component';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
@@ -671,8 +672,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       .subscribe({
         next: () => {
           // Recargar datos y luego actualizar el modal
-          this.loadOperatingDaysAndUpdateModal();
-          this.loading = false;
+          this.loadOperatingDaysAndUpdateModal().subscribe({
+            next: () => {
+              this.loading = false;
+            },
+            error: () => {
+              this.loading = false;
+            }
+          });
         },
         error: () => {
           this.loading = false;
@@ -687,8 +694,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       .subscribe({
         next: () => {
           // Recargar datos y luego actualizar el modal
-          this.loadOperatingDaysAndUpdateModal();
-          this.loading = false;
+          this.loadOperatingDaysAndUpdateModal().subscribe({
+            next: () => {
+              this.loading = false;
+            },
+            error: () => {
+              this.loading = false;
+            }
+          });
         },
         error: () => {
           this.loading = false;
@@ -991,46 +1004,39 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       });
   }
 
-  // Método para cargar datos y actualizar el modal de tabla
-  private loadOperatingDaysAndUpdateModal() {
-    // Obtener mes y año del viewDate actual
-    const month = this.viewDate.getMonth() + 1; // getMonth() retorna 0-11, necesitamos 1-12
+  /** Carga días de funcionamiento y actualiza el modal de tabla si está abierto. Retorna Observable para que el caller pueda esperar. */
+  loadOperatingDaysAndUpdateModal(): Observable<unknown> {
+    const month = this.viewDate.getMonth() + 1;
     const year = this.viewDate.getFullYear();
-
     const queryParameters: QueryParameters = {
       siteId: this.currentSiteId,
-      month: month,
-      year: year
+      month,
+      year
     };
 
-    this.siteCalendarService.getOperatingDays(queryParameters)
-      .subscribe({
-        next: (response: any) => {
-
-          const data = response?.body || response;
-          this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
+    return this.siteCalendarService.getOperatingDays(queryParameters).pipe(
+      tap({
+        next: (response: unknown) => {
+          const data = (response as { body?: unknown })?.body ?? response;
+          const raw = (data as { operatingDays?: unknown; data?: { operatingDays?: unknown }; operatingFromDate?: string; operatingToDate?: string }) ?? {};
+          const days = raw.operatingDays ?? (raw.data?.operatingDays ?? []);
+          this.operatingDays = this.mapApiResponseToOperatingDays(Array.isArray(days) ? days : []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
-          // Extraer fechas límite de funcionamiento
-          if (data?.operatingFromDate) {
-            this.operatingFromDate = new Date(data.operatingFromDate);
+          if (raw.operatingFromDate) {
+            this.operatingFromDate = new Date(raw.operatingFromDate);
           }
-          if (data?.operatingToDate) {
-            this.operatingToDate = new Date(data.operatingToDate);
+          if (raw.operatingToDate) {
+            this.operatingToDate = new Date(raw.operatingToDate);
           }
-
-          // Actualizar la tabla del modal directamente si está abierto
           if (this.currentTableModal && this.selectedDate) {
             const newEvents = this.getDayEvents(this.selectedDate);
             this.currentTableModal.updateTableData(newEvents);
-
           } else if (this.selectedDate) {
             this.updateDayEventsTable(this.selectedDate);
           }
-        },
-        error: () => {
-
         }
-      });
+      })
+    );
   }
 
   private transformToCalendarEvents(days: SiteOperatingDay[]): CalendarEvent[] {
@@ -1714,8 +1720,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         this.loading = true;
         this.siteOperatingDayServiceService.updateService(serviceId, request).subscribe({
           next: () => {
-            this.loadOperatingDaysAndUpdateModal();
-            this.loading = false;
+            this.loadOperatingDaysAndUpdateModal().subscribe({
+              next: () => {
+                this.loading = false;
+              },
+              error: () => {
+                this.loading = false;
+              }
+            });
           },
           error: (error) => {
             console.error('Error al actualizar servicio:', error);
@@ -1739,8 +1751,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         this.loading = true;
         this.siteOperatingDayServiceService.toggleService(serviceId, newState).subscribe({
           next: () => {
-            this.loadOperatingDaysAndUpdateModal();
-            this.loading = false;
+            this.loadOperatingDaysAndUpdateModal().subscribe({
+              next: () => {
+                this.loading = false;
+              },
+              error: () => {
+                this.loading = false;
+              }
+            });
           },
           error: (error) => {
             console.error('Error al cambiar estado del servicio:', error);

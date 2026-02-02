@@ -1,22 +1,40 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-100">
-  <!-- Header -->
+  <!-- Header (mismo estilo que Editar Servicio: icono + título, bg-primary) -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="text-lg font-medium">
-      {{ 'sites.calendar.modals.add-service.title' | transloco }}
+    <div class="flex gap-2 items-center">
+      <mat-icon class="text-current icon-size-5" [svgIcon]="'mat_solid:add'" aria-hidden="true"></mat-icon>
+      <span class="text-lg font-medium">
+        {{ 'sites.calendar.modals.add-service.title' | transloco }}
+      </span>
     </div>
-    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" type="button" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
       <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
     </button>
   </div>
 
-  <!-- Form -->
+  <!-- Form (mismo fondo que modal Servicios del día: bg-default) -->
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="data.form" (ngSubmit)="onSave()">
-    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
       <div class="flex flex-col gap-6 animate-slide-in">
-        <!-- Información del día -->
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+        <!-- Información del día (mismo borde/sombra que en Servicios del día) -->
+        <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <p class="text-sm text-gray-600 dark:text-gray-400">
             <strong>{{ 'sites.calendar.modals.add-service.date' | transloco }}:</strong> {{ displayDate | date:'dd/MM/yyyy' }}
+          </p>
+        </div>
+
+        <!-- Error de tiempo mínimo entre servicios -->
+        <div *ngIf="timeValidationError" class="flex items-start gap-3 rounded-lg border border-amber-500/50 bg-amber-50 p-4 dark:border-amber-600/50 dark:bg-amber-950/40" role="alert">
+          <mat-icon class="mt-0.5 shrink-0 text-amber-600 dark:text-amber-400" [attr.aria-hidden]="true">warning</mat-icon>
+          <p class="min-w-0 flex-1 text-sm text-amber-800 dark:text-amber-200">
+            {{ 'sites.add.services.modal.validation.insufficient-time-between' | transloco: { nameA: timeValidationError.nameA, nameB: timeValidationError.nameB, minMinutes: timeValidationError.minMinutes } }}
+          </p>
+        </div>
+        <!-- Error de solapamiento (horario ya en uso) -->
+        <div *ngIf="overlapValidationError" class="flex items-start gap-3 rounded-lg border border-red-500/50 bg-red-50 p-4 dark:border-red-600/50 dark:bg-red-950/40" role="alert">
+          <mat-icon class="mt-0.5 shrink-0 text-red-600 dark:text-red-400" [attr.aria-hidden]="true">error</mat-icon>
+          <p class="min-w-0 flex-1 text-sm text-red-800 dark:text-red-200">
+            {{ 'sites.calendar.modals.add-service.validation.time-overlap' | transloco: { nameA: overlapValidationError.nameA, nameB: overlapValidationError.nameB } }}
           </p>
         </div>
 

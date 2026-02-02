@@ -1679,6 +1679,9 @@
                         "placeholder": "Service comment..."
                     },
                     "enabled": "Service Enabled",
+                    "validation": {
+                        "time-overlap": "The schedule overlaps with {{nameA}} and {{nameB}}. Choose a time slot that is not in use."
+                    },
                     "buttons": {
                         "cancel": "Cancel",
                         "save": "Save"
