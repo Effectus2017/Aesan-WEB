@@ -1585,6 +1585,7 @@
                 },
                 "operating-day-title": "Operating day",
                 "section-operating-day": "Operating day",
+                "section-active-services": "Active Services",
                 "group-unnamed": "Ungrouped",
                 "service-fallback": "Service",
                 "confirm-delete-service": "Are you sure you want to delete this service?",

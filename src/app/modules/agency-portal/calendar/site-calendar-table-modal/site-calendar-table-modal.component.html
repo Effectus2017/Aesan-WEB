@@ -9,45 +9,48 @@
     </button>
   </div>
 
-  <!-- Content: vista agrupada por grupo (Opción B) -->
-  <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
+  <!-- Content: mismo fondo que área de contenido principal (bg-default = slate.100 en light) -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0 bg-default">
     <div class="flex flex-col gap-6 animate-slide-in">
-      <!-- Resumen -->
-      <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+      <!-- Resumen (mismo borde que en sitios) -->
+      <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800">
         <p class="text-sm text-gray-600 dark:text-gray-400">
           <strong>{{ 'sites.calendar.modals.day-events.totalEvents' | transloco }}:</strong> {{ totalEvents }}
         </p>
       </div>
 
-      <!-- Card: Día de funcionamiento -->
-      <mat-card class="overflow-hidden" *ngIf="dayRows.length > 0">
-        <mat-card-header>
-          <mat-card-title class="text-base">
+      <!-- Card: Día de funcionamiento (mismo borde/sombra que en sitios: rounded-2xl border shadow) -->
+      <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngIf="dayRows.length > 0">
+        <div class="flex flex-col gap-1 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <div class="flex justify-center sm:justify-start">
+            <mat-icon class="text-primary icon-size-5" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
+          </div>
+          <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
             {{ 'sites.calendar.day-events.section-operating-day' | transloco }}
-          </mat-card-title>
-        </mat-card-header>
+          </h3>
+        </div>
         <mat-card-content>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.title' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.type' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.comment' | transloco }}</th>
-                  <th class="text-right py-2 px-3 font-medium w-24">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.title' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.type' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.comment' | transloco }}</th>
+                  <th class="px-3 py-2 w-24 font-medium text-right">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let row of dayRows" class="border-b border-gray-100 dark:border-gray-700/50">
-                  <td class="py-2 px-3">{{ row.title }}</td>
-                  <td class="py-2 px-3">{{ row.startTime }}</td>
-                  <td class="py-2 px-3">{{ row.endTime }}</td>
-                  <td class="py-2 px-3">{{ row.type }}</td>
-                  <td class="py-2 px-3">{{ row.comment || '—' }}</td>
-                  <td class="py-2 px-3 text-right">
-                    <button mat-icon-button type="button" [matTooltip]="'sites.calendar.day-events.table.buttons.edit' | transloco" [attr.aria-label]="'sites.calendar.day-events.table.buttons.edit' | transloco" (click)="onEditDay(row)">
+                  <td class="px-3 py-2">{{ row.title }}</td>
+                  <td class="px-3 py-2">{{ row.startTime }}</td>
+                  <td class="px-3 py-2">{{ row.endTime }}</td>
+                  <td class="px-3 py-2">{{ row.type }}</td>
+                  <td class="px-3 py-2">{{ row.comment || '—' }}</td>
+                  <td class="px-3 py-2 text-right">
+                    <button class="edit-icon-green" mat-icon-button type="button" [matTooltip]="'sites.calendar.day-events.table.buttons.edit' | transloco" [attr.aria-label]="'sites.calendar.day-events.table.buttons.edit' | transloco" (click)="onEditDay(row)">
                       <mat-icon [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
                     </button>
                   </td>
@@ -58,31 +61,44 @@
         </mat-card-content>
       </mat-card>
 
-      <!-- Cards: un card por grupo con sus servicios -->
-      <mat-card class="overflow-hidden" *ngFor="let group of servicesGroupedByGroup">
-        <mat-card-header>
-          <mat-card-title class="text-base">{{ group.groupName }}</mat-card-title>
-        </mat-card-header>
+      <!-- Cards: un card por grupo (mismo borde/sombra que en sitios) -->
+      <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngFor="let group of servicesGroupedByGroup">
+        <div class="flex flex-col gap-1 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <div class="flex justify-center sm:justify-start">
+            <mat-icon class="text-primary icon-size-5" svgIcon="heroicons_outline:rectangle-group" aria-hidden="true"></mat-icon>
+          </div>
+          <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
+            {{ group.groupName }}
+          </h3>
+        </div>
         <mat-card-content>
+          <div class="px-4 pt-3 mb-3 text-xs font-semibold tracking-wider uppercase text-secondary">
+            {{ 'sites.calendar.day-events.section-active-services' | transloco }}
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.type' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
-                  <th class="text-left py-2 px-3 font-medium">{{ 'sites.calendar.day-events.table.columns.comment' | transloco }}</th>
-                  <th class="text-right py-2 px-3 font-medium w-28">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
+                  <th class="px-2 py-2 w-10 font-medium text-left" scope="col" aria-label="Icono tipo"></th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.type' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.comment' | transloco }}</th>
+                  <th class="px-3 py-2 w-28 font-medium text-right">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let svc of group.services" class="border-b border-gray-100 dark:border-gray-700/50" [class.opacity-60]="svc.isEnabled === false">
-                  <td class="py-2 px-3">{{ svc.type }}</td>
-                  <td class="py-2 px-3">{{ svc.startTime }}</td>
-                  <td class="py-2 px-3">{{ svc.endTime }}</td>
-                  <td class="py-2 px-3">{{ svc.comment || '—' }}</td>
-                  <td class="py-2 px-3 text-right">
+                  <td class="px-2 py-2 w-10 text-center align-middle">
+                    <span class="inline-flex justify-center items-center text-lg leading-none" [ngClass]="getServiceTypeStyle(svc.serviceTypeId).text" [attr.aria-hidden]="true">{{ getServiceTypeStyle(svc.serviceTypeId).icon }}</span>
+                  </td>
+                  <td class="px-3 py-2" [ngClass]="getServiceTypeStyle(svc.serviceTypeId).text">{{ svc.type }}</td>
+                  <td class="px-3 py-2">{{ svc.startTime }}</td>
+                  <td class="px-3 py-2">{{ svc.endTime }}</td>
+                  <td class="px-3 py-2">{{ svc.comment || '—' }}</td>
+                  <td class="px-3 py-2 text-right">
                     <button
+                      class="edit-icon-green"
                       mat-icon-button
                       type="button"
                       [matTooltip]="'sites.calendar.day-events.table.buttons.edit' | transloco"
@@ -100,15 +116,15 @@
       </mat-card>
 
       <!-- Si no hay día ni servicios, mensaje breve -->
-      <div *ngIf="dayRows.length === 0 && servicesGroupedByGroup.length === 0" class="text-center py-8 text-gray-500 dark:text-gray-400">
+      <div *ngIf="dayRows.length === 0 && servicesGroupedByGroup.length === 0" class="py-8 text-center text-gray-500 dark:text-gray-400">
         <p>{{ 'sites.calendar.modals.day-events.totalEvents' | transloco }}: 0</p>
-        <p class="text-sm mt-2">{{ 'sites.calendar.modals.day-events.addEvent' | transloco }}</p>
+        <p class="mt-2 text-sm">{{ 'sites.calendar.modals.day-events.addEvent' | transloco }}</p>
       </div>
     </div>
   </div>
 
   <!-- Actions - Fixed footer -->
-  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+  <div class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
     <div class="flex gap-2">
       <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
         {{ 'global.buttons.close' | transloco }}

@@ -421,12 +421,12 @@
 
                   <!-- Fallback: cuando no hay booleanos (p. ej. programData vacío) pero sí serviceSlots con isOffered -->
                   <ng-container *ngIf="shouldShowServiceSlotsFallback(element)">
-                    <div *ngFor="let slot of getActiveServiceSlots(element); let i = index" class="flex flex-col rounded-lg p-2.5 min-w-[140px] border" [ngClass]="getFallbackSlotStyle(i).bg + ' ' + getFallbackSlotStyle(i).border">
+                    <div *ngFor="let slot of getActiveServiceSlots(element); let i = index" class="flex flex-col rounded-lg p-2.5 min-w-[140px] border" [ngClass]="getFallbackSlotStyle(i, slot).bg + ' ' + getFallbackSlotStyle(i, slot).border">
                       <div class="flex gap-1.5 items-center mb-1">
-                        <span class="text-lg">{{ getFallbackSlotStyle(i).icon }}</span>
-                        <span class="text-sm font-semibold" [ngClass]="getFallbackSlotStyle(i).text">{{ (slot.label || slot.serviceTypeName) || 'Servicio' }}</span>
+                        <span class="text-lg">{{ getFallbackSlotStyle(i, slot).icon }}</span>
+                        <span class="text-sm font-semibold" [ngClass]="getFallbackSlotStyle(i, slot).text">{{ (slot.label || slot.serviceTypeName) || 'Servicio' }}</span>
                       </div>
-                      <div *ngIf="slot.from || slot.to" class="pl-6 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i).textMedium">
+                      <div *ngIf="slot.from || slot.to" class="pl-6 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i, slot).textMedium">
                         {{ timeStringToDateWrapper(slot.from) | date:'shortTime' }} - {{ timeStringToDateWrapper(slot.to) | date:'shortTime' }}
                       </div>
                     </div>

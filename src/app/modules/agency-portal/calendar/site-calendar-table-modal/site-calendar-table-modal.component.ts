@@ -16,6 +16,7 @@ import { SiteCalendarTableModalData } from './site-calendar-table-modal-data.int
 import { NotificationService } from 'app/shared/services/notification.service';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
+import { getServiceTypeStyle, ServiceTypeStyle } from 'app/shared/constants/service-type-styles.constants';
 
 /** Una fila de día de funcionamiento para la vista agrupada (Opción B) */
 export interface DayRow {
@@ -34,6 +35,7 @@ export interface ServiceRow {
   id: number;
   title: string;
   type: string;
+  serviceTypeId?: number;
   startTime: string;
   endTime: string;
   comment: string;
@@ -66,6 +68,11 @@ export interface ServiceGroup {
 
     .animate-slide-in {
       animation: fadeIn 1.0s ease-out;
+    }
+
+    /* Icono editar verde como en generic table (Material no lo sobrescriba) */
+    .edit-icon-green mat-icon {
+      color: #4CAF50 !important;
     }
   `]
 })
@@ -368,6 +375,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
         id: s.id,
         title: s.title,
         type: s.type,
+        serviceTypeId: s.meta?.serviceTypeId,
         startTime: s.startTime,
         endTime: s.endTime,
         comment: s.comment,
@@ -428,6 +436,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
     const currentLang = this.translocoService.getActiveLang() || 'es';
     const serviceName = currentLang === 'es' ? service.serviceTypeName : service.serviceTypeNameEN;
     return serviceName || this.translocoService.translate('sites.calendar.day-events.service-fallback');
+  }
+
+  /** Estilo (icono + color) por serviceTypeId para la columna Tipo. */
+  getServiceTypeStyle(serviceTypeId: number | undefined | null): ServiceTypeStyle {
+    return getServiceTypeStyle(serviceTypeId);
   }
 
   private formatTimeValue(timeValue: any): string {

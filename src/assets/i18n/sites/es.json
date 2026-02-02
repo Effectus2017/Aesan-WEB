@@ -1523,6 +1523,7 @@
                 },
                 "operating-day-title": "Día de funcionamiento",
                 "section-operating-day": "Día de funcionamiento",
+                "section-active-services": "Servicios Activos",
                 "group-unnamed": "Sin grupo",
                 "service-fallback": "Servicio",
                 "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",

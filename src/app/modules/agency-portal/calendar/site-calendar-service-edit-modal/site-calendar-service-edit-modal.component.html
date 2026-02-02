@@ -1,20 +1,23 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-100">
-  <!-- Header -->
+  <!-- Header (mismo estilo que modal Servicios del día: icono + título, bg-primary) -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="text-lg font-medium">
-      {{ 'sites.calendar.modals.edit-service.title' | transloco }}
+    <div class="flex gap-2 items-center">
+      <mat-icon class="text-current icon-size-5" [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+      <span class="text-lg font-medium">
+        {{ 'sites.calendar.modals.edit-service.title' | transloco }}
+      </span>
     </div>
-    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" type="button" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
       <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
     </button>
   </div>
 
-  <!-- Form -->
+  <!-- Form (mismo fondo que modal Servicios del día: bg-default) -->
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="data.form" (ngSubmit)="onSave()">
-    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
       <div class="flex flex-col gap-6 animate-slide-in">
-        <!-- Información del servicio -->
-        <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+        <!-- Información del servicio (mismo borde/sombra que en Servicios del día) -->
+        <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <p class="text-sm text-gray-600 dark:text-gray-400">
             <strong>{{ 'sites.calendar.modals.edit-service.service' | transloco }}:</strong> {{ getServiceName() }}
           </p>

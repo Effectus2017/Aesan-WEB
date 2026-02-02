@@ -39,6 +39,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { Site } from 'app/shared/models/Site';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
+import { getServiceEventColorByTypeId } from 'app/shared/constants/service-type-styles.constants';
 
 @Component({
   selector: 'app-site-calendar',
@@ -1176,8 +1177,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   private getServiceEventColor(service: SiteOperatingDayService): any {
-    // Color azul para servicios
-    return { primary: '#2196f3', secondary: '#bbdefb' };
+    return getServiceEventColorByTypeId(service?.serviceTypeId);
   }
 
   private getEventColor(day: SiteOperatingDay): any {
