@@ -1509,7 +1509,8 @@
                     },
                     "buttons": {
                         "edit": "Editar",
-                        "delete": "Eliminar"
+                        "delete": "Eliminar",
+                        "toggle": "Activar/Desactivar"
                     }
                 },
                 "day-types": {
@@ -1521,6 +1522,8 @@
                     "holiday": "Día Feriado"
                 },
                 "operating-day-title": "Día de funcionamiento",
+                "section-operating-day": "Día de funcionamiento",
+                "group-unnamed": "Sin grupo",
                 "service-fallback": "Servicio",
                 "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",
                 "cannot-edit-holiday": "No se pueden editar servicios en días feriados"

@@ -267,7 +267,7 @@
 
   <!-- CARD VIEW MODE -->
   @if (viewMode === 'cards' && !isEmpty) {
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
+  <div [class]="cardsGridClass">
     @for (element of data$ | async; track trackByFn($index, element)) {
       @if (customCardTemplate || cardTemplate) {
         <ng-container *ngTemplateOutlet="customCardTemplate || cardTemplate; context: { $implicit: element }"></ng-container>
@@ -311,9 +311,9 @@
                   Servicios Activos
                 </div>
 
-                <div class="flex flex-wrap gap-2">
+                <div class="grid grid-cols-2 gap-2 services-grid">
                   <!-- Desayuno -->
-                  <div *ngIf="element.breakfast" class="flex flex-col bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.breakfast" class="flex flex-col bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🥣</span>
                       <span class="text-sm font-semibold text-blue-800 dark:text-blue-300">Desayuno</span>
@@ -324,7 +324,7 @@
                   </div>
 
                   <!-- Almuerzo -->
-                  <div *ngIf="element.lunch" class="flex flex-col bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.lunch" class="flex flex-col bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🍛</span>
                       <span class="text-sm font-semibold text-orange-800 dark:text-orange-300">Almuerzo</span>
@@ -335,7 +335,7 @@
                   </div>
 
                   <!-- Merienda AM -->
-                  <div *ngIf="element.snackAM" class="flex flex-col bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.snackAM" class="flex flex-col bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🍎</span>
                       <span class="text-sm font-semibold text-green-800 dark:text-green-300">Merienda AM</span>
@@ -346,7 +346,7 @@
                   </div>
 
                   <!-- Merienda PM -->
-                  <div *ngIf="element.snackPM" class="flex flex-col bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.snackPM" class="flex flex-col bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🍪</span>
                       <span class="text-sm font-semibold text-green-800 dark:text-green-300">Merienda PM</span>
@@ -357,7 +357,7 @@
                   </div>
 
                   <!-- Cena -->
-                  <div *ngIf="element.dinner" class="flex flex-col bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.dinner" class="flex flex-col bg-purple-50 dark:bg-purple-900/20 border border-purple-100 dark:border-purple-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🌙</span>
                       <span class="text-sm font-semibold text-purple-800 dark:text-purple-300">Cena</span>
@@ -368,7 +368,7 @@
                   </div>
 
                   <!-- Merienda Nocturna -->
-                  <div *ngIf="element.snackNight" class="flex flex-col bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.snackNight" class="flex flex-col bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-100 dark:border-indigo-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🥛</span>
                       <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-300">M. Nocturna</span>
@@ -379,7 +379,7 @@
                   </div>
 
                   <!-- Servicios PACNA Adicionales -->
-                  <div *ngIf="element.dinnerExtended" class="flex flex-col bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.dinnerExtended" class="flex flex-col bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🕰️</span>
                       <span class="text-sm font-semibold text-pink-800 dark:text-pink-300">Cena Ext.</span>
@@ -389,7 +389,7 @@
                     </div>
                   </div>
 
-                  <div *ngIf="element.dinnerAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.dinnerAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🍝</span>
                       <span class="text-sm font-semibold text-red-800 dark:text-red-300">Cena Riesgo</span>
@@ -399,7 +399,7 @@
                     </div>
                   </div>
 
-                  <div *ngIf="element.snackExtended" class="flex flex-col bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.snackExtended" class="flex flex-col bg-teal-50 dark:bg-teal-900/20 border border-teal-100 dark:border-teal-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🍪</span>
                       <span class="text-sm font-semibold text-teal-800 dark:text-teal-300">Merienda Ext.</span>
@@ -409,7 +409,7 @@
                     </div>
                   </div>
 
-                  <div *ngIf="element.snackAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px] flex-1">
+                  <div *ngIf="element.snackAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
                     <div class="flex gap-1.5 items-center mb-1">
                       <span class="text-lg">🥪</span>
                       <span class="text-sm font-semibold text-red-800 dark:text-red-300">Merienda Riesgo</span>
@@ -421,7 +421,7 @@
 
                   <!-- Fallback: cuando no hay booleanos (p. ej. programData vacío) pero sí serviceSlots con isOffered -->
                   <ng-container *ngIf="shouldShowServiceSlotsFallback(element)">
-                    <div *ngFor="let slot of getActiveServiceSlots(element); let i = index" class="flex flex-col rounded-lg p-2.5 min-w-[140px] flex-1 border" [ngClass]="getFallbackSlotStyle(i).bg + ' ' + getFallbackSlotStyle(i).border">
+                    <div *ngFor="let slot of getActiveServiceSlots(element); let i = index" class="flex flex-col rounded-lg p-2.5 min-w-[140px] border" [ngClass]="getFallbackSlotStyle(i).bg + ' ' + getFallbackSlotStyle(i).border">
                       <div class="flex gap-1.5 items-center mb-1">
                         <span class="text-lg">{{ getFallbackSlotStyle(i).icon }}</span>
                         <span class="text-sm font-semibold" [ngClass]="getFallbackSlotStyle(i).text">{{ (slot.label || slot.serviceTypeName) || 'Servicio' }}</span>

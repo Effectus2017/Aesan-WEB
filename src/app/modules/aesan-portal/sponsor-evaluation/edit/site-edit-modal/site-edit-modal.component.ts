@@ -806,6 +806,9 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       siteCode: site.siteCode || '',
     });
 
+    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
+    DateCalculationsUtil.calculateOperatingDays(this.form);
+
     // Update validations based on isActive
     if (site.isActive === false) {
       this.form.get('inactiveDate')?.enable();

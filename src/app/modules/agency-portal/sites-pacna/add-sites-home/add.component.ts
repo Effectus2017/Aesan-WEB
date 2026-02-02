@@ -76,6 +76,7 @@ import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
   templateUrl: './add.component.html',
   providers: [provideNativeDateAdapter()],
   standalone: true,
+  styles: ['.services-grid > *:last-child:nth-child(odd) { grid-column: span 2; }'],
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,

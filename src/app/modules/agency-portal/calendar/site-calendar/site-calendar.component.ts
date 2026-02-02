@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -67,6 +67,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private siteService: SiteService = inject(SiteService);
   private siteOperatingDayServiceService: SiteOperatingDayServiceService = inject(SiteOperatingDayServiceService);
   private route: ActivatedRoute = inject(ActivatedRoute);
+  private router: Router = inject(Router);
   private translocoService: TranslocoService = inject(TranslocoService);
   private fuseConfigService: FuseConfigService = inject(FuseConfigService);
   private dialog: MatDialog = inject(MatDialog);
@@ -1582,7 +1583,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   private deleteService(serviceId: number): void {
     const confirmMessage = this.translocoService.translate('sites.calendar.day-events.confirm-delete-service');
-    
+
     this.notificationService.showConfirmationDialogWithCallback({
       message: confirmMessage,
       icon: {
@@ -1908,29 +1909,37 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   /**
-   * Navega al sitio correspondiente
-   * Determina la ruta correcta basándose en si es un center o un home
+   * Navega al sitio correspondiente.
+   * Usa la ruta actual para determinar el programa (PDAM, PSAV, PACNA) y navegar al edit correcto.
    */
   navigateToSite(): void {
     if (!this.currentSiteId || this.currentSiteId === 0) {
       return;
     }
 
-    // Determinar la ruta basándose en si es un Day Care Home o un Center
+    const url = this.router.url;
+    const segments = url.split('/').filter(Boolean);
+
+    // Encontrar el segmento del programa: sites-pdam, sites-pacna o sites-psav
+    const programSegment = segments.find(
+      (s) => s === 'sites-pdam' || s === 'sites-pacna' || s === 'sites-psav'
+    );
+
     let targetRoute: string;
 
-    // Verificar si es un Day Care Home
-    // isDayCareHomeId: 1 = Sí (Home), 2 = No (Center)
-    // isDayCareHome.booleanValue: true = Home, false = Center
-    const isDayCareHome = this.currentSite?.isDayCareHomeId === 1 ||
-                          this.currentSite?.isDayCareHome?.booleanValue === true;
-
-    if (isDayCareHome) {
-      // Es un Home (Day Care Home)
-      targetRoute = `sites-pacna/homes/edit/${this.currentSiteId}`;
+    if (programSegment === 'sites-pdam' || programSegment === 'sites-psav') {
+      targetRoute = `${programSegment}/edit/${this.currentSiteId}`;
+    } else if (programSegment === 'sites-pacna') {
+      const isDayCareHome =
+        this.currentSite?.isDayCareHomeId === 1 ||
+        this.currentSite?.isDayCareHome?.booleanValue === true;
+      if (isDayCareHome) {
+        targetRoute = `sites-pacna/homes/edit/${this.currentSiteId}`;
+      } else {
+        targetRoute = `sites-pacna/centers/edit/${this.currentSiteId}`;
+      }
     } else {
-      // Es un Center
-      targetRoute = `sites-pacna/centers/edit/${this.currentSiteId}`;
+      return;
     }
 
     this.customRouterService.navigate([targetRoute]);

@@ -40,11 +40,6 @@ export const DAY_EVENTS_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit-modal',
         label: 'sites.calendar.day-events.table.buttons.edit',
         icon: 'mat_solid:edit'
-      },
-      {
-        key: 'toggle',
-        label: 'sites.calendar.day-events.table.buttons.toggle',
-        icon: 'heroicons_outline:check-circle'
       }
     ]
   }

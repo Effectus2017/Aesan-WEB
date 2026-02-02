@@ -1525,8 +1525,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     // Actualizar validaciones de distributionType basado en groupType
     this.updateDistributionTypeValidation();
 
-    // Calcular días operativos automáticamente si es necesario
-    this.calculateOperatingDaysIfNeeded();
+    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
+    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
 
     // Si el groupType es "Comedor", cargar las opciones válidas de kitchenTypes
     // y preservar el kitchenType original del sitio
@@ -1870,7 +1870,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     // 1. offersServiceToDifferentGroups es true (Day Care Home), O
     // 2. La capacidad del salón comedor es menor que la matrícula general
     const shouldUseServicesByGroups = (formValues.offersServiceToDifferentGroups || this.shouldShowServicesByGroupsForDiningRoom()) && this.servicesByGroups.length > 0;
-    
+
     if (shouldUseServicesByGroups) {
       const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {

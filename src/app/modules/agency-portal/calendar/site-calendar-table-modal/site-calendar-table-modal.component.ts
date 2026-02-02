@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CalendarEvent } from 'angular-calendar';
-import { GenericTableComponent } from '../../../../shared/components/generic-table/generic-table.component';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
 import { SiteCalendarServiceAddModalComponent } from '../site-calendar-service-add-modal/site-calendar-service-add-modal.component';
 import { SiteCalendarServiceAddModalData } from '../site-calendar-service-add-modal/site-calendar-service-add-modal-data.interface';
@@ -16,10 +17,42 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 
+/** Una fila de día de funcionamiento para la vista agrupada (Opción B) */
+export interface DayRow {
+  id: number;
+  title: string;
+  startTime: string;
+  endTime: string;
+  type: string;
+  comment: string;
+  meta: unknown;
+  isService: false;
+}
+
+/** Una fila de servicio para la vista agrupada (Opción B) */
+export interface ServiceRow {
+  id: number;
+  title: string;
+  type: string;
+  startTime: string;
+  endTime: string;
+  comment: string;
+  meta: unknown;
+  isService: true;
+  isEnabled?: boolean;
+  operatingDayIsHoliday?: boolean;
+}
+
+/** Grupo de servicios para la vista agrupada (Opción B) */
+export interface ServiceGroup {
+  groupName: string;
+  services: ServiceRow[];
+}
+
 @Component({
   selector: 'app-school-calendar-table-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, TranslocoModule, GenericTableComponent, ReactiveFormsModule, DisableIfAgencyRestrictedDirective, KeyboardShortcutDirective],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatCardModule, MatTooltipModule, TranslocoModule, ReactiveFormsModule, DisableIfAgencyRestrictedDirective, KeyboardShortcutDirective],
   templateUrl: './site-calendar-table-modal.component.html',
   styles: [`
     @keyframes fadeIn {
@@ -45,6 +78,12 @@ export class SiteCalendarTableModalComponent implements OnInit {
   private notificationService: NotificationService = inject(NotificationService);
 
   totalEvents: number = 0;
+
+  /** Filas del día de funcionamiento (para vista agrupada por grupos - Opción B) */
+  dayRows: DayRow[] = [];
+
+  /** Servicios agrupados por grupo (para vista agrupada - Opción B) */
+  servicesGroupedByGroup: ServiceGroup[] = [];
 
   constructor(public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>, @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData) {}
 
@@ -305,10 +344,48 @@ export class SiteCalendarTableModalComponent implements OnInit {
     // Combinar días de funcionamiento primero, luego servicios
     const tableData = [...dayTableData, ...servicesTableData];
 
+    // Vista agrupada (Opción B): filas del día y servicios por grupo
+    this.dayRows = dayTableData.map((row) => ({
+      id: row.id,
+      title: row.title,
+      startTime: row.startTime,
+      endTime: row.endTime,
+      type: row.type,
+      comment: row.comment,
+      meta: row.meta,
+      isService: false as const
+    }));
+
+    const groupMap = new Map<string, ServiceRow[]>();
+    const unnamedGroupKey =
+      this.translocoService.translate('sites.calendar.day-events.group-unnamed') || 'Sin grupo';
+    for (const s of servicesTableData) {
+      const name = s.groupName?.trim() || unnamedGroupKey;
+      if (!groupMap.has(name)) {
+        groupMap.set(name, []);
+      }
+      groupMap.get(name)!.push({
+        id: s.id,
+        title: s.title,
+        type: s.type,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        comment: s.comment,
+        meta: s.meta,
+        isService: true as const,
+        isEnabled: s.isEnabled,
+        operatingDayIsHoliday: s.operatingDayIsHoliday
+      });
+    }
+    this.servicesGroupedByGroup = Array.from(groupMap.entries()).map(([groupName, services]) => ({
+      groupName,
+      services
+    }));
+
     // Actualizar el contador de eventos totales
     this.totalEvents = tableData.length;
 
-    // Actualizar el dataSource existente
+    // Actualizar el dataSource existente (compatibilidad con handler y totalEvents)
     this.data.tableConfig.dataSourceList = tableData;
     this.data.tableConfig.dataSource.data = tableData;
 
@@ -316,6 +393,23 @@ export class SiteCalendarTableModalComponent implements OnInit {
     this.cdr.detectChanges();
 
     console.log('Table data updated:', tableData);
+  }
+
+  /** Abre el modal de edición del día de funcionamiento (vista agrupada) */
+  onEditDay(row: DayRow): void {
+    if (this.data.handler && typeof (this.data.handler as any).onTableEditModal === 'function') {
+      (this.data.handler as any).onTableEditModal(null, row.id);
+    }
+  }
+
+  /** Abre el modal de edición del servicio (vista agrupada). No hace nada si el día es feriado. */
+  onEditService(service: ServiceRow): void {
+    if (service?.operatingDayIsHoliday) {
+      return;
+    }
+    if (this.data.handler && typeof (this.data.handler as any).onTableEditModal === 'function') {
+      (this.data.handler as any).onTableEditModal(null, service.id);
+    }
   }
 
   private getServiceTitle(service: any): string {

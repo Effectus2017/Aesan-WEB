@@ -1571,7 +1571,8 @@
                     },
                     "buttons": {
                         "edit": "Edit",
-                        "delete": "Delete"
+                        "delete": "Delete",
+                        "toggle": "Activate/Deactivate"
                     }
                 },
                 "day-types": {
@@ -1583,6 +1584,8 @@
                     "holiday": "Holiday"
                 },
                 "operating-day-title": "Operating day",
+                "section-operating-day": "Operating day",
+                "group-unnamed": "Ungrouped",
                 "service-fallback": "Service",
                 "confirm-delete-service": "Are you sure you want to delete this service?",
                 "cannot-edit-holiday": "Services cannot be edited on holidays"
