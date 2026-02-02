@@ -1813,11 +1813,13 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        if (slot?.from != null) {
-          fromTo[key + 'From'] = slot.from;
+        const fromVal = slot?.fromTime;
+        const toVal = slot?.toTime;
+        if (fromVal != null) {
+          fromTo[key + 'From'] = fromVal;
         }
-        if (slot?.to != null) {
-          fromTo[key + 'To'] = slot.to;
+        if (toVal != null) {
+          fromTo[key + 'To'] = toVal;
         }
       }
       return { ...row, ...booleans, ...fromTo };

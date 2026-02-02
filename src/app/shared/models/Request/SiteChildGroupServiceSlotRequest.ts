@@ -1,8 +1,10 @@
-/** Slot de servicio por grupo (SiteChildGroupService). */
+/** Slot de servicio por grupo (SiteChildGroupService). La API espera fromTime y toTime (camelCase). */
 export interface SiteChildGroupServiceSlotRequest {
   id?: number;
   serviceTypeId: number;
   isOffered: boolean;
-  from?: string;
-  to?: string;
+  /** Hora inicio. */
+  fromTime?: string;
+  /** Hora fin. */
+  toTime?: string;
 }

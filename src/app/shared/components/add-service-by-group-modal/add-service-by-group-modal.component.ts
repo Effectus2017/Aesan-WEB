@@ -88,7 +88,7 @@ export interface ServiceByGroupDialogData {
   snackAtRiskTo?: string;
 
   isEdit?: boolean;
-  
+
   // Flags para identificar el programa (fallback cuando no hay serviceTypes)
   isPDAM?: boolean;
   isPACNA?: boolean;
@@ -210,13 +210,13 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
     });
 
     // Si se pasan serviceSlots (nuevo formato), rellenar el formulario desde ellos.
-    // La API devuelve fromTime/toTime; el modal acepta from/to o fromTime/toTime.
+    // La API devuelve fromTime/toTime; el modal acepta fromTime/toTime o from/to (compat).
     if (data?.serviceSlots && data.serviceSlots.length > 0) {
       for (const slot of data.serviceSlots) {
         const formKey = SERVICE_TYPE_ID_TO_FORM_KEY[slot.serviceTypeId];
         if (formKey) {
-          const fromStr = slot.from ?? (slot as { fromTime?: string }).fromTime;
-          const toStr = slot.to ?? (slot as { toTime?: string }).toTime;
+          const fromStr = slot.fromTime ?? (slot as { from?: string }).from;
+          const toStr = slot.toTime ?? (slot as { to?: string }).to;
           this.serviceForm.get(formKey.bool)?.setValue(!!slot.isOffered, { emitEvent: false });
           this.serviceForm.get(formKey.from)?.setValue(fromStr ? timeStringToDate(fromStr) : null, { emitEvent: false });
           this.serviceForm.get(formKey.to)?.setValue(toStr ? timeStringToDate(toStr) : null, { emitEvent: false });
@@ -228,7 +228,7 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // Inicializar opciones de tiempo
     this.timeOptions = generateTimeOptions();
-    
+
     // Actualizar validador cuando cambia numberOfChildren para revalidar
     const numberOfChildrenControl = this.serviceForm.get('numberOfChildren');
     if (numberOfChildrenControl) {
@@ -679,8 +679,8 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
       serviceSlots.push({
         serviceTypeId: st.id,
         isOffered,
-        from: isOffered && fromVal ? toTimeString(fromVal) : undefined,
-        to: isOffered && toVal ? toTimeString(toVal) : undefined,
+        fromTime: isOffered && fromVal ? toTimeString(fromVal) : undefined,
+        toTime: isOffered && toVal ? toTimeString(toVal) : undefined,
       });
     }
 

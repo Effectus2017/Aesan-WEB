@@ -21,7 +21,7 @@ export interface SiteChildGroupServiceSlotResponse {
 }
 
 /**
- * Normaliza un slot de respuesta (from/fromTime, to/toTime) al formato de request (from, to).
+ * Normaliza un slot de respuesta (from/fromTime, to/toTime) al formato de request (fromTime, toTime).
  * Usar al cargar childGroups desde la API en formularios de sitios.
  */
 export function normalizeServiceSlotFromResponse(
@@ -30,7 +30,7 @@ export function normalizeServiceSlotFromResponse(
   return {
     serviceTypeId: slot.serviceTypeId,
     isOffered: slot.isOffered,
-    from: slot.from ?? slot.fromTime,
-    to: slot.to ?? slot.toTime,
+    fromTime: slot.from ?? slot.fromTime,
+    toTime: slot.to ?? slot.toTime,
   };
 }
