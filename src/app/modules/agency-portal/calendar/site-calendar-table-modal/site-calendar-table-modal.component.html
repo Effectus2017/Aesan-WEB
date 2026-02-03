@@ -1,4 +1,4 @@
-<div class="flex flex-col -m-6 max-h-screen min-w-120" [appKeyboardShortcut]="null" [compatibilityMode]="true">
+<div class="flex flex-col -m-6 max-h-[95vh] min-w-120" [appKeyboardShortcut]="null" [compatibilityMode]="true">
   <!-- Header -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
@@ -12,13 +12,6 @@
   <!-- Content: mismo fondo que área de contenido principal (bg-default = slate.100 en light) -->
   <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0 bg-default">
     <div class="flex flex-col gap-6 animate-slide-in">
-      <!-- Resumen (mismo borde que en sitios) -->
-      <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-800">
-        <p class="text-sm text-gray-600 dark:text-gray-400">
-          <strong>{{ 'sites.calendar.modals.day-events.totalEvents' | transloco }}:</strong> {{ totalEvents }}
-        </p>
-      </div>
-
       <!-- Card: Día de funcionamiento (mismo borde/sombra que en sitios: rounded-2xl border shadow) -->
       <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngIf="dayRows.length > 0">
         <div class="flex flex-col gap-1 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
@@ -117,8 +110,7 @@
 
       <!-- Si no hay día ni servicios, mensaje breve -->
       <div *ngIf="dayRows.length === 0 && servicesGroupedByGroup.length === 0" class="py-8 text-center text-gray-500 dark:text-gray-400">
-        <p>{{ 'sites.calendar.modals.day-events.totalEvents' | transloco }}: 0</p>
-        <p class="mt-2 text-sm">{{ 'sites.calendar.modals.day-events.addEvent' | transloco }}</p>
+        <p class="text-sm">{{ 'sites.calendar.modals.day-events.addEvent' | transloco }}</p>
       </div>
     </div>
   </div>

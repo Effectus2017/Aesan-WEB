@@ -85,8 +85,6 @@ export class SiteCalendarTableModalComponent implements OnInit {
   private translocoService: TranslocoService = inject(TranslocoService);
   private notificationService: NotificationService = inject(NotificationService);
 
-  totalEvents: number = 0;
-
   /** Filas del día de funcionamiento (para vista agrupada por grupos - Opción B) */
   dayRows: DayRow[] = [];
 
@@ -391,10 +389,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
       services
     }));
 
-    // Actualizar el contador de eventos totales
-    this.totalEvents = tableData.length;
-
-    // Actualizar el dataSource existente (compatibilidad con handler y totalEvents)
+    // Actualizar el dataSource existente (compatibilidad con handler)
     this.data.tableConfig.dataSourceList = tableData;
     this.data.tableConfig.dataSource.data = tableData;
 
@@ -633,22 +628,22 @@ export class SiteCalendarTableModalComponent implements OnInit {
                   handler.loadOperatingDaysAndUpdateModal().subscribe({
                     next: () => {
                       refreshTable();
-                      this.notificationService.showSuccess('Servicio agregado correctamente');
+                      this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
                     },
                     error: () => {
                       refreshTable();
-                      this.notificationService.showSuccess('Servicio agregado correctamente');
+                      this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
                     }
                   });
                 } else if (handler?.loadOperatingDays) {
                   handler.loadOperatingDays();
                   setTimeout(() => {
                     refreshTable();
-                    this.notificationService.showSuccess('Servicio agregado correctamente');
+                    this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
                   }, 500);
                 } else {
                   refreshTable();
-                  this.notificationService.showSuccess('Servicio agregado correctamente');
+                  this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
                 }
               },
               error: (error) => {

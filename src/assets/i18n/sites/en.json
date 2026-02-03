@@ -1620,7 +1620,8 @@
                 "group-unnamed": "Ungrouped",
                 "service-fallback": "Service",
                 "confirm-delete-service": "Are you sure you want to delete this service?",
-                "cannot-edit-holiday": "Services cannot be edited on holidays"
+                "cannot-edit-holiday": "Services cannot be edited on holidays",
+                "service-added-success": "Service added successfully"
             },
             "errors": {
                 "agency-completed": "Cannot add an operating day because the agency registration has already been completed.",

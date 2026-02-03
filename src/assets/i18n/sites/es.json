@@ -1558,7 +1558,8 @@
                 "group-unnamed": "Sin grupo",
                 "service-fallback": "Servicio",
                 "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",
-                "cannot-edit-holiday": "No se pueden editar servicios en días feriados"
+                "cannot-edit-holiday": "No se pueden editar servicios en días feriados",
+                "service-added-success": "Servicio agregado correctamente"
             },
             "errors": {
                 "agency-completed": "No se puede agregar un día de funcionamiento porque el registro de la agencia ya ha sido completado.",

@@ -200,11 +200,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Experience
   experience: OptionSelection[] = [];
 
-  // Resultado de revisión / Review result
-  // Review result
-  // COMENTADO: Se va a cambiar de lugar
-  // reviewResult: OptionSelection[] = [];
-
   // Lista de sitios
   // List of sites
 
@@ -372,61 +367,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
-      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-      // Desayuno - Campo requerido para indicar si el sitio tiene desayuno
-      // Breakfast - Required field indicating if the site has breakfast
-      // breakfast: [false],
-      // Desayuno desde - Campo requerido para indicar la hora de inicio del desayuno
-      // Breakfast from - Required field indicating the start time of breakfast
-      // breakfastFrom: [null],
-      // Desayuno hasta - Campo requerido para indicar la hora de fin del desayuno
-      // Breakfast to - Required field indicating the end time of breakfast
-      // breakfastTo: [null],
-      // Almuerzo - Campo requerido para indicar si el sitio tiene almuerzo
-      // Lunch - Required field indicating if the site has lunch
-      // lunch: [false],
-      // Almuerzo desde - Campo requerido para indicar la hora de inicio del almuerzo
-      // Lunch from - Required field indicating the start time of lunch
-      // lunchFrom: [null],
-      // Almuerzo hasta - Campo requerido para indicar la hora de fin del almuerzo
-      // Lunch to - Required field indicating the end time of lunch
-      // lunchTo: [null],
-      // Merienda AM - Campo requerido para indicar si el sitio tiene merienda AM
-      // Snack AM - Required field indicating if the site has snack AM
-      // snackAM: [false],
-      // Merienda AM desde - Campo requerido para indicar la hora de inicio de la merienda AM
-      // Snack AM from - Required field indicating the start time of snack AM
-      // snackAMFrom: [null],
-      // Merienda AM hasta - Campo requerido para indicar la hora de fin de la merienda AM
-      // Snack AM to - Required field indicating the end time of snack AM
-      // snackAMTo: [null],
-      // Merienda PM - Campo requerido para indicar si el sitio tiene merienda PM
-      // Snack PM - Required field indicating if the site has snack PM
-      // snackPM: [false],
-      // Merienda PM desde - Campo requerido para indicar la hora de inicio de la merienda PM
-      // Snack PM from - Required field indicating the start time of snack PM
-      // snackPMFrom: [null],
-      // Merienda PM hasta - Campo requerido para indicar la hora de fin de la merienda PM
-      // Snack PM to - Required field indicating the end time of snack PM
-      // snackPMTo: [null],
-      // Cena - Campo requerido para indicar si el sitio tiene cena
-      // Dinner - Required field indicating if the site has dinner
-      // dinner: [false],
-      // Cena desde - Campo requerido para indicar la hora de inicio de la cena
-      // Dinner from - Required field indicating the start time of dinner
-      // dinnerFrom: [null],
-      // Cena hasta - Campo requerido para indicar la hora de fin de la cena
-      // Dinner to - Required field indicating the end time of dinner
-      // dinnerTo: [null],
-      // Merienda nocturna - Campo requerido para indicar si el sitio tiene merienda nocturna
-      // Snack night - Required field indicating if the site has snack night
-      // snackNight: [false],
-      // Merienda nocturna desde - Campo requerido para indicar la hora de inicio de la merienda nocturna
-      // Snack night from - Required field indicating the start time of snack night
-      // snackNightFrom: [null],
-      // Merienda nocturna hasta - Campo requerido para indicar la hora de fin de la merienda nocturna
-      // Snack night to - Required field indicating the end time of snack night
-      // snackNightTo: [null],
       // Comunidad - Campo requerido para indicar la comunidad del sitio
       // Community - Required field indicating the community of the site
       community: [null, Validators.required],
@@ -448,16 +388,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Fecha de inactivación - Fecha cuando se inactivó el sitio
       // Inactivation date - Date when the site was inactivated
       inactiveDate: [{ value: null, disabled: true }],
-      // Resultado de revisión - Resultado de la revisión del sitio
-      // Review result - Result of the site review
-      // COMENTADO: Se va a cambiar de lugar
-      // reviewResult: [null],
-      // Fecha de revisión - Fecha cuando se realizó la revisión
-      // Review date - Date when the review was conducted
-      // reviewDate: [null],
-      // Justificación de revisión - Justificación de la revisión
-      // Review justification - Justification of the review
-      // reviewJustification: [null],
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
@@ -587,10 +517,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Experiencia / Experience
       this.experience = this.sortOptionsAlphabetically(resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience'));
 
-      // Resultado de revisión / Review result
-      // COMENTADO: Se va a cambiar de lugar
-      // this.reviewResult = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-
       // Catálogos
       this.organizationTypes = resolvedData.organizationTypes;
       this.kitchenTypes = resolvedData.kitchenTypes;
@@ -653,22 +579,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    // this.headerConfig.formGroup
-    //   .get('operatingStartTime')
-    //   ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-    //   .subscribe(() => {
-    //     this.revalidateAllServiceTimes();
-    //   });
-
-    // this.headerConfig.formGroup
-    //   .get('operatingEndTime')
-    //   ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
-    //   .subscribe(() => {
-    //     this.revalidateAllServiceTimes();
-    //   });
-
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
@@ -686,10 +596,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Campos isActive, inactiveDate e inactiveJustification ahora se manejan desde el modal de Settings
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
-
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Configurar validaciones condicionales para servicios
-    // this.setupServiceValidations();
 
     // Listener para cambios en hasDiningRoom
     this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
@@ -724,79 +630,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Configura validaciones condicionales para todos los servicios
-   * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
-   * Si hay horarios seleccionados, el campo si/no del servicio es requerido
-   */
-  // private setupServiceValidations(): void {
-  //   // Lista de servicios con sus campos From y To correspondientes
-  //   const services = [
-  //     { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-  //     { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-  //     { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-  //     { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-  //     { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-  //     { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
-  //   ];
-
-  //   // Configurar suscripciones para cada servicio
-  //   services.forEach(({ service, from, to }) => {
-  //     const serviceControl = this.headerConfig.formGroup.get(service);
-  //     const fromControl = this.headerConfig.formGroup.get(from);
-  //     const toControl = this.headerConfig.formGroup.get(to);
-
-  //     if (serviceControl && fromControl && toControl) {
-  //       // Validación inicial
-  //       this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl, serviceControl);
-  //       this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-
-  //       // Suscribirse a cambios en el campo de servicio
-  //       serviceControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value: boolean | null) => {
-  //         this.updateServiceTimeValidations(value, fromControl, toControl, serviceControl);
-  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-  //       });
-
-  //       // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-  //       fromControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
-  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-  //         // Forzar detección de cambios para actualizar las opciones en el template
-  //         this._changeDetectorRef.detectChanges();
-  //       });
-
-  //       // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-  //       toControl.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
-  //         this.updateServiceRequiredValidation(serviceControl, fromControl, toControl);
-  //       });
-  //     }
-  //   });
-  // }
-
-  /**
    * Genera todas las opciones de hora (cada 30 minutos)
    */
   private initializeTimeOptions(): void {
     this.timeOptions = generateTimeOptions();
   }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
-   */
-  // getStartTimeOptions(): TimeOption[] {
-  //   const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-  //   const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
-  //   return filterStartTimeOptions(
-  //     this.timeOptions,
-  //     operatingStartTime,
-  //     operatingEndTime
-  //   );
-  // }
 
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
@@ -830,130 +668,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
    * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
    */
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
-   */
-  // isEndTimeInvalid(fromField: string, toField: string): boolean {
-    // const fromControl = this.headerConfig.formGroup.get(fromField);
-    // const toControl = this.headerConfig.formGroup.get(toField);
-
-    // if (!fromControl || !toControl) return false;
-
-    // const fromTime = fromControl.value;
-    // const toTime = toControl.value;
-
-    // if (!fromTime || !toTime) return false;
-
-    // const fromMinutes = dateToMinutes(fromTime);
-    // const toMinutes = dateToMinutes(toTime);
-
-    // return toMinutes <= fromMinutes;
-  // }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Actualiza la validación requerida del campo servicio basado en si hay horarios seleccionados
-   * Si hay un horario "desde" o "hasta", el campo si/no del servicio es requerido
-   */
-  // private updateServiceRequiredValidation(serviceControl: AbstractControl, fromControl: AbstractControl, toControl: AbstractControl): void {
-    // const fromTime = fromControl.value;
-    // const toTime = toControl.value;
-    // // Verificar si hay horarios (pueden ser Date, string, o null/undefined)
-    // const hasFromTime = fromTime !== null && fromTime !== undefined && fromTime !== '';
-    // const hasToTime = toTime !== null && toTime !== undefined && toTime !== '';
-
-    // if (hasFromTime || hasToTime) {
-    //   // Si hay algún horario seleccionado, el campo si/no es requerido
-    //   serviceControl.setValidators([Validators.required]);
-    //   serviceControl.updateValueAndValidity({ emitEvent: false });
-    // } else {
-    //   // Si no hay horarios, remover la validación requerida solo si el servicio no está en "Sí"
-    //   const serviceValue = serviceControl.value;
-    //   if (serviceValue !== true) {
-    //     serviceControl.clearValidators();
-    //     serviceControl.updateValueAndValidity({ emitEvent: false });
-    //   }
-    // }
-
-    // // Actualizar el estado del botón después de cambiar las validaciones
-    // this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    // this._changeDetectorRef.detectChanges();
-  // }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Actualiza las validaciones de los campos de hora según el estado del servicio
-   * @param serviceValue Valor del servicio (true = Sí, false/null = No)
-   * @param fromControl Control del campo "Hora desde"
-   * @param toControl Control del campo "Hora hasta"
-   * @param serviceControl Control del campo servicio (opcional, para actualizar validación del servicio)
-   */
-  // private updateServiceTimeValidations(serviceValue: boolean | null, fromControl: AbstractControl, toControl: AbstractControl, serviceControl?: AbstractControl): void {
-    // const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-    // const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
-    // if (serviceValue === true) {
-    //   // Si el servicio está en "Sí", hacer requeridos los campos de hora y agregar validación de rango
-    //   const fromValidators = [Validators.required];
-    //   const toValidators = [Validators.required];
-
-    //   // Agregar validador de rango si hay horas de funcionamiento configuradas
-    //   if (operatingStartTime && operatingEndTime) {
-    //     fromValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, true));
-    //     toValidators.push(operatingHoursRangeValidator(operatingStartTime, operatingEndTime, false));
-    //   }
-
-    //   fromControl.setValidators(fromValidators);
-    //   toControl.setValidators(toValidators);
-    // } else {
-    //   // Si el servicio está en "No" o null, remover validaciones requeridas
-    //   fromControl.clearValidators();
-    //   toControl.clearValidators();
-    //   // Limpiar valores si el servicio está en "No"
-    //   if (serviceValue === false) {
-    //     fromControl.setValue(null, { emitEvent: false });
-    //     toControl.setValue(null, { emitEvent: false });
-    //     // Si el servicio está en "No", remover también la validación requerida del servicio
-    //     if (serviceControl) {
-    //       serviceControl.clearValidators();
-    //       serviceControl.updateValueAndValidity({ emitEvent: false });
-    //     }
-    //   }
-    // }
-
-    // fromControl.updateValueAndValidity({ emitEvent: false });
-    // toControl.updateValueAndValidity({ emitEvent: false });
-
-    // // Actualizar el estado del botón de guardar después de cambiar las validaciones
-    // // (necesario porque usamos emitEvent: false para evitar bucles infinitos)
-    // this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    // this._changeDetectorRef.detectChanges();
-  // }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
-   */
-  // private revalidateAllServiceTimes(): void {
-    // const services: ServiceConfig[] = [
-    //   { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-    //   { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-    //   { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-    //   { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-    //   { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-    //   { service: 'snackNight', from: 'snackNightFrom', to: 'snackNightTo' },
-    // ];
-
-    // TimeValidationUtil.revalidateAllServiceTimes(
-    //   this.headerConfig.formGroup,
-    //   services,
-    //   (serviceValue, fromControl, toControl, serviceControl) => {
-    //     this.updateServiceTimeValidations(serviceValue, fromControl, toControl, serviceControl);
-    //   }
-    // );
-  // }
 
   // Manejar cambio de non-profit para programa PDAM
   nonProfitChange(event?: any): void {
@@ -1012,37 +726,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const areaType = param.areaType;
     const locationType = param.locationType;
 
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Obtener datos de servicios desde el primer grupo (si existe)
-    // Si hay grupos con servicios, usar el primer servicio del primer grupo
-    // const siteService = param.childGroups && param.childGroups.length > 0 && param.childGroups[0].services && param.childGroups[0].services.length > 0
-    //   ? param.childGroups[0].services[0]
-    //   : null;
-
-    // Horarios de servicios básicos
-    // const breakfastFrom: Date | null = siteService ? toTimeDate(siteService.breakfastFrom) : null;
-    // const breakfastTo: Date | null = siteService ? toTimeDate(siteService.breakfastTo) : null;
-    // const lunchFrom: Date | null = siteService ? toTimeDate(siteService.lunchFrom) : null;
-    // const lunchTo: Date | null = siteService ? toTimeDate(siteService.lunchTo) : null;
-    // const snackAMFrom: Date | null = siteService ? toTimeDate(siteService.snackAMFrom) : null;
-    // const snackAMTo: Date | null = siteService ? toTimeDate(siteService.snackAMTo) : null;
-    // const snackPMFrom: Date | null = siteService ? toTimeDate(siteService.snackPMFrom) : null;
-    // const snackPMTo: Date | null = siteService ? toTimeDate(siteService.snackPMTo) : null;
-
-    // Campos adicionales
-    // const dinnerFrom: Date | null = siteService ? toTimeDate(siteService.dinnerFrom) : null;
-    // const dinnerTo: Date | null = siteService ? toTimeDate(siteService.dinnerTo) : null;
-    // const snackNightFrom: Date | null = siteService ? toTimeDate(siteService.snackNightFrom) : null;
-    // const snackNightTo: Date | null = siteService ? toTimeDate(siteService.snackNightTo) : null;
-
     const communityId = param.communityId;
     const walkersId = param.walkersId;
     const siteTypeId = param.siteTypeId;
     const experienceId = param.experienceId;
-    // COMENTADO: Se va a cambiar de lugar
-    // const reviewResultId = param.reviewResultId;
-    // const reviewDate = param.reviewDate;
-    // const reviewJustification = param.reviewJustification;
 
     // Obtener los días de operación seleccionados, con fallback a días permitidos
     // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
@@ -1093,34 +780,10 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
             extension: '',
             mobilePhone: '',
           },
-      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-      // Servicios básicos
-      // breakfast: siteService?.breakfast ?? false,
-      // breakfastFrom: breakfastFrom,
-      // breakfastTo: breakfastTo,
-      // lunch: siteService?.lunch ?? false,
-      // lunchFrom: lunchFrom,
-      // lunchTo: lunchTo,
-      // snackAM: siteService?.snackAM ?? false,
-      // snackAMFrom: snackAMFrom,
-      // snackAMTo: snackAMTo,
-      // snackPM: siteService?.snackPM ?? false,
-      // snackPMFrom: snackPMFrom,
-      // snackPMTo: snackPMTo,
-      // dinner: siteService?.dinner ?? false,
-      // dinnerFrom: dinnerFrom,
-      // dinnerTo: dinnerTo,
-      // snackNight: siteService?.snackNight ?? false,
-      // snackNightFrom: snackNightFrom,
-      // snackNightTo: snackNightTo,
       community: this.community.find((o) => o.id === communityId),
       walkers: this.walkers.find((o) => o.id === walkersId),
       siteType: this.siteType.find((o) => o.id === siteTypeId),
       experience: this.experience.find((o) => o.id === experienceId),
-      // COMENTADO: Se va a cambiar de lugar
-      // reviewResult: this.reviewResult.find((o) => o.id === reviewResultId),
-      // reviewDate: reviewDate,
-      // reviewJustification: reviewJustification,
       isActive: param.isActive,
       inactiveJustification: param.inactiveJustification || null,
       inactiveDate: param.inactiveDate,
@@ -1389,39 +1052,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const applicantTypeId: number = formValues.typeOfApplicant?.id;
     const areaTypeId: number = formValues.areaType?.id;
     const locationTypeId: number = formValues.locationType?.id;
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Horarios de servicios básicos
-    // const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
-    // const breakfastTo: string = toTimeString(formValues.breakfastTo);
-    // const lunchFrom: string = toTimeString(formValues.lunchFrom);
-    // const lunchTo: string = toTimeString(formValues.lunchTo);
-    // const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
-    // const snackAMTo: string = toTimeString(formValues.snackAMTo);
-    // const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
-    // const snackPMTo: string = toTimeString(formValues.snackPMTo);
-
-    // Servicios básicos
-    // const snackAM = formValues.snackAM;
-    // const snackPM = formValues.snackPM;
-    // const lunch = formValues.lunch;
-    // const breakfast = formValues.breakfast;
-
-    // Campos adicionales
-    // const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
-    // const dinnerTo: string = toTimeString(formValues.dinnerTo);
-    // const snackNightFrom: string = toTimeString(formValues.snackNightFrom);
-    // const snackNightTo: string = toTimeString(formValues.snackNightTo);
-    // const dinner = formValues.dinner;
-    // const snackNight = formValues.snackNight;
 
     const communityId = formValues.community?.id;
     const walkersId = formValues.walkers?.id;
     const siteTypeId = formValues.siteType?.id;
     const experienceId = formValues.experience?.id;
-    // COMENTADO: Se va a cambiar de lugar
-    // const reviewResultId = formValues.reviewResult?.id;
-    // const reviewDate = formValues.reviewDate;
-    // const reviewJustification = formValues.reviewJustification;
 
     // Fechas de operación
     const operatingFromDate: string = formValues.operatingFromDate;
@@ -1486,10 +1121,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       walkersId: walkersId ?? null,
       siteTypeId: siteTypeId ?? null,
       experienceId: experienceId ?? null,
-      // COMENTADO: Se va a cambiar de lugar
-      // reviewResultId: reviewResultId ?? null,
-      // reviewDate: reviewDate ?? null,
-      // reviewJustification: reviewJustification ?? null,
       // Campos requeridos por el stored procedure 104_UpdateSite
       serviceTime: formValues.serviceTime ?? null,
       isActive: formValues.isActive ?? true,
@@ -1497,54 +1128,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
     };
-
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // ===== CREAR SCHOOL SERVICE REQUEST =====
-    // Constantes para servicios básicos
-    // const breakfastService = breakfast ?? null;
-    // const lunchService = lunch ?? null;
-    // const snackAMService = snackAM ?? null;
-    // const snackPMService = snackPM ?? null;
-    // const dinnerService = dinner ?? null;
-    // const snackNightService = snackNight ?? null;
-
-    // Crear SiteServiceRequest
-    // Obtener el primer servicio del primer grupo (si existe)
-    // const siteService = this.param.childGroups && this.param.childGroups.length > 0 && this.param.childGroups[0].services && this.param.childGroups[0].services.length > 0
-    //   ? this.param.childGroups[0].services[0]
-    //   : null;
-    // const siteServiceRequest: SiteServiceRequest = {
-    //   id: siteService?.id, // ID del servicio existente para actualizar
-    //   childGroupId: null, // Servicio general
-
-    //   // Servicios básicos
-    //   breakfast: breakfastService,
-    //   breakfastFrom: breakfastFrom ?? null,
-    //   breakfastTo: breakfastTo ?? null,
-
-    //   lunch: lunchService,
-    //   lunchFrom: lunchFrom ?? null,
-    //   lunchTo: lunchTo ?? null,
-
-    //   snackAM: snackAMService,
-    //   snackAMFrom: snackAMFrom ?? null,
-    //   snackAMTo: snackAMTo ?? null,
-
-    //   dinner: dinnerService,
-    //   dinnerFrom: dinnerFrom ?? null,
-    //   dinnerTo: dinnerTo ?? null,
-
-    //   snackPM: snackPMService,
-    //   snackPMFrom: snackPMFrom ?? null,
-    //   snackPMTo: snackPMTo ?? null,
-
-    //   snackNight: snackNightService,
-    //   snackNightFrom: snackNightFrom ?? null,
-    //   snackNightTo: snackNightTo ?? null,
-    // };
-
-    // Validar y limpiar el servicio antes de agregarlo
-    // const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
 
     // Validar al menos un grupo con servicios y sincronizar
     if (this.servicesByGroups.length === 0) {

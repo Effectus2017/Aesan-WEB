@@ -346,43 +346,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         extension: [''],
         mobilePhone: ['', puertoRicoPhoneValidator()],
       }),
-      // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-      // Desayuno (si, no)
-      // Breakfast (yes, no)
-      // breakfast: [false],
-      // Horario desde para el desayuno
-      // Breakfast schedule from
-      // breakfastFrom: [null],
-      // Horario hasta para el desayuno
-      // Breakfast schedule to
-      // breakfastTo: [null],
-      // Almuerzo (si, no)
-      // Lunch (yes, no)
-      // lunch: [false],
-      // Horario desde para el almuerzo
-      // Lunch schedule from
-      // lunchFrom: [null],
-      // Horario hasta para el almuerzo
-      // Lunch schedule to
-      // lunchTo: [null],
-      // Merienda AM (si, no)
-      // Snack AM (yes, no)
-      // snackAM: [false],
-      // Horario desde para la merienda AM
-      // Snack AM schedule from
-      // snackAMFrom: [null],
-      // Horario hasta para la merienda AM
-      // Snack AM schedule to
-      // snackAMTo: [null],
-      // Merienda PM (si, no)
-      // Snack PM (yes, no)
-      // snackPM: [false],
-      // Horario desde para la merienda PM
-      // Snack PM schedule from
-      // snackPMFrom: [null],
-      // Horario hasta para la merienda PM
-      // Snack PM schedule to
-      // snackPMTo: [null],
       // Comunidad
       // Community
       community: [null, Validators.required],
@@ -395,15 +358,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Experiencia / Experience
       // Experience
       experience: [null, Validators.required],
-      // Cena (si, no)
-      // Dinner (yes, no)
-      // dinner: [false],
-      // Horario desde para la cena
-      // Dinner schedule from
-      // dinnerFrom: [null],
-      // Horario hasta para la cena
-      // Dinner schedule to
-      // dinnerTo: [null],
       // ¿Este hogar está autorizado a funcionar?
       // Is this home authorized to operate?
       isAuthorizedToOperate: [null],
@@ -616,20 +570,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Suscribirse a cambios en operatingStartTime y operatingEndTime para revalidar servicios
-    // this.headerConfig.formGroup.get('operatingStartTime')?.valueChanges
-    //   .pipe(takeUntil(this._unsubscribeAll))
-    //   .subscribe(() => {
-    //     this.revalidateAllServiceTimes();
-    //   });
-
-    // this.headerConfig.formGroup.get('operatingEndTime')?.valueChanges
-    //   .pipe(takeUntil(this._unsubscribeAll))
-    //   .subscribe(() => {
-    //     this.revalidateAllServiceTimes();
-    //   });
-
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -641,10 +581,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         this.loadDeliveryTypesByGroupType(groupType);
         this._changeDetectorRef.detectChanges();
       });
-
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // Configurar validaciones condicionales para servicios
-    // this.setupServiceValidations();
 
     // Listener para cambios en hasDiningRoom
     this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
@@ -679,79 +615,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Configura validaciones condicionales para todos los servicios
-   * Cuando un servicio está en "Sí" (true), los campos "Hora desde" y "Hora hasta" son requeridos
-   */
-  // private setupServiceValidations(): void {
-  //   // Lista de servicios con sus campos From y To correspondientes
-  //   const services = [
-  //     { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-  //     { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-  //     { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-  //     { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-  //     { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-  //   ];
-
-  //   // Configurar suscripciones para cada servicio
-  //   services.forEach(({ service, from, to }) => {
-  //     const serviceControl = this.headerConfig.formGroup.get(service);
-  //     const fromControl = this.headerConfig.formGroup.get(from);
-  //     const toControl = this.headerConfig.formGroup.get(to);
-
-  //     if (serviceControl && fromControl && toControl) {
-  //       // Validación inicial
-  //       this.updateServiceTimeValidations(serviceControl.value, fromControl, toControl);
-
-  //       // Suscribirse a cambios en el campo de servicio
-  //       serviceControl.valueChanges
-  //         .pipe(takeUntil(this._unsubscribeAll))
-  //         .subscribe((value: boolean | null) => {
-  //           this.updateServiceTimeValidations(value, fromControl, toControl);
-  //         });
-
-  //       // Suscribirse a cambios en "Hora desde" para validar y ajustar "Hora hasta"
-  //       fromControl.valueChanges
-  //         .pipe(takeUntil(this._unsubscribeAll))
-  //         .subscribe(() => {
-  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
-  //           // Forzar detección de cambios para actualizar las opciones en el template
-  //           this._changeDetectorRef.detectChanges();
-  //         });
-
-  //       // Suscribirse a cambios en "Hora hasta" para validar y ajustar si es necesario
-  //       toControl.valueChanges
-  //         .pipe(takeUntil(this._unsubscribeAll))
-  //         .subscribe(() => {
-  //           TimeValidationUtil.validateAndAdjustTimeRange(fromControl, toControl);
-  //           TimeValidationUtil.validateTimeRange(fromControl, toControl);
-  //         });
-  //     }
-  //   });
-  // }
-
-  /**
    * Genera todas las opciones de hora (cada 30 minutos)
    */
   private initializeTimeOptions(): void {
     this.timeOptions = generateTimeOptions();
   }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Obtiene las opciones filtradas para un campo "desde" basado en las horas de funcionamiento
-   */
-  // getStartTimeOptions(): TimeOption[] {
-  //   const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-  //   const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-
-  //   return filterStartTimeOptions(
-  //     this.timeOptions,
-  //     operatingStartTime,
-  //     operatingEndTime
-  //   );
-  // }
 
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
@@ -785,73 +653,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
    * Valida y ajusta la hora "hasta" si es menor o igual a "desde"
    * Establece la hora "hasta" en la siguiente hora válida (30 minutos después de "desde")
    */
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Verifica si un campo de hora "hasta" es inválido (menor o igual a "desde")
-   */
-  // isEndTimeInvalid(fromField: string, toField: string): boolean {
-    // const fromControl = this.headerConfig.formGroup.get(fromField);
-    // const toControl = this.headerConfig.formGroup.get(toField);
-
-    // if (!fromControl || !toControl) return false;
-
-    // const fromTime = fromControl.value;
-    // const toTime = toControl.value;
-
-    // if (!fromTime || !toTime) return false;
-
-    // const fromMinutes = dateToMinutes(fromTime);
-    // const toMinutes = dateToMinutes(toTime);
-
-    // return toMinutes <= fromMinutes;
-  // }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Actualiza las validaciones de los campos de hora según el estado del servicio
-   * @param serviceValue Valor del servicio (true = Sí, false/null = No)
-   * @param fromControl Control del campo "Hora desde"
-   * @param toControl Control del campo "Hora hasta"
-   */
-  // private updateServiceTimeValidations(
-//     serviceValue: boolean | null,
-//     fromControl: AbstractControl,
-//     toControl: AbstractControl
-//   ): void {
-//     TimeValidationUtil.updateServiceTimeValidations(
-//       this.headerConfig.formGroup,
-//       serviceValue,
-//       fromControl,
-//       toControl,
-//       'operatingStartTime',
-//       'operatingEndTime',
-//       this._changeDetectorRef,
-//       (disabled) => { this.headerConfig.submitDisabled = disabled; }
-//     );
-  // }
-
-  /**
-   * COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-   * Revalida todos los campos de hora de servicios cuando cambian las horas de funcionamiento
-   */
-  // private revalidateAllServiceTimes(): void {
-    // const services: ServiceConfig[] = [
-    //   { service: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
-    //   { service: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
-    //   { service: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },
-    //   { service: 'snackPM', from: 'snackPMFrom', to: 'snackPMTo' },
-    //   { service: 'dinner', from: 'dinnerFrom', to: 'dinnerTo' },
-    // ];
-
-    // TimeValidationUtil.revalidateAllServiceTimes(
-    //   this.headerConfig.formGroup,
-    //   services,
-    //   (serviceValue, fromControl, toControl) => {
-    //     this.updateServiceTimeValidations(serviceValue, fromControl, toControl);
-    //   }
-    // );
-  // }
 
   // Manejar cambio de non-profit
   nonProfitChange(): void {
@@ -1102,48 +903,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       siteRequest.childGroups = this.childGroups;
     }
 
-    // COMENTADO: Servicios individuales ya no se usan - se manejan dentro de grupos
-    // ===== CREAR SITE SERVICE REQUEST =====
-    // Constantes para servicios básicos
-    // const breakfast = formValues.breakfast ?? null;
-    // const lunch = formValues.lunch ?? null;
-    // const snackAM = formValues.snackAM ?? null;
-    // const snackPM = formValues.snackPM ?? null;
-    // const dinner = formValues.dinner ?? null;
-
-    // Crear SiteServiceRequest
-    // const siteServiceRequest: SiteServiceRequest = {
-    //   childGroupId: null, // Servicio general
-
-    //   // Servicios básicos
-    //   breakfast: breakfast,
-    //   breakfastFrom: breakfastFrom ?? null,
-    //   breakfastTo: breakfastTo ?? null,
-
-    //   lunch: lunch,
-    //   lunchFrom: lunchFrom ?? null,
-    //   lunchTo: lunchTo ?? null,
-
-    //   snackAM: snackAM,
-    //   snackAMFrom: snackAMFrom ?? null,
-    //   snackAMTo: snackAMTo ?? null,
-
-    //   dinner: dinner,
-    //   dinnerFrom: dinnerFrom ?? null,
-    //   dinnerTo: dinnerTo ?? null,
-
-    //   snackPM: snackPM,
-    //   snackPMFrom: snackPMFrom ?? null,
-    //   snackPMTo: snackPMTo ?? null,
-    // };
-
-    // Validar y limpiar el servicio antes de agregarlo
-    // const cleanedServiceRequest = validateAndCleanSiteService(siteServiceRequest);
-
-    // Agregar servicios al SiteRequest
-    // siteRequest.services = [cleanedServiceRequest];
-
-
     this.isLoading = true;
 
     // Disable the form
@@ -1182,8 +941,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       },
       complete: () => {
         this.isLoading = false;
-        // Enable the form
-        //this.headerConfig.formGroup.enable();
         // Reset the form
         this.headerConfig.formGroup.reset();
       },

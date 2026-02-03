@@ -876,227 +876,30 @@
         <!-- Horario desde para la merienda nocturna -->
         <!-- Horario hasta para la merienda nocturna -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
-          <mat-form-field data-cy="snack-night-field">
-            <mat-label>{{ "sites.add.snack-night.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-night-from-field">
-            <mat-label>{{ "sites.add.snack-night-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNightFrom" data-cy="snack-night-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightFrom')?.hasError('required')">
-              {{ "sites.add.snack-night-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.add.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-night-to-field">
-            <mat-label>{{ "sites.add.snack-night-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackNightTo" data-cy="snack-night-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackNightFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('required')">
-              {{ 'sites.add.snack-night-to.required' | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackNightTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackNightFrom', 'snackNightTo')">
-              {{ 'sites.add.time-range-invalid' | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div> -->
-
 
         <!-- ✅ VERIFICADO: Cena Horario Extendido - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Cena Horario Extendido / Dinner Extended -->
         <!-- Horario desde para la cena horario extendido / Dinner Extended From -->
         <!-- Horario hasta para la cena horario extendido / Dinner Extended To -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
-          <mat-form-field data-cy="dinner-extended-field">
-            <mat-label>{{ "sites.add.dinner-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-extended-from-field">
-            <mat-label>{{ "sites.add.dinner-extended-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtendedFrom" data-cy="dinner-extended-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedFrom')?.hasError('required')">
-              {{ "sites.add.dinner-extended-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.add.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-extended-to-field">
-            <mat-label>{{ "sites.add.dinner-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerExtendedTo" data-cy="dinner-extended-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('dinnerExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('required')">
-              {{ 'sites.add.dinner-extended-to.required' | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerExtendedFrom', 'dinnerExtendedTo')">
-              {{ 'sites.add.time-range-invalid' | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div> -->
-
 
         <!-- ✅ VERIFICADO: Cena en Riesgo - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Cena en Riesgo / Dinner At Risk -->
         <!-- Horario desde para la cena en riesgo / Dinner At Risk From -->
         <!-- Horario hasta para la cena en riesgo / Dinner At Risk To -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <!--
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
-          <mat-form-field data-cy="dinner-at-risk-field">
-            <mat-label>{{ "sites.add.dinner-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-at-risk-from-field">
-            <mat-label>{{ "sites.add.dinner-at-risk-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRiskFrom" data-cy="dinner-at-risk-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskFrom')?.hasError('required')">
-              {{ "sites.add.dinner-at-risk-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.add.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="dinner-at-risk-to-field">
-            <mat-label>{{ "sites.add.dinner-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="dinnerAtRiskTo" data-cy="dinner-at-risk-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('dinnerAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('required')">
-              {{ 'sites.add.dinner-at-risk-to.required' | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('dinnerAtRiskFrom', 'dinnerAtRiskTo')">
-              {{ 'sites.add.time-range-invalid' | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        -->
 
         <!-- ✅ VERIFICADO: Merienda Horario Extendido - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Merienda Horario Extendido / Snack Extended -->
         <!-- Horario desde para la merienda horario extendido / Snack Extended From -->
         <!-- Horario hasta para la merienda horario extendido / Snack Extended To -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <!-- <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
-          <mat-form-field data-cy="snack-extended-field">
-            <mat-label>{{ "sites.add.snack-extended.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-extended-from-field">
-            <mat-label>{{ "sites.add.snack-extended-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtendedFrom" data-cy="snack-extended-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedFrom')?.hasError('required')">
-              {{ "sites.add.snack-extended-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.add.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-extended-to-field">
-            <mat-label>{{ "sites.add.snack-extended-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackExtendedTo" data-cy="snack-extended-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackExtendedFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('required')">
-              {{ 'sites.add.snack-extended-to.required' | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackExtendedTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackExtendedFrom', 'snackExtendedTo')">
-              {{ 'sites.add.time-range-invalid' | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div> -->
-
 
         <!-- ✅ VERIFICADO: Merienda en Riesgo - Aplica a: PDAM ❌ PSAV ❌ PACNA ✅ -->
         <!-- Merienda en Riesgo / Snack At Risk -->
         <!-- Horario desde para la merienda en riesgo / Snack At Risk From -->
         <!-- Horario hasta para la merienda en riesgo / Snack At Risk To -->
         <!-- Servicios individuales removidos - siempre se usa tabla de grupos -->
-        <!--
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" style="display: none;">
-          <mat-form-field data-cy="snack-at-risk-field">
-            <mat-label>{{ "sites.add.snack-at-risk.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-at-risk-from-field">
-            <mat-label>{{ "sites.add.snack-at-risk-from.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRiskFrom" data-cy="snack-at-risk-from-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskFrom')?.hasError('required')">
-              {{ "sites.add.snack-at-risk-from.required" | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskFrom')?.hasError('operatingHoursRange')">
-              {{ "sites.add.service-time-range-error.message" | transloco }}
-            </mat-error>
-          </mat-form-field>
-          <mat-form-field data-cy="snack-at-risk-to-field">
-            <mat-label>{{ "sites.add.snack-at-risk-to.label" | transloco }}</mat-label>
-            <mat-select formControlName="snackAtRiskTo" data-cy="snack-at-risk-to-input" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of getEndTimeOptions('snackAtRiskFrom')" [value]="timeStringToDateWrapper(time.value)">
-                {{ time.display }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('required')">
-              {{ 'sites.add.snack-at-risk-to.required' | transloco }}
-            </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('snackAtRiskTo')?.hasError('timeRangeInvalid') || isEndTimeInvalid('snackAtRiskFrom', 'snackAtRiskTo')">
-              {{ 'sites.add.time-range-invalid' | transloco }}
-            </mat-error>
-          </mat-form-field>
-        </div>
-        -->
 
         <!-- TITULO -->
         <!-- Persona a Cargo -->
