@@ -529,21 +529,22 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
       }
 
       // Validar contra la matrícula general
-      if (generalEnrollment) {
+      const maxEnrollment = Number(generalEnrollment);
+      if (maxEnrollment != null && !Number.isNaN(maxEnrollment)) {
         // Calcular la suma de todos los grupos existentes (excluyendo el grupo actual si está en edición)
         const otherGroupsTotal = (existingGroups || [])
-          .filter(group => group.id !== currentGroupId)
-          .reduce((sum, group) => sum + (group.numberOfChildren || 0), 0);
+          .filter((group) => group.id != currentGroupId)
+          .reduce((sum, group) => sum + Number(group.numberOfChildren ?? 0), 0);
 
         const totalWithCurrent = otherGroupsTotal + numberOfChildren;
 
-        if (totalWithCurrent > generalEnrollment) {
+        if (totalWithCurrent > maxEnrollment) {
           return {
             exceedsEnrollment: {
               value: numberOfChildren,
               otherGroupsTotal: otherGroupsTotal,
               total: totalWithCurrent,
-              maxEnrollment: generalEnrollment
+              maxEnrollment: maxEnrollment
             }
           };
         }

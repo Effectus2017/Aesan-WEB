@@ -62,6 +62,11 @@ export interface Site {
   operatingStartTime?: string;
   operatingEndTime?: string;
 
+  /** Inicio de la primera clase académica (Horario Académico PDAM) */
+  firstAcademicClassStartTime?: string;
+  /** Finalización de la última clase académica (Horario Académico PDAM) */
+  lastAcademicClassEndTime?: string;
+
   /**
    * ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
    * How long has the school/site been providing services with an established enrollment?

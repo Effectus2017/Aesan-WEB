@@ -412,6 +412,26 @@
           </mat-form-field>
         </div>
 
+        <!-- Horario Académico PDAM (opcional) - ambos en una sola fila ocupando todo el espacio -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-2 sm:col-span-12">
+          <mat-form-field data-cy="first-academic-class-start-time-field" class="w-full">
+            <mat-label>{{ "sites.add.first-academic-class-start-time.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'firstAcademicClassStartTime'" data-cy="first-academic-class-start-time-select" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of timeOptions" [value]="timeStringToDateWrapper(time.value)" data-cy="first-academic-class-start-time-option">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field data-cy="last-academic-class-end-time-field" class="w-full">
+            <mat-label>{{ "sites.add.last-academic-class-end-time.label" | transloco }}</mat-label>
+            <mat-select [formControlName]="'lastAcademicClassEndTime'" data-cy="last-academic-class-end-time-select" [compareWith]="compareByTimeWrapper">
+              <mat-option *ngFor="let time of getAcademicEndTimeOptions('firstAcademicClassStartTime')" [value]="timeStringToDateWrapper(time.value)" data-cy="last-academic-class-end-time-option">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
         <!-- TITULO -->
         <!-- Datos Operacionales -->
         <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-1">
@@ -535,6 +555,9 @@
               placeholder="{{ 'sites.add.dining-room-capacity.placeholder' | transloco }}"
               data-cy="dining-room-capacity-input"
             />
+            <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('required')">
+              {{ "sites.add.dining-room-capacity.required-error" | transloco }}
+            </mat-error>
             <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('min')">
               {{ "sites.add.dining-room-capacity.min-error" | transloco }}
             </mat-error>

@@ -9,6 +9,7 @@
     "error": {
       "title": "Error",
       "message": "An error occurred during the operation. Please try again.",
+      "no-response": "No response received from the server. Check your connection or that the server is available.",
       "messageSendError": "Error sending message",
       "confirm": "OK"
     },

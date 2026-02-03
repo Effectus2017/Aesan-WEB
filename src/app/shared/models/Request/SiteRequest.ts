@@ -40,6 +40,10 @@ export interface SiteRequest {
     operatingDaysCalculated?: number;
     operatingStartTime?: string;
     operatingEndTime?: string;
+    /** Inicio de la primera clase académica (Horario Académico PDAM) */
+    firstAcademicClassStartTime?: string;
+    /** Finalización de la última clase académica (Horario Académico PDAM) */
+    lastAcademicClassEndTime?: string;
     operatingDaysOfWeek?: number[]; // Días de la semana en que opera el sitio (1=Lunes, 2=Martes, ..., 7=Domingo)
 
     /**

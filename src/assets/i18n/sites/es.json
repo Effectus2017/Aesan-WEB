@@ -219,6 +219,14 @@
                 "placeholder": "Seleccione la hora de fin",
                 "required": "La hora de fin es requerida"
             },
+            "first-academic-class-start-time": {
+                "label": "Inicio de la Primera Clase Académica",
+                "placeholder": "Seleccione la hora (opcional)"
+            },
+            "last-academic-class-end-time": {
+                "label": "Finalización de la Última Clase Académica",
+                "placeholder": "Seleccione la hora (opcional)"
+            },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
                 "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
@@ -292,7 +300,13 @@
                 "label": "Capacidad de Salón Comedor",
                 "placeholder": "Ingrese la capacidad del salón comedor",
                 "min-error": "La capacidad debe ser mayor a 0",
-                "max-error": "La capacidad no puede ser mayor que la matrícula general"
+                "max-error": "La capacidad no puede ser mayor que la matrícula general",
+                "required-error": "La capacidad del salón comedor es requerida cuando tiene salón comedor"
+            },
+            "groups": {
+                "dining-room-capacity-required": "Debe indicar la capacidad del salón comedor antes de agregar o editar grupos",
+                "total-exceeds-enrollment": "La suma de niños en los grupos no puede superar la matrícula general",
+                "group-exceeds-capacity": "Ningún grupo puede superar la capacidad del salón comedor"
             },
             "administrator-authorized": {
                 "label": "Información del Representante",
@@ -809,6 +823,9 @@
         },
         "edit": {
             "title": "Editar Sitio",
+            "error": {
+                "save-failed": "No se pudo guardar el sitio. La operación no se completó correctamente."
+            },
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
             "service-time-range-error": {
                 "message": "El horario del servicio debe estar dentro del rango de horas de operación del sitio"
@@ -986,6 +1003,14 @@
                 "placeholder": "Seleccione la hora de fin",
                 "required": "La hora de fin es requerida"
             },
+            "first-academic-class-start-time": {
+                "label": "Inicio de la Primera Clase Académica",
+                "placeholder": "Seleccione la hora (opcional)"
+            },
+            "last-academic-class-end-time": {
+                "label": "Finalización de la Última Clase Académica",
+                "placeholder": "Seleccione la hora (opcional)"
+            },
             "operating-dates": {
                 "label": "Días de Funcionamiento",
                 "description": "Período de funcionamiento del sitio"
@@ -1059,7 +1084,13 @@
                 "label": "Capacidad de Salón Comedor",
                 "placeholder": "Ingrese la capacidad del salón comedor",
                 "min-error": "La capacidad debe ser mayor a 0",
-                "max-error": "La capacidad no puede ser mayor que la matrícula general"
+                "max-error": "La capacidad no puede ser mayor que la matrícula general",
+                "required-error": "La capacidad del salón comedor es requerida cuando tiene salón comedor"
+            },
+            "groups": {
+                "dining-room-capacity-required": "Debe indicar la capacidad del salón comedor antes de agregar o editar grupos",
+                "total-exceeds-enrollment": "La suma de niños en los grupos no puede superar la matrícula general",
+                "group-exceeds-capacity": "Ningún grupo puede superar la capacidad del salón comedor"
             },
             "administrator-authorized": {
                 "label": "Información del Representante",

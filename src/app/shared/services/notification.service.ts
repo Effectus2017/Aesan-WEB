@@ -51,6 +51,7 @@ export class NotificationService {
   /**
    * Muestra un diálogo de error usando FuseConfirmationService
    * Utiliza inyección de dependencias interna para obtener los servicios necesarios
+   * @param message Clave i18n o mensaje; se traduce con Transloco (para claves como 'sites.edit.groups.group-exceeds-capacity')
    */
   showErrorDialog(message: string = 'dialog.error.message'): void {
     this.fuseConfirmationService.open({
@@ -61,6 +62,28 @@ export class NotificationService {
         color: 'error',
       },
       message: this.translocoService.translate(message),
+      actions: {
+        confirm: {
+          label: this.translocoService.translate('dialog.error.confirm'),
+          color: 'warn',
+        },
+      },
+    });
+  }
+
+  /**
+   * Muestra un diálogo de error con un mensaje en texto plano (sin traducir).
+   * Útil para mostrar el mensaje de error que devuelve el servidor/API.
+   */
+  showErrorDialogWithRawMessage(message: string): void {
+    this.fuseConfirmationService.open({
+      title: this.translocoService.translate('dialog.error.title'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:x-circle',
+        color: 'error',
+      },
+      message,
       actions: {
         confirm: {
           label: this.translocoService.translate('dialog.error.confirm'),

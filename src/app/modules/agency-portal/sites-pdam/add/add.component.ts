@@ -316,6 +316,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
+      // Horario Académico PDAM (opcional)
+      firstAcademicClassStartTime: [null],
+      lastAcademicClassEndTime: [null],
       // Días de la semana en que opera el sitio (selección múltiple)
       // Days of the week the site operates (multiple selection)
       operatingDaysOfWeek: [[], Validators.required],
@@ -628,13 +631,15 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       .subscribe((hasDiningRoom: boolean) => {
         const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
         if (hasDiningRoom === false) {
-          // Si cambia a false, limpiar el campo de capacidad
+          // Si cambia a false, limpiar el campo de capacidad y deshabilitar
           capacityControl?.setValue(null, { emitEvent: false });
           capacityControl?.clearValidators();
+          capacityControl?.disable();
           capacityControl?.updateValueAndValidity({ emitEvent: false });
         } else if (hasDiningRoom === true) {
-          // Si cambia a true, agregar validación mínima
-          capacityControl?.setValidators([Validators.min(1)]);
+          capacityControl?.enable();
+          // Si cambia a true, capacidad es obligatoria y mínimo 1
+          capacityControl?.setValidators([Validators.required, Validators.min(1)]);
           capacityControl?.updateValueAndValidity({ emitEvent: false });
         }
         this._changeDetectorRef.detectChanges();
@@ -655,7 +660,11 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
         this._changeDetectorRef.detectChanges();
       });
 
-
+    // Estado inicial: deshabilitar capacidad si no tiene salón comedor
+    const initialHasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value;
+    if (initialHasDiningRoom !== true) {
+      this.headerConfig.formGroup.get('diningRoomCapacity')?.disable({ emitEvent: false });
+    }
   }
 
   /**
@@ -735,6 +744,16 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
 
     return getEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
+  }
+
+  /**
+   * Opciones para "Finalización de la Última Clase Académica": rango completo (12 AM - 11:30 PM),
+   * sin limitar por horas de funcionamiento. Si hay "Inicio" seleccionado, solo horas posteriores.
+   */
+  getAcademicEndTimeOptions(fromField: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromField);
+    const fromTime = fromControl?.value ?? null;
+    return getEndTimeOptions(this.timeOptions, fromTime, '23:59');
   }
 
   /**
@@ -1038,6 +1057,8 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Horas de funcionamiento
     const operatingStartTime: string = toTimeString(formValues.operatingStartTime);
     const operatingEndTime: string = toTimeString(formValues.operatingEndTime);
+    const firstAcademicClassStartTime: string | null = formValues.firstAcademicClassStartTime ? toTimeString(formValues.firstAcademicClassStartTime) : null;
+    const lastAcademicClassEndTime: string | null = formValues.lastAcademicClassEndTime ? toTimeString(formValues.lastAcademicClassEndTime) : null;
 
     // Obtener los días permitidos de la agencia
     const operatingDaysOfWeekIds: number[] = formValues.operatingDaysOfWeek.map((day: DayOfWeekResponse) => day.id);
@@ -1105,6 +1126,8 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Horas de funcionamiento
       operatingStartTime: operatingStartTime ?? null,
       operatingEndTime: operatingEndTime ?? null,
+      firstAcademicClassStartTime: firstAcademicClassStartTime ?? undefined,
+      lastAcademicClassEndTime: lastAcademicClassEndTime ?? undefined,
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
       serviceTime: formValues.serviceTime ?? null,
@@ -1244,6 +1267,10 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
         this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
         return;
       }
+
+      if (!this.validateGroupsEnrollmentAndCapacity()) {
+        return;
+      }
     }
 
     // Agregar grupos de niños con serviceSlots (los servicios van dentro de cada grupo)
@@ -1272,15 +1299,18 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
-        if (
-          err?.status === 400 &&
-          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
-          err?.error?.message
-        ) {
-          this._notificationService.showError(err.error.message);
+      error: (err: { status?: number; error?: { code?: string; message?: string } | string; message?: string }) => {
+        const body = err?.error;
+        const message =
+          typeof body === 'object' && body !== null && 'message' in body
+            ? (body as { message?: string }).message
+            : typeof body === 'string'
+              ? body
+              : err?.message;
+        if (message) {
+          this._notificationService.showErrorDialogWithRawMessage(message);
         } else {
-          this._notificationService.showErrorDialog();
+          this._notificationService.showErrorDialog('dialog.error.no-response');
         }
         this.headerConfig.formGroup.enable();
       },
@@ -1798,6 +1828,37 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     }
   }
 
+  /**
+   * Valida que la suma de niños en los grupos no supere la matrícula general
+   * y que cada grupo no supere la capacidad del salón (cuando hay salón comedor).
+   * @returns false si la validación falla (y muestra el mensaje de error)
+   */
+  private validateGroupsEnrollmentAndCapacity(): boolean {
+    const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+    const totalChildren = this.servicesByGroups.reduce(
+      (sum, g) => sum + Number(g.numberOfChildren ?? 0),
+      0
+    );
+    const maxEnrollment = Number(generalEnrollment);
+    if (maxEnrollment != null && !Number.isNaN(maxEnrollment) && totalChildren > maxEnrollment) {
+      this._notificationService.showErrorDialog('sites.add.groups.total-exceeds-enrollment');
+      return false;
+    }
+    if (hasDiningRoom && diningRoomCapacity != null) {
+      const capacityNum = Number(diningRoomCapacity);
+      const exceeds = this.servicesByGroups.some(
+        (g) => Number(g.numberOfChildren ?? 0) > capacityNum
+      );
+      if (exceeds) {
+        this._notificationService.showErrorDialog('sites.add.groups.group-exceeds-capacity');
+        return false;
+      }
+    }
+    return true;
+  }
+
   // ===== MÉTODOS PARA MANEJO DE TABLA DE SERVICIOS POR GRUPOS =====
 
   onAddMenuAction(menuItemId: string): void {
@@ -1807,6 +1868,14 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   onTableAdd(): void {
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    if (hasDiningRoom) {
+      const diningRoomCapacityVal = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+      if (diningRoomCapacityVal == null || diningRoomCapacityVal === '' || Number(diningRoomCapacityVal) < 1) {
+        this._notificationService.showErrorDialog('sites.add.groups.dining-room-capacity-required');
+        return;
+      }
+    }
     const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
@@ -1851,7 +1920,14 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this._notificationService.showError('sites.add.services.error.service-not-found');
       return;
     }
-
+    const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
+    if (hasDiningRoom) {
+      const diningRoomCapacityVal = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
+      if (diningRoomCapacityVal == null || diningRoomCapacityVal === '' || Number(diningRoomCapacityVal) < 1) {
+        this._notificationService.showErrorDialog('sites.add.groups.dining-room-capacity-required');
+        return;
+      }
+    }
     const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
     const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;

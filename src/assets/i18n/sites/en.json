@@ -219,6 +219,14 @@
                 "placeholder": "Select end time",
                 "required": "End time is required"
             },
+            "first-academic-class-start-time": {
+                "label": "Start of First Academic Class",
+                "placeholder": "Select time (optional)"
+            },
+            "last-academic-class-end-time": {
+                "label": "End of Last Academic Class",
+                "placeholder": "Select time (optional)"
+            },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
                 "placeholder": "Select the date when your entity began operating (optional)",
@@ -292,7 +300,13 @@
                 "label": "Dining Room Capacity",
                 "placeholder": "Enter the dining room capacity",
                 "min-error": "Capacity must be greater than 0",
-                "max-error": "Capacity cannot be greater than general enrollment"
+                "max-error": "Capacity cannot be greater than general enrollment",
+                "required-error": "Dining room capacity is required when the site has a dining room"
+            },
+            "groups": {
+                "dining-room-capacity-required": "You must indicate the dining room capacity before adding or editing groups",
+                "total-exceeds-enrollment": "The sum of children in all groups cannot exceed the general enrollment",
+                "group-exceeds-capacity": "No group can exceed the dining room capacity"
             },
             "administrator-authorized": {
                 "label": "Representative Information",
@@ -876,6 +890,9 @@
         },
         "edit": {
             "title": "Edit Site",
+            "error": {
+                "save-failed": "The site could not be saved. The operation did not complete successfully."
+            },
             "time-range-invalid": "End time must be greater than start time",
             "service-time-range-error": {
                 "message": "Service time must be within the site's operating hours range"
@@ -1053,6 +1070,14 @@
                 "placeholder": "Select end time",
                 "required": "End time is required"
             },
+            "first-academic-class-start-time": {
+                "label": "Start of First Academic Class",
+                "placeholder": "Select time (optional)"
+            },
+            "last-academic-class-end-time": {
+                "label": "End of Last Academic Class",
+                "placeholder": "Select time (optional)"
+            },
             "operating-dates": {
                 "label": "Operating Days",
                 "description": "Site operating period"
@@ -1126,7 +1151,13 @@
                 "label": "Dining Room Capacity",
                 "placeholder": "Enter the dining room capacity",
                 "min-error": "Capacity must be greater than 0",
-                "max-error": "Capacity cannot be greater than general enrollment"
+                "max-error": "Capacity cannot be greater than general enrollment",
+                "required-error": "Dining room capacity is required when the site has a dining room"
+            },
+            "groups": {
+                "dining-room-capacity-required": "You must indicate the dining room capacity before adding or editing groups",
+                "total-exceeds-enrollment": "The sum of children in all groups cannot exceed the general enrollment",
+                "group-exceeds-capacity": "No group can exceed the dining room capacity"
             },
             "administrator-authorized": {
                 "label": "Representative Information",

@@ -9,6 +9,7 @@
     "error": {
       "title": "Error",
       "message": "Ha ocurrido un error durante la operación. Por favor, inténtelo de nuevo.",
+      "no-response": "No se recibió respuesta del servidor. Compruebe la conexión o que el servidor esté disponible.",
       "messageSendError": "Error al enviar el mensaje",
       "confirm": "Aceptar"
     },
