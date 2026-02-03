@@ -46,6 +46,9 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <p *ngIf="timeOutsideSiteRangeError" class="error-message" role="alert">
+          {{ timeOutsideSiteRangeError }}
+        </p>
 
         <!-- Comentario -->
         <mat-form-field>
@@ -69,7 +72,7 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid">
+      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || timeOutsideSiteRangeError">
         {{ 'global.buttons.add' | transloco }}
       </button>
     </div>

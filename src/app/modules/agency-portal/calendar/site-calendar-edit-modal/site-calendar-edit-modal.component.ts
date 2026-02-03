@@ -71,6 +71,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
 export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   timeOptions: { value: string; display: string }[] = [];
   conflictingServices: SiteOperatingDayService[] = [];
+  timeOutsideSiteRangeError: string | null = null;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private translocoService: TranslocoService = inject(TranslocoService);
 
@@ -78,25 +79,61 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<SiteCalendarEditModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarEditModalData
   ) {
-    console.log('Edit modal constructor - data:', this.data);
-    console.log('Edit modal constructor - form values:', {
-      startTime: this.data.form.get('startTime')?.value,
-      endTime: this.data.form.get('endTime')?.value
-    });
     this.generateTimeOptions();
     this.convertFormValuesTo24h();
   }
 
+  /** Convierte "08:00" o "08:00:00" a minutos desde medianoche. */
+  private timeToMinutes(timeStr: string | undefined): number | null {
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (!match) return null;
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+    return hours * 60 + minutes;
+  }
+
+  private timeValueToMinutes(value: string): number {
+    const m = this.timeToMinutes(value);
+    return m ?? 0;
+  }
+
   ngOnInit(): void {
-    // Suscribirse a cambios del campo startTime para validación en tiempo real
+    this.setupTimeRangeValidation();
     this.data.form.get('startTime')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.checkStartTimeConflict();
+        this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+      });
+    this.data.form.get('endTime')?.valueChanges
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
       });
 
-    // Validar al inicializar
     this.checkStartTimeConflict();
+    this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+  }
+
+  private setupTimeRangeValidation(): void {
+    this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+  }
+
+  getTimeOutsideSiteRangeError(): string | null {
+    const siteStart = this.timeToMinutes(this.data.siteOperatingStartTime);
+    const siteEnd = this.timeToMinutes(this.data.siteOperatingEndTime);
+    if (siteStart == null || siteEnd == null) return null;
+    const startVal = this.data.form.get('startTime')?.value;
+    const endVal = this.data.form.get('endTime')?.value;
+    if (!startVal || !endVal) return null;
+    const startMin = this.timeValueToMinutes(startVal);
+    const endMin = this.timeValueToMinutes(endVal);
+    if (startMin < siteStart || endMin > siteEnd) {
+      return this.translocoService.translate('sites.calendar.modals.edit-day.time-outside-site-hours') ?? null;
+    }
+    return null;
   }
 
   ngOnDestroy(): void {
@@ -105,21 +142,23 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   }
 
   private generateTimeOptions(): void {
-    const options: { value: string; display: string }[] = [];
-
+    const all: { value: string; display: string }[] = [];
     for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const time12 = this.convert24To12(hour, minute);
-        options.push({
-          value: time24,
-          display: time12
-        });
+        all.push({ value: time24, display: this.convert24To12(hour, minute) });
       }
     }
-
-    this.timeOptions = options;
-    console.log('Generated time options:', this.timeOptions.slice(0, 5)); // Mostrar solo las primeras 5
+    const siteStart = this.timeToMinutes(this.data.siteOperatingStartTime);
+    const siteEnd = this.timeToMinutes(this.data.siteOperatingEndTime);
+    if (siteStart != null && siteEnd != null && siteStart <= siteEnd) {
+      this.timeOptions = all.filter((opt) => {
+        const min = this.timeValueToMinutes(opt.value);
+        return min >= siteStart && min <= siteEnd;
+      });
+    } else {
+      this.timeOptions = all;
+    }
   }
 
   private convert24To12(hour: number, minute: number): string {
@@ -130,12 +169,6 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   }
 
   private convertFormValuesTo24h(): void {
-    // Debug: mostrar valores originales
-    console.log('Original form values:', {
-      startTime: this.data.form.get('startTime')?.value,
-      endTime: this.data.form.get('endTime')?.value
-    });
-
     // Convertir startTime de 12h a 24h si es necesario
     const startTime = this.data.form.get('startTime')?.value;
     if (startTime && typeof startTime === 'string') {
@@ -173,22 +206,13 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
 
       this.data.form.get('endTime')?.setValue(time24);
     }
-
-    // Debug: mostrar valores convertidos
-    console.log('Form values after conversion:', {
-      startTime: this.data.form.get('startTime')?.value,
-      endTime: this.data.form.get('endTime')?.value
-    });
   }
 
   private convert12To24(time12: string): string {
-    console.log('Converting 12h to 24h:', time12);
 
     // Parsear formato 12h (ej: "8:00 AM", "4:30 PM")
     const match = time12.match(/(\d{1,2}):(\d{2})\s*(AM|PM)/i);
     if (!match) {
-      console.log('No match found for 12h format, returning as is:', time12);
-      // Si no coincide con formato 12h, devolver tal como está
       return time12;
     }
 
@@ -196,17 +220,13 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
     const minutes = parseInt(match[2]);
     const period = match[3].toUpperCase();
 
-    console.log('Parsed values:', { hours, minutes, period });
-
     if (period === 'PM' && hours !== 12) {
       hours += 12;
     } else if (period === 'AM' && hours === 12) {
       hours = 0;
     }
 
-    const result = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
-    console.log('Converted result:', result);
-    return result;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
   }
 
   private removeSeconds(timeString: string): string {
@@ -271,7 +291,7 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
 
     // Normalizar formato: remover segundos y espacios
     let normalizedTime = timeString.trim();
-    
+
     // Si tiene formato 12h (AM/PM), convertir a 24h primero
     if (normalizedTime.includes('AM') || normalizedTime.includes('PM')) {
       normalizedTime = this.convert12To24(normalizedTime);
@@ -286,7 +306,7 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
 
     const hours = parseInt(match[1], 10);
     const minutes = parseInt(match[2], 10);
-    
+
     return hours * 60 + minutes;
   }
 
@@ -343,11 +363,13 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Verifica si el formulario es válido (incluyendo validación de conflictos)
+   * Verifica si el formulario es válido (incluyendo validación de conflictos y rango del sitio)
    */
   isFormValid(): boolean {
     if (!this.data.form.valid) return false;
-    return !this.hasStartTimeConflict();
+    if (this.hasStartTimeConflict()) return false;
+    if (this.timeOutsideSiteRangeError) return false;
+    return true;
   }
 
   /**
@@ -355,10 +377,10 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
    */
   formatServiceTime(timeString: string): string {
     if (!timeString) return '';
-    
+
     // Normalizar formato
     let normalizedTime = timeString.trim();
-    
+
     // Si tiene formato 12h, mantenerlo
     if (normalizedTime.includes('AM') || normalizedTime.includes('PM')) {
       return normalizedTime;
@@ -385,12 +407,9 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   }
 
   onSave(): void {
-    // Validar antes de guardar
-    if (this.hasStartTimeConflict()) {
-      // No permitir guardar si hay conflicto
-      return;
-    }
-
+    if (this.hasStartTimeConflict()) return;
+    this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+    if (this.timeOutsideSiteRangeError) return;
     if (this.data.form.valid) {
       this.dialogRef.close(this.data.form.value);
     }

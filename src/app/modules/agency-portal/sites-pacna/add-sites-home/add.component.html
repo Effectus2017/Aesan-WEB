@@ -515,6 +515,9 @@
                     <div class="pl-6 text-xs font-medium text-blue-600 dark:text-blue-400">
                       {{ timeStringToDateWrapper(item.breakfastFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.breakfastTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 1).length">
+                      {{ getOperatingDatesForService(item, 1) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Almuerzo -->
@@ -525,6 +528,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-orange-600 dark:text-orange-400">
                       {{ timeStringToDateWrapper(item.lunchFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.lunchTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 2).length">
+                      {{ getOperatingDatesForService(item, 2) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -537,6 +543,9 @@
                     <div class="pl-6 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(item.snackAMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.snackAMTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 3).length">
+                      {{ getOperatingDatesForService(item, 3) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Merienda PM -->
@@ -547,6 +556,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(item.snackPMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.snackPMTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 5).length">
+                      {{ getOperatingDatesForService(item, 5) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -559,6 +571,9 @@
                     <div class="pl-6 text-xs font-medium text-purple-600 dark:text-purple-400">
                       {{ timeStringToDateWrapper(item.dinnerFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.dinnerTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 4).length">
+                      {{ getOperatingDatesForService(item, 4) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Merienda Nocturna -->
@@ -569,6 +584,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                       {{ timeStringToDateWrapper(item.snackNightFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.snackNightTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 6).length">
+                      {{ getOperatingDatesForService(item, 6) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -581,6 +599,9 @@
                     <div class="pl-6 text-xs font-medium text-pink-600 dark:text-pink-400">
                       {{ timeStringToDateWrapper(item.dinnerExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.dinnerExtendedTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 7).length">
+                      {{ getOperatingDatesForService(item, 7) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <div *ngIf="item.dinnerAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
@@ -590,6 +611,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(item.dinnerAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.dinnerAtRiskTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 8).length">
+                      {{ getOperatingDatesForService(item, 8) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -601,6 +625,9 @@
                     <div class="pl-6 text-xs font-medium text-teal-600 dark:text-teal-400">
                       {{ timeStringToDateWrapper(item.snackExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.snackExtendedTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 9).length">
+                      {{ getOperatingDatesForService(item, 9) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <div *ngIf="item.snackAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
@@ -610,6 +637,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(item.snackAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(item.snackAtRiskTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(item, 10).length">
+                      {{ getOperatingDatesForService(item, 10) | serviceDaysDisplay }}
                     </div>
                   </div>
                 </div>

@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
@@ -50,6 +51,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
+import { ApiErrorBody } from 'app/shared/models/ApiError';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -70,6 +72,11 @@ import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
+import { ServiceDaysDisplayPipe } from 'app/shared/pipes/service-days-display.pipe';
+import {
+  SiteChildGroupServiceSlotResponse,
+  ServiceSlotOperatingDate
+} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 
 @Component({
   selector: 'app-add-sites-home',
@@ -99,7 +106,8 @@ import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DatePipe
+    DatePipe,
+    ServiceDaysDisplayPipe
 ],
 })
 export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -386,7 +394,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    viewMode: 'cards'
+    viewMode: 'cards',
+    operatingDaysOfWeek: []
   };
 
   // Lista de grupos con sus slots de servicio (en memoria hasta el envío)
@@ -534,6 +543,10 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
     this.setupFormListeners();
 
+    // Días de operación para tarjetas Servicios Activos (inicial desde formulario)
+    this.servicesTableConfig.operatingDaysOfWeek =
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
+
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -547,11 +560,13 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
-    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos y actualizar días en tarjetas Servicios Activos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
@@ -598,6 +613,14 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
    */
   timeStringToDateWrapper(timeString: string): Date | null {
     return timeStringToDate(timeString);
+  }
+
+  /** Fechas de operación del slot por serviceTypeId (para pipe serviceDaysDisplay). */
+  getOperatingDatesForService(item: any, serviceTypeId: number): ServiceSlotOperatingDate[] {
+    const slots = item?.serviceSlots ?? [];
+    if (!Array.isArray(slots)) return [];
+    const slot = slots.find((s: SiteChildGroupServiceSlotResponse) => s.serviceTypeId === serviceTypeId);
+    return slot?.operatingDates ?? [];
   }
 
   ngOnDestroy(): void {
@@ -931,13 +954,14 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+      error: (err: HttpErrorResponse) => {
+        const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
-          err?.error?.message
+          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.message
         ) {
-          this._notificationService.showError(err.error.message);
+          this._notificationService.showError(body.message);
         } else {
           this._notificationService.showErrorDialog();
         }

@@ -67,6 +67,9 @@
             </mat-error>
           </mat-form-field>
         </div>
+        <p *ngIf="timeOutsideSiteRangeError" class="error-message" role="alert">
+          {{ timeOutsideSiteRangeError }}
+        </p>
 
         <!-- Comentario -->
         <mat-form-field>

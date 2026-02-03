@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -10,7 +11,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { NgForOf, NgIf } from '@angular/common';
-import { Subject, takeUntil, skip } from 'rxjs';
+import { merge, Subject, takeUntil, skip } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
@@ -41,6 +42,7 @@ import {
   generateTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
+  isTimeWithinOperatingRange,
   timeStringToDate,
   dateToMinutes,
   compareByTime,
@@ -51,6 +53,11 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { getApiErrorMessage } from 'app/shared/models/ApiError';
+import {
+  SiteChildGroupServiceSlotMinimal,
+  SiteChildGroupServiceSlotResponse
+} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
@@ -457,7 +464,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    viewMode: 'cards'
+    viewMode: 'cards',
+    operatingDaysOfWeek: []
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
@@ -592,11 +600,13 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
-    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos y actualizar tarjetas Servicios Activos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
@@ -682,6 +692,61 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     if (initialHasDiningRoom !== true) {
       this.headerConfig.formGroup.get('diningRoomCapacity')?.disable({ emitEvent: false });
     }
+
+    // Validar horas académicas cuando cambien las horas de funcionamiento
+    const operatingStartControl = this.headerConfig.formGroup.get('operatingStartTime');
+    const operatingEndControl = this.headerConfig.formGroup.get('operatingEndTime');
+    merge(
+      operatingStartControl?.valueChanges ?? [],
+      operatingEndControl?.valueChanges ?? []
+    )
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => this.validateAcademicTimesWithinOperatingHours());
+  }
+
+  /**
+   * Valida que firstAcademicClassStartTime y lastAcademicClassEndTime estén dentro del rango de funcionamiento.
+   */
+  private validateAcademicTimesWithinOperatingHours(): void {
+    const group = this.headerConfig.formGroup;
+    const operatingStartTime = group.get('operatingStartTime')?.value;
+    const operatingEndTime = group.get('operatingEndTime')?.value;
+    const firstControl = group.get('firstAcademicClassStartTime');
+    const lastControl = group.get('lastAcademicClassEndTime');
+    if (!firstControl || !lastControl) return;
+
+    const firstValid = isTimeWithinOperatingRange(
+      firstControl.value,
+      operatingStartTime,
+      operatingEndTime
+    );
+    const lastValid = isTimeWithinOperatingRange(
+      lastControl.value,
+      operatingStartTime,
+      operatingEndTime
+    );
+
+    if (firstValid) {
+      const err = firstControl.errors;
+      if (err?.['outsideOperatingHours']) {
+        const { outsideOperatingHours: _, ...rest } = err;
+        firstControl.setErrors(Object.keys(rest).length ? rest : null);
+      }
+    } else {
+      firstControl.setErrors({ ...(firstControl.errors ?? {}), outsideOperatingHours: true });
+    }
+    if (lastValid) {
+      const err = lastControl.errors;
+      if (err?.['outsideOperatingHours']) {
+        const { outsideOperatingHours: _, ...rest } = err;
+        lastControl.setErrors(Object.keys(rest).length ? rest : null);
+      }
+    } else {
+      lastControl.setErrors({ ...(lastControl.errors ?? {}), outsideOperatingHours: true });
+    }
+    firstControl.updateValueAndValidity({ emitEvent: false });
+    lastControl.updateValueAndValidity({ emitEvent: false });
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -707,13 +772,24 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   /**
-   * Opciones para "Finalización de la Última Clase Académica": rango completo (12 AM - 11:30 PM),
-   * sin limitar por horas de funcionamiento. Si hay "Inicio" seleccionado, solo horas posteriores.
+   * Opciones para "Inicio de la Primera Clase Académica": solo horas dentro del rango de funcionamiento.
+   */
+  getAcademicStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    return filterStartTimeOptions(this.timeOptions, operatingStartTime, operatingEndTime);
+  }
+
+  /**
+   * Opciones para "Finalización de la Última Clase Académica": dentro del rango de funcionamiento;
+   * si hay "Inicio" seleccionado, solo horas posteriores.
    */
   getAcademicEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     const fromTime = fromControl?.value ?? null;
-    return getEndTimeOptions(this.timeOptions, fromTime, '23:59');
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    return getEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -841,6 +917,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
   onSetForm(param: Site): void {
     this.param = param;
+    this.servicesTableConfig.operatingDaysOfWeek = param.operatingDaysOfWeek ?? [];
 
     // Obtener las ciudades y regiones
     // Get cities and regions
@@ -960,6 +1037,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
     DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
 
+    // Validar horas académicas tras cargar datos (pueden venir fuera del rango de funcionamiento)
+    this.validateAcademicTimesWithinOperatingHours();
+
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
     if (!areaType && city) {
@@ -1006,7 +1086,15 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         id: group.id ?? index + 1,
         groupName: group.groupName,
         numberOfChildren: group.numberOfChildren || 0,
-        serviceSlots: (group as { serviceSlots?: { serviceTypeId: number; isOffered: boolean; from?: string; to?: string }[] }).serviceSlots ?? [],
+        serviceSlots: (group.serviceSlots ?? []).map((slot: SiteChildGroupServiceSlotResponse) => ({
+          serviceTypeId: slot.serviceTypeId,
+          isOffered: slot.isOffered,
+          from: slot.from ?? slot.fromTime,
+          to: slot.to ?? slot.toTime,
+          serviceTypeName: slot.serviceTypeName,
+          serviceTypeNameEN: slot.serviceTypeNameEN,
+          operatingDates: slot.operatingDates ?? [],
+        })),
       }));
       this.updateServicesTableDataSource();
       this.syncChildGroupsFromServices();
@@ -1177,11 +1265,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       return;
     }
 
-    // Agregar grupos de niños con serviceSlots (los servicios van dentro de cada grupo)
-    if (this.childGroups.length > 0) {
-      siteRequest.childGroups = this.childGroups;
-    }
-
+    // En edición los grupos se persisten en el momento desde el modal; no enviar childGroups en update-site.
     this.isLoading = true;
     this.headerConfig.formGroup.disable();
 
@@ -1201,15 +1285,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } | string; message?: string }) => {
+      error: (err: HttpErrorResponse) => {
         console.error('[Edit Site] updateSite error:', err);
-        const body = err?.error;
-        const message =
-          typeof body === 'object' && body !== null && 'message' in body
-            ? (body as { message?: string }).message
-            : typeof body === 'string'
-              ? body
-              : err?.message;
+        const message = getApiErrorMessage(err);
         if (message) {
           this._notificationService.showErrorDialogWithRawMessage(message);
         } else {
@@ -1929,6 +2007,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
         this.syncChildGroupsFromServices();
+        this.saveChildGroupsToBackend();
       }
     });
   }
@@ -1985,6 +2064,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
             this.servicesByGroups[index] = { ...result, id };
             this.updateServicesTableDataSource();
             this.syncChildGroupsFromServices();
+            this.saveChildGroupsToBackend();
           }
         }
       });
@@ -2022,9 +2102,46 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
           this.servicesByGroups.splice(index, 1);
           this.updateServicesTableDataSource();
           this.syncChildGroupsFromServices();
-
+          this.saveChildGroupsToBackend();
         }
       }
+    });
+  }
+
+  private saveChildGroupsToBackend(): void {
+    const siteId = this.param?.id;
+    if (siteId == null) {
+      return;
+    }
+    const payload = this.childGroups.map((g) => ({
+      groupName: g.groupName,
+      numberOfChildren: g.numberOfChildren,
+      serviceSlots: (g.serviceSlots ?? []).map((slot) => ({
+        serviceTypeId: slot.serviceTypeId,
+        isOffered: slot.isOffered,
+        fromTime: slot.fromTime ?? (slot as { from?: string }).from ?? undefined,
+        toTime: slot.toTime ?? (slot as { to?: string }).to ?? undefined,
+        operatingDates: (slot.operatingDates ?? []).map((od: string | { date?: string }) =>
+          typeof od === 'string' ? od : (od as { date?: string }).date
+        ).filter((d): d is string => typeof d === 'string'),
+      })),
+    }));
+    this._siteService.updateSiteChildGroups(siteId, payload).subscribe({
+      next: () => {
+        this._notificationService.showSuccessDialog('sites.edit.childGroups.saved');
+        this._siteService.getSiteById({ id: siteId }).subscribe({
+          next: (response) => {
+            const site = response?.body ?? response;
+            if (site) {
+              this.onSetForm(site);
+              this._changeDetectorRef?.markForCheck();
+            }
+          },
+        });
+      },
+      error: () => {
+        this._notificationService.showErrorDialog('sites.edit.childGroups.error');
+      },
     });
   }
 
@@ -2059,7 +2176,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const s = slot as SiteChildGroupServiceSlotResponse | undefined;
         const fromVal = s?.from ?? s?.fromTime;
         const toVal = s?.to ?? s?.toTime;
         if (fromVal != null) {

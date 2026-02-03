@@ -14,16 +14,22 @@ export class NotificationService {
   private translocoService = inject(TranslocoService);
   private snackBar = inject(MatSnackBar);
 
+  // NOTA: NO SE USA
   showSuccess = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
+  // NOTA: NO SE USA
   showError = (mensaje: string = 'Ocurrió un error', titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
+  // NOTA: NO SE USA
   showWarning = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
+  // NOTA: NO SE USA
   showInfo = (mensaje: string, titulo?: string) => this.snackBar.open(mensaje, titulo, { duration: 5000 });
 
+  // NOTA: NO SE USA
   noImplementado = () => this.showInfo('Acción no implementada');
 
+  // NOTA: NO SE USA
   clear = () => this.snackBar.dismiss();
 
   /**

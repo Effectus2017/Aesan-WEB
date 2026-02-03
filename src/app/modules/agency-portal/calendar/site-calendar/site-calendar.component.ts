@@ -41,6 +41,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { Site } from 'app/shared/models/Site';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 import { getServiceEventColorByTypeId } from 'app/shared/constants/service-type-styles.constants';
+import { HourSegmentClickEvent } from 'app/shared/models/HourSegmentClickEvent';
 
 @Component({
   selector: 'app-site-calendar',
@@ -419,7 +420,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     this.updateOperatingDayFromDrag(updatedOperatingDay);
   }
 
-  onHourSegmentClicked(event: { date: Date }) {
+  onHourSegmentClicked(event: HourSegmentClickEvent) {
     if (this.loading) return;
     const date = event.date;
     const dayData = this.findDayData(date);
@@ -475,22 +476,29 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       updatedAt: new Date()
     };
 
+    const siteStart = this.normalizeTimeToHHmm(this.currentSite?.operatingStartTime);
+    const siteEnd = this.normalizeTimeToHHmm(this.currentSite?.operatingEndTime);
+    const defaultStart = siteStart ?? '08:00';
+    const defaultEnd = siteEnd ?? '18:00';
+
     // Preparar el formulario con valores por defecto
     this.editForm.patchValue({
-      startTime: '08:00',
-      endTime: '18:00',
+      startTime: defaultStart,
+      endTime: defaultEnd,
       comment: '',
       isWeekend: isWeekend, // Establecer automáticamente si es fin de semana
       isHoliday: false
     });
 
-      const dialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
+    const dialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
         form: this.editForm,
         operatingDay: newDay,
-        siteId: this.currentSiteId
+        siteId: this.currentSiteId,
+        siteOperatingStartTime: this.currentSite?.operatingStartTime,
+        siteOperatingEndTime: this.currentSite?.operatingEndTime
       }
     });
 
@@ -510,14 +518,16 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: dayData.isHoliday || false
     });
 
-      const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
         form: this.editForm,
         event: null, // No hay evento para días existentes
         operatingDay: dayData,
-        siteId: this.currentSiteId
+        siteId: this.currentSiteId,
+        siteOperatingStartTime: this.currentSite?.operatingStartTime,
+        siteOperatingEndTime: this.currentSite?.operatingEndTime
       }
     });
 
@@ -544,7 +554,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: operatingDay.isHoliday || false
     });
 
-      const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -552,7 +562,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         event: event,
         operatingDay: operatingDay,
         siteId: this.currentSiteId,
-        fromTable: fromTable
+        fromTable: fromTable,
+        siteOperatingStartTime: this.currentSite?.operatingStartTime,
+        siteOperatingEndTime: this.currentSite?.operatingEndTime
       }
     });
 
@@ -580,7 +592,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: operatingDay.isHoliday || false
     });
 
-      const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -588,7 +600,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         event: event,
         operatingDay: operatingDay,
         siteId: this.currentSiteId,
-        fromTable: true
+        fromTable: true,
+        siteOperatingStartTime: this.currentSite?.operatingStartTime,
+        siteOperatingEndTime: this.currentSite?.operatingEndTime
       }
     });
 
@@ -603,12 +617,47 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     });
   }
 
-  private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any, fromTable: boolean = false) {
+  /** Convierte "08:00:00" o "08:00" a "08:00" (HH:mm). */
+  private normalizeTimeToHHmm(timeStr: string | undefined): string | null {
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})/);
+    if (!match) return null;
+    const h = parseInt(match[1], 10);
+    const m = parseInt(match[2], 10);
+    if (h < 0 || h > 23 || m < 0 || m > 59) return null;
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+  }
 
+  /** Convierte "HH:mm" o "HH:mm:ss" a minutos desde medianoche. */
+  private timeToMinutes(timeStr: string | undefined): number | null {
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (!match) return null;
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+    return hours * 60 + minutes;
+  }
+
+  /** Retorna true si startTime y endTime (HH:mm o con segundos) están dentro del rango del sitio. Si el sitio no tiene rango, retorna true. */
+  private isTimeWithinSiteOperatingRange(startTime: string, endTime: string): boolean {
+    const siteStart = this.timeToMinutes(this.currentSite?.operatingStartTime);
+    const siteEnd = this.timeToMinutes(this.currentSite?.operatingEndTime);
+    if (siteStart == null || siteEnd == null) return true;
+    const startMin = this.timeToMinutes(startTime) ?? 0;
+    const endMin = this.timeToMinutes(endTime) ?? 0;
+    return startMin >= siteStart && endMin <= siteEnd;
+  }
+
+  private updateOperatingDay(operatingDay: SiteOperatingDay, formData: any, fromTable: boolean = false) {
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
 
+    if (!this.isTimeWithinSiteOperatingRange(startTime, endTime)) {
+      this.notificationService.showWarningDialog('sites.calendar.modals.add-day.time-outside-site-hours');
+      return;
+    }
 
     // Obtener isWeekend del operatingDay original (se establece automáticamente)
     const isWeekend = operatingDay.isWeekend || false;
@@ -647,10 +696,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método específico para actualizar desde la tabla
   private updateOperatingDayFromTable(operatingDay: SiteOperatingDay, formData: any, id: any) {
-
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
+
+    if (!this.isTimeWithinSiteOperatingRange(startTime, endTime)) {
+      this.notificationService.showWarningDialog('sites.calendar.modals.add-day.time-outside-site-hours');
+      return;
+    }
 
     // Obtener isWeekend del operatingDay original (se establece automáticamente)
     const isWeekend = operatingDay.isWeekend || false;
@@ -720,6 +773,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     // Convertir DateTime objects a strings para el backend (formato HH:mm:ss)
     const startTime = this.formatTimeForBackend(formData.startTime);
     const endTime = this.formatTimeForBackend(formData.endTime);
+
+    if (!this.isTimeWithinSiteOperatingRange(startTime, endTime)) {
+      this.notificationService.showWarningDialog('sites.calendar.modals.add-day.time-outside-site-hours');
+      return;
+    }
 
     // Obtener isWeekend del newDay (se establece automáticamente si es fin de semana)
     const isWeekend = operatingDay.isWeekend || false;

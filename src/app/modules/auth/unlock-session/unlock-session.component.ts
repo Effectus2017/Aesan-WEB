@@ -10,6 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { UnlockSessionRequest } from 'app/shared/models/Request/UnlockSessionRequest';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({
@@ -87,11 +88,12 @@ export class AuthUnlockSessionComponent implements OnInit {
     // Hide the alert
     this.showAlert = false;
 
+    const credentials: UnlockSessionRequest = {
+      email: this._email ?? '',
+      password: this.unlockSessionForm.get('password').value,
+    };
     this._authService
-      .unlockSession({
-        email: this._email ?? '',
-        password: this.unlockSessionForm.get('password').value,
-      })
+      .unlockSession(credentials)
       .subscribe(
         () => {
           // Set the redirect url.

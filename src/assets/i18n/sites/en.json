@@ -221,11 +221,13 @@
             },
             "first-academic-class-start-time": {
                 "label": "Start of First Academic Class",
-                "placeholder": "Select time (optional)"
+                "placeholder": "Select time (optional)",
+                "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "last-academic-class-end-time": {
                 "label": "End of Last Academic Class",
-                "placeholder": "Select time (optional)"
+                "placeholder": "Select time (optional)",
+                "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
@@ -890,6 +892,11 @@
         },
         "edit": {
             "title": "Edit Site",
+            "success": "The site was saved successfully.",
+            "childGroups": {
+                "saved": "Services by group updated successfully.",
+                "error": "Error saving services by group."
+            },
             "error": {
                 "save-failed": "The site could not be saved. The operation did not complete successfully."
             },
@@ -1072,11 +1079,13 @@
             },
             "first-academic-class-start-time": {
                 "label": "Start of First Academic Class",
-                "placeholder": "Select time (optional)"
+                "placeholder": "Select time (optional)",
+                "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "last-academic-class-end-time": {
                 "label": "End of Last Academic Class",
-                "placeholder": "Select time (optional)"
+                "placeholder": "Select time (optional)",
+                "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "operating-dates": {
                 "label": "Operating Days",
@@ -1647,7 +1656,8 @@
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
-                    "isHoliday": "Is holiday"
+                    "isHoliday": "Is holiday",
+                    "time-outside-site-hours": "Hours must be within the site operating hours (e.g. 8:00 AM - 6:00 PM)."
                 },
                 "add-day": {
                     "title": "Add Operating Day",
@@ -1665,7 +1675,8 @@
                         "label": "Comment",
                         "placeholder": "Operating day description..."
                     },
-                    "isHoliday": "Is holiday"
+                    "isHoliday": "Is holiday",
+                    "time-outside-site-hours": "Hours must be within the site operating hours (e.g. 8:00 AM - 6:00 PM)."
                 },
                 "edit-service": {
                     "title": "Edit Service",

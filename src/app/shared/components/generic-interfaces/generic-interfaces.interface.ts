@@ -1,3 +1,14 @@
+/** Callback de subscribe para loadOperatingDaysAndUpdateModal (next/error opcionales). */
+export interface LoadOperatingDaysSubscribeObserver {
+  next?: () => void;
+  error?: () => void;
+}
+
+/** Retorno de loadOperatingDaysAndUpdateModal: observable con subscribe. */
+export interface LoadOperatingDaysAndUpdateModalResult {
+  subscribe: (cb: LoadOperatingDaysSubscribeObserver) => { unsubscribe?: () => void };
+}
+
 export interface OnGenericEditComponentHandler {
   /**
    * Método para establecer el formulario

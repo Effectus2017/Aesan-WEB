@@ -30,8 +30,15 @@ import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directi
 import { Subject, takeUntil } from 'rxjs';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 
+/** Entrada del mapeo ServiceTypeId -> nombres de controles (bool, from, to). */
+export interface ServiceTypeFormKeyEntry {
+  bool: string;
+  from: string;
+  to: string;
+}
+
 /** Mapeo ServiceTypeId -> nombres de controles del formulario (AESAN-257). */
-const SERVICE_TYPE_ID_TO_FORM_KEY: Record<number, { bool: string; from: string; to: string }> = {
+const SERVICE_TYPE_ID_TO_FORM_KEY: Record<number, ServiceTypeFormKeyEntry> = {
   1: { bool: 'breakfast', from: 'breakfastFrom', to: 'breakfastTo' },
   2: { bool: 'lunch', from: 'lunchFrom', to: 'lunchTo' },
   3: { bool: 'snackAM', from: 'snackAMFrom', to: 'snackAMTo' },

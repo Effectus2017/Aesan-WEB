@@ -1,11 +1,10 @@
 import { inject, Injectable } from '@angular/core';
+import { AgencyRestrictedStatusPayload } from 'app/shared/models/AgencyRestrictedStatusPayload';
 
 /**
- * Interfaz para el estado de restricción de la agencia
+ * Interfaz para el estado de restricción de la agencia (incluye timestamp interno).
  */
-export interface AgencyRestrictedStatus {
-  isCompleted: boolean;
-  isExpired: boolean;
+export interface AgencyRestrictedStatus extends AgencyRestrictedStatusPayload {
   lastUpdated: string;
 }
 
@@ -20,7 +19,7 @@ export class AgencyStatusStorageService {
   private readonly STORAGE_KEY = 'agencyRestrictedStatus';
   // En producción, considerar usar variable de entorno
   private readonly SECRET_KEY = 'AESAN_AGENCY_STATUS_SECRET_KEY_2025';
-  
+
   // Cache en memoria para evitar deshashear repetidamente
   private _cachedStatus: AgencyRestrictedStatus | null = null;
   private _cachedHashedValue: string | null = null;
@@ -29,7 +28,7 @@ export class AgencyStatusStorageService {
    * Guarda el estado de restricción de la agencia en localStorage de forma hasheada
    * @param data Datos del estado (completado y expirado)
    */
-  setAgencyRestrictedStatus(data: { isCompleted: boolean; isExpired: boolean }): void {
+  setAgencyRestrictedStatus(data: AgencyRestrictedStatusPayload): void {
     const dataWithTimestamp: AgencyRestrictedStatus = {
       ...data,
       lastUpdated: new Date().toISOString(),
@@ -37,7 +36,7 @@ export class AgencyStatusStorageService {
     const jsonData = JSON.stringify(dataWithTimestamp);
     const hashed = this._hash(jsonData);
     localStorage.setItem(this.STORAGE_KEY, hashed);
-    
+
     // Actualizar cache
     this._cachedStatus = dataWithTimestamp;
     this._cachedHashedValue = hashed;
@@ -67,11 +66,11 @@ export class AgencyStatusStorageService {
     try {
       const unhashed = this._unhash(hashed);
       const data: AgencyRestrictedStatus = JSON.parse(unhashed);
-      
+
       // Actualizar cache
       this._cachedStatus = data;
       this._cachedHashedValue = hashed;
-      
+
       return data;
     } catch (error) {
       console.error('[AgencyStatusStorageService] Error al deshashear datos:', error);

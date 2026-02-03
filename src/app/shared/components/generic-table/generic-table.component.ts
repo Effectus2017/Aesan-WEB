@@ -7,17 +7,23 @@ import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { ButtonConfig, GenericTableConfig, OnGenericTableHandler } from './generic-table.interface';
+import {
+  SiteChildGroupServiceSlotResponse,
+  ServiceSlotDisplay,
+  ServiceSlotOperatingDate
+} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { getServiceTypeStyle, SERVICE_TYPE_STYLES_BY_INDEX } from 'app/shared/constants/service-type-styles.constants';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, takeUntil, Observable, of } from 'rxjs';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
+import { ServiceDaysDisplayPipe } from 'app/shared/pipes/service-days-display.pipe';
 
 @Component({
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule, DisableIfAgencyRestrictedDirective],
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule, DisableIfAgencyRestrictedDirective, ServiceDaysDisplayPipe],
     styles: [
         '.services-grid > *:last-child:nth-child(odd) { grid-column: span 2; }'
     ]
@@ -205,15 +211,15 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
    * Slots de servicio ofrecidos en el elemento (desde serviceSlots cuando no hay columnas boolean rellenadas).
    * Usado como fallback para mostrar servicios dentro de la card (PDAM, PACNA, PSAV).
    */
-  getActiveServiceSlots(element: any): { from?: string; to?: string; label?: string; serviceTypeName?: string; serviceTypeId?: number }[] {
+  getActiveServiceSlots(element: any): ServiceSlotDisplay[] {
     const slots = element?.serviceSlots ?? [];
     if (!Array.isArray(slots)) return [];
     return slots
-      .filter((s: { isOffered?: boolean }) => !!s?.isOffered)
-      .map((s: { from?: string; to?: string; fromTime?: string; toTime?: string; serviceTypeName?: string; label?: string; serviceTypeId?: number }) => ({
+      .filter((s: SiteChildGroupServiceSlotResponse) => !!s?.isOffered)
+      .map((s: SiteChildGroupServiceSlotResponse) => ({
         from: s?.from ?? s?.fromTime,
         to: s?.to ?? s?.toTime,
-        label: s?.serviceTypeName ?? s?.label,
+        label: s?.serviceTypeName ?? (s as ServiceSlotDisplay).label,
         serviceTypeName: s?.serviceTypeName,
         serviceTypeId: s?.serviceTypeId,
       }));
@@ -224,6 +230,17 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
    */
   shouldShowServiceSlotsFallback(element: any): boolean {
     return !this.hasAnyActiveService(element) && this.getActiveServiceSlots(element).length > 0;
+  }
+
+  /**
+   * Devuelve las fechas de operación del slot para un servicio (por serviceTypeId).
+   * Usar con pipe serviceDaysDisplay para formato "Jueves(6)".
+   */
+  getOperatingDatesForService(element: any, serviceTypeId: number): ServiceSlotOperatingDate[] {
+    const slots = element?.serviceSlots ?? [];
+    if (!Array.isArray(slots)) return [];
+    const slot = slots.find((s: SiteChildGroupServiceSlotResponse) => s.serviceTypeId === serviceTypeId);
+    return slot?.operatingDates ?? [];
   }
 
   /**

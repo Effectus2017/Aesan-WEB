@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -67,7 +68,7 @@ export class HouseholdMemberIncomeListComponent implements OnDestroy {
       });
   }
 
-  getPaginator(event: { pageIndex: number; pageSize: number }): void {
+  getPaginator(event: PageEvent): void {
     this.getAll(event.pageIndex, event.pageSize);
   }
 

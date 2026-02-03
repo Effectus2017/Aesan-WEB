@@ -5,6 +5,9 @@ import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'environments/environment';
 import { Observable, of, switchMap, throwError } from 'rxjs';
 import { Token, TokenResponse } from '../../shared/models/user.types';
+import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
+import { SignUpRequest } from 'app/shared/models/Request/SignUpRequest';
+import { UnlockSessionRequest } from 'app/shared/models/Request/UnlockSessionRequest';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -78,7 +81,7 @@ export class AuthService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
-  signIn(credentials: { userName: string; password: string }): Observable<any> {
+  signIn(credentials: LoginRequest): Observable<any> {
     if (this._authenticated) {
       return throwError('User is already logged in.');
     }
@@ -132,11 +135,11 @@ export class AuthService {
     return of(true);
   }
 
-  signUp(user: { name: string; email: string; password: string; company: string }): Observable<any> {
+  signUp(user: SignUpRequest): Observable<any> {
     return this._httpClient.post('api/auth/sign-up', user);
   }
 
-  unlockSession(credentials: { email: string; password: string }): Observable<any> {
+  unlockSession(credentials: UnlockSessionRequest): Observable<any> {
     return this._httpClient.post('api/auth/unlock-session', credentials);
   }
 

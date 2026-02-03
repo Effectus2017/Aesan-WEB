@@ -6,6 +6,7 @@ import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { Site } from '../models/Site';
 import { SiteRequest } from '../models/Request/SiteRequest';
+import { SiteChildGroupRequest } from '../models/Request/SiteChildGroupRequest';
 import { SiteSatelliteResponse } from '../models/Response/SiteSatelliteResponse';
 
 @Injectable({
@@ -77,6 +78,16 @@ export class SiteService {
    */
   updateSite(site: SiteRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-site`, site, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Actualiza solo los grupos de niños y sus servicios del sitio (persistencia inmediata desde el modal).
+   * @param siteId ID del sitio
+   * @param childGroups Lista de grupos con servicios
+   * @returns Observable con el resultado
+   */
+  updateSiteChildGroups(siteId: number, childGroups: SiteChildGroupRequest[]): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-site-child-groups`, { siteId, childGroups }, getHttpOptions({}));
   }
 
   /**

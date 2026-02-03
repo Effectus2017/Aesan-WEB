@@ -1,4 +1,5 @@
-import { HttpParams } from '@angular/common/http';
+import { HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { getApiErrorMessage } from './models/ApiError';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
 import { throwError } from 'rxjs';
@@ -254,16 +255,16 @@ export function queryParameters(model: QueryParameters) {
   return options;
 }
 
-export function handleError(error: any) {
+export function handleError(error: HttpErrorResponse) {
   let errorMessage = '';
   if (error.error instanceof ErrorEvent) {
     // Get client-side error
     errorMessage = error.error.message;
   } else {
-    // Get server-side error
-    errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    // Get server-side error (body object, body string, or message)
+    const apiMessage = getApiErrorMessage(error);
+    errorMessage = apiMessage || `Error Code: ${error.status}\nMessage: ${error.message}`;
   }
-  //window.alert(errorMessage);
   return throwError(() => {
     return errorMessage;
   });
@@ -793,6 +794,29 @@ export function filterEndTimeOptions(
     const optionMinutes = timeToMinutes(option.value);
     return optionMinutes > startMinutes && optionMinutes <= maxMinutes;
   });
+}
+
+/**
+ * Indica si una hora está dentro del rango de funcionamiento [operatingStartTime, operatingEndTime].
+ * Si la hora o el rango no están definidos, se considera válido (no fuera de rango).
+ */
+export function isTimeWithinOperatingRange(
+  time: Date | string | null | undefined,
+  operatingStartTime: Date | string | null | undefined,
+  operatingEndTime: Date | string | null | undefined
+): boolean {
+  if (time === null || time === undefined) return true;
+  if (!operatingStartTime || !operatingEndTime) return true;
+  const timeMinutes = time instanceof Date ? dateToMinutes(time) : timeToMinutes(time);
+  const startMinutes =
+    operatingStartTime instanceof Date
+      ? dateToMinutes(operatingStartTime)
+      : timeToMinutes(operatingStartTime);
+  const endMinutes =
+    operatingEndTime instanceof Date
+      ? dateToMinutes(operatingEndTime)
+      : timeToMinutes(operatingEndTime);
+  return timeMinutes >= startMinutes && timeMinutes <= endMinutes;
 }
 
 /**

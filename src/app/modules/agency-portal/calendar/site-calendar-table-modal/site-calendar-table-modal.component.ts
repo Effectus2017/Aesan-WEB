@@ -18,6 +18,11 @@ import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disabl
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 import { getServiceTypeStyle, ServiceTypeStyle } from 'app/shared/constants/service-type-styles.constants';
 import { normalizeTime } from 'app/shared/utils';
+import { SiteCalendarServiceSlot } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import {
+  LoadOperatingDaysAndUpdateModalResult,
+  LoadOperatingDaysSubscribeObserver
+} from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 
 /** Una fila de día de funcionamiento para la vista agrupada (Opción B) */
 export interface DayRow {
@@ -538,14 +543,12 @@ export class SiteCalendarTableModalComponent implements OnInit {
         const defaultChildGroupId = childGroups.length > 0 ? childGroups[0].id : null;
         // Construir lista de servicios existentes del día para excluir tipos y validar tiempo mínimo
         const existingServiceSlots =
-          (operatingDay as { services?: Array<{ childGroupId: number; serviceTypeId: number; startTime?: string; endTime?: string }> }).services?.map(
-            (s: { childGroupId: number; serviceTypeId: number; startTime?: string; endTime?: string }) => ({
-              childGroupId: s.childGroupId,
-              serviceTypeId: s.serviceTypeId,
-              startTime: s.startTime ? normalizeTime(String(s.startTime)) : undefined,
-              endTime: s.endTime ? normalizeTime(String(s.endTime)) : undefined
-            })
-          ) ?? [];
+          (operatingDay as { services?: SiteCalendarServiceSlot[] }).services?.map((s: SiteCalendarServiceSlot) => ({
+            childGroupId: s.childGroupId,
+            serviceTypeId: s.serviceTypeId,
+            startTime: s.startTime ? normalizeTime(String(s.startTime)) : undefined,
+            endTime: s.endTime ? normalizeTime(String(s.endTime)) : undefined
+          })) ?? [];
         // Crear formulario para agregar servicio (childGroupId es obligatorio)
         const serviceForm = this.formBuilder.group({
           childGroupId: [defaultChildGroupId, Validators.required],
@@ -620,12 +623,11 @@ export class SiteCalendarTableModalComponent implements OnInit {
                     this.data.onEventUpdated();
                   }
                 };
-                const handler = this.data.handler as {
-                  loadOperatingDaysAndUpdateModal?: () => { subscribe: (cb: { next?: () => void; error?: () => void }) => void };
-                  loadOperatingDays?: () => void;
-                } | undefined;
+                const handler = this.data.handler as
+                  | { loadOperatingDaysAndUpdateModal?: () => LoadOperatingDaysAndUpdateModalResult; loadOperatingDays?: () => void }
+                  | undefined;
                 if (handler?.loadOperatingDaysAndUpdateModal) {
-                  handler.loadOperatingDaysAndUpdateModal().subscribe({
+                  const observer: LoadOperatingDaysSubscribeObserver = {
                     next: () => {
                       refreshTable();
                       this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
@@ -634,7 +636,8 @@ export class SiteCalendarTableModalComponent implements OnInit {
                       refreshTable();
                       this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success');
                     }
-                  });
+                  };
+                  handler.loadOperatingDaysAndUpdateModal().subscribe(observer);
                 } else if (handler?.loadOperatingDays) {
                   handler.loadOperatingDays();
                   setTimeout(() => {

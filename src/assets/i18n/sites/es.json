@@ -221,11 +221,13 @@
             },
             "first-academic-class-start-time": {
                 "label": "Inicio de la Primera Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)"
+                "placeholder": "Seleccione la hora (opcional)",
+                "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "last-academic-class-end-time": {
                 "label": "Finalización de la Última Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)"
+                "placeholder": "Seleccione la hora (opcional)",
+                "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
@@ -823,6 +825,11 @@
         },
         "edit": {
             "title": "Editar Sitio",
+            "success": "El sitio se guardó correctamente.",
+            "childGroups": {
+                "saved": "Servicios por grupo actualizados correctamente.",
+                "error": "Error al guardar los servicios por grupo."
+            },
             "error": {
                 "save-failed": "No se pudo guardar el sitio. La operación no se completó correctamente."
             },
@@ -1005,11 +1012,13 @@
             },
             "first-academic-class-start-time": {
                 "label": "Inicio de la Primera Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)"
+                "placeholder": "Seleccione la hora (opcional)",
+                "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "last-academic-class-end-time": {
                 "label": "Finalización de la Última Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)"
+                "placeholder": "Seleccione la hora (opcional)",
+                "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "operating-dates": {
                 "label": "Días de Funcionamiento",
@@ -1585,7 +1594,8 @@
                         "label": "Comentario",
                         "placeholder": "Descripción del día de funcionamiento..."
                     },
-                    "isHoliday": "Feriado (No Operacional)"
+                    "isHoliday": "Feriado (No Operacional)",
+                    "time-outside-site-hours": "Las horas deben estar dentro del horario de funcionamiento del sitio (ej. 8:00 AM - 6:00 PM)."
                 },
                 "add-day": {
                     "title": "Agregar Día de Funcionamiento",
@@ -1603,7 +1613,8 @@
                         "label": "Comentario",
                         "placeholder": "Descripción del día de funcionamiento..."
                     },
-                    "isHoliday": "Feriado (No Operacional)"
+                    "isHoliday": "Feriado (No Operacional)",
+                    "time-outside-site-hours": "Las horas deben estar dentro del horario de funcionamiento del sitio (ej. 8:00 AM - 6:00 PM)."
                 },
                 "edit-service": {
                     "title": "Editar Servicio",

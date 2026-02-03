@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
@@ -53,6 +54,8 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
+import { ApiErrorBody } from 'app/shared/models/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OrganizationType } from 'app/shared/models/OrganizationType';
@@ -219,7 +222,8 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    viewMode: 'cards'
+    viewMode: 'cards',
+    operatingDaysOfWeek: []
   };
 
   // Lista de grupos con sus slots de servicio (en memoria hasta el envío)
@@ -544,6 +548,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     this.setupFormListeners();
 
+    this.servicesTableConfig.operatingDaysOfWeek =
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
+
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -563,11 +570,13 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
-    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos y actualizar tarjetas Servicios Activos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
@@ -927,13 +936,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+      error: (err: HttpErrorResponse) => {
+        const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
-          err?.error?.message
+          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.message
         ) {
-          this._notificationService.showError(err.error.message);
+          this._notificationService.showError(body.message);
         } else {
           this._notificationService.showErrorDialog();
         }
@@ -1107,7 +1117,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const s = slot as SiteChildGroupServiceSlotResponse | undefined;
         const fromVal = s?.from ?? s?.fromTime;
         const toVal = s?.to ?? s?.toTime;
         if (fromVal != null) {

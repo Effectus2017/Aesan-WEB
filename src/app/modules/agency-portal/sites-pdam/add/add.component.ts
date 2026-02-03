@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
@@ -19,7 +20,7 @@ import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGro
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { NgForOf, NgIf } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { merge, Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { Agency } from 'app/shared/models/Agency';
@@ -35,6 +36,7 @@ import {
   generateTimeOptions,
   filterStartTimeOptions,
   getEndTimeOptions,
+  isTimeWithinOperatingRange,
   timeStringToDate,
   dateToMinutes,
   compareByTime,
@@ -52,6 +54,8 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
+import { getApiErrorMessage } from 'app/shared/models/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { CenterType } from 'app/shared/models/CenterType';
@@ -229,7 +233,8 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    viewMode: 'cards'
+    viewMode: 'cards',
+    operatingDaysOfWeek: []
   };
 
   // Lista de grupos con sus slots de servicio (en memoria hasta el envío)
@@ -525,6 +530,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     this.setupFormListeners();
 
+    this.servicesTableConfig.operatingDaysOfWeek =
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
+
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
       this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
@@ -542,11 +550,13 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
-    // Escuchar cambios en los días seleccionados para recalcular los días operativos
+    // Escuchar cambios en los días seleccionados para recalcular los días operativos y actualizar tarjetas Servicios Activos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
@@ -606,6 +616,61 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     if (initialHasDiningRoom !== true) {
       this.headerConfig.formGroup.get('diningRoomCapacity')?.disable({ emitEvent: false });
     }
+
+    // Validar horas académicas cuando cambien las horas de funcionamiento
+    const operatingStartControl = this.headerConfig.formGroup.get('operatingStartTime');
+    const operatingEndControl = this.headerConfig.formGroup.get('operatingEndTime');
+    merge(
+      operatingStartControl?.valueChanges ?? [],
+      operatingEndControl?.valueChanges ?? []
+    )
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => this.validateAcademicTimesWithinOperatingHours());
+  }
+
+  /**
+   * Valida que firstAcademicClassStartTime y lastAcademicClassEndTime estén dentro del rango de funcionamiento.
+   */
+  private validateAcademicTimesWithinOperatingHours(): void {
+    const group = this.headerConfig.formGroup;
+    const operatingStartTime = group.get('operatingStartTime')?.value;
+    const operatingEndTime = group.get('operatingEndTime')?.value;
+    const firstControl = group.get('firstAcademicClassStartTime');
+    const lastControl = group.get('lastAcademicClassEndTime');
+    if (!firstControl || !lastControl) return;
+
+    const firstValid = isTimeWithinOperatingRange(
+      firstControl.value,
+      operatingStartTime,
+      operatingEndTime
+    );
+    const lastValid = isTimeWithinOperatingRange(
+      lastControl.value,
+      operatingStartTime,
+      operatingEndTime
+    );
+
+    if (firstValid) {
+      const err = firstControl.errors;
+      if (err?.['outsideOperatingHours']) {
+        const { outsideOperatingHours: _, ...rest } = err;
+        firstControl.setErrors(Object.keys(rest).length ? rest : null);
+      }
+    } else {
+      firstControl.setErrors({ ...(firstControl.errors ?? {}), outsideOperatingHours: true });
+    }
+    if (lastValid) {
+      const err = lastControl.errors;
+      if (err?.['outsideOperatingHours']) {
+        const { outsideOperatingHours: _, ...rest } = err;
+        lastControl.setErrors(Object.keys(rest).length ? rest : null);
+      }
+    } else {
+      lastControl.setErrors({ ...(lastControl.errors ?? {}), outsideOperatingHours: true });
+    }
+    firstControl.updateValueAndValidity({ emitEvent: false });
+    lastControl.updateValueAndValidity({ emitEvent: false });
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -631,13 +696,24 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   /**
-   * Opciones para "Finalización de la Última Clase Académica": rango completo (12 AM - 11:30 PM),
-   * sin limitar por horas de funcionamiento. Si hay "Inicio" seleccionado, solo horas posteriores.
+   * Opciones para "Inicio de la Primera Clase Académica": solo horas dentro del rango de funcionamiento.
+   */
+  getAcademicStartTimeOptions(): TimeOption[] {
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    return filterStartTimeOptions(this.timeOptions, operatingStartTime, operatingEndTime);
+  }
+
+  /**
+   * Opciones para "Finalización de la Última Clase Académica": dentro del rango de funcionamiento;
+   * si hay "Inicio" seleccionado, solo horas posteriores.
    */
   getAcademicEndTimeOptions(fromField: string): TimeOption[] {
     const fromControl = this.headerConfig.formGroup.get(fromField);
     const fromTime = fromControl?.value ?? null;
-    return getEndTimeOptions(this.timeOptions, fromTime, '23:59');
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    return getEndTimeOptions(this.timeOptions, fromTime, '23:59', operatingStartTime, operatingEndTime);
   }
 
   /**
@@ -1073,14 +1149,8 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } | string; message?: string }) => {
-        const body = err?.error;
-        const message =
-          typeof body === 'object' && body !== null && 'message' in body
-            ? (body as { message?: string }).message
-            : typeof body === 'string'
-              ? body
-              : err?.message;
+      error: (err: HttpErrorResponse) => {
+        const message = getApiErrorMessage(err);
         if (message) {
           this._notificationService.showErrorDialogWithRawMessage(message);
         } else {
@@ -1810,7 +1880,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const s = slot as SiteChildGroupServiceSlotResponse | undefined;
         const fromVal = s?.from ?? s?.fromTime;
         const toVal = s?.to ?? s?.toTime;
         if (fromVal != null) {

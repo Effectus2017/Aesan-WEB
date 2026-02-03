@@ -18,6 +18,41 @@ export interface SiteChildGroupServiceSlotResponse {
   updatedAt?: string;
   serviceTypeName?: string;
   serviceTypeNameEN?: string;
+  /** Fechas de operación donde este servicio está cargado (formato "Jueves(6)"). */
+  operatingDates?: ServiceSlotOperatingDate[];
+}
+
+/** Fecha de operación por slot (nombre del día + día del mes + fecha ISO para enviar al API). */
+export interface ServiceSlotOperatingDate {
+  dayName: string;
+  dayOfMonth: number;
+  /** Fecha en formato ISO o YYYY-MM-DD (desde la API; se envía en update-site-child-groups). */
+  date?: string;
+}
+
+/** Slot mínimo para lista de serviceSlots en un grupo (sin id, childGroupId, etc.). */
+export type SiteChildGroupServiceSlotMinimal = Pick<
+  SiteChildGroupServiceSlotResponse,
+  'serviceTypeId' | 'isOffered' | 'from' | 'to'
+>;
+
+/** Slot de servicio en contexto de calendario (startTime/endTime). */
+export interface SiteCalendarServiceSlot {
+  childGroupId: number;
+  serviceTypeId: number;
+  startTime?: string;
+  endTime?: string;
+}
+
+/** Slot para mostrar en tabla (horas + nombre + label). */
+export interface ServiceSlotDisplay {
+  from?: string;
+  to?: string;
+  fromTime?: string;
+  toTime?: string;
+  serviceTypeName?: string;
+  serviceTypeId?: number;
+  label?: string;
 }
 
 /**

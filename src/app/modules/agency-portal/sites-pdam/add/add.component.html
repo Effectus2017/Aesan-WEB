@@ -417,10 +417,13 @@
           <mat-form-field data-cy="first-academic-class-start-time-field" class="w-full">
             <mat-label>{{ "sites.add.first-academic-class-start-time.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'firstAcademicClassStartTime'" data-cy="first-academic-class-start-time-select" [compareWith]="compareByTimeWrapper">
-              <mat-option *ngFor="let time of timeOptions" [value]="timeStringToDateWrapper(time.value)" data-cy="first-academic-class-start-time-option">
+              <mat-option *ngFor="let time of getAcademicStartTimeOptions()" [value]="timeStringToDateWrapper(time.value)" data-cy="first-academic-class-start-time-option">
                 {{ time.display }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('firstAcademicClassStartTime')?.hasError('outsideOperatingHours')">
+              {{ "sites.add.first-academic-class-start-time.outside-operating-hours" | transloco }}
+            </mat-error>
           </mat-form-field>
           <mat-form-field data-cy="last-academic-class-end-time-field" class="w-full">
             <mat-label>{{ "sites.add.last-academic-class-end-time.label" | transloco }}</mat-label>
@@ -429,6 +432,9 @@
                 {{ time.display }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('lastAcademicClassEndTime')?.hasError('outsideOperatingHours')">
+              {{ "sites.add.last-academic-class-end-time.outside-operating-hours" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 

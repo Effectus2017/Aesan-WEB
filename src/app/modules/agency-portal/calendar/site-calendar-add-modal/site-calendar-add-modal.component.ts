@@ -67,6 +67,7 @@ import { SiteCalendarAddModalData } from 'app/shared/models/Response/SiteCalenda
 })
 export class SiteCalendarAddModalComponent {
   timeOptions: { value: string; display: string }[] = [];
+  timeOutsideSiteRangeError: string | null = null;
   private translocoService: TranslocoService = inject(TranslocoService);
 
   constructor(
@@ -74,23 +75,72 @@ export class SiteCalendarAddModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarAddModalData
   ) {
     this.generateTimeOptions();
+    this.setupTimeRangeValidation();
+  }
+
+  /** Convierte "08:00" o "08:00:00" a minutos desde medianoche. */
+  private timeToMinutes(timeStr: string | undefined): number | null {
+    if (!timeStr || typeof timeStr !== 'string') return null;
+    const match = timeStr.trim().match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+    if (!match) return null;
+    const hours = parseInt(match[1], 10);
+    const minutes = parseInt(match[2], 10);
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59) return null;
+    return hours * 60 + minutes;
+  }
+
+  /** Convierte "HH:mm" a minutos desde medianoche. */
+  private timeValueToMinutes(value: string): number {
+    const m = this.timeToMinutes(value);
+    return m ?? 0;
   }
 
   private generateTimeOptions(): void {
-    const options: { value: string; display: string }[] = [];
-
+    const all: { value: string; display: string }[] = [];
     for (let hour = 0; hour < 24; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
-        const time12 = this.convert24To12(hour, minute);
-        options.push({
-          value: time24,
-          display: time12
-        });
+        all.push({ value: time24, display: this.convert24To12(hour, minute) });
       }
     }
+    const siteStart = this.timeToMinutes(this.data.siteOperatingStartTime);
+    const siteEnd = this.timeToMinutes(this.data.siteOperatingEndTime);
+    if (siteStart != null && siteEnd != null && siteStart <= siteEnd) {
+      this.timeOptions = all.filter((opt) => {
+        const min = this.timeValueToMinutes(opt.value);
+        return min >= siteStart && min <= siteEnd;
+      });
+    } else {
+      this.timeOptions = all;
+    }
+  }
 
-    this.timeOptions = options;
+  private setupTimeRangeValidation(): void {
+    const startCtrl = this.data.form.get('startTime');
+    const endCtrl = this.data.form.get('endTime');
+    const check = () => {
+      this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+    };
+    startCtrl?.valueChanges?.subscribe(() => check());
+    endCtrl?.valueChanges?.subscribe(() => check());
+    check();
+  }
+
+  /** Retorna mensaje de error si las horas están fuera del rango del sitio; null si son válidas. */
+  getTimeOutsideSiteRangeError(): string | null {
+    const siteStart = this.timeToMinutes(this.data.siteOperatingStartTime);
+    const siteEnd = this.timeToMinutes(this.data.siteOperatingEndTime);
+    if (siteStart == null || siteEnd == null) return null;
+    const startVal = this.data.form.get('startTime')?.value;
+    const endVal = this.data.form.get('endTime')?.value;
+    if (!startVal || !endVal) return null;
+    const startMin = this.timeValueToMinutes(startVal);
+    const endMin = this.timeValueToMinutes(endVal);
+    if (startMin < siteStart || endMin > siteEnd) {
+      return this.translocoService.translate('sites.calendar.modals.add-day.time-outside-site-hours') ?? null;
+    }
+    if (endMin <= startMin) return null; // ese error lo muestra otro validador
+    return null;
   }
 
   private convert24To12(hour: number, minute: number): string {
@@ -149,7 +199,8 @@ export class SiteCalendarAddModalComponent {
   }
 
   onSave(): void {
-    if (this.data.form.valid) {
+    this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
+    if (this.data.form.valid && !this.timeOutsideSiteRangeError) {
       this.dialogRef.close(this.data.form.value);
     }
   }

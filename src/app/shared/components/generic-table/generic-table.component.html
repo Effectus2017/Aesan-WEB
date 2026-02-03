@@ -321,6 +321,9 @@
                     <div class="pl-6 text-xs font-medium text-blue-600 dark:text-blue-400">
                       {{ timeStringToDateWrapper(element.breakfastFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.breakfastTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 1).length">
+                      {{ getOperatingDatesForService(element, 1) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Almuerzo -->
@@ -331,6 +334,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-orange-600 dark:text-orange-400">
                       {{ timeStringToDateWrapper(element.lunchFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.lunchTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 2).length">
+                      {{ getOperatingDatesForService(element, 2) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -343,6 +349,9 @@
                     <div class="pl-6 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(element.snackAMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackAMTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 3).length">
+                      {{ getOperatingDatesForService(element, 3) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Merienda PM -->
@@ -353,6 +362,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(element.snackPMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackPMTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 5).length">
+                      {{ getOperatingDatesForService(element, 5) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -365,6 +377,9 @@
                     <div class="pl-6 text-xs font-medium text-purple-600 dark:text-purple-400">
                       {{ timeStringToDateWrapper(element.dinnerFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 4).length">
+                      {{ getOperatingDatesForService(element, 4) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <!-- Merienda Nocturna -->
@@ -375,6 +390,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                       {{ timeStringToDateWrapper(element.snackNightFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackNightTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 6).length">
+                      {{ getOperatingDatesForService(element, 6) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -387,6 +405,9 @@
                     <div class="pl-6 text-xs font-medium text-pink-600 dark:text-pink-400">
                       {{ timeStringToDateWrapper(element.dinnerExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerExtendedTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 7).length">
+                      {{ getOperatingDatesForService(element, 7) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <div *ngIf="element.dinnerAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
@@ -396,6 +417,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(element.dinnerAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerAtRiskTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 8).length">
+                      {{ getOperatingDatesForService(element, 8) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -407,6 +431,9 @@
                     <div class="pl-6 text-xs font-medium text-teal-600 dark:text-teal-400">
                       {{ timeStringToDateWrapper(element.snackExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackExtendedTo) | date:'shortTime' }}
                     </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 9).length">
+                      {{ getOperatingDatesForService(element, 9) | serviceDaysDisplay }}
+                    </div>
                   </div>
 
                   <div *ngIf="element.snackAtRisk" class="flex flex-col bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800 rounded-lg p-2.5 min-w-[140px]">
@@ -416,6 +443,9 @@
                     </div>
                     <div class="pl-6 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(element.snackAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackAtRiskTo) | date:'shortTime' }}
+                    </div>
+                    <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, 10).length">
+                      {{ getOperatingDatesForService(element, 10) | serviceDaysDisplay }}
                     </div>
                   </div>
 
@@ -428,6 +458,9 @@
                       </div>
                       <div *ngIf="slot.from || slot.to" class="pl-6 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i, slot).textMedium">
                         {{ timeStringToDateWrapper(slot.from) | date:'shortTime' }} - {{ timeStringToDateWrapper(slot.to) | date:'shortTime' }}
+                      </div>
+                      <div class="pl-6 text-xs text-secondary mt-0.5" *ngIf="getOperatingDatesForService(element, slot.serviceTypeId).length">
+                        {{ getOperatingDatesForService(element, slot.serviceTypeId) | serviceDaysDisplay }}
                       </div>
                     </div>
                   </ng-container>

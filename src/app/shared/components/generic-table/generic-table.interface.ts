@@ -1,6 +1,7 @@
 import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatCheckboxChange } from '@angular/material/checkbox';
+import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 
 export interface ImageConfig {
   defaultImage?: string;
@@ -145,6 +146,11 @@ export interface GenericTableConfig<T = any> {
    * @default 'table'
    */
   viewMode?: 'table' | 'cards' | 'auto';
+  /**
+   * Días de la semana de operación del sitio (para mostrar en tarjetas Servicios Activos).
+   * Formato: iniciales "L M X J V" debajo del horario de cada servicio.
+   */
+  operatingDaysOfWeek?: DayOfWeekResponse[];
 }
 
 export interface OnGenericTableHandler {

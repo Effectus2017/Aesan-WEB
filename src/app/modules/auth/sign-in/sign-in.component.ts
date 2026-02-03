@@ -13,6 +13,7 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
@@ -98,7 +99,7 @@ export class AuthSignInComponent implements OnInit {
     this.showAlert = false;
 
     // Crear el modelo según el formulario
-    const signInModel = {
+    const signInModel: LoginRequest = {
       userName: this.signInForm.value.email,
       password: this.signInForm.value.password,
     };

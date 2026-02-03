@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -24,7 +25,10 @@ import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest
 import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
 import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
-import { normalizeServiceSlotFromResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import {
+  normalizeServiceSlotFromResponse,
+  SiteChildGroupServiceSlotResponse
+} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -76,6 +80,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ApiErrorBody } from 'app/shared/models/ApiError';
 
 @Component({
   selector: 'app-edit-sites-home',
@@ -178,7 +183,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
-    viewMode: 'cards'
+    viewMode: 'cards',
+    operatingDaysOfWeek: []
   };
 
   // Lista de grupos con sus slots de servicio (en memoria hasta el envío)
@@ -535,8 +541,10 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     // Escuchar cambios en los días seleccionados para recalcular los días operativos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
@@ -703,6 +711,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   onSetForm(param: Site): void {
     this.param = param;
+    this.servicesTableConfig.operatingDaysOfWeek = param.operatingDaysOfWeek ?? [];
 
     // Obtener las ciudades y regiones
     // Get cities and regions
@@ -848,7 +857,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
             numberOfChildren: group.numberOfChildren ?? 0,
             serviceSlots: (group.serviceSlots ?? []).map((slot) => {
               const base = normalizeServiceSlotFromResponse(slot);
-              return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
+              return {
+                ...base,
+                serviceTypeName: slot.serviceTypeName,
+                serviceTypeNameEN: slot.serviceTypeNameEN,
+                operatingDates: slot.operatingDates ?? [],
+              };
             }),
           }));
           this.updateServicesTableDataSource();
@@ -957,25 +971,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       }
     }
 
-    // Agregar grupos de niños con serviceSlots si OffersServiceToDifferentGroups = true
-    if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
-      const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
-      if (servicesWithoutGroup.length > 0) {
-        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
-        return;
-      }
-      this.syncChildGroupsFromServices();
-      if (this.childGroups.length === 0) {
-        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
-        return;
-      }
-      siteRequest.childGroups = this.childGroups;
-    } else {
-      if (this.childGroups.length > 0) {
-        siteRequest.childGroups = this.childGroups;
-      }
-    }
-
+    // En edición los grupos se persisten en el momento desde el modal; no enviar childGroups en update-site.
     // Agregar tipos de participantes
     if (formValues.participantTypes && formValues.participantTypes.length > 0) {
       siteRequest.participants = formValues.participantTypes.map((id: number) => ({
@@ -1024,13 +1020,14 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+      error: (err: HttpErrorResponse) => {
+        const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
-          err?.error?.message
+          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.message
         ) {
-          this._notificationService.showError(err.error.message);
+          this._notificationService.showError(body.message);
         } else {
           this._notificationService.showErrorDialog();
         }
@@ -1404,6 +1401,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
         this.syncChildGroupsFromServices();
+        this.saveChildGroupsToBackend();
       }
     });
   }
@@ -1454,6 +1452,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
           this.servicesByGroups[index] = { ...result, id };
           this.updateServicesTableDataSource();
           this.syncChildGroupsFromServices();
+          this.saveChildGroupsToBackend();
         }
       }
     });
@@ -1493,10 +1492,50 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         if (index !== -1) {
           this.servicesByGroups.splice(index, 1);
           this.updateServicesTableDataSource();
-          this.syncChildGroupsFromServices(); // Sincronizar grupos
-
+          this.syncChildGroupsFromServices();
+          this.saveChildGroupsToBackend();
         }
       }
+    });
+  }
+
+  /**
+   * Persiste los grupos de niños en el backend (endpoint update-site-child-groups).
+   */
+  private saveChildGroupsToBackend(): void {
+    const siteId = this.param?.id;
+    if (siteId == null) {
+      return;
+    }
+    const payload = this.childGroups.map((g) => ({
+      groupName: g.groupName,
+      numberOfChildren: g.numberOfChildren,
+      serviceSlots: (g.serviceSlots ?? []).map((slot) => ({
+        serviceTypeId: slot.serviceTypeId,
+        isOffered: slot.isOffered,
+        fromTime: slot.fromTime ?? (slot as { from?: string }).from ?? undefined,
+        toTime: slot.toTime ?? (slot as { to?: string }).to ?? undefined,
+        operatingDates: (slot.operatingDates ?? []).map((od: string | { date?: string }) =>
+          typeof od === 'string' ? od : (od as { date?: string }).date
+        ).filter((d): d is string => typeof d === 'string'),
+      })),
+    }));
+    this._siteService.updateSiteChildGroups(siteId, payload).subscribe({
+      next: () => {
+        this._notificationService.showSuccessDialog('sites.edit.childGroups.saved');
+        this._siteService.getSiteById({ id: siteId }).subscribe({
+          next: (response) => {
+            const site = response?.body ?? response;
+            if (site) {
+              this.onSetForm(site);
+              this._changeDetectorRef?.markForCheck();
+            }
+          },
+        });
+      },
+      error: () => {
+        this._notificationService.showErrorDialog('sites.edit.childGroups.error');
+      },
     });
   }
 
@@ -1532,7 +1571,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const s = slot as SiteChildGroupServiceSlotResponse | undefined;
         const fromVal = s?.from ?? s?.fromTime;
         const toVal = s?.to ?? s?.toTime;
         if (fromVal != null) {

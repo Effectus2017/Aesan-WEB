@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
@@ -53,6 +54,9 @@ import { OrganizationType } from 'app/shared/models/OrganizationType';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
 import { AuthService } from 'app/core/auth/auth.service';
+import { ApiErrorBody } from 'app/shared/models/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { ValidationMessage } from 'app/shared/models/ValidationMessage';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/AreaType';
@@ -231,7 +235,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   currentLang: string = 'es';
 
   // ===== PROPIEDADES PARA VALIDACIÓN PACNA =====
-  pacnaValidationMessage: { type: 'error' | 'warning' | null; message: string | null } = { type: null, message: null };
+  pacnaValidationMessage: ValidationMessage = { type: null, message: null };
 
   // Header config and reactive form
   // Configuración del header y formulario reactivo
@@ -537,6 +541,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     pageSizeOptions: [5, 10, 25, 50],
     pageSize: 10,
     fullScreen: false,
+    operatingDaysOfWeek: []
   };
 
   // Configuración de tabla requerida por OnGenericTableHandler
@@ -650,6 +655,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
     this.setupFormListeners();
 
+    this.servicesTableConfig.operatingDaysOfWeek =
+      this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
+
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges
       .pipe(takeUntil(this._unsubscribeAll))
@@ -672,8 +680,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Escuchar cambios en los días seleccionados para recalcular los días operativos
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
+      .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
+        this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
+        this._changeDetectorRef.markForCheck();
       });
 
     // Listener para cambios en organizationType que afectan la visibilidad del campo centerType
@@ -1217,13 +1227,14 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
             break;
         }
       },
-      error: (err: { status?: number; error?: { code?: string; message?: string } }) => {
+      error: (err: HttpErrorResponse) => {
+        const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (err?.error?.code === 'MissingStrongService' || err?.error?.code === 'InsufficientTimeBetweenServices') &&
-          err?.error?.message
+          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.message
         ) {
-          this._notificationService.showError(err.error.message);
+          this._notificationService.showError(body.message);
         } else {
           this._notificationService.showErrorDialog();
         }
@@ -1792,7 +1803,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         const id = Number(idStr);
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
-        const s = slot as { from?: string; to?: string; fromTime?: string; toTime?: string } | undefined;
+        const s = slot as SiteChildGroupServiceSlotResponse | undefined;
         const fromVal = s?.from ?? s?.fromTime;
         const toVal = s?.to ?? s?.toTime;
         if (fromVal != null) {
