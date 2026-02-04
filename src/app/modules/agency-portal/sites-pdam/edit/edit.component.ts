@@ -1896,7 +1896,16 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
     const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
     const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
-    return hasDiningRoom && capacity && enrollment && capacity < enrollment;
+    const capacityNum = Number(capacity);
+    const enrollmentNum = Number(enrollment);
+    return (
+      hasDiningRoom &&
+      capacity != null &&
+      enrollment != null &&
+      !Number.isNaN(capacityNum) &&
+      !Number.isNaN(enrollmentNum) &&
+      capacityNum < enrollmentNum
+    );
   }
 
   /**
@@ -1914,8 +1923,16 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
     const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const capacity = capacityControl?.value;
+    const capacityNum = Number(capacity);
+    const enrollmentNum = Number(enrollment);
 
-    if (capacity && enrollment && capacity > enrollment) {
+    if (
+      capacity != null &&
+      enrollment != null &&
+      !Number.isNaN(capacityNum) &&
+      !Number.isNaN(enrollmentNum) &&
+      capacityNum > enrollmentNum
+    ) {
       capacityControl?.setErrors({ max: true });
     } else if (capacityControl?.hasError('max')) {
       const errors = { ...capacityControl.errors };

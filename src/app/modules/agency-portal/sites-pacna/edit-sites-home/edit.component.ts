@@ -1329,8 +1329,16 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
     const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const capacity = capacityControl?.value;
+    const capacityNum = Number(capacity);
+    const enrollmentNum = Number(enrollment);
 
-    if (capacity && enrollment && capacity > enrollment) {
+    if (
+      capacity != null &&
+      enrollment != null &&
+      !Number.isNaN(capacityNum) &&
+      !Number.isNaN(enrollmentNum) &&
+      capacityNum > enrollmentNum
+    ) {
       capacityControl?.setErrors({ max: true });
     } else if (capacityControl?.hasError('max')) {
       const errors = { ...capacityControl.errors };
