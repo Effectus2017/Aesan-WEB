@@ -677,6 +677,7 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
     const formValue = this.serviceForm.value;
 
     // Construir serviceSlots desde el formulario (formato normalizado por ServiceTypeId)
+    // Preservar operatingDates del slot inicial (mismo serviceTypeId) para no perder días al editar desde el sitio
     const serviceSlots: SiteChildGroupServiceSlotRequest[] = [];
     const items = this.getVisibleServiceTypesWithKeys();
     for (const { st, formKey } of items) {
@@ -684,11 +685,15 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
       const fromVal = this.serviceForm.get(formKey.from)?.value;
       const toVal = this.serviceForm.get(formKey.to)?.value;
       const isOffered = !!boolVal && fromVal instanceof Date && toVal instanceof Date;
+      const initialSlot = this.data?.serviceSlots?.find(
+        (s) => Number(s.serviceTypeId) === Number(st.id)
+      );
       serviceSlots.push({
         serviceTypeId: st.id,
         isOffered,
         fromTime: isOffered && fromVal ? toTimeString(fromVal) : undefined,
         toTime: isOffered && toVal ? toTimeString(toVal) : undefined,
+        operatingDates: initialSlot?.operatingDates ?? [],
       });
     }
 

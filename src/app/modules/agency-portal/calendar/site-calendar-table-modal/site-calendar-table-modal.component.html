@@ -14,10 +14,8 @@
     <div class="flex flex-col gap-6 animate-slide-in">
       <!-- Card: Día de funcionamiento (mismo borde/sombra que en sitios: rounded-2xl border shadow) -->
       <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngIf="dayRows.length > 0">
-        <div class="flex flex-col gap-1 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
-          <div class="flex justify-center sm:justify-start">
-            <mat-icon class="text-primary icon-size-5" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
-          </div>
+        <div class="flex items-center gap-2 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <mat-icon class="text-primary icon-size-5 flex-shrink-0" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
           <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
             {{ 'sites.calendar.day-events.section-operating-day' | transloco }}
           </h3>
@@ -56,10 +54,8 @@
 
       <!-- Cards: un card por grupo (mismo borde/sombra que en sitios) -->
       <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngFor="let group of servicesGroupedByGroup">
-        <div class="flex flex-col gap-1 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
-          <div class="flex justify-center sm:justify-start">
-            <mat-icon class="text-primary icon-size-5" svgIcon="heroicons_outline:rectangle-group" aria-hidden="true"></mat-icon>
-          </div>
+        <div class="flex items-center gap-2 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <mat-icon class="text-primary icon-size-5 flex-shrink-0" svgIcon="heroicons_outline:rectangle-group" aria-hidden="true"></mat-icon>
           <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
             {{ group.groupName }}
           </h3>
