@@ -28,6 +28,14 @@ export interface ServiceSlotOperatingDate {
   dayOfMonth: number;
   /** Fecha en formato ISO o YYYY-MM-DD (desde la API; se envía en update-site-child-groups). */
   date?: string;
+  /** Hora inicio para este día (cuando difiere por día; formato HH:mm o HH:mm:ss). */
+  from?: string;
+  /** Hora fin para este día (cuando difiere por día; formato HH:mm o HH:mm:ss). */
+  to?: string;
+  /** True si el día es feriado (para mostrar color distinto en la UI). */
+  isHoliday?: boolean;
+  /** True si el día es fin de semana (para mostrar color distinto en la UI). */
+  isWeekend?: boolean;
 }
 
 /** Slot mínimo para lista de serviceSlots en un grupo (sin id, childGroupId, etc.). */

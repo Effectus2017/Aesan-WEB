@@ -73,6 +73,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
@@ -125,7 +126,8 @@ import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
     LatitudeDirective,
     LongitudeDirective,
     DynamicGridDirective,
-    GenericTableComponent
+    GenericTableComponent,
+    MatProgressSpinnerModule
 ],
 })
 export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -261,11 +263,14 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   // Lista de servicios por grupos (en memoria hasta el envío)
   servicesByGroups: ServiceByGroupDialogResult[] = [];
 
+  servicesCardLoading = false;
+
   // Tabla de servicios por grupos
   servicesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,
     displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
+    viewMode: 'cards',
     addMenuShow: true,
     addMenuItems: [
       {
@@ -2061,6 +2066,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
         this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
@@ -2110,6 +2117,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups[index] = { ...result, id };
@@ -2150,6 +2159,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       }
     }, (result) => {
       if (result === 'confirmed') {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups.splice(index, 1);
@@ -2164,6 +2175,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   private saveChildGroupsToBackend(): void {
     const siteId = this.param?.id;
     if (siteId == null) {
+      this.servicesCardLoading = false;
+      this._changeDetectorRef?.markForCheck();
       return;
     }
     const payload = this.childGroups.map((g) => ({
@@ -2181,6 +2194,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     }));
     this._siteService.updateSiteChildGroups(siteId, payload).subscribe({
       next: () => {
+        this.servicesCardLoading = false;
+        this._changeDetectorRef?.markForCheck();
         this._notificationService.showSuccessDialog('sites.edit.childGroups.saved');
         this._siteService.getSiteById({ id: siteId }).subscribe({
           next: (response) => {
@@ -2193,6 +2208,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         });
       },
       error: () => {
+        this.servicesCardLoading = false;
+        this._changeDetectorRef?.markForCheck();
         this._notificationService.showErrorDialog('sites.edit.childGroups.error');
       },
     });

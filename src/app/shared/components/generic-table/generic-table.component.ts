@@ -17,13 +17,15 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, takeUntil, Observable, of } from 'rxjs';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
-import { ServiceDaysDisplayPipe } from 'app/shared/pipes/service-days-display.pipe';
+import { formatTimeForDisplay } from 'app/shared/pipes/service-days-display.pipe';
+import { ExtraDayServicesDisplayPipe } from 'app/shared/pipes/extra-day-services-display.pipe';
+import { ServiceDaysIndicatorComponent } from 'app/shared/components/service-days-indicator/service-days-indicator.component';
 
 @Component({
     selector: 'app-generic-table',
     templateUrl: './generic-table.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule, DisableIfAgencyRestrictedDirective, ServiceDaysDisplayPipe],
+    imports: [CommonModule, MatTableModule, MatIconModule, MatButtonModule, MatCheckboxModule, MatTooltipModule, MatMenuModule, TranslocoModule, DisableIfAgencyRestrictedDirective, ExtraDayServicesDisplayPipe, ServiceDaysIndicatorComponent],
     styles: [
         '.services-grid > *:last-child:nth-child(odd) { grid-column: span 2; }'
     ]
@@ -241,6 +243,116 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
     if (!Array.isArray(slots)) return [];
     const slot = slots.find((s: SiteChildGroupServiceSlotResponse) => s.serviceTypeId === serviceTypeId);
     return slot?.operatingDates ?? [];
+  }
+
+  /**
+   * True si alguna tarjeta tiene operatingDates con isHoliday o isWeekend (para mostrar leyenda).
+   */
+  hasAnyExtrasInCards(): boolean {
+    const data = this.config?.dataSource?.data ?? this.config?.dataSourceList ?? [];
+    if (!Array.isArray(data)) return false;
+    for (const element of data) {
+      const slots = element?.serviceSlots ?? [];
+      for (const slot of slots) {
+        const dates = slot?.operatingDates ?? [];
+        const hasExtra = dates.some(
+          (d: { isHoliday?: boolean; isWeekend?: boolean; IsHoliday?: boolean; IsWeekend?: boolean }) =>
+            d.isHoliday ?? d.IsHoliday ?? d.isWeekend ?? d.IsWeekend
+        );
+        if (hasExtra) return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   * Días extras (feriados/fines de semana) agrupados por fecha, con todos los servicios de ese día.
+   * Para la sección "Días extras" en cada tarjeta de grupo.
+   */
+  getExtraDaysByDate(element: any): Array<{
+    dateKey: string;
+    dayName: string;
+    dayOfMonth: number;
+    date?: string;
+    isHoliday: boolean;
+    isWeekend: boolean;
+    services: Array<{ serviceTypeName: string; from: string; to: string }>;
+  }> {
+    const slots = element?.serviceSlots ?? [];
+    if (!Array.isArray(slots)) return [];
+    const map = new Map<
+      string,
+      {
+        dateKey: string;
+        dayName: string;
+        dayOfMonth: number;
+        date?: string;
+        isHoliday: boolean;
+        isWeekend: boolean;
+        services: Array<{ serviceTypeName: string; from: string; to: string }>;
+      }
+    >();
+    for (const slot of slots as SiteChildGroupServiceSlotResponse[]) {
+      if (!slot?.isOffered) continue;
+      const dates = slot?.operatingDates ?? [];
+      const serviceName = slot?.serviceTypeName ?? slot?.serviceTypeNameEN ?? 'Servicio';
+      for (const d of dates) {
+        const isH = (d as { isHoliday?: boolean; IsHoliday?: boolean }).isHoliday ?? (d as { isHoliday?: boolean; IsHoliday?: boolean }).IsHoliday;
+        const isW = (d as { isWeekend?: boolean; IsWeekend?: boolean }).isWeekend ?? (d as { isWeekend?: boolean; IsWeekend?: boolean }).IsWeekend;
+        if (!isH && !isW) continue;
+        const from = (d as { from?: string; From?: string }).from ?? (d as { from?: string; From?: string }).From;
+        const to = (d as { to?: string; To?: string }).to ?? (d as { to?: string; To?: string }).To;
+        if (!from || !to) continue;
+        const dayName = (d as { dayName?: string; DayName?: string }).dayName ?? (d as { dayName?: string; DayName?: string }).DayName ?? '';
+        const dayOfMonth = (d as { dayOfMonth?: number; DayOfMonth?: number }).dayOfMonth ?? (d as { dayOfMonth?: number; DayOfMonth?: number }).DayOfMonth ?? 0;
+        const dateVal = (d as { date?: string; Date?: string }).date ?? (d as { date?: string; Date?: string }).Date;
+        const dateKey = dateVal ?? `${dayName}-${dayOfMonth}`;
+        if (!map.has(dateKey)) {
+          map.set(dateKey, {
+            dateKey,
+            dayName,
+            dayOfMonth,
+            date: dateVal,
+            isHoliday: !!isH,
+            isWeekend: !!isW,
+            services: [],
+          });
+        }
+        const entry = map.get(dateKey)!;
+        if (!entry.services.some((s) => s.serviceTypeName === serviceName && s.from === from && s.to === to)) {
+          entry.services.push({ serviceTypeName: serviceName, from, to });
+        }
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => {
+      if (a.date && b.date) return a.date.localeCompare(b.date);
+      return a.dayOfMonth - b.dayOfMonth || a.dayName.localeCompare(b.dayName);
+    });
+  }
+
+  /** True si el elemento tiene días extras (feriados/fines de semana) con horarios. */
+  hasExtraDays(element: any): boolean {
+    return this.getExtraDaysByDate(element).length > 0;
+  }
+
+  /** Formatea un servicio para la sección días extras: "Desayuno 9:00-9:30 AM". */
+  formatExtraDayService(service: { serviceTypeName: string; from: string; to: string }): string {
+    return `${service.serviceTypeName} ${formatTimeForDisplay(service.from)}-${formatTimeForDisplay(service.to)}`;
+  }
+
+  /**
+   * True si el servicio tiene operatingDates con from/to que varían por día.
+   * En ese caso se muestra el formato "Martes(6): 4:00-4:30 PM; Miércoles(14): 5:30-6:00 PM".
+   * Soporta from/to en camelCase o PascalCase (API).
+   */
+  hasPerDayTimesThatDiffer(element: any, serviceTypeId: number): boolean {
+    const dates = this.getOperatingDatesForService(element, serviceTypeId);
+    const from = (d: { from?: string; to?: string; From?: string; To?: string }) => d.from ?? (d as { From?: string }).From;
+    const to = (d: { from?: string; to?: string; From?: string; To?: string }) => d.to ?? (d as { To?: string }).To;
+    const withTimes = dates.filter((d) => from(d) && to(d));
+    if (withTimes.length < 2) return false;
+    const uniquePairs = new Set(withTimes.map((d) => `${from(d)}-${to(d)}`));
+    return uniquePairs.size > 1;
   }
 
   /**

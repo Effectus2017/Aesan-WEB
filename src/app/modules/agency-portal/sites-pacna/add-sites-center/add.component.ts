@@ -528,6 +528,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     dataSource: new MatTableDataSource<any>(),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,
     displayedColumns: SERVICES_COLUMNS_SCHEMA.map((col) => col.key as string),
+    viewMode: 'cards',
     addMenuShow: true,
     addMenuItems: [
       {

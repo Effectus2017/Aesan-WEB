@@ -1,0 +1,9 @@
+@if (operatingDates()?.length) {
+  <div class="flex items-center gap-1">
+    @for (day of dayLabels; track day) {
+      <span [class]="getDayClasses($index)">
+        {{ day }}
+      </span>
+    }
+  </div>
+}

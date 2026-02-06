@@ -1,0 +1,4 @@
+/* Espacio entre icono y título en eventos de servicio */
+:host ::ng-deep .cal-event .cal-event-title span:first-child {
+  margin-right: 0.25rem;
+}

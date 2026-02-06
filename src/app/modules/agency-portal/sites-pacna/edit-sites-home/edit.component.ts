@@ -59,6 +59,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
@@ -107,7 +108,8 @@ import { ApiErrorBody } from 'app/shared/models/ApiError';
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective
+    LongitudeDirective,
+    MatProgressSpinnerModule
 ],
 })
 export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -189,6 +191,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
   // Lista de grupos con sus slots de servicio (en memoria hasta el envío)
   servicesByGroups: ServiceByGroupDialogResult[] = [];
+
+  servicesCardLoading = false;
 
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.servicesTableConfig;
@@ -1405,6 +1409,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
         this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
@@ -1455,6 +1461,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
       if (result) {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups[index] = { ...result, id };
@@ -1496,6 +1504,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       }
     }, (result) => {
       if (result === 'confirmed') {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
         const index = this.servicesByGroups.findIndex((s) => s.id === id);
         if (index !== -1) {
           this.servicesByGroups.splice(index, 1);
@@ -1513,6 +1523,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   private saveChildGroupsToBackend(): void {
     const siteId = this.param?.id;
     if (siteId == null) {
+      this.servicesCardLoading = false;
+      this._changeDetectorRef?.markForCheck();
       return;
     }
     const payload = this.childGroups.map((g) => ({
@@ -1530,6 +1542,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     }));
     this._siteService.updateSiteChildGroups(siteId, payload).subscribe({
       next: () => {
+        this.servicesCardLoading = false;
+        this._changeDetectorRef?.markForCheck();
         this._notificationService.showSuccessDialog('sites.edit.childGroups.saved');
         this._siteService.getSiteById({ id: siteId }).subscribe({
           next: (response) => {
@@ -1542,6 +1556,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         });
       },
       error: () => {
+        this.servicesCardLoading = false;
+        this._changeDetectorRef?.markForCheck();
         this._notificationService.showErrorDialog('sites.edit.childGroups.error');
       },
     });

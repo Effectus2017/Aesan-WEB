@@ -15,7 +15,8 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import {
   CalendarView,
   CalendarEvent,
-  CalendarModule} from 'angular-calendar';
+  CalendarModule
+} from 'angular-calendar';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarService } from '../site-calendar.service';
 import { SiteService } from 'app/shared/services/site.service';
@@ -40,11 +41,16 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { Site } from 'app/shared/models/Site';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
-import { getServiceEventColorByTypeId } from 'app/shared/constants/service-type-styles.constants';
+import {
+  getServiceEventColorByTypeId,
+  getServiceTypeStyle
+} from 'app/shared/constants/service-type-styles.constants';
+import { getGroupBorderColor } from 'app/shared/constants/child-group-styles.constants';
 import { HourSegmentClickEvent } from 'app/shared/models/HourSegmentClickEvent';
 
 @Component({
   selector: 'app-site-calendar',
+  styleUrls: ['./site-calendar.component.scss'],
   imports: [
     CommonModule,
     CalendarModule,
@@ -360,9 +366,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   onEventClick({ event }: { event: CalendarEvent }) {
     // Verificar si es un servicio o un día de funcionamiento
     const isService = event.meta?.isService === true;
+    const isPlaceholderForHoliday = (event.meta as { isPlaceholderForHoliday?: boolean })?.isPlaceholderForHoliday === true;
 
-    if (isService) {
-      // Es un servicio, abrir modal de edición de servicio
+    if (isService && !isPlaceholderForHoliday) {
+      // Es un servicio real, abrir modal de edición de servicio
       const service = event.meta as SiteOperatingDayService;
       this.openEditServiceDialog(service);
     } else {
@@ -1153,10 +1160,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       });
 
       // Transformar servicios del día en eventos
-      if (day.services && day.services.length > 0) {
+      const hasServices = day.services && day.services.length > 0;
+      if (hasServices) {
         day.services.forEach((service: SiteOperatingDayService) => {
-          if (!service.isEnabled) {
-            return; // No mostrar servicios deshabilitados
+          // Mostrar todos los servicios: los deshabilitados en feriados se muestran con tono apagado (opacity-40)
+          if (!service.isEnabled && !day.isHoliday) {
+            return; // No mostrar servicios deshabilitados salvo en feriados
           }
 
           // Usar la misma fecha del día de funcionamiento para evitar problemas de zona horaria
@@ -1185,10 +1194,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
             ? (service.serviceTypeName || this.translocoService.translate('sites.calendar.day-events.service-fallback'))
             : (service.serviceTypeNameEN || this.translocoService.translate('sites.calendar.day-events.service-fallback'));
 
+          const title = service.childGroupName
+            ? `${service.childGroupName} - ${serviceName}`
+            : serviceName;
+
           serviceEvents.push({
             start: serviceStartDate,
             end: serviceEndDate,
-            title: serviceName,
+            title,
             color: this.getServiceEventColor(service),
             draggable: false, // Los servicios no son arrastrables
             resizable: { beforeStart: false, afterEnd: false }, // Los servicios no son redimensionables
@@ -1200,11 +1213,111 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
             }
           });
         });
+      } else if (day.isHoliday) {
+        // Día feriado sin servicios en API: crear placeholders (childGroups o fallback desde otros días)
+        this.createPlaceholderServiceEventsForHoliday(day, operatingDate, startDate, endDate, serviceEvents, days);
       }
     });
 
     // Combinar eventos: días primero, luego servicios
     return [...dayEvents, ...serviceEvents];
+  }
+
+  /**
+   * Crea eventos placeholder de servicios para días feriados cuando la API no devuelve servicios.
+   * 1) Intenta usar serviceSlots de childGroups del sitio.
+   * 2) Si no hay childGroups/slots, usa servicios de otros días del mes como plantilla.
+   */
+  private createPlaceholderServiceEventsForHoliday(
+    day: SiteOperatingDay,
+    operatingDate: Date,
+    startDate: Date,
+    endDate: Date,
+    serviceEvents: CalendarEvent[],
+    allDays: SiteOperatingDay[]
+  ): void {
+    const countBefore = serviceEvents.length;
+
+    // Estrategia 1: childGroups del sitio
+    const site = this.currentSite;
+    if (site?.childGroups?.length) {
+      site.childGroups.forEach(childGroup => {
+        const slots = childGroup.serviceSlots ?? [];
+        slots
+          .filter(slot => slot.isOffered)
+          .forEach(slot => {
+            this.addPlaceholderServiceEvent(day, operatingDate, startDate, endDate, serviceEvents, {
+              serviceTypeId: slot.serviceTypeId,
+              serviceTypeName: slot.serviceTypeName,
+              serviceTypeNameEN: slot.serviceTypeNameEN,
+              childGroupId: childGroup.id,
+              childGroupName: this.currentLanguage === 'es' ? (childGroup.groupName ?? '') : (childGroup.groupNameEN ?? childGroup.groupName ?? '')
+            });
+          });
+      });
+    }
+
+    // Estrategia 2: fallback desde servicios de otros días del mes
+    if (serviceEvents.length === countBefore && allDays?.length) {
+      const templateServices = allDays
+        .filter(d => d !== day && d.services?.length)
+        .flatMap(d => d.services!)
+        .filter((s: SiteOperatingDayService) => s.isEnabled);
+
+      const seen = new Set<string>();
+      templateServices.forEach((service: SiteOperatingDayService) => {
+        const key = `${service.childGroupId}-${service.serviceTypeId}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        this.addPlaceholderServiceEvent(day, operatingDate, startDate, endDate, serviceEvents, {
+          serviceTypeId: service.serviceTypeId,
+          serviceTypeName: service.serviceTypeName,
+          serviceTypeNameEN: service.serviceTypeNameEN,
+          childGroupId: service.childGroupId,
+          childGroupName: service.childGroupName ?? ''
+        });
+      });
+    }
+  }
+
+  private addPlaceholderServiceEvent(
+    day: SiteOperatingDay,
+    operatingDate: Date,
+    startDate: Date,
+    endDate: Date,
+    serviceEvents: CalendarEvent[],
+    service: { serviceTypeId: number; serviceTypeName?: string; serviceTypeNameEN?: string; childGroupId: number; childGroupName: string }
+  ): void {
+    const serviceDate = new Date(operatingDate);
+    const serviceStartDate = new Date(serviceDate);
+    const serviceEndDate = new Date(serviceDate);
+    serviceStartDate.setHours(startDate.getHours(), startDate.getMinutes(), 0, 0);
+    serviceEndDate.setHours(endDate.getHours(), endDate.getMinutes(), 0, 0);
+
+    const serviceName = this.currentLanguage === 'es'
+      ? (service.serviceTypeName ?? this.translocoService.translate('sites.calendar.day-events.service-fallback'))
+      : (service.serviceTypeNameEN ?? service.serviceTypeName ?? this.translocoService.translate('sites.calendar.day-events.service-fallback'));
+    const title = service.childGroupName ? `${service.childGroupName} - ${serviceName}` : serviceName;
+
+    serviceEvents.push({
+      start: serviceStartDate,
+      end: serviceEndDate,
+      title,
+      color: getServiceEventColorByTypeId(service.serviceTypeId),
+      draggable: false,
+      resizable: { beforeStart: false, afterEnd: false },
+      meta: {
+        serviceTypeId: service.serviceTypeId,
+        serviceTypeName: service.serviceTypeName,
+        serviceTypeNameEN: service.serviceTypeNameEN,
+        childGroupId: service.childGroupId,
+        childGroupName: service.childGroupName,
+        isService: true,
+        isPlaceholderForHoliday: true,
+        operatingDayId: day.id,
+        operatingDate: day.date
+      }
+    });
   }
 
   /**
@@ -1242,6 +1355,61 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   private getServiceEventColor(service: SiteOperatingDayService): any {
     return getServiceEventColorByTypeId(service?.serviceTypeId);
+  }
+
+  /** Icono del servicio para eventos en la vista de mes (reemplaza el punto de color). */
+  getServiceIcon(event: CalendarEvent): string {
+    const meta = event.meta as { isService?: boolean; serviceTypeId?: number } | undefined;
+    if (meta?.isService && meta.serviceTypeId != null) {
+      return getServiceTypeStyle(meta.serviceTypeId).icon;
+    }
+    return '';
+  }
+
+  /** Indica si el evento es de servicio (para mostrar icono en lugar de color). */
+  isServiceEvent(event: CalendarEvent): boolean {
+    const meta = event.meta as { isService?: boolean } | undefined;
+    return !!meta?.isService;
+  }
+
+  /** Eventos de día (operación, fin de semana, festivo) para la barra superior de la celda. */
+  getDayIndicatorEvents(day: { events?: CalendarEvent[] }): CalendarEvent[] {
+    return (day?.events ?? []).filter(e => !this.isServiceEvent(e));
+  }
+
+  /** Eventos de servicio para los iconos en la fila inferior de la celda. */
+  getServiceIconEvents(day: { events?: CalendarEvent[] }): CalendarEvent[] {
+    return (day?.events ?? []).filter(e => this.isServiceEvent(e));
+  }
+
+  /** Indica si el día es feriado (para aplicar tono deshabilitado a los iconos). */
+  isDayHoliday(day: { events?: CalendarEvent[] }): boolean {
+    return this.getDayIndicatorEvents(day).some(
+      e => (e.meta as { isHoliday?: boolean })?.isHoliday === true
+    );
+  }
+
+  /** Texto del tooltip para el indicador de tipo de día */
+  getDayTypeTooltip(day: { events?: CalendarEvent[] }): string {
+    const indicatorEvents = this.getDayIndicatorEvents(day);
+    return indicatorEvents.length > 0 ? (indicatorEvents[0].title ?? '') : '';
+  }
+
+  /** Color de fondo del badge según el tipo de día de funcionamiento */
+  getBadgeBackgroundColor(day: { events?: CalendarEvent[] }): string {
+    const indicatorEvents = this.getDayIndicatorEvents(day);
+    if (indicatorEvents.length > 0) {
+      return indicatorEvents[0].color?.primary ?? '#b94a48';
+    }
+    return '#b94a48';
+  }
+
+  /** Color de borde para el grupo en la vista de mes (por childGroupId). */
+  getGroupColor(childGroupId: number | undefined): string {
+    if (childGroupId == null) return '#9e9e9e';
+    const groups = this.currentSite?.childGroups ?? [];
+    const index = groups.findIndex(g => g.id === childGroupId);
+    return getGroupBorderColor(index >= 0 ? index : 0);
   }
 
   private getEventColor(day: SiteOperatingDay): any {

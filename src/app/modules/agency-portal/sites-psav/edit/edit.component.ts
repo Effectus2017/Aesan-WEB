@@ -60,6 +60,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { AreaType } from 'app/shared/models/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
@@ -113,7 +114,8 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from 'app/shared/components/site-sat
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
     LongitudeDirective,
-    DynamicGridDirective
+    DynamicGridDirective,
+    MatProgressSpinnerModule
 ],
 })
 export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -236,6 +238,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Propiedades para grupos de niños y servicios por grupos
   childGroups: SiteChildGroupRequest[] = [];
   servicesByGroups: ServiceByGroupDialogResult[] = [];
+
+  servicesCardLoading = false;
   servicesTableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>([]),
     columnsSchema: SERVICES_COLUMNS_SCHEMA,

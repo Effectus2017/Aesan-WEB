@@ -582,7 +582,13 @@
             <p class="mb-4 text-sm text-gray-600">{{ "sites.edit.services.table.description" | transloco }}</p>
 
             <!-- Tabla de servicios -->
-            <div class="rounded-lg shadow-md bg-card">
+            <div class="relative rounded-lg shadow-md bg-card min-h-[200px]">
+              <div
+                *ngIf="servicesCardLoading"
+                class="absolute inset-0 z-10 flex items-center justify-center rounded-lg bg-white/80 dark:bg-gray-900/80"
+              >
+                <mat-spinner diameter="48"></mat-spinner>
+              </div>
               <app-generic-table [config]="servicesTableConfig" [handler]="this" #servicesTable></app-generic-table>
             </div>
           </div>

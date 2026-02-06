@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf, DatePipe } from '@angular/common';
+import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -72,7 +72,6 @@ import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
-import { ServiceDaysDisplayPipe } from 'app/shared/pipes/service-days-display.pipe';
 import {
   SiteChildGroupServiceSlotResponse,
   ServiceSlotOperatingDate
@@ -105,9 +104,7 @@ import {
     PhoneFormatDirective,
     PuertoRicoZipCodeDirective,
     LatitudeDirective,
-    LongitudeDirective,
-    DatePipe,
-    ServiceDaysDisplayPipe
+    LongitudeDirective
 ],
 })
 export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
