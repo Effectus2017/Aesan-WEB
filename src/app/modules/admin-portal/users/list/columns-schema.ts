@@ -29,7 +29,7 @@ export const USERS_COLUMNS_SCHEMA: ColumnSchema[] = [
       label: 'users.list.columns.email',
     },
     {
-      key: 'role.name',
+      key: 'rolesDisplay',
       type: 'text',
       label: 'users.list.columns.roles',
     },

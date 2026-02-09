@@ -177,6 +177,10 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     });
   }
 
+  onAdd(): void {
+    this._customRouter.navigate(['users/add']);
+  }
+
   onSearch() {
     if (this.headerConfig.formGroup.valid) {
       this.getAll(0, this.headerConfig.formGroup.value);

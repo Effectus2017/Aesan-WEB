@@ -110,28 +110,35 @@
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>
               <mat-select
-                formControlName="role"
+                formControlName="roles"
+                multiple
                 [placeholder]="'users.edit.role.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="role-select"
+                data-cy="roles-select"
                 [attr.aria-label]="'users.edit.role.label' | transloco"
               >
-                <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">
-                  {{ _roles.name }}
+                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
+                  {{ _role.name }}
                 </mat-option>
               </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('roles').hasError('required')">
+                {{ "users.edit.role.required" | transloco }}
+              </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
-              <mat-label>{{ "users.edit.agency.readonly" | transloco }}</mat-label>
-              <input
-                matInput
-                [value]="user?.agency?.name || ''"
-                readonly
-                disabled
-                data-cy="agency-readonly-input"
-                [attr.aria-label]="'users.edit.agency.readonly' | transloco"
-                [title]="'users.edit.agency.readonly' | transloco"
-              />
+              <mat-label>{{ "users.edit.agency.label" | transloco }}</mat-label>
+              <mat-select
+                formControlName="agency"
+                [placeholder]="'users.edit.agency.placeholder' | transloco"
+                [compareWith]="compareById"
+                data-cy="agency-select"
+                [attr.aria-label]="'users.edit.agency.label' | transloco"
+              >
+                <mat-option [value]="null">{{ "users.edit.agency.empty" | transloco }}</mat-option>
+                <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
+                  {{ _agency.name }}
+                </mat-option>
+              </mat-select>
             </mat-form-field>
           </div>
           @if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {

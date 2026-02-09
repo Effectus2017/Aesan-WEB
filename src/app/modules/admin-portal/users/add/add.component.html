@@ -124,14 +124,16 @@
             <mat-form-field class="flex-auto">
               <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
               <mat-select
-                formControlName="role"
+                formControlName="roles"
+                multiple
                 [placeholder]="'users.add.role.placeholder' | transloco"
-                data-cy="role-select"
+                [compareWith]="compareById"
+                data-cy="roles-select"
                 [attr.aria-label]="'users.add.role.label' | transloco"
               >
-                <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">{{ _roles.name }}</mat-option>
+                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">{{ _role.name }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('role').hasError('required')" data-cy="role-error">
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('roles').hasError('required')" data-cy="roles-error">
                 {{ 'users.add.role.required' | transloco }}
               </mat-error>
             </mat-form-field>
@@ -141,11 +143,12 @@
               <mat-select
                 formControlName="agency"
                 [placeholder]="'users.add.agency.placeholder' | transloco"
+                [compareWith]="compareById"
                 data-cy="agency-select"
                 [attr.aria-label]="'users.add.agency.label' | transloco"
               >
-                <mat-option *ngFor="let _agencies of listAgencies" [value]="_agencies" data-cy="agency-option">
-                  {{ _agencies.name }}
+                <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
+                  {{ _agency.name }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('agency').hasError('required')" data-cy="agency-error">

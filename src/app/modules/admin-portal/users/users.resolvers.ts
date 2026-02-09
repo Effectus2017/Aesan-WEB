@@ -70,7 +70,7 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
   const usersService = inject(UsersService);
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: true }),
+    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getAllRolesFromDb({ take: 25, skip: 0 })
   ]).pipe(
     map(([agencies, roles]) => ({
@@ -92,7 +92,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
   const permissionService = inject(PermissionService);
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: true }),
+    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getUserByIdWithSP({ userId: route.paramMap.get('id') }),
     usersService.getAllRolesFromDb({
       take: 25,

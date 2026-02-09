@@ -53,6 +53,8 @@
   "./assets/i18n/sign-up/en.json",
   "./assets/i18n/sign-in/es.json",
   "./assets/i18n/sign-in/en.json",
+  "./assets/i18n/select-role/es.json",
+  "./assets/i18n/select-role/en.json",
   "./assets/i18n/sign-out/es.json",
   "./assets/i18n/sign-out/en.json",
   "./assets/i18n/update-password/es.json",

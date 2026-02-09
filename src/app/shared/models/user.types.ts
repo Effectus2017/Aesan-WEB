@@ -22,8 +22,10 @@ export interface Token {
   token_type: string;
   access_token: string;
   expires_in: number;
-  refresh_token: string;
-  permissions: string[];
+  refresh_token?: string;
+  permissions?: string[];
+  /** Roles AESAN disponibles para selección (solo cuando usuario tiene 2+ roles AESAN) */
+  roles?: string[];
 }
 
 export interface Role {

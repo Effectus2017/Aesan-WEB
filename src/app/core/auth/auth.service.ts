@@ -143,6 +143,31 @@ export class AuthService {
     return this._httpClient.post('api/auth/unlock-session', credentials);
   }
 
+  /**
+   * Selecciona el rol con el que el usuario desea entrar (usuarios multi-rol AESAN).
+   * Actualiza el token y el usuario en el servicio.
+   */
+  selectRole(role: string): Observable<Token> {
+    return this._httpClient.post<Token>(`${this.apiUrl}/select-role`, { role }).pipe(
+      switchMap((response: Token) => {
+        try {
+          const payloadPart = response.access_token.split('.')[1];
+          const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+
+          this.accessToken = response.access_token;
+          this._authenticated = true;
+          this._userService.user = user;
+          this._permissions = user.permissions ?? [];
+
+          return of(response);
+        } catch (error) {
+          console.error('Error al decodificar el token en selectRole:', error);
+          return throwError(() => new Error('Error al procesar el token de autenticación'));
+        }
+      })
+    );
+  }
+
   check(): Observable<boolean> {
     // Verificar si el usuario está autenticado
     if (this._authenticated) {
@@ -178,8 +203,12 @@ export class AuthService {
         return null;
     }
     try {
-      const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
-      return user.role;
+      const user = this.decodeJwtPayload(payloadPart) as Record<string, unknown>;
+      const role = user.role;
+      if (Array.isArray(role) && role.length > 0) {
+        return role[0] as string;
+      }
+      return typeof role === 'string' ? role : null;
     } catch (error) {
       return null;
     }

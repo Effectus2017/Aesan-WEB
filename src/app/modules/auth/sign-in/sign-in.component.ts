@@ -106,10 +106,15 @@ export class AuthSignInComponent implements OnInit {
 
     // Sign in
     this._authService.signIn(signInModel).subscribe({
-      next: () => {
-        const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
-        // Navigate to the redirect url
-        this._router.navigateByUrl(redirectURL);
+      next: (response) => {
+        const roles = response?.roles as string[] | undefined;
+        if (roles && Array.isArray(roles) && roles.length >= 2) {
+          sessionStorage.setItem('pendingAesanRoles', JSON.stringify(roles));
+          this._router.navigateByUrl('/select-role');
+        } else {
+          const redirectURL = this._activatedRoute.snapshot.queryParamMap.get('redirectURL') || '/signed-in-redirect';
+          this._router.navigateByUrl(redirectURL);
+        }
       },
       error: (response) => {
         // Re-enable the form

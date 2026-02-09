@@ -89,7 +89,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
-        role: new FormControl(null, Validators.required),
+        roles: new FormControl([], [Validators.required, (c) => (Array.isArray(c.value) && c.value.length >= 1 ? null : { required: true })]),
         agency: new FormControl(null),
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
@@ -160,8 +160,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (resolvedData) {
       // Asignar datos directamente desde el resolver
       this.user = resolvedData.user;
-      this.listRoles = resolvedData.roles.data || resolvedData.roles;
-      this.listAgencies = resolvedData.agencies;
+      this.listRoles = resolvedData.roles?.data ?? resolvedData.roles ?? [];
+      this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
 
       // Configurar permisos si existen
       if (resolvedData.permissions) {
@@ -209,6 +209,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.imageURL = param.imageURL;
     }
 
+    const selectedRoles = this.getSelectedRolesFromUser();
+    const agencyId = this.user.agency?.id ?? this.user.agencyId;
+    const selectedAgency = agencyId
+      ? (this.listAgencies?.find((a: { id: number }) => a.id === agencyId) ?? this.user.agency ?? { id: agencyId, name: this.user.agencyName ?? '' })
+      : null;
     this.headerConfig.formGroup.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
@@ -218,8 +223,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       isActive: this.user.isActive,
       isTemporalPasswordActived: this.user.isTemporalPasswordActived,
       emailConfirmed: this.user.emailConfirmed,
-      role: this.user.role,
-      agency: this.user.agency,
+      roles: selectedRoles,
+      agency: selectedAgency,
     });
 
     // Actualizar el validador de email con el email original
@@ -231,6 +236,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     }
 
     this.disableEditableFormControls();
+  }
+
+  private getSelectedRolesFromUser(): any[] {
+    const roleNames = this.user?.roles ?? (this.user?.role ? [this.user.role.name] : []);
+    if (!roleNames?.length) return [];
+    return this.listRoles.filter((r: { name: string }) => roleNames.includes(r.name));
   }
 
   getById() {
@@ -278,27 +289,27 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       return;
     }
 
-    // Verificar si el rol está deshabilitado (cuando el usuario edita su propio perfil)
+    // Verificar si los roles están deshabilitados (cuando el usuario edita su propio perfil)
     const loggedInUserId = this._authService.getUserId();
-    let roleName: string;
+    let roleNames: string[];
 
-    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('role').disabled) {
-      // Si el rol está deshabilitado, usar el rol actual del usuario
-      roleName = this.user.roles[0];
+    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('roles').disabled) {
+      roleNames = this.user?.roles ?? (this.user?.role ? [this.user.role.name] : []);
     } else {
-      // Si el rol no está deshabilitado, verificar que no sea nulo
-      if (isNullOrUndefinedEmptyStringNullArray(form.role?.name)) {
-        this.headerConfig.formGroup.get('role').setErrors({ required: true });
-        this.headerConfig.formGroup.get('role').markAsTouched();
+      const rolesValue = form.roles;
+      if (!rolesValue || !Array.isArray(rolesValue) || rolesValue.length === 0) {
+        this.headerConfig.formGroup.get('roles').setErrors({ required: true });
+        this.headerConfig.formGroup.get('roles').markAsTouched();
         return;
       }
-      roleName = form.role.name;
+      roleNames = rolesValue.map((r: { name?: string }) => (typeof r === 'string' ? r : r?.name)).filter(Boolean);
     }
 
     const requestParameters: QueryParameters = {
       currentUserId: loggedInUserId,
     };
 
+    const agencyId = form.agency?.id ?? this.user.agency?.id;
     const _model: RequestUser = {
       id: this.id,
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -308,8 +319,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
       userName: this.user.userName,
       imageURL: this.imageURL,
-      roles: [roleName],
-      agencyId: this.user.agency?.id,
+      roles: roleNames,
+      agencyId: agencyId,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,
@@ -733,9 +744,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const loggedInUserId = this._authService.getUserId();
 
     // Si el usuario que se está editando es el mismo que está logueado,
-    // deshabilitar el campo de rol para evitar que cambie su propio rol
+    // deshabilitar el campo de roles para evitar que cambie sus propios roles
     if (loggedInUserId === this.id) {
-      this.headerConfig.formGroup.get('role').disable();
+      this.headerConfig.formGroup.get('roles').disable();
     }
   }
 

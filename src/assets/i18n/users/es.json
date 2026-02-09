@@ -70,7 +70,10 @@
                 "force-password": "Forzar Cambio de Contraseña"
             },
             "agency": {
-                "readonly": "Auspiciador"
+                "readonly": "Auspiciador",
+                "label": "Auspiciador",
+                "placeholder": "Seleccione una agencia",
+                "empty": "Ninguno"
             },
             "update-password-modal": {
                 "title": "Cambiar Contraseña",

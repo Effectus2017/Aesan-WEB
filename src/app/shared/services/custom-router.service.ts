@@ -26,7 +26,7 @@ export class CustomRouterService {
 
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       prefix = '/agency-portal/';
-    } else if (userRole === 'Monitor') {
+    } else if (userRole === 'Monitor' || userRole === 'Program-Coordinator') {
       prefix = '/aesan-portal/';
     } else {
       switch (userPrograms) {

@@ -47,6 +47,7 @@ export const appRoutes: Route[] = [
     children: [
       { path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.routes') },
       { path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.routes') },
+      { path: 'select-role', loadChildren: () => import('app/modules/auth/select-role/select-role.routes') },
     ],
   },
 
@@ -77,6 +78,7 @@ export const appRoutes: Route[] = [
       initialData: initialDataResolver,
     },
     children: [
+      { path: '', pathMatch: 'full', redirectTo: 'sponsors' },
       // Sponsors (Role: Admin)
       { path: 'sponsors', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
       // Users (Role: Admin)

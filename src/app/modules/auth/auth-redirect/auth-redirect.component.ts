@@ -69,12 +69,16 @@ export class AuthRedirectComponent implements OnInit {
   private getTargetRoute(userRole: string): string[] {
     switch (userRole) {
       case 'Administrator':
+      case 'SuperAdmin':
         return ['sponsors'];
       case 'Agency-Administrator':
       case 'Agency-User':
         return ['dashboard'];
-      default:
+      case 'Monitor':
+      case 'Program-Coordinator':
         return ['dashboard'];
+      default:
+        return ['sponsors'];
     }
   }
 

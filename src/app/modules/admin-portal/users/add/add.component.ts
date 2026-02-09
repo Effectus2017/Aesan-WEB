@@ -31,7 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
-import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareById, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -85,7 +85,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           middleName: new FormControl(null),
           fatherLastName: new FormControl(null, Validators.required),
           motherLastName: new FormControl(null),
-          role: new FormControl(null, Validators.required),
+          roles: new FormControl([], [Validators.required, (c) => (Array.isArray(c.value) && c.value.length >= 1 ? null : { required: true })]),
           agency: new FormControl(null, Validators.required),
           isActive: new FormControl(true),
           isTemporalPasswordActived: new FormControl(true),
@@ -106,6 +106,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   listRoles = [];
   listAgencies = [];
+  compareById = compareById;
 
   // Validador personalizado para email
   emailValidator(): ValidatorFn {
@@ -128,8 +129,8 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      this.listRoles = resolvedData.roles.data || resolvedData.roles;
-      this.listAgencies = resolvedData.agencies;
+      this.listRoles = resolvedData.roles?.data ?? resolvedData.roles ?? [];
+      this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
       this._changeDetectorRef.markForCheck();
     }
 
@@ -182,10 +183,11 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       return;
     }
 
-    // si rol es null, no se puede actualizar
-    if (isNullOrUndefinedEmptyStringNullArray(form.role.name)) {
-      this.headerConfig.formGroup.get('datosPersonales').get('role').setErrors({ required: true });
-      this.headerConfig.formGroup.get('datosPersonales').get('role').markAsTouched();
+    // si roles está vacío, no se puede crear
+    const roleNames = (form.roles ?? []).map((r: { name?: string }) => (typeof r === 'string' ? r : r?.name)).filter(Boolean);
+    if (!roleNames.length) {
+      this.headerConfig.formGroup.get('datosPersonales').get('roles').setErrors({ required: true });
+      this.headerConfig.formGroup.get('datosPersonales').get('roles').markAsTouched();
       return;
     }
 
@@ -197,7 +199,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       userName: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? null : form.email,
       password: isNullOrUndefinedEmptyStringNullArray(form.newPassword) ? null : form.newPassword,
-      roles: [form.role.name],
+      roles: roleNames,
       imageURL: this.imageURL,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,

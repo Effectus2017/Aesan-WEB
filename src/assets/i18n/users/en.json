@@ -70,7 +70,10 @@
                 "force-password": "Force Password Change"
             },
             "agency": {
-                "readonly": "Sponsor"
+                "readonly": "Sponsor",
+                "label": "Sponsor",
+                "placeholder": "Select an agency",
+                "empty": "None"
             },
             "update-password-modal": {
                 "title": "Update Password",
