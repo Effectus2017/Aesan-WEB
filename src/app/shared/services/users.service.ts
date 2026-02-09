@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, map, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/QueryParameters';
 import { RequestUser } from '../../modules/admin-portal/users/users.types';
@@ -18,8 +18,13 @@ export class UsersService {
   private _roles: BehaviorSubject<any | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
+  private authApiUrl = `${environment.baseHttpUrl}/auth`;
   private _httpClient = inject(HttpClient);
   private _uploadService = inject(UploadService);
+
+  private _aesanRolesCache: string[] | null = null;
+  private _aesanRolesCacheTime = 0;
+  private readonly AESAN_ROLES_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -98,6 +103,25 @@ export class UsersService {
   getAllUsersFromDbWithSP(requestParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-all-users-from-db-with-sp`, getHttpOptions(requestParameters))
       .pipe(tap((response: any) => this._users.next(response)));
+  }
+
+  /**
+   * Obtiene los nombres de roles AESAN desde la API (con caché).
+   * Usados para la selección multi-rol en select-role.
+   */
+  getAesanRolesFromDb(): Observable<string[]> {
+    const now = Date.now();
+    if (this._aesanRolesCache && now - this._aesanRolesCacheTime < this.AESAN_ROLES_TTL_MS) {
+      return of(this._aesanRolesCache);
+    }
+    return this._httpClient.get<{ names: string[] }>(`${this.authApiUrl}/aesan-roles`).pipe(
+      tap((res) => {
+        this._aesanRolesCache = res?.names ?? [];
+        this._aesanRolesCacheTime = Date.now();
+      }),
+      map((res) => res?.names ?? []),
+      catchError(handleError)
+    );
   }
 
   /**

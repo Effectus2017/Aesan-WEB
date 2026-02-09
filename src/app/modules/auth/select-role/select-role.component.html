@@ -28,7 +28,8 @@
       </fuse-alert>
 
       <div class="mt-8 flex flex-col gap-3">
-        <mat-form-field class="w-full" appearance="outline">
+        <mat-spinner *ngIf="isLoading" diameter="32" class="mx-auto"></mat-spinner>
+        <mat-form-field *ngIf="!isLoading" class="w-full" appearance="outline">
           <mat-label>{{ 'select-role.placeholder' | transloco }}</mat-label>
           <mat-select
             [disabled]="isLoading"
@@ -38,7 +39,7 @@
             [attr.aria-label]="'select-role.placeholder' | transloco"
           >
             <mat-option *ngFor="let role of roles" [value]="role" [attr.data-cy]="'role-' + role">
-              {{ getRoleLabel(role) | transloco }}
+              {{ getRoleLabel(role) }}
             </mat-option>
           </mat-select>
         </mat-form-field>

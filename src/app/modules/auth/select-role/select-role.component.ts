@@ -6,10 +6,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { AESAN_ROLES } from 'app/shared/constants/aesan-roles.constants';
+import { UsersService } from 'app/shared/services/users.service';
 
 const SELECT_ROLE_STORAGE_KEY = 'pendingAesanRoles';
 
@@ -33,39 +33,40 @@ const SELECT_ROLE_STORAGE_KEY = 'pendingAesanRoles';
 export class AuthSelectRoleComponent implements OnInit {
   private _authService = inject(AuthService);
   private _router = inject(Router);
+  private _usersService = inject(UsersService);
+  private _transloco = inject(TranslocoService);
 
   roles: string[] = [];
   selectedRole: string | null = null;
-  isLoading = false;
+  isLoading = true;
   alert: { type: FuseAlertType; message: string } = {
     type: 'error',
     message: '',
   };
   showAlert = false;
 
-  /** Etiquetas de rol para i18n */
-  readonly roleLabels: Record<string, string> = {
-    Administrator: 'select-role.roles.Administrator',
-    Monitor: 'select-role.roles.Monitor',
-    SuperAdmin: 'select-role.roles.SuperAdmin',
-    'Program-Coordinator': 'select-role.roles.ProgramCoordinator',
-  };
-
   ngOnInit(): void {
     const stored = sessionStorage.getItem(SELECT_ROLE_STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored) as string[];
-        this.roles = (parsed ?? []).filter((r) => AESAN_ROLES.includes(r as any));
-      } catch {
-        this.roles = [];
-      }
-    }
+    const storedRoles: string[] = stored ? (() => { try { return JSON.parse(stored) ?? []; } catch { return []; } })() : [];
 
-    if (this.roles.length < 2) {
-      sessionStorage.removeItem(SELECT_ROLE_STORAGE_KEY);
-      this._router.navigateByUrl('/signed-in-redirect');
-    }
+    this._usersService.getAesanRolesFromDb().subscribe({
+      next: (aesanRoles) => {
+        this.roles = storedRoles.filter((r) => aesanRoles.includes(r));
+        this.isLoading = false;
+        if (this.roles.length < 2) {
+          sessionStorage.removeItem(SELECT_ROLE_STORAGE_KEY);
+          this._router.navigateByUrl('/signed-in-redirect');
+        }
+      },
+      error: () => {
+        this.roles = storedRoles;
+        this.isLoading = false;
+        if (this.roles.length < 2) {
+          sessionStorage.removeItem(SELECT_ROLE_STORAGE_KEY);
+          this._router.navigateByUrl('/signed-in-redirect');
+        }
+      },
+    });
   }
 
   selectRole(role: string | null): void {
@@ -90,7 +91,13 @@ export class AuthSelectRoleComponent implements OnInit {
     });
   }
 
+  /**
+   * Obtiene la etiqueta traducida del rol. Usa select-role.roles.{roleKey} con fallback al nombre del rol.
+   */
   getRoleLabel(role: string): string {
-    return this.roleLabels[role] ?? role;
+    const roleKey = role.replace(/-/g, '');
+    const i18nKey = `select-role.roles.${roleKey}`;
+    const translated = this._transloco.translate(i18nKey);
+    return translated !== i18nKey ? translated : role;
   }
 }
