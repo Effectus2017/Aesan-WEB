@@ -83,6 +83,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 @Component({
   selector: 'app-add-sites-center',
@@ -1369,6 +1370,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PACNA,
     };
 
     this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({

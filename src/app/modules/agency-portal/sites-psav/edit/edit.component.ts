@@ -1399,6 +1399,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PSAV,
     };
 
     this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({

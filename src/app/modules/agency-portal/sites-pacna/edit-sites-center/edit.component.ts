@@ -87,6 +87,7 @@ import {
   SiteChangesCancellationsModalComponent,
   SiteChangesCancellationsModalData,
 } from 'app/shared/components/site-changes-cancellations-modal/site-changes-cancellations-modal.component';
+import { PROGRAM_IDS } from 'app/shared/const';
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -1641,6 +1642,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PACNA,
     };
 
     this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({

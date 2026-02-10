@@ -9,6 +9,7 @@ import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { ServiceTypeService } from 'app/shared/services/service-type.service';
+import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 // Resolver para la lista de sitios PSAV
@@ -41,6 +42,7 @@ export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: Activ
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
   const serviceTypeService = inject(ServiceTypeService);
+  const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
@@ -48,9 +50,10 @@ export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: Activ
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PSAV }),
     serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
+    kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PSAV }),
   ]).pipe(
     map(
-      ([deliveryTypes, groupTypes, organizationTypes, allowedOperatingDays, serviceTypes]) => ({
+      ([deliveryTypes, groupTypes, organizationTypes, allowedOperatingDays, serviceTypes, kitchenTypes]) => ({
         centerTypes: [], // PSAV no tiene centerTypes
         deliveryTypes: deliveryTypes.body,
         sponsorTypes: [], // PSAV no tiene sponsorTypes
@@ -58,6 +61,7 @@ export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: Activ
         organizationTypes: organizationTypes.body,
         allowedOperatingDays: allowedOperatingDays.body,
         serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+        kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
       })
     )
   );

@@ -1518,6 +1518,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PDAM,
     };
 
     this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({

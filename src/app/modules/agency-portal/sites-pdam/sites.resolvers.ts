@@ -11,6 +11,7 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { OrganizationTypeService } from 'app/shared/services/organization-type.service';
 import { ServiceTypeService } from 'app/shared/services/service-type.service';
+import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 // Resolver para el calendario del sitio
@@ -74,6 +75,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
   const organizationTypeService = inject(OrganizationTypeService);
   const siteCalendarService = inject(SiteCalendarService);
   const serviceTypeService = inject(ServiceTypeService);
+  const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
@@ -83,6 +85,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PDAM }),
     serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
   ]).pipe(
     map(
       ([
@@ -93,6 +96,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
         organizationTypes,
         allowedOperatingDays,
         serviceTypes,
+        kitchenTypes,
       ]) => ({
         centerTypes: centerTypes.body,
         deliveryTypes: deliveryTypes.body,
@@ -101,6 +105,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
         organizationTypes: organizationTypes.body,
         allowedOperatingDays: allowedOperatingDays.body,
         serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
+        kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
       })
     )
   );

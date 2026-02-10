@@ -163,9 +163,8 @@ export const initialDataSitesPacnaCenterAddResolver: ResolveFn<any> = (route: Ac
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
-    // Types of kitchen
-    // Tipos de cocina
-    kitchenTypeService.getAllKitchenTypesFromDb(requestParameters),
+    // Types of kitchen (por programa: PACNA sin CGA)
+    kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     // Geographic service
     // Servicio para operaciones geográficas
     geoService.getCitiesFromDb(requestParameters),
@@ -187,7 +186,7 @@ export const initialDataSitesPacnaCenterAddResolver: ResolveFn<any> = (route: Ac
   ]).pipe(
     map(([options, kitchenTypes, cities, regions, organizationTypes, educationLevels, operatingPeriods, areaTypes]) => ({
       options: options.body,
-      kitchenTypes: kitchenTypes.body,
+      kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
       siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
       cities: cities.body,
       regions: regions.body,
@@ -223,9 +222,8 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
     }),
-    // Types of kitchen
-    // Tipos de cocina
-    kitchenTypeService.getAllKitchenTypesFromDb(requestParameters),
+    // Types of kitchen (por programa: PACNA sin CGA)
+    kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     // Geographic service
     // Servicio para operaciones geográficas
     geoService.getCitiesFromDb(requestParameters),
@@ -248,7 +246,7 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
     map(([site, options, kitchenTypes, cities, regions, organizationTypes, educationLevels, operatingPeriods, areaTypes]) => ({
       site: site.body,
       options: options.body,
-      kitchenTypes: kitchenTypes.body,
+      kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
       siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
       cities: cities.body,
       regions: regions.body,

@@ -48,8 +48,17 @@ export class KitchenTypeService {
   }
 
   /**
-   * Obtiene los tipos de cocina válidos para un tipo de grupo específico
-   * @param queryParameters Los parámetros de consulta que incluyen el ID del tipo de grupo
+   * Obtiene los tipos de cocina válidos para un programa
+   * @param queryParameters Los parámetros de consulta que incluyen el ID del programa (programId)
+   * @returns Un observable que emite los tipos de cocina obtenidos
+   */
+  getKitchenTypesByProgram(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-kitchen-types-by-program`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._kitchenTypes.next(response)));
+  }
+
+  /**
+   * Obtiene los tipos de cocina válidos para un tipo de grupo y programa específicos
+   * @param queryParameters Los parámetros de consulta que incluyen groupTypeId y programId
    * @returns Un observable que emite los tipos de cocina obtenidos
    */
   getKitchenTypesByGroupType(queryParameters: QueryParameters): Observable<any> {
