@@ -30,6 +30,8 @@ export interface UserToken {
     isActive?: boolean;
     isTemporalPasswordActived?: boolean;
     emailConfirmed?: boolean;
+    programId?: number;
+    programName?: string;
   }
 
   export interface DTOUserRole {

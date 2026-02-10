@@ -6,6 +6,7 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from '../../../shared/services/users.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PermissionService } from 'app/shared/services/permission.service';
+import { ProgramService } from 'app/shared/services/program.service';
 
 @Injectable({
   providedIn: 'root',
@@ -68,14 +69,17 @@ export const initialRolesResolver: ResolveFn<any> = () => {
 export const initialAddUsersResolver: ResolveFn<any> = () => {
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
+  const programService = inject(ProgramService);
 
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
-    usersService.getAllRolesFromDb({ take: 25, skip: 0 })
+    usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
+    programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
-    map(([agencies, roles]) => ({
+    map(([agencies, roles, programs]) => ({
       agencies: agencies.body,
-      roles: roles.body
+      roles: roles.body,
+      programs: programs?.body ?? []
     }))
   );
 };
@@ -90,6 +94,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
   const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
   const permissionService = inject(PermissionService);
+  const programService = inject(ProgramService);
 
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
@@ -101,12 +106,14 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     permissionService.getUserPermissions({
       userId: route.paramMap.get('id'),
     }),
+    programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
-    map(([agencies, user, roles, permissions]) => ({
+    map(([agencies, user, roles, permissions, programs]) => ({
       agencies: agencies.body,
       user: user.body,
       roles: roles.body,
-      permissions: permissions.body
+      permissions: permissions.body,
+      programs: programs?.body ?? []
     }))
   );
 };

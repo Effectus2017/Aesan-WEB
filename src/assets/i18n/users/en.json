@@ -75,6 +75,11 @@
                 "placeholder": "Select an agency",
                 "empty": "None"
             },
+            "program": {
+                "label": "Program",
+                "placeholder": "Select a program",
+                "none": "None"
+            },
             "update-password-modal": {
                 "title": "Update Password",
                 "subtitle": "Update password for {{ userName }}",
@@ -205,6 +210,11 @@
                 "placeholder": "Select an agency",
                 "required": "Agency is required"
             },
+            "program": {
+                "label": "Program",
+                "placeholder": "Select a program",
+                "none": "None"
+            },
             "isActive": {
                 "label": "Active User"
             },
@@ -225,6 +235,7 @@
                 "fatherLastName": "Last Name",
                 "email": "Email",
                 "roles": "Roles",
+                "program": "Program",
                 "avatar": "Profile Picture",
                 "isActive": "Active",
                 "isTemporalPasswordActived": "Temporary Password Activated",

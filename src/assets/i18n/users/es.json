@@ -75,6 +75,11 @@
                 "placeholder": "Seleccione una agencia",
                 "empty": "Ninguno"
             },
+            "program": {
+                "label": "Programa",
+                "placeholder": "Seleccione un programa",
+                "none": "Ninguno"
+            },
             "update-password-modal": {
                 "title": "Cambiar Contraseña",
                 "subtitle": "Actualizar contraseña para {{ userName }}",
@@ -160,6 +165,7 @@
                 "fatherLastName": "Apellido",
                 "email": "Correo Electrónico",
                 "roles": "Roles",
+                "program": "Programa",
                 "avatar": "Foto de Perfil",
                 "isActive": "Activo",
                 "isTemporalPasswordActived": "Contraseña Temporera Activada",
@@ -237,6 +243,11 @@
                 "label": "Auspiciador",
                 "placeholder": "Seleccione una agencia",
                 "required": "La agencia es requerida"
+            },
+            "program": {
+                "label": "Programa",
+                "placeholder": "Seleccione un programa",
+                "none": "Ninguno"
             },
             "isActive": {
                 "label": "Usuario Activo"

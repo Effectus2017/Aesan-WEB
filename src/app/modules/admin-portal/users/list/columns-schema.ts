@@ -34,6 +34,11 @@ export const USERS_COLUMNS_SCHEMA: ColumnSchema[] = [
       label: 'users.list.columns.roles',
     },
     {
+      key: 'programName',
+      type: 'text',
+      label: 'users.list.columns.program',
+    },
+    {
       key: 'isActive',
       type: 'boolean',
       label: 'users.list.columns.isActive',

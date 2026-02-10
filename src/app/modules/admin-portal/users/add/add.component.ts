@@ -87,6 +87,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           motherLastName: new FormControl(null),
           roles: new FormControl([], [Validators.required, (c) => (Array.isArray(c.value) && c.value.length >= 1 ? null : { required: true })]),
           agency: new FormControl(null, Validators.required),
+          program: new FormControl(null),
           isActive: new FormControl(true),
           isTemporalPasswordActived: new FormControl(true),
           emailConfirmed: new FormControl(false),
@@ -106,6 +107,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   listRoles = [];
   listAgencies = [];
+  listPrograms: { id: number; name: string }[] = [];
   compareById = compareById;
 
   // Validador personalizado para email
@@ -131,6 +133,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     if (resolvedData) {
       this.listRoles = resolvedData.roles?.data ?? resolvedData.roles ?? [];
       this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
+      this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
       this._changeDetectorRef.markForCheck();
     }
 
@@ -191,6 +194,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       return;
     }
 
+    const programId = form.program?.id ?? form.programId ?? undefined;
     const _model: RequestUser = {
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
       middleName: isNullOrUndefinedEmptyStringNullArray(form.middleName) ? null : form.middleName,
@@ -204,6 +208,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,
+      programId: programId,
     };
 
     this._usersService.add(_model, requestParameters).subscribe({

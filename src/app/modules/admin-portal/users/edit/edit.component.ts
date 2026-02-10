@@ -91,6 +91,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         motherLastName: new FormControl(null),
         roles: new FormControl([], [Validators.required, (c) => (Array.isArray(c.value) && c.value.length >= 1 ? null : { required: true })]),
         agency: new FormControl(null),
+        program: new FormControl(null),
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
@@ -142,6 +143,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   listRoles: any[] = [];
   listAgencies: any[] = [];
+  listPrograms: { id: number; name: string }[] = [];
 
   userRole: string = null;
 
@@ -162,6 +164,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.user = resolvedData.user;
       this.listRoles = resolvedData.roles?.data ?? resolvedData.roles ?? [];
       this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
+      this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
 
       // Configurar permisos si existen
       if (resolvedData.permissions) {
@@ -214,6 +217,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const selectedAgency = agencyId
       ? (this.listAgencies?.find((a: { id: number }) => a.id === agencyId) ?? this.user.agency ?? { id: agencyId, name: this.user.agencyName ?? '' })
       : null;
+    const programId = this.user.programId ?? this.user.program?.id;
+    const selectedProgram = programId
+      ? (this.listPrograms?.find((p: { id: number }) => p.id === programId) ?? { id: programId, name: this.user.programName ?? this.user.program?.name ?? '' })
+      : null;
     this.headerConfig.formGroup.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
@@ -225,6 +232,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailConfirmed: this.user.emailConfirmed,
       roles: selectedRoles,
       agency: selectedAgency,
+      program: selectedProgram,
     });
 
     // Actualizar el validador de email con el email original
@@ -310,6 +318,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     };
 
     const agencyId = form.agency?.id ?? this.user.agency?.id;
+    const programId = form.program?.id ?? form.programId ?? undefined;
     const _model: RequestUser = {
       id: this.id,
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -321,6 +330,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       imageURL: this.imageURL,
       roles: roleNames,
       agencyId: agencyId,
+      programId: programId,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,
