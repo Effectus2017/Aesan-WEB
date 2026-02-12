@@ -2,6 +2,8 @@ export interface TokenResponse {
   nameid: string;
   unique_name: string;
   role: string;
+  /** Lista de roles AESAN disponibles para cambio en el menú (solo cuando el usuario tiene 2+ roles) */
+  roles?: string[];
   userId: string;
   name: string;
   avatar?: string;

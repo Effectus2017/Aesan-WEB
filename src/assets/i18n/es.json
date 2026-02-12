@@ -52,6 +52,8 @@
         "close": "Cerrar",
         "profile": "Perfil",
         "signed-in-as": "Sesión iniciada como",
+        "current-role": "Rol actual",
+        "switch-role": "Cambiar rol",
         "sign-out": "Cerrar sesión",
         "dark-mode": "Modo oscuro",
         "light-mode": "Modo claro"

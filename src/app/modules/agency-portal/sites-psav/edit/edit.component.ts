@@ -1683,12 +1683,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    */
   private validateDiningRoomCapacity(): void {
     const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
-    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
-    const capacity = capacityControl?.value;
-
-    if (capacity && enrollment && capacity > enrollment) {
-      capacityControl?.setErrors({ max: true });
-    } else if (capacityControl?.hasError('max')) {
+    if (capacityControl?.hasError('max')) {
       const errors = { ...capacityControl.errors };
       delete errors['max'];
       capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);

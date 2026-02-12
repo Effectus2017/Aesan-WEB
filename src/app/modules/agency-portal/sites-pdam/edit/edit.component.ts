@@ -1926,20 +1926,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
    */
   private validateDiningRoomCapacity(): void {
     const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
-    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
-    const capacity = capacityControl?.value;
-    const capacityNum = Number(capacity);
-    const enrollmentNum = Number(enrollment);
-
-    if (
-      capacity != null &&
-      enrollment != null &&
-      !Number.isNaN(capacityNum) &&
-      !Number.isNaN(enrollmentNum) &&
-      capacityNum > enrollmentNum
-    ) {
-      capacityControl?.setErrors({ max: true });
-    } else if (capacityControl?.hasError('max')) {
+    if (capacityControl?.hasError('max')) {
       const errors = { ...capacityControl.errors };
       delete errors['max'];
       capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);

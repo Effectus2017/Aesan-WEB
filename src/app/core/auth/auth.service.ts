@@ -77,6 +77,39 @@ export class AuthService {
     }
   }
 
+  /**
+   * Convierte el payload decodificado del JWT en TokenResponse (normaliza role y roles).
+   */
+  private payloadToTokenResponse(payload: Record<string, unknown>): TokenResponse {
+    const rolesClaim = payload.roles;
+    const rolesArray = typeof rolesClaim === 'string'
+      ? (rolesClaim ? (rolesClaim as string).split(',').map((r: string) => r.trim()).filter(Boolean) : undefined)
+      : Array.isArray(rolesClaim)
+        ? (rolesClaim as string[])
+        : undefined;
+
+    return {
+      nameid: payload.nameid as string,
+      unique_name: payload.unique_name as string,
+      role: Array.isArray(payload.role) ? (payload.role[0] as string) : (payload.role as string),
+      roles: rolesArray,
+      userId: payload.userId as string,
+      name: payload.name as string,
+      lastName: payload.lastName as string,
+      email: payload.email as string,
+      avatar: payload.avatar as string | undefined,
+      status: payload.status as string | undefined,
+      agency: payload.agency as string | undefined,
+      agencyId: payload.agencyId as number | undefined,
+      programs: payload.programs as string | undefined,
+      programIds: payload.programIds as string | undefined,
+      permissions: (payload.permissions as string[] | undefined) ?? [],
+      nbf: payload.nbf as number,
+      exp: payload.exp as number,
+      iat: payload.iat as number,
+    };
+  }
+
   // -----------------------------------------------------------------------------------------------------
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
@@ -91,7 +124,8 @@ export class AuthService {
         const token: Token = response as Token;
         try {
           const payloadPart = token.access_token.split('.')[1];
-          const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+          const payload = this.decodeJwtPayload(payloadPart);
+          const user = this.payloadToTokenResponse(payload);
 
           // Store the access token in the local storage
           this.accessToken = token.access_token;
@@ -152,7 +186,8 @@ export class AuthService {
       switchMap((response: Token) => {
         try {
           const payloadPart = response.access_token.split('.')[1];
-          const user = this.decodeJwtPayload(payloadPart) as TokenResponse;
+          const payload = this.decodeJwtPayload(payloadPart);
+          const user = this.payloadToTokenResponse(payload);
 
           this.accessToken = response.access_token;
           this._authenticated = true;
@@ -287,25 +322,7 @@ export class AuthService {
     try {
         const payloadPart = token.split('.')[1];
         const payload = this.decodeJwtPayload(payloadPart);
-
-        const userData = {
-            nameid: payload.nameid,
-            unique_name: payload.unique_name,
-            role: payload.role,
-            userId: payload.userId,
-            name: payload.name,
-            lastName: payload.lastName,
-            email: payload.email,
-            avatar: payload.avatar,
-            status: payload.status,
-            agency: payload.agency,
-            programs: payload.programs,
-            programIds: payload.programIds,
-            permissions: payload.permissions || [],
-            nbf: payload.nbf,
-            exp: payload.exp,
-            iat: payload.iat
-        };
+        const userData = this.payloadToTokenResponse(payload);
 
         // Cargar los permisos en el servicio
         this._permissions = userData.permissions || [];

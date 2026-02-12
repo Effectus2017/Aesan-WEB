@@ -482,9 +482,6 @@
             <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('min')">
               {{ "sites.edit.dining-room-capacity.min-error" | transloco }}
             </mat-error>
-            <mat-error *ngIf="headerConfig.formGroup.get('diningRoomCapacity')?.hasError('max')">
-              {{ "sites.edit.dining-room-capacity.max-error" | transloco }}
-            </mat-error>
           </mat-form-field>
         </div>
 

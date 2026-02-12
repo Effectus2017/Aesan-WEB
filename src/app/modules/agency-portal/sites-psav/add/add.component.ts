@@ -309,17 +309,17 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       siteLocation: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
-      groupType: [null],
+      groupType: [null, Validators.required],
       // Tipo de distribución - Método de distribución para sitios no congregados
       // Distribution type - Distribution method for non-congregate sites
       distributionType: [{ value: null, disabled: true }],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
-      deliveryType: [null],
+      deliveryType: [null, Validators.required],
       // Tipo de solicitante - Tipo de solicitante del sitio
       // Type of applicant - Type of site applicant
       // Laico (15), Base de fe (16)
-      typeOfApplicant: [null],
+      typeOfApplicant: [null, Validators.required],
       // Tipo de área - Campo requerido para clasificación del sitio
       // Type of area - Required field for site classification
       // Rural (23), Urbana (24)
@@ -332,10 +332,10 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       locationType: [null, Validators.required],
       // Disponibilidad de almacén - Indica si el sitio tiene instalaciones de almacenamiento
       // Warehouse availability - Indicates if site has storage facilities
-      hasWarehouse: [null],
+      hasWarehouse: [null, Validators.required],
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
-      hasDiningRoom: [null],
+      hasDiningRoom: [null, Validators.required],
       // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
       // Dining room capacity - Only visible when hasDiningRoom is true
       diningRoomCapacity: [null, [Validators.min(1)]],
@@ -394,7 +394,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       homeType: [null],
       // Matrícula General
       // General Enrollment
-      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
 
       // Estado activo del sitio
       // Site active status
@@ -1513,12 +1513,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
    */
   private validateDiningRoomCapacity(): void {
     const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
-    const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
-    const capacity = capacityControl?.value;
-
-    if (capacity && enrollment && capacity > enrollment) {
-      capacityControl?.setErrors({ max: true });
-    } else if (capacityControl?.hasError('max')) {
+    if (capacityControl?.hasError('max')) {
       const errors = { ...capacityControl.errors };
       delete errors['max'];
       capacityControl.setErrors(Object.keys(errors).length > 0 ? errors : null);

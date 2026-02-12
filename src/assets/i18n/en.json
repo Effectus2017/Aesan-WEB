@@ -58,6 +58,8 @@
         "close": "Close",
         "profile": "Profile",
         "signed-in-as": "Signed in as",
+        "current-role": "Current role",
+        "switch-role": "Switch role",
         "sign-out": "Sign out",
         "dark-mode": "Dark mode",
         "light-mode": "Light mode"

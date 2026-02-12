@@ -1,5 +1,5 @@
 import { BooleanInput } from '@angular/cdk/coercion';
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -12,6 +12,7 @@ import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-t
 import { KeyboardShortcutsComponent } from 'app/layout/common/keyboard-shortcuts/keyboard-shortcuts.component';
 import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
+import { AuthService } from 'app/core/auth/auth.service';
 import { Subject, takeUntil } from 'rxjs';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
@@ -28,6 +29,7 @@ import { TranslocoModule } from '@ngneat/transloco';
         MatButtonModule,
         MatIconModule,
         MatMenuModule,
+        NgForOf,
         NgIf,
         LazyImgDirective,
         OptimizeImagePipe,
@@ -52,6 +54,14 @@ export class UserComponent implements OnInit, OnDestroy {
 
   isDarkMode: boolean;
   private _customRouterService: CustomRouterService = inject(CustomRouterService);
+  private _authService: AuthService = inject(AuthService);
+
+  /**
+   * Roles disponibles para cambio (solo cuando el usuario tiene 2+ roles AESAN).
+   */
+  get availableRoles(): string[] {
+    return this.user?.roles ?? [];
+  }
 
   /**
    * Constructor
@@ -126,6 +136,24 @@ export class UserComponent implements OnInit, OnDestroy {
    */
   navigateToProfile(): void {
     this._customRouterService.navigate(['users/profile']);
+  }
+
+  /**
+   * Cambiar el rol activo (usuarios multi-rol). Actualiza token y redirige para refrescar navegación.
+   */
+  switchRole(role: string): void {
+    if (!role || role === this.user?.role) {
+      return;
+    }
+    this._authService.selectRole(role).subscribe({
+      next: () => {
+        this._changeDetectorRef.markForCheck();
+        this._router.navigateByUrl('/auth-redirect');
+      },
+      error: () => {
+        this._changeDetectorRef.markForCheck();
+      },
+    });
   }
 
 }

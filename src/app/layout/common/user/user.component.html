@@ -28,8 +28,22 @@
     <span class="flex flex-col leading-none">
       <span>{{ 'common.signed-in-as' | transloco }}</span>
       <span class="mt-1.5 font-medium text-md">{{ user.email }}</span>
+      <ng-container *ngIf="user?.role">
+        <span class="mt-1 text-secondary">{{ 'common.current-role' | transloco }}: {{ user.role }}</span>
+      </ng-container>
     </span>
   </button>
+  <ng-container *ngIf="availableRoles.length > 1">
+    <button mat-menu-item [matMenuTriggerFor]="switchRoleMenu">
+      <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>
+      <span>{{ 'common.switch-role' | transloco }}</span>
+    </button>
+    <mat-menu #switchRoleMenu="matMenu" class="user-switch-role-menu">
+      <button mat-menu-item *ngFor="let r of availableRoles" (click)="switchRole(r)" [disabled]="r === user?.role">
+        <span>{{ r }}</span>
+      </button>
+    </mat-menu>
+  </ng-container>
   <mat-divider class="my-2"></mat-divider>
   <button mat-menu-item (click)="navigateToProfile()">
     <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
