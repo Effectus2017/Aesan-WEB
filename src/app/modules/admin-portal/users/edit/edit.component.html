@@ -108,21 +108,20 @@
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
-              <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>
+              <mat-label>{{ "users.edit.primaryRole.label" | transloco }}</mat-label>
               <mat-select
-                formControlName="roles"
-                multiple
-                [placeholder]="'users.edit.role.placeholder' | transloco"
+                formControlName="primaryRole"
+                [placeholder]="'users.edit.primaryRole.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="roles-select"
-                [attr.aria-label]="'users.edit.role.label' | transloco"
+                data-cy="primary-role-select"
+                [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
               >
                 <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
                   {{ _role.name }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('roles').hasError('required')">
-                {{ "users.edit.role.required" | transloco }}
+              <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')">
+                {{ "users.edit.primaryRole.required" | transloco }}
               </mat-error>
             </mat-form-field>
             <mat-form-field class="flex-auto">
@@ -154,7 +153,7 @@
               </mat-select>
             </mat-form-field>
           </div>
-          @if(userRole === 'Administrator' || userRole === 'SuperAdministrator') {
+          @if(userRole === 'Administrator' || userRole === 'Super-Administrator') {
           <!-- Nuevos checkboxes para estados del usuario -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
             <mat-checkbox formControlName="isActive" [attr.aria-label]="'users.edit.isActive.label' | transloco" data-cy="is-active-checkbox">
@@ -177,6 +176,14 @@
         </div>
 
       </form>
+      @if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+      <div class="grid grid-cols-1 col-span-12 gap-4 my-6 px-4 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ "users.edit.secondaryRoles.title" | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 px-4 sm:grid-cols-1 sm:col-span-12">
+        <app-generic-table [config]="secondaryRolesTableConfig" [handler]="secondaryRolesTableHandler"></app-generic-table>
+      </div>
+      }
       <div class="grid grid-cols-1 col-span-12 gap-4 my-6 px-4 sm:grid-cols-1">
         <p class="text-lg font-medium">{{ "users.edit.permissions-section" | transloco }}</p>
       </div>

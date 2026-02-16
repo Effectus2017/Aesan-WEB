@@ -1,6 +1,11 @@
 {
     "sites": {
         "title": "Sitios",
+        "error": {
+            "FirstSiteMustBeComedor": "El primer sitio de la escuela debe ser de tipo Comedor.",
+            "SiteDatesOutsideComedorRange": "Las fechas de funcionamiento del sitio deben estar dentro del periodo del Comedor de la escuela.",
+            "SchoolMustHaveComedorFirst": "La escuela debe tener un sitio Comedor antes de agregar otros sitios. El primer sitio de la escuela debe ser de tipo Comedor."
+        },
         "list": {
             "title": "Lista de Sitios",
             "titleCenters": "Lista de Centros",
@@ -52,6 +57,7 @@
         "add": {
             "title": "Agregar Sitio",
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
+            "school-name-label": "Nombre de la escuela",
             "information": "Información",
             "information-description": "Información del sitio",
             "person-in-charge": {

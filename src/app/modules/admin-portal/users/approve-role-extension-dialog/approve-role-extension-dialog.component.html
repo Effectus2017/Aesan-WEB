@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ 'users.roleExtensionRequests.approveDialogTitle' | transloco }}</h2>
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <mat-form-field class="w-full fuse-mat-dense fuse-mat-rounded" subscriptSizing="dynamic">
+      <mat-label>{{ 'users.roleExtensionRequests.newValidTo' | transloco }}</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="newValidTo" />
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ 'dialog.permission-request-form.cancel' | transloco }}</button>
+  <button mat-raised-button color="primary" (click)="onConfirm()">{{ 'users.roleExtensionRequests.actions.approve' | transloco }}</button>
+</mat-dialog-actions>

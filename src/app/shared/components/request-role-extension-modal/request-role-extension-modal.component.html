@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ 'roleExtension.modal.title' | transloco }}</h2>
+<mat-dialog-content>
+  <p class="mb-4">{{ 'roleExtension.modal.subtitle' | transloco }}</p>
+  <form [formGroup]="form">
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>{{ 'roleExtension.modal.requestedValidTo' | transloco }}</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="requestedValidTo" />
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="form.get('requestedValidTo')?.hasError('required')">{{ 'roleExtension.modal.requestedValidToRequired' | transloco }}</mat-error>
+    </mat-form-field>
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>{{ 'roleExtension.modal.reason' | transloco }}</mat-label>
+      <textarea matInput formControlName="reason" rows="3"></textarea>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ 'roleExtension.modal.cancel' | transloco }}</button>
+  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || isLoading">
+    {{ 'roleExtension.modal.submit' | transloco }}
+  </button>
+</mat-dialog-actions>

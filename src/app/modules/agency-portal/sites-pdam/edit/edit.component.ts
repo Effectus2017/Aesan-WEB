@@ -337,26 +337,26 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       serviceTime: [null],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
-      // Kitchen type - Type of kitchen facility
+      // Kitchen type - Type of kitchen facility (required when group type is Dining Room)
       kitchenType: [null],
       // Site Location - Determined by Group Type
       // Site location - Determined by group type
       siteLocation: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
-      groupType: [null],
+      groupType: [null, Validators.required],
       // Tipo de distribución - Método de distribución para sitios no congregados
       // Distribution type - Distribution method for non-congregate sites
       distributionType: [{ value: null, disabled: true }],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
-      deliveryType: [null],
+      deliveryType: [null, Validators.required],
       // Tipo de auspiciador - Tipo de patrocinio del sitio
       // Sponsor type - Type of site sponsorship
       sponsorType: [null],
       // Tipo de solicitante - Tipo de solicitante del sitio
       // Type of applicant - Type of applicant of the site
-      typeOfApplicant: [null],
+      typeOfApplicant: [null, Validators.required],
       // Tipo de residencial - Tipo de residencial del sitio
       // Type of residential - Type of residential of the site
       typeOfResidential: [null],
@@ -373,10 +373,10 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       operatingPolicy: [null],
       // Almacén - Campo requerido para indicar si el sitio tiene un almacén
       // Warehouse - Required field indicating if the site has a warehouse
-      hasWarehouse: [null],
+      hasWarehouse: [null, Validators.required],
       // Comedor - Campo requerido para indicar si el sitio tiene un comedor
       // Dining room - Required field indicating if the site has a dining room
-      hasDiningRoom: [null],
+      hasDiningRoom: [null, Validators.required],
       // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
       // Dining room capacity - Only visible when hasDiningRoom is true
       diningRoomCapacity: [null, [Validators.min(1)]],
@@ -407,7 +407,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       // reviewJustification: [null],
       // Matrícula General
       // General Enrollment
-      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -618,14 +618,30 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
       this.loadDeliveryTypesByGroupType(groupType);
-      // Si no es "Comedor", limpiar el valor de kitchenType
+
+      const kitchenTypeControl = this.headerConfig.formGroup.get('kitchenType');
+
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
         if (!isComedor) {
-          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          // Si no es "Comedor", limpiar el valor, opciones y validaciones de tipo de cocina
           this.kitchenTypes = [];
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          kitchenTypeControl?.clearValidators();
+          kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
+        } else {
+          // Para "Comedor", tipo de cocina es obligatorio
+          kitchenTypeControl?.setValidators([Validators.required]);
+          kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
         }
+      } else {
+        // Sin tipo de grupo seleccionado, limpiar también cocina
+        this.kitchenTypes = [];
+        this.headerConfig.formGroup.patchValue({ kitchenType: null });
+        kitchenTypeControl?.clearValidators();
+        kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
       }
+
       this._changeDetectorRef.detectChanges();
     });
 

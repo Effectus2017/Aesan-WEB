@@ -368,8 +368,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   // Se cargan desde el backend, no hardcodeados
   availableDaysOfWeek: DayOfWeekResponse[] = [];
 
-  // School-related properties
+  // School-related properties (schoolId y schoolName desde resolver schoolData)
   schoolId: number | null = null;
+  schoolName: string | null = null;
   childGroups: SiteChildGroupRequest[] = [];
   nextGroupNumber: number = 1;
 
@@ -434,21 +435,13 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // schoolId y schoolName desde el resolver (schoolData)
+    const schoolData = this._route.snapshot.data['schoolData'] as { schoolId: number | null; schoolName: string | null } | undefined;
+    if (schoolData) {
+      this.schoolId = schoolData.schoolId;
+      this.schoolName = schoolData.schoolName;
+    }
 
-    // Verificar si hay schoolId o isDayCareHomeId en query parameters
-    this._route.queryParams.subscribe(params => {
-      if (params['schoolId']) {
-        this.schoolId = +params['schoolId'];
-      }
-      // Leer isDayCareHomeId de los query parameters
-      if (params['isDayCareHomeId']) {
-        const isDayCareHomeId = +params['isDayCareHomeId'];
-        // Determinar isDayCareHome basado en el ID
-        // Necesitamos obtener las opciones para comparar
-        // Por ahora, asumimos que si viene el parámetro, debemos determinar el valor
-        // Esto se ajustará cuando tengamos las opciones cargadas
-      }
-    });
     // Combinar datos de resolvers comunes y específicos del programa
     const commonData = this._route.snapshot.data['commonData'];
     const programData = this._route.snapshot.data['programData'];

@@ -3,7 +3,7 @@ import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PacnaProgramGuard } from 'app/core/auth/guards/pacna-program.guard';
 import { SitesPacnaComponent } from './sites-pacna.component';
 import { initialDataSitesPacnaListResolver, initialDataSitesPacnaProgramResolver, initialDataSitesPacnaProgramEditResolver } from './sites-pacna.resolvers';
-import { initialDataSiteCalendarResolver } from '../sites-pdam/sites.resolvers';
+import { initialDataSiteCalendarResolver, schoolForAddSiteResolver } from '../sites-pdam/sites.resolvers';
 import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
 import { initialDataSitesPacnaCenterAddResolver, initialDataSitesPacnaCenterEditResolver } from './sites-pacna.resolvers';
 
@@ -30,6 +30,7 @@ export default [
         resolve: {
           commonData: initialDataSitesCommonAddResolver,
           programData: initialDataSitesPacnaProgramResolver,
+          schoolData: schoolForAddSiteResolver,
         },
       },
       // Rutas para Centros (Centers)
@@ -41,6 +42,7 @@ export default [
         resolve: {
           commonData: initialDataSitesPacnaCenterAddResolver,
           programData: initialDataSitesPacnaProgramResolver,
+          schoolData: schoolForAddSiteResolver,
         },
       },
       {
@@ -62,6 +64,7 @@ export default [
         resolve: {
           commonData: initialDataSitesCommonAddResolver,
           programData: initialDataSitesPacnaProgramResolver,
+          schoolData: schoolForAddSiteResolver,
         },
       },
       {

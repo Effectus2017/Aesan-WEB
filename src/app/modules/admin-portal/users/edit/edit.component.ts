@@ -1,11 +1,12 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { RequestUser } from '../users.types';
+import { take } from 'rxjs/operators';
+import { RequestUser, SecondaryRoleInput } from '../users.types';
 import { UploadService } from 'app/shared/services/upload.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,14 +29,17 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { PERMISSIONS_COLUMNS_SCHEMA } from './columns-schema';
+import { PERMISSIONS_COLUMNS_SCHEMA, SECONDARY_ROLES_COLUMNS_SCHEMA } from './columns-schema';
 import { MatTableDataSource } from '@angular/material/table';
 import { Permission } from 'app/shared/models/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
+import { AddSecondaryRoleModalComponent, AddSecondaryRoleModalResult } from '../add-secondary-role-modal/add-secondary-role-modal.component';
 import { DeletePermissionModalComponent } from '../delete-permission-modal/delete-permission-modal.component';
 import { UpdatePasswordModalComponent } from '../update-password-modal/update-password-modal.component';
 import { UserService } from 'app/shared/services/user.service';
@@ -60,6 +64,8 @@ import { emailExistsValidator } from 'app/shared/validators/email-exists.validat
     TranslocoModule,
     GenericHeaderComponent,
     MatCheckboxModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     GenericTableComponent,
   ],
 })
@@ -81,6 +87,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // Email original para excluir de la validación en edición
   originalEmail: string = '';
 
+  savingSecondaryRole = false;
+
   headerConfig: GenericHeaderConfig = {
     title: 'users.edit.title',
     formGroup: this._formBuilder.group({
@@ -89,7 +97,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
-        roles: new FormControl([], [Validators.required, (c) => (Array.isArray(c.value) && c.value.length >= 1 ? null : { required: true })]),
+        primaryRole: new FormControl(null, Validators.required),
+        secondaryRoles: this._formBuilder.array([]),
         agency: new FormControl(null),
         program: new FormControl(null),
         isActive: new FormControl(null),
@@ -109,6 +118,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         id: 'update-password',
         label: 'users.edit.buttons.update-password',
         icon: 'heroicons_solid:key',
+      },
+      {
+        id: 'add-secondary-role',
+        label: 'users.edit.secondaryRoles.add',
+        icon: 'heroicons_solid:user-plus',
       },
     ],
   };
@@ -134,6 +148,49 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     addMenuTooltip: 'global.tooltips.addPermission',
   };
 
+  secondaryRolesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<{ id: number; roleName: string; validFrom: string; validTo: string }>(),
+    columnsSchema: SECONDARY_ROLES_COLUMNS_SCHEMA,
+    displayedColumns: SECONDARY_ROLES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: null as any,
+    showPaginator: false,
+    fullScreen: false,
+  };
+
+  get secondaryRolesTableHandler(): OnGenericTableHandler {
+    return {
+      tableConfig: this.secondaryRolesTableConfig,
+      onTableAction: (event: Event, action: string, id: any) => {
+        event?.stopPropagation?.();
+        event?.preventDefault?.();
+        if (action === 'delete') {
+          const index = typeof id === 'number' ? id : parseInt(id, 10);
+          if (!isNaN(index)) this.confirmRemoveSecondaryRole(index);
+        }
+      },
+    };
+  }
+
+  confirmRemoveSecondaryRole(index: number): void {
+    this._fuseConfirmationService
+      .open({
+        title: this._translocoService.translate('users.edit.secondaryRoles.table.buttons.delete'),
+        message: this._translocoService.translate('users.edit.secondaryRoles.table.deleteConfirmMessage'),
+        icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+        actions: {
+          confirm: { show: true, label: this._translocoService.translate('users.edit.secondaryRoles.table.buttons.delete'), color: 'warn' },
+          cancel: { show: true, label: this._translocoService.translate('users.list.delete.cancel') },
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === 'confirmed') {
+          this.removeSecondaryRole(index);
+          this.syncSecondaryRolesTableData();
+        }
+      });
+  }
+
   imageURL: string;
   fileToUpload: File = null;
   fileResponse: FileResponse;
@@ -151,10 +208,65 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   compareById = compareById;
   compareString = compareString;
 
+  get secondaryRolesArray(): FormArray {
+    return this.headerConfig.formGroup.get('secondaryRoles') as FormArray;
+  }
+
   constructor() {}
+
+  createSecondaryRoleGroup(role?: { id: string; name: string } | null, validFrom?: string | Date | null, validTo?: string | Date | null): FormGroup {
+    const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
+    const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
+    return this._formBuilder.group({
+      role: new FormControl(role ?? null),
+      validFrom: new FormControl(fromVal),
+      validTo: new FormControl(toVal),
+    }, {
+      validators: (g: AbstractControl) => {
+        const from = g.get('validFrom')?.value;
+        const to = g.get('validTo')?.value;
+        if (from && to && new Date(to) <= new Date(from)) {
+          return { dateRange: true };
+        }
+        return null;
+      },
+    });
+  }
+
+  addSecondaryRole(): void {
+    this.secondaryRolesArray.push(this.createSecondaryRoleGroup());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  removeSecondaryRole(index: number): void {
+    this.secondaryRolesArray.removeAt(index);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  syncSecondaryRolesTableData(): void {
+    const arr = this.secondaryRolesArray;
+    const rows: { id: number; roleName: string; validFrom: string; validTo: string }[] = [];
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      const role = g.get('role')?.value as { id: string; name: string } | null;
+      const from = g.get('validFrom')?.value;
+      const to = g.get('validTo')?.value;
+      const fromStr = from ? (typeof from === 'string' ? from : (from as Date).toISOString().slice(0, 10)) : '';
+      const toStr = to ? (typeof to === 'string' ? to : (to as Date).toISOString().slice(0, 10)) : '';
+      rows.push({ id: i, roleName: role?.name ?? '', validFrom: fromStr, validTo: toStr });
+    }
+    this.secondaryRolesTableConfig.dataSource.data = rows;
+    this._changeDetectorRef.markForCheck();
+  }
 
   ngOnInit() {
     this.userRole = this._authService.getUserRole();
+    const isAdmin = this.userRole === 'Administrator' || this.userRole === 'Super-Administrator';
+    this.headerConfig.settingsMenuItems = [
+      { id: 'force-password', label: 'users.edit.buttons.force-password', icon: 'heroicons_solid:lock-closed' },
+      { id: 'update-password', label: 'users.edit.buttons.update-password', icon: 'heroicons_solid:key' },
+      ...(isAdmin ? [{ id: 'add-secondary-role', label: 'users.edit.secondaryRoles.add', icon: 'heroicons_solid:user-plus' }] : []),
+    ];
 
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this.route.snapshot.data['data'];
@@ -162,7 +274,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (resolvedData) {
       // Asignar datos directamente desde el resolver
       this.user = resolvedData.user;
-      this.listRoles = resolvedData.roles?.data ?? resolvedData.roles ?? [];
+      const rolesPayload = resolvedData.roles ?? {};
+      const rolesList = Array.isArray(rolesPayload) ? rolesPayload : (rolesPayload.data ?? rolesPayload.Data ?? []);
+      this.listRoles = (Array.isArray(rolesList) ? rolesList : []).slice().sort((a: any, b: any) =>
+        (a?.name ?? a?.Name ?? '').localeCompare(b?.name ?? b?.Name ?? '', 'es')
+      );
       this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
       this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
 
@@ -212,7 +328,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.imageURL = param.imageURL;
     }
 
-    const selectedRoles = this.getSelectedRolesFromUser();
+    const selectedPrimaryRole = this.getPrimaryRoleFromUser();
     const agencyId = this.user.agency?.id ?? this.user.agencyId;
     const selectedAgency = agencyId
       ? (this.listAgencies?.find((a: { id: number }) => a.id === agencyId) ?? this.user.agency ?? { id: agencyId, name: this.user.agencyName ?? '' })
@@ -230,10 +346,16 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       isActive: this.user.isActive,
       isTemporalPasswordActived: this.user.isTemporalPasswordActived,
       emailConfirmed: this.user.emailConfirmed,
-      roles: selectedRoles,
+      primaryRole: selectedPrimaryRole,
       agency: selectedAgency,
       program: selectedProgram,
     });
+    const secondaryRows = this.getSecondaryRolesFromUser();
+    this.secondaryRolesArray.clear();
+    secondaryRows.forEach((row) => {
+      this.secondaryRolesArray.push(this.createSecondaryRoleGroup(row.role, row.validFrom, row.validTo));
+    });
+    this.syncSecondaryRolesTableData();
 
     // Actualizar el validador de email con el email original
     const emailControl = this.headerConfig.formGroup.get('email');
@@ -246,10 +368,27 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.disableEditableFormControls();
   }
 
-  private getSelectedRolesFromUser(): any[] {
+  private getPrimaryRoleFromUser(): { id: string; name: string } | null {
+    const primaryName = this.user?.primaryRoleName;
+    if (primaryName) {
+      const found = this.listRoles?.find((r: { name: string }) => r.name === primaryName);
+      return found ?? null;
+    }
     const roleNames = this.user?.roles ?? (this.user?.role ? [this.user.role.name] : []);
-    if (!roleNames?.length) return [];
-    return this.listRoles.filter((r: { name: string }) => roleNames.includes(r.name));
+    const first = roleNames?.[0];
+    if (!first) return null;
+    return this.listRoles?.find((r: { name: string }) => r.name === first) ?? null;
+  }
+
+  private getSecondaryRolesFromUser(): { role: { id: string; name: string } | null; validFrom: string | null; validTo: string | null }[] {
+    const list = this.user?.secondaryRoles ?? [];
+    if (!Array.isArray(list) || !list.length) return [];
+    return list.map((s: { roleName?: string; validFrom?: string; validTo?: string }) => {
+      const role = s.roleName ? (this.listRoles?.find((r: { name: string }) => r.name === s.roleName) ?? null) : null;
+      const from = s.validFrom ?? null;
+      const to = s.validTo ?? null;
+      return { role, validFrom: from, validTo: to };
+    });
   }
 
   getById() {
@@ -269,6 +408,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       case 'update-password':
         this.openUpdatePasswordModal();
         break;
+      case 'add-secondary-role':
+        this.openAddSecondaryRoleModal();
+        break;
       default:
         console.warn(`Acción de menú no reconocida: ${menuItemId}`);
     }
@@ -280,6 +422,170 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.onUpdate(this.headerConfig.formGroup.value);
     } else {
       this.headerConfig.formGroup.markAllAsTouched();
+    }
+  }
+
+  onCustom(): void {
+    this.openAddSecondaryRoleModal();
+  }
+
+  openAddSecondaryRoleModal(): void {
+    const primaryRole = this.headerConfig.formGroup.get('primaryRole')?.value as { id?: string; Id?: number; name?: string; Name?: string } | null;
+    const primaryRoleId = primaryRole != null ? String(primaryRole.id ?? primaryRole.Id ?? '') : undefined;
+    const existingSecondaryRoleIds = this.secondaryRolesArray.controls
+      .map((c) => c.get('role')?.value?.id ?? c.get('role')?.value?.Id)
+      .filter((id) => id != null)
+      .map((id) => String(id));
+    this._usersService.roles$.pipe(take(1)).subscribe((rolesResponse: any) => {
+      const payload = rolesResponse?.body ?? rolesResponse ?? {};
+      const list = Array.isArray(payload) ? payload : (payload?.data ?? payload?.Data ?? []);
+      const listToPass = (Array.isArray(list) ? list : []).slice().sort((a: any, b: any) =>
+        (a?.name ?? a?.Name ?? '').localeCompare(b?.name ?? b?.Name ?? '', 'es')
+      );
+      const dialogRef = this._matDialog.open(AddSecondaryRoleModalComponent, {
+        width: '500px',
+        maxWidth: '90vw',
+        data: {
+          listRoles: listToPass,
+          primaryRoleId: primaryRoleId || undefined,
+          excludeRoleIds: existingSecondaryRoleIds,
+        },
+      });
+      dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
+        if (result?.role) {
+          this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
+          this.syncSecondaryRolesTableData();
+          this.saveSecondaryRolesToBackend();
+        }
+      });
+    });
+  }
+
+  private setAddSecondaryRoleMenuItemDisabled(disabled: boolean): void {
+    const item = this.headerConfig.settingsMenuItems?.find((i) => i.id === 'add-secondary-role');
+    if (item) {
+      item.disabled = disabled;
+    }
+  }
+
+  private saveSecondaryRolesToBackend(): void {
+    this.savingSecondaryRole = true;
+    this.setAddSecondaryRoleMenuItemDisabled(true);
+    this._changeDetectorRef.markForCheck();
+    const form = this.headerConfig.formGroup.value;
+    const loggedInUserId = this._authService.getUserId();
+    const primaryRoleControl = this.headerConfig.formGroup.get('primaryRole');
+    const isOwnProfile = loggedInUserId === this.id;
+    const rolesDisabled = primaryRoleControl?.disabled === true;
+
+    let primaryRoleName: string;
+    if (isOwnProfile && rolesDisabled) {
+      primaryRoleName = this.user?.primaryRoleName ?? (this.user?.roles?.[0] ?? this.user?.role?.name ?? '');
+    } else {
+      const primaryRole = form.primaryRole;
+      primaryRoleName = primaryRole?.name ?? (typeof primaryRole === 'string' ? primaryRole : '');
+      if (!primaryRoleName) {
+        primaryRoleControl?.setErrors({ required: true });
+        primaryRoleControl?.markAsTouched();
+        this.revertLastSecondaryRole();
+        return;
+      }
+    }
+    const secondaryRows = (form.secondaryRoles ?? []) as { role?: { name: string }; validFrom?: string | Date; validTo?: string | Date }[];
+    let secondaryRolesPayload: SecondaryRoleInput[] | undefined = secondaryRows
+      .filter((row) => row?.role?.name)
+      .map((row) => ({
+        roleName: row.role!.name,
+        validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
+        validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
+      }))
+      .filter((s) => s.validFrom && s.validTo);
+    if (secondaryRolesPayload.length === 0) secondaryRolesPayload = undefined;
+
+    const requestParameters: QueryParameters = { currentUserId: loggedInUserId };
+    const agencyId = form.agency?.id ?? this.user.agency?.id;
+    const programId = form.program?.id ?? form.programId ?? undefined;
+    const _model: RequestUser = {
+      id: this.id,
+      firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
+      middleName: isNullOrUndefinedEmptyStringNullArray(form.middleName) ? null : form.middleName,
+      fatherLastName: isNullOrUndefinedEmptyStringNullArray(form.fatherLastName) ? null : form.fatherLastName,
+      motherLastName: isNullOrUndefinedEmptyStringNullArray(form.motherLastName) ? null : form.motherLastName,
+      email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
+      userName: this.user.userName,
+      imageURL: this.imageURL,
+      primaryRoleName,
+      secondaryRoles: secondaryRolesPayload,
+      agencyId: agencyId,
+      programId: programId,
+      isActive: form.isActive,
+      isTemporalPasswordActived: form.isTemporalPasswordActived,
+      emailConfirmed: form.emailConfirmed,
+    };
+
+    this._usersService.updateWithSP(_model, requestParameters).subscribe({
+      next: (result: any) => {
+        this.savingSecondaryRole = false;
+        this.setAddSecondaryRoleMenuItemDisabled(false);
+        this._changeDetectorRef.markForCheck();
+        if (result.status === 200) {
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+            next: (res: any) => {
+              if (res?.body) {
+                this.onSetForm(res.body);
+              }
+              this._changeDetectorRef.markForCheck();
+            },
+          });
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.update.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.update.success.message'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success',
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('dialog.success.confirm'),
+                color: 'primary',
+              },
+              cancel: { show: false },
+            },
+          });
+        }
+      },
+      error: () => {
+        this.savingSecondaryRole = false;
+        this.setAddSecondaryRoleMenuItemDisabled(false);
+        this.revertLastSecondaryRole();
+        this._changeDetectorRef.markForCheck();
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.update.error.title'),
+          message: this._translocoService.translate('users.update.error.message'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error',
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary',
+            },
+            cancel: { show: false },
+          },
+        });
+      },
+    });
+  }
+
+  private revertLastSecondaryRole(): void {
+    if (this.secondaryRolesArray.length > 0) {
+      this.secondaryRolesArray.removeAt(this.secondaryRolesArray.length - 1);
+      this.syncSecondaryRolesTableData();
     }
   }
 
@@ -297,20 +603,44 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       return;
     }
 
-    // Verificar si los roles están deshabilitados (cuando el usuario edita su propio perfil)
     const loggedInUserId = this._authService.getUserId();
-    let roleNames: string[];
+    const primaryRoleControl = this.headerConfig.formGroup.get('primaryRole');
+    const isOwnProfile = loggedInUserId === this.id;
+    const rolesDisabled = primaryRoleControl?.disabled === true;
 
-    if (loggedInUserId === this.id && this.headerConfig.formGroup.get('roles').disabled) {
-      roleNames = this.user?.roles ?? (this.user?.role ? [this.user.role.name] : []);
+    let primaryRoleName: string;
+    let secondaryRolesPayload: SecondaryRoleInput[] | undefined;
+
+    if (isOwnProfile && rolesDisabled) {
+      primaryRoleName = this.user?.primaryRoleName ?? (this.user?.roles?.[0] ?? this.user?.role?.name ?? '');
+      const list = this.user?.secondaryRoles ?? [];
+      secondaryRolesPayload = Array.isArray(list)
+        ? list
+            .filter((s: { roleName?: string; validFrom?: string; validTo?: string }) => s.roleName && s.validFrom && s.validTo)
+            .map((s: { roleName: string; validFrom: string; validTo: string }) => ({
+              roleName: s.roleName,
+              validFrom: typeof s.validFrom === 'string' ? s.validFrom.slice(0, 10) : '',
+              validTo: typeof s.validTo === 'string' ? s.validTo.slice(0, 10) : '',
+            }))
+        : undefined;
     } else {
-      const rolesValue = form.roles;
-      if (!rolesValue || !Array.isArray(rolesValue) || rolesValue.length === 0) {
-        this.headerConfig.formGroup.get('roles').setErrors({ required: true });
-        this.headerConfig.formGroup.get('roles').markAsTouched();
+      const primaryRole = form.primaryRole;
+      primaryRoleName = primaryRole?.name ?? (typeof primaryRole === 'string' ? primaryRole : '');
+      if (!primaryRoleName) {
+        primaryRoleControl?.setErrors({ required: true });
+        primaryRoleControl?.markAsTouched();
         return;
       }
-      roleNames = rolesValue.map((r: { name?: string }) => (typeof r === 'string' ? r : r?.name)).filter(Boolean);
+      const secondaryRows = (form.secondaryRoles ?? []) as { role?: { name: string }; validFrom?: string | Date; validTo?: string | Date }[];
+      secondaryRolesPayload = secondaryRows
+        .filter((row) => row?.role?.name)
+        .map((row) => ({
+          roleName: row.role!.name,
+          validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
+          validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
+        }))
+        .filter((s) => s.validFrom && s.validTo);
+      if (secondaryRolesPayload.length === 0) secondaryRolesPayload = undefined;
     }
 
     const requestParameters: QueryParameters = {
@@ -328,7 +658,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
       userName: this.user.userName,
       imageURL: this.imageURL,
-      roles: roleNames,
+      primaryRoleName,
+      secondaryRoles: secondaryRolesPayload,
       agencyId: agencyId,
       programId: programId,
       isActive: form.isActive,
@@ -754,9 +1085,10 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const loggedInUserId = this._authService.getUserId();
 
     // Si el usuario que se está editando es el mismo que está logueado,
-    // deshabilitar el campo de roles para evitar que cambie sus propios roles
+    // deshabilitar rol principal y roles secundarios para evitar que cambie sus propios roles
     if (loggedInUserId === this.id) {
-      this.headerConfig.formGroup.get('roles').disable();
+      this.headerConfig.formGroup.get('primaryRole')?.disable();
+      this.secondaryRolesArray.controls.forEach((c) => c.disable());
     }
   }
 

@@ -4,6 +4,8 @@ export interface TokenResponse {
   role: string;
   /** Lista de roles AESAN disponibles para cambio en el menú (solo cuando el usuario tiene 2+ roles) */
   roles?: string[];
+  /** Fecha tope de vigencia del rol actual (ISO), solo cuando el rol seleccionado es secundario */
+  roleValidTo?: string;
   userId: string;
   name: string;
   avatar?: string;

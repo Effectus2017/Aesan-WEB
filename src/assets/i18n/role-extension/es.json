@@ -1,0 +1,21 @@
+{
+  "roleExtension": {
+    "banner": {
+      "message": "Está usando un rol temporal. Puede usarlo hasta el {{ date }}.",
+      "requestExtension": "Solicitar extensión"
+    },
+    "modal": {
+      "title": "Solicitar extensión de rol",
+      "subtitle": "Solicite una extensión del período de vigencia de su rol temporal actual.",
+      "requestedValidTo": "Nueva fecha tope",
+      "requestedValidToRequired": "La nueva fecha tope es requerida",
+      "reason": "Motivo (opcional)",
+      "cancel": "Cancelar",
+      "submit": "Enviar",
+      "successTitle": "Solicitud enviada",
+      "successMessage": "Su solicitud de extensión ha sido enviada. Los administradores la revisarán.",
+      "error": "Error",
+      "userRequired": "Debe iniciar sesión para solicitar una extensión."
+    }
+  }
+}

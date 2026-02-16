@@ -169,6 +169,49 @@ export class UsersService {
   }
 
   /**
+   * Solicita extensión de vigencia de un rol secundario temporal.
+   * @param body roleName (rol actual), requestedValidTo (ISO date), reason (opcional)
+   * @param requestParameters debe incluir currentUserId
+   */
+  requestRoleExtension(
+    body: { roleName: string; requestedValidTo: string; reason?: string },
+    requestParameters: QueryParameters
+  ): Observable<{ id?: number; message?: string }> {
+    return this._httpClient
+      .post<{ id?: number; message?: string }>(`${this.apiUrl}/role-extension-request`, body, getHttpOptions(requestParameters))
+      .pipe(catchError(handleError));
+  }
+
+  /**
+   * Lista solicitudes de extensión de rol (admin). status: Pending | Approved | Rejected | null (todas).
+   */
+  getRoleExtensionRequests(params: { status?: string; take?: number; skip?: number }): Observable<any> {
+    const q = new URLSearchParams();
+    if (params.status != null) q.set('status', params.status);
+    if (params.take != null) q.set('take', String(params.take));
+    if (params.skip != null) q.set('skip', String(params.skip));
+    const query = q.toString();
+    return this._httpClient.get<{ data: any[]; total: number }>(
+      `${this.apiUrl}/role-extension-requests${query ? '?' + query : ''}`,
+      getHttpOptions({})
+    ).pipe(catchError(handleError));
+  }
+
+  /**
+   * Aprobar solicitud de extensión (admin). body opcional: { newValidTo: string (ISO date) }.
+   */
+  approveRoleExtensionRequest(id: number, body: { newValidTo?: string } | null, requestParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/role-extension-requests/${id}/approve`, body ?? {}, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
+   * Rechazar solicitud de extensión (admin).
+   */
+  rejectRoleExtensionRequest(id: number, requestParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/role-extension-requests/${id}/reject`, {}, getHttpOptions(requestParameters)).pipe(catchError(handleError));
+  }
+
+  /**
    * Elimina un usuario de la base de datos
    * @param requestParameters Parámetros de la solicitud
    * @returns Observable<any>

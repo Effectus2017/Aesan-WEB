@@ -1,0 +1,29 @@
+<div class="absolute inset-0 flex flex-col h-full min-w-0 overflow-hidden">
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+  <!-- Filtro por estado -->
+  <div class="px-6 pb-4 flex gap-3 items-center" [formGroup]="headerConfig.formGroup">
+    <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-48" subscriptSizing="dynamic">
+      <mat-label>{{ 'users.roleExtensionRequests.statusFilter' | transloco }}</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="Pending">{{ 'users.roleExtensionRequests.status.Pending' | transloco }}</mat-option>
+        <mat-option value="Approved">{{ 'users.roleExtensionRequests.status.Approved' | transloco }}</mat-option>
+        <mat-option value="Rejected">{{ 'users.roleExtensionRequests.status.Rejected' | transloco }}</mat-option>
+        <mat-option value="">{{ 'users.roleExtensionRequests.status.All' | transloco }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="button" (click)="onSearch()">
+      {{ 'users.roleExtensionRequests.filter' | transloco }}
+    </button>
+  </div>
+  <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable>
+    <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+  </div>
+  <mat-paginator
+    class="hidden sm:block"
+    [pageSizeOptions]="tableConfig.pageSizeOptions"
+    [pageSize]="tableConfig.pageSize"
+    [length]="tableConfig.length"
+    (page)="getPaginator($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

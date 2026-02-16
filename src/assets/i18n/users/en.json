@@ -22,6 +22,40 @@
                 "placeholder": "Select a role",
                 "required": "Role is required"
             },
+            "primaryRole": {
+                "label": "Primary role",
+                "placeholder": "Select primary role",
+                "required": "Primary role is required"
+            },
+            "secondaryRoles": {
+                "title": "Secondary roles (optional)",
+                "add": "Add secondary role",
+                "role": "Role",
+                "rolePlaceholder": "Select role",
+                "validFrom": "From",
+                "validTo": "To",
+                "dateRangeError": "End date must be after start date",
+                "remove": "Remove",
+                "modal": {
+                    "addTitle": "Add secondary role",
+                    "editTitle": "Edit secondary role",
+                    "description": "Select the secondary role and the validity period (from / to).",
+                    "add": "Add",
+                    "save": "Save"
+                },
+                "table": {
+                    "columns": {
+                        "roleName": "Role",
+                        "validFrom": "From",
+                        "validTo": "To",
+                        "actions": "Actions"
+                    },
+                    "buttons": {
+                        "delete": "Delete"
+                    },
+                    "deleteConfirmMessage": "Remove this secondary role?"
+                }
+            },
             "current-password": {
                 "label": "Current Password",
                 "placeholder": "Enter current password",
@@ -203,6 +237,21 @@
                 "placeholder": "Select a role",
                 "required": "Role is required"
             },
+            "primaryRole": {
+                "label": "Primary role",
+                "placeholder": "Select primary role",
+                "required": "Primary role is required"
+            },
+            "secondaryRoles": {
+                "title": "Secondary roles (optional)",
+                "add": "Add secondary role",
+                "role": "Role",
+                "rolePlaceholder": "Select role",
+                "validFrom": "From",
+                "validTo": "To",
+                "dateRangeError": "End date must be after start date",
+                "remove": "Remove"
+            },
             "submit": "Save",
             "back": "Back",
             "agency": {
@@ -254,6 +303,40 @@
                 "delete": "Delete",
                 "download": "Download"
             }
+        },
+        "roleExtensionRequests": {
+            "title": "Role extension requests",
+            "statusFilter": "Status",
+            "filter": "Filter",
+            "status": {
+                "Pending": "Pending",
+                "Approved": "Approved",
+                "Rejected": "Rejected",
+                "All": "All"
+            },
+            "columns": {
+                "userName": "User",
+                "userEmail": "Email",
+                "roleName": "Role",
+                "requestedValidTo": "Requested valid to",
+                "reason": "Reason",
+                "status": "Status",
+                "requestedAt": "Requested at"
+            },
+            "actions": {
+                "approve": "Approve",
+                "reject": "Reject"
+            },
+            "approveDialogTitle": "Approve extension",
+            "newValidTo": "New valid to date (optional)",
+            "rejectConfirmTitle": "Reject request",
+            "rejectConfirmMessage": "Are you sure you want to reject this extension request?",
+            "approvedTitle": "Request approved",
+            "approvedMessage": "The extension request has been approved.",
+            "rejectedTitle": "Request rejected",
+            "rejectedMessage": "The extension request has been rejected.",
+            "errorTitle": "Error",
+            "errorMessage": "An error occurred. Please try again."
         },
         "update": {
             "success": {

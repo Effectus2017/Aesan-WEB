@@ -54,7 +54,7 @@ export class UpdatePasswordModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<UpdatePasswordModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UpdatePasswordModalData
   ) {
-    this.isAdmin = data.userRole === 'Administrator' || data.userRole === 'SuperAdministrator';
+    this.isAdmin = data.userRole === 'Administrator' || data.userRole === 'Super-Administrator';
   }
 
   ngOnInit(): void {

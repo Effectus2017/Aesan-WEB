@@ -2,7 +2,8 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { SiteService } from 'app/shared/services/site.service';
-import { forkJoin, map } from 'rxjs';
+import { SchoolService } from 'app/shared/services/school.service';
+import { forkJoin, map, of, catchError } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
@@ -63,6 +64,23 @@ export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRou
     map(([sites]) => ({
       sites: sites.body,
     }))
+  );
+};
+
+// Resolver: escuela por schoolId (query param) para Agregar Sitio
+export const schoolForAddSiteResolver: ResolveFn<{ schoolId: number | null; schoolName: string | null }> = (route: ActivatedRouteSnapshot) => {
+  const schoolIdParam = route.queryParams['schoolId'];
+  if (!schoolIdParam) {
+    return of({ schoolId: null, schoolName: null });
+  }
+  const schoolId = +schoolIdParam;
+  const schoolService = inject(SchoolService);
+  return schoolService.getSchoolById({ id: schoolId }).pipe(
+    map((response: { body?: { name?: string }; name?: string }) => {
+      const school = response?.body ?? response;
+      return { schoolId, schoolName: school?.name ?? null };
+    }),
+    catchError(() => of({ schoolId, schoolName: null }))
   );
 };
 

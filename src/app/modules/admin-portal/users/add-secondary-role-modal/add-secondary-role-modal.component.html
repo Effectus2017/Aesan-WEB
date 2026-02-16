@@ -1,0 +1,65 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120 min-h-0">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ modalTitleKey | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="form" class="flex flex-col flex-auto min-h-0" (ngSubmit)="onConfirm()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
+        <!-- Description -->
+        <p class="text-secondary">
+          {{ 'users.edit.secondaryRoles.modal.description' | transloco }}
+        </p>
+
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'users.edit.secondaryRoles.role' | transloco }}</mat-label>
+          <mat-select formControlName="role" [placeholder]="'users.edit.secondaryRoles.rolePlaceholder' | transloco">
+            <mat-option [value]="null">{{ 'users.edit.secondaryRoles.rolePlaceholder' | transloco }}</mat-option>
+            <mat-option *ngFor="let r of rolesFiltered" [value]="r">{{ r.name }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'users.edit.secondaryRoles.validFrom' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFrom></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'users.edit.secondaryRoles.validTo' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="pickerTo" formControlName="validTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+          <mat-datepicker #pickerTo></mat-datepicker>
+          <mat-error *ngIf="form.hasError('dateRange')">{{ 'users.edit.secondaryRoles.dateRangeError' | transloco }}</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button
+          mat-button
+          color="warn"
+          type="button"
+          (click)="onCancel()"
+          data-cy="cancel-button"
+        >
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+      </div>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        data-cy="save-button"
+      >
+        {{ submitKey | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

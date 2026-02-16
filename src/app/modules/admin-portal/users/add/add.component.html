@@ -122,19 +122,18 @@
           </div>
           <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
             <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
+              <mat-label>{{ 'users.add.primaryRole.label' | transloco }}</mat-label>
               <mat-select
-                formControlName="roles"
-                multiple
-                [placeholder]="'users.add.role.placeholder' | transloco"
+                formControlName="primaryRole"
+                [placeholder]="'users.add.primaryRole.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="roles-select"
-                [attr.aria-label]="'users.add.role.label' | transloco"
+                data-cy="primary-role-select"
+                [attr.aria-label]="'users.add.primaryRole.label' | transloco"
               >
-                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">{{ _role.name }}</mat-option>
+                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="primary-role-option">{{ _role.name }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('roles').hasError('required')" data-cy="roles-error">
-                {{ 'users.add.role.required' | transloco }}
+              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('primaryRole').hasError('required')" data-cy="primary-role-error">
+                {{ 'users.add.primaryRole.required' | transloco }}
               </mat-error>
             </mat-form-field>
 
@@ -169,6 +168,11 @@
                 <mat-option *ngFor="let _program of listPrograms" [value]="_program" data-cy="program-option">{{ _program.name }}</mat-option>
               </mat-select>
             </mat-form-field>
+          </div>
+
+          <!-- Roles secundarios (opcionales) -->
+          <div class="col-span-12 mt-4">
+            <p class="text-subtitle-1 mb-2">{{ 'users.add.secondaryRoles.title' | transloco }}</p>
           </div>
 
           <!-- Nuevos checkboxes para estados del usuario -->
@@ -270,6 +274,12 @@
         </div>
         <div class="mt-1 text-md text-hint">{{ 'users.add.password-requirements' | transloco }}</div>
       </form>
+      <div class="grid grid-cols-1 col-span-12 gap-4 my-6 px-4 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ 'users.add.secondaryRoles.title' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 px-4 sm:grid-cols-1 sm:col-span-12">
+        <app-generic-table [config]="secondaryRolesTableConfig" [handler]="secondaryRolesTableHandler"></app-generic-table>
+      </div>
     </div>
   </div>
 </div>

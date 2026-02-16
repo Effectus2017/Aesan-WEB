@@ -14,6 +14,13 @@ export interface UserToken {
     iat?: number;
   }
 
+  /** Rol secundario con vigencia (para enviar a la API) */
+  export interface SecondaryRoleInput {
+    roleName: string;
+    validFrom: string;
+    validTo: string;
+  }
+
   export interface RequestUser {
     id?: string;
     firstName?: string;
@@ -25,6 +32,10 @@ export interface UserToken {
     password?: string;
     role?: any;
     roles?: any;
+    /** Rol principal (un solo nombre). Si se envía, la API usa flujo primary + secondary. */
+    primaryRoleName?: string;
+    /** Roles secundarios con fechas. Solo usado cuando primaryRoleName está definido. */
+    secondaryRoles?: SecondaryRoleInput[];
     imageURL?: string;
     agencyId?: number;
     isActive?: boolean;

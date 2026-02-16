@@ -325,27 +325,27 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       serviceTime: [null],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
-      // Kitchen type - Type of kitchen facility
+      // Kitchen type - Type of kitchen facility (required when group type is Dining Room)
       kitchenType: [null],
       // Site Location - Determined by Group Type
       // Site location - Determined by group type
       siteLocation: [null],
       // Tipo de grupo - Clasificación de grupos de estudiantes
       // Group type - Classification of student groups
-      groupType: [null],
+      groupType: [null, Validators.required],
       // Tipo de distribución - Método de distribución para sitios no congregados
       // Distribution type - Distribution method for non-congregate sites
       distributionType: [{ value: null, disabled: true }],
       // Tipo de entrega - Método de entrega de servicio
       // Delivery type - Method of service delivery
-      deliveryType: [null],
+      deliveryType: [null, Validators.required],
       // Tipo de auspiciador - Tipo de patrocinio del sitio
       // Sponsor type - Type of site sponsorship
       sponsorType: [null],
       // Tipo de solicitante - Tipo de solicitante del sitio
       // Type of applicant - Type of site applicant
       // Laico (15), Base de fe (16)
-      typeOfApplicant: [null],
+      typeOfApplicant: [null, Validators.required],
       // Tipo de área - Campo requerido para clasificación del sitio
       // Type of area - Required field for site classification
       // Rural (23), Urbana (24)
@@ -363,10 +363,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Política de operación - Directrices operativas del sitio
       // Disponibilidad de almacén - Indica si el sitio tiene instalaciones de almacenamiento
       // Warehouse availability - Indicates if site has storage facilities
-      hasWarehouse: [null],
+      hasWarehouse: [null, Validators.required],
       // Disponibilidad de comedor - Indica si el sitio tiene instalaciones de comedor
       // Dining room availability - Indicates if site has dining facilities
-      hasDiningRoom: [null],
+      hasDiningRoom: [null, Validators.required],
       // Capacidad de Salón Comedor - Solo visible cuando hasDiningRoom es true
       // Dining room capacity - Only visible when hasDiningRoom is true
       diningRoomCapacity: [null, [Validators.min(1)]],
@@ -442,7 +442,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       administratorAuthorizedName: [null],
       // Matrícula General
       // General Enrollment
-      generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -516,8 +516,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Se cargan desde el backend, no hardcodeados
   availableDaysOfWeek: DayOfWeekResponse[] = [];
 
-  // School-related properties
+  // School-related properties (schoolId y schoolName desde resolver schoolData)
   schoolId: number | null = null;
+  schoolName: string | null = null;
   childGroups: SiteChildGroupRequest[] = [];
   nextGroupNumber: number = 1;
 
@@ -574,13 +575,13 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // schoolId y schoolName desde el resolver (schoolData)
+    const schoolData = this._route.snapshot.data['schoolData'] as { schoolId: number | null; schoolName: string | null } | undefined;
+    if (schoolData) {
+      this.schoolId = schoolData.schoolId;
+      this.schoolName = schoolData.schoolName;
+    }
 
-    // Verificar si hay schoolId en query parameters
-    this._route.queryParams.subscribe(params => {
-      if (params['schoolId']) {
-        this.schoolId = +params['schoolId'];
-      }
-    });
     // Combinar datos de resolvers comunes y específicos del programa
     const commonData = this._route.snapshot.data['commonData'];
     const programData = this._route.snapshot.data['programData'];
@@ -707,11 +708,15 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       .subscribe((hasDiningRoom: boolean) => {
         const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
         if (hasDiningRoom === false) {
+          // Si cambia a false, limpiar el campo de capacidad y deshabilitar
           capacityControl?.setValue(null, { emitEvent: false });
           capacityControl?.clearValidators();
+          capacityControl?.disable({ emitEvent: false });
           capacityControl?.updateValueAndValidity({ emitEvent: false });
         } else if (hasDiningRoom === true) {
-          capacityControl?.setValidators([Validators.min(1)]);
+          // Si cambia a true, capacidad es obligatoria y mínimo 1
+          capacityControl?.enable({ emitEvent: false });
+          capacityControl?.setValidators([Validators.required, Validators.min(1)]);
           capacityControl?.updateValueAndValidity({ emitEvent: false });
         }
         this._changeDetectorRef.detectChanges();
@@ -732,7 +737,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         this._changeDetectorRef.detectChanges();
       });
 
-
+    // Estado inicial: deshabilitar capacidad si no tiene salón comedor
+    const initialHasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value;
+    if (initialHasDiningRoom !== true) {
+      this.headerConfig.formGroup.get('diningRoomCapacity')?.disable({ emitEvent: false });
+    }
   }
 
   /**
@@ -777,19 +786,35 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
 
   private setupGroupTypeListener(): void {
-    // Listener para cambios en groupType que afectan distributionType, siteLocation y deliveryTypes
+    // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
       this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
       this.loadDeliveryTypesByGroupType(groupType);
-      // Si no es "Comedor", limpiar el valor de kitchenType
+
+      const kitchenTypeControl = this.headerConfig.formGroup.get('kitchenType');
+
       if (groupType) {
         const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
         if (!isComedor) {
-          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          // Si no es "Comedor", limpiar el valor, opciones y validaciones de tipo de cocina
           this.kitchenTypes = [];
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          kitchenTypeControl?.clearValidators();
+          kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
+        } else {
+          // Para "Comedor", tipo de cocina es obligatorio
+          kitchenTypeControl?.setValidators([Validators.required]);
+          kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
         }
+      } else {
+        // Sin tipo de grupo seleccionado, limpiar también cocina
+        this.kitchenTypes = [];
+        this.headerConfig.formGroup.patchValue({ kitchenType: null });
+        kitchenTypeControl?.clearValidators();
+        kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
       }
+
       this._changeDetectorRef.detectChanges();
     });
   }

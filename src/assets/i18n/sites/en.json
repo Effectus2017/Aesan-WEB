@@ -1,6 +1,11 @@
 {
     "sites": {
         "title": "Sites",
+        "error": {
+            "FirstSiteMustBeComedor": "The first site of the school must be of type Dining Room (Comedor).",
+            "SiteDatesOutsideComedorRange": "The site operating dates must be within the school's Dining Room (Comedor) period.",
+            "SchoolMustHaveComedorFirst": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor."
+        },
         "list": {
             "title": "Site List",
             "titleCenters": "Centers List",
@@ -52,6 +57,7 @@
         "add": {
             "title": "Add Site",
             "time-range-invalid": "End time must be greater than start time",
+            "school-name-label": "School name",
             "information": "Information",
             "information-description": "Site information",
             "person-in-charge": {

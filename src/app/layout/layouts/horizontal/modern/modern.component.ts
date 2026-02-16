@@ -14,6 +14,7 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
 import { UserComponent } from 'app/layout/common/user/user.component';
 import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/custom-shortcuts.component';
 import { DeadlineBannerComponent } from 'app/shared/components/deadline-banner/deadline-banner.component';
+import { RoleValidityBannerComponent } from 'app/shared/components/role-validity-banner/role-validity-banner.component';
 import { CurrentProgramBannerComponent } from 'app/shared/components/current-program-banner/current-program-banner.component';
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
 import { AgencyCodeBannerComponent } from 'app/shared/components/agency-code-banner/agency-code-banner.component';
@@ -36,6 +37,7 @@ import { MessagesComponent } from 'app/layout/common/messages/messages.component
         UserComponent,
         CustomShortcutsComponent,
         DeadlineBannerComponent,
+        RoleValidityBannerComponent,
         CurrentProgramBannerComponent,
         AgencyStatusBannerComponent,
         AgencyCodeBannerComponent,

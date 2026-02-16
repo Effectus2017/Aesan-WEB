@@ -22,6 +22,40 @@
                 "placeholder": "Seleccione un rol",
                 "required": "El rol es requerido"
             },
+            "primaryRole": {
+                "label": "Rol principal",
+                "placeholder": "Seleccione el rol principal",
+                "required": "El rol principal es requerido"
+            },
+            "secondaryRoles": {
+                "title": "Roles secundarios (opcionales)",
+                "add": "Agregar otro rol secundario",
+                "role": "Rol",
+                "rolePlaceholder": "Seleccione rol",
+                "validFrom": "Desde",
+                "validTo": "Hasta",
+                "dateRangeError": "La fecha hasta debe ser posterior a la fecha desde",
+                "remove": "Quitar",
+                "modal": {
+                    "addTitle": "Agregar rol secundario",
+                    "editTitle": "Editar rol secundario",
+                    "description": "Seleccione el rol secundario y el período de vigencia (desde / hasta).",
+                    "add": "Agregar",
+                    "save": "Guardar"
+                },
+                "table": {
+                    "columns": {
+                        "roleName": "Rol",
+                        "validFrom": "Desde",
+                        "validTo": "Hasta",
+                        "actions": "Acciones"
+                    },
+                    "buttons": {
+                        "delete": "Eliminar"
+                    },
+                    "deleteConfirmMessage": "¿Eliminar este rol secundario?"
+                }
+            },
             "current-password": {
                 "label": "Contraseña Actual",
                 "placeholder": "Ingrese la contraseña actual",
@@ -185,6 +219,40 @@
                 "download": "Descargar"
             }
         },
+        "roleExtensionRequests": {
+            "title": "Solicitudes de extensión de rol",
+            "statusFilter": "Estado",
+            "filter": "Filtrar",
+            "status": {
+                "Pending": "Pendiente",
+                "Approved": "Aprobado",
+                "Rejected": "Rechazado",
+                "All": "Todos"
+            },
+            "columns": {
+                "userName": "Usuario",
+                "userEmail": "Correo",
+                "roleName": "Rol",
+                "requestedValidTo": "Vigencia solicitada hasta",
+                "reason": "Motivo",
+                "status": "Estado",
+                "requestedAt": "Fecha de solicitud"
+            },
+            "actions": {
+                "approve": "Aprobar",
+                "reject": "Rechazar"
+            },
+            "approveDialogTitle": "Aprobar extensión",
+            "newValidTo": "Nueva fecha tope (opcional)",
+            "rejectConfirmTitle": "Rechazar solicitud",
+            "rejectConfirmMessage": "¿Está seguro de que desea rechazar esta solicitud de extensión?",
+            "approvedTitle": "Solicitud aprobada",
+            "approvedMessage": "La solicitud de extensión ha sido aprobada.",
+            "rejectedTitle": "Solicitud rechazada",
+            "rejectedMessage": "La solicitud de extensión ha sido rechazada.",
+            "errorTitle": "Error",
+            "errorMessage": "Ha ocurrido un error. Intente de nuevo."
+        },
         "add": {
             "title": "Agregar Usuario",
             "personal-info": "Datos Personales",
@@ -236,6 +304,21 @@
                 "label": "Rol",
                 "placeholder": "Seleccione un rol",
                 "required": "El rol es requerido"
+            },
+            "primaryRole": {
+                "label": "Rol principal",
+                "placeholder": "Seleccione el rol principal",
+                "required": "El rol principal es requerido"
+            },
+            "secondaryRoles": {
+                "title": "Roles secundarios (opcionales)",
+                "add": "Agregar otro rol secundario",
+                "role": "Rol",
+                "rolePlaceholder": "Seleccione rol",
+                "validFrom": "Desde",
+                "validTo": "Hasta",
+                "dateRangeError": "La fecha hasta debe ser posterior a la fecha desde",
+                "remove": "Quitar"
             },
             "submit": "Guardar",
             "back": "Volver",

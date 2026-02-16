@@ -109,11 +109,11 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: agencies.body,
-      user: user.body,
-      roles: roles.body,
-      permissions: permissions.body,
-      programs: programs?.body ?? []
+      agencies: agencies?.body ?? agencies,
+      user: user?.body ?? user,
+      roles: roles?.body ?? roles,
+      permissions: permissions?.body ?? permissions,
+      programs: programs?.body ?? programs ?? []
     }))
   );
 };

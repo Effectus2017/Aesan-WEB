@@ -1,0 +1,21 @@
+{
+  "roleExtension": {
+    "banner": {
+      "message": "You are using a temporary role. You can use it until {{ date }}.",
+      "requestExtension": "Request extension"
+    },
+    "modal": {
+      "title": "Request role extension",
+      "subtitle": "Request an extension of the validity period for your current temporary role.",
+      "requestedValidTo": "New end date",
+      "requestedValidToRequired": "New end date is required",
+      "reason": "Reason (optional)",
+      "cancel": "Cancel",
+      "submit": "Submit",
+      "successTitle": "Request sent",
+      "successMessage": "Your extension request has been sent. Administrators will review it.",
+      "error": "Error",
+      "userRequired": "You must be logged in to request an extension."
+    }
+  }
+}

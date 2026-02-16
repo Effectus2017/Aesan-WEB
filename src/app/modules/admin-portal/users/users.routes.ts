@@ -6,6 +6,7 @@ import { initialAddUsersResolver, initialAgenciesUsersListResolver, initialEditU
 import { UsersEditComponent } from './edit/edit.component';
 import { RolesListComponent } from './list-roles/list.component';
 import { AgenciesUsersListComponent } from './list-agencies/list.component';
+import { ListRoleExtensionRequestsComponent } from './list-role-extension-requests/list.component';
 
 export default [
   {
@@ -48,6 +49,10 @@ export default [
         resolve: {
           data: initialAgenciesUsersListResolver,
         },
+      },
+      {
+        path: 'role-extension-requests',
+        component: ListRoleExtensionRequestsComponent,
       },
     ],
   },
