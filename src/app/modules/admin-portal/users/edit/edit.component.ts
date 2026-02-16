@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
-import { take } from 'rxjs/operators';
+import { take, takeUntil } from 'rxjs/operators';
 import { RequestUser, SecondaryRoleInput } from '../users.types';
 import { UploadService } from 'app/shared/services/upload.service';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -100,7 +100,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         primaryRole: new FormControl(null, Validators.required),
         secondaryRoles: this._formBuilder.array([]),
         agency: new FormControl(null),
-        program: new FormControl(null),
+        programs: new FormControl([] as { id: number; name: string }[]),
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
@@ -204,6 +204,13 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   userRole: string = null;
 
+  /** Nombres de roles AESAN (desde API). Si el rol primario está aquí, el auspiciador es siempre AESAN y se oculta el input. */
+  aesanRoleNames: string[] = [];
+  /** Agencia AESAN en listAgencies (por nombre 'AESAN'). */
+  aesanAgency: { id: number; name: string } | null = null;
+  /** true = mostrar campo Auspiciador (roles de agencia); false = ocultar y usar siempre AESAN. */
+  showAgencyField = true;
+
   compare = compare;
   compareById = compareById;
   compareString = compareString;
@@ -281,6 +288,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       );
       this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
       this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
+      this._resolveAesanAgency();
 
       // Configurar permisos si existen
       if (resolvedData.permissions) {
@@ -291,9 +299,69 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Configurar el formulario con los datos del usuario
       this.onSetForm(this.user);
 
+      this._usersService.getAesanRolesFromDb().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
+        this.aesanRoleNames = names ?? [];
+        this._applyAgencyVisibilityByPrimaryRole();
+        this._changeDetectorRef.markForCheck();
+      });
+
+      // Mostrar/ocultar campo Auspiciador según rol primario (AESAN vs agencia)
+      this.headerConfig.formGroup.get('primaryRole').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+        this._applyAgencyVisibilityByPrimaryRole();
+        this._changeDetectorRef.markForCheck();
+      });
+
+      // Actualizar vista del header cuando cambie la validez del formulario (p. ej. validadores asíncronos)
+      this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+        this._changeDetectorRef.markForCheck();
+      });
+
       this._changeDetectorRef.markForCheck();
     }
 
+  }
+
+  private _resolveAesanAgency(): void {
+    const found = (this.listAgencies as { id?: number; name?: string; Name?: string }[]).find(
+      (a) => (a.name ?? a.Name ?? '') === 'AESAN'
+    );
+    this.aesanAgency = found ? { id: found.id ?? 0, name: found.name ?? found.Name ?? 'AESAN' } : null;
+  }
+
+  private _isPrimaryRoleAesan(): boolean {
+    const role = this.headerConfig.formGroup.get('primaryRole')?.value;
+    const name = (role?.name ?? role?.Name ?? '').trim();
+    if (name.length === 0) return false;
+    const nameLower = name.toLowerCase();
+    return this.aesanRoleNames.some((n) => (n ?? '').trim().toLowerCase() === nameLower);
+  }
+
+  private _applyAgencyVisibilityByPrimaryRole(): void {
+    const agencyControl = this.headerConfig.formGroup.get('agency');
+    if (!agencyControl) return;
+    // Mientras no tengamos la lista de roles AESAN, no exigir auspiciante (evita validación incorrecta al cargar)
+    if (this.aesanRoleNames.length === 0) {
+      agencyControl.clearValidators();
+      agencyControl.setErrors(null);
+      agencyControl.updateValueAndValidity({ emitEvent: false });
+      this.headerConfig.formGroup.updateValueAndValidity({ emitEvent: false });
+      return;
+    }
+    const isAesan = this._isPrimaryRoleAesan();
+    this.showAgencyField = !isAesan;
+    if (isAesan) {
+      // Rol AESAN: quitar siempre la validación de auspiciante y limpiar errores
+      agencyControl.clearValidators();
+      agencyControl.setErrors(null);
+      if (this.aesanAgency) {
+        agencyControl.setValue(this.aesanAgency);
+      }
+      agencyControl.updateValueAndValidity({ emitEvent: false });
+    } else {
+      agencyControl.setValidators(Validators.required);
+      agencyControl.updateValueAndValidity({ emitEvent: false });
+    }
+    this.headerConfig.formGroup.updateValueAndValidity({ emitEvent: false });
   }
 
   onPassword(formGroup: FormGroup) {
@@ -333,10 +401,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const selectedAgency = agencyId
       ? (this.listAgencies?.find((a: { id: number }) => a.id === agencyId) ?? this.user.agency ?? { id: agencyId, name: this.user.agencyName ?? '' })
       : null;
-    const programId = this.user.programId ?? this.user.program?.id;
-    const selectedProgram = programId
-      ? (this.listPrograms?.find((p: { id: number }) => p.id === programId) ?? { id: programId, name: this.user.programName ?? this.user.program?.name ?? '' })
-      : null;
+    const userPrograms = this.user.programs ?? [];
+    const selectedPrograms = Array.isArray(userPrograms) && userPrograms.length > 0
+      ? userPrograms.map((p: { id: number; name?: string }) => this.listPrograms?.find((lp: { id: number }) => lp.id === p.id) ?? { id: p.id, name: p.name ?? '' }).filter(Boolean)
+      : (this.user.programId != null
+          ? [this.listPrograms?.find((p: { id: number }) => p.id === this.user.programId) ?? { id: this.user.programId, name: this.user.programName ?? this.user.program?.name ?? '' }].filter(Boolean)
+          : []);
     this.headerConfig.formGroup.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
@@ -348,7 +418,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailConfirmed: this.user.emailConfirmed,
       primaryRole: selectedPrimaryRole,
       agency: selectedAgency,
-      program: selectedProgram,
+      programs: selectedPrograms ?? [],
     });
     const secondaryRows = this.getSecondaryRolesFromUser();
     this.secondaryRolesArray.clear();
@@ -418,10 +488,29 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   // Para cuando se actualiza el usuario. save button
   onSave(): void {
+    // Asegurar que la validación de auspiciante esté alineada con el rol actual (p. ej. rol AESAN = no requerido)
+    this._applyAgencyVisibilityByPrimaryRole();
     if (this.headerConfig.formGroup.valid) {
       this.onUpdate(this.headerConfig.formGroup.value);
     } else {
       this.headerConfig.formGroup.markAllAsTouched();
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('users.edit.update.invalidForm.title'),
+        message: this._translocoService.translate('users.edit.update.invalidForm.message'),
+        icon: {
+          show: true,
+          name: 'heroicons_outline:exclamation-triangle',
+          color: 'warn',
+        },
+        actions: {
+          confirm: {
+            show: true,
+            label: this._translocoService.translate('dialog.success.confirm'),
+            color: 'primary',
+          },
+          cancel: { show: false },
+        },
+      });
     }
   }
 
@@ -503,8 +592,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (secondaryRolesPayload.length === 0) secondaryRolesPayload = undefined;
 
     const requestParameters: QueryParameters = { currentUserId: loggedInUserId };
-    const agencyId = form.agency?.id ?? this.user.agency?.id;
-    const programId = form.program?.id ?? form.programId ?? undefined;
+    const agencyId = this._isPrimaryRoleAesan() && this.aesanAgency
+      ? this.aesanAgency.id
+      : (form.agency?.id ?? this.user.agency?.id);
+    const programsListSec = (form.programs ?? []) as { id: number; name: string }[];
+    const programIdsSec = programsListSec?.length ? programsListSec.map((p) => p.id).filter((id) => id > 0) : undefined;
     const _model: RequestUser = {
       id: this.id,
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -517,7 +609,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       primaryRoleName,
       secondaryRoles: secondaryRolesPayload,
       agencyId: agencyId,
-      programId: programId,
+      programIds: programIdsSec?.length ? programIdsSec : undefined,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,
@@ -647,8 +739,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       currentUserId: loggedInUserId,
     };
 
-    const agencyId = form.agency?.id ?? this.user.agency?.id;
-    const programId = form.program?.id ?? form.programId ?? undefined;
+    const agencyId = this._isPrimaryRoleAesan() && this.aesanAgency
+      ? this.aesanAgency.id
+      : (form.agency?.id ?? this.user.agency?.id);
+    const programsListForUpdate = (form.programs ?? []) as { id: number; name: string }[];
+    const programIdsForUpdate = programsListForUpdate?.length ? programsListForUpdate.map((p) => p.id).filter((id) => id > 0) : undefined;
     const _model: RequestUser = {
       id: this.id,
       firstName: isNullOrUndefinedEmptyStringNullArray(form.firstName) ? null : form.firstName,
@@ -661,7 +756,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       primaryRoleName,
       secondaryRoles: secondaryRolesPayload,
       agencyId: agencyId,
-      programId: programId,
+      programIds: programIdsForUpdate?.length ? programIdsForUpdate : undefined,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,
       emailConfirmed: form.emailConfirmed,

@@ -120,7 +120,7 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div class="grid grid-cols-1 gap-2" [class.sm:grid-cols-2]="!showAgencyField" [class.sm:grid-cols-3]="showAgencyField">
             <mat-form-field class="flex-auto">
               <mat-label>{{ 'users.add.primaryRole.label' | transloco }}</mat-label>
               <mat-select
@@ -137,34 +137,36 @@
               </mat-error>
             </mat-form-field>
 
-            <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.add.agency.label' | transloco }}</mat-label>
-              <mat-select
-                formControlName="agency"
-                [placeholder]="'users.add.agency.placeholder' | transloco"
-                [compareWith]="compareById"
-                data-cy="agency-select"
-                [attr.aria-label]="'users.add.agency.label' | transloco"
-              >
-                <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
-                  {{ _agency.name }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('agency').hasError('required')" data-cy="agency-error">
-                {{ 'users.add.agency.required' | transloco }}
-              </mat-error>
-            </mat-form-field>
+            @if (showAgencyField) {
+              <mat-form-field class="flex-auto">
+                <mat-label>{{ 'users.add.agency.label' | transloco }}</mat-label>
+                <mat-select
+                  formControlName="agency"
+                  [placeholder]="'users.add.agency.placeholder' | transloco"
+                  [compareWith]="compareById"
+                  data-cy="agency-select"
+                  [attr.aria-label]="'users.add.agency.label' | transloco"
+                >
+                  <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
+                    {{ _agency.name }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="headerConfig.formGroup.get('datosPersonales').get('agency').hasError('required')" data-cy="agency-error">
+                  {{ 'users.add.agency.required' | transloco }}
+                </mat-error>
+              </mat-form-field>
+            }
 
             <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.add.program.label' | transloco }}</mat-label>
+              <mat-label>{{ 'users.add.programs.label' | transloco }}</mat-label>
               <mat-select
-                formControlName="program"
-                [placeholder]="'users.add.program.placeholder' | transloco"
+                formControlName="programs"
+                multiple
+                [placeholder]="'users.add.programs.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="program-select"
-                [attr.aria-label]="'users.add.program.label' | transloco"
+                data-cy="programs-select"
+                [attr.aria-label]="'users.add.programs.label' | transloco"
               >
-                <mat-option [value]="null" data-cy="program-option-none">{{ 'users.add.program.none' | transloco }}</mat-option>
                 <mat-option *ngFor="let _program of listPrograms" [value]="_program" data-cy="program-option">{{ _program.name }}</mat-option>
               </mat-select>
             </mat-form-field>

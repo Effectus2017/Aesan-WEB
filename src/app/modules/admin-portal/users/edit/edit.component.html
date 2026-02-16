@@ -86,7 +86,7 @@
             </mat-form-field>
           </div>
           <!-- Access Information -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12" [class.sm:grid-cols-3]="!showAgencyField" [class.sm:grid-cols-4]="showAgencyField">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
               <input
@@ -124,31 +124,33 @@
                 {{ "users.edit.primaryRole.required" | transloco }}
               </mat-error>
             </mat-form-field>
+            @if (showAgencyField) {
+              <mat-form-field class="flex-auto">
+                <mat-label>{{ "users.edit.agency.label" | transloco }}</mat-label>
+                <mat-select
+                  formControlName="agency"
+                  [placeholder]="'users.edit.agency.placeholder' | transloco"
+                  [compareWith]="compareById"
+                  data-cy="agency-select"
+                  [attr.aria-label]="'users.edit.agency.label' | transloco"
+                >
+                  <mat-option [value]="null">{{ "users.edit.agency.empty" | transloco }}</mat-option>
+                  <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
+                    {{ _agency.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            }
             <mat-form-field class="flex-auto">
-              <mat-label>{{ "users.edit.agency.label" | transloco }}</mat-label>
+              <mat-label>{{ "users.edit.programs.label" | transloco }}</mat-label>
               <mat-select
-                formControlName="agency"
-                [placeholder]="'users.edit.agency.placeholder' | transloco"
+                formControlName="programs"
+                multiple
+                [placeholder]="'users.edit.programs.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="agency-select"
-                [attr.aria-label]="'users.edit.agency.label' | transloco"
+                data-cy="programs-select"
+                [attr.aria-label]="'users.edit.programs.label' | transloco"
               >
-                <mat-option [value]="null">{{ "users.edit.agency.empty" | transloco }}</mat-option>
-                <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
-                  {{ _agency.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field class="flex-auto">
-              <mat-label>{{ "users.edit.program.label" | transloco }}</mat-label>
-              <mat-select
-                formControlName="program"
-                [placeholder]="'users.edit.program.placeholder' | transloco"
-                [compareWith]="compareById"
-                data-cy="program-select"
-                [attr.aria-label]="'users.edit.program.label' | transloco"
-              >
-                <mat-option [value]="null">{{ "users.edit.program.none" | transloco }}</mat-option>
                 <mat-option *ngFor="let _program of listPrograms" [value]="_program" data-cy="program-option">{{ _program.name }}</mat-option>
               </mat-select>
             </mat-form-field>
@@ -177,17 +179,17 @@
 
       </form>
       @if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
-      <div class="grid grid-cols-1 col-span-12 gap-4 my-6 px-4 sm:grid-cols-1">
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
         <p class="text-lg font-medium">{{ "users.edit.secondaryRoles.title" | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 px-4 sm:grid-cols-1 sm:col-span-12">
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 mb-4 sm:grid-cols-1 sm:col-span-12">
         <app-generic-table [config]="secondaryRolesTableConfig" [handler]="secondaryRolesTableHandler"></app-generic-table>
       </div>
       }
-      <div class="grid grid-cols-1 col-span-12 gap-4 my-6 px-4 sm:grid-cols-1">
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
         <p class="text-lg font-medium">{{ "users.edit.permissions-section" | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 px-4 sm:grid-cols-1 sm:col-span-12">
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 mb-4 sm:grid-cols-1 sm:col-span-12">
         <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
       </div>
 

@@ -60,6 +60,7 @@
         "signed-in-as": "Signed in as",
         "current-role": "Current role",
         "switch-role": "Switch role",
+        "single-role-tooltip": "You only have one role assigned",
         "sign-out": "Sign out",
         "dark-mode": "Dark mode",
         "light-mode": "Light mode"

@@ -125,7 +125,9 @@ export class GenericHeaderComponent {
   }
 
   onSave() {
-    this.handler.onSave();
+    if (this.handler?.onSave) {
+      this.handler.onSave();
+    }
   }
 
   onReject() {

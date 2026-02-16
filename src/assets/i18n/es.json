@@ -54,6 +54,7 @@
         "signed-in-as": "Sesión iniciada como",
         "current-role": "Rol actual",
         "switch-role": "Cambiar rol",
+        "single-role-tooltip": "Solo tienes un rol asignado",
         "sign-out": "Cerrar sesión",
         "dark-mode": "Modo oscuro",
         "light-mode": "Modo claro"

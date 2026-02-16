@@ -114,6 +114,10 @@
                 "placeholder": "Seleccione un programa",
                 "none": "Ninguno"
             },
+            "programs": {
+                "label": "Programas asignados",
+                "placeholder": "Seleccione uno o más programas"
+            },
             "update-password-modal": {
                 "title": "Cambiar Contraseña",
                 "subtitle": "Actualizar contraseña para {{ userName }}",
@@ -332,6 +336,10 @@
                 "placeholder": "Seleccione un programa",
                 "none": "Ninguno"
             },
+            "programs": {
+                "label": "Programas asignados",
+                "placeholder": "Seleccione uno o más programas"
+            },
             "isActive": {
                 "label": "Usuario Activo"
             },
@@ -350,6 +358,10 @@
             "error": {
                 "title": "Error",
                 "message": "Error al actualizar el usuario"
+            },
+            "invalidForm": {
+                "title": "Formulario incompleto",
+                "message": "Revisa los campos marcados y completa los datos requeridos."
             }
         }
     }

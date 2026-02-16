@@ -114,6 +114,10 @@
                 "placeholder": "Select a program",
                 "none": "None"
             },
+            "programs": {
+                "label": "Assigned programs",
+                "placeholder": "Select one or more programs"
+            },
             "update-password-modal": {
                 "title": "Update Password",
                 "subtitle": "Update password for {{ userName }}",
@@ -264,6 +268,10 @@
                 "placeholder": "Select a program",
                 "none": "None"
             },
+            "programs": {
+                "label": "Assigned programs",
+                "placeholder": "Select one or more programs"
+            },
             "isActive": {
                 "label": "Active User"
             },
@@ -346,6 +354,10 @@
             "error": {
                 "title": "Error",
                 "message": "Error updating user"
+            },
+            "invalidForm": {
+                "title": "Incomplete form",
+                "message": "Review the marked fields and complete the required data."
             }
         }
     }

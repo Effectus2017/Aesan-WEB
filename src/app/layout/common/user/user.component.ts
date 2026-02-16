@@ -6,6 +6,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FuseConfigService } from '@fuse/services/config';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
@@ -35,6 +37,7 @@ import { TranslocoModule } from '@ngneat/transloco';
         OptimizeImagePipe,
         MatDividerModule,
         MatTooltipModule,
+        MatSnackBarModule,
         ThemeToggleComponent,
         KeyboardShortcutsComponent,
         NgClass,
@@ -55,6 +58,7 @@ export class UserComponent implements OnInit, OnDestroy {
   isDarkMode: boolean;
   private _customRouterService: CustomRouterService = inject(CustomRouterService);
   private _authService: AuthService = inject(AuthService);
+  private _snackBar: MatSnackBar = inject(MatSnackBar);
 
   /**
    * Roles disponibles para cambio (solo cuando el usuario tiene 2+ roles AESAN).
@@ -150,8 +154,10 @@ export class UserComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.markForCheck();
         this._router.navigateByUrl('/auth-redirect');
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
         this._changeDetectorRef.markForCheck();
+        const message = err?.error?.message ?? err?.message ?? err?.error ?? 'Error al cambiar el rol.';
+        this._snackBar.open(typeof message === 'string' ? message : 'Error al cambiar el rol.', undefined, { duration: 5000 });
       },
     });
   }

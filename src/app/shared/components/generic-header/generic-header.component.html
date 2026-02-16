@@ -96,6 +96,7 @@
         [title]="getButtonTooltip(config.saveButtonTooltip, config.saveButtonDisabledTooltip, config.saveButtonPermission) || 'Guardar'"
         mat-raised-button
         color="primary"
+        [disabled]="config.formGroup && !config.formGroup.valid"
         [appDisableIfNoPermission]="config.saveButtonPermission"
         [appDisableIfAgencyRestricted]="true"
         (click)="onSave()">

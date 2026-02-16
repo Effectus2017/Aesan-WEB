@@ -24,15 +24,21 @@
 </button>
 
 <mat-menu [xPosition]="'before'" class="w-56" #userActions="matMenu">
-  <button mat-menu-item>
-    <span class="flex flex-col leading-none">
+  <button mat-menu-item class="cursor-default">
+    <span class="flex flex-col leading-none min-w-0 w-full text-left">
       <span>{{ 'common.signed-in-as' | transloco }}</span>
-      <span class="mt-1.5 font-medium text-md">{{ user.email }}</span>
-      <ng-container *ngIf="user?.role">
-        <span class="mt-1 text-secondary">{{ 'common.current-role' | transloco }}: {{ user.role }}</span>
-      </ng-container>
+      <span
+        class="mt-1.5 font-medium text-md truncate"
+        [matTooltip]="user.email">{{ user.email }}</span>
     </span>
   </button>
+  <mat-divider class="my-2"></mat-divider>
+  <ng-container *ngIf="user?.role">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
+      <mat-icon [svgIcon]="'heroicons_outline:identification'" class="text-current"></mat-icon>
+      <span class="flex-1">{{ user.role }}</span>
+    </div>
+  </ng-container>
   <ng-container *ngIf="availableRoles.length > 1">
     <button mat-menu-item [matMenuTriggerFor]="switchRoleMenu">
       <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>
@@ -43,6 +49,14 @@
         <span>{{ r }}</span>
       </button>
     </mat-menu>
+  </ng-container>
+  <ng-container *ngIf="availableRoles.length <= 1">
+    <span [matTooltip]="'common.single-role-tooltip' | transloco">
+      <button mat-menu-item disabled>
+        <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>
+        <span>{{ 'common.switch-role' | transloco }}</span>
+      </button>
+    </span>
   </ng-container>
   <mat-divider class="my-2"></mat-divider>
   <button mat-menu-item (click)="navigateToProfile()">

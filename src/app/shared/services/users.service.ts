@@ -14,7 +14,8 @@ import { UploadService } from './upload.service';
 })
 export class UsersService {
   private _users: BehaviorSubject<RequestUser[] | null> = new BehaviorSubject(null);
-  private _user: BehaviorSubject<RequestUser | null> = new BehaviorSubject(null);
+  /** Usuario actual: puede ser TokenResponse (login) o RequestUser (get-user-by-id, edit). */
+  private _user: BehaviorSubject<RequestUser | TokenResponse | null> = new BehaviorSubject(null);
   private _roles: BehaviorSubject<any | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
@@ -37,7 +38,7 @@ export class UsersService {
     return this._users.asObservable();
   }
 
-  get user$(): Observable<RequestUser> {
+  get user$(): Observable<RequestUser | TokenResponse | null> {
     return this._user.asObservable();
   }
 

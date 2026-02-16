@@ -41,8 +41,11 @@ export interface UserToken {
     isActive?: boolean;
     isTemporalPasswordActived?: boolean;
     emailConfirmed?: boolean;
+    /** Un solo programa (compatibilidad). Preferir programIds. */
     programId?: number;
     programName?: string;
+    /** Lista de IDs de programas asignados al usuario (Admin Portal). */
+    programIds?: number[];
   }
 
   export interface DTOUserRole {
