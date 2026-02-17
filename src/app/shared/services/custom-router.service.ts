@@ -1,11 +1,10 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
-import { PROGRAM_CODES } from 'app/shared/const';
 
 /**
- * Servicio para la navegación personalizada
- * Segun el rol y la agencia del usuario, se redirige a la ruta correspondiente
+ * Servicio para la navegación personalizada.
+ * Según el rol: Administrator/Super-Administrator → admin-portal; Agency-* → agency-portal; resto → aesan-portal.
  */
 
 @Injectable({
@@ -19,39 +18,14 @@ export class CustomRouterService {
 
   navigate(commands: any[], extras?: any): Promise<boolean> {
     const userRole = this._authService.getUserRole();
-    const userAgency = this._authService.getUserAgency();
-    const userPrograms = this._authService.getUserPrograms();
 
-    let prefix = '/admin-portal/';
-
-    if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+    let prefix: string;
+    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+      prefix = '/admin-portal/';
+    } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       prefix = '/agency-portal/';
-    } else if (userRole === 'Monitor' || userRole === 'Program-Coordinator') {
-      prefix = '/aesan-portal/';
     } else {
-      switch (userPrograms) {
-        case PROGRAM_CODES.PDAM:
-          prefix = '/pdam-portal/';
-          break;
-        case PROGRAM_CODES.PSAV:
-          prefix = '/psav-portal/';
-          break;
-        case PROGRAM_CODES.PACNA:
-          prefix = '/pacna-portal/';
-          break;
-        case PROGRAM_CODES.PFHF:
-          prefix = '/pfhf-portal/';
-          break;
-        case PROGRAM_CODES.PAF:
-          prefix = '/paf-portal/';
-          break;
-        case PROGRAM_CODES.PDFE:
-          prefix = '/pdf-portal/';
-          break;
-        default:
-          prefix = '/admin-portal/';
-          break;
-      }
+      prefix = '/aesan-portal/';
     }
 
     // Añadir el prefijo solo si el primer segmento no es 'sign-in' o 'sign-up'

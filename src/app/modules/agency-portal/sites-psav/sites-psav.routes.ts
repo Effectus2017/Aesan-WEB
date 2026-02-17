@@ -35,6 +35,7 @@ export default [
         loadComponent: () => import('./edit/edit.component').then((c) => c.EditSitePsavComponent),
         canActivate: [PsavProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
+        runGuardsResolvers: 'always',
         resolve: {
           commonData: initialDataSitesCommonEditResolver,
           programData: initialDataSitesPsavProgramResolver,

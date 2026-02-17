@@ -1,8 +1,21 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { TranslocoService } from '@ngneat/transloco';
 import { ServiceSlotOperatingDate } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 
 /** Día de la semana: índice 0=Lunes, 6=Domingo. */
-const DAY_LABELS = ['L', 'M', 'X', 'J', 'V', 'S', 'D'] as const;
+/** Claves i18n para abreviaturas (ES: L,K,M,J,V,S,D; EN: M,T,W,Th,F,Sa,S). */
+const DAY_SHORT_KEYS = [
+  'sites.add.operating-days-of-week.mondayShort',
+  'sites.add.operating-days-of-week.tuesdayShort',
+  'sites.add.operating-days-of-week.wednesdayShort',
+  'sites.add.operating-days-of-week.thursdayShort',
+  'sites.add.operating-days-of-week.fridayShort',
+  'sites.add.operating-days-of-week.saturdayShort',
+  'sites.add.operating-days-of-week.sundayShort',
+] as const;
+
+/** Fallback español si falta traducción. */
+const DAY_LABELS_FALLBACK = ['L', 'K', 'M', 'J', 'V', 'S', 'D'];
 
 /** Mapeo dayName (API) -> índice 0-6 (Lunes=0, Domingo=6). */
 const DAY_NAME_TO_INDEX: Record<string, number> = {
@@ -27,7 +40,7 @@ const DAY_NAME_TO_INDEX: Record<string, number> = {
 export type DayType = 'normal' | 'weekend' | 'holiday' | 'inactive';
 
 /**
- * Indicador visual semanal: 7 círculos (L M X J V S D) con los días activos resaltados.
+ * Indicador visual semanal: 7 círculos con abreviaturas por idioma (ES: L,K,M,J,V,S,D; EN: M,T,W,Th,F,Sa,S).
  * Colores por tipo: normal (verde), fin de semana (naranja), feriado (morado).
  */
 @Component({
@@ -38,10 +51,18 @@ export type DayType = 'normal' | 'weekend' | 'holiday' | 'inactive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceDaysIndicatorComponent {
+  private readonly transloco = inject(TranslocoService);
+
   /** Fechas de operación del slot. */
   operatingDates = input<ServiceSlotOperatingDate[] | null | undefined>([]);
 
-  readonly dayLabels = DAY_LABELS;
+  /** Etiquetas de días desde i18n (orden Lunes→Domingo). Fallback a español si falta clave. */
+  get dayLabels(): string[] {
+    return DAY_SHORT_KEYS.map((key) => {
+      const t = this.transloco.translate(key);
+      return t !== key ? t : DAY_LABELS_FALLBACK[DAY_SHORT_KEYS.indexOf(key)];
+    });
+  }
 
   /** Índices (0-6) de días que tienen operatingDates. */
   get activeDayIndices(): Set<number> {

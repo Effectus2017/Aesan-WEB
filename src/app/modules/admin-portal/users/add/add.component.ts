@@ -22,11 +22,11 @@ import { Subject, takeUntil } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { UploadService } from 'app/shared/services/upload.service';
-import { RequestUser, SecondaryRoleInput } from '../users.types';
+import { RequestUser, SecondaryRoleFormRow, SecondaryRoleInput } from '../users.types';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
-import { NgFor, NgIf } from '@angular/common';
+import { formatDate, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
@@ -121,7 +121,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   };
 
   secondaryRolesTableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<{ id: number; roleName: string; validFrom: string; validTo: string }>(),
+    dataSource: new MatTableDataSource<{ id: number; roleName: string; comment: string; validFrom: string; validTo: string }>(),
     columnsSchema: SECONDARY_ROLES_COLUMNS_SCHEMA,
     displayedColumns: SECONDARY_ROLES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: null as any,
@@ -202,12 +202,14 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     role?: { id: string; name: string } | null,
     validFrom?: string | Date | null,
     validTo?: string | Date | null,
+    comment?: string | null,
   ): FormGroup {
     const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
     const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
     return this._formBuilder.group(
       {
         role: new FormControl(role ?? null),
+        comment: new FormControl(comment ?? null),
         validFrom: new FormControl(fromVal),
         validTo: new FormControl(toVal),
       },
@@ -234,18 +236,26 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   syncSecondaryRolesTableData(): void {
     const arr = this.secondaryRolesArray;
-    const rows: { id: number; roleName: string; validFrom: string; validTo: string }[] = [];
+    const rows: { id: number; roleName: string; comment: string; validFrom: string; validTo: string }[] = [];
     for (let i = 0; i < arr.length; i++) {
       const g = arr.at(i);
       const role = g.get('role')?.value as { id: string; name: string } | null;
+      const comment = g.get('comment')?.value ?? '';
       const from = g.get('validFrom')?.value;
       const to = g.get('validTo')?.value;
-      const fromStr = from ? (typeof from === 'string' ? from : (from as Date).toISOString().slice(0, 10)) : '';
-      const toStr = to ? (typeof to === 'string' ? to : (to as Date).toISOString().slice(0, 10)) : '';
-      rows.push({ id: i, roleName: role?.name ?? '', validFrom: fromStr, validTo: toStr });
+      const fromStr = this._formatDateShort(from);
+      const toStr = this._formatDateShort(to);
+      rows.push({ id: i, roleName: role?.name ?? '', comment: comment != null ? String(comment).trim() : '', validFrom: fromStr, validTo: toStr });
     }
     this.secondaryRolesTableConfig.dataSource.data = rows;
     this._changeDetectorRef.markForCheck();
+  }
+
+  private _formatDateShort(v: string | Date | null | undefined): string {
+    if (v == null) return '';
+    const d = typeof v === 'string' ? new Date(v) : v;
+    if (isNaN(d.getTime())) return typeof v === 'string' ? v : '';
+    return formatDate(d, 'dd/MM/yyyy', 'es');
   }
 
   onCustom(): void {
@@ -276,7 +286,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       });
       dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
         if (result?.role) {
-          this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
+          this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
           this.syncSecondaryRolesTableData();
         }
       });
@@ -296,7 +306,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
       this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
       this._resolveAesanAgency();
-      this._usersService.getAesanRolesFromDb().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
+      this._usersService.getAesanRoleNames().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
         this.aesanRoleNames = names ?? [];
         this._applyAgencyVisibilityByPrimaryRole();
         this._changeDetectorRef.markForCheck();
@@ -409,9 +419,10 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
 
     const secondaryRoles: SecondaryRoleInput[] = (form.secondaryRoles ?? [])
-      .filter((row: { role?: { name: string }; validFrom?: string; validTo?: string }) => row?.role?.name)
-      .map((row: { role: { name: string }; validFrom: string; validTo: string }) => ({
-        roleName: row.role.name,
+      .filter((row: SecondaryRoleFormRow) => row?.role?.name)
+      .map((row: SecondaryRoleFormRow) => ({
+        roleName: row.role!.name,
+        comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
         validFrom: typeof row.validFrom === 'string' ? row.validFrom : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
         validTo: typeof row.validTo === 'string' ? row.validTo : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
       }))

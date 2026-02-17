@@ -1,5 +1,5 @@
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -65,6 +65,7 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
     MatTableModule,
     MatPaginatorModule,
     NgFor,
+    NgIf,
     GenericHeaderComponent,
     TranslocoModule,
     MatSnackBarModule,

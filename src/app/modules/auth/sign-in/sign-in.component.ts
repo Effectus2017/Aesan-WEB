@@ -107,7 +107,7 @@ export class AuthSignInComponent implements OnInit {
     // Sign in
     this._authService.signIn(signInModel).subscribe({
       next: (response) => {
-        const roles = response?.roles as string[] | undefined;
+        const roles = (response?.roles ?? (response as { Roles?: string[] })?.Roles) as string[] | undefined;
         if (roles && Array.isArray(roles) && roles.length >= 2) {
           sessionStorage.setItem('pendingAesanRoles', JSON.stringify(roles));
           this._router.navigateByUrl('/select-role');

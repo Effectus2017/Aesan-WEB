@@ -28,10 +28,12 @@
                 "required": "El rol principal es requerido"
             },
             "secondaryRoles": {
-                "title": "Roles secundarios (opcionales)",
+                "title": "Roles secundarios (en caso de que aplique)",
                 "add": "Agregar otro rol secundario",
                 "role": "Rol",
                 "rolePlaceholder": "Seleccione rol",
+                "comment": "Motivo",
+                "commentPlaceholder": "Motivo por el cual se asigna este rol",
                 "validFrom": "Desde",
                 "validTo": "Hasta",
                 "dateRangeError": "La fecha hasta debe ser posterior a la fecha desde",
@@ -46,6 +48,7 @@
                 "table": {
                     "columns": {
                         "roleName": "Rol",
+                        "comment": "Motivo",
                         "validFrom": "Desde",
                         "validTo": "Hasta",
                         "actions": "Acciones"
@@ -315,10 +318,12 @@
                 "required": "El rol principal es requerido"
             },
             "secondaryRoles": {
-                "title": "Roles secundarios (opcionales)",
+                "title": "Roles secundarios (en caso de que aplique)",
                 "add": "Agregar otro rol secundario",
                 "role": "Rol",
                 "rolePlaceholder": "Seleccione rol",
+                "comment": "Motivo",
+                "commentPlaceholder": "Motivo por el cual se asigna este rol",
                 "validFrom": "Desde",
                 "validTo": "Hasta",
                 "dateRangeError": "La fecha hasta debe ser posterior a la fecha desde",

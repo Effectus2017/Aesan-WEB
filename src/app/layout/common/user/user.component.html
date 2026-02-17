@@ -23,22 +23,33 @@
     ></span>
 </button>
 
-<mat-menu [xPosition]="'before'" class="w-56" #userActions="matMenu">
-  <button mat-menu-item class="cursor-default">
-    <span class="flex flex-col leading-none min-w-0 w-full text-left">
-      <span>{{ 'common.signed-in-as' | transloco }}</span>
-      <span
-        class="mt-1.5 font-medium text-md truncate"
-        [matTooltip]="user.email">{{ user.email }}</span>
-    </span>
-  </button>
+<mat-menu [xPosition]="'before'" class="min-w-[18rem] w-max" #userActions="matMenu">
+  <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="user.email">
+    <mat-icon [svgIcon]="'heroicons_outline:envelope'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
+    <span class="flex-1">{{ user.email }}</span>
+  </div>
   <mat-divider class="my-2"></mat-divider>
   <ng-container *ngIf="user?.role">
     <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
-      <mat-icon [svgIcon]="'heroicons_outline:identification'" class="text-current"></mat-icon>
+      <mat-icon [svgIcon]="'heroicons_outline:identification'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
       <span class="flex-1">{{ user.role }}</span>
     </div>
   </ng-container>
+  <mat-divider class="my-2" *ngIf="user?.role"></mat-divider>
+  <ng-container *ngIf="programsDisplay">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
+      <mat-icon [svgIcon]="'heroicons_outline:academic-cap'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
+      <span class="flex-1 text-sm text-gray-600 dark:text-gray-300">{{ programsDisplay }}</span>
+    </div>
+  </ng-container>
+  <mat-divider class="my-2" *ngIf="programsDisplay"></mat-divider>
+  <ng-container *ngIf="userAgency">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
+      <mat-icon [svgIcon]="'heroicons_outline:building-office-2'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
+      <span class="flex-1 truncate">{{ userAgency }}</span>
+    </div>
+  </ng-container>
+  <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
   <ng-container *ngIf="availableRoles.length > 1">
     <button mat-menu-item [matMenuTriggerFor]="switchRoleMenu">
       <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>

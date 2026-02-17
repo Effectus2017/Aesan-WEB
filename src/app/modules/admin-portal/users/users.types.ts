@@ -17,8 +17,17 @@ export interface UserToken {
   /** Rol secundario con vigencia (para enviar a la API) */
   export interface SecondaryRoleInput {
     roleName: string;
+    comment?: string;
     validFrom: string;
     validTo: string;
+  }
+
+  /** Fila del formulario de roles secundarios (FormArray value). Usar en lugar de tipos inline. */
+  export interface SecondaryRoleFormRow {
+    role: { id: string; name: string } | null;
+    comment?: string | null;
+    validFrom?: string | Date | null;
+    validTo?: string | Date | null;
   }
 
   export interface RequestUser {

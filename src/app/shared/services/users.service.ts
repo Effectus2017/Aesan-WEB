@@ -9,6 +9,12 @@ import { TokenResponse } from '../models/user.types';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
 import { UploadService } from './upload.service';
 
+/** Rol AESAN con name (español/clave) y nameEN (inglés) desde la DB. */
+export interface AesanRoleItem {
+  name: string;
+  nameEN?: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -23,7 +29,7 @@ export class UsersService {
   private _httpClient = inject(HttpClient);
   private _uploadService = inject(UploadService);
 
-  private _aesanRolesCache: string[] | null = null;
+  private _aesanRolesCache: AesanRoleItem[] | null = null;
   private _aesanRolesCacheTime = 0;
   private readonly AESAN_ROLES_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
@@ -107,22 +113,37 @@ export class UsersService {
   }
 
   /**
-   * Obtiene los nombres de roles AESAN desde la API (con caché).
-   * Usados para la selección multi-rol en select-role.
+   * Obtiene los roles AESAN con name y nameEN desde la API (traducción desde DB). Con caché.
    */
-  getAesanRolesFromDb(): Observable<string[]> {
+  getAesanRolesFromDb(): Observable<AesanRoleItem[]> {
     const now = Date.now();
     if (this._aesanRolesCache && now - this._aesanRolesCacheTime < this.AESAN_ROLES_TTL_MS) {
       return of(this._aesanRolesCache);
     }
-    return this._httpClient.get<{ names: string[] }>(`${this.authApiUrl}/aesan-roles`).pipe(
-      tap((res) => {
-        this._aesanRolesCache = res?.names ?? [];
+    return this._httpClient.get<{ roles: AesanRoleItem[] }>(`${this.authApiUrl}/aesan-roles`).pipe(
+      map((res) => {
+        const raw = res?.roles ?? [];
+        // Asegurar camelCase (API .NET puede devolver Name/NameEN)
+        const normalized: AesanRoleItem[] = raw.map((r) => {
+          const item = r as AesanRoleItem & { Name?: string; NameEN?: string };
+          const name = item.name ?? item.Name ?? '';
+          return { name, nameEN: item.nameEN ?? item.NameEN ?? name };
+        });
+        return normalized;
+      }),
+      tap((normalized) => {
+        this._aesanRolesCache = normalized;
         this._aesanRolesCacheTime = Date.now();
       }),
-      map((res) => res?.names ?? []),
       catchError(handleError)
     );
+  }
+
+  /**
+   * Obtiene solo los nombres de roles AESAN (para add/edit usuario). Usa la misma caché que getAesanRolesFromDb.
+   */
+  getAesanRoleNames(): Observable<string[]> {
+    return this.getAesanRolesFromDb().pipe(map((roles) => (roles ?? []).map((r) => r.name)));
   }
 
   /**

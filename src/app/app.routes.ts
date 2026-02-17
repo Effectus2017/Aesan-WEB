@@ -1,5 +1,6 @@
 import { Route } from '@angular/router';
 import { initialDataAgencyPortalResolver, initialDataResolver } from 'app/app.resolvers';
+import { AdminPortalGuard } from 'app/core/auth/guards/admin-portal.guard';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
@@ -65,11 +66,11 @@ export const appRoutes: Route[] = [
     ],
   },
 
-  // Admin routes
+  // Admin routes (solo Administrator y Super-Administrator)
   {
     path: 'admin-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard, AdminPortalGuard],
+    canActivateChild: [AuthGuard, AdminPortalGuard],
     component: LayoutComponent,
     data: {
       layout: 'modern',
@@ -116,7 +117,7 @@ export const appRoutes: Route[] = [
     ],
   },
 
-  // Monitor (Role: Monitor) routes
+  // AESAN portal routes
   {
     path: 'aesan-portal',
     canActivate: [AuthGuard],

@@ -1238,6 +1238,21 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       next: (result: any) => {
         switch (result?.body) {
           case true:
+            this.isLoading = false;
+            this.headerConfig.formGroup.reset();
+
+            const baseYearControl = this.headerConfig.formGroup.get('baseYear');
+            const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
+
+            if (baseYearControl) {
+              baseYearControl.disable();
+              baseYearControl.setValue(null);
+            }
+            if (renewalYearControl) {
+              renewalYearControl.disable();
+              renewalYearControl.setValue(null);
+            }
+
             this._notificationService.showSuccessDialogWithCallback(
               'sites.add.success',
               (result) => {
@@ -1250,13 +1265,23 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
             );
             break;
           default:
+            this.isLoading = false;
             this._notificationService.showErrorDialog();
             break;
         }
       },
       error: (err: HttpErrorResponse) => {
+        this.isLoading = false;
         const body = err?.error as ApiErrorBody | undefined;
         if (
+          err?.status === 400 &&
+          (body?.code === 'FirstSiteMustBeComedor' ||
+            body?.code === 'SchoolMustHaveComedorFirst' ||
+            body?.code === 'SiteDatesOutsideComedorRange') &&
+          body?.message
+        ) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
+        } else if (
           err?.status === 400 &&
           (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
           body?.message
@@ -1269,21 +1294,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       },
       complete: () => {
         this.isLoading = false;
-        // Reset the form
-        this.headerConfig.formGroup.reset();
-
-        const baseYearControl = this.headerConfig.formGroup.get('baseYear');
-        const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
-
-        // Disable the base year and renewal year fields
-        if (baseYearControl) {
-          baseYearControl.disable();
-          baseYearControl.setValue(null);
-        }
-        if (renewalYearControl) {
-          renewalYearControl.disable();
-          renewalYearControl.setValue(null);
-        }
       },
     });
   }

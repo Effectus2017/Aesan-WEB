@@ -54,11 +54,11 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   backgroundClass: string;
   logoPath: string;
 
-  // Propiedades para controlar la visibilidad de los banners
-  showCurrentProgramBanner: boolean = true;
-  showAgencyStatusBanner: boolean = true;
-  showDeadlineBanner: boolean = true;
-  showAgencyCodeBanner: boolean = true;
+  // Propiedades para controlar la visibilidad de los banners (inicialmente ocultos para evitar flash)
+  showCurrentProgramBanner: boolean = false;
+  showAgencyStatusBanner: boolean = false;
+  showDeadlineBanner: boolean = false;
+  showAgencyCodeBanner: boolean = false;
 
   private _authService = inject(AuthService);
   private _agencyService = inject(AgencyService);
@@ -113,7 +113,6 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     this.updateRouteStyles();
 
     // Verificar si los banners deben mostrarse
-    console.log('Compact Layout - ngOnInit - calling checkBannerVisibility');
     this.checkBannerVisibility();
   }
 
@@ -162,38 +161,34 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Verifica si los banners deben mostrarse basado en el rol del usuario y la agencia
+   * Verifica si los banners deben mostrarse basado en el rol del usuario y la agencia.
+   * Solo usuarios con rol Agency-Administrator o Agency-User ven los banners de agencia (salvo NUTRE).
    */
   private checkBannerVisibility(): void {
-    console.log('Compact Layout - checkBannerVisibility called');
-
-    // Verificar si el usuario es administrador o monitor
     const userRole = this._authService.getUserRole();
     const isAdmin = userRole === 'Administrator' || userRole === 'Admin';
-    const isMonitor = userRole === 'Monitor';
 
-    console.log('Compact Layout - User role:', userRole, 'Is admin:', isAdmin, 'Is monitor:', isMonitor);
-
-    // Si es administrador o monitor, ocultar todos los banners
-    if (isAdmin || isMonitor) {
-      console.log('Compact Layout - Hiding all banners for admin/monitor user');
+    // 1. Admin → ocultar todos los banners
+    if (isAdmin) {
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;
       this.showAgencyCodeBanner = false;
-      console.log('Compact Layout - Banner visibility after admin/monitor check:', {
-        showCurrentProgramBanner: this.showCurrentProgramBanner,
-        showAgencyStatusBanner: this.showAgencyStatusBanner,
-        showDeadlineBanner: this.showDeadlineBanner,
-        showAgencyCodeBanner: this.showAgencyCodeBanner
-      });
       return;
     }
 
-    // Verificar si la agencia es NUTRE
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      console.log('Compact Layout - Agency service result:', result);
+    // 2. No es Agency (AESAN u otro rol) → ocultar todos los banners
+    const isAgency = userRole === 'Agency-Administrator' || userRole === 'Agency-User';
+    if (!isAgency) {
+      this.showCurrentProgramBanner = false;
+      this.showAgencyStatusBanner = false;
+      this.showDeadlineBanner = false;
+      this.showAgencyCodeBanner = false;
+      return;
+    }
 
+    // 3. Es Agency → suscribirse a agency$ y mostrar/ocultar según NUTRE
+    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (result && result.body) {
         const agency = result.body;
         const isNutreAgency = agency && (
@@ -203,29 +198,17 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
           (agency.name && agency.name.toLowerCase() === 'nutre')
         );
 
-        console.log('Compact Layout - Agency data:', agency);
-        console.log('Compact Layout - Is NUTRE agency:', isNutreAgency);
-
         if (isNutreAgency) {
-          console.log('Compact Layout - Hiding all banners for NUTRE agency');
           this.showCurrentProgramBanner = false;
           this.showAgencyStatusBanner = false;
           this.showDeadlineBanner = false;
           this.showAgencyCodeBanner = false;
         } else {
-          console.log('Compact Layout - Showing all banners for non-NUTRE agency');
           this.showCurrentProgramBanner = true;
           this.showAgencyStatusBanner = true;
           this.showDeadlineBanner = true;
           this.showAgencyCodeBanner = true;
         }
-
-        console.log('Compact Layout - Final banner visibility:', {
-          showCurrentProgramBanner: this.showCurrentProgramBanner,
-          showAgencyStatusBanner: this.showAgencyStatusBanner,
-          showDeadlineBanner: this.showDeadlineBanner,
-          showAgencyCodeBanner: this.showAgencyCodeBanner
-        });
       }
     });
   }

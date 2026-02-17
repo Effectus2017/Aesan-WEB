@@ -7,6 +7,7 @@ import { UsersService } from '../../../shared/services/users.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { ProgramService } from 'app/shared/services/program.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -106,6 +107,38 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     permissionService.getUserPermissions({
       userId: route.paramMap.get('id'),
     }),
+    programService.getAllProgramsFromDb({ alls: true, isList: true })
+  ]).pipe(
+    map(([agencies, user, roles, permissions, programs]) => ({
+      agencies: agencies?.body ?? agencies,
+      user: user?.body ?? user,
+      roles: roles?.body ?? roles,
+      permissions: permissions?.body ?? permissions,
+      programs: programs?.body ?? programs ?? []
+    }))
+  );
+};
+
+/**
+ * Resolver para el perfil del usuario actual en admin-portal (misma estructura que edit).
+ */
+export const initialProfileUsersResolver: ResolveFn<any> = () => {
+  const agencyService = inject(AgencyService);
+  const usersService = inject(UsersService);
+  const permissionService = inject(PermissionService);
+  const programService = inject(ProgramService);
+  const authService = inject(AuthService);
+
+  const userId = authService.getUserId();
+  if (!userId) {
+    throw new Error('Usuario no autenticado');
+  }
+
+  return forkJoin([
+    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
+    usersService.getUserByIdWithSP({ userId }),
+    usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
+    permissionService.getUserPermissions({ userId }),
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({

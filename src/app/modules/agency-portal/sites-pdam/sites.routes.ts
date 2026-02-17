@@ -27,6 +27,7 @@ export default [
         loadComponent: () => import('./edit/edit.component').then((c) => c.EditSitePdamComponent),
         canActivate: [PdamProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
+        runGuardsResolvers: 'always',
         resolve: {
           commonData: initialDataSitesCommonEditResolver,
           programData: initialDataSitesPdamProgramResolver,

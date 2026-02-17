@@ -50,6 +50,7 @@ export default [
         loadComponent: () => import('./edit-sites-center/edit.component').then((c) => c.EditSitePacnaCenterComponent),
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
+        runGuardsResolvers: 'always',
         resolve: {
           commonData: initialDataSitesPacnaCenterEditResolver,
           programData: initialDataSitesPacnaProgramEditResolver,
@@ -72,6 +73,7 @@ export default [
         loadComponent: () => import('./edit-sites-home/edit.component').then((c) => c.EditSitePacnaHomeComponent),
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.edit' },
+        runGuardsResolvers: 'always',
         resolve: {
           commonData: initialDataSitesCommonEditResolver,
           programData: initialDataSitesPacnaProgramEditResolver,

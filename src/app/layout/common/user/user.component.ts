@@ -68,6 +68,24 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Nombre de la agencia del usuario (desde token). Solo tiene valor para usuarios de agencia.
+   */
+  get userAgency(): string | null {
+    return this._authService.getUserAgency();
+  }
+
+  /**
+   * Programas del usuario formateados para mostrar (separados por coma y espacio).
+   */
+  get programsDisplay(): string {
+    const p = this.user?.programs;
+    if (!p || typeof p !== 'string') {
+      return '';
+    }
+    return p.split(',').map((s) => s.trim()).filter(Boolean).join(', ');
+  }
+
+  /**
    * Constructor
    */
   constructor(private _changeDetectorRef: ChangeDetectorRef, private _router: Router, private _userService: UserService) {}

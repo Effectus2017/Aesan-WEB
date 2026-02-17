@@ -6,12 +6,12 @@ import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { take, takeUntil } from 'rxjs/operators';
-import { RequestUser, SecondaryRoleInput } from '../users.types';
+import { RequestUser, SecondaryRoleFormRow, SecondaryRoleInput } from '../users.types';
 import { UploadService } from 'app/shared/services/upload.service';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgFor, NgIf } from '@angular/common';
+import { formatDate, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
@@ -149,7 +149,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   };
 
   secondaryRolesTableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<{ id: number; roleName: string; validFrom: string; validTo: string }>(),
+    dataSource: new MatTableDataSource<{ id: number; roleName: string; comment: string; validFrom: string; validTo: string }>(),
     columnsSchema: SECONDARY_ROLES_COLUMNS_SCHEMA,
     displayedColumns: SECONDARY_ROLES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: null as any,
@@ -221,11 +221,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   constructor() {}
 
-  createSecondaryRoleGroup(role?: { id: string; name: string } | null, validFrom?: string | Date | null, validTo?: string | Date | null): FormGroup {
+  createSecondaryRoleGroup(role?: { id: string; name: string } | null, validFrom?: string | Date | null, validTo?: string | Date | null, comment?: string | null): FormGroup {
     const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
     const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
     return this._formBuilder.group({
       role: new FormControl(role ?? null),
+      comment: new FormControl(comment ?? null),
       validFrom: new FormControl(fromVal),
       validTo: new FormControl(toVal),
     }, {
@@ -252,18 +253,26 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   syncSecondaryRolesTableData(): void {
     const arr = this.secondaryRolesArray;
-    const rows: { id: number; roleName: string; validFrom: string; validTo: string }[] = [];
+    const rows: { id: number; roleName: string; comment: string; validFrom: string; validTo: string }[] = [];
     for (let i = 0; i < arr.length; i++) {
       const g = arr.at(i);
       const role = g.get('role')?.value as { id: string; name: string } | null;
+      const comment = g.get('comment')?.value ?? '';
       const from = g.get('validFrom')?.value;
       const to = g.get('validTo')?.value;
-      const fromStr = from ? (typeof from === 'string' ? from : (from as Date).toISOString().slice(0, 10)) : '';
-      const toStr = to ? (typeof to === 'string' ? to : (to as Date).toISOString().slice(0, 10)) : '';
-      rows.push({ id: i, roleName: role?.name ?? '', validFrom: fromStr, validTo: toStr });
+      const fromStr = this._formatDateShort(from);
+      const toStr = this._formatDateShort(to);
+      rows.push({ id: i, roleName: role?.name ?? '', comment: comment != null ? String(comment).trim() : '', validFrom: fromStr, validTo: toStr });
     }
     this.secondaryRolesTableConfig.dataSource.data = rows;
     this._changeDetectorRef.markForCheck();
+  }
+
+  private _formatDateShort(v: string | Date | null | undefined): string {
+    if (v == null) return '';
+    const d = typeof v === 'string' ? new Date(v) : v;
+    if (isNaN(d.getTime())) return typeof v === 'string' ? v : '';
+    return formatDate(d, 'dd/MM/yyyy', 'es');
   }
 
   ngOnInit() {
@@ -299,7 +308,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       // Configurar el formulario con los datos del usuario
       this.onSetForm(this.user);
 
-      this._usersService.getAesanRolesFromDb().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
+      this._usersService.getAesanRoleNames().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
         this.aesanRoleNames = names ?? [];
         this._applyAgencyVisibilityByPrimaryRole();
         this._changeDetectorRef.markForCheck();
@@ -423,7 +432,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const secondaryRows = this.getSecondaryRolesFromUser();
     this.secondaryRolesArray.clear();
     secondaryRows.forEach((row) => {
-      this.secondaryRolesArray.push(this.createSecondaryRoleGroup(row.role, row.validFrom, row.validTo));
+      this.secondaryRolesArray.push(this.createSecondaryRoleGroup(row.role, row.validFrom, row.validTo, row.comment));
     });
     this.syncSecondaryRolesTableData();
 
@@ -450,14 +459,15 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     return this.listRoles?.find((r: { name: string }) => r.name === first) ?? null;
   }
 
-  private getSecondaryRolesFromUser(): { role: { id: string; name: string } | null; validFrom: string | null; validTo: string | null }[] {
+  private getSecondaryRolesFromUser(): { role: { id: string; name: string } | null; comment: string | null; validFrom: string | null; validTo: string | null }[] {
     const list = this.user?.secondaryRoles ?? [];
     if (!Array.isArray(list) || !list.length) return [];
-    return list.map((s: { roleName?: string; validFrom?: string; validTo?: string }) => {
+    return list.map((s: { roleName?: string; comment?: string; validFrom?: string; validTo?: string }) => {
       const role = s.roleName ? (this.listRoles?.find((r: { name: string }) => r.name === s.roleName) ?? null) : null;
+      const comment = s.comment ?? null;
       const from = s.validFrom ?? null;
       const to = s.validTo ?? null;
-      return { role, validFrom: from, validTo: to };
+      return { role, comment, validFrom: from, validTo: to };
     });
   }
 
@@ -542,7 +552,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       });
       dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
         if (result?.role) {
-          this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
+          this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
           this.syncSecondaryRolesTableData();
           this.saveSecondaryRolesToBackend();
         }
@@ -580,11 +590,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         return;
       }
     }
-    const secondaryRows = (form.secondaryRoles ?? []) as { role?: { name: string }; validFrom?: string | Date; validTo?: string | Date }[];
+    const secondaryRows = (form.secondaryRoles ?? []) as SecondaryRoleFormRow[];
     let secondaryRolesPayload: SecondaryRoleInput[] | undefined = secondaryRows
       .filter((row) => row?.role?.name)
       .map((row) => ({
         roleName: row.role!.name,
+        comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
         validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
         validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
       }))
@@ -709,8 +720,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       secondaryRolesPayload = Array.isArray(list)
         ? list
             .filter((s: { roleName?: string; validFrom?: string; validTo?: string }) => s.roleName && s.validFrom && s.validTo)
-            .map((s: { roleName: string; validFrom: string; validTo: string }) => ({
+            .map((s: { roleName: string; comment?: string; validFrom: string; validTo: string }) => ({
               roleName: s.roleName,
+              comment: s.comment != null && String(s.comment).trim() !== '' ? String(s.comment).trim() : undefined,
               validFrom: typeof s.validFrom === 'string' ? s.validFrom.slice(0, 10) : '',
               validTo: typeof s.validTo === 'string' ? s.validTo.slice(0, 10) : '',
             }))
@@ -723,11 +735,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         primaryRoleControl?.markAsTouched();
         return;
       }
-      const secondaryRows = (form.secondaryRoles ?? []) as { role?: { name: string }; validFrom?: string | Date; validTo?: string | Date }[];
+      const secondaryRows = (form.secondaryRoles ?? []) as SecondaryRoleFormRow[];
       secondaryRolesPayload = secondaryRows
         .filter((row) => row?.role?.name)
         .map((row) => ({
           roleName: row.role!.name,
+          comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
           validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
           validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
         }))

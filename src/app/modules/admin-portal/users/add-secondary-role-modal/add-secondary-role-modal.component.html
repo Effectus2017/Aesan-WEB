@@ -24,18 +24,24 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field class="w-full">
-          <mat-label>{{ 'users.edit.secondaryRoles.validFrom' | transloco }}</mat-label>
-          <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" />
-          <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
-          <mat-datepicker #pickerFrom></mat-datepicker>
+          <mat-label>{{ 'users.edit.secondaryRoles.comment' | transloco }}</mat-label>
+          <textarea matInput formControlName="comment" rows="2" [placeholder]="'users.edit.secondaryRoles.commentPlaceholder' | transloco"></textarea>
         </mat-form-field>
-        <mat-form-field class="w-full">
-          <mat-label>{{ 'users.edit.secondaryRoles.validTo' | transloco }}</mat-label>
-          <input matInput [matDatepicker]="pickerTo" formControlName="validTo" />
-          <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
-          <mat-datepicker #pickerTo></mat-datepicker>
-          <mat-error *ngIf="form.hasError('dateRange')">{{ 'users.edit.secondaryRoles.dateRangeError' | transloco }}</mat-error>
-        </mat-form-field>
+        <div class="flex flex-row gap-4 w-full flex-wrap">
+          <mat-form-field class="flex-1 min-w-40">
+            <mat-label>{{ 'users.edit.secondaryRoles.validFrom' | transloco }}</mat-label>
+            <input matInput [matDatepicker]="pickerFrom" formControlName="validFrom" />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFrom></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field class="flex-1 min-w-40">
+            <mat-label>{{ 'users.edit.secondaryRoles.validTo' | transloco }}</mat-label>
+            <input matInput [matDatepicker]="pickerTo" formControlName="validTo" />
+            <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerTo></mat-datepicker>
+            <mat-error *ngIf="form.hasError('dateRange')">{{ 'users.edit.secondaryRoles.dateRangeError' | transloco }}</mat-error>
+          </mat-form-field>
+        </div>
       </div>
     </div>
 

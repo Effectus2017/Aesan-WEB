@@ -17,11 +17,12 @@ export interface AddSecondaryRoleModalData {
   primaryRoleId?: string;
   /** Ids de roles ya asignados como secundarios (no se muestran), salvo el de editRow si existe. */
   excludeRoleIds?: string[];
-  editRow?: { role: { id: string; name: string } | null; validFrom: string | null; validTo: string | null; index: number };
+  editRow?: { role: { id: string; name: string } | null; comment: string | null; validFrom: string | null; validTo: string | null; index: number };
 }
 
 export interface AddSecondaryRoleModalResult {
   role: { id: string; name: string };
+  comment: string | null;
   validFrom: string | null;
   validTo: string | null;
 }
@@ -56,9 +57,11 @@ export class AddSecondaryRoleModalComponent {
     const edit = data?.editRow;
     const fromVal = edit?.validFrom ?? null;
     const toVal = edit?.validTo ?? null;
+    const commentVal = edit?.comment ?? null;
     this.form = new FormGroup(
       {
         role: new FormControl(edit?.role ?? null, Validators.required),
+        comment: new FormControl(commentVal),
         validFrom: new FormControl(fromVal),
         validTo: new FormControl(toVal),
       },
@@ -110,12 +113,14 @@ export class AddSecondaryRoleModalComponent {
       return;
     }
     const role = this.form.get('role')?.value as { id: string; name: string };
+    const comment = this.form.get('comment')?.value ?? null;
     const validFrom = this.form.get('validFrom')?.value ?? null;
     const validTo = this.form.get('validTo')?.value ?? null;
     if (!role) return;
+    const commentStr = comment != null && String(comment).trim() !== '' ? String(comment).trim() : null;
     const fromStr = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
     const toStr = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
-    this.dialogRef.close({ role, validFrom: fromStr, validTo: toStr } as AddSecondaryRoleModalResult);
+    this.dialogRef.close({ role, comment: commentStr, validFrom: fromStr, validTo: toStr } as AddSecondaryRoleModalResult);
   }
 
   onCancel(): void {

@@ -69,7 +69,7 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
       this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
       this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
       this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
-      this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, roles: ['Monitor'] }),
+      this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true }),
       this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome' }),
       this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true })
     ]).pipe(

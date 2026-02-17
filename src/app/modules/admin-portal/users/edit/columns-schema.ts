@@ -2,6 +2,7 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 
 export const SECONDARY_ROLES_COLUMNS_SCHEMA: ColumnSchema[] = [
   { key: 'roleName', type: 'text', label: 'users.edit.secondaryRoles.table.columns.roleName' },
+  { key: 'comment', type: 'text', label: 'users.edit.secondaryRoles.table.columns.comment' },
   { key: 'validFrom', type: 'text', label: 'users.edit.secondaryRoles.table.columns.validFrom' },
   { key: 'validTo', type: 'text', label: 'users.edit.secondaryRoles.table.columns.validTo' },
   {

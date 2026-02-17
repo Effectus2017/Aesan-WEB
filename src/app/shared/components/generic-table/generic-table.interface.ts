@@ -148,7 +148,7 @@ export interface GenericTableConfig<T = any> {
   viewMode?: 'table' | 'cards' | 'auto';
   /**
    * Días de la semana de operación del sitio (para mostrar en tarjetas Servicios Activos).
-   * Formato: iniciales "L M X J V" debajo del horario de cada servicio.
+   * Formato: abreviaturas por idioma debajo del horario (ES: L K M J V S D; EN: M T W Th F Sa S).
    */
   operatingDaysOfWeek?: DayOfWeekResponse[];
 }

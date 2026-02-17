@@ -208,7 +208,14 @@
                 "thursday": "Thursday",
                 "friday": "Friday",
                 "saturday": "Saturday",
-                "sunday": "Sunday"
+                "sunday": "Sunday",
+                "mondayShort": "M",
+                "tuesdayShort": "T",
+                "wednesdayShort": "W",
+                "thursdayShort": "Th",
+                "fridayShort": "F",
+                "saturdayShort": "Sa",
+                "sundayShort": "S"
             },
             "operating-days-calculated": {
                 "label": "Total Operating Days",
@@ -1604,6 +1611,10 @@
             },
             "date-out-of-range": "The selected date is outside the site's operating days range",
             "navigate-to-site": "Go to site",
+            "today": "Today",
+            "viewMonth": "Month",
+            "viewWeek": "Week",
+            "viewDay": "Day",
             "day-events": {
                 "table": {
                     "columns": {

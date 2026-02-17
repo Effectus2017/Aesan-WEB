@@ -1,22 +1,57 @@
-<h2 mat-dialog-title>{{ 'roleExtension.modal.title' | transloco }}</h2>
-<mat-dialog-content>
-  <p class="mb-4">{{ 'roleExtension.modal.subtitle' | transloco }}</p>
-  <form [formGroup]="form">
-    <mat-form-field class="w-full" appearance="outline">
-      <mat-label>{{ 'roleExtension.modal.requestedValidTo' | transloco }}</mat-label>
-      <input matInput [matDatepicker]="picker" formControlName="requestedValidTo" />
-      <mat-datepicker #picker></mat-datepicker>
-      <mat-error *ngIf="form.get('requestedValidTo')?.hasError('required')">{{ 'roleExtension.modal.requestedValidToRequired' | transloco }}</mat-error>
-    </mat-form-field>
-    <mat-form-field class="w-full" appearance="outline">
-      <mat-label>{{ 'roleExtension.modal.reason' | transloco }}</mat-label>
-      <textarea matInput formControlName="reason" rows="3"></textarea>
-    </mat-form-field>
+<div class="flex flex-col -m-6 max-h-screen min-w-120 min-h-0">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'roleExtension.modal.title' | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current">close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form [formGroup]="form" class="flex flex-col flex-auto min-h-0" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+      <div class="flex flex-col gap-6">
+        <!-- Description -->
+        <p class="text-secondary">
+          {{ 'roleExtension.modal.subtitle' | transloco }}
+        </p>
+
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'roleExtension.modal.requestedValidTo' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="picker" formControlName="requestedValidTo" />
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="form.get('requestedValidTo')?.hasError('required')">{{ 'roleExtension.modal.requestedValidToRequired' | transloco }}</mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'roleExtension.modal.reason' | transloco }}</mat-label>
+          <textarea matInput formControlName="reason" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button
+          mat-button
+          type="button"
+          (click)="onCancel()"
+          data-cy="cancel-button"
+        >
+          {{ 'roleExtension.modal.cancel' | transloco }}
+        </button>
+      </div>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || isLoading"
+        data-cy="submit-button"
+      >
+        <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" class="mr-2 inline-block"></mat-progress-spinner>
+        {{ 'roleExtension.modal.submit' | transloco }}
+      </button>
+    </div>
   </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">{{ 'roleExtension.modal.cancel' | transloco }}</button>
-  <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || isLoading">
-    {{ 'roleExtension.modal.submit' | transloco }}
-  </button>
-</mat-dialog-actions>
+</div>

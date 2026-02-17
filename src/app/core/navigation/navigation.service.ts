@@ -112,11 +112,11 @@ export class NavigationService implements OnDestroy {
     }
 
     let nav: FuseNavigationItem[] = [];
-    if (userRole === 'Administrator') {
+    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
       nav = navigation.admin ?? [];
     } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       nav = navigation.agency ?? [];
-    } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
+    } else {
       nav = navigation.aesan ?? [];
     }
     // Agrega los ítems compartidos si existen
@@ -160,12 +160,13 @@ export class NavigationService implements OnDestroy {
   }
 
   private getRoutePrefix(userRole: string, userPrograms: string): string {
+    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+      return '/admin-portal';
+    }
     if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
       return '/agency-portal';
-    } else if (userRole === 'Monitor' || userRole === 'Monitor-Administrator') {
-      return '/aesan-portal';
     }
-    return '/admin-portal';
+    return '/aesan-portal';
   }
 
   private cleanRoute(route: string): string {

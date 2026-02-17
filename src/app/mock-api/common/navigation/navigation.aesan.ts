@@ -7,7 +7,7 @@ export const aesanNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:home',
     link: '/dashboard',
-    roles: ['Monitor'],
+    roles: ['Evaluator'],
   },
   {
     id: 'evaluation',
@@ -15,6 +15,6 @@ export const aesanNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:clipboard-document-check',
     link: '/sponsor-evaluation',
-    roles: ['Monitor'],
+    roles: ['Evaluator'],
   },
 ];

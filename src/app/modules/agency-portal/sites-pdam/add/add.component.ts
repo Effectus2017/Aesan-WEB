@@ -54,7 +54,7 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
-import { getApiErrorMessage } from 'app/shared/models/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/ApiError';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -1157,6 +1157,21 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       next: (result: any) => {
         switch (result.body) {
           case true:
+            this.isLoading = false;
+            this.headerConfig.formGroup.reset();
+
+            const baseYearControl = this.headerConfig.formGroup.get('baseYear');
+            const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
+
+            if (baseYearControl) {
+              baseYearControl.disable();
+              baseYearControl.setValue(null);
+            }
+            if (renewalYearControl) {
+              renewalYearControl.disable();
+              renewalYearControl.setValue(null);
+            }
+
             this._notificationService.showSuccessDialogWithCallback('sites.add.success', (result) => {
               if (result === 'confirmed') {
                 // Navegar a la ruta correcta según el programa
@@ -1165,36 +1180,34 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
             });
             break;
           default:
+            this.isLoading = false;
             this._notificationService.showErrorDialog();
             break;
         }
       },
       error: (err: HttpErrorResponse) => {
-        const message = getApiErrorMessage(err);
-        if (message) {
-          this._notificationService.showErrorDialogWithRawMessage(message);
+        this.isLoading = false;
+        const body = err?.error as ApiErrorBody | undefined;
+        if (
+          err?.status === 400 &&
+          (body?.code === 'FirstSiteMustBeComedor' ||
+            body?.code === 'SchoolMustHaveComedorFirst' ||
+            body?.code === 'SiteDatesOutsideComedorRange') &&
+          body?.message
+        ) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else {
-          this._notificationService.showErrorDialog('dialog.error.no-response');
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
         this.headerConfig.formGroup.enable();
       },
       complete: () => {
         this.isLoading = false;
-        // Reset the form
-        this.headerConfig.formGroup.reset();
-
-        const baseYearControl = this.headerConfig.formGroup.get('baseYear');
-        const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
-
-        // Disable the base year and renewal year fields
-        if (baseYearControl) {
-          baseYearControl.disable();
-          baseYearControl.setValue(null);
-        }
-        if (renewalYearControl) {
-          renewalYearControl.disable();
-          renewalYearControl.setValue(null);
-        }
       },
     });
   }

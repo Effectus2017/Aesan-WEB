@@ -924,38 +924,30 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   getCurrentDateLabel(): string {
     const date = this.viewDate;
-    const monthNames = [
-      'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-      'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
-    ];
-
-    const monthName = monthNames[date.getMonth()];
-    const year = date.getFullYear();
+    const locale = this.currentLanguage === 'es' ? 'es-PR' : 'en-US';
 
     if (this.view === CalendarView.Month) {
-      return `${monthName} ${year}`;
+      return date.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
     } else if (this.view === CalendarView.Week) {
-      // Calcular el rango de la semana
       const startOfWeek = new Date(date);
-      const day = startOfWeek.getDay();
-      const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Ajustar para que la semana empiece en lunes
+      const dayOfWeek = startOfWeek.getDay();
+      const diff = startOfWeek.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
       startOfWeek.setDate(diff);
 
       const endOfWeek = new Date(startOfWeek);
       endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-      const startMonth = monthNames[startOfWeek.getMonth()];
-      const endMonth = monthNames[endOfWeek.getMonth()];
+      const year = date.getFullYear();
 
-      if (startOfWeek.getMonth() === endOfWeek.getMonth()) {
-        return `${startMonth} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${year}`;
-      } else {
-        return `${startMonth} ${startOfWeek.getDate()} - ${endMonth} ${endOfWeek.getDate()}, ${year}`;
+      if (startOfWeek.getMonth() === endOfWeek.getMonth() && startOfWeek.getFullYear() === endOfWeek.getFullYear()) {
+        const monthName = endOfWeek.toLocaleDateString(locale, { month: 'long' });
+        return `${monthName} ${startOfWeek.getDate()}-${endOfWeek.getDate()}, ${year}`;
       }
+      const startStr = startOfWeek.toLocaleDateString(locale, { month: 'long', day: 'numeric' });
+      const endStr = endOfWeek.toLocaleDateString(locale, { month: 'long', day: 'numeric' });
+      return `${startStr} - ${endStr}, ${year}`;
     } else {
-      // Vista de día
-      const day = date.getDate();
-      return `${day} de ${monthName}, ${year}`;
+      return date.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' });
     }
   }
 

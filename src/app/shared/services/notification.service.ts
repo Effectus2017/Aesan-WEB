@@ -121,6 +121,28 @@ export class NotificationService {
     });
   }
 
+  /**
+   * Muestra un diálogo de advertencia con un mensaje en texto plano (sin traducir).
+   * Útil para mostrar el mensaje que devuelve el servidor/API (p. ej. SiteDatesOutsideComedorRange).
+   */
+  showWarningDialogWithRawMessage(message: string): void {
+    this.fuseConfirmationService.open({
+      title: this.translocoService.translate('dialog.warning.title'),
+      icon: {
+        show: true,
+        name: 'heroicons_outline:exclamation-triangle',
+        color: 'warning',
+      },
+      message,
+      actions: {
+        confirm: {
+          label: this.translocoService.translate('dialog.warning.confirm'),
+          color: 'warn',
+        },
+      },
+    });
+  }
+
   // ============================================================================
   // NUEVOS MÉTODOS CON ACCESO A EVENTOS
   // ============================================================================

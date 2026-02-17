@@ -115,7 +115,7 @@
                 <button mat-button (click)="today()"
                     class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                     <mat-icon>today</mat-icon>
-                    Hoy
+                    {{ 'sites.calendar.today' | transloco }}
                 </button>
                 <button mat-icon-button (click)="next()"
                     class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
@@ -130,21 +130,21 @@
                     [class.text-blue-600]="view === CalendarView.Month"
                     [class.dark:text-blue-400]="view === CalendarView.Month"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Mes
+                    {{ 'sites.calendar.viewMonth' | transloco }}
                 </button>
                 <button mat-button (click)="setView(CalendarView.Week)" [class.bg-white]="view === CalendarView.Week"
                     [class.dark:bg-gray-600]="view === CalendarView.Week"
                     [class.text-blue-600]="view === CalendarView.Week"
                     [class.dark:text-blue-400]="view === CalendarView.Week"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Semana
+                    {{ 'sites.calendar.viewWeek' | transloco }}
                 </button>
                 <button mat-button (click)="setView(CalendarView.Day)" [class.bg-white]="view === CalendarView.Day"
                     [class.dark:bg-gray-600]="view === CalendarView.Day"
                     [class.text-blue-600]="view === CalendarView.Day"
                     [class.dark:text-blue-400]="view === CalendarView.Day"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Día
+                    {{ 'sites.calendar.viewDay' | transloco }}
                 </button>
             </div>
         </div>

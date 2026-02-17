@@ -53,7 +53,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { getApiErrorMessage } from 'app/shared/models/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/ApiError';
 import {
   SiteChildGroupServiceSlotMinimal,
   SiteChildGroupServiceSlotResponse
@@ -1307,11 +1307,22 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       },
       error: (err: HttpErrorResponse) => {
         console.error('[Edit Site] updateSite error:', err);
-        const message = getApiErrorMessage(err);
-        if (message) {
-          this._notificationService.showErrorDialogWithRawMessage(message);
+        const body = err?.error as ApiErrorBody | undefined;
+        if (
+          err?.status === 400 &&
+          (body?.code === 'FirstSiteMustBeComedor' ||
+            body?.code === 'SchoolMustHaveComedorFirst' ||
+            body?.code === 'SiteDatesOutsideComedorRange') &&
+          body?.message
+        ) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else {
-          this._notificationService.showErrorDialog('dialog.error.no-response');
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
         this.headerConfig.formGroup.enable();
       },

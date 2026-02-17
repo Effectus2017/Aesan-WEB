@@ -8,7 +8,6 @@ import { sharedNavigation } from './navigation.shared';
 export const navigationByRole = {
   'Administrator': adminNavigation,
   'Agency-Administrator': agencyNavigation,
-  'Monitor': aesanNavigation,
   'Shared': sharedNavigation
 };
 

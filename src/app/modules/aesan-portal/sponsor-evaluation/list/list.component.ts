@@ -55,7 +55,7 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
     searchFieldShow: true,
     searchInputPlaceholder: 'sponsor-evaluation.list.search.placeholder',
     submitButtonText: 'sponsor-evaluation.list.buttons.save',
-    goToAddButtonShow: true,
+    goToAddButtonShow: false,
   };
 
   // Configuración de la tabla
