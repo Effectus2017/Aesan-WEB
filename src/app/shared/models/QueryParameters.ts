@@ -22,6 +22,8 @@ export interface QueryParameters {
   fileName?: string;
   folderTo?: string;
   roles?: string[];
+  /** Excluir usuarios con rol Administrator o Super-Administrator (para dropdowns sin admins) */
+  excludeAdministrators?: boolean;
   password?: string;
   newPassword?: string;
   temporaryPassword?: string;

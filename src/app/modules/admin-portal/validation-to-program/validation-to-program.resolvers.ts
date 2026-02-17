@@ -57,7 +57,7 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
     programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true }),
+    usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, excludeAdministrators: true }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',
       names: 'Administrador,Director,Coordinador(a) del Programa',
