@@ -108,6 +108,8 @@ export const appRoutes: Route[] = [
       { path: 'email-template', loadChildren: () => import('app/modules/admin-portal/email-template/email-template.routes') },
       // Email logs (Role: Admin)
       { path: 'email-logs', loadChildren: () => import('app/modules/admin-portal/email-logs/email-logs.routes') },
+      // Centro de logs (Role: Admin, permisos por categoría)
+      { path: 'logs', loadChildren: () => import('app/modules/admin-portal/logs/logs.routes') },
       // Message templates (Role: Admin)
       { path: 'message-template', loadChildren: () => import('app/modules/admin-portal/message-template/message-template.routes') },
       // Organization types (Role: Admin)

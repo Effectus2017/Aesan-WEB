@@ -5,6 +5,7 @@ import { catchError, distinctUntilChanged, map, Observable, ReplaySubject, Subje
 import { AuthService } from '../auth/auth.service';
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { UserService } from 'app/shared/services/user.service';
+import { isAdminRole, isAgencyRole } from 'app/shared/constants/role-keys';
 
 @Injectable({ providedIn: 'root' })
 export class NavigationService implements OnDestroy {
@@ -112,9 +113,9 @@ export class NavigationService implements OnDestroy {
     }
 
     let nav: FuseNavigationItem[] = [];
-    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+    if (isAdminRole(userRole)) {
       nav = navigation.admin ?? [];
-    } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+    } else if (isAgencyRole(userRole)) {
       nav = navigation.agency ?? [];
     } else {
       nav = navigation.aesan ?? [];
@@ -160,10 +161,10 @@ export class NavigationService implements OnDestroy {
   }
 
   private getRoutePrefix(userRole: string, userPrograms: string): string {
-    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+    if (isAdminRole(userRole)) {
       return '/admin-portal';
     }
-    if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+    if (isAgencyRole(userRole)) {
       return '/agency-portal';
     }
     return '/aesan-portal';

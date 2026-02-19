@@ -23,6 +23,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAdminRole } from 'app/shared/constants/role-keys';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -708,7 +709,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   private checkAdminPermissions(): void {
     const userRole = this._authService.getUserRole();
-    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+    this.canViewReviewFields = isAdminRole(userRole);
 
     if (this.canViewReviewFields) {
       this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);

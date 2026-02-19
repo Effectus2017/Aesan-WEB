@@ -18,6 +18,7 @@ const EXCLUDED_ENDPOINTS = [
   '/notifications',
   '/realtime',
   '/signalr',
+  '/api/logs', // centro de logs: datos en tiempo real, no cachear (evita 401 o datos obsoletos)
   '/get-operating-days', // días de funcionamiento y servicios del calendario (cambian al agregar/editar servicios)
   '/site/', // sitios (cambian al agregar/editar sitios)
   '/staff/', // personal (cambian al agregar/editar personal)

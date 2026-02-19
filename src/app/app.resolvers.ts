@@ -69,48 +69,49 @@ export const initialDataAgencyPortalResolver = () => {
   const agencyStatusStorageService = inject(AgencyStatusStorageService);
 
   const agencyId = authService.getAgencyId();
+  const hasValidAgencyId = agencyId != null && agencyId !== undefined && Number(agencyId) > 0;
 
-  const params: QueryParameters = {
-    agencyId: agencyId,
-  };
-
-  // Fork join multiple API endpoint calls to wait all of them to finish
-  return forkJoin([
-    navigationService.get(),
-    agencyService.getAgencyById(params)
-  ]).pipe(
-    tap(([navigation, agency]) => {
-      // Almacenar los programas de la agencia en localStorage
-      if (agency?.body?.programs) {
-        localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
-      }
-      // Almacenar isDayCareHome booleanValue en localStorage (true/false/null)
-      const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
-      if (isDayCareHomeOption) {
-        const booleanValue = isDayCareHomeOption.booleanValue;
-        // Guardar como string: "true", "false", o "null"
-        if (booleanValue === null || booleanValue === undefined) {
-          localStorage.setItem('agencyIsDayCareHome', 'null');
-        } else {
-          localStorage.setItem('agencyIsDayCareHome', String(booleanValue));
+  if (hasValidAgencyId) {
+    const params: QueryParameters = {
+      agencyId: agencyId as number,
+    };
+    return forkJoin([
+      navigationService.get(),
+      agencyService.getAgencyById(params),
+    ]).pipe(
+      tap(([navigation, agency]) => {
+        if (agency?.body?.programs) {
+          localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
         }
-      } else {
-        localStorage.removeItem('agencyIsDayCareHome');
-      }
+        const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
+        if (isDayCareHomeOption) {
+          const booleanValue = isDayCareHomeOption.booleanValue;
+          if (booleanValue === null || booleanValue === undefined) {
+            localStorage.setItem('agencyIsDayCareHome', 'null');
+          } else {
+            localStorage.setItem('agencyIsDayCareHome', String(booleanValue));
+          }
+        } else {
+          localStorage.removeItem('agencyIsDayCareHome');
+        }
+        const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
+        const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration
+          || agency?.body?.deadlineToCompleteRegistration;
+        const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
+        agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
+      }),
+      map(([navigation, agency]) => ({
+        navigation,
+        agency: agency?.body ?? null,
+      }))
+    );
+  }
 
-      // Calcular y guardar estado de restricción de la agencia
-      const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
-      const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration 
-        || agency?.body?.deadlineToCompleteRegistration;
-      const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
-      agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
-    }),
-    map(([navigation, agency]) => {
-      return {
-        navigation: navigation,
-        agency: agency.body,
-      };
-    })
+  return forkJoin([navigationService.get()]).pipe(
+    map(([navigation]) => ({
+      navigation,
+      agency: null,
+    }))
   );
 };
 

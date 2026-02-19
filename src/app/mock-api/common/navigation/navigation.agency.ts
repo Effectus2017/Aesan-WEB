@@ -1,5 +1,6 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { ROLE_KEY_AGENCY_ADMINISTRATOR, ROLE_KEY_AGENCY_USER } from 'app/shared/constants/role-keys';
 
 /**
  * Función helper para obtener el valor de isDayCareHome de manera robusta
@@ -34,7 +35,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:home',
     link: '/dashboard',
-    roles: ['Agency-Administrator', 'Agency-User'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR, ROLE_KEY_AGENCY_USER],
   },
   {
     id: 'legibility',
@@ -51,7 +52,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-duplicate',
     link: '/documents',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['DocumentView'],
   },
 //   {
@@ -60,7 +61,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
 //     type: 'basic',
 //     icon: 'heroicons_outline:academic-cap',
 //     link: '/sites',
-//     roles: ['Agency-Administrator'],
+//     roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
 //     permissions: ['site.view'],
 //     hidden: (item) => {
 //       const programsRaw = localStorage.getItem('agencyPrograms');
@@ -79,7 +80,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:academic-cap',
     link: '/schools',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['school.view'],
     hidden: (item) => {
       const programsRaw = localStorage.getItem('agencyPrograms');
@@ -98,7 +99,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:academic-cap',
     link: '/sites-pacna',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['site.view'],
     hidden: (item) => {
       // Solo mostrar si tiene PACNA Y isDayCareHome es TRUE
@@ -125,7 +126,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:academic-cap',
     link: '/centers',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['school.view'],
     hidden: (item) => {
       // Solo mostrar si tiene PACNA Y isDayCareHome es FALSE
@@ -151,7 +152,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     title: 'navigation.sites.centersAndHomes',
     type: 'group',
     icon: 'mat_solid:home_work',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['site.view'],
     hidden: (item) => {
       // Solo mostrar si tiene PACNA Y isDayCareHome es NULL (Ambos)
@@ -178,7 +179,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_solid:academic-cap',
         link: '/centers',
-        roles: ['Agency-Administrator'],
+        roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
         permissions: ['school.view'],
       },
       {
@@ -187,7 +188,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'mat_solid:house',
         link: '/sites-pacna',
-        roles: ['Agency-Administrator'],
+        roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
         permissions: ['site.view'],
       },
     ],
@@ -213,7 +214,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         link: '/forms/psav-solicitud',
       },
     ],
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['FormView'],
   },
   {
@@ -248,7 +249,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         icon: 'heroicons_solid:document',
       },
     ],
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['AccountingView'],
   },
   {
@@ -263,7 +264,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     //     type: 'basic',
     //     icon: 'mat_solid:add',
     //     link: '/staff/add',
-    //     roles: ['Agency-Administrator'],
+    //     roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     //     permissions: ['staff.create'],
     //   },
       {
@@ -272,7 +273,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_solid:users',
         link: '/staff/employees',
-        roles: ['Agency-Administrator'],
+        roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
         permissions: ['staff.view'],
       },
       {
@@ -281,11 +282,11 @@ export const agencyNavigation: FuseNavigationItem[] = [
         type: 'basic',
         icon: 'heroicons_solid:user-group',
         link: '/staff/board-members',
-        roles: ['Agency-Administrator'],
+        roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
         permissions: ['staff.view'],
       },
     ],
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['staff.view'],
   },
   {
@@ -294,7 +295,7 @@ export const agencyNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-chart-bar',
     link: '/reports',
-    roles: ['Agency-Administrator'],
+    roles: [ROLE_KEY_AGENCY_ADMINISTRATOR],
     permissions: ['ReportView'],
   },
 ];

@@ -1,0 +1,43 @@
+{
+  "logs": {
+    "list": {
+      "title": "Log center",
+      "selectCategory": "Select a category",
+      "categories": {
+        "audit": "Audit",
+        "email": "Email",
+        "job": "Jobs",
+        "application": "Application errors"
+      },
+      "filters": {
+        "category": "Category",
+        "from": "From",
+        "to": "To",
+        "search": "Search"
+      },
+      "columns": {
+        "category": "Category",
+        "id": "ID",
+        "timestamp": "Date",
+        "summary": "Summary",
+        "status": "Status",
+        "level": "Level"
+      },
+      "buttons": {
+        "view": "View"
+      },
+      "details": {
+        "title": "Log detail",
+        "close": "Close",
+        "category": "Category",
+        "id": "ID",
+        "timestamp": "Date",
+        "summary": "Summary",
+        "status": "Status",
+        "level": "Level",
+        "userId": "User",
+        "payload": "Payload"
+      }
+    }
+  }
+}

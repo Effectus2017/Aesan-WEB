@@ -59,8 +59,11 @@
         "profile": "Profile",
         "signed-in-as": "Signed in as",
         "current-role": "Current role",
+        "agency-name-tooltip": "Agency name",
+        "role-tooltip": "Role",
         "switch-role": "Switch role",
         "single-role-tooltip": "You only have one role assigned",
+        "switch-role-aesan-only": "Only available for AESAN users",
         "sign-out": "Sign out",
         "dark-mode": "Dark mode",
         "light-mode": "Light mode"

@@ -74,12 +74,12 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
 
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
-    usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
+    usersService.getAllRolesFromDb({ aesanOnly: true }),
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, roles, programs]) => ({
       agencies: agencies.body,
-      roles: roles.body,
+      roles: roles ?? [],
       programs: programs?.body ?? []
     }))
   );
@@ -100,10 +100,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getUserByIdWithSP({ userId: route.paramMap.get('id') }),
-    usersService.getAllRolesFromDb({
-      take: 25,
-      skip: 0,
-    }),
+    usersService.getAllRolesFromDb({ aesanOnly: true }),
     permissionService.getUserPermissions({
       userId: route.paramMap.get('id'),
     }),
@@ -112,7 +109,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     map(([agencies, user, roles, permissions, programs]) => ({
       agencies: agencies?.body ?? agencies,
       user: user?.body ?? user,
-      roles: roles?.body ?? roles,
+      roles: roles ?? [],
       permissions: permissions?.body ?? permissions,
       programs: programs?.body ?? programs ?? []
     }))
@@ -137,14 +134,14 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getUserByIdWithSP({ userId }),
-    usersService.getAllRolesFromDb({ take: 25, skip: 0 }),
+    usersService.getAllRolesFromDb({ aesanOnly: true }),
     permissionService.getUserPermissions({ userId }),
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
       agencies: agencies?.body ?? agencies,
       user: user?.body ?? user,
-      roles: roles?.body ?? roles,
+      roles: roles ?? [],
       permissions: permissions?.body ?? permissions,
       programs: programs?.body ?? programs ?? []
     }))

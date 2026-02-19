@@ -7,6 +7,7 @@ import { FuseLoadingBarComponent } from '@fuse/components/loading-bar';
 import { FuseNavigationService, FuseVerticalNavigationComponent } from '@fuse/components/navigation';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAdminRole, isAgencyRole } from 'app/shared/constants/role-keys';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { Navigation } from 'app/core/navigation/navigation.types';
@@ -162,14 +163,13 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
 
   /**
    * Verifica si los banners deben mostrarse basado en el rol del usuario y la agencia.
-   * Solo usuarios con rol Agency-Administrator o Agency-User ven los banners de agencia (salvo NUTRE).
+   * Solo usuarios con rol agency_administrator o agency_user ven los banners de agencia (salvo NUTRE).
    */
   private checkBannerVisibility(): void {
     const userRole = this._authService.getUserRole();
-    const isAdmin = userRole === 'Administrator' || userRole === 'Admin';
 
     // 1. Admin → ocultar todos los banners
-    if (isAdmin) {
+    if (isAdminRole(userRole)) {
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;
@@ -178,8 +178,7 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     }
 
     // 2. No es Agency (AESAN u otro rol) → ocultar todos los banners
-    const isAgency = userRole === 'Agency-Administrator' || userRole === 'Agency-User';
-    if (!isAgency) {
+    if (!isAgencyRole(userRole)) {
       this.showCurrentProgramBanner = false;
       this.showAgencyStatusBanner = false;
       this.showDeadlineBanner = false;

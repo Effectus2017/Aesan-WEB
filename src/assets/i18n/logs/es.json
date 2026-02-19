@@ -1,0 +1,43 @@
+{
+  "logs": {
+    "list": {
+      "title": "Centro de logs",
+      "selectCategory": "Seleccione una categoría",
+      "categories": {
+        "audit": "Auditoría",
+        "email": "Correo",
+        "job": "Jobs",
+        "application": "Errores de aplicación"
+      },
+      "filters": {
+        "category": "Categoría",
+        "from": "Desde",
+        "to": "Hasta",
+        "search": "Buscar"
+      },
+      "columns": {
+        "category": "Categoría",
+        "id": "ID",
+        "timestamp": "Fecha",
+        "summary": "Resumen",
+        "status": "Estado",
+        "level": "Nivel"
+      },
+      "buttons": {
+        "view": "Ver"
+      },
+      "details": {
+        "title": "Detalle del log",
+        "close": "Cerrar",
+        "category": "Categoría",
+        "id": "ID",
+        "timestamp": "Fecha",
+        "summary": "Resumen",
+        "status": "Estado",
+        "level": "Nivel",
+        "userId": "Usuario",
+        "payload": "Payload"
+      }
+    }
+  }
+}

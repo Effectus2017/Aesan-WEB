@@ -15,6 +15,8 @@ import { KeyboardShortcutsComponent } from 'app/layout/common/keyboard-shortcuts
 import { TokenResponse } from 'app/shared/models/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { TranslocoService } from '@ngneat/transloco';
+import { DTORole, UsersService } from 'app/shared/services/users.service';
 import { Subject, takeUntil } from 'rxjs';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
@@ -59,6 +61,21 @@ export class UserComponent implements OnInit, OnDestroy {
   private _customRouterService: CustomRouterService = inject(CustomRouterService);
   private _authService: AuthService = inject(AuthService);
   private _snackBar: MatSnackBar = inject(MatSnackBar);
+  private _transloco = inject(TranslocoService);
+  private _usersService = inject(UsersService);
+
+  /** Mapa clave de rol -> nombre a mostrar (para menú de cambio de rol). */
+  roleDisplayByKey: Record<string, string> = {};
+
+  /**
+   * Etiqueta del rol actual según idioma (roleDisplay/roleDisplayEN desde JWT).
+   */
+  get roleDisplayLabel(): string {
+    const u = this.user;
+    if (!u?.role) return '';
+    const lang = this._transloco.getActiveLang() ?? 'es';
+    return lang === 'es' ? (u.roleDisplay ?? u.role) : (u.roleDisplayEN ?? u.roleDisplay ?? u.role);
+  }
 
   /**
    * Roles disponibles para cambio (solo cuando el usuario tiene 2+ roles AESAN).
@@ -72,6 +89,13 @@ export class UserComponent implements OnInit, OnDestroy {
    */
   get userAgency(): string | null {
     return this._authService.getUserAgency();
+  }
+
+  /**
+   * Solo usuarios AESAN (sin agencia en token) pueden cambiar de rol.
+   */
+  get canSwitchRole(): boolean {
+    return !this.userAgency;
   }
 
   /**
@@ -101,8 +125,19 @@ export class UserComponent implements OnInit, OnDestroy {
     // Subscribe to user changes
     this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenResponse) => {
       this.user = user;
-
-      // Mark for check
+      if (user?.roles && user.roles.length > 1) {
+        this._usersService.getAllRolesFromDb({ aesanOnly: true }).pipe(takeUntil(this._unsubscribeAll)).subscribe((roles) => {
+          const lang = this._transloco.getActiveLang() ?? 'es';
+          this.roleDisplayByKey = {};
+          (roles ?? []).forEach((r: DTORole) => {
+            const key = r.name ?? '';
+            this.roleDisplayByKey[key] = lang === 'en' ? (r.displayNameEN ?? key) : (r.displayName ?? key);
+          });
+          this._changeDetectorRef.markForCheck();
+        });
+      } else {
+        this.roleDisplayByKey = {};
+      }
       this._changeDetectorRef.markForCheck();
     });
 

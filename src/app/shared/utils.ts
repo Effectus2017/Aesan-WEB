@@ -1,4 +1,5 @@
 import { HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { formatDate } from '@angular/common';
 import { getApiErrorMessage } from './models/ApiError';
 import { Constants } from './const';
 import { QueryParameters } from './models/QueryParameters';
@@ -641,6 +642,18 @@ export function dateToTimeString(date: Date | null): string {
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
   return `${hours}:${minutes}`;
+}
+
+/**
+ * Formatea una fecha (string o Date) a dd/MM/yyyy en locale español.
+ * @param v Fecha como string, Date, null o undefined
+ * @returns String en formato dd/MM/yyyy o string vacío si v es null/undefined/inválido
+ */
+export function formatDateShort(v: string | Date | null | undefined): string {
+  if (v == null) return '';
+  const d = typeof v === 'string' ? new Date(v) : v;
+  if (isNaN(d.getTime())) return typeof v === 'string' ? v : '';
+  return formatDate(d, 'dd/MM/yyyy', 'es');
 }
 
 /**

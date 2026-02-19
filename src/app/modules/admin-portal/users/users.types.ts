@@ -24,7 +24,7 @@ export interface UserToken {
 
   /** Fila del formulario de roles secundarios (FormArray value). Usar en lugar de tipos inline. */
   export interface SecondaryRoleFormRow {
-    role: { id: string; name: string } | null;
+    role: DTORole | null;
     comment?: string | null;
     validFrom?: string | Date | null;
     validTo?: string | Date | null;
@@ -57,11 +57,6 @@ export interface UserToken {
     programIds?: number[];
   }
 
-  export interface DTOUserRole {
-    id: string;
-    name: string;
-  }
-
   export interface Token {
     token_type: string;
     access_token: string;
@@ -69,9 +64,74 @@ export interface UserToken {
     refresh_token: string;
   }
 
-  export interface Role {
-    id: string;
+  /** Único modelo de rol (tabla: id, name, displayName, displayNameEN; servicio normaliza a camelCase). */
+  export interface DTORole {
+    id?: string;
+    name?: string;
+    displayName?: string;
+    displayNameEN?: string;
+  }
+
+  /** Datos de entrada del modal de agregar/editar rol secundario. */
+  export interface AddSecondaryRoleModalData {
+    listRoles: DTORole[];
+    primaryRoleId?: string;
+    primaryRoleName?: string;
+    excludeRoleIds?: string[];
+    excludeRoleNames?: string[];
+    editRow?: { role: DTORole | null; comment: string | null; validFrom: string | null; validTo: string | null; index: number };
+  }
+
+  /** Resultado al cerrar el modal de agregar/editar rol secundario. */
+  export interface AddSecondaryRoleModalResult {
+    role: DTORole;
+    comment: string | null;
+    validFrom: string | null;
+    validTo: string | null;
+  }
+
+  /** Fila de rol secundario con role y fechas (retorno de getSecondaryRolesFromUser). */
+  export interface SecondaryRoleFromUserRow {
+    role: DTORole | null;
+    comment: string | null;
+    validFrom: string | null;
+    validTo: string | null;
+  }
+
+  /** Item de secondary role tal como viene del usuario (campos opcionales). */
+  export interface UserSecondaryRoleStub {
+    roleName?: string;
+    comment?: string;
+    validFrom?: string;
+    validTo?: string;
+  }
+
+  /** Programa para select (id + name). */
+  export interface ProgramOption {
+    id: number;
     name: string;
+  }
+
+  /** Agencia para select (id + name). */
+  export interface AgencyOption {
+    id: number;
+    name: string;
+  }
+
+  /** Item de agencia tal como viene del API (puede tener Name en PascalCase). */
+  export interface AgencyListItem {
+    id?: number;
+    name?: string;
+    Name?: string;
+  }
+
+  /** Fila de la tabla de roles secundarios en add/edit. */
+  export interface SecondaryRoleTableRow {
+    id: number;
+    roleName: string;
+    comment: string;
+    validFrom: string;
+    validTo: string;
   }
 
   export interface ChangePassword {
@@ -88,4 +148,68 @@ export interface UserToken {
   export interface ResetPassword {
     token: string;
     userId: string;
+  }
+
+  /** Valor del formulario de alta de usuario (datosPersonales). Evita tipos inline en submitForm. */
+  export interface AddUserFormValue {
+    username?: string | null;
+    currentPassword?: string | null;
+    newPassword?: string | null;
+    email?: string | null;
+    firstName?: string | null;
+    middleName?: string | null;
+    fatherLastName?: string | null;
+    motherLastName?: string | null;
+    primaryRole?: DTORole | null;
+    secondaryRoles?: SecondaryRoleFormRow[];
+    agency?: AgencyOption | null;
+    programs?: ProgramOption[];
+    isActive?: boolean;
+    isTemporalPasswordActived?: boolean;
+    emailConfirmed?: boolean;
+  }
+
+  /** Errores de validación usados en add/edit usuario (evitar literales inline). */
+  export interface RequiredValidationError {
+    required: true;
+  }
+
+  export interface PasswordNotMatchValidationError {
+    passwordNotMatch: true;
+  }
+
+  export interface InvalidEmailFormatValidationError {
+    invalidEmailFormat: true;
+  }
+
+  export interface DateRangeValidationError {
+    dateRange: true;
+  }
+
+  /** Opciones iniciales del FormControl de username (disabled hasta rellenar email). */
+  export interface FormControlDisabledOptions {
+    value: null;
+    disabled: true;
+  }
+
+  /** Respuesta mínima del endpoint add user (para tipar callback next). */
+  export interface AddUserResponse {
+    status?: number;
+  }
+
+  /** Colores de icono admitidos por FuseConfirmationService. */
+  export type FuseConfirmationIconColor = 'error' | 'warn' | 'primary' | 'accent' | 'basic' | 'info' | 'success' | 'warning';
+
+  /** Colores de acción confirm admitidos por FuseConfirmationService. */
+  export type FuseConfirmationActionColor = 'warn' | 'primary' | 'accent';
+
+  /** Opciones del diálogo de confirmación Fuse usadas en add usuario (evitar literales inline). */
+  export interface FuseConfirmationDialogOptions {
+    title: string;
+    message: string;
+    icon: { show: boolean; name: string; color: FuseConfirmationIconColor };
+    actions: {
+      confirm: { show: boolean; label: string; color: FuseConfirmationActionColor };
+      cancel: { show: boolean; label?: string };
+    };
   }

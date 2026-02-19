@@ -10,22 +10,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
 import { TranslocoModule } from '@ngneat/transloco';
-
-export interface AddSecondaryRoleModalData {
-  listRoles: { id: string; name: string }[];
-  /** Id del rol principal (no se muestra en el select). */
-  primaryRoleId?: string;
-  /** Ids de roles ya asignados como secundarios (no se muestran), salvo el de editRow si existe. */
-  excludeRoleIds?: string[];
-  editRow?: { role: { id: string; name: string } | null; comment: string | null; validFrom: string | null; validTo: string | null; index: number };
-}
-
-export interface AddSecondaryRoleModalResult {
-  role: { id: string; name: string };
-  comment: string | null;
-  validFrom: string | null;
-  validTo: string | null;
-}
+import { compareById } from 'app/shared/utils';
+import { AddSecondaryRoleModalData, AddSecondaryRoleModalResult, DTORole } from '../users.types';
 
 @Component({
   selector: 'app-add-secondary-role-modal',
@@ -47,54 +33,35 @@ export interface AddSecondaryRoleModalResult {
   ],
 })
 export class AddSecondaryRoleModalComponent {
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   form: FormGroup;
-  rolesFiltered: { id: string; name: string }[] = [];
+  rolesFiltered: DTORole[] = [];
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
   constructor(
     public dialogRef: MatDialogRef<AddSecondaryRoleModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSecondaryRoleModalData,
   ) {
     const edit = data?.editRow;
-    const fromVal = edit?.validFrom ?? null;
-    const toVal = edit?.validTo ?? null;
-    const commentVal = edit?.comment ?? null;
     this.form = new FormGroup(
       {
         role: new FormControl(edit?.role ?? null, Validators.required),
-        comment: new FormControl(commentVal),
-        validFrom: new FormControl(fromVal),
-        validTo: new FormControl(toVal),
+        comment: new FormControl(edit?.comment ?? null),
+        validFrom: new FormControl(edit?.validFrom ?? null),
+        validTo: new FormControl(edit?.validTo ?? null),
       },
-      { validators: this.dateRangeValidator },
+      { validators: this.dateRangeValidator.bind(this) },
     );
-    this.updateRolesFiltered();
+    this._updateRolesFiltered();
   }
 
-  dateRangeValidator(g: AbstractControl): { dateRange: boolean } | null {
-    const from = g.get('validFrom')?.value;
-    const to = g.get('validTo')?.value;
-    if (from && to && new Date(to) <= new Date(from)) {
-      return { dateRange: true };
-    }
-    return null;
-  }
-
-  private updateRolesFiltered(): void {
-    const raw: any = this.data?.listRoles ?? [];
-    const list = Array.isArray(raw) ? raw : (raw?.data ?? raw?.Data ?? []);
-    const normalized = (Array.isArray(list) ? list : []).map((r: any) => ({
-      id: String(r?.id ?? r?.Id ?? ''),
-      name: String(r?.name ?? r?.Name ?? '').trim(),
-    })).filter((r) => r.id && r.name);
-    const primaryId = this.data?.primaryRoleId ? String(this.data.primaryRoleId) : undefined;
-    const excludeIds = new Set(this.data?.excludeRoleIds ?? []);
-    if (primaryId) excludeIds.add(primaryId);
-    // En modo edición, el rol que se edita debe seguir visible (no está en excludeRoleIds que envía el padre)
-    this.rolesFiltered = normalized
-      .filter((r) => !excludeIds.has(r.id))
-      .sort((a, b) => a.name.localeCompare(b.name, 'es'));
-  }
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Getters
+  // -----------------------------------------------------------------------------------------------------
   get isEditMode(): boolean {
     return !!this.data?.editRow;
   }
@@ -107,23 +74,61 @@ export class AddSecondaryRoleModalComponent {
     return this.isEditMode ? 'users.edit.secondaryRoles.modal.save' : 'users.edit.secondaryRoles.modal.add';
   }
 
-  onConfirm(): void {
+  /** Función para mat-select compareWith (comparar roles por id). */
+  roleCompareFn = compareById;
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones On (componentes genéricos)
+  // -----------------------------------------------------------------------------------------------------
+  /** Valida el formulario y cierra el diálogo con el rol, comentario y fechas seleccionados. */
+  onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    const role = this.form.get('role')?.value as { id: string; name: string };
-    const comment = this.form.get('comment')?.value ?? null;
-    const validFrom = this.form.get('validFrom')?.value ?? null;
-    const validTo = this.form.get('validTo')?.value ?? null;
+
+    const formValues = this.form.value;
+    const role = formValues.role as DTORole;
     if (!role) return;
-    const commentStr = comment != null && String(comment).trim() !== '' ? String(comment).trim() : null;
-    const fromStr = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
-    const toStr = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
-    this.dialogRef.close({ role, comment: commentStr, validFrom: fromStr, validTo: toStr } as AddSecondaryRoleModalResult);
+
+    const comment: string | null = formValues.comment || null;
+    const validFrom: string | null = formValues.validFrom
+      ? (typeof formValues.validFrom === 'string' ? formValues.validFrom : (formValues.validFrom as Date).toISOString().slice(0, 10))
+      : null;
+    const validTo: string | null = formValues.validTo
+      ? (typeof formValues.validTo === 'string' ? formValues.validTo : (formValues.validTo as Date).toISOString().slice(0, 10))
+      : null;
+
+    this.dialogRef.close({ role, comment, validFrom, validTo });
   }
 
+  /** Cierra el modal sin resultado. */
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  /** Validador del grupo: validFrom debe ser anterior a validTo. */
+  dateRangeValidator(g: AbstractControl): { dateRange: true } | null {
+    const from = g.get('validFrom')?.value;
+    const to = g.get('validTo')?.value;
+    if (from && to && new Date(to) <= new Date(from)) {
+      return { dateRange: true };
+    }
+    return null;
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
+  /** Filtra y ordena la lista de roles excluyendo el primario y los ya asignados. */
+  private _updateRolesFiltered(): void {
+    const list = Array.isArray(this.data?.listRoles) ? this.data.listRoles : [];
+    const primaryName = this.data?.primaryRoleName ? String(this.data.primaryRoleName).trim() : undefined;
+    const excludeNames = new Set((this.data?.excludeRoleNames ?? []).map((n) => String(n).trim()));
+    if (primaryName) excludeNames.add(primaryName);
+    const excludeIds = new Set((this.data?.excludeRoleIds ?? []).map((id) => String(id)));
+    this.rolesFiltered = list
+      .filter((r) => (r?.name ?? '').trim() !== '' && !excludeNames.has(String(r.name ?? '').trim()) && !(r?.id && excludeIds.has(String(r.id))))
+      .sort((a, b) => (a?.displayName ?? a?.name ?? '').localeCompare(b?.displayName ?? b?.name ?? '', 'es'));
   }
 }

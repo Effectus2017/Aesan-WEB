@@ -117,7 +117,7 @@
                 [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
               >
                 <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
-                  {{ _role.name }}
+                  {{ (_role.displayName || _role.DisplayName || _role.displayNameEN || _role.DisplayNameEN || _role.name || _role.Name) }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')">
@@ -155,7 +155,7 @@
               </mat-select>
             </mat-form-field>
           </div>
-          @if(userRole === 'Administrator' || userRole === 'Super-Administrator') {
+          @if(isAdminUser) {
           <!-- Nuevos checkboxes para estados del usuario -->
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
             <mat-checkbox formControlName="isActive" [attr.aria-label]="'users.edit.isActive.label' | transloco" data-cy="is-active-checkbox">
@@ -178,7 +178,7 @@
         </div>
 
       </form>
-      @if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+      @if (isAdminUser) {
       <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
         <p class="text-lg font-medium">{{ "users.edit.secondaryRoles.title" | transloco }}</p>
       </div>

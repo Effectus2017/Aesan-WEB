@@ -92,6 +92,8 @@ export class AuthService {
       nameid: payload.nameid as string,
       unique_name: payload.unique_name as string,
       role: Array.isArray(payload.role) ? (payload.role[0] as string) : (payload.role as string),
+      roleDisplay: payload.roleDisplay as string | undefined,
+      roleDisplayEN: payload.roleDisplayEN as string | undefined,
       roles: rolesArray,
       roleValidTo: payload.roleValidTo as string | undefined,
       userId: payload.userId as string,

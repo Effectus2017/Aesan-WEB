@@ -1,19 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, tap, map, catchError, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, tap, map, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/QueryParameters';
-import { RequestUser } from '../../modules/admin-portal/users/users.types';
+import { DTORole, RequestUser } from '../../modules/admin-portal/users/users.types';
 import { getHttpOptions, handleError } from '../utils';
 import { TokenResponse } from '../models/user.types';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
 import { UploadService } from './upload.service';
 
-/** Rol AESAN con name (español/clave) y nameEN (inglés) desde la DB. */
-export interface AesanRoleItem {
-  name: string;
-  nameEN?: string;
-}
+export type { DTORole };
 
 @Injectable({
   providedIn: 'root',
@@ -29,9 +25,7 @@ export class UsersService {
   private _httpClient = inject(HttpClient);
   private _uploadService = inject(UploadService);
 
-  private _aesanRolesCache: AesanRoleItem[] | null = null;
-  private _aesanRolesCacheTime = 0;
-  private readonly AESAN_ROLES_TTL_MS = 5 * 60 * 1000; // 5 minutos
+  private _aesanRoles: BehaviorSubject<DTORole[] | null> = new BehaviorSubject<DTORole[] | null>(null);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
@@ -54,6 +48,10 @@ export class UsersService {
 
   get roles$(): Observable<any> {
     return this._roles.asObservable();
+  }
+
+  get aesanRoles$(): Observable<DTORole[] | null> {
+    return this._aesanRoles.asObservable();
   }
 
   get getPassword(): string {
@@ -113,50 +111,39 @@ export class UsersService {
   }
 
   /**
-   * Obtiene los roles AESAN con name y nameEN desde la API (traducción desde DB). Con caché.
-   */
-  getAesanRolesFromDb(): Observable<AesanRoleItem[]> {
-    const now = Date.now();
-    if (this._aesanRolesCache && now - this._aesanRolesCacheTime < this.AESAN_ROLES_TTL_MS) {
-      return of(this._aesanRolesCache);
-    }
-    return this._httpClient.get<{ roles: AesanRoleItem[] }>(`${this.authApiUrl}/aesan-roles`).pipe(
-      map((res) => {
-        const raw = res?.roles ?? [];
-        // Asegurar camelCase (API .NET puede devolver Name/NameEN)
-        const normalized: AesanRoleItem[] = raw.map((r) => {
-          const item = r as AesanRoleItem & { Name?: string; NameEN?: string };
-          const name = item.name ?? item.Name ?? '';
-          return { name, nameEN: item.nameEN ?? item.NameEN ?? name };
-        });
-        return normalized;
-      }),
-      tap((normalized) => {
-        this._aesanRolesCache = normalized;
-        this._aesanRolesCacheTime = Date.now();
-      }),
-      catchError(handleError)
-    );
-  }
-
-  /**
-   * Obtiene solo los nombres de roles AESAN (para add/edit usuario). Usa la misma caché que getAesanRolesFromDb.
-   */
-  getAesanRoleNames(): Observable<string[]> {
-    return this.getAesanRolesFromDb().pipe(map((roles) => (roles ?? []).map((r) => r.name)));
-  }
-
-  /**
-   * Obtiene todos los roles desde la base de datos
-   * @param requestParameters Parámetros de la solicitud
-   * @returns Observable<any>
+   * Obtiene todos los roles desde la base de datos. Con aesanOnly=true devuelve solo roles AESAN (actualiza aesanRoles$).
+   * @param requestParameters Parámetros (take, skip, etc.). aesanOnly=true para solo roles AESAN en formato { roles }.
+   * @returns Observable con respuesta { data, count } o, si aesanOnly, array de roles AESAN.
    */
   getAllRolesFromDb(requestParameters: QueryParameters): Observable<any> {
-    return <Observable<any>>this._httpClient.get<any>(`${this.apiUrl}` + '/get-all-roles-from-db', getHttpOptions(requestParameters)).pipe(
-      tap((response: any) => {
-        this._roles.next(response);
-      }),
-      catchError(handleError)
+    const aesanOnly = requestParameters?.aesanOnly === true;
+    if (aesanOnly) {
+      return this._httpClient
+        .get<{ roles: any[] }>(`${this.apiUrl}/get-all-roles-from-db`, getHttpOptions(requestParameters))
+        .pipe(
+          map((res) => (res?.roles ?? []).map((r: any) => ({
+            name: r?.Name ?? r?.name,
+            displayName: r?.DisplayName ?? r?.displayName,
+            displayNameEN: r?.DisplayNameEN ?? r?.displayNameEN,
+          } as DTORole))),
+          tap((arr) => this._aesanRoles.next(arr)),
+          catchError(handleError)
+        );
+    }
+    return this._httpClient
+      .get<any>(`${this.apiUrl}/get-all-roles-from-db`, getHttpOptions(requestParameters))
+      .pipe(
+        tap((response: any) => this._roles.next(response)),
+        catchError(handleError)
+      );
+  }
+
+  /**
+   * Obtiene solo los nombres de roles AESAN (para add/edit usuario). Usa getAllRolesFromDb con aesanOnly.
+   */
+  getAesanRoleNames(): Observable<string[]> {
+    return this.getAllRolesFromDb({ aesanOnly: true }).pipe(
+      map((roles) => (roles ?? []).map((r: DTORole) => r.name ?? ''))
     );
   }
 

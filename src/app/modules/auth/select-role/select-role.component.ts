@@ -9,7 +9,7 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
-import { AesanRoleItem, UsersService } from 'app/shared/services/users.service';
+import { DTORole, UsersService } from 'app/shared/services/users.service';
 
 const SELECT_ROLE_STORAGE_KEY = 'pendingAesanRoles';
 
@@ -36,8 +36,8 @@ export class AuthSelectRoleComponent implements OnInit {
   private _usersService = inject(UsersService);
   private _transloco = inject(TranslocoService);
 
-  /** Roles AESAN del usuario (name + nameEN desde DB). El value del select es role.name. */
-  roles: AesanRoleItem[] = [];
+  /** Roles AESAN del usuario (name = clave; displayName/displayNameEN para mostrar). El value del select es role.name. */
+  roles: DTORole[] = [];
   selectedRole: string | null = null;
   isLoading = true;
   get currentLang(): string {
@@ -60,13 +60,13 @@ export class AuthSelectRoleComponent implements OnInit {
       return;
     }
 
-    this._usersService.getAesanRolesFromDb().subscribe({
+    this._usersService.getAllRolesFromDb({ aesanOnly: true }).subscribe({
       next: (aesanRoles) => {
-        this.roles = (aesanRoles ?? []).filter((r) => storedRoleNames.includes(r.name));
+        this.roles = (aesanRoles ?? []).filter((r) => storedRoleNames.includes((r as any).name ?? (r as any).Name ?? ''));
         this.isLoading = false;
       },
       error: () => {
-        this.roles = storedRoleNames.map((name) => ({ name, nameEN: name }));
+        this.roles = storedRoleNames.map((name) => ({ name, displayName: name, displayNameEN: name }));
         this.isLoading = false;
       },
     });

@@ -22,6 +22,8 @@ export interface QueryParameters {
   fileName?: string;
   folderTo?: string;
   roles?: string[];
+  /** Si true, get-all-roles-from-db devuelve solo roles AESAN (Name, DisplayName, DisplayNameEN) en { roles }. */
+  aesanOnly?: boolean;
   /** Excluir usuarios con rol Administrator o Super-Administrator (para dropdowns sin admins) */
   excludeAdministrators?: boolean;
   password?: string;
@@ -95,4 +97,11 @@ export interface QueryParameters {
   uieNumber?: number | null; // Identificador Único de Entidad (IUE)
   sdrNumber?: number | null; // Número de Registro del Departamento de Estado (SDR)
   einNumber?: number | null; // Número de Seguro Social Patronal (EIN)
+
+  // Centro de logs unificado (GET /api/logs)
+  logCategory?: string; // Audit, Email, Job, Application
+  logFrom?: string; // ISO date
+  logTo?: string; // ISO date
+  page?: number;
+  pageSize?: number;
 }

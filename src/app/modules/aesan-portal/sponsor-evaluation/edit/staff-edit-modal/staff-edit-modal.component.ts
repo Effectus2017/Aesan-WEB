@@ -34,6 +34,7 @@ import { StaffClassificationService } from 'app/shared/services/staff-classifica
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAdminRole } from 'app/shared/constants/role-keys';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
@@ -287,7 +288,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
 
   private checkAdminPermissions(): void {
     const userRole = this._authService.getUserRole();
-    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+    this.canViewReviewFields = isAdminRole(userRole);
 
     if (this.canViewReviewFields) {
       this.form.get('reviewResult')?.setValidators([Validators.required]);

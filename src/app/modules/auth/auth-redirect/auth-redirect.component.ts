@@ -1,6 +1,12 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import {
+  ROLE_KEY_ADMINISTRATOR,
+  ROLE_KEY_AGENCY_ADMINISTRATOR,
+  ROLE_KEY_AGENCY_USER,
+  ROLE_KEY_SUPER_ADMINISTRATOR,
+} from 'app/shared/constants/role-keys';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 
 @Component({
@@ -68,11 +74,11 @@ export class AuthRedirectComponent implements OnInit {
 
   private getTargetRoute(userRole: string): string[] {
     switch (userRole) {
-      case 'Administrator':
-      case 'Super-Administrator':
+      case ROLE_KEY_ADMINISTRATOR:
+      case ROLE_KEY_SUPER_ADMINISTRATOR:
         return ['sponsors'];
-      case 'Agency-Administrator':
-      case 'Agency-User':
+      case ROLE_KEY_AGENCY_ADMINISTRATOR:
+      case ROLE_KEY_AGENCY_USER:
         return ['dashboard'];
       default:
         return ['dashboard'];

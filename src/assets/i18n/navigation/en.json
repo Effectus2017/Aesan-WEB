@@ -64,8 +64,7 @@
         "staff": {
           "title": "Staff",
           "employees": "Administrative and Operational Employees",
-          "board-members": "Board of Directors Members",
-          "add": "Add"
+          "board-members": "Board of Directors Members"
         },
         "program-requests": "Program Requests",
         "legibility": "Eligibility",
@@ -112,6 +111,7 @@
             "residential-types": "Residential Types",
             "email-templates": "Email Templates",
             "email-logs": "Email Logs",
+            "logs": "Log center",
             "message-templates": "Message Templates"
         }
     },

@@ -10,6 +10,7 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAgencyRole } from 'app/shared/constants/role-keys';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { Subject, takeUntil, take } from 'rxjs';
 
@@ -263,10 +264,10 @@ export class CustomShortcutsComponent implements OnInit, OnDestroy
     {
         // Verificar el rol del usuario
         const userRole = this._authService.getUserRole();
-        const isAgencyRole = userRole === 'Agency-Administrator' || userRole === 'Agency-User';
+        const isAgencyRoleUser = isAgencyRole(userRole);
 
         // Si no es rol de agencia, ocultar el botón
-        if (!isAgencyRole) {
+        if (!isAgencyRoleUser) {
             this.showCompleteButton = false;
             this._changeDetectorRef.markForCheck();
             return;

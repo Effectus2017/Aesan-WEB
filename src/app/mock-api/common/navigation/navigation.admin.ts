@@ -1,4 +1,5 @@
 import { FuseNavigationItem } from '@fuse/components/navigation';
+import { ROLE_KEY_ADMINISTRATOR } from 'app/shared/constants/role-keys';
 
 export const adminNavigation: FuseNavigationItem[] = [
   {
@@ -7,7 +8,7 @@ export const adminNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:home',
     link: '/sponsors',
-    roles: ['Administrator'],
+    roles: [ROLE_KEY_ADMINISTRATOR],
   },
   {
     id: 'documents',
@@ -15,7 +16,7 @@ export const adminNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-duplicate',
     link: '/documents',
-    roles: ['Administrator'],
+    roles: [ROLE_KEY_ADMINISTRATOR],
   },
   {
     id: 'reports',
@@ -23,7 +24,7 @@ export const adminNavigation: FuseNavigationItem[] = [
     type: 'basic',
     icon: 'heroicons_solid:document-chart-bar',
     link: '/reports',
-    roles: ['Administrator'],
+    roles: [ROLE_KEY_ADMINISTRATOR],
   },
   {
     id: 'administration',
@@ -102,6 +103,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/email-logs',
       },
       {
+        id: 'administration.logs',
+        title: 'navigation.administration.logs',
+        type: 'basic',
+        icon: 'heroicons_solid:document-text',
+        link: '/logs',
+      },
+      {
         id: 'administration.message-templates',
         title: 'navigation.administration.message-templates',
         type: 'basic',
@@ -109,7 +117,7 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/message-template',
       },
     ],
-    roles: ['Administrator'],
+    roles: [ROLE_KEY_ADMINISTRATOR],
   },
   {
     id: 'users',
@@ -146,13 +154,6 @@ export const adminNavigation: FuseNavigationItem[] = [
     type: 'group',
     icon: 'heroicons_solid:user-group',
     children: [
-      {
-        id: 'staff.add',
-        title: 'navigation.staff.add',
-        type: 'basic',
-        icon: 'mat_solid:add',
-        link: '/staff/add',
-      },
       {
         id: 'staff.employees',
         title: 'navigation.staff.employees',

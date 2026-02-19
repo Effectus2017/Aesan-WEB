@@ -1,10 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAdminRole, isAgencyRole } from 'app/shared/constants/role-keys';
 
 /**
  * Servicio para la navegación personalizada.
- * Según el rol: Administrator/Super-Administrator → admin-portal; Agency-* → agency-portal; resto → aesan-portal.
+ * Usa el portal actual (URL) como prefijo; si la URL no contiene ningún portal, usa el rol del usuario.
+ * Portales: admin-portal, agency-portal, aesan-portal.
  */
 
 @Injectable({
@@ -17,15 +19,24 @@ export class CustomRouterService {
   constructor() {}
 
   navigate(commands: any[], extras?: any): Promise<boolean> {
-    const userRole = this._authService.getUserRole();
+    const currentUrl = this._router.url;
 
     let prefix: string;
-    if (userRole === 'Administrator' || userRole === 'Super-Administrator') {
+    if (currentUrl.startsWith('/admin-portal')) {
       prefix = '/admin-portal/';
-    } else if (userRole === 'Agency-Administrator' || userRole === 'Agency-User') {
+    } else if (currentUrl.startsWith('/agency-portal')) {
       prefix = '/agency-portal/';
-    } else {
+    } else if (currentUrl.startsWith('/aesan-portal')) {
       prefix = '/aesan-portal/';
+    } else {
+      const userRole = this._authService.getUserRole();
+      if (isAdminRole(userRole)) {
+        prefix = '/admin-portal/';
+      } else if (isAgencyRole(userRole)) {
+        prefix = '/agency-portal/';
+      } else {
+        prefix = '/aesan-portal/';
+      }
     }
 
     // Añadir el prefijo solo si el primer segmento no es 'sign-in' o 'sign-up'

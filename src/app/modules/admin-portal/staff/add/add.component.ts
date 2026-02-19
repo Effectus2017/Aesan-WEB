@@ -23,6 +23,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
+import { isAdminRole } from 'app/shared/constants/role-keys';
 import { compare, compareById, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -892,7 +893,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   private checkAdminPermissions(): void {
     const userRole = this._authService.getUserRole();
     // Solo mostrar campos de revisión si el usuario es administrador
-    this.canViewReviewFields = userRole === 'Administrator' || userRole === 'Admin';
+    this.canViewReviewFields = isAdminRole(userRole);
 
     if (this.canViewReviewFields) {
       this.headerConfig.formGroup.get('reviewResult')?.setValidators([Validators.required]);

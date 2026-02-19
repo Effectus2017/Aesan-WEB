@@ -1,0 +1,52 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <!-- Filtros -->
+  <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700" [formGroup]="headerConfig.formGroup!">
+    <div class="flex flex-wrap gap-4 items-center">
+      <mat-form-field appearance="outline" class="w-full sm:w-auto min-w-[160px]">
+        <mat-label>{{ 'logs.list.filters.category' | transloco }}</mat-label>
+        <mat-select formControlName="logCategory">
+          @for (opt of categoryOptions; track opt.value) {
+            <mat-option [value]="opt.value">{{ opt.labelKey | transloco }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full sm:w-auto min-w-[160px]">
+        <mat-label>{{ 'logs.list.filters.from' | transloco }}</mat-label>
+        <input matInput [matDatepicker]="pickerFrom" formControlName="logFrom" [attr.aria-label]="'logs.list.filters.from' | transloco" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+        <mat-datepicker #pickerFrom></mat-datepicker>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-full sm:w-auto min-w-[160px]">
+        <mat-label>{{ 'logs.list.filters.to' | transloco }}</mat-label>
+        <input matInput [matDatepicker]="pickerTo" formControlName="logTo" [attr.aria-label]="'logs.list.filters.to' | transloco" />
+        <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+        <mat-datepicker #pickerTo></mat-datepicker>
+      </mat-form-field>
+      <button
+        type="button"
+        mat-flat-button
+        color="primary"
+        (click)="onSearch()"
+        [disabled]="loading()">
+        {{ 'logs.list.filters.search' | transloco }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Main: tabla siempre visible -->
+  <div class="flex-auto overflow-y-auto" cdkScrollable>
+    <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+  </div>
+
+  <!-- Paginador al pie, como en los demás listados -->
+  <mat-paginator
+    class="hidden sm:block"
+    [length]="tableConfig.length"
+    [pageSize]="tableConfig.pageSize ?? 20"
+    [pageSizeOptions]="tableConfig.pageSizeOptions ?? [10, 20, 50, 100]"
+    (page)="getPaginator($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+</div>

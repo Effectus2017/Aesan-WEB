@@ -11,6 +11,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
+import { isAdminRole } from 'app/shared/constants/role-keys';
 import { UsersService } from 'app/shared/services/users.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
@@ -54,7 +55,7 @@ export class UpdatePasswordModalComponent implements OnInit, OnDestroy {
     public dialogRef: MatDialogRef<UpdatePasswordModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: UpdatePasswordModalData
   ) {
-    this.isAdmin = data.userRole === 'Administrator' || data.userRole === 'Super-Administrator';
+    this.isAdmin = isAdminRole(data.userRole);
   }
 
   ngOnInit(): void {

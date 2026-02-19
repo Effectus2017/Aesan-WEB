@@ -24,15 +24,22 @@
 </button>
 
 <mat-menu [xPosition]="'before'" class="min-w-[18rem] w-max" #userActions="matMenu">
+  <ng-container *ngIf="userAgency">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="'common.agency-name-tooltip' | transloco">
+      <mat-icon [svgIcon]="'heroicons_outline:building-office-2'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
+      <span class="flex-1 truncate">{{ userAgency }}</span>
+    </div>
+  </ng-container>
+  <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
   <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="user.email">
     <mat-icon [svgIcon]="'heroicons_outline:envelope'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
     <span class="flex-1">{{ user.email }}</span>
   </div>
   <mat-divider class="my-2"></mat-divider>
   <ng-container *ngIf="user?.role">
-    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="'common.role-tooltip' | transloco">
       <mat-icon [svgIcon]="'heroicons_outline:identification'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
-      <span class="flex-1">{{ user.role }}</span>
+      <span class="flex-1">{{ roleDisplayLabel }}</span>
     </div>
   </ng-container>
   <mat-divider class="my-2" *ngIf="user?.role"></mat-divider>
@@ -42,26 +49,19 @@
       <span class="flex-1 text-sm text-gray-600 dark:text-gray-300">{{ programsDisplay }}</span>
     </div>
   </ng-container>
-  <mat-divider class="my-2" *ngIf="programsDisplay"></mat-divider>
-  <ng-container *ngIf="userAgency">
-    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
-      <mat-icon [svgIcon]="'heroicons_outline:building-office-2'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
-      <span class="flex-1 truncate">{{ userAgency }}</span>
-    </div>
-  </ng-container>
-  <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
-  <ng-container *ngIf="availableRoles.length > 1">
+  <mat-divider class="my-2" *ngIf="programsDisplay || (canSwitchRole && availableRoles.length > 1)"></mat-divider>
+  <ng-container *ngIf="canSwitchRole && availableRoles.length > 1">
     <button mat-menu-item [matMenuTriggerFor]="switchRoleMenu">
       <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>
       <span>{{ 'common.switch-role' | transloco }}</span>
     </button>
     <mat-menu #switchRoleMenu="matMenu" class="user-switch-role-menu">
       <button mat-menu-item *ngFor="let r of availableRoles" (click)="switchRole(r)" [disabled]="r === user?.role">
-        <span>{{ r }}</span>
+        <span>{{ roleDisplayByKey[r] || r }}</span>
       </button>
     </mat-menu>
   </ng-container>
-  <ng-container *ngIf="availableRoles.length <= 1">
+  <ng-container *ngIf="canSwitchRole && availableRoles.length <= 1">
     <span [matTooltip]="'common.single-role-tooltip' | transloco">
       <button mat-menu-item disabled>
         <mat-icon [svgIcon]="'heroicons_outline:arrows-right-left'"></mat-icon>
@@ -69,7 +69,7 @@
       </button>
     </span>
   </ng-container>
-  <mat-divider class="my-2"></mat-divider>
+  <!-- <mat-divider class="my-2"></mat-divider> -->
   <button mat-menu-item (click)="navigateToProfile()">
     <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
     <span>{{ 'common.profile' | transloco }}</span>
