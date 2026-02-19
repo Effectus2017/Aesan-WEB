@@ -84,6 +84,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Listas separadas para cada tipo de posición
   listAdministrativePositions: OptionSelection[] = [];
   listOperationalPositions: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // Propiedades para controlar la visibilidad de campos
   selectedClassification: StaffClassification | null = null;
@@ -125,6 +126,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       comments: new FormControl('', [Validators.required]),
       // Sitio asignado (opcional)
       site: new FormControl(null),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -172,6 +174,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Poblar listas separadas
       this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
       this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -315,6 +318,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
+      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
     };
 
     // Disable the form

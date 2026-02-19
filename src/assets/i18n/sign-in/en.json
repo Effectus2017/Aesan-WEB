@@ -20,7 +20,8 @@
       "connection": "Could not connect to server. Please check your internet connection.",
       "credentials": "The credentials entered are incorrect",
       "server": "Server error. Please try again later.",
-      "unknown": "An unexpected error has occurred. Please try again."
+      "unknown": "An unexpected error has occurred. Please try again.",
+      "no-agency-assigned": "You do not have an agency assigned. Contact the system administrator."
     }
   }
 }

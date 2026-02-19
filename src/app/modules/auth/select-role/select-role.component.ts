@@ -8,6 +8,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AUTH_ERROR_I18N_SELECT_ROLE_NO_AGENCY_ASSIGNED } from 'app/shared/constants/auth-error-keys';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { DTORole, UsersService } from 'app/shared/services/users.service';
 
@@ -87,7 +88,9 @@ export class AuthSelectRoleComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         this.selectedRole = null;
-        const msg = err?.error?.message ?? (err?.status === 401 ? 'select-role.error.unauthorized' : 'select-role.error.server');
+        const msg = err?.status === 403
+          ? (err?.error?.message ?? AUTH_ERROR_I18N_SELECT_ROLE_NO_AGENCY_ASSIGNED)
+          : (err?.error?.message ?? (err?.status === 401 ? 'select-role.error.unauthorized' : 'select-role.error.server'));
         this.alert = { type: 'error', message: msg };
         this.showAlert = true;
       },

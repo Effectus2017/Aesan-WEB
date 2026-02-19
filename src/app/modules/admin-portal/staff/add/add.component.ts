@@ -106,6 +106,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   // Listas para campos de Miembros de la Junta
   listTenureDurationUnits: OptionSelection[] = [];
   listReceivesProgramSalary: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // Propiedades para controlar la visibilidad de campos
   isEmployee: boolean = false;
@@ -156,6 +157,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),
       receivesProgramSalary: new FormControl(''),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
       // Campos de revisión (solo para administradores)
       reviewResult: new FormControl(''),
       reviewDate: new FormControl(''),
@@ -225,6 +227,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
         // Listas para campos de Miembros de la Junta
         this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
         this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+        this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
       this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
 
       // Pre-seleccionar tipo de staff según query parameter o por defecto
@@ -450,6 +453,9 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       staffRequest.tenureDurationUnitId = formValues.tenureDurationUnit?.id || null;
       staffRequest.receivesProgramSalaryId = formValues.receivesProgramSalary?.id || null;
     }
+
+    // Origen del Salario (común para empleados y miembros de junta)
+    staffRequest.salaryOriginIds = formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [];
 
     // Agregar campos de revisión solo si el usuario tiene permisos para verlos
     if (this.canViewReviewFields) {

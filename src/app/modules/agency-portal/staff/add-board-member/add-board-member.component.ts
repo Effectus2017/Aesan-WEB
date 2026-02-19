@@ -94,6 +94,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
   // Listas para campos de Miembros de la Junta
   listTenureDurationUnits: OptionSelection[] = [];
   listReceivesProgramSalary: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // Lista completa de opciones de selección
   allOptionSelections: OptionSelection[] = [];
@@ -139,6 +140,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       tenureDuration: new FormControl('', [Validators.required]),
       tenureDurationUnit: new FormControl('', [Validators.required]),
       receivesProgramSalary: new FormControl('', [Validators.required]),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -189,6 +191,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       // Listas para campos de Miembros de la Junta
       this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
       this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -337,6 +340,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       tenureDuration: tenureDuration ? parseInt(tenureDuration) : null,
       tenureDurationUnitId: tenureDurationUnit?.id || null,
       receivesProgramSalaryId: receivesProgramSalary?.id || null,
+      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
     };
 
     // Disable the form

@@ -120,6 +120,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   // Listas para campos de Miembros de la Junta
   listTenureDurationUnits: OptionSelection[] = [];
   listReceivesProgramSalary: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // ViewChild para el contenedor del formulario
   @ViewChild('formContainer', { static: false }) formContainer!: ElementRef;
@@ -192,6 +193,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),
       receivesProgramSalary: new FormControl(''),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
     }),
     // Submit button
     submitButtonShow: true,
@@ -269,6 +271,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       // Listas para campos de Miembros de la Junta
       this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
       this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -424,6 +427,9 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: param.tenureDuration,
       tenureDurationUnit: param.tenureDurationUnitId ? this.listTenureDurationUnits.find(u => u.id === param.tenureDurationUnitId) : null,
       receivesProgramSalary: param.receivesProgramSalaryId ? this.listReceivesProgramSalary.find(s => s.id === param.receivesProgramSalaryId) : null,
+      salaryOrigins: param.salaryOriginIds?.length && this.listSalaryOrigins?.length
+        ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
+        : [],
     });
 
     // Actualizar el validador de email con el email original
@@ -585,6 +591,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: tenureDuration ? parseInt(tenureDuration) : null,
       tenureDurationUnitId: tenureDurationUnit?.id || null,
       receivesProgramSalaryId: receivesProgramSalary?.id || null,
+      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
     };
 
     // Disable the form

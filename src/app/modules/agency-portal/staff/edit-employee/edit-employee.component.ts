@@ -113,6 +113,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   // Lista completa de opciones de selección
   allOptionSelections: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // Parámetro del staff
   param: Staff | null = null;
@@ -158,6 +159,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewDate: new FormControl(''),
       // Review justification
       reviewJustification: new FormControl(''),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
     }),
     // Submit button
     submitButtonShow: true,
@@ -258,6 +260,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
       // Review result
       this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -348,6 +351,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
       site: param.site,
+      salaryOrigins: (param.salaryOriginIds?.length && this.listSalaryOrigins?.length)
+        ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
+        : [],
     });
 
     // Actualizar el validador de email con el email original
@@ -479,6 +485,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       email: email,
       contractStartDate: contractStartDate,
       contractEndDate: contractEndDate,
+      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
     };
 
     // Disable the form

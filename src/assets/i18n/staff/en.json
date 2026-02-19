@@ -249,6 +249,10 @@
         "placeholder": "Select an option",
         "required": "This field is required"
       },
+      "salaryOrigin": {
+        "label": "Salary Origin",
+        "placeholder": "Select one or more"
+      },
       "relationships": {
         "label": "Staff Relationships",
         "description": "Manage relationships between staff members",
@@ -501,6 +505,10 @@
         "label": "Does receive program salary?",
         "placeholder": "Select an option",
         "required": "This field is required"
+      },
+      "salaryOrigin": {
+        "label": "Salary Origin",
+        "placeholder": "Select one or more"
       },
       "relationships": {
         "label": "Staff Relationships",

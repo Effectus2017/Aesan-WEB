@@ -54,6 +54,8 @@ export interface Staff {
   receivesProgramSalaryId?: number; // Referencia a OptionSelection con optionKey = 'yesNo' (¿Recibe salario del programa?)
   receivesProgramSalaryName?: string;
   receivesProgramSalaryNameEN?: string;
+  /** Origen del Salario (selección múltiple: IDs de OptionSelection con optionKey = 'salaryOrigin') */
+  salaryOriginIds?: number[];
 
   // Datos de la relación SchoolStaff
   schoolId?: number;
@@ -76,6 +78,8 @@ export interface Staff {
   tenureDurationUnit?: OptionSelection;
   // Receives program salary (objeto completo)
   receivesProgramSalary?: OptionSelection;
+  /** Origen del Salario (opciones seleccionadas para mat-select multiple) */
+  salaryOrigins?: OptionSelection[];
   // School (objeto completo)
   school?: SiteListItem;
 }

@@ -246,6 +246,10 @@
         "placeholder": "Seleccione una opción",
         "required": "Este campo es requerido"
       },
+      "salaryOrigin": {
+        "label": "Origen del Salario",
+        "placeholder": "Seleccione uno o más"
+      },
       "buttons": {
         "save": "Guardar",
         "cancel": "Cancelar"
@@ -391,6 +395,10 @@
         "label": "¿Recibe salario del programa?",
         "placeholder": "Seleccione una opción",
         "required": "Este campo es requerido"
+      },
+      "salaryOrigin": {
+        "label": "Origen del Salario",
+        "placeholder": "Seleccione uno o más"
       },
       "comments": {
         "label": "Comentarios",

@@ -1,6 +1,7 @@
 import { Route } from '@angular/router';
 import { initialDataAgencyPortalResolver, initialDataResolver } from 'app/app.resolvers';
 import { AdminPortalGuard } from 'app/core/auth/guards/admin-portal.guard';
+import { AgencyPortalGuard } from 'app/core/auth/guards/agency-portal.guard';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
@@ -141,8 +142,8 @@ export const appRoutes: Route[] = [
   // Agency (sponsor) routes
   {
     path: 'agency-portal',
-    canActivate: [AuthGuard],
-    canActivateChild: [AuthGuard],
+    canActivate: [AuthGuard, AgencyPortalGuard],
+    canActivateChild: [AuthGuard, AgencyPortalGuard],
     component: LayoutComponent,
     data: {
       layout: 'modern',

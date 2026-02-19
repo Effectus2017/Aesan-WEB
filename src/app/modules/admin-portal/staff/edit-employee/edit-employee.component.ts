@@ -98,6 +98,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   // Lista completa de opciones de selección
   listAdministrativePositions: OptionSelection[] = [];
   listOperationalPositions: OptionSelection[] = [];
+  listSalaryOrigins: OptionSelection[] = [];
 
   // Propiedades específicas de empleados
   selectedClassification: StaffClassification | null = null;
@@ -148,6 +149,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       // Sitio asignado
       site: new FormControl(null),
       isPrimary: new FormControl(false),
+      salaryOrigins: new FormControl([] as OptionSelection[]),
       // Review result
       reviewResult: new FormControl(''),
       // Review date
@@ -265,6 +267,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
         // Review result
         this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+        this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
       }
     });
 
@@ -358,6 +361,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewJustification: param.reviewJustification,
       site: param.site,
       isPrimary: param.isPrimary,
+      salaryOrigins: param.salaryOriginIds?.length && this.listSalaryOrigins?.length
+        ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
+        : [],
     });
 
     // Actualizar validaciones
@@ -507,6 +513,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       birthDate: birthDate,
       contractStartDate: contractStartDate,
       contractEndDate: contractEndDate,
+      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
     };
 
     // Disable the form

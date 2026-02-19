@@ -13,6 +13,10 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { FuseNavigationService } from '@fuse/components/navigation';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
+import {
+  AUTH_ERROR_I18N_SIGN_IN_NO_AGENCY_ASSIGNED,
+  AUTH_ERROR_QUERY_NO_AGENCY_ASSIGNED,
+} from 'app/shared/constants/auth-error-keys';
 import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
@@ -78,6 +82,14 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert = true;
       }
 
+      if (params['error'] === AUTH_ERROR_QUERY_NO_AGENCY_ASSIGNED) {
+        this.alert = {
+          type: 'error',
+          message: AUTH_ERROR_I18N_SIGN_IN_NO_AGENCY_ASSIGNED,
+        };
+        this.showAlert = true;
+      }
+
       if (!params['email']) {
         return;
       }
@@ -135,6 +147,15 @@ export class AuthSignInComponent implements OnInit {
           this._router.navigate(['/update-password'], {
             queryParams: { email: this.signInForm.get('email').value },
           });
+          return;
+        }
+
+        if (response.status === 403) {
+          this.alert = {
+            type: 'error',
+            message: response.error?.message ?? AUTH_ERROR_I18N_SIGN_IN_NO_AGENCY_ASSIGNED,
+          };
+          this.showAlert = true;
           return;
         }
 
