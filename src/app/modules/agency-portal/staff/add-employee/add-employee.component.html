@@ -140,6 +140,16 @@
               {{ "staff.add.email.exists" | transloco }}
             </mat-error>
           </mat-form-field>
+
+          <!-- Origen del Salario (selección múltiple) -->
+          <mat-form-field data-cy="salary-origin-field">
+            <mat-label>{{ "staff.add.salaryOrigin.label" | transloco }}</mat-label>
+            <mat-select formControlName="salaryOrigins" [placeholder]="'staff.add.salaryOrigin.placeholder' | transloco" [compareWith]="compareById" multiple data-cy="salaryOrigins-select">
+              <mat-option *ngFor="let option of listSalaryOrigins" [value]="option" data-cy="salaryOrigin-option">
+                {{ currentLang === "es" ? option.name : option.nameEN }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
 
         <!-- Asignación de Sitio -->
@@ -158,18 +168,6 @@
             <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
             <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
               <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <!-- Origen del Salario (selección múltiple) -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="salary-origin-field">
-            <mat-label>{{ "staff.add.salaryOrigin.label" | transloco }}</mat-label>
-            <mat-select formControlName="salaryOrigins" [placeholder]="'staff.add.salaryOrigin.placeholder' | transloco" [compareWith]="compareById" multiple data-cy="salaryOrigins-select">
-              <mat-option *ngFor="let option of listSalaryOrigins" [value]="option" data-cy="salaryOrigin-option">
-                {{ currentLang === "es" ? option.name : option.nameEN }}
-              </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
