@@ -79,8 +79,8 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
   ]).pipe(
     map(([agencies, roles, programs]) => ({
       agencies: agencies.body,
-      roles: roles ?? [],
-      programs: programs?.body ?? []
+      roles: roles.body,
+      programs: programs.body
     }))
   );
 };
@@ -107,11 +107,11 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: agencies?.body ?? agencies,
-      user: user?.body ?? user,
-      roles: roles ?? [],
-      permissions: permissions?.body ?? permissions,
-      programs: programs?.body ?? programs ?? []
+      agencies: agencies.body,
+      user: user.body,
+      roles: roles.body,
+      permissions: permissions.body,
+      programs: programs.body
     }))
   );
 };
@@ -127,6 +127,7 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
   const authService = inject(AuthService);
 
   const userId = authService.getUserId();
+  
   if (!userId) {
     throw new Error('Usuario no autenticado');
   }
@@ -139,11 +140,11 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: agencies?.body ?? agencies,
-      user: user?.body ?? user,
-      roles: roles ?? [],
-      permissions: permissions?.body ?? permissions,
-      programs: programs?.body ?? programs ?? []
+      agencies: agencies.body,
+      user: user.body,
+      roles: roles.body,
+      permissions: permissions.body,
+      programs: programs.body
     }))
   );
 };

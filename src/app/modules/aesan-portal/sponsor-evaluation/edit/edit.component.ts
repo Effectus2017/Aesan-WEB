@@ -237,7 +237,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
 
       // Configurar tabla de sitios
       if (resolvedData.sites) {
-        const sitesData = resolvedData.sites.data || resolvedData.sites;
+        const sitesData = resolvedData.sites?.data ?? [];
         // Mapear sitios para incluir el nombre de la escuela
         const sitesWithSchoolName = Array.isArray(sitesData) ? sitesData.map((site: any) => ({
           ...site,

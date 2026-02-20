@@ -120,15 +120,9 @@ export class AddSecondaryRoleModalComponent {
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones privadas
   // -----------------------------------------------------------------------------------------------------
-  /** Filtra y ordena la lista de roles excluyendo el primario y los ya asignados. */
+  /** Asigna la lista de roles disponibles (ya filtrada por el backend). */
   private _updateRolesFiltered(): void {
-    const list = Array.isArray(this.data?.listRoles) ? this.data.listRoles : [];
-    const primaryName = this.data?.primaryRoleName ? String(this.data.primaryRoleName).trim() : undefined;
-    const excludeNames = new Set((this.data?.excludeRoleNames ?? []).map((n) => String(n).trim()));
-    if (primaryName) excludeNames.add(primaryName);
-    const excludeIds = new Set((this.data?.excludeRoleIds ?? []).map((id) => String(id)));
-    this.rolesFiltered = list
-      .filter((r) => (r?.name ?? '').trim() !== '' && !excludeNames.has(String(r.name ?? '').trim()) && !(r?.id && excludeIds.has(String(r.id))))
-      .sort((a, b) => (a?.displayName ?? a?.name ?? '').localeCompare(b?.displayName ?? b?.name ?? '', 'es'));
+    // Los roles ya vienen filtrados del backend (sin rol primario ni roles secundarios ya asignados)
+    this.rolesFiltered = this.data?.listRoles ?? [];
   }
 }

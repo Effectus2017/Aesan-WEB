@@ -1,1 +1,16 @@
-{"select-role":{"title":"Select your role","subtitle":"Select which role you want to enter the system with","placeholder":"Select a role","error":{"server":"Server error. Please try again later.","unauthorized":"Session expired. Please sign in again.","signInAgain":"Sign in again","no-agency-assigned":"You do not have an agency assigned. Contact the system administrator."}}}
+{
+  "select-role": {
+    "title": "Select your role",
+    "subtitle": "Select which role you want to enter the system with",
+    "placeholder": "Select a role",
+    "error": {
+      "server": "Server error. Please try again later.",
+      "unauthorized": "Session expired. Please sign in again.",
+      "signInAgain": "Sign in again",
+      "no-agency-assigned": "You do not have an agency assigned. Contact the system administrator.",
+      "noUserId": "Unable to obtain user identifier. Please sign in again.",
+      "noRolesFound": "No available roles found. Contact the system administrator.",
+      "loadRolesFailed": "Error loading available roles. Please try again later."
+    }
+  }
+}

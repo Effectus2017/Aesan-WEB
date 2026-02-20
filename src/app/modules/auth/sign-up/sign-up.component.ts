@@ -48,6 +48,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { catchError, debounceTime, first, map, Observable, of, switchMap, takeUntil, tap } from 'rxjs';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { uieExistsValidator, sdrExistsValidator, einExistsValidator } from 'app/shared/validators/agency-identifiers-exists.validator';
@@ -347,10 +348,10 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     if (resolvedData) {
       // Asignar ciudades
-      this.listCities = resolvedData.cities.data || resolvedData.cities;
+      this.listCities = resolvedData.cities?.data ?? [];
 
       // Asignar programas
-      this.listPrograms = resolvedData.programs.data || resolvedData.programs;
+      this.listPrograms = resolvedData.programs?.data ?? [];
 
       // Asignar opciones
       const allOptions = [...resolvedData.options1.data, ...resolvedData.options2.data];
@@ -621,7 +622,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       } else {
         // preservar otros errores como required
         const hasRequired = ctrl.hasError('required');
-        ctrl.setErrors(hasRequired ? { required: true } : null);
+        ctrl.setErrors(hasRequired ? VALIDATION_ERRORS.REQUIRED : null);
       }
     });
 

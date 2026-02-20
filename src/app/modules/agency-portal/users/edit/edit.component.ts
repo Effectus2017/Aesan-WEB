@@ -29,6 +29,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UpdatePasswordModalComponent } from '../../../../modules/admin-portal/users/update-password-modal/update-password-modal.component';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
 
 @Component({
   selector: 'app-users-edit',
@@ -111,7 +112,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     if (resolvedData) {
       this.user = resolvedData.user;
-      this.listRoles = resolvedData.roles.data || resolvedData.roles;
+      this.listRoles = resolvedData.roles?.data ?? [];
       this.id = this.user.id;
 
       // Configurar el formulario con los datos del usuario
@@ -189,7 +190,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   onUpdate(form: any) {
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email) && isNullOrUndefinedEmptyStringNullArray(this.user.email)) {
-      this.headerConfig.formGroup.get('email').setErrors({ required: true });
+      this.headerConfig.formGroup.get('email').setErrors(VALIDATION_ERRORS.REQUIRED);
       this.headerConfig.formGroup.get('email').markAsTouched();
       return;
     }

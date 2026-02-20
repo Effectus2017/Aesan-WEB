@@ -35,14 +35,14 @@
     <mat-icon [svgIcon]="'heroicons_outline:envelope'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
     <span class="flex-1">{{ user.email }}</span>
   </div>
-  <mat-divider class="my-2"></mat-divider>
+  <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
   <ng-container *ngIf="user?.role">
     <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="'common.role-tooltip' | transloco">
       <mat-icon [svgIcon]="'heroicons_outline:identification'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
       <span class="flex-1">{{ roleDisplayLabel }}</span>
     </div>
   </ng-container>
-  <mat-divider class="my-2" *ngIf="user?.role"></mat-divider>
+  <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
   <ng-container *ngIf="programsDisplay">
     <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
       <mat-icon [svgIcon]="'heroicons_outline:academic-cap'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>

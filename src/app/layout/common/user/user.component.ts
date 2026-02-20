@@ -126,12 +126,13 @@ export class UserComponent implements OnInit, OnDestroy {
     this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: TokenResponse) => {
       this.user = user;
       if (user?.roles && user.roles.length > 1) {
-        this._usersService.getAllRolesFromDb({ aesanOnly: true }).pipe(takeUntil(this._unsubscribeAll)).subscribe((roles) => {
+        this._usersService.getAllRolesFromDb({ aesanOnly: true }).pipe(takeUntil(this._unsubscribeAll)).subscribe((response) => {
           const lang = this._transloco.getActiveLang() ?? 'es';
           this.roleDisplayByKey = {};
-          (roles ?? []).forEach((r: DTORole) => {
-            const key = r.name ?? '';
-            this.roleDisplayByKey[key] = lang === 'en' ? (r.displayNameEN ?? key) : (r.displayName ?? key);
+          const data = response?.body?.data ?? [];
+          data.forEach((r: any) => {
+            const key = r?.name ?? r?.Name ?? '';
+            this.roleDisplayByKey[key] = lang === 'en' ? (r?.displayNameEN ?? r?.DisplayNameEN ?? key) : (r?.displayName ?? r?.DisplayName ?? key);
           });
           this._changeDetectorRef.markForCheck();
         });

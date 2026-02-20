@@ -7,10 +7,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
   UntypedFormBuilder,
-  UntypedFormGroup,
   Validators,
   AbstractControl,
-  ValidationErrors,
 } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
@@ -28,17 +26,12 @@ import {
   AgencyListItem,
   AgencyOption,
   DTORole,
-  DateRangeValidationError,
-  FormControlDisabledOptions,
   FuseConfirmationDialogOptions,
-  InvalidEmailFormatValidationError,
-  PasswordNotMatchValidationError,
   ProgramOption,
   RequestUser,
   SecondaryRoleFormRow,
   SecondaryRoleInput,
   SecondaryRoleTableRow,
-  RequiredValidationError,
 } from '../users.types';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -67,6 +60,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SECONDARY_ROLES_COLUMNS_SCHEMA } from '../edit/columns-schema';
+import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
 
 @Component({
   selector: 'app-users-add',
@@ -114,39 +108,30 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
   // -----------------------------------------------------------------------------------------------------
-  /** Constantes de errores de validación (evitar literales inline). */
-  private static readonly ERR_REQUIRED: RequiredValidationError = { required: true };
-  private static readonly ERR_PASSWORD_NOT_MATCH: PasswordNotMatchValidationError = { passwordNotMatch: true };
-  private static readonly ERR_INVALID_EMAIL: InvalidEmailFormatValidationError = { invalidEmailFormat: true };
-  private static readonly ERR_DATE_RANGE: DateRangeValidationError = { dateRange: true };
-  private static readonly USERNAME_CONTROL_OPTS: FormControlDisabledOptions = { value: null, disabled: true };
-
   headerConfig: GenericHeaderConfig = {
     title: 'users.add.title',
-    formGroup: this._formBuilder.group({
-      datosPersonales: this._formBuilder.group(
-        {
-          username: new FormControl(UsersAddComponent.USERNAME_CONTROL_OPTS, [Validators.required, Validators.email, emailFormatValidator()], [emailExistsValidator(this._userService)]),
-          currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
-          email: new FormControl(null, [Validators.required, Validators.email, emailFormatValidator()], [emailExistsValidator(this._userService)]),
-          firstName: new FormControl(null, Validators.required),
-          middleName: new FormControl(null),
-          fatherLastName: new FormControl(null, Validators.required),
-          motherLastName: new FormControl(null),
-          primaryRole: new FormControl(null, Validators.required),
-          secondaryRoles: this._formBuilder.array([]),
-          agency: new FormControl(null, Validators.required),
-          programs: new FormControl([] as ProgramOption[]),
-          isActive: new FormControl(true),
-          isTemporalPasswordActived: new FormControl(true),
-          emailConfirmed: new FormControl(false),
-        },
-        {
-          validators: this.onPassword.bind(this),
-        }
-      ),
-    }),
+    formGroup: this._formBuilder.group(
+      {
+        username: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email, emailFormatValidator()], [emailExistsValidator(this._userService)]),
+        currentPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        newPassword: new FormControl(null, [Validators.required, Validators.minLength(8)]),
+        email: new FormControl(null, [Validators.required, Validators.email, emailFormatValidator()], [emailExistsValidator(this._userService)]),
+        firstName: new FormControl(null, Validators.required),
+        middleName: new FormControl(null),
+        fatherLastName: new FormControl(null, Validators.required),
+        motherLastName: new FormControl(null),
+        primaryRole: new FormControl(null, Validators.required),
+        secondaryRoles: this._formBuilder.array([]),
+        agency: new FormControl(null, Validators.required),
+        programs: new FormControl([] as ProgramOption[]),
+        isActive: new FormControl(true),
+        isTemporalPasswordActived: new FormControl(true),
+        emailConfirmed: new FormControl(false),
+      },
+      {
+        validators: this.onPassword.bind(this),
+      }
+    ),
     saveButtonShow: true,
     saveButtonText: 'users.add.submit',
     settingsButtonShow: true,
@@ -208,9 +193,9 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     return handler;
   }
 
-  /** Devuelve el FormArray de roles secundarios dentro de datosPersonales. */
+  /** Devuelve el FormArray de roles secundarios. */
   get secondaryRolesArray(): FormArray {
-    return this.headerConfig.formGroup.get('datosPersonales')?.get('secondaryRoles') as FormArray;
+    return this.headerConfig.formGroup.get('secondaryRoles') as FormArray;
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -222,13 +207,9 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      const rolesPayload = resolvedData.roles ?? {};
-      const rolesList = Array.isArray(rolesPayload) ? rolesPayload : (rolesPayload.data ?? rolesPayload.Data ?? []);
-      this.listRoles = (Array.isArray(rolesList) ? rolesList : []).slice().sort((a: DTORole, b: DTORole) =>
-        (a?.displayName ?? a?.name ?? '').localeCompare(b?.displayName ?? b?.name ?? '', 'es')
-      );
-      this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
-      this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
+      this.listRoles = resolvedData.roles?.data ?? [];
+      this.listAgencies = resolvedData.agencies?.data ?? [];
+      this.listPrograms = resolvedData.programs?.data ?? [];
       this._resolveAesanAgency();
       this._usersService.getAesanRoleNames().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
         this.aesanRoleNames = names ?? [];
@@ -238,22 +219,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this._changeDetectorRef.markForCheck();
     }
 
-    // Suscribirse a los cambios del campo email
-    this.headerConfig.formGroup
-      .get('datosPersonales.email')
-      .valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((value) => {
-        this.headerConfig.formGroup.get('datosPersonales.username').setValue(value);
-      });
+    // Suscribirse a los cambios del campo email para sincronizar con username
+    this.headerConfig.formGroup.get('email').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value) => {
+      this.headerConfig.formGroup.get('username').setValue(value);
+    });
 
     // Mostrar/ocultar campo Auspiciador según rol primario (AESAN vs agencia)
-    this.headerConfig.formGroup
-      .get('datosPersonales.primaryRole')
-      .valueChanges.pipe(takeUntil(this._unsubscribeAll))
-      .subscribe(() => {
-        this._applyAgencyVisibilityByPrimaryRole();
-        this._changeDetectorRef.markForCheck();
-      });
+    this.headerConfig.formGroup.get('primaryRole').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this._applyAgencyVisibilityByPrimaryRole();
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   /** Cancela suscripciones al destruir el componente. */
@@ -274,11 +249,11 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Valida el formulario y envía los datos con submitForm, o marca errores de contraseña si no es válido. */
   onSave(): void {
-    if (this.headerConfig.formGroup.controls.datosPersonales.valid) {
-      this.submitForm(this.headerConfig.formGroup.value.datosPersonales);
+    if (this.headerConfig.formGroup.valid) {
+      this.submitForm(this.headerConfig.formGroup.value);
     } else {
-      this.headerConfig.formGroup.get('datosPersonales').get('currentPassword').setErrors(UsersAddComponent.ERR_PASSWORD_NOT_MATCH);
-      this.headerConfig.formGroup.get('datosPersonales').get('newPassword').setErrors(UsersAddComponent.ERR_PASSWORD_NOT_MATCH);
+      this.headerConfig.formGroup.get('currentPassword').setErrors(VALIDATION_ERRORS.PASSWORD_NOT_MATCH);
+      this.headerConfig.formGroup.get('newPassword').setErrors(VALIDATION_ERRORS.PASSWORD_NOT_MATCH);
       this.headerConfig.formGroup.markAllAsTouched();
     }
   }
@@ -384,7 +359,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         validators: (g: AbstractControl) => {
           const from = g.get('validFrom')?.value;
           const to = g.get('validTo')?.value;
-          if (from && to && new Date(to) <= new Date(from)) return UsersAddComponent.ERR_DATE_RANGE;
+          if (from && to && new Date(to) <= new Date(from)) return VALIDATION_ERRORS.DATE_RANGE;
           return null;
         },
       },
@@ -417,31 +392,38 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Abre el modal para elegir un rol secundario; pasa lista de roles, rol primario y IDs ya usados para excluirlos. Al confirmar, añade la fila y sincroniza la tabla. */
   openAddSecondaryRoleModal(): void {
-    const datosPersonales = this.headerConfig.formGroup.get('datosPersonales');
-    const primaryRole = datosPersonales?.get('primaryRole')?.value as DTORole | null;
-    const primaryRoleId = primaryRole != null ? String(primaryRole.id ?? '') : undefined;
-    const secondaryRoles = datosPersonales?.get('secondaryRoles') as FormArray | null;
+    // Obtener el rol primario para excluirlo del backend
+    const primaryRole = this.headerConfig.formGroup.get('primaryRole')?.value as DTORole | null;
+    const primaryRoleId = primaryRole?.id ? String(primaryRole.id) : undefined;
+    
+    // Obtener los IDs de roles secundarios ya asignados para excluirlos del backend
+    const secondaryRoles = this.headerConfig.formGroup.get('secondaryRoles') as FormArray | null;
     const existingSecondaryRoleIds = (secondaryRoles?.controls ?? [])
       .map((c) => (c.get('role')?.value as DTORole)?.id)
       .filter((id) => id != null)
       .map((id) => String(id));
-    const listToPass = (Array.isArray(this.listRoles) ? this.listRoles : []).slice().sort((a: DTORole, b: DTORole) =>
-      (a?.displayName ?? a?.name ?? '').localeCompare(b?.displayName ?? b?.name ?? '', 'es')
-    );
-    const modalData: AddSecondaryRoleModalData = {
-      listRoles: listToPass,
-      primaryRoleId: primaryRoleId || undefined,
-      excludeRoleIds: existingSecondaryRoleIds,
-    };
-    const dialogRef = this._matDialog.open(AddSecondaryRoleModalComponent, {
-      width: '500px',
-      maxWidth: '90vw',
-      data: modalData,
-    });
-    dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
-      if (result?.role) {
-        this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
-        this.syncSecondaryRolesTableData();
+    
+    // Llamar al backend para obtener roles ya filtrados
+    this._usersService.getAvailableSecondaryRoles(primaryRoleId, existingSecondaryRoleIds).subscribe({
+      next: (response) => {
+        const availableRoles = response?.body?.data ?? [];
+        const modalData: AddSecondaryRoleModalData = {
+          listRoles: availableRoles,
+        };
+        const dialogRef = this._matDialog.open(AddSecondaryRoleModalComponent, {
+          width: '500px',
+          maxWidth: '90vw',
+          data: modalData,
+        });
+        dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
+          if (result?.role) {
+            this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
+            this.syncSecondaryRolesTableData();
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error loading available secondary roles:', error);
       }
     });
   }
@@ -450,7 +432,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   onPassword(formGroup: FormGroup) {
     const { value: password } = formGroup.get('currentPassword');
     const { value: confirmPassword } = formGroup.get('newPassword');
-    return password === confirmPassword ? null : UsersAddComponent.ERR_PASSWORD_NOT_MATCH;
+    return password === confirmPassword ? null : VALIDATION_ERRORS.PASSWORD_NOT_MATCH;
   }
 
   /** Validador del grupo: verifica que username y email coincidan. */
@@ -467,8 +449,8 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       ? this.aesanAgency.id
       : form.agency?.id;
     if (!agencyId && this.showAgencyField) {
-      this.headerConfig.formGroup.get('datosPersonales')?.get('agency')?.setErrors(UsersAddComponent.ERR_REQUIRED);
-      this.headerConfig.formGroup.get('datosPersonales')?.get('agency')?.markAsTouched();
+      this.headerConfig.formGroup.get('agency')?.setErrors(VALIDATION_ERRORS.REQUIRED);
+      this.headerConfig.formGroup.get('agency')?.markAsTouched();
       this._changeDetectorRef.markForCheck();
       return;
     }
@@ -478,16 +460,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email)) {
-      this.headerConfig.formGroup.get('datosPersonales').get('email').setErrors(UsersAddComponent.ERR_REQUIRED);
-      this.headerConfig.formGroup.get('datosPersonales').get('email').markAsTouched();
+      this.headerConfig.formGroup.get('email').setErrors(VALIDATION_ERRORS.REQUIRED);
+      this.headerConfig.formGroup.get('email').markAsTouched();
       return;
     }
 
     const primaryRole = form.primaryRole;
     const primaryRoleName = primaryRole?.name ?? (typeof primaryRole === 'string' ? primaryRole : null);
     if (!primaryRoleName) {
-      this.headerConfig.formGroup.get('datosPersonales')?.get('primaryRole')?.setErrors(UsersAddComponent.ERR_REQUIRED);
-      this.headerConfig.formGroup.get('datosPersonales')?.get('primaryRole')?.markAsTouched();
+      this.headerConfig.formGroup.get('primaryRole')?.setErrors(VALIDATION_ERRORS.REQUIRED);
+      this.headerConfig.formGroup.get('primaryRole')?.markAsTouched();
       return;
     }
 
@@ -558,15 +540,15 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Indica si el rol primario seleccionado es uno de los roles AESAN (aesanRoleNames). */
   private _isPrimaryRoleAesan(): boolean {
-    const role = this.headerConfig.formGroup.get('datosPersonales')?.get('primaryRole')?.value;
+    const role = this.headerConfig.formGroup.get('primaryRole')?.value;
     const name = role?.name ?? '';
     return name.length > 0 && this.aesanRoleNames.includes(name);
   }
 
   /** Muestra u oculta el campo Auspiciador y configura validación según si el rol primario es AESAN; si es AESAN, fija la agencia y quita validación. */
   private _applyAgencyVisibilityByPrimaryRole(): void {
-    const datosPersonales = this.headerConfig.formGroup.get('datosPersonales');
-    const agencyControl = datosPersonales?.get('agency');
+    const formGroup = this.headerConfig.formGroup;
+    const agencyControl = formGroup?.get('agency');
     if (!agencyControl) return;
     const isAesan = this._isPrimaryRoleAesan();
     this.showAgencyField = !isAesan;

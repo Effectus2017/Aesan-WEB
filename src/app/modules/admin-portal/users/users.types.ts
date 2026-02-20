@@ -64,7 +64,17 @@ export interface UserToken {
     refresh_token: string;
   }
 
-  /** Único modelo de rol (tabla: id, name, displayName, displayNameEN; servicio normaliza a camelCase). */
+  /**
+   * Modelo de rol de usuario.
+   * 
+   * @property id - Identificador único del rol (GUID)
+   * @property name - Clave técnica del rol (ej: "administrator", "program_coordinator"). 
+   *                  Se usa como identificador en lógica de negocio y como value en selects.
+   * @property displayName - Nombre legible del rol en español para mostrar al usuario (ej: "Administrador", "Coordinador de Programa")
+   * @property displayNameEN - Nombre legible del rol en inglés para mostrar al usuario (ej: "Administrator", "Program Coordinator")
+   * 
+   * Nota: Los campos vienen del backend en lowercase (name, displayname, displaynameen) y se normalizan a camelCase.
+   */
   export interface DTORole {
     id?: string;
     name?: string;
@@ -74,11 +84,9 @@ export interface UserToken {
 
   /** Datos de entrada del modal de agregar/editar rol secundario. */
   export interface AddSecondaryRoleModalData {
+    /** Lista de roles disponibles (ya filtrada por el backend sin rol primario ni roles ya asignados) */
     listRoles: DTORole[];
-    primaryRoleId?: string;
-    primaryRoleName?: string;
-    excludeRoleIds?: string[];
-    excludeRoleNames?: string[];
+    /** Datos del rol a editar (opcional, solo para modo edición) */
     editRow?: { role: DTORole | null; comment: string | null; validFrom: string | null; validTo: string | null; index: number };
   }
 
@@ -150,7 +158,7 @@ export interface UserToken {
     userId: string;
   }
 
-  /** Valor del formulario de alta de usuario (datosPersonales). Evita tipos inline en submitForm. */
+  /** Valor del formulario de alta de usuario. Evita tipos inline en submitForm. */
   export interface AddUserFormValue {
     username?: string | null;
     currentPassword?: string | null;

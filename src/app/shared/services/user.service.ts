@@ -59,14 +59,6 @@ export class UserService {
   }
 
   /**
-   * Obtiene todos los roles desde la base de datos.
-   * @returns Un observable que emite todos los roles obtenidos.
-   */
-  getAllRolesFromDb(): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-roles-from-db`);
-  }
-
-  /**
    * Registra un usuario y una agencia.
    * @param model El modelo que contiene los datos del usuario y la agencia.
    * @returns Un observable que emite el resultado de la operación.

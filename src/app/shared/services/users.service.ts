@@ -25,8 +25,6 @@ export class UsersService {
   private _httpClient = inject(HttpClient);
   private _uploadService = inject(UploadService);
 
-  private _aesanRoles: BehaviorSubject<DTORole[] | null> = new BehaviorSubject<DTORole[] | null>(null);
-
   // -----------------------------------------------------------------------------------------------------
   // @ Accessors
   // -----------------------------------------------------------------------------------------------------
@@ -48,10 +46,6 @@ export class UsersService {
 
   get roles$(): Observable<any> {
     return this._roles.asObservable();
-  }
-
-  get aesanRoles$(): Observable<DTORole[] | null> {
-    return this._aesanRoles.asObservable();
   }
 
   get getPassword(): string {
@@ -111,25 +105,11 @@ export class UsersService {
   }
 
   /**
-   * Obtiene todos los roles desde la base de datos. Con aesanOnly=true devuelve solo roles AESAN (actualiza aesanRoles$).
-   * @param requestParameters Parámetros (take, skip, etc.). aesanOnly=true para solo roles AESAN en formato { roles }.
-   * @returns Observable con respuesta { data, count } o, si aesanOnly, array de roles AESAN.
+   * Obtiene todos los roles desde la base de datos. Respuesta unificada { data, count } en body.
+   * @param requestParameters Parámetros (take, skip, aesanOnly, etc.). Se pasan al API como query params.
+   * @returns Observable con la respuesta completa (HttpResponse); los datos en response.body.
    */
   getAllRolesFromDb(requestParameters: QueryParameters): Observable<any> {
-    const aesanOnly = requestParameters?.aesanOnly === true;
-    if (aesanOnly) {
-      return this._httpClient
-        .get<{ roles: any[] }>(`${this.apiUrl}/get-all-roles-from-db`, getHttpOptions(requestParameters))
-        .pipe(
-          map((res) => (res?.roles ?? []).map((r: any) => ({
-            name: r?.Name ?? r?.name,
-            displayName: r?.DisplayName ?? r?.displayName,
-            displayNameEN: r?.DisplayNameEN ?? r?.displayNameEN,
-          } as DTORole))),
-          tap((arr) => this._aesanRoles.next(arr)),
-          catchError(handleError)
-        );
-    }
     return this._httpClient
       .get<any>(`${this.apiUrl}/get-all-roles-from-db`, getHttpOptions(requestParameters))
       .pipe(
@@ -139,12 +119,43 @@ export class UsersService {
   }
 
   /**
-   * Obtiene solo los nombres de roles AESAN (para add/edit usuario). Usa getAllRolesFromDb con aesanOnly.
+   * Obtiene solo los nombres de roles AESAN (para add/edit usuario). Llama getAllRolesFromDb con aesanOnly.
    */
   getAesanRoleNames(): Observable<string[]> {
     return this.getAllRolesFromDb({ aesanOnly: true }).pipe(
-      map((roles) => (roles ?? []).map((r: DTORole) => r.name ?? ''))
+      map((response: any) => (response?.body?.data ?? []).map((r: any) => r?.name ?? r?.Name ?? ''))
     );
+  }
+
+  /**
+   * Obtiene roles AESAN disponibles para asignar como roles secundarios.
+   * El backend excluye automáticamente el rol primario y roles secundarios ya asignados.
+   * @param primaryRoleId ID del rol primario a excluir (opcional)
+   * @param excludeRoleIds Lista de IDs de roles secundarios ya asignados a excluir (opcional)
+   * @returns Observable con la respuesta completa (HttpResponse); los datos en response.body.
+   */
+  getAvailableSecondaryRoles(primaryRoleId?: string, excludeRoleIds?: string[]): Observable<any> {
+    const params: any = {};
+    if (primaryRoleId) params.primaryRoleId = primaryRoleId;
+    if (excludeRoleIds && excludeRoleIds.length > 0) {
+      excludeRoleIds.forEach((id, index) => {
+        params[`excludeRoleIds[${index}]`] = id;
+      });
+    }
+    return this._httpClient
+      .get<any>(`${this.apiUrl}/get-available-secondary-roles`, getHttpOptions(params))
+      .pipe(catchError(handleError));
+  }
+
+  /**
+   * Obtiene todos los roles asignados a un usuario específico (primario + secundarios activos).
+   * @param userId ID del usuario
+   * @returns Observable con la respuesta completa (HttpResponse); los datos en response.body.
+   */
+  getUserRoles(userId: string): Observable<any> {
+    return this._httpClient
+      .get<any>(`${this.apiUrl}/get-user-roles/${userId}`, getHttpOptions({}))
+      .pipe(catchError(handleError));
   }
 
   /**

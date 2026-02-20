@@ -22,7 +22,7 @@ export interface QueryParameters {
   fileName?: string;
   folderTo?: string;
   roles?: string[];
-  /** Si true, get-all-roles-from-db devuelve solo roles AESAN (Name, DisplayName, DisplayNameEN) en { roles }. */
+  /** Si true, get-all-roles-from-db devuelve solo roles AESAN (Name, DisplayName, DisplayNameEN). La respuesta sigue siendo { data, count }. */
   aesanOnly?: boolean;
   /** Excluir usuarios con rol Administrator o Super-Administrator (para dropdowns sin admins) */
   excludeAdministrators?: boolean;

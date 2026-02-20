@@ -20,11 +20,13 @@ export class RoleMappingService {
   }
 
   /**
-   * Carga los roles desde la API
+   * Carga los roles desde la API (respuesta unificada { data, count } en body).
    */
   private loadRolesFromApi(): void {
     this._usersService.getAllRolesFromDb({ take: 100, skip: 0 }).subscribe({
-      next: (roles: Role[]) => {
+      next: (response: any) => {
+        const data = response?.body?.data ?? [];
+        const roles = Array.isArray(data) ? data : [];
         console.log('🔧 RoleMappingService - Roles cargados desde API:', roles);
         this._roles.next(roles);
       },
