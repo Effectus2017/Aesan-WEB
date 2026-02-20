@@ -85,10 +85,31 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      this.tableConfig.dataSource.data = resolvedData.staff.data;
+      const staffData = this.processStaffData(resolvedData.staff.data);
+      this.tableConfig.dataSource.data = staffData;
       this.tableConfig.length = resolvedData.staff.count;
       this._changeDetectorRef.markForCheck();
     }
+  }
+
+  /** Procesa los datos del staff para agregar el campo displayPosition */
+  private processStaffData(staffList: StaffList[]): StaffList[] {
+    return staffList.map(staff => ({
+      ...staff,
+      displayPosition: this.getDisplayPosition(staff)
+    }));
+  }
+
+  /** Calcula el texto a mostrar en la columna Cargo según la clasificación */
+  private getDisplayPosition(staff: StaffList): string {
+    // Si la clasificación es "Ambos" (id 3) y tiene ambos cargos, mostrar ambos separados por " / "
+    if (staff.staffClassificationId === 3 && 
+        staff.administrativePositionName && 
+        staff.operationalPositionName) {
+      return `${staff.administrativePositionName} / ${staff.operationalPositionName}`;
+    }
+    // Si no, mostrar solo el cargo principal
+    return staff.positionName || '';
   }
 
   ngOnDestroy(): void {
@@ -110,10 +131,10 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
-        // Filtrar solo empleados en el resultado
-        const employees = response.body.data;
+        // Filtrar solo empleados en el resultado y procesar datos
+        const employees = this.processStaffData(response.body.data);
         this.tableConfig.dataSource.data = employees;
-        this.tableConfig.length = employees.length;
+        this.tableConfig.length = response.body.count;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {

@@ -21,7 +21,7 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors } from 'app/shared/utils';
+import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator, logFormValidationErrors, generateTimeOptions, getEndTimeOptions, TimeOption } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
 import { isAdminRole } from 'app/shared/constants/role-keys';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -41,7 +41,6 @@ import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
-
 @Component({
   selector: 'app-edit-employee',
   templateUrl: './edit-employee.component.html',
@@ -64,8 +63,8 @@ import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if
     MatTooltipModule,
     MatIconModule,
     MatTimepickerModule,
-    MatDialogModule
-],
+    MatDialogModule,
+  ],
 })
 export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
@@ -98,6 +97,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   // Lista completa de opciones de selección
   listAdministrativePositions: OptionSelection[] = [];
   listOperationalPositions: OptionSelection[] = [];
+
+  /** Opciones de hora para Desde/Hasta (rango cada 30 min), como en sitios. */
+  timeOptions: TimeOption[] = [];
 
   // Propiedades específicas de empleados
   selectedClassification: StaffClassification | null = null;
@@ -142,9 +144,21 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       // Staff classification
       staffClassification: new FormControl('', [Validators.required]),
       // Contract start date
-      contractStartDate: new FormControl(''),
+      contractStartDate: new FormControl('', [Validators.required]),
       // Contract end date
-      contractEndDate: new FormControl(''),
+      contractEndDate: new FormControl('', [Validators.required]),
+      scheduleFrom: new FormControl('', [Validators.required]),
+      scheduleTo: new FormControl('', [Validators.required]),
+      administrativePosition: new FormControl(''),
+      administrativeContractStartDate: new FormControl(''),
+      administrativeContractEndDate: new FormControl(''),
+      administrativeScheduleFrom: new FormControl(''),
+      administrativeScheduleTo: new FormControl(''),
+      operationalPosition: new FormControl(''),
+      operationalContractStartDate: new FormControl(''),
+      operationalContractEndDate: new FormControl(''),
+      operationalScheduleFrom: new FormControl(''),
+      operationalScheduleTo: new FormControl(''),
       // Birth date
       birthDate: new FormControl('', [Validators.required]),
       // Email
@@ -183,6 +197,20 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   // Compare methods
   compareById = compareById;
+
+  /** True si la clasificación es "Ambos" (id 3). */
+  get isClassificationBoth(): boolean {
+    return this.selectedClassification?.id === 3;
+  }
+
+  /**
+   * Opciones filtradas para el campo "Hasta" según la hora "Desde" seleccionada (como en sitios).
+   */
+  getScheduleToOptions(fromFieldName: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromFieldName);
+    if (!fromControl) return this.timeOptions;
+    return getEndTimeOptions(this.timeOptions, fromControl.value, '23:59');
+  }
 
   // Agencia Id
   agencyId: number = 0;
@@ -242,6 +270,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     this.headerConfig.formGroup.get('reviewResult')?.updateValueAndValidity();
     this.headerConfig.formGroup.get('reviewDate')?.updateValueAndValidity();
     this.headerConfig.formGroup.get('reviewJustification')?.updateValueAndValidity();
+
+    // Opciones de hora para Desde/Hasta (como en sitios)
+    this.timeOptions = generateTimeOptions();
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -332,8 +363,17 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       ? this.listPositions.find(p => p.id === param.position.id)
       : param.position;
 
-    // Establecer valores del formulario
-    this.headerConfig.formGroup.patchValue({
+    const contracts = param.classificationContracts ?? [];
+    const adminContract = contracts.find((c: { staffClassificationId: number }) => c.staffClassificationId === 1);
+    const operContract = contracts.find((c: { staffClassificationId: number }) => c.staffClassificationId === 2);
+    const adminPosition = adminContract?.positionId && this.listAdministrativePositions.length > 0
+      ? this.listAdministrativePositions.find(p => p.id === adminContract.positionId)
+      : null;
+    const operPosition = operContract?.positionId && this.listOperationalPositions.length > 0
+      ? this.listOperationalPositions.find(p => p.id === operContract.positionId)
+      : null;
+
+    const patch: Record<string, unknown> = {
       id: param.id,
       firstName: param.firstName,
       middleName: param.middleName,
@@ -354,7 +394,61 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       salaryOrigins: (param.salaryOriginIds?.length && this.listSalaryOrigins?.length)
         ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
         : [],
-    });
+    };
+    if (param.staffClassificationId === 3 && adminContract && operContract) {
+      patch['administrativePosition'] = adminPosition;
+      patch['administrativeContractStartDate'] = adminContract.contractStartDate ?? null;
+      patch['administrativeContractEndDate'] = adminContract.contractEndDate ?? null;
+      patch['administrativeScheduleFrom'] = adminContract.scheduleFrom ?? '';
+      patch['administrativeScheduleTo'] = adminContract.scheduleTo ?? '';
+      patch['operationalPosition'] = operPosition;
+      patch['operationalContractStartDate'] = operContract.contractStartDate ?? null;
+      patch['operationalContractEndDate'] = operContract.contractEndDate ?? null;
+      patch['operationalScheduleFrom'] = operContract.scheduleFrom ?? '';
+      patch['operationalScheduleTo'] = operContract.scheduleTo ?? '';
+    } else if (contracts.length > 0 && contracts[0]) {
+      const first = contracts[0];
+      patch['scheduleFrom'] = first.scheduleFrom ?? '';
+      patch['scheduleTo'] = first.scheduleTo ?? '';
+    }
+    this.headerConfig.formGroup.patchValue(patch);
+
+    if (param.staffClassificationId === 3) {
+      this.headerConfig.formGroup.get('position')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativePosition')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalPosition')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeContractStartDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeContractEndDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeScheduleTo')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalContractStartDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalContractEndDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalScheduleFrom')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalScheduleTo')?.setValidators([Validators.required]);
+    } else {
+      this.headerConfig.formGroup.get('position')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativePosition')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalPosition')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeContractStartDate')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeContractEndDate')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeScheduleTo')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalContractStartDate')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalContractEndDate')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalScheduleFrom')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalScheduleTo')?.clearValidators();
+    }
+    this.headerConfig.formGroup.get('position')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativePosition')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalPosition')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeContractStartDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeContractEndDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeScheduleFrom')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeScheduleTo')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalContractStartDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalContractEndDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalScheduleFrom')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalScheduleTo')?.updateValueAndValidity();
 
     // Actualizar el validador de email con el email original
     const emailControl = this.headerConfig.formGroup.get('email');
@@ -465,15 +559,57 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewJustification = formValues.reviewJustification;
     }
 
+    // Obtener las clasificaciones que NO son "Ambos" (las dos clasificaciones individuales)
+    const individualClassifications = this.listStaffClassifications
+      .filter(c => c.id !== staffClassificationId)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+
+    // Construir classificationContracts según clasificación
+    const isBothClassification = individualClassifications.length === 2;
+    const classificationContracts = isBothClassification
+      ? [
+          {
+            staffClassificationId: individualClassifications[0].id,
+            positionId: formValues.administrativePosition?.id ?? 0,
+            contractStartDate: formValues.administrativeContractStartDate ?? null,
+            contractEndDate: formValues.administrativeContractEndDate ?? null,
+            scheduleFrom: formValues.administrativeScheduleFrom || null,
+            scheduleTo: formValues.administrativeScheduleTo || null,
+          },
+          {
+            staffClassificationId: individualClassifications[1].id,
+            positionId: formValues.operationalPosition?.id ?? 0,
+            contractStartDate: formValues.operationalContractStartDate ?? null,
+            contractEndDate: formValues.operationalContractEndDate ?? null,
+            scheduleFrom: formValues.operationalScheduleFrom || null,
+            scheduleTo: formValues.operationalScheduleTo || null,
+          }
+        ]
+      : [
+          {
+            staffClassificationId: staffClassificationId,
+            positionId: positionId,
+            contractStartDate: contractStartDate,
+            contractEndDate: contractEndDate,
+            scheduleFrom: formValues.scheduleFrom || null,
+            scheduleTo: formValues.scheduleTo || null,
+          }
+        ];
+
+    // Para retrocompatibilidad con Staff table (positionId, contractStartDate, contractEndDate)
+    const effectivePositionId = isBothClassification ? (formValues.administrativePosition?.id ?? 0) : positionId;
+    const effectiveContractStart = isBothClassification ? (formValues.administrativeContractStartDate ?? null) : contractStartDate;
+    const effectiveContractEnd = isBothClassification ? (formValues.administrativeContractEndDate ?? null) : contractEndDate;
+
     // Crear staff request para empleados
     const staffRequest: any = {
       id: formValues.id,
       statusId: statusId,
-      positionId: positionId,
+      positionId: effectivePositionId,
       staffTypeId: staffTypeId,
       staffClassificationId: staffClassificationId,
       comments: comments,
-      isActive: formValues.status?.booleanValue ?? true, // Usar el valor del dropdown o true por defecto
+      isActive: formValues.status?.booleanValue ?? true,
       agencyId: this.agencyId,
       firstName: firstName,
       middleName: middleName,
@@ -483,9 +619,10 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
-      contractStartDate: contractStartDate,
-      contractEndDate: contractEndDate,
+      contractStartDate: effectiveContractStart,
+      contractEndDate: effectiveContractEnd,
       salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      classificationContracts,
     };
 
     // Disable the form
@@ -593,6 +730,54 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
 
+    const positionControl = this.headerConfig.formGroup.get('position');
+    const adminPosControl = this.headerConfig.formGroup.get('administrativePosition');
+    const operPosControl = this.headerConfig.formGroup.get('operationalPosition');
+    const adminContractStart = this.headerConfig.formGroup.get('administrativeContractStartDate');
+    const adminContractEnd = this.headerConfig.formGroup.get('administrativeContractEndDate');
+    const adminScheduleFrom = this.headerConfig.formGroup.get('administrativeScheduleFrom');
+    const adminScheduleTo = this.headerConfig.formGroup.get('administrativeScheduleTo');
+    const operContractStart = this.headerConfig.formGroup.get('operationalContractStartDate');
+    const operContractEnd = this.headerConfig.formGroup.get('operationalContractEndDate');
+    const operScheduleFrom = this.headerConfig.formGroup.get('operationalScheduleFrom');
+    const operScheduleTo = this.headerConfig.formGroup.get('operationalScheduleTo');
+    if (this.selectedClassification?.id === 3) {
+      positionControl?.clearValidators();
+      adminPosControl?.setValidators([Validators.required]);
+      operPosControl?.setValidators([Validators.required]);
+      adminContractStart?.setValidators([Validators.required]);
+      adminContractEnd?.setValidators([Validators.required]);
+      adminScheduleFrom?.setValidators([Validators.required]);
+      adminScheduleTo?.setValidators([Validators.required]);
+      operContractStart?.setValidators([Validators.required]);
+      operContractEnd?.setValidators([Validators.required]);
+      operScheduleFrom?.setValidators([Validators.required]);
+      operScheduleTo?.setValidators([Validators.required]);
+    } else {
+      positionControl?.setValidators([Validators.required]);
+      adminPosControl?.clearValidators();
+      operPosControl?.clearValidators();
+      adminContractStart?.clearValidators();
+      adminContractEnd?.clearValidators();
+      adminScheduleFrom?.clearValidators();
+      adminScheduleTo?.clearValidators();
+      operContractStart?.clearValidators();
+      operContractEnd?.clearValidators();
+      operScheduleFrom?.clearValidators();
+      operScheduleTo?.clearValidators();
+    }
+    positionControl?.updateValueAndValidity();
+    adminPosControl?.updateValueAndValidity();
+    operPosControl?.updateValueAndValidity();
+    adminContractStart?.updateValueAndValidity();
+    adminContractEnd?.updateValueAndValidity();
+    adminScheduleFrom?.updateValueAndValidity();
+    adminScheduleTo?.updateValueAndValidity();
+    operContractStart?.updateValueAndValidity();
+    operContractEnd?.updateValueAndValidity();
+    operScheduleFrom?.updateValueAndValidity();
+    operScheduleTo?.updateValueAndValidity();
+
     // Actualizar el estado del botón
     this.updateSubmitButtonState();
   }
@@ -607,7 +792,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     }
 
     // Usar IDs en lugar de nombres para identificar clasificaciones
-    // ID 1: Administrativo, ID 2: Operacional (verificar en la base de datos si es necesario)
+    // ID 1: Administrativo, ID 2: Operacional, ID 3: Ambos
     if (this.selectedClassification?.id === 1) {
       this.listPositions = this.listAdministrativePositions;
     } else if (this.selectedClassification?.id === 2) {

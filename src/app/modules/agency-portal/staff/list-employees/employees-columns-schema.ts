@@ -15,7 +15,7 @@ export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
     sortable: true
   },
   {
-    key: 'positionName',
+    key: 'displayPosition',
     label: 'staff.employees.list.table.columns.position',
     type: 'text',
     sortable: true

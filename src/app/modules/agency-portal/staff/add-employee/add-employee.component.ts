@@ -22,7 +22,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compareById, logFormValidationErrors } from 'app/shared/utils';
+import { compareById, generateTimeOptions, getEndTimeOptions, logFormValidationErrors, TimeOption } from 'app/shared/utils';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
@@ -92,6 +92,9 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Lista completa de opciones de selección
   allOptionSelections: OptionSelection[] = [];
 
+  /** Opciones de hora cada 30 min para Desde/Hasta (como en sitios). */
+  timeOptions: TimeOption[] = [];
+
   // Tipo de staff fijo (siempre será empleado)
   private employeeStaffType: StaffType | null = null;
 
@@ -115,9 +118,24 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Clasificación de Staff
       staffClassification: new FormControl('', [Validators.required]),
       // Fecha de inicio de contrato
-      contractStartDate: new FormControl(''),
+      contractStartDate: new FormControl('', [Validators.required]),
       // Fecha de finalización de contrato
-      contractEndDate: new FormControl(''),
+      contractEndDate: new FormControl('', [Validators.required]),
+      // Horario Desde/Hasta (clasificación única)
+      scheduleFrom: new FormControl('', [Validators.required]),
+      scheduleTo: new FormControl('', [Validators.required]),
+      // Bloque Ambos: administrativo
+      administrativePosition: new FormControl(''),
+      administrativeContractStartDate: new FormControl(''),
+      administrativeContractEndDate: new FormControl(''),
+      administrativeScheduleFrom: new FormControl(''),
+      administrativeScheduleTo: new FormControl(''),
+      // Bloque Ambos: operacional
+      operationalPosition: new FormControl(''),
+      operationalContractStartDate: new FormControl(''),
+      operationalContractEndDate: new FormControl(''),
+      operationalScheduleFrom: new FormControl(''),
+      operationalScheduleTo: new FormControl(''),
       // Fecha de nacimiento
       birthDate: new FormControl('', [Validators.required]),
       // Email
@@ -139,6 +157,20 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   // Compare methods
   compareById = compareById;
 
+  /** True si la clasificación es "Ambos" (id 3). */
+  get isClassificationBoth(): boolean {
+    return this.selectedClassification?.id === 3;
+  }
+
+  /**
+   * Opciones filtradas para el campo "Hasta" según la hora "Desde" seleccionada (como en sitios).
+   */
+  getScheduleToOptions(fromFieldName: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromFieldName);
+    if (!fromControl) return this.timeOptions;
+    return getEndTimeOptions(this.timeOptions, fromControl.value, '23:59');
+  }
+
   // Agencia Id
   agencyId: number = 0;
 
@@ -156,6 +188,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   }
 
   ngOnInit(): void {
+    this.timeOptions = generateTimeOptions();
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
@@ -299,14 +333,56 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
+    // Obtener las clasificaciones que NO son "Ambos" (las dos clasificaciones individuales)
+    const individualClassifications = this.listStaffClassifications
+      .filter(c => c.id !== staffClassificationId)
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+
+    // Construir classificationContracts según clasificación
+    const isBothClassification = individualClassifications.length === 2;
+    const classificationContracts = isBothClassification
+      ? [
+          {
+            staffClassificationId: individualClassifications[0].id,
+            positionId: formValues.administrativePosition?.id ?? 0,
+            contractStartDate: formValues.administrativeContractStartDate ?? null,
+            contractEndDate: formValues.administrativeContractEndDate ?? null,
+            scheduleFrom: formValues.administrativeScheduleFrom || null,
+            scheduleTo: formValues.administrativeScheduleTo || null,
+          },
+          {
+            staffClassificationId: individualClassifications[1].id,
+            positionId: formValues.operationalPosition?.id ?? 0,
+            contractStartDate: formValues.operationalContractStartDate ?? null,
+            contractEndDate: formValues.operationalContractEndDate ?? null,
+            scheduleFrom: formValues.operationalScheduleFrom || null,
+            scheduleTo: formValues.operationalScheduleTo || null,
+          }
+        ]
+      : [
+          {
+            staffClassificationId: staffClassificationId,
+            positionId: positionId,
+            contractStartDate: contractStartDate,
+            contractEndDate: contractEndDate,
+            scheduleFrom: formValues.scheduleFrom || null,
+            scheduleTo: formValues.scheduleTo || null,
+          }
+        ];
+
+    // Para retrocompatibilidad con Staff table (positionId, contractStartDate, contractEndDate)
+    const effectivePositionId = isBothClassification ? (formValues.administrativePosition?.id ?? 0) : positionId;
+    const effectiveContractStart = isBothClassification ? (formValues.administrativeContractStartDate ?? null) : contractStartDate;
+    const effectiveContractEnd = isBothClassification ? (formValues.administrativeContractEndDate ?? null) : contractEndDate;
+
     // Crear staff request para empleados
     const staffRequest: any = {
       statusId: statusId,
-      positionId: positionId,
+      positionId: effectivePositionId,
       staffTypeId: staffTypeId,
       staffClassificationId: staffClassificationId,
-      contractStartDate: contractStartDate,
-      contractEndDate: contractEndDate,
+      contractStartDate: effectiveContractStart,
+      contractEndDate: effectiveContractEnd,
       comments: comments,
       isActive: true,
       agencyId: this.agencyId,
@@ -319,6 +395,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       birthDate: birthDate,
       email: email,
       salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      classificationContracts,
     };
 
     // Disable the form
@@ -453,7 +530,31 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     birthDateControl?.setValidators([Validators.required]);
     firstNameControl?.setValidators([Validators.required]);
     fatherLastNameControl?.setValidators([Validators.required]);
-    positionControl?.setValidators([Validators.required]);
+    if (this.selectedClassification?.id === 3) {
+      positionControl?.clearValidators();
+      this.headerConfig.formGroup.get('administrativePosition')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalPosition')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeContractStartDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeContractEndDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativeScheduleTo')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalContractStartDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalContractEndDate')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalScheduleFrom')?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('operationalScheduleTo')?.setValidators([Validators.required]);
+    } else {
+      positionControl?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.get('administrativePosition')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalPosition')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeContractStartDate')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeContractEndDate')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.clearValidators();
+      this.headerConfig.formGroup.get('administrativeScheduleTo')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalContractStartDate')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalContractEndDate')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalScheduleFrom')?.clearValidators();
+      this.headerConfig.formGroup.get('operationalScheduleTo')?.clearValidators();
+    }
     emailControl?.setValidators([Validators.required, Validators.email]);
     emailControl?.setAsyncValidators([emailExistsValidator(this._userService)]);
 
@@ -462,6 +563,16 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     firstNameControl?.updateValueAndValidity();
     fatherLastNameControl?.updateValueAndValidity();
     positionControl?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativePosition')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalPosition')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeContractStartDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeContractEndDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeScheduleFrom')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('administrativeScheduleTo')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalContractStartDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalContractEndDate')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalScheduleFrom')?.updateValueAndValidity();
+    this.headerConfig.formGroup.get('operationalScheduleTo')?.updateValueAndValidity();
     emailControl?.updateValueAndValidity();
 
     // El campo de clasificación SIEMPRE debe estar habilitado
@@ -510,13 +621,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     }
 
     // Usar IDs en lugar de nombres para identificar clasificaciones
-    // ID 1: Administrativo, ID 2: Operacional (verificar en la base de datos si es necesario)
+    // ID 1: Administrativo, ID 2: Operacional, ID 3: Ambos
     if (this.selectedClassification?.id === 1) {
       this.listPositions = this.listAdministrativePositions;
     } else if (this.selectedClassification?.id === 2) {
       this.listPositions = this.listOperationalPositions;
     } else {
-      this.listPositions = [];
+      this.listPositions = []; // Ambos: cada bloque usa su lista
     }
     this._changeDetectorRef.detectChanges();
   }

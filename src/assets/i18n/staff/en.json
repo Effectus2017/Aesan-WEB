@@ -151,11 +151,47 @@
       },
       "contractStartDate": {
         "label": "Contract Start Date",
-        "placeholder": "Select the contract start date"
+        "placeholder": "Select the contract start date",
+        "required": "Contract start date is required"
       },
       "contractEndDate": {
         "label": "Contract End Date",
-        "placeholder": "Select the contract end date"
+        "placeholder": "Select the contract end date",
+        "required": "Contract end date is required"
+      },
+      "administrativeSection": "Administrative Position",
+      "administrativeSectionSubtitle": "Position, contract dates and schedule under administrative classification.",
+      "operationalSection": "Operational Position",
+      "operationalSectionSubtitle": "Position, contract dates and schedule under operational classification.",
+      "contractAdministrativeStart": {
+        "label": "Administrative Contract Start",
+        "placeholder": "Select date",
+        "required": "Administrative contract start is required"
+      },
+      "contractAdministrativeEnd": {
+        "label": "Administrative Contract End",
+        "placeholder": "Select date",
+        "required": "Administrative contract end is required"
+      },
+      "contractOperationalStart": {
+        "label": "Operational Contract Start",
+        "placeholder": "Select date",
+        "required": "Operational contract start is required"
+      },
+      "contractOperationalEnd": {
+        "label": "Operational Contract End",
+        "placeholder": "Select date",
+        "required": "Operational contract end is required"
+      },
+      "scheduleFrom": {
+        "label": "From",
+        "placeholder": "HH:mm",
+        "required": "From time is required"
+      },
+      "scheduleTo": {
+        "label": "To",
+        "placeholder": "HH:mm",
+        "required": "To time is required"
       },
       "email": {
         "label": "Email",
@@ -408,11 +444,47 @@
       },
       "contractStartDate": {
         "label": "Contract Start Date",
-        "placeholder": "Select the contract start date"
+        "placeholder": "Select the contract start date",
+        "required": "Contract start date is required"
       },
       "contractEndDate": {
         "label": "Contract End Date",
-        "placeholder": "Select the contract end date"
+        "placeholder": "Select the contract end date",
+        "required": "Contract end date is required"
+      },
+      "administrativeSection": "Administrative Position",
+      "administrativeSectionSubtitle": "Position, contract dates and schedule under administrative classification.",
+      "operationalSection": "Operational Position",
+      "operationalSectionSubtitle": "Position, contract dates and schedule under operational classification.",
+      "contractAdministrativeStart": {
+        "label": "Administrative Contract Start",
+        "placeholder": "Select date",
+        "required": "Administrative contract start is required"
+      },
+      "contractAdministrativeEnd": {
+        "label": "Administrative Contract End",
+        "placeholder": "Select date",
+        "required": "Administrative contract end is required"
+      },
+      "contractOperationalStart": {
+        "label": "Operational Contract Start",
+        "placeholder": "Select date",
+        "required": "Operational contract start is required"
+      },
+      "contractOperationalEnd": {
+        "label": "Operational Contract End",
+        "placeholder": "Select date",
+        "required": "Operational contract end is required"
+      },
+      "scheduleFrom": {
+        "label": "From",
+        "placeholder": "HH:mm",
+        "required": "From time is required"
+      },
+      "scheduleTo": {
+        "label": "To",
+        "placeholder": "HH:mm",
+        "required": "To time is required"
       },
       "email": {
         "label": "Email",

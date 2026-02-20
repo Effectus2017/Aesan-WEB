@@ -82,6 +82,27 @@ export interface Staff {
   salaryOrigins?: OptionSelection[];
   // School (objeto completo)
   school?: SiteListItem;
+  /** Contratos por clasificación (Administrativo/Operacional), poblado en GetById */
+  classificationContracts?: StaffClassificationContract[];
+}
+
+/** Contrato por clasificación (Administrativo u Operacional) de un staff */
+export interface StaffClassificationContract {
+  id: number;
+  staffId: number;
+  staffClassificationId: number;
+  staffClassificationName?: string;
+  staffClassificationNameEn?: string;
+  positionId: number;
+  positionName?: string;
+  positionNameEn?: string;
+  contractStartDate?: string;
+  contractEndDate?: string;
+  scheduleFrom?: string;
+  scheduleTo?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  isActive?: boolean;
 }
 
 export interface StaffList {
@@ -94,8 +115,14 @@ export interface StaffList {
   positionName: string;
   staffTypeName: string;
   staffTypeNameEn: string;
+  staffClassificationId?: number;
   staffClassificationName?: string;
   staffClassificationNameEn?: string;
+  administrativePositionName?: string;
+  administrativePositionNameEN?: string;
+  operationalPositionName?: string;
+  operationalPositionNameEN?: string;
+  displayPosition?: string; // Campo calculado para mostrar en la tabla
   email: string;
   cityName: string;
   regionName: string;
@@ -103,4 +130,5 @@ export interface StaffList {
   isActive: boolean;
   hasRelationships?: boolean;
   isSiteAdmin?: boolean;
+  comments?: string;
 }
