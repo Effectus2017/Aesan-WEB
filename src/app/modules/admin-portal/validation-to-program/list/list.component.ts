@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -16,7 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { COLUMNS_SCHEMA } from './columns-schema';
+import { VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
@@ -73,7 +73,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'validation-to-program.list.search.placeholder',
     submitButtonText: 'validation-to-program.list.buttons.save',
     filterButtonShow: true,
@@ -84,8 +84,8 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<Agency>(),
     dataSourceList: [],
-    columnsSchema: COLUMNS_SCHEMA,
-    displayedColumns: COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA,
+    displayedColumns: VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSize: 15,
@@ -97,6 +97,9 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   // Constructor
   constructor() {}
 
+  // -----
+  // @ ngOnInit / ngOnDestroy
+  // -----
   // Lifecycle hooks
   ngOnInit() {
     // Get the agencies
@@ -129,11 +132,13 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   onFiltersApply(filters: ListFilterResult): void {
     this.appliedFilters = { ...filters };
-    this.filterDrawer?.close();
     this.getAll(0, this._buildFormForRequest());
     this._changeDetectorRef.markForCheck();
   }
 
+  // -----
+  // @ Funciones On (componentes genéricos)
+  // -----
   onFiltersReset(): void {
     this.appliedFilters = {};
     this.getAll(0, this._buildFormForRequest());
@@ -147,12 +152,16 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   // Métodos para obtener datos
   getAll(index: number, form: any) {
+    const name = form.name || null;
+    const pageSize = this.tableConfig.pageSize;
+
     const requestParameters: QueryParameters = {
-      take: this.tableConfig.pageSize,
+      take: pageSize,
       skip: index,
-      name: (form.name ?? null) || null,
+      name: name,
       alls: true,
       isList: false,
+      isPropietary: false,
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();

@@ -1,6 +1,6 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-export const COLUMNS_SCHEMA: ColumnSchema[] = [
+export const VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'name',
     type: 'text',
@@ -25,12 +25,14 @@ export const COLUMNS_SCHEMA: ColumnSchema[] = [
     key: ['user.firstName', 'user.fatherLastName'],
     type: 'combined-text',
     keys: ['user.firstName', 'user.fatherLastName'],
-    label: 'validation-to-program.list.table.columns.createdBy'
+    label: 'validation-to-program.list.table.columns.createdBy',
+    searchable: false,
   },
   {
     key: 'status.name',
     type: 'text',
-    label: 'validation-to-program.list.table.columns.status'
+    label: 'validation-to-program.list.table.columns.status',
+    searchable: false,
   },
   {
     key: 'createdAt',
@@ -41,7 +43,8 @@ export const COLUMNS_SCHEMA: ColumnSchema[] = [
     key: ['monitor.firstName', 'monitor.fatherLastName'],
     type: 'combined-text',
     keys: ['monitor.firstName', 'monitor.fatherLastName'],
-    label: 'validation-to-program.list.table.columns.assignedTo'
+    label: 'validation-to-program.list.table.columns.assignedTo',
+    searchable: false,
   },
   {
     key: 'actions',

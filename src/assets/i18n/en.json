@@ -43,7 +43,7 @@
         },
         "listFilters": {
             "title": "Filters",
-            "apply": "Apply",
+            "apply": "Search",
             "reset": "Reset",
             "from": "From",
             "to": "To",

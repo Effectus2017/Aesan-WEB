@@ -35,8 +35,8 @@
     </div>
     }
 
-    <!-- Campo de búsqueda -->
-    @if (config.searchFieldShow) {
+    <!-- Campo de búsqueda (oculto si searchFieldShow es false, vía config o @Input) -->
+    @if (showSearchField) {
     <mat-form-field class="fuse-mat-dense fuse-mat-rounded min-w-64" [subscriptSizing]="'dynamic'">
       <input matInput autocomplete="off" [placeholder]="config.searchInputPlaceholder | transloco" formControlName="name" data-cy="generic-header-search-input" />
     </mat-form-field>
@@ -60,14 +60,13 @@
       <button
         type="button"
         [title]="getButtonTooltip(config.filterButtonTooltip, config.filterButtonDisabledTooltip, config.filterButtonPermission) || ('global.tooltips.header.filter' | transloco)"
+        class="text-white bg-[#f6a735] hover:bg-[#e09528]"
         mat-raised-button
-        color="primary"
         [appDisableIfNoPermission]="config.filterButtonPermission"
         (click)="onFilter()"
         data-cy="generic-header-filter-button"
         [attr.aria-label]="'global.listFilters.title' | transloco">
-        <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:filter_list"></mat-icon>
-        <span>{{ 'global.listFilters.title' | transloco }}</span>
+        <mat-icon class="icon-size-5" svgIcon="mat_outline:filter_list"></mat-icon>
       </button>
     </div>
     }

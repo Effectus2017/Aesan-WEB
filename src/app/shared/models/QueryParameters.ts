@@ -86,6 +86,13 @@ export interface QueryParameters {
   // Campo para filtrar sitios por IsDayCareHomeId (Sí, No, Ambos)
   isDayCareHomeId?: number | null;
 
+  // Filtros lista validation-to-program (get-all-agencies-from-db)
+  userFirstName?: string | null;
+  statusName?: string | null;
+  monitorFirstName?: string | null;
+  createdAtFrom?: string | null;
+  createdAtTo?: string | null;
+
   // Campo para filtrar templates de email por clave
   templateKey?: string;
 

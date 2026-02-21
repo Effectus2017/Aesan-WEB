@@ -43,7 +43,7 @@
         },
         "listFilters": {
             "title": "Filtros",
-            "apply": "Aplicar",
+            "apply": "Buscar",
             "reset": "Restablecer",
             "from": "Desde",
             "to": "Hasta",

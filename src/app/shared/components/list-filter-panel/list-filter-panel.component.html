@@ -25,15 +25,15 @@
           </mat-form-field>
         }
         @case ('date') {
-          <div class="flex flex-row gap-4 w-full flex-wrap">
-            <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+          <div class="flex flex-col gap-4 w-full">
+            <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
               <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.from' | transloco }})</mat-label>
               <input matInput [matDatepicker]="pickerFrom" [formControlName]="field.formControlKey" />
               <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
               <mat-datepicker #pickerFrom></mat-datepicker>
             </mat-form-field>
             @if (field.formControlKeyTo) {
-              <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+              <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
                 <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.to' | transloco }})</mat-label>
                 <input matInput [matDatepicker]="pickerTo" [formControlName]="field.formControlKeyTo" />
                 <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
@@ -43,15 +43,15 @@
           </div>
         }
         @case ('date-time') {
-          <div class="flex flex-row gap-4 w-full flex-wrap">
-            <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+          <div class="flex flex-col gap-4 w-full">
+            <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
               <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.from' | transloco }})</mat-label>
               <input matInput [matDatepicker]="pickerDtFrom" [formControlName]="field.formControlKey" />
               <mat-datepicker-toggle matIconSuffix [for]="pickerDtFrom"></mat-datepicker-toggle>
               <mat-datepicker #pickerDtFrom></mat-datepicker>
             </mat-form-field>
             @if (field.formControlKeyTo) {
-              <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+              <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
                 <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.to' | transloco }})</mat-label>
                 <input matInput [matDatepicker]="pickerDtTo" [formControlName]="field.formControlKeyTo" />
                 <mat-datepicker-toggle matIconSuffix [for]="pickerDtTo"></mat-datepicker-toggle>
@@ -68,7 +68,7 @@
     <button mat-button type="button" (click)="onReset()" data-cy="list-filter-reset">
       {{ 'global.listFilters.reset' | transloco }}
     </button>
-    <button mat-flat-button color="primary" type="submit" data-cy="list-filter-apply">
+    <button mat-flat-button class="text-white bg-[#f6a735] hover:bg-[#e09528]" type="submit" data-cy="list-filter-apply">
       {{ 'global.listFilters.apply' | transloco }}
     </button>
   </div>

@@ -65,7 +65,7 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'sponsor-type.list.search.placeholder',
     submitButtonText: 'sponsor-type.list.buttons.save',
     goToAddButtonShow: true,
@@ -73,6 +73,7 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     searchButtonTooltip: 'global.tooltips.header.search',
     goToAddButtonTooltip: 'global.tooltips.header.add',
     goToAddButtonPermission: 'sponsor-type.create',
+    // Configuración de botón de filtro
     filterButtonShow: true,
     filterButtonTooltip: 'global.tooltips.header.filter',
   };

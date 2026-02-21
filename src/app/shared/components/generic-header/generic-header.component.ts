@@ -31,8 +31,8 @@ export class GenericHeaderComponent {
   private _translocoService = inject(TranslocoService);
   private _authService = inject(AuthService);
 
-  // Search Field config
-  @Input() searchFieldShow: boolean = false;
+  // Search Field config (sin default: si no se pasa, se usa config.searchFieldShow)
+  @Input() searchFieldShow?: boolean;
   @Input() searchInputPlaceholder: string = 'Search'; // TODO: Change this to the correct translation key
 
   // Go to Add Button config
@@ -62,6 +62,17 @@ export class GenericHeaderComponent {
 
   // Clear Button config
   @Input() clearVisible: boolean = false;
+
+  /**
+   * Indica si debe mostrarse el bloque de búsqueda (campo + botón).
+   * Se usa @Input() searchFieldShow si viene definido; si no, config.searchFieldShow.
+   */
+  get showSearchField(): boolean {
+    if (this.searchFieldShow !== undefined && this.searchFieldShow !== null) {
+      return this.searchFieldShow === true;
+    }
+    return this.config?.searchFieldShow === true;
+  }
 
   // Loading config
   @Input() isLoading: boolean = false;
