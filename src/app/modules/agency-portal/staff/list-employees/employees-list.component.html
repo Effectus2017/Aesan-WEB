@@ -5,4 +5,35 @@
   <div class="overflow-y-auto flex-auto" cdkScrollable>
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
+
+  <!-- Drawer de filtros (panel lateral) -->
+  <fuse-drawer
+    #filterDrawer
+    class="w-screen min-w-screen sm:w-100 sm:min-w-100 z-999"
+    fixed
+    [mode]="'over'"
+    [name]="'listFilterDrawer'"
+    [position]="'right'">
+    <div class="flex flex-col w-full h-full overflow-hidden bg-card">
+      <div class="flex flex-row items-center px-6 h-20 min-h-20 text-white bg-primary shrink-0">
+        <mat-icon class="icon-size-7 text-current" svgIcon="mat_outline:filter_list"></mat-icon>
+        <span class="ml-3 text-xl font-semibold tracking-tight">{{ 'global.listFilters.title' | transloco }}</span>
+        <button
+          class="ml-auto"
+          mat-icon-button
+          type="button"
+          [attr.aria-label]="'global.buttons.close' | transloco"
+          (click)="filterDrawer.close()">
+          <mat-icon class="text-current" svgIcon="mat_outline:close"></mat-icon>
+        </button>
+      </div>
+      <app-list-filter-panel
+        [columnsSchema]="tableConfig.columnsSchema"
+        [initialValues]="appliedFilters"
+        (apply)="onFiltersApply($event)"
+        (resetFilters)="onFiltersReset()"
+        class="flex flex-col flex-1 min-h-0 overflow-hidden">
+      </app-list-filter-panel>
+    </div>
+  </fuse-drawer>
 </div>

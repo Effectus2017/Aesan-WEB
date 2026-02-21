@@ -54,6 +54,23 @@
       </button>
     </div>
     }
+    <!-- Botón Filtros (drawer de filtros para listas) -->
+    @if (config?.filterButtonShow) {
+    <div [matTooltip]="getButtonTooltip(config.filterButtonTooltip, config.filterButtonDisabledTooltip, config.filterButtonPermission)" [matTooltipDisabled]="!config.filterButtonTooltip && !config.filterButtonDisabledTooltip">
+      <button
+        type="button"
+        [title]="getButtonTooltip(config.filterButtonTooltip, config.filterButtonDisabledTooltip, config.filterButtonPermission) || ('global.tooltips.header.filter' | transloco)"
+        mat-raised-button
+        color="primary"
+        [appDisableIfNoPermission]="config.filterButtonPermission"
+        (click)="onFilter()"
+        data-cy="generic-header-filter-button"
+        [attr.aria-label]="'global.listFilters.title' | transloco">
+        <mat-icon class="mr-2 icon-size-5" svgIcon="mat_outline:filter_list"></mat-icon>
+        <span>{{ 'global.listFilters.title' | transloco }}</span>
+      </button>
+    </div>
+    }
     <!-- Botón Agregar -->
     @if (config.goToAddButtonShow) {
     <div [matTooltip]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission)" [matTooltipDisabled]="!config.goToAddButtonTooltip && !config.goToAddButtonDisabledTooltip">

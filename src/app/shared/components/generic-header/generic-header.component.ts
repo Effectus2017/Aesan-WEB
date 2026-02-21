@@ -138,6 +138,10 @@ export class GenericHeaderComponent {
     this.handler.onSearch();
   }
 
+  onFilter(): void {
+    this.handler?.onFilter?.();
+  }
+
   onClean(event: Event) {
     this.handler.onClean(event);
   }

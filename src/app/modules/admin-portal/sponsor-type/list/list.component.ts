@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -11,14 +11,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { SPONSOR_TYPE_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, ListFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -40,6 +42,8 @@ import { AuthService } from 'app/core/auth/auth.service';
         RouterModule,
         GenericTableComponent,
         GenericHeaderComponent,
+        ListFilterPanelComponent,
+        FuseDrawerComponent,
         TranslocoModule,
     ]
 })
@@ -51,6 +55,10 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
+
+  appliedFilters: ListFilterResult = {};
 
   headerConfig: GenericHeaderConfig = {
     title: 'sponsor-type.list.title',
@@ -64,7 +72,9 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     // Configuración de tooltips y permisos directamente en cada botón
     searchButtonTooltip: 'global.tooltips.header.search',
     goToAddButtonTooltip: 'global.tooltips.header.add',
-    goToAddButtonPermission: 'sponsor-type.create'  // Ejemplo de permiso para el botón agregar
+    goToAddButtonPermission: 'sponsor-type.create',
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig = {
@@ -99,13 +109,37 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     this._unsubscribeAll.complete();
   }
 
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  onFiltersApply(filters: ListFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  private _buildFormForRequest(): Record<string, unknown> {
+    const header = this.headerConfig.formGroup?.value ?? {};
+    return { ...header, ...this.appliedFilters };
+  }
+
   getAll(index: number, form: any) {
-    const requestParameters: QueryParameters = {
+    const requestParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: form.name || null,
+      name: (form.name ?? null) || null,
       userId: this._authService.getUserId(),
-    };
+      ...(form.nameEN != null && form.nameEN !== '' && { nameEN: form.nameEN }),
+      ...(form.isActive !== undefined && form.isActive !== null && { isActive: form.isActive }),
+    } as QueryParameters;
     this._sponsorTypeService.getAllSponsorTypesFromDb(requestParameters).subscribe();
   }
 
@@ -122,6 +156,6 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
   getPaginator(event?: PageEvent) {
     const index = event && event.pageIndex ? event.pageIndex : 0;
     this.tableConfig.pageSize = event ? event.pageSize : this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+    this.getAll(index * this.tableConfig.pageSize, this._buildFormForRequest());
   }
 }

@@ -78,6 +78,12 @@ export interface GenericHeaderConfig {
   uploadButtonDisabledTooltip?: string;
   uploadButtonPermission?: string;
 
+  // Filter Button config (panel de filtros dinámicos)
+  filterButtonShow?: boolean;
+  filterButtonTooltip?: string;
+  filterButtonDisabledTooltip?: string;
+  filterButtonPermission?: string;
+
   // Settings Button config
   settingsButtonShow?: boolean;
   settingsButtonTooltip?: string;
@@ -158,4 +164,9 @@ export interface OnGenericHeaderHandlers {
    * @param menuItemId ID del item del menú seleccionado
    */
   onSettingsMenuAction?: (menuItemId: string) => void;
+
+  /**
+   * Manejador para abrir el panel de filtros (ej. drawer).
+   */
+  onFilter?: () => void;
 }

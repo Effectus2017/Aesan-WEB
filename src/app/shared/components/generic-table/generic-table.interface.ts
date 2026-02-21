@@ -70,8 +70,18 @@ export interface ColumnSchema {
   visible?: boolean;
   sortable?: boolean;
   searchable?: boolean;
+  /**
+   * Si es false, la columna no se incluye en el panel de filtros dinámicos.
+   * Por defecto se considera filterable para tipos: text, combined-text, boolean, date, date-time.
+   */
+  filterable?: boolean;
   format?: string;
 }
+
+/**
+ * Resultado del panel de filtros: objeto plano que la lista convierte en QueryParameters.
+ */
+export type ListFilterResult = Record<string, string | number | boolean | null | undefined>;
 
 export interface GenericTableConfig<T = any> {
   dataSource: MatTableDataSource<T>;

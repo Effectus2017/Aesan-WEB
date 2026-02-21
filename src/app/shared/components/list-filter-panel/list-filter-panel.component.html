@@ -1,0 +1,75 @@
+<form [formGroup]="form" class="flex flex-col flex-auto min-h-0" (ngSubmit)="onApply()">
+  <div class="flex flex-col flex-auto overflow-y-auto p-6 gap-4">
+    @for (field of filterFields; track field.formControlKey) {
+      @switch (field.type) {
+        @case ('text') {
+          <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
+            <mat-label>{{ field.label | transloco }}</mat-label>
+            <input matInput [formControlName]="field.formControlKey" type="text" />
+          </mat-form-field>
+        }
+        @case ('combined-text') {
+          <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
+            <mat-label>{{ field.label | transloco }}</mat-label>
+            <input matInput [formControlName]="field.formControlKey" type="text" />
+          </mat-form-field>
+        }
+        @case ('boolean') {
+          <mat-form-field class="w-full fuse-mat-dense" subscriptSizing="dynamic">
+            <mat-label>{{ field.label | transloco }}</mat-label>
+            <mat-select [formControlName]="field.formControlKey">
+              <mat-option [value]="null">{{ 'global.listFilters.all' | transloco }}</mat-option>
+              <mat-option [value]="true">{{ 'global.listFilters.yes' | transloco }}</mat-option>
+              <mat-option [value]="false">{{ 'global.listFilters.no' | transloco }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        }
+        @case ('date') {
+          <div class="flex flex-row gap-4 w-full flex-wrap">
+            <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+              <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.from' | transloco }})</mat-label>
+              <input matInput [matDatepicker]="pickerFrom" [formControlName]="field.formControlKey" />
+              <mat-datepicker-toggle matIconSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+              <mat-datepicker #pickerFrom></mat-datepicker>
+            </mat-form-field>
+            @if (field.formControlKeyTo) {
+              <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+                <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.to' | transloco }})</mat-label>
+                <input matInput [matDatepicker]="pickerTo" [formControlName]="field.formControlKeyTo" />
+                <mat-datepicker-toggle matIconSuffix [for]="pickerTo"></mat-datepicker-toggle>
+                <mat-datepicker #pickerTo></mat-datepicker>
+              </mat-form-field>
+            }
+          </div>
+        }
+        @case ('date-time') {
+          <div class="flex flex-row gap-4 w-full flex-wrap">
+            <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+              <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.from' | transloco }})</mat-label>
+              <input matInput [matDatepicker]="pickerDtFrom" [formControlName]="field.formControlKey" />
+              <mat-datepicker-toggle matIconSuffix [for]="pickerDtFrom"></mat-datepicker-toggle>
+              <mat-datepicker #pickerDtFrom></mat-datepicker>
+            </mat-form-field>
+            @if (field.formControlKeyTo) {
+              <mat-form-field class="flex-1 min-w-40 fuse-mat-dense" subscriptSizing="dynamic">
+                <mat-label>{{ field.label | transloco }} ({{ 'global.listFilters.to' | transloco }})</mat-label>
+                <input matInput [matDatepicker]="pickerDtTo" [formControlName]="field.formControlKeyTo" />
+                <mat-datepicker-toggle matIconSuffix [for]="pickerDtTo"></mat-datepicker-toggle>
+                <mat-datepicker #pickerDtTo></mat-datepicker>
+              </mat-form-field>
+            }
+          </div>
+        }
+      }
+    }
+  </div>
+
+  <div class="flex flex-col justify-between gap-2 p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <button mat-button type="button" (click)="onReset()" data-cy="list-filter-reset">
+      {{ 'global.listFilters.reset' | transloco }}
+    </button>
+    <button mat-flat-button color="primary" type="submit" data-cy="list-filter-apply">
+      {{ 'global.listFilters.apply' | transloco }}
+    </button>
+  </div>
+</form>

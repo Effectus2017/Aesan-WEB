@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -10,7 +10,7 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffList } from 'app/shared/models/Staff';
 import { EMPLOYEES_COLUMNS_SCHEMA } from './employees-columns-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, ListFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -19,8 +19,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({
@@ -41,6 +43,8 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    ListFilterPanelComponent,
+    FuseDrawerComponent,
     TranslocoModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,6 +58,11 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
+
+  /** Filtros aplicados desde el panel (drawer). */
+  appliedFilters: ListFilterResult = {};
+
   headerConfig: GenericHeaderConfig = {
     title: 'staff.employees.list.title',
     formGroup: this._formBuilder.group({
@@ -65,7 +74,9 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
     customButtonIcon: 'mat_outline:add',
     customButtonIconEnabled: true,
     customButtonPermission: 'staff.create',
-    searchInputPlaceholder: 'staff.employees.list.search.placeholder'
+    searchInputPlaceholder: 'staff.employees.list.search.placeholder',
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig = {
@@ -118,15 +129,42 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onSearch(): void {
-    this.getAll(0, this.headerConfig.formGroup.value);
+    this.getAll(0, this._buildFormForRequest());
+  }
+
+  /** Abre o cierra el drawer de filtros. */
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  /** Recibe filtros aplicados desde el panel y recarga la lista. */
+  onFiltersApply(filters: ListFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Restablecer filtros del panel y recargar sin filtros adicionales. */
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Construye el objeto form que usa getAll: búsqueda del header + filtros del panel. */
+  private _buildFormForRequest(): Record<string, unknown> {
+    const header = this.headerConfig.formGroup?.value ?? {};
+    return { ...header, ...this.appliedFilters };
   }
 
   getAll(index: number, form: any): void {
     const queryParams: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index * this.tableConfig.pageSize,
-      name: form.name || null,
-      staffTypeId: 1 // Filtrar solo empleados
+      name: (form.name ?? form.firstName ?? null) || null,
+      staffTypeId: 1, // Filtrar solo empleados
+      ...(form.isActive !== undefined && form.isActive !== null && { isActive: form.isActive }),
     };
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
@@ -162,7 +200,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
       next: (response) => {
         if (response.body) {
           // Recargar la lista después de eliminar
-          this.getAll(0, this.headerConfig.formGroup.value);
+          this.getAll(0, this._buildFormForRequest());
         }
       },
       error: (error) => {
@@ -172,6 +210,6 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onPageChange(event: any): void {
-    this.getAll(event.pageIndex, this.headerConfig.formGroup.value);
+    this.getAll(event.pageIndex, this._buildFormForRequest());
   }
 }

@@ -20,6 +20,7 @@
             "header": {
                 "clear": "Clear form",
                 "search": "Search elements",
+                "filter": "Open filters",
                 "add": "Add new element",
                 "cancel": "Cancel operation",
                 "save": "Save changes",
@@ -39,6 +40,16 @@
         },
         "table": {
             "empty": "No data available"
+        },
+        "listFilters": {
+            "title": "Filters",
+            "apply": "Apply",
+            "reset": "Reset",
+            "from": "From",
+            "to": "To",
+            "all": "All",
+            "yes": "Yes",
+            "no": "No"
         }
     },
     "side-menu": {

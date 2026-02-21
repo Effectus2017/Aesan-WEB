@@ -20,6 +20,7 @@
             "header": {
                 "clear": "Limpiar formulario",
                 "search": "Buscar elementos",
+                "filter": "Abrir filtros",
                 "add": "Agregar nuevo elemento",
                 "cancel": "Cancelar operación",
                 "save": "Guardar cambios",
@@ -39,6 +40,16 @@
         },
         "table": {
             "empty": "No hay datos disponibles"
+        },
+        "listFilters": {
+            "title": "Filtros",
+            "apply": "Aplicar",
+            "reset": "Restablecer",
+            "from": "Desde",
+            "to": "Hasta",
+            "all": "Todos",
+            "yes": "Sí",
+            "no": "No"
         }
     },
     "common": {

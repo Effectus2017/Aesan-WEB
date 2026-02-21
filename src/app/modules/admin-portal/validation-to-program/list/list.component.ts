@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -13,16 +13,16 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { MatInputModule } from '@angular/material/input';
+import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-// Importa el esquema de columnas
 import { COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
+import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-// Datos Dummy
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, ListFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
@@ -48,6 +48,8 @@ import { AuthService } from 'app/core/auth/auth.service';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    ListFilterPanelComponent,
+    FuseDrawerComponent,
     TranslocoModule,
   ],
 })
@@ -61,6 +63,10 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
+
+  appliedFilters: ListFilterResult = {};
+
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.list.title',
@@ -70,6 +76,8 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     searchFieldShow: true,
     searchInputPlaceholder: 'validation-to-program.list.search.placeholder',
     submitButtonText: 'validation-to-program.list.buttons.save',
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   // Configuración de la tabla
@@ -111,9 +119,30 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   onSearch() {
     if (this.headerConfig.formGroup.valid) {
-      //this.getAll(0, this.headerConfig.formGroup.value);
-      //this.headerConfig.clearVisible = true;
+      this.getAll(0, this._buildFormForRequest());
     }
+  }
+
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  onFiltersApply(filters: ListFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
+    this._changeDetectorRef.markForCheck();
+  }
+
+  private _buildFormForRequest(): Record<string, unknown> {
+    const header = this.headerConfig.formGroup?.value ?? {};
+    return { ...header, ...this.appliedFilters };
   }
 
   // Métodos para obtener datos
@@ -121,7 +150,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: form.name || null,
+      name: (form.name ?? null) || null,
       alls: true,
       isList: false,
     };
@@ -130,21 +159,18 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   }
 
   getPaginator(event?: PageEvent) {
-    // Paginado de tabla
-    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
-    this.tableConfig.pageSize = event.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+    const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event?.pageSize ?? this.tableConfig.pageSize;
+    this.getAll(index * this.tableConfig.pageSize, this._buildFormForRequest());
   }
 
   onClean(event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    // quita el botón de limpiar
     this.headerConfig.clearVisible = false;
-    // resetea el formulario
     this.headerConfig.formGroup.reset();
-    // obtiene todos los datos
-    this.getAll(0, this.headerConfig.formGroup.value);
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
   }
 
   onTableEdit(event: Event, id: number) {
