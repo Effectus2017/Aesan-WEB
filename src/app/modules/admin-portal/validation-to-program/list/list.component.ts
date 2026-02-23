@@ -79,7 +79,6 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     searchFieldShow: false,
     searchInputPlaceholder: 'validation-to-program.list.search.placeholder',
     submitButtonText: 'validation-to-program.list.buttons.save',
-    filterButtonShow: true,
     filterButtonTooltip: 'global.tooltips.header.filter',
   };
 

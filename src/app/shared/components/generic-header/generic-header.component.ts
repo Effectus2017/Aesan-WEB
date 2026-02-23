@@ -74,6 +74,18 @@ export class GenericHeaderComponent {
     return this.config?.searchFieldShow === true;
   }
 
+  /**
+   * Indica si debe mostrarse el botón de filtros.
+   * True si config.filterButtonShow es true o si el handler tiene filtersSchema con longitud > 0.
+   */
+  get showFilterButton(): boolean {
+    if (this.config?.filterButtonShow === true) {
+      return true;
+    }
+    const schema = (this.handler as { filtersSchema?: unknown[] })?.filtersSchema;
+    return Array.isArray(schema) && schema.length > 0;
+  }
+
   // Loading config
   @Input() isLoading: boolean = false;
 

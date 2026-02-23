@@ -55,7 +55,7 @@
     </div>
     }
     <!-- Botón Filtros (drawer de filtros para listas) -->
-    @if (config?.filterButtonShow) {
+    @if (showFilterButton) {
     <div [matTooltip]="getButtonTooltip(config.filterButtonTooltip, config.filterButtonDisabledTooltip, config.filterButtonPermission)" [matTooltipDisabled]="!config.filterButtonTooltip && !config.filterButtonDisabledTooltip">
       <button
         type="button"
