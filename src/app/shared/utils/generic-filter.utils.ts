@@ -23,6 +23,15 @@ export function buildRequestParamsFromFiltersSchema<T extends Record<string, unk
   if (!filtersSchema?.length) return result as T;
   for (const f of filtersSchema) {
     const paramKey = getFilterParamKey(f);
+    if (f.type === 'date' || f.type === 'date-time') {
+      const paramKeyFrom = paramKey + 'From';
+      const paramKeyTo = paramKey + 'To';
+      const rawFrom = form[paramKeyFrom];
+      const rawTo = form[paramKeyTo];
+      result[paramKeyFrom] = normalizeDateParam(rawFrom);
+      result[paramKeyTo] = normalizeDateParam(rawTo);
+      continue;
+    }
     const raw = form[paramKey];
     let value: string | number | null =
       raw === undefined || raw === null || raw === ''
@@ -36,6 +45,23 @@ export function buildRequestParamsFromFiltersSchema<T extends Record<string, unk
     result[paramKey] = value;
   }
   return result as T;
+}
+
+function normalizeDateParam(raw: unknown): string | null {
+  if (raw === undefined || raw === null || raw === '') return null;
+  if (raw instanceof Date) {
+    const y = raw.getFullYear();
+    const m = String(raw.getMonth() + 1).padStart(2, '0');
+    const d = String(raw.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  if (typeof raw === 'string') {
+    const trimmed = raw.trim();
+    if (!trimmed) return null;
+    if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) return trimmed.substring(0, 10);
+    return trimmed;
+  }
+  return null;
 }
 
 /** Tipos de columna que no participan en filtros (solo visuales o acciones). */

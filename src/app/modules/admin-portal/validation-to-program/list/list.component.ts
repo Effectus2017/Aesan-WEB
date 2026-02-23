@@ -13,8 +13,8 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { MatInputModule } from '@angular/material/input';
-import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA } from './columns-schema';
 import { VALIDATION_TO_PROGRAM_FILTERS_SCHEMA } from './filters-schema';
@@ -50,8 +50,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
-    GenericFilterPanelComponent,
-    FuseDrawerComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
 })
@@ -65,7 +64,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   // Suscripciones
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
 
   filtersSchema = VALIDATION_TO_PROGRAM_FILTERS_SCHEMA;
   appliedFilters: GenericFilterResult = {};

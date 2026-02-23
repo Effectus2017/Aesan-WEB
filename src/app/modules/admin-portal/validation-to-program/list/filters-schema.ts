@@ -21,4 +21,9 @@ export const VALIDATION_TO_PROGRAM_FILTERS_SCHEMA: FilterSchema[] = [
     type: 'text',
     label: 'validation-to-program.list.table.columns.ssPatronal',
   },
+  {
+    key: 'createdAt',
+    type: 'date',
+    label: 'validation-to-program.list.table.columns.createdAt',
+  },
 ];
