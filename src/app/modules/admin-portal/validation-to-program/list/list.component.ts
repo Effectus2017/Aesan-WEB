@@ -17,12 +17,14 @@ import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA } from './columns-schema';
+import { VALIDATION_TO_PROGRAM_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
+import { GenericFilterPanelComponent } from 'app/shared/components/generic-filter-panel/generic-filter-panel.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, ListFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { Agency } from 'app/shared/models/Agency';
@@ -48,12 +50,12 @@ import { AuthService } from 'app/core/auth/auth.service';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
-    ListFilterPanelComponent,
+    GenericFilterPanelComponent,
     FuseDrawerComponent,
     TranslocoModule,
   ],
 })
-export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   // Inyeccion de servicios
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
@@ -65,7 +67,8 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
 
-  appliedFilters: ListFilterResult = {};
+  filtersSchema = VALIDATION_TO_PROGRAM_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -121,8 +124,10 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   }
 
   onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this._buildFormForRequest());
+    if (this.headerConfig.formGroup?.valid) {
+      const header = this.headerConfig.formGroup?.value ?? {};
+      this.appliedFilters = { ...this.appliedFilters, ...header };
+      this.getAll(0);
     }
   }
 
@@ -130,9 +135,9 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     this.filterDrawer?.toggle();
   }
 
-  onFiltersApply(filters: ListFilterResult): void {
+  onFiltersApply(filters: GenericFilterResult): void {
     this.appliedFilters = { ...filters };
-    this.getAll(0, this._buildFormForRequest());
+    this.getAll(0);
     this._changeDetectorRef.markForCheck();
   }
 
@@ -141,36 +146,28 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
   // -----
   onFiltersReset(): void {
     this.appliedFilters = {};
-    this.getAll(0, this._buildFormForRequest());
+    this.getAll(0);
     this._changeDetectorRef.markForCheck();
   }
 
-  private _buildFormForRequest(): Record<string, unknown> {
-    const header = this.headerConfig.formGroup?.value ?? {};
-    return { ...header, ...this.appliedFilters };
-  }
-
-  // Métodos para obtener datos
-  getAll(index: number, form: any) {
-    const name = form.name || null;
+  // Métodos para obtener datos: solo parámetros base + appliedFilters (emitidos por el panel ya listos para la API).
+  getAll(index: number) {
     const pageSize = this.tableConfig.pageSize;
-
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
-      name: name,
       alls: true,
       isList: false,
       isPropietary: false,
+      ...this.appliedFilters,
     };
-
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();
   }
 
   getPaginator(event?: PageEvent) {
     const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
     this.tableConfig.pageSize = event?.pageSize ?? this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this._buildFormForRequest());
+    this.getAll(index * this.tableConfig.pageSize);
   }
 
   onClean(event: Event) {
@@ -179,7 +176,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
     this.headerConfig.clearVisible = false;
     this.headerConfig.formGroup.reset();
     this.appliedFilters = {};
-    this.getAll(0, this._buildFormForRequest());
+    this.getAll(0);
   }
 
   onTableEdit(event: Event, id: number) {

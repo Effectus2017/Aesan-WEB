@@ -10,7 +10,7 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { StaffList } from 'app/shared/models/Staff';
 import { EMPLOYEES_COLUMNS_SCHEMA } from './employees-columns-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, ListFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,7 +22,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
+import { GenericFilterPanelComponent } from 'app/shared/components/generic-filter-panel/generic-filter-panel.component';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({
@@ -43,7 +43,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
-    ListFilterPanelComponent,
+    GenericFilterPanelComponent,
     FuseDrawerComponent,
     TranslocoModule,
   ],
@@ -61,7 +61,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
 
   /** Filtros aplicados desde el panel (drawer). */
-  appliedFilters: ListFilterResult = {};
+  appliedFilters: GenericFilterResult = {};
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.employees.list.title',
@@ -138,7 +138,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   /** Recibe filtros aplicados desde el panel y recarga la lista. */
-  onFiltersApply(filters: ListFilterResult): void {
+  onFiltersApply(filters: GenericFilterResult): void {
     this.appliedFilters = { ...filters };
     this.filterDrawer?.close();
     this.getAll(0, this._buildFormForRequest());

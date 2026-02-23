@@ -81,7 +81,7 @@ export interface ColumnSchema {
 /**
  * Resultado del panel de filtros: objeto plano que la lista convierte en QueryParameters.
  */
-export type ListFilterResult = Record<string, string | number | boolean | null | undefined>;
+export type GenericFilterResult = Record<string, string | number | boolean | null | undefined>;
 
 export interface GenericTableConfig<T = any> {
   dataSource: MatTableDataSource<T>;

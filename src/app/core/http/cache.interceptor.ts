@@ -23,6 +23,7 @@ const EXCLUDED_ENDPOINTS = [
   '/site/', // sitios (cambian al agregar/editar sitios)
   '/staff/', // personal (cambian al agregar/editar personal)
   '/site-staff/', // personal por sitio (cambian al agregar/editar personal en un sitio)
+  '/get-all-agencies-from-db', // búsqueda/listado de agencias: filtros dinámicos, no cachear
 ];
 
 /**

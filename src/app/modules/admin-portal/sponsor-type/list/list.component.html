@@ -25,13 +25,13 @@
           <mat-icon class="text-current" svgIcon="mat_outline:close"></mat-icon>
         </button>
       </div>
-      <app-list-filter-panel
+      <app-generic-filter-panel
         [columnsSchema]="tableConfig.columnsSchema"
         [initialValues]="appliedFilters"
         (apply)="onFiltersApply($event)"
         (resetFilters)="onFiltersReset()"
         class="flex flex-col flex-1 min-h-0 overflow-hidden">
-      </app-list-filter-panel>
+      </app-generic-filter-panel>
     </div>
   </fuse-drawer>
 </div>

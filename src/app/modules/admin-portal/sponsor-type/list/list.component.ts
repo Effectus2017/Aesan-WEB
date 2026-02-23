@@ -17,10 +17,10 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { SPONSOR_TYPE_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { ListFilterPanelComponent } from 'app/shared/components/list-filter-panel/list-filter-panel.component';
+import { GenericFilterPanelComponent } from 'app/shared/components/generic-filter-panel/generic-filter-panel.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, ListFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -42,7 +42,7 @@ import { AuthService } from 'app/core/auth/auth.service';
         RouterModule,
         GenericTableComponent,
         GenericHeaderComponent,
-        ListFilterPanelComponent,
+        GenericFilterPanelComponent,
         FuseDrawerComponent,
         TranslocoModule,
     ]
@@ -58,7 +58,7 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
 
   @ViewChild('filterDrawer') filterDrawer!: FuseDrawerComponent;
 
-  appliedFilters: ListFilterResult = {};
+  appliedFilters: GenericFilterResult = {};
 
   headerConfig: GenericHeaderConfig = {
     title: 'sponsor-type.list.title',
@@ -114,7 +114,7 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     this.filterDrawer?.toggle();
   }
 
-  onFiltersApply(filters: ListFilterResult): void {
+  onFiltersApply(filters: GenericFilterResult): void {
     this.appliedFilters = { ...filters };
     this.filterDrawer?.close();
     this.getAll(0, this._buildFormForRequest());
