@@ -43,11 +43,11 @@ export const USERS_COLUMNS_SCHEMA: ColumnSchema[] = [
       type: 'boolean',
       label: 'users.list.columns.isActive',
     },
-    {
-      key: 'isTemporalPasswordActived',
-      type: 'boolean',
-      label: 'users.list.columns.isTemporalPasswordActived',
-    },
+    // {
+    //   key: 'isTemporalPasswordActived',
+    //   type: 'boolean',
+    //   label: 'users.list.columns.isTemporalPasswordActived',
+    // },
     // {
     //   key: 'emailConfirmed',
     //   type: 'boolean',
