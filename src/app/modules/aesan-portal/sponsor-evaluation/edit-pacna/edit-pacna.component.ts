@@ -46,7 +46,7 @@ import { SiteEditModalComponent, SiteEditModalData } from '../edit/site-edit-mod
 import { StatusConfigModalComponent } from '../edit/status-config-modal/status-config-modal.component';
 import { AssignedToConfigModalComponent } from '../edit/assigned-to-config-modal/assigned-to-config-modal.component';
 import { AppointmentConfigModalComponent } from '../edit/appointment-config-modal/appointment-config-modal.component';
-import { compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareById, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SITES_COLUMNS_SCHEMA } from '../edit/columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -131,13 +131,15 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
   boardExecutiveAuthorityOptions: OptionSelection[] = [];
 
   param: Agency;
+  currentLang: string = 'es';
 
+  compareById = compareById;
   compareItems = compareItems;
   compareMonitors = compareMonitors;
   comparePostal = comparePostal;
 
   headerConfig: GenericHeaderConfig = {
-    title: 'sponsor-evaluation.edit-pacna.title',
+    title: 'sponsor-evaluation.edit.title',
     formGroup: this._formBuilder.group({
       name: [{ value: null, disabled: true }],
       status: [null, Validators.required],
@@ -182,8 +184,7 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       postalCity: [null, Validators.required],
       postalRegion: [null, Validators.required],
     }),
-    saveButtonText: 'global.buttons.save',
-    saveButtonShow: true,
+    saveButtonShow: false,
     settingsButtonShow: true,
     settingsButtonTooltip: 'sponsor-evaluation.edit.settings.tooltip',
     settingsMenuItems: [
@@ -214,6 +215,11 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
   // -----------------------------------------------------------------------------------------------------
   /** Inicializa el componente, carga datos del resolver y configura validaciones del formulario. */
   ngOnInit(): void {
+    // Transloco
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+    });
+
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
@@ -230,13 +236,12 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
       this.boardExecutiveAuthorityOptions = resolvedData.boardExecutiveAuthorityOptions || [];
 
+      this.currentLang = this._translocoService.getActiveLang();
+
       if (resolvedData.sites) {
         const sitesData = resolvedData.sites?.data ?? [];
-        const sitesWithSchoolName = Array.isArray(sitesData)
-          ? sitesData.map((site: any) => ({ ...site, schoolName: site.school?.name || site.schoolName || '-' }))
-          : sitesData;
-        this.tableConfig.dataSource.data = sitesWithSchoolName;
-        this.tableConfig.length = resolvedData.sites.count || (Array.isArray(sitesData) ? sitesData.length : 0);
+        this.tableConfig.dataSource.data = sitesData;
+        this.tableConfig.length = resolvedData.sites.count || 0;
       }
 
       this.onSetForm(resolvedData.agency);
@@ -277,23 +282,24 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       motherLastName: param.user?.motherLastName || null,
       email: param.email || null,
       phone: param.phone || null,
+      positionId: param.user?.position ?? null,
       appointmentCoordinated: param.appointmentCoordinated,
       appointmentDate: param.appointmentDate,
       rejectionJustification: param.rejectionJustification,
       monitor: param.monitor || null,
-      isDayCareHomeId: inscription?.isDayCareHomeId || null,
-      extendedHours: inscription?.extendedHours || null,
+      isDayCareHomeId: inscription?.isDayCareHome ?? null,
+      extendedHours: inscription?.extendedHours ?? null,
       servicesOfferedSince: inscription?.servicesOfferedSince || null,
       boardMeetingsPerYear: inscription?.boardMeetingsPerYear || null,
-      boardMeetsRegularly: inscription?.boardMeetsRegularly || null,
+      boardMeetsRegularly: inscription?.boardMeetsRegularly ?? null,
       boardExecutiveAuthority: inscription?.boardExecutiveAuthority || [],
-      taxExemptionStatusId: inscription?.taxExemptionStatusId || null,
-      taxExemptionTypeId: inscription?.taxExemptionTypeId || null,
-      typeOfEntityId: inscription?.typeOfEntityId || null,
-      typeOfApplicantId: inscription?.typeOfApplicantId || null,
-      publicAllianceContractId: inscription?.publicAllianceContractId || null,
-      stateFundsDenied: inscription?.stateFundsDenied || null,
-      federalFundsDenied: inscription?.federalFundsDenied || null,
+      taxExemptionStatusId: inscription?.taxExemptionStatus ?? null,
+      taxExemptionTypeId: inscription?.taxExemptionType ?? null,
+      typeOfEntityId: inscription?.typeOfEntity ?? null,
+      typeOfApplicantId: inscription?.typeOfApplicant ?? null,
+      publicAllianceContractId: inscription?.publicAllianceContract ?? null,
+      stateFundsDenied: inscription?.stateFundsDenied ?? null,
+      federalFundsDenied: inscription?.federalFundsDenied ?? null,
       stateFundsDeniedReason: inscription?.stateFundsDeniedReason || null,
       federalFundsDeniedReason: inscription?.federalFundsDeniedReason || null,
       address: param.address || null,
@@ -308,6 +314,8 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       postalCity: param.postalCity || null,
       postalRegion: param.postalRegion || null,
     });
+
+    this.headerConfig.formGroup.disable({ onlySelf: false });
   }
 
   /** Guarda los cambios de la evaluación de la agencia. */
@@ -319,6 +327,7 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     }
 
     const formValues = this.headerConfig.formGroup.getRawValue();
+    
     const agencyRequest: UpdateAgencyInscriptionRequest = {
       agencyId: this.param.id,
       statusId: formValues.status?.id,

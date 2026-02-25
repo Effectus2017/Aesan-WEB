@@ -50,6 +50,7 @@
         "administration": {
             "title": "Administration",
             "agency-status": "Agency Status",
+            "agency-status-history": "Agency Status History",
             "kitchen-types": "Kitchen Types",
             "organization-types": "Organization Types",
             "group-types": "Group Types",
@@ -101,6 +102,7 @@
         "administration": {
             "title": "Administration",
             "agency-status": "Agency Status",
+            "agency-status-history": "Agency Status History",
             "kitchen-types": "Kitchen Types",
             "organization-types": "Organization Types",
             "group-types": "Group Types",

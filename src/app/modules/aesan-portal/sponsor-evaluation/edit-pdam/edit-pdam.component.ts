@@ -143,7 +143,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   comparePostal = comparePostal;
 
   headerConfig: GenericHeaderConfig = {
-    title: 'sponsor-evaluation.edit-pdam.title',
+    title: 'sponsor-evaluation.edit.title',
     formGroup: this._formBuilder.group({
       name: [{ value: null, disabled: true }],
       status: [null, Validators.required],
@@ -185,8 +185,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       postalCity: [null, Validators.required],
       postalRegion: [null, Validators.required],
     }),
-    saveButtonText: 'global.buttons.save',
-    saveButtonShow: true,
+    saveButtonShow: false,
     settingsButtonShow: true,
     settingsButtonTooltip: 'sponsor-evaluation.edit.settings.tooltip',
     settingsMenuItems: [
@@ -244,11 +243,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
 
       if (resolvedData.sites) {
         const sitesData = resolvedData.sites?.data ?? [];
-        const sitesWithSchoolName = Array.isArray(sitesData)
-          ? sitesData.map((site: any) => ({ ...site, schoolName: site.school?.name || site.schoolName || '-' }))
-          : sitesData;
-        this.tableConfig.dataSource.data = sitesWithSchoolName;
-        this.tableConfig.length = resolvedData.sites.count || (Array.isArray(sitesData) ? sitesData.length : 0);
+        this.tableConfig.dataSource.data = sitesData;
+        this.tableConfig.length = resolvedData.sites.count || 0;
       }
 
       this.onSetForm(resolvedData.agency);

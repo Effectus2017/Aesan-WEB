@@ -89,6 +89,8 @@ export const appRoutes: Route[] = [
       { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents-files/documents.routes') },
       // Agency status (Role: Admin)
       { path: 'agency-status', loadChildren: () => import('app/modules/admin-portal/agency-status/agency-status.routes') },
+      // Agency status history (Role: Admin, permiso agencystatushistory.view)
+      { path: 'agency-status-history', loadChildren: () => import('app/modules/admin-portal/agency-status-history/agency-status-history.routes') },
       // Kitchen types (Role: Admin)
       { path: 'kitchen-type', loadChildren: () => import('app/modules/admin-portal/kitchen-type/kitchen-type.routes') },
       // Group types (Role: Admin)

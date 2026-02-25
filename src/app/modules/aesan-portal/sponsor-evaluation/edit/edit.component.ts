@@ -144,6 +144,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   tableConfig: GenericTableConfig = this.sitesTableConfig;
 
   param: Agency;
+  currentLang: string = 'es';
 
   compareItems = compareItems;
   compareMonitors = compareMonitors;
@@ -227,6 +228,11 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   constructor() {}
 
   ngOnInit() {
+    // Transloco
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+    });
+
     // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
 
@@ -245,6 +251,8 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
       this.typeOfApplicantOptions = resolvedData.typeOfApplicantOptions;
       this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
       this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
+
+      this.currentLang = this._translocoService.getActiveLang();
 
       // Configurar tabla de sitios
       if (resolvedData.sites) {

@@ -71,7 +71,7 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
       this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
       this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, excludeAdministrators: true }),
       this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority,administrativePosition' }),
-      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: true })
+      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: false })
     ]).pipe(
       map(([agency, agencyStatuses, cities, regions, programs, users, allOptions, sites]) => {
         // Filtrar las opciones por optionKey como en sign-up

@@ -1,0 +1,25 @@
+{
+  "agency-status-history": {
+    "list": {
+      "title": "Agency Status History",
+      "filters": {
+        "agency": "Agency",
+        "selectAgency": "Select an agency",
+        "from": "From",
+        "to": "To"
+      },
+      "table": {
+        "columns": {
+          "previousStatus": "Previous Status",
+          "status": "Status",
+          "changedAt": "Date Changed",
+          "changedBy": "Changed By",
+          "justification": "Justification"
+        }
+      },
+      "buttons": {
+        "search": "Search"
+      }
+    }
+  }
+}

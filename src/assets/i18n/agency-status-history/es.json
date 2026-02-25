@@ -1,0 +1,25 @@
+{
+  "agency-status-history": {
+    "list": {
+      "title": "Historial de Estados de Agencia",
+      "filters": {
+        "agency": "Agencia",
+        "selectAgency": "Seleccione una agencia",
+        "from": "Desde",
+        "to": "Hasta"
+      },
+      "table": {
+        "columns": {
+          "previousStatus": "Estado Anterior",
+          "status": "Estado",
+          "changedAt": "Fecha de Cambio",
+          "changedBy": "Modificado Por",
+          "justification": "Justificación"
+        }
+      },
+      "buttons": {
+        "search": "Buscar"
+      }
+    }
+  }
+}

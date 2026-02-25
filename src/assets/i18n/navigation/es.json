@@ -50,6 +50,7 @@
         "administration": {
             "title": "Administración",
             "agency-status": "Estados de Agencia",
+            "agency-status-history": "Historial de Estados de Agencia",
             "kitchen-types": "Tipos de Cocina",
             "organization-types": "Tipos de Organización",
             "group-types": "Tipos de Grupo",

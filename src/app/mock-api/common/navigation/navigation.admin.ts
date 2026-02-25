@@ -40,6 +40,13 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/agency-status',
       },
       {
+        id: 'administration.agency-status-history',
+        title: 'navigation.administration.agency-status-history',
+        type: 'basic',
+        icon: 'heroicons_solid:clock',
+        link: '/agency-status-history',
+      },
+      {
         id: 'administration.kitchen-types',
         title: 'navigation.administration.kitchen-types',
         type: 'basic',

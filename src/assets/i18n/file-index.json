@@ -79,6 +79,8 @@
   "./assets/i18n/role-extension/en.json",
   "./assets/i18n/agency-status/es.json",
   "./assets/i18n/agency-status/en.json",
+  "./assets/i18n/agency-status-history/es.json",
+  "./assets/i18n/agency-status-history/en.json",
   "./assets/i18n/email-logs/es.json",
   "./assets/i18n/email-logs/en.json","./assets/i18n/logs/es.json","./assets/i18n/logs/en.json"
 ]
