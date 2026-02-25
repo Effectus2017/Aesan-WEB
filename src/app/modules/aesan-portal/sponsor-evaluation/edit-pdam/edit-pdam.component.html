@@ -12,31 +12,31 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12">
           <mat-form-field class="w-full">
             <mat-label>{{ "sponsor-evaluation.edit.fields.agency.label" | transloco }}</mat-label>
-            <input matInput formControlName="name" [placeholder]="'sponsor-evaluation.edit.fields.agency.placeholder' | transloco" />
+            <input matInput formControlName="name" readonly [placeholder]="'sponsor-evaluation.edit.fields.agency.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.uieNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="uieNumber" [placeholder]="'sponsor-evaluation.edit.fields.uieNumber.placeholder' | transloco" type="number" />
+            <input matInput formControlName="uieNumber" readonly [placeholder]="'sponsor-evaluation.edit.fields.uieNumber.placeholder' | transloco" type="number" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.stateDepartmentRegistration.label" | transloco }}</mat-label>
-            <input matInput formControlName="sdrNumber" [placeholder]="'sponsor-evaluation.edit.fields.stateDepartmentRegistration.placeholder' | transloco" type="text" />
+            <input matInput formControlName="sdrNumber" readonly [placeholder]="'sponsor-evaluation.edit.fields.stateDepartmentRegistration.placeholder' | transloco" type="text" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.einNumber.label" | transloco }}</mat-label>
-            <input matInput formControlName="einNumber" [placeholder]="'sponsor-evaluation.edit.fields.einNumber.placeholder' | transloco" type="text" />
+            <input matInput formControlName="einNumber" readonly [placeholder]="'sponsor-evaluation.edit.fields.einNumber.placeholder' | transloco" type="text" />
           </mat-form-field>
         </div>
 
-        <!-- PDAM: basicEducationRegistry y publicAllianceContract requeridos -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <!-- PDAM: basicEducationRegistry y publicAllianceContract requeridos (2 por fila) -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.basicEducationRegistry.label" | transloco }}</mat-label>
-            <mat-select formControlName="basicEducationRegistry" [compareWith]="compareItems">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            <mat-select formControlName="basicEducationRegistry" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('basicEducationRegistry')?.hasError('required')">
               {{ "sponsor-evaluation.edit.fields.basicEducationRegistry.required" | transloco }}
@@ -44,20 +44,20 @@
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.nonProfit.label" | transloco }}</mat-label>
-            <mat-select formControlName="nonProfit" [compareWith]="compareItems">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            <mat-select formControlName="nonProfit" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionStatus.label" | transloco }}</mat-label>
-            <mat-select formControlName="taxExemptionStatusId" [compareWith]="compareItems">
-              <mat-option *ngFor="let status of exceptionStatusOptions" [value]="status">{{ status.name }}</mat-option>
+            <mat-select formControlName="taxExemptionStatusId" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let status of exceptionStatusOptions" [value]="status">{{ currentLang === "en" ? status.nameEN : status.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionType.label" | transloco }}</mat-label>
-            <mat-select formControlName="taxExemptionTypeId" [compareWith]="compareItems">
-              <mat-option *ngFor="let type of taxExemptionTypeOptions" [value]="type">{{ type.name }}</mat-option>
+            <mat-select formControlName="taxExemptionTypeId" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let type of taxExemptionTypeOptions" [value]="type">{{ currentLang === "en" ? type.nameEN : type.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -65,20 +65,20 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfEntity.label" | transloco }}</mat-label>
-            <mat-select formControlName="typeOfEntityId" [compareWith]="compareItems">
-              <mat-option *ngFor="let entity of typeOfEntityOptions" [value]="entity">{{ entity.name }}</mat-option>
+            <mat-select formControlName="typeOfEntityId" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let entity of typeOfEntityOptions" [value]="entity">{{ currentLang === "en" ? entity.nameEN : entity.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfApplicant.label" | transloco }}</mat-label>
-            <mat-select formControlName="typeOfApplicantId" [compareWith]="compareItems">
-              <mat-option *ngFor="let applicant of typeOfApplicantOptions" [value]="applicant">{{ applicant.name }}</mat-option>
+            <mat-select formControlName="typeOfApplicantId" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let applicant of typeOfApplicantOptions" [value]="applicant">{{ currentLang === "en" ? applicant.nameEN : applicant.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.publicAllianceContract.label" | transloco }}</mat-label>
-            <mat-select formControlName="publicAllianceContractId" [compareWith]="compareItems">
-              <mat-option *ngFor="let contract of publicAllianceContractOptions" [value]="contract">{{ contract.name }}</mat-option>
+            <mat-select formControlName="publicAllianceContractId" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let contract of publicAllianceContractOptions" [value]="contract">{{ currentLang === "en" ? contract.nameEN : contract.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('publicAllianceContractId')?.hasError('required')">
               {{ "sponsor-evaluation.edit.fields.publicAllianceContract.required" | transloco }}
@@ -89,14 +89,14 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDenied.label" | transloco }}</mat-label>
-            <mat-select formControlName="stateFundsDenied" [compareWith]="compareItems">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            <mat-select formControlName="stateFundsDenied" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDenied.label" | transloco }}</mat-label>
-            <mat-select formControlName="federalFundsDenied" [compareWith]="compareItems">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option">{{ option.name }}</mat-option>
+            <mat-select formControlName="federalFundsDenied" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -104,11 +104,11 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDeniedReason.label" | transloco }}</mat-label>
-            <textarea matInput formControlName="stateFundsDeniedReason" [placeholder]="'sponsor-evaluation.edit.fields.stateFundsDeniedReason.placeholder' | transloco" rows="3"></textarea>
+            <textarea matInput formControlName="stateFundsDeniedReason" readonly [placeholder]="'sponsor-evaluation.edit.fields.stateFundsDeniedReason.placeholder' | transloco" rows="3"></textarea>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDeniedReason.label" | transloco }}</mat-label>
-            <textarea matInput formControlName="federalFundsDeniedReason" [placeholder]="'sponsor-evaluation.edit.fields.federalFundsDeniedReason.placeholder' | transloco" rows="3"></textarea>
+            <textarea matInput formControlName="federalFundsDeniedReason" readonly [placeholder]="'sponsor-evaluation.edit.fields.federalFundsDeniedReason.placeholder' | transloco" rows="3"></textarea>
           </mat-form-field>
         </div>
 
@@ -120,17 +120,17 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.address.label" | transloco }}</mat-label>
-            <input matInput formControlName="address" [placeholder]="'sponsor-evaluation.edit.fields.address.placeholder' | transloco" />
+            <input matInput formControlName="address" readonly [placeholder]="'sponsor-evaluation.edit.fields.address.placeholder' | transloco" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [compareWith]="compareById">
+            <mat-select formControlName="city" (valueChange)="getRegionsByCityId($event, 'region')" [disabled]="true" [compareWith]="compareById">
               <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.region.label" | transloco }}</mat-label>
-            <mat-select formControlName="region" [compareWith]="compareById">
+            <mat-select formControlName="region" [compareWith]="compareById" [disabled]="true">
               <mat-option *ngFor="let region of listRegions" [value]="region">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
@@ -139,24 +139,19 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="zipCode" puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="text" inputmode="numeric" />
+            <input matInput formControlName="zipCode" puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="text" inputmode="numeric" readonly />
             <mat-error *ngIf="headerConfig.formGroup.get('zipCode')?.hasError('puertoRicoZipCode')">
               {{ headerConfig.formGroup.get('zipCode')?.errors?.['puertoRicoZipCode']?.message }}
             </mat-error>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.latitude.label" | transloco }}</mat-label>
-            <input matInput formControlName="latitude" latitude [placeholder]="'sponsor-evaluation.edit.fields.latitude.placeholder' | transloco" />
+            <input matInput formControlName="latitude" latitude [placeholder]="'sponsor-evaluation.edit.fields.latitude.placeholder' | transloco" readonly />
           </mat-form-field>
-          <div class="flex gap-2 items-center">
-            <mat-form-field class="flex-grow">
-              <mat-label>{{ "sponsor-evaluation.edit.fields.longitude.label" | transloco }}</mat-label>
-              <input matInput formControlName="longitude" longitude [placeholder]="'sponsor-evaluation.edit.fields.longitude.placeholder' | transloco" />
-            </mat-form-field>
-            <button mat-icon-button type="button" class="mt-2" matTooltipPosition="above" matTooltip="{{ 'sponsor-evaluation.edit.fields.gps-coordinates.tooltip' | transloco }}" (click)="getCurrentLocation()">
-              <mat-icon class="text-hint">language</mat-icon>
-            </button>
-          </div>
+          <mat-form-field>
+            <mat-label>{{ "sponsor-evaluation.edit.fields.longitude.label" | transloco }}</mat-label>
+            <input matInput formControlName="longitude" longitude [placeholder]="'sponsor-evaluation.edit.fields.longitude.placeholder' | transloco" readonly />
+          </mat-form-field>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
@@ -165,29 +160,29 @@
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 -ml-2 sm:grid-cols-4">
-          <mat-checkbox formControlName="sameAsPhysicalAddress" (change)="onCheckboxChange($event)">{{ "sponsor-evaluation.edit.fields.sameAsPhysicalAddress.label" | transloco }}</mat-checkbox>
+          <mat-checkbox formControlName="sameAsPhysicalAddress" [disabled]="true">{{ "sponsor-evaluation.edit.fields.sameAsPhysicalAddress.label" | transloco }}</mat-checkbox>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.postalAddress.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalAddress" [placeholder]="'sponsor-evaluation.edit.fields.postalAddress.placeholder' | transloco" />
+            <input matInput formControlName="postalAddress" readonly [placeholder]="'sponsor-evaluation.edit.fields.postalAddress.placeholder' | transloco" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.city.label" | transloco }}</mat-label>
-            <mat-select formControlName="postalCity" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [compareWith]="compareById">
+            <mat-select formControlName="postalCity" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [disabled]="true" [compareWith]="compareById">
               <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.region.label" | transloco }}</mat-label>
-            <mat-select formControlName="postalRegion" [compareWith]="compareById">
+            <mat-select formControlName="postalRegion" [compareWith]="compareById" [disabled]="true">
               <mat-option *ngFor="let region of listPostalRegions" [value]="region">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
-            <input matInput formControlName="postalZipCode" puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="text" inputmode="numeric" />
+            <input matInput formControlName="postalZipCode" readonly puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="text" inputmode="numeric" />
           </mat-form-field>
         </div>
 
@@ -199,38 +194,35 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.firstName.label" | transloco }}</mat-label>
-            <input matInput formControlName="firstName" [placeholder]="'sponsor-evaluation.edit.fields.firstName.placeholder' | transloco" />
+            <input matInput formControlName="firstName" readonly [placeholder]="'sponsor-evaluation.edit.fields.firstName.placeholder' | transloco" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.middleName.label" | transloco }}</mat-label>
-            <input matInput formControlName="middleName" [placeholder]="'sponsor-evaluation.edit.fields.middleName.placeholder' | transloco" />
+            <input matInput formControlName="middleName" readonly [placeholder]="'sponsor-evaluation.edit.fields.middleName.placeholder' | transloco" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.fatherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="fatherLastName" [placeholder]="'sponsor-evaluation.edit.fields.fatherLastName.placeholder' | transloco" />
+            <input matInput formControlName="fatherLastName" readonly [placeholder]="'sponsor-evaluation.edit.fields.fatherLastName.placeholder' | transloco" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.motherLastName.label" | transloco }}</mat-label>
-            <input matInput formControlName="motherLastName" [placeholder]="'sponsor-evaluation.edit.fields.motherLastName.placeholder' | transloco" />
+            <input matInput formControlName="motherLastName" readonly [placeholder]="'sponsor-evaluation.edit.fields.motherLastName.placeholder' | transloco" />
           </mat-form-field>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.email.label" | transloco }}</mat-label>
-            <input matInput formControlName="email" [placeholder]="'sponsor-evaluation.edit.fields.email.placeholder' | transloco" type="email" />
+            <input matInput formControlName="email" readonly [placeholder]="'sponsor-evaluation.edit.fields.email.placeholder' | transloco" type="email" />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.phone.label" | transloco }}</mat-label>
-            <input matInput formControlName="phone" [placeholder]="'sponsor-evaluation.edit.fields.phone.placeholder' | transloco" phoneFormat />
+            <input matInput formControlName="phone" readonly [placeholder]="'sponsor-evaluation.edit.fields.phone.placeholder' | transloco" phoneFormat />
           </mat-form-field>
-        </div>
-
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.personInCharge.label" | transloco }}</mat-label>
-            <mat-select formControlName="positionId" [compareWith]="compareItems">
-              <mat-option *ngFor="let option of listAdministrativePositions" [value]="option">{{ option.name }}</mat-option>
+            <mat-select formControlName="positionId" [compareWith]="compareItems" [disabled]="true" [compareWith]="compareItems">
+              <mat-option *ngFor="let option of listAdministrativePositions" [value]="option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

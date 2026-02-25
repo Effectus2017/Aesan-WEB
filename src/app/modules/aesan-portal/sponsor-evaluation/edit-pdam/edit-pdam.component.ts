@@ -135,6 +135,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   listAdministrativePositions: OptionSelection[] = [];
 
   param: Agency;
+  currentLang: string = 'es';
 
   compareById = compareById;
   compareItems = compareItems;
@@ -216,11 +217,17 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   // -----------------------------------------------------------------------------------------------------
   /** Inicializa el componente, carga datos del resolver y configura validaciones del formulario. */
   ngOnInit(): void {
+    // Transloco
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
+      this.currentLang = lang;
+    });
+
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
+      this.listPostalRegions = resolvedData.regions;
       this.listPrograms = resolvedData.programs;
       this.listAgencyStatus = resolvedData.agencyStatuses;
       this.listUsers = resolvedData.users;
@@ -232,6 +239,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
       this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
       this.listAdministrativePositions = resolvedData.administrativePositionOptions || [];
+
+      this.currentLang = this._translocoService.getActiveLang();
 
       if (resolvedData.sites) {
         const sitesData = resolvedData.sites?.data ?? [];
@@ -280,32 +289,20 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       motherLastName: param.user?.motherLastName || null,
       email: param.email || null,
       phone: param.phone || null,
-      positionId: this.listAdministrativePositions.find((o) => o.id === param.user?.positionId) ?? null,
+      positionId: param.user?.position ?? null,
       appointmentCoordinated: param.appointmentCoordinated,
       appointmentDate: param.appointmentDate,
       rejectionJustification: param.rejectionJustification,
       monitor: param.monitor || null,
-      basicEducationRegistry: this.yesNoOptions.find((o) => o.booleanValue === inscription?.basicEducationRegistry) ?? null,
-      nonProfit: this.yesNoOptions.find((o) => o.booleanValue === inscription?.nonProfit) ?? null,
-      taxExemptionStatusId:
-        inscription?.taxExemptionStatusId != null
-          ? this.exceptionStatusOptions.find((o) => o.id === inscription.taxExemptionStatusId) ?? null
-          : null,
-      taxExemptionTypeId:
-        inscription?.taxExemptionTypeId != null
-          ? this.taxExemptionTypeOptions.find((o) => o.id === inscription.taxExemptionTypeId) ?? null
-          : null,
-      typeOfEntityId:
-        inscription?.typeOfEntityId != null
-          ? this.typeOfEntityOptions.find((o) => o.id === inscription.typeOfEntityId) ?? null
-          : null,
-      typeOfApplicantId:
-        inscription?.typeOfApplicantId != null
-          ? this.typeOfApplicantOptions.find((o) => o.id === inscription.typeOfApplicantId) ?? null
-          : null,
-      publicAllianceContractId: this.publicAllianceContractOptions.find((o) => o.id === inscription?.publicAllianceContractId) ?? null,
-      stateFundsDenied: this.yesNoOptions.find((o) => o.booleanValue === inscription?.stateFundsDenied) ?? null,
-      federalFundsDenied: this.yesNoOptions.find((o) => o.booleanValue === inscription?.federalFundsDenied) ?? null,
+      basicEducationRegistry: inscription?.basicEducationRegistry ?? null,
+      nonProfit: inscription?.nonProfit ?? null,
+      taxExemptionStatusId: inscription?.taxExemptionStatus ?? null,
+      taxExemptionTypeId: inscription?.taxExemptionType ?? null,
+      typeOfEntityId: inscription?.typeOfEntity ?? null,
+      typeOfApplicantId: inscription?.typeOfApplicant ?? null,
+      publicAllianceContractId: inscription?.publicAllianceContract ?? null,
+      stateFundsDenied: inscription?.stateFundsDenied ?? null,
+      federalFundsDenied: inscription?.federalFundsDenied ?? null,
       stateFundsDeniedReason: inscription?.stateFundsDeniedReason || null,
       federalFundsDeniedReason: inscription?.federalFundsDeniedReason || null,
       address: param.address || null,
@@ -318,20 +315,10 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       postalAddress: param.postalAddress || null,
       postalZipCode: param.postalZipCode ?? null,
       postalCity: param.postalCity || null,
-      postalRegion: null,
+      postalRegion: param.postalRegion || null,
     });
 
-    if (param.postalCity) {
-      this._geoService.getRegionsByCityId({ cityId: param.postalCity.id }).subscribe({
-        next: (response: any) => {
-          if (response?.body?.data) {
-            this.listPostalRegions = response.body.data;
-            this.headerConfig.formGroup.patchValue({ postalRegion: param.postalRegion || null });
-            this._changeDetectorRef.markForCheck();
-          }
-        },
-      });
-    }
+    this.headerConfig.formGroup.disable({ onlySelf: false });
   }
 
   /** Guarda los cambios de la evaluación de la agencia. */
