@@ -61,7 +61,7 @@ export interface Agency {
 }
 
 
-class InscriptionResponse {
+export interface InscriptionResponse {
     appointmentCoordinated?: boolean;
     appointmentDate?: string | null;
     basicEducationRegistry?: boolean | null;
@@ -94,4 +94,9 @@ class InscriptionResponse {
     // Early Head Start, Head Start, N/A
     participatesInHeadStartProgramId?: number | null;
     participatesInHeadStartProgram?: OptionSelection | null;
+    // Campos específicos de PACNA
+    servicesOfferedSince?: string | null;
+    boardMeetingsPerYear?: number | null;
+    boardMeetsRegularly?: boolean | null;
+    boardExecutiveAuthority?: OptionSelection[] | null;
 }

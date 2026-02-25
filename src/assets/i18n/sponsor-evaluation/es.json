@@ -25,6 +25,20 @@
         "save": "Guardar"
       }
     },
+    "programSelector": {
+      "title": "Seleccionar Programa",
+      "label": "Programa",
+      "required": "Debe seleccionar un programa"
+    },
+    "edit-pdam": {
+      "title": "Editar Evaluación PDAM"
+    },
+    "edit-psav": {
+      "title": "Editar Evaluación PSAV"
+    },
+    "edit-pacna": {
+      "title": "Editar Evaluación PACNA"
+    },
     "edit": {
       "title": "Editar Evaluación de Auspiciador",
     "sections": {
@@ -139,7 +153,8 @@
         },
         "basicEducationRegistry": {
           "label": "¿Su entidad posee certificación de Registro de Educación Básica vigente?",
-          "placeholder": "Seleccione si posee certificación de registro de educación básica"
+          "placeholder": "Seleccione si posee certificación de registro de educación básica",
+          "required": "Debe seleccionar si posee certificación de registro de educación básica"
         },
         "taxExemptionStatus": {
           "label": "¿En qué estatus se encuentra su Exención Contributiva?",
@@ -159,7 +174,41 @@
         },
         "publicAllianceContract": {
           "label": "De poseer un contrato Público Alianza, especifique su modalidad",
-          "placeholder": "Seleccione el tipo de contrato público alianza"
+          "placeholder": "Seleccione el tipo de contrato público alianza",
+          "required": "Debe seleccionar el tipo de contrato público alianza"
+        },
+        "participatesInHeadStartProgram": {
+          "label": "¿Su Entidad participa actualmente en alguno de los siguientes programas?",
+          "placeholder": "Seleccione (Early Head Start, Head Start, N/A)",
+          "required": "Debe seleccionar si participa en Head Start"
+        },
+        "isDayCareHome": {
+          "label": "¿Es usted una Entidad Auspiciadora de Hogares?",
+          "placeholder": "Seleccione",
+          "required": "Debe seleccionar"
+        },
+        "extendedHours": {
+          "label": "¿Ofrece servicios de horario extendido?",
+          "placeholder": "Seleccione"
+        },
+        "servicesOfferedSince": {
+          "label": "¿Desde qué fecha ofrece servicios?",
+          "placeholder": "Seleccione fecha"
+        },
+        "boardMeetingsPerYear": {
+          "label": "¿Cuántas reuniones se realizan durante el año?",
+          "placeholder": "Número mayor a 1",
+          "required": "Debe ser mayor a 1"
+        },
+        "boardMeetsRegularly": {
+          "label": "¿La Junta de Directores se reúne regularmente?",
+          "placeholder": "Seleccione",
+          "required": "Debe seleccionar"
+        },
+        "boardExecutiveAuthority": {
+          "label": "¿La Junta tiene autoridad sobre el Director Ejecutivo?",
+          "placeholder": "Seleccione una o más",
+          "required": "Debe seleccionar al menos una"
         },
         "stateFundsDenied": {
           "label": "¿Ha sido denegado o descalificado de fondos estatales en los últimos siete años?",
@@ -230,6 +279,14 @@
         "motherLastName": {
           "label": "Apellido Materno",
           "placeholder": "Apellido materno"
+        },
+        "nonProfit": {
+          "label": "¿Su entidad es una organización sin fines de lucro?",
+          "placeholder": "Seleccione"
+        },
+        "personInCharge": {
+          "label": "Persona a cargo",
+          "placeholder": "Seleccione la persona a cargo"
         },
         "email": {
           "label": "Correo Electrónico",

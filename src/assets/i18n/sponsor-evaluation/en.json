@@ -25,6 +25,20 @@
         "save": "Save"
       }
     },
+    "programSelector": {
+      "title": "Select Program",
+      "label": "Program",
+      "required": "You must select a program"
+    },
+    "edit-pdam": {
+      "title": "Edit PDAM Evaluation"
+    },
+    "edit-psav": {
+      "title": "Edit PSAV Evaluation"
+    },
+    "edit-pacna": {
+      "title": "Edit PACNA Evaluation"
+    },
     "edit": {
       "title": "Edit Sponsor Evaluation",
     "sections": {
@@ -166,7 +180,8 @@
         },
         "basicEducationRegistry": {
           "label": "Basic Education Registry Certification",
-          "placeholder": "Select if you have basic education registry certification"
+          "placeholder": "Select if you have basic education registry certification",
+          "required": "You must select if you have basic education registry certification"
         },
         "taxExemptionStatus": {
           "label": "Tax Exemption Status",
@@ -186,7 +201,41 @@
         },
         "publicAllianceContract": {
           "label": "If you have a Public Alliance contract, please specify the type of contract",
-          "placeholder": "Select public alliance contract type"
+          "placeholder": "Select public alliance contract type",
+          "required": "You must select the public alliance contract type"
+        },
+        "participatesInHeadStartProgram": {
+          "label": "Does your Entity currently participate in any of the following programs?",
+          "placeholder": "Select (Early Head Start, Head Start, N/A)",
+          "required": "You must select if you participate in Head Start"
+        },
+        "isDayCareHome": {
+          "label": "Are you a Sponsor of Day Care Homes?",
+          "placeholder": "Select",
+          "required": "You must select"
+        },
+        "extendedHours": {
+          "label": "Do you offer extended hours services?",
+          "placeholder": "Select"
+        },
+        "servicesOfferedSince": {
+          "label": "Since what date have you offered services?",
+          "placeholder": "Select date"
+        },
+        "boardMeetingsPerYear": {
+          "label": "How many meetings are held per year?",
+          "placeholder": "Number greater than 1",
+          "required": "Must be greater than 1"
+        },
+        "boardMeetsRegularly": {
+          "label": "Does the Board of Directors meet regularly?",
+          "placeholder": "Select",
+          "required": "You must select"
+        },
+        "boardExecutiveAuthority": {
+          "label": "Does the Board have authority over the Executive Director?",
+          "placeholder": "Select one or more",
+          "required": "You must select at least one"
         },
         "stateFundsDenied": {
           "label": "Have you been denied or disqualified from state funds in the last seven years?",
@@ -257,6 +306,14 @@
         "motherLastName": {
           "label": "Second Last Name",
           "placeholder": "Second last name"
+        },
+        "nonProfit": {
+          "label": "Is your entity a non-profit organization?",
+          "placeholder": "Select"
+        },
+        "personInCharge": {
+          "label": "Person in charge",
+          "placeholder": "Select the person in charge"
         },
         "email": {
           "label": "Email",

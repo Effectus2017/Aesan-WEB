@@ -6,6 +6,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialog } from '@angular/material/dialog';
 import { ProgramRequest } from 'app/shared/models/program-request.types';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
 import { Subject, takeUntil } from 'rxjs';
@@ -23,6 +24,9 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { getProgramCodeById } from 'app/shared/const';
+import { Program } from 'app/shared/models/Program';
+import { ProgramSelectorModalComponent } from '../program-selector-modal/program-selector-modal.component';
 
 @Component({
     selector: 'aesan-sponsor-evaluation-list',
@@ -45,6 +49,7 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService: AuthService = inject(AuthService);
   private _route = inject(ActivatedRoute);
+  private _dialog = inject(MatDialog);
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -147,7 +152,36 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this._customRouterService.navigate([`sponsor-evaluation/edit/${id}`]);
+    const data = this.tableConfig.dataSource.data as any[];
+    const row = Array.isArray(data) ? data.find((r: any) => r.id === id) : null;
+    const programs: Program[] = row?.programs ?? [];
+
+    if (programs.length === 0) {
+      this._customRouterService.navigate([`sponsor-evaluation/edit/${id}`]);
+      return;
+    }
+
+    if (programs.length === 1) {
+      this._navigateToProgram(id, programs[0]);
+      return;
+    }
+
+    const dialogRef = this._dialog.open(ProgramSelectorModalComponent, {
+      width: '500px',
+      data: { programs, currentProgram: programs[0] },
+    });
+
+    dialogRef.afterClosed().subscribe((selectedProgram: Program) => {
+      if (selectedProgram) {
+        this._navigateToProgram(id, selectedProgram);
+      }
+    });
+  }
+
+  private _navigateToProgram(agencyId: number, program: Program): void {
+    const programCode = getProgramCodeById(program.id)?.toLowerCase();
+    const route = programCode ? `sponsor-evaluation/edit-${programCode}/${agencyId}` : `sponsor-evaluation/edit/${agencyId}`;
+    this._customRouterService.navigate([route]);
   }
 
   onTableDelete(event: Event, id: number): void {
