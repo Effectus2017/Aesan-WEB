@@ -1,0 +1,45 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'sponsor-evaluation.edit.settings.assignedToModal.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6 bg-gray-50 dark:bg-gray-800">
+      <div class="flex flex-col gap-4">
+        <!-- Campo Asignado a -->
+        <mat-form-field>
+          <mat-label>{{ 'sponsor-evaluation.edit.fields.assigned-to.label' | transloco }}</mat-label>
+          <mat-select formControlName="assignedTo" [compareWith]="compareMonitors">
+            @for (user of listUsers; track user.id) {
+            <mat-option [value]="user">
+              {{ user.firstName + ' ' + user.fatherLastName }}
+            </mat-option>
+            }
+          </mat-select>
+          @if (form.get('assignedTo')?.hasError('required')) {
+          <mat-error>
+            {{ 'sponsor-evaluation.edit.settings.assignedToModal.required' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+      </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid">
+        {{ 'global.buttons.save' | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

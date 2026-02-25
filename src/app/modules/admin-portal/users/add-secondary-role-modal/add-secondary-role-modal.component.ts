@@ -50,7 +50,6 @@ export class AddSecondaryRoleModalComponent {
     this.form = new FormGroup(
       {
         role: new FormControl(edit?.role ?? null, Validators.required),
-        comment: new FormControl(edit?.comment ?? null),
         validFrom: new FormControl(edit?.validFrom ?? null),
         validTo: new FormControl(edit?.validTo ?? null),
       },
@@ -80,7 +79,7 @@ export class AddSecondaryRoleModalComponent {
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones On (componentes genéricos)
   // -----------------------------------------------------------------------------------------------------
-  /** Valida el formulario y cierra el diálogo con el rol, comentario y fechas seleccionados. */
+  /** Valida el formulario y cierra el diálogo con el rol y fechas seleccionados. */
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -91,7 +90,6 @@ export class AddSecondaryRoleModalComponent {
     const role = formValues.role as DTORole;
     if (!role) return;
 
-    const comment: string | null = formValues.comment || null;
     const validFrom: string | null = formValues.validFrom
       ? (typeof formValues.validFrom === 'string' ? formValues.validFrom : (formValues.validFrom as Date).toISOString().slice(0, 10))
       : null;
@@ -99,7 +97,7 @@ export class AddSecondaryRoleModalComponent {
       ? (typeof formValues.validTo === 'string' ? formValues.validTo : (formValues.validTo as Date).toISOString().slice(0, 10))
       : null;
 
-    this.dialogRef.close({ role, comment, validFrom, validTo });
+    this.dialogRef.close({ role, validFrom, validTo });
   }
 
   /** Cierra el modal sin resultado. */

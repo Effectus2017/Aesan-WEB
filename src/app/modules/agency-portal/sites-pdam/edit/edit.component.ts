@@ -1054,9 +1054,6 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       generalEnrollment: param.generalEnrollment,
     });
 
-    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
-    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-
     // Validar horas académicas tras cargar datos (pueden venir fuera del rango de funcionamiento)
     this.validateAcademicTimesWithinOperatingHours();
 
@@ -2225,8 +2222,17 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         const slot = slots.find((s) => s.serviceTypeId === id && s.isOffered);
         booleans[key] = !!slot;
         const s = slot as SiteChildGroupServiceSlotResponse | undefined;
-        const fromVal = s?.from ?? s?.fromTime;
-        const toVal = s?.to ?? s?.toTime;
+        let fromVal = s?.from ?? s?.fromTime;
+        let toVal = s?.to ?? s?.toTime;
+        if ((fromVal == null || toVal == null) && s?.operatingDates?.length) {
+          const firstWithTimes = (s.operatingDates as { from?: string; to?: string; From?: string; To?: string }[]).find(
+            (od) => (od.from ?? od.From) && (od.to ?? od.To)
+          );
+          if (firstWithTimes) {
+            fromVal = fromVal ?? firstWithTimes.from ?? (firstWithTimes as { From?: string }).From;
+            toVal = toVal ?? firstWithTimes.to ?? (firstWithTimes as { To?: string }).To;
+          }
+        }
         if (fromVal != null) {
           fromTo[key + 'From'] = fromVal;
         }

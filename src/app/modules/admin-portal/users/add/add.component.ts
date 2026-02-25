@@ -208,8 +208,8 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     if (resolvedData) {
       this.listRoles = resolvedData.roles?.data ?? [];
-      this.listAgencies = resolvedData.agencies?.data ?? [];
-      this.listPrograms = resolvedData.programs?.data ?? [];
+      this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
+      this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
       this._resolveAesanAgency();
       this._usersService.getAesanRoleNames().pipe(takeUntil(this._unsubscribeAll)).subscribe((names) => {
         this.aesanRoleNames = names ?? [];
@@ -339,19 +339,17 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       });
   }
 
-  /** Crea un FormGroup para una fila de rol secundario (rol, comentario, vigencia desde/hasta) con validador de rango de fechas. */
+  /** Crea un FormGroup para una fila de rol secundario (rol, vigencia desde/hasta) con validador de rango de fechas. */
   createSecondaryRoleGroup(
     role?: DTORole | null,
     validFrom?: string | Date | null,
     validTo?: string | Date | null,
-    comment?: string | null,
   ): FormGroup {
     const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
     const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
     return this._formBuilder.group(
       {
         role: new FormControl(role ?? null),
-        comment: new FormControl(comment ?? null),
         validFrom: new FormControl(fromVal),
         validTo: new FormControl(toVal),
       },
@@ -380,13 +378,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Actualiza la fuente de datos de la tabla de roles secundarios a partir del FormArray del formulario. */
   syncSecondaryRolesTableData(): void {
-    this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => ({
-      id: i,
-      roleName: (g.get('role')?.value as DTORole | null)?.name ?? '',
-      comment: String(g.get('comment')?.value ?? '').trim(),
-      validFrom: formatDateShort(g.get('validFrom')?.value),
-      validTo: formatDateShort(g.get('validTo')?.value),
-    })) as SecondaryRoleTableRow[];
+    this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
+      const role = g.get('role')?.value as DTORole | null;
+      const roleName = role?.displayName ?? role?.name ?? '';
+      return {
+        id: i,
+        roleName,
+        validFrom: formatDateShort(g.get('validFrom')?.value),
+        validTo: formatDateShort(g.get('validTo')?.value),
+      };
+    }) as SecondaryRoleTableRow[];
     this._changeDetectorRef.markForCheck();
   }
 
@@ -417,7 +418,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         });
         dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
           if (result?.role) {
-            this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
+            this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
             this.syncSecondaryRolesTableData();
           }
         });
@@ -478,7 +479,6 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       .map((row: SecondaryRoleFormRow) => {
         const item: SecondaryRoleInput = {
           roleName: row.role!.name ?? '',
-          comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
           validFrom: typeof row.validFrom === 'string' ? row.validFrom : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
           validTo: typeof row.validTo === 'string' ? row.validTo : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
         };

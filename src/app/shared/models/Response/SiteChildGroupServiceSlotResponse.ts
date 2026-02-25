@@ -36,6 +36,8 @@ export interface ServiceSlotOperatingDate {
   isHoliday?: boolean;
   /** True si el día es fin de semana (para mostrar color distinto en la UI). */
   isWeekend?: boolean;
+  /** True si el día fue agregado manualmente (día extra; para mostrar color distinto en la UI). */
+  isManuallyAdded?: boolean;
 }
 
 /** Slot mínimo para lista de serviceSlots en un grupo (sin id, childGroupId, etc.). */

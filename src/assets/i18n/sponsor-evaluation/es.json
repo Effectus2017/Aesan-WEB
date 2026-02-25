@@ -78,6 +78,36 @@
         }
       }
     },
+    "settings": {
+      "tooltip": "Configuración",
+      "menuEditStatus": "Cambiar Estatus",
+      "menuEditAssignedTo": "Cambiar Asignado a",
+      "menuEditAppointment": "Coordinar Cita",
+      "statusModal": {
+        "title": "Seleccionar Estatus",
+        "required": "Debe seleccionar un estatus"
+      },
+      "assignedToModal": {
+        "title": "Seleccionar Asignado a",
+        "required": "Debe seleccionar un usuario"
+      },
+      "appointmentModal": {
+        "title": "Coordinar Cita",
+        "appointmentCoordinated": {
+          "required": "Debe seleccionar si se coordinó la cita"
+        },
+        "appointmentDate": {
+          "required": "Debe seleccionar la fecha de la cita"
+        },
+        "comments": {
+          "label": "Comentarios",
+          "placeholder": "Ingrese comentarios adicionales sobre la cita..."
+        },
+        "relatedSites": {
+          "title": "Sitios Relacionados"
+        }
+      }
+    },
       "fields": {
         "program": {
           "label": "Programa",

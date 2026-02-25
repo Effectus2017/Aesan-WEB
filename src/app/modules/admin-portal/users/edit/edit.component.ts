@@ -170,7 +170,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   };
 
   secondaryRolesTableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<{ id: number; roleName: string; comment: string; validFrom: string; validTo: string }>(),
+    dataSource: new MatTableDataSource<{ id: number; roleName: string; validFrom: string; validTo: string }>(),
     columnsSchema: SECONDARY_ROLES_COLUMNS_SCHEMA,
     displayedColumns: SECONDARY_ROLES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: null as any,
@@ -771,13 +771,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     return userName === email ? null : { emailNotMatch: true };
   }
 
-  /** Crea un FormGroup para una fila de rol secundario (rol, comentario, vigencia desde/hasta) con validador de rango de fechas. */
-  createSecondaryRoleGroup(role?: DTORole | null, validFrom?: string | Date | null, validTo?: string | Date | null, comment?: string | null): FormGroup {
+  /** Crea un FormGroup para una fila de rol secundario (rol, vigencia desde/hasta) con validador de rango de fechas. */
+  createSecondaryRoleGroup(role?: DTORole | null, validFrom?: string | Date | null, validTo?: string | Date | null): FormGroup {
     const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
     const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
     return this._formBuilder.group({
       role: new FormControl(role ?? null),
-      comment: new FormControl(comment ?? null),
       validFrom: new FormControl(fromVal),
       validTo: new FormControl(toVal),
     }, {
@@ -806,13 +805,16 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   /** Actualiza la fuente de datos de la tabla de roles secundarios a partir del FormArray del formulario. */
   syncSecondaryRolesTableData(): void {
-    this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => ({
-      id: i,
-      roleName: (g.get('role')?.value as { id: string; name: string } | null)?.name ?? '',
-      comment: String(g.get('comment')?.value ?? '').trim(),
-      validFrom: formatDateShort(g.get('validFrom')?.value),
-      validTo: formatDateShort(g.get('validTo')?.value),
-    }));
+    this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
+      const role = g.get('role')?.value as DTORole | null;
+      const roleName = role?.displayName ?? role?.name ?? '';
+      return {
+        id: i,
+        roleName,
+        validFrom: formatDateShort(g.get('validFrom')?.value),
+        validTo: formatDateShort(g.get('validTo')?.value),
+      };
+    });
     this._changeDetectorRef.markForCheck();
   }
 
@@ -858,7 +860,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     const secondaryRows = this.getSecondaryRolesFromUser();
     this.secondaryRolesArray.clear();
     secondaryRows.forEach((row) => {
-      this.secondaryRolesArray.push(this.createSecondaryRoleGroup(row.role, row.validFrom, row.validTo, row.comment));
+      this.secondaryRolesArray.push(this.createSecondaryRoleGroup(row.role, row.validFrom, row.validTo));
     });
     this.syncSecondaryRolesTableData();
 
@@ -886,16 +888,17 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     return this.listRoles?.find((r: DTORole) => r.name === first) ?? null;
   }
 
-  /** Convierte los roles secundarios del usuario (user.secondaryRoles) en filas con rol, comentario y fechas. */
+  /** Convierte los roles secundarios del usuario (user.secondaryRoles) en filas con rol y fechas. Si el rol no está en listRoles, usa un stub con roleName para mostrar el nombre. */
   private getSecondaryRolesFromUser(): SecondaryRoleFromUserRow[] {
     const list = this.user?.secondaryRoles ?? [];
     if (!Array.isArray(list) || !list.length) return [];
     return list.map((s: UserSecondaryRoleStub) => {
-      const role = s.roleName ? (this.listRoles?.find((r: DTORole) => r.name === s.roleName) ?? null) : null;
-      const comment = s.comment ?? null;
+      const role = s.roleName
+        ? (this.listRoles?.find((r: DTORole) => r.name === s.roleName) ?? { id: (s as { roleId?: string }).roleId, name: s.roleName, displayName: s.roleName })
+        : null;
       const from = s.validFrom ?? null;
       const to = s.validTo ?? null;
-      return { role, comment, validFrom: from, validTo: to };
+      return { role, validFrom: from, validTo: to };
     });
   }
 
@@ -936,7 +939,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         });
         dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
           if (result?.role) {
-            this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo, result.comment ?? null));
+            this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
             this.syncSecondaryRolesTableData();
             this.saveSecondaryRolesToBackend();
           }
@@ -985,7 +988,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       .filter((row) => row?.role?.name)
       .map((row) => ({
         roleName: row.role!.name ?? '',
-        comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
         validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
         validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
       }))
@@ -1108,7 +1110,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             .filter((s: UserSecondaryRoleStub) => s.roleName && s.validFrom && s.validTo)
             .map((s: SecondaryRoleInput) => ({
               roleName: s.roleName,
-              comment: s.comment != null && String(s.comment).trim() !== '' ? String(s.comment).trim() : undefined,
               validFrom: typeof s.validFrom === 'string' ? s.validFrom.slice(0, 10) : '',
               validTo: typeof s.validTo === 'string' ? s.validTo.slice(0, 10) : '',
             }))
@@ -1126,7 +1127,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         .filter((row) => row?.role?.name)
         .map((row) => ({
           roleName: row.role!.name,
-          comment: row.comment != null && String(row.comment).trim() !== '' ? String(row.comment).trim() : undefined,
           validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
           validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
         }))

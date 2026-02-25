@@ -784,9 +784,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       siteCode: param.siteCode || '',
     });
 
-    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
-    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-
     // Establecer isDayCareHomeId del sitio si existe
     if (param.isDayCareHomeId) {
       this.isDayCareHomeId = param.isDayCareHomeId;

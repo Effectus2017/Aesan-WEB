@@ -87,13 +87,12 @@ export interface UserToken {
     /** Lista de roles disponibles (ya filtrada por el backend sin rol primario ni roles ya asignados) */
     listRoles: DTORole[];
     /** Datos del rol a editar (opcional, solo para modo edición) */
-    editRow?: { role: DTORole | null; comment: string | null; validFrom: string | null; validTo: string | null; index: number };
+    editRow?: { role: DTORole | null; validFrom: string | null; validTo: string | null; index: number };
   }
 
   /** Resultado al cerrar el modal de agregar/editar rol secundario. */
   export interface AddSecondaryRoleModalResult {
     role: DTORole;
-    comment: string | null;
     validFrom: string | null;
     validTo: string | null;
   }
@@ -101,7 +100,6 @@ export interface UserToken {
   /** Fila de rol secundario con role y fechas (retorno de getSecondaryRolesFromUser). */
   export interface SecondaryRoleFromUserRow {
     role: DTORole | null;
-    comment: string | null;
     validFrom: string | null;
     validTo: string | null;
   }
@@ -137,7 +135,6 @@ export interface UserToken {
   export interface SecondaryRoleTableRow {
     id: number;
     roleName: string;
-    comment: string;
     validFrom: string;
     validTo: string;
   }

@@ -176,7 +176,13 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       isPropietary: false,
       ...this.appliedFilters,
     };
-    this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe();
+    this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe((result: any) => {
+      const body = result?.body ?? result;
+      this.tableConfig.dataSource.data = body?.data ?? [];
+      this.tableConfig.length = body?.count ?? 0;
+      this.tableConfig.dataSourceList = body?.data ?? [];
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   /** Maneja el evento de paginación de la tabla. */

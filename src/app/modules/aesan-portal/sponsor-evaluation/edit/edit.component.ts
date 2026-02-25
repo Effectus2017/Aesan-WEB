@@ -47,6 +47,9 @@ import { ProgramService } from 'app/shared/services/program.service';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { SiteEditModalComponent, SiteEditModalData } from './site-edit-modal/site-edit-modal.component';
+import { StatusConfigModalComponent } from './status-config-modal/status-config-modal.component';
+import { AssignedToConfigModalComponent } from './assigned-to-config-modal/assigned-to-config-modal.component';
+import { AppointmentConfigModalComponent } from './appointment-config-modal/appointment-config-modal.component';
 import { compareByProperty, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
@@ -108,6 +111,7 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _route = inject(ActivatedRoute);
   private _siteService = inject(SiteService);
   private _siteStaffService = inject(SiteStaffService);
+  private _agencyStatusService = inject(AgencyStatusService);
 
   listAgencyStatus: AgencyStatus[] = [];
   listPrograms: Program[] = [];
@@ -209,6 +213,13 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
     }),
     saveButtonText: 'global.buttons.save',
     saveButtonShow: true,
+    settingsButtonShow: true,
+    settingsButtonTooltip: 'sponsor-evaluation.edit.settings.tooltip',
+    settingsMenuItems: [
+      { id: 'edit-status', label: 'sponsor-evaluation.edit.settings.menuEditStatus', icon: 'mat_outline:label' },
+      { id: 'edit-assigned-to', label: 'sponsor-evaluation.edit.settings.menuEditAssignedTo', icon: 'mat_outline:person' },
+      { id: 'edit-appointment', label: 'sponsor-evaluation.edit.settings.menuEditAppointment', icon: 'mat_outline:event' },
+    ],
   };
 
   isDarkMode: boolean = false;
@@ -392,6 +403,79 @@ export class EditAesanSponsorEvaluationComponent implements OnInit, OnDestroy, O
         this._customRouterService.navigate([`sponsor-evaluation/list`]);
       },
     });
+  }
+
+  /**
+   * Gestiona las acciones del menú de configuración (tres puntos) del header.
+   */
+  onSettingsMenuAction(menuItemId: string): void {
+    switch (menuItemId) {
+      case 'edit-status': {
+        const currentStatus = this.headerConfig.formGroup.get('status')?.value;
+        const dialogRef = this._dialog.open(StatusConfigModalComponent, {
+          width: '500px',
+          maxHeight: '90vh',
+          data: {
+            statuses: this.listAgencyStatus,
+            currentStatus: currentStatus,
+          },
+        });
+        dialogRef.afterClosed().subscribe((selectedStatus: AgencyStatus | null) => {
+          if (selectedStatus) {
+            this.headerConfig.formGroup.patchValue({ status: selectedStatus });
+            this._changeDetectorRef.markForCheck();
+          }
+        });
+        break;
+      }
+      case 'edit-assigned-to': {
+        const currentMonitor = this.headerConfig.formGroup.get('monitor')?.value;
+        const dialogRef = this._dialog.open(AssignedToConfigModalComponent, {
+          width: '500px',
+          maxHeight: '90vh',
+          data: {
+            users: this.listUsers,
+            currentUser: currentMonitor,
+          },
+        });
+        dialogRef.afterClosed().subscribe((selectedUser: any | null) => {
+          if (selectedUser) {
+            this.headerConfig.formGroup.patchValue({ monitor: selectedUser });
+            this._changeDetectorRef.markForCheck();
+          }
+        });
+        break;
+      }
+      case 'edit-appointment': {
+        const currentAppointmentCoordinated = this.headerConfig.formGroup.get('appointmentCoordinated')?.value;
+        const currentAppointmentDate = this.headerConfig.formGroup.get('appointmentDate')?.value;
+        const currentComments = this.headerConfig.formGroup.get('comments')?.value;
+        const dialogRef = this._dialog.open(AppointmentConfigModalComponent, {
+          width: '600px',
+          maxHeight: '90vh',
+          data: {
+            yesNoOptions: this.yesNoOptions,
+            currentAppointmentCoordinated: currentAppointmentCoordinated,
+            currentAppointmentDate: currentAppointmentDate,
+            currentComments: currentComments,
+            relatedSites: this.sitesTableConfig.dataSource.data,
+          },
+        });
+        dialogRef.afterClosed().subscribe((result: any) => {
+          if (result) {
+            this.headerConfig.formGroup.patchValue({
+              appointmentCoordinated: result.appointmentCoordinated,
+              appointmentDate: result.appointmentDate,
+              comments: result.comments,
+            });
+            this._changeDetectorRef.markForCheck();
+          }
+        });
+        break;
+      }
+      default:
+        break;
+    }
   }
 
   // Método para obtener todas las ciudades según el ID de la región

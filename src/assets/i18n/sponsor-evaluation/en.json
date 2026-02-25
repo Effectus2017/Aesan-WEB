@@ -105,6 +105,36 @@
         }
       }
     },
+    "settings": {
+      "tooltip": "Settings",
+      "menuEditStatus": "Change Status",
+      "menuEditAssignedTo": "Change Assigned To",
+      "menuEditAppointment": "Schedule Appointment",
+      "statusModal": {
+        "title": "Select Status",
+        "required": "You must select a status"
+      },
+      "assignedToModal": {
+        "title": "Select Assigned To",
+        "required": "You must select a user"
+      },
+      "appointmentModal": {
+        "title": "Schedule Appointment",
+        "appointmentCoordinated": {
+          "required": "You must select if the appointment was scheduled"
+        },
+        "appointmentDate": {
+          "required": "You must select the appointment date"
+        },
+        "comments": {
+          "label": "Comments",
+          "placeholder": "Enter additional comments about the appointment..."
+        },
+        "relatedSites": {
+          "title": "Related Sites"
+        }
+      }
+    },
       "fields": {
         "program": {
           "label": "Program",

@@ -1,0 +1,84 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'sponsor-evaluation.edit.settings.appointmentModal.title' | transloco }}</div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6 bg-gray-50 dark:bg-gray-800">
+      <div class="flex flex-col gap-4">
+        <!-- Cita Coordinada -->
+        <mat-form-field>
+          <mat-label>{{ 'sponsor-evaluation.edit.fields.appointmentCoordinated.label' | transloco }}</mat-label>
+          <mat-select formControlName="appointmentCoordinated">
+            @for (option of yesNoOptions; track option.id) {
+            <mat-option [value]="option">
+              {{ option.name }}
+            </mat-option>
+            }
+          </mat-select>
+          @if (form.get('appointmentCoordinated')?.hasError('required')) {
+          <mat-error>
+            {{ 'sponsor-evaluation.edit.settings.appointmentModal.appointmentCoordinated.required' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Fecha de Cita -->
+        <mat-form-field>
+          <mat-label>{{ 'sponsor-evaluation.edit.fields.appointmentDate.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="pickerAppointment" formControlName="appointmentDate" />
+          <mat-hint>{{ 'sponsor-evaluation.edit.fields.appointmentDate.hint' | transloco }}</mat-hint>
+          <mat-datepicker-toggle matSuffix [for]="pickerAppointment"></mat-datepicker-toggle>
+          <mat-datepicker #pickerAppointment></mat-datepicker>
+          @if (form.get('appointmentDate')?.hasError('required')) {
+          <mat-error>
+            {{ 'sponsor-evaluation.edit.settings.appointmentModal.appointmentDate.required' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Comentarios -->
+        <mat-form-field>
+          <mat-label>{{ 'sponsor-evaluation.edit.settings.appointmentModal.comments.label' | transloco }}</mat-label>
+          <textarea matInput formControlName="comments" rows="4" [placeholder]="'sponsor-evaluation.edit.settings.appointmentModal.comments.placeholder' | transloco"></textarea>
+        </mat-form-field>
+
+        <!-- Sitios Relacionados (solo visualización) -->
+        @if (relatedSites && relatedSites.length > 0) {
+        <div class="mt-4">
+          <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+            {{ 'sponsor-evaluation.edit.settings.appointmentModal.relatedSites.title' | transloco }}
+          </p>
+          <div class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+            <ul class="space-y-2">
+              @for (site of relatedSites; track site.id) {
+              <li class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:location_on'"></mat-icon>
+                <span>{{ site.name }} - {{ site.siteCode }}</span>
+              </li>
+              }
+            </ul>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Actions - Fixed footer, outside scroll -->
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <div class="flex gap-2">
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
+      </div>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid">
+        {{ 'global.buttons.save' | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

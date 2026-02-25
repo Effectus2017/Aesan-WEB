@@ -14,6 +14,10 @@
         <span class="inline-flex h-4 w-4 rounded-full bg-[#9c27b0] dark:bg-[#7b1fa2]"></span>
         Feriado
       </span>
+      <span class="flex items-center gap-1.5">
+        <span class="inline-flex h-4 w-4 rounded-full bg-[#009688] dark:bg-[#00796b]"></span>
+        Día extra
+      </span>
     </div>
     <div *ngIf="config.addMenuShow" class="ml-auto" [matTooltip]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)" [matTooltipDisabled]="!getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)">
       <button
@@ -333,7 +337,7 @@
                       <span class="text-lg">🥣</span>
                       <span class="text-sm font-semibold text-blue-800 dark:text-blue-300">Desayuno</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 1)" class="pl-7 mt-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">
+                    <div *ngIf="element.breakfastFrom && element.breakfastTo" class="pl-7 mt-0.5 text-xs font-medium text-blue-600 dark:text-blue-400">
                       {{ timeStringToDateWrapper(element.breakfastFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.breakfastTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 1).length">
@@ -347,7 +351,7 @@
                       <span class="text-lg">🍛</span>
                       <span class="text-sm font-semibold text-orange-800 dark:text-orange-300">Almuerzo</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 2)" class="pl-7 mt-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
+                    <div *ngIf="element.lunchFrom && element.lunchTo" class="pl-7 mt-0.5 text-xs font-medium text-orange-600 dark:text-orange-400">
                       {{ timeStringToDateWrapper(element.lunchFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.lunchTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 2).length">
@@ -361,7 +365,7 @@
                       <span class="text-lg">🍎</span>
                       <span class="text-sm font-semibold text-green-800 dark:text-green-300">Merienda AM</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 3)" class="pl-7 mt-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+                    <div *ngIf="element.snackAMFrom && element.snackAMTo" class="pl-7 mt-0.5 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(element.snackAMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackAMTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 3).length">
@@ -375,7 +379,7 @@
                       <span class="text-lg">🍪</span>
                       <span class="text-sm font-semibold text-green-800 dark:text-green-300">Merienda PM</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 5)" class="pl-7 mt-0.5 text-xs font-medium text-green-600 dark:text-green-400">
+                    <div *ngIf="element.snackPMFrom && element.snackPMTo" class="pl-7 mt-0.5 text-xs font-medium text-green-600 dark:text-green-400">
                       {{ timeStringToDateWrapper(element.snackPMFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackPMTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 5).length">
@@ -389,7 +393,7 @@
                       <span class="text-lg">🌙</span>
                       <span class="text-sm font-semibold text-purple-800 dark:text-purple-300">Cena</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 4)" class="pl-7 mt-0.5 text-xs font-medium text-purple-600 dark:text-purple-400">
+                    <div *ngIf="element.dinnerFrom && element.dinnerTo" class="pl-7 mt-0.5 text-xs font-medium text-purple-600 dark:text-purple-400">
                       {{ timeStringToDateWrapper(element.dinnerFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 4).length">
@@ -403,7 +407,7 @@
                       <span class="text-lg">🥛</span>
                       <span class="text-sm font-semibold text-indigo-800 dark:text-indigo-300">M. Nocturna</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 6)" class="pl-7 mt-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
+                    <div *ngIf="element.snackNightFrom && element.snackNightTo" class="pl-7 mt-0.5 text-xs font-medium text-indigo-600 dark:text-indigo-400">
                       {{ timeStringToDateWrapper(element.snackNightFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackNightTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 6).length">
@@ -417,7 +421,7 @@
                       <span class="text-lg">🕰️</span>
                       <span class="text-sm font-semibold text-pink-800 dark:text-pink-300">Cena Ext.</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 7)" class="pl-7 mt-0.5 text-xs font-medium text-pink-600 dark:text-pink-400">
+                    <div *ngIf="element.dinnerExtendedFrom && element.dinnerExtendedTo" class="pl-7 mt-0.5 text-xs font-medium text-pink-600 dark:text-pink-400">
                       {{ timeStringToDateWrapper(element.dinnerExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerExtendedTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 7).length">
@@ -430,7 +434,7 @@
                       <span class="text-lg">🍝</span>
                       <span class="text-sm font-semibold text-red-800 dark:text-red-300">Cena Riesgo</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 8)" class="pl-7 mt-0.5 text-xs font-medium text-red-600 dark:text-red-400">
+                    <div *ngIf="element.dinnerAtRiskFrom && element.dinnerAtRiskTo" class="pl-7 mt-0.5 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(element.dinnerAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.dinnerAtRiskTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 8).length">
@@ -443,7 +447,7 @@
                       <span class="text-lg">🍪</span>
                       <span class="text-sm font-semibold text-teal-800 dark:text-teal-300">Merienda Ext.</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 9)" class="pl-7 mt-0.5 text-xs font-medium text-teal-600 dark:text-teal-400">
+                    <div *ngIf="element.snackExtendedFrom && element.snackExtendedTo" class="pl-7 mt-0.5 text-xs font-medium text-teal-600 dark:text-teal-400">
                       {{ timeStringToDateWrapper(element.snackExtendedFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackExtendedTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 9).length">
@@ -456,7 +460,7 @@
                       <span class="text-lg">🥪</span>
                       <span class="text-sm font-semibold text-red-800 dark:text-red-300">Merienda Riesgo</span>
                     </div>
-                    <div *ngIf="!hasPerDayTimesThatDiffer(element, 10)" class="pl-7 mt-0.5 text-xs font-medium text-red-600 dark:text-red-400">
+                    <div *ngIf="element.snackAtRiskFrom && element.snackAtRiskTo" class="pl-7 mt-0.5 text-xs font-medium text-red-600 dark:text-red-400">
                       {{ timeStringToDateWrapper(element.snackAtRiskFrom) | date:'shortTime' }} - {{ timeStringToDateWrapper(element.snackAtRiskTo) | date:'shortTime' }}
                     </div>
                     <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, 10).length">
@@ -471,7 +475,7 @@
                         <span class="text-lg">{{ getFallbackSlotStyle(i, slot).icon }}</span>
                         <span class="text-sm font-semibold" [ngClass]="getFallbackSlotStyle(i, slot).text">{{ (slot.label || slot.serviceTypeName) || 'Servicio' }}</span>
                       </div>
-                      <div *ngIf="(slot.from || slot.to) && !hasPerDayTimesThatDiffer(element, slot.serviceTypeId)" class="pl-7 mt-0.5 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i, slot).textMedium">
+                      <div *ngIf="(slot.from || slot.to)" class="pl-7 mt-0.5 text-xs font-medium" [ngClass]="getFallbackSlotStyle(i, slot).textMedium">
                         {{ timeStringToDateWrapper(slot.from) | date:'shortTime' }} - {{ timeStringToDateWrapper(slot.to) | date:'shortTime' }}
                       </div>
                       <div class="pl-7 mt-2" *ngIf="getOperatingDatesForService(element, slot.serviceTypeId).length">

@@ -37,7 +37,7 @@ const DAY_NAME_TO_INDEX: Record<string, number> = {
   sunday: 6,
 };
 
-export type DayType = 'normal' | 'weekend' | 'holiday' | 'inactive';
+export type DayType = 'normal' | 'weekend' | 'holiday' | 'extra' | 'inactive';
 
 /**
  * Indicador visual semanal: 7 círculos con abreviaturas por idioma (ES: L,K,M,J,V,S,D; EN: M,T,W,Th,F,Sa,S).
@@ -92,22 +92,36 @@ export class ServiceDaysIndicatorComponent {
     });
   }
 
-  /** Tipo de día para el círculo: holiday > weekend > normal. */
+  /** Tipo de día para el círculo: holiday > weekend > extra (manual) > normal. */
   getDayType(index: number): DayType {
     if (!this.isActive(index)) return 'inactive';
     const dates = this.getDatesForIndex(index);
     const hasHoliday = dates.some((d) => (d as { isHoliday?: boolean; IsHoliday?: boolean }).isHoliday ?? (d as { isHoliday?: boolean; IsHoliday?: boolean }).IsHoliday);
     const hasWeekend = dates.some((d) => (d as { isWeekend?: boolean; IsWeekend?: boolean }).isWeekend ?? (d as { isWeekend?: boolean; IsWeekend?: boolean }).IsWeekend);
+    const hasManuallyAdded = dates.some((d) => this._isManuallyAdded(d));
     if (hasHoliday) return 'holiday';
     if (hasWeekend) return 'weekend';
+    if (hasManuallyAdded) return 'extra';
     return 'normal';
   }
 
-  /** Colores del calendario: normal=verde, weekend=naranja, holiday=morado. */
+  /** Indica si la fecha de operación corresponde a un día agregado manualmente (API puede enviar boolean o 1/0). */
+  private _isManuallyAdded(d: ServiceSlotOperatingDate): boolean {
+    const v =
+      (d as { isManuallyAdded?: boolean; IsManuallyAdded?: boolean; ismanuallyadded?: boolean }).isManuallyAdded ??
+      (d as { isManuallyAdded?: boolean; IsManuallyAdded?: boolean; ismanuallyadded?: boolean }).IsManuallyAdded ??
+      (d as { isManuallyAdded?: boolean; IsManuallyAdded?: boolean; ismanuallyadded?: boolean }).ismanuallyadded;
+    if (typeof v === 'boolean') return v;
+    if (typeof v === 'number') return v === 1;
+    return false;
+  }
+
+  /** Colores del calendario: normal=verde, weekend=naranja, holiday=morado, extra=teal. */
   private static readonly DAY_TYPE_COLORS = {
     holiday: 'bg-[#9c27b0] text-white dark:bg-[#7b1fa2] dark:text-white',
     weekend: 'bg-[#ff9800] text-white dark:bg-[#f57c00] dark:text-white',
     normal: 'bg-[#4caf50] text-white dark:bg-[#388e3c] dark:text-white',
+    extra: 'bg-[#009688] text-white dark:bg-[#00796b] dark:text-white',
     inactive: 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400',
   } as const;
 

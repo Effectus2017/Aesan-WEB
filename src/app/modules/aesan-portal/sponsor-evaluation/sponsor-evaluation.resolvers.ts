@@ -26,7 +26,7 @@ export const initialAesanSponsorEvaluationResolver = () => {
     cityId: null,
     programId: null,
     statusId: null,
-    isPropietary: null,
+    isPropietary: false,
     userId: userId,
     alls: false,
   };

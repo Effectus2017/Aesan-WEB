@@ -1143,9 +1143,6 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     // Actualizar validaciones de distributionType basado en groupType
     this.updateDistributionTypeValidation();
 
-    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
-    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-
     // Si el groupType es "Comedor", cargar las opciones válidas de kitchenTypes
     // y preservar el kitchenType original del sitio
     if (groupType) {
