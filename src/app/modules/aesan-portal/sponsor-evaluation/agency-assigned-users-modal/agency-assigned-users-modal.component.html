@@ -1,0 +1,38 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <!-- Header - Fixed, outside scroll -->
+  <div class="flex flex-shrink-0 justify-between items-center pr-3 pl-6 h-16 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col">
+      <div class="text-lg font-medium">
+        {{ 'sponsor-evaluation.agencyAssignedUsersModal.title' | transloco }}
+      </div>
+    </div>
+    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content - Scrollable area -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0">
+    <!-- Loading State -->
+    <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+      <mat-icon class="text-4xl text-secondary">people</mat-icon>
+      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+    </div>
+
+    <!-- Tabla de usuarios asignados -->
+    <div *ngIf="!isInitialLoading" class="flex-1 animate-slide-in">
+      <app-generic-table
+        [config]="tableConfig"
+        [handler]="this"
+        [darkMode]="false">
+      </app-generic-table>
+    </div>
+  </div>
+
+  <!-- Actions - Fixed footer, outside scroll -->
+  <div class="flex flex-col flex-shrink-0 justify-end p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
+    <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()" class="sm:ml-auto">
+      {{ 'global.buttons.close' | transloco }}
+    </button>
+  </div>
+</div>

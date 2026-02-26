@@ -10,7 +10,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { Site } from 'app/shared/models/Site';
 
 export interface AppointmentConfigModalData {
   /** Opciones de Sí/No para "Cita Coordinada". */
@@ -21,8 +20,6 @@ export interface AppointmentConfigModalData {
   currentAppointmentDate?: Date | null;
   /** Comentarios actuales (opcional). */
   currentComments?: string | null;
-  /** Lista de sitios relacionados (opcional). */
-  relatedSites?: Site[];
 }
 
 export interface AppointmentConfigModalResult {
@@ -56,7 +53,6 @@ export class AppointmentConfigModalComponent implements OnInit {
 
   form: FormGroup;
   yesNoOptions: OptionSelection[] = [];
-  relatedSites: Site[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<AppointmentConfigModalComponent>,
@@ -77,7 +73,6 @@ export class AppointmentConfigModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.yesNoOptions = this.data.yesNoOptions || [];
-    this.relatedSites = this.data.relatedSites || [];
 
     // Observar cambios en appointmentCoordinated para validar appointmentDate
     this.form.get('appointmentCoordinated')?.valueChanges.subscribe((option: OptionSelection) => {

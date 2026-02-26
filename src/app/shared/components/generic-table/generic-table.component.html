@@ -271,6 +271,23 @@
           </button>
         </div>
         }
+
+        @if (button.key === 'viewAssignedUsers') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || (button.label | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+            (click)="onButtonClick($event, button, element)"
+            [attr.aria-label]="button.label | transloco"
+          >
+            <span class="sr-only">{{ button.label | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:users'" [attr.aria-hidden]="true"></mat-icon>
+          </button>
+        </div>
+        }
         }
       </div>
       } @default {

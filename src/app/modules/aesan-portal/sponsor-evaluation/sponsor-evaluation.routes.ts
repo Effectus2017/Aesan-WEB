@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { AesanSponsorEvaluationComponent } from './sponsor-evaluation.component';
 import { AesanSponsorEvaluationListComponent } from './list/list.component';
 import { initialAesanSponsorEvaluationResolver, editAesanSponsorEvaluationResolver } from './sponsor-evaluation.resolvers';
-import { EditAesanSponsorEvaluationComponent } from './edit/edit.component';
 import { EditPDAMSponsorEvaluationComponent } from './edit-pdam/edit-pdam.component';
 import { EditPSAVSponsorEvaluationComponent } from './edit-psav/edit-psav.component';
 import { EditPACNASponsorEvaluationComponent } from './edit-pacna/edit-pacna.component';
@@ -17,13 +16,6 @@ export default [
         component: AesanSponsorEvaluationListComponent,
         resolve: {
           data: initialAesanSponsorEvaluationResolver,
-        },
-      },
-      {
-        path: 'edit/:id',
-        component: EditAesanSponsorEvaluationComponent,
-        resolve: {
-          data: editAesanSponsorEvaluationResolver,
         },
       },
       {

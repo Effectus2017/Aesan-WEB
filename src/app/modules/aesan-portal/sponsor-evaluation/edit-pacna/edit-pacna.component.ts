@@ -42,12 +42,12 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
-import { SiteEditModalComponent, SiteEditModalData } from '../edit/site-edit-modal/site-edit-modal.component';
-import { StatusConfigModalComponent } from '../edit/status-config-modal/status-config-modal.component';
-import { AssignedToConfigModalComponent } from '../edit/assigned-to-config-modal/assigned-to-config-modal.component';
-import { AppointmentConfigModalComponent } from '../edit/appointment-config-modal/appointment-config-modal.component';
+import { SiteEditModalComponent, SiteEditModalData } from '../site-edit-modal/site-edit-modal.component';
+import { StatusConfigModalComponent } from '../status-config-modal/status-config-modal.component';
+import { AssignedToConfigModalComponent } from '../assigned-to-config-modal/assigned-to-config-modal.component';
+import { AppointmentConfigModalComponent } from '../appointment-config-modal/appointment-config-modal.component';
 import { compareById, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { SITES_COLUMNS_SCHEMA } from '../edit/columns-schema';
+import { PACNA_SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
@@ -196,8 +196,8 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: SITES_COLUMNS_SCHEMA,
-    displayedColumns: SITES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: PACNA_SITES_COLUMNS_SCHEMA,
+    displayedColumns: PACNA_SITES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSizeOptions: [25, 50, 100],
@@ -327,7 +327,7 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     }
 
     const formValues = this.headerConfig.formGroup.getRawValue();
-    
+
     const agencyRequest: UpdateAgencyInscriptionRequest = {
       agencyId: this.param.id,
       statusId: formValues.status?.id,
@@ -353,11 +353,12 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
   onSettingsMenuAction(menuItemId: string): void {
     switch (menuItemId) {
       case 'edit-status': {
-        const currentStatus = this.headerConfig.formGroup.get('status')?.value;
+        const formValues = this.headerConfig.formGroup.getRawValue();
+        const currentStatus = formValues.status;
         const dialogRef = this._dialog.open(StatusConfigModalComponent, {
           width: '500px',
           maxHeight: '90vh',
-          data: { statuses: this.listAgencyStatus, currentStatus },
+          data: { statuses: this.listAgencyStatus, currentStatus, agencyId: this.param.id },
         });
         dialogRef.afterClosed().subscribe((selectedStatus: AgencyStatus | null) => {
           if (selectedStatus) {
@@ -391,7 +392,6 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
             currentAppointmentCoordinated: this.headerConfig.formGroup.get('appointmentCoordinated')?.value,
             currentAppointmentDate: this.headerConfig.formGroup.get('appointmentDate')?.value,
             currentComments: this.headerConfig.formGroup.get('comments')?.value,
-            relatedSites: this.tableConfig.dataSource.data,
           },
         });
         dialogRef.afterClosed().subscribe((result: any) => {
@@ -540,7 +540,7 @@ export class EditPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       next: (response: any) => {
         const staffList = response?.body?.data || response?.body;
         if (staffList != null) {
-          import('../edit/staff-by-site-modal/staff-by-site-modal.component').then((module) => {
+          import('../staff-by-site-modal/staff-by-site-modal.component').then((module) => {
             this._dialog.open(module.StaffBySiteModalComponent, {
               width: '90vw',
               maxWidth: '1200px',

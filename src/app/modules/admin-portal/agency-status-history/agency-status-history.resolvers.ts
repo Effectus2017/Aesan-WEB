@@ -1,17 +1,23 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
-import { AgencyService } from 'app/shared/services/agency.service';
-import { forkJoin, map } from 'rxjs';
+import { map } from 'rxjs';
+import { AgencyStatusHistoryService } from 'app/shared/services/agency-status-history.service';
+import { QueryParameters } from 'app/shared/models/QueryParameters';
 
+/**
+ * Resolver para obtener los datos iniciales del listado de historial de estados.
+ */
 export const initialDataAgencyStatusHistoryListResolver: ResolveFn<any> = () => {
-  const agencyService = inject(AgencyService);
-  return forkJoin([
-    agencyService.getAllAgenciesFromDb({ take: 10000, skip: 0, alls: true, isList: true, isPropietary: false }),
-  ]).pipe(
-    map(([agenciesRes]) => {
-      const res = agenciesRes as { data?: unknown[]; count?: number };
-      const agencies = res?.data ?? [];
-      return { agencies };
-    })
+  const agencyStatusHistoryService = inject(AgencyStatusHistoryService);
+
+  const requestParameters: QueryParameters = {
+    take: 25,
+    skip: 0,
+  };
+
+  return agencyStatusHistoryService.getAgencyStatusHistory(requestParameters).pipe(
+    map((response) => ({
+      history: response,
+    }))
   );
 };

@@ -18,12 +18,22 @@
           "actions": "Actions"
         },
         "buttons": {
-          "edit": "Edit"
+          "edit": "Edit",
+          "viewAssignedUsers": "Assigned users"
         }
       },
       "buttons": {
         "save": "Save"
       }
+    },
+    "agencyAssignedUsersModal": {
+      "title": "AESAN users assigned to agency",
+      "loading": "Loading...",
+      "empty": "No users assigned to this agency.",
+      "agencyLabel": "Agency",
+      "columnName": "Name",
+      "columnEmail": "Email",
+      "columnRole": "Role"
     },
     "programSelector": {
       "title": "Select Program",
@@ -345,7 +355,8 @@
         "noProgramsAssigned": "This agency does not have programs assigned that match the user.",
         "invalidForm": "The form is invalid. Please complete all required fields.",
         "success": "Evaluation saved successfully",
-        "error": "Error saving evaluation"
+        "error": "Error saving evaluation",
+        "statusUpdated": "Status has been updated successfully."
       }
     }
   }

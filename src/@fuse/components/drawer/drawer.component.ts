@@ -1,6 +1,6 @@
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
 import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, HostBinding, HostListener, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { FuseDrawerService } from '@fuse/components/drawer/drawer.service';
 import { FuseDrawerMode, FuseDrawerPosition } from '@fuse/components/drawer/drawer.types';
 import { FuseUtilsService } from '@fuse/services/utils/utils.service';
@@ -43,6 +43,7 @@ export class FuseDrawerComponent implements OnChanges, OnInit, OnDestroy
      */
     constructor(
         private _animationBuilder: AnimationBuilder,
+        private _changeDetectorRef: ChangeDetectorRef,
         private _elementRef: ElementRef,
         private _renderer2: Renderer2,
         private _fuseDrawerService: FuseDrawerService,
@@ -404,6 +405,10 @@ export class FuseDrawerComponent implements OnChanges, OnInit, OnDestroy
     {
         // Set the opened
         this.opened = open;
+
+        // Forzar detección de cambios: el overlay se añade con Renderer2 fuera del árbol de vistas,
+        // así que un clic en el overlay no dispara CD y el panel no se actualizaba.
+        this._changeDetectorRef.detectChanges();
 
         // Enable the animations
         this._enableAnimations();

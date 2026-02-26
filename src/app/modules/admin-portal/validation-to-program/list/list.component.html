@@ -13,6 +13,8 @@
     [filtersSchema]="filtersSchema"
     [handler]="this"
     [initialValues]="appliedFilters"
-    drawerName="validationToProgramListFilterDrawer">
+    drawerName="validationToProgramListFilterDrawer"
+    (apply)="onFiltersApply($event)"
+    (resetFilters)="onFiltersReset()">
   </app-generic-filter-drawer>
 </div>

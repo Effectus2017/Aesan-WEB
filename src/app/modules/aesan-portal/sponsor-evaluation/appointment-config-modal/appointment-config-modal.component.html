@@ -47,25 +47,6 @@
           <mat-label>{{ 'sponsor-evaluation.edit.settings.appointmentModal.comments.label' | transloco }}</mat-label>
           <textarea matInput formControlName="comments" rows="4" [placeholder]="'sponsor-evaluation.edit.settings.appointmentModal.comments.placeholder' | transloco"></textarea>
         </mat-form-field>
-
-        <!-- Sitios Relacionados (solo visualización) -->
-        @if (relatedSites && relatedSites.length > 0) {
-        <div class="mt-4">
-          <p class="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-            {{ 'sponsor-evaluation.edit.settings.appointmentModal.relatedSites.title' | transloco }}
-          </p>
-          <div class="p-3 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-            <ul class="space-y-2">
-              @for (site of relatedSites; track site.id) {
-              <li class="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <mat-icon class="icon-size-4" [svgIcon]="'mat_outline:location_on'"></mat-icon>
-                <span>{{ site.name }} - {{ site.siteCode }}</span>
-              </li>
-              }
-            </ul>
-          </div>
-        </div>
-        }
       </div>
     </div>
 

@@ -27,6 +27,10 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { getProgramCodeById } from 'app/shared/const';
 import { Program } from 'app/shared/models/Program';
 import { ProgramSelectorModalComponent } from '../program-selector-modal/program-selector-modal.component';
+import {
+  AgencyAssignedUsersModalComponent,
+  AgencyAssignedUsersModalData
+} from '../agency-assigned-users-modal/agency-assigned-users-modal.component';
 
 @Component({
     selector: 'aesan-sponsor-evaluation-list',
@@ -187,5 +191,25 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   onTableDelete(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
+  }
+
+  /** Abre el modal de usuarios asignados a la agencia cuando se pulsa el botón viewAssignedUsers. */
+  onTableAction(event: Event, action: string, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    if (action !== 'viewAssignedUsers') {
+      return;
+    }
+    const data = this.tableConfig.dataSource.data as { id?: number; name?: string }[];
+    const row = Array.isArray(data) ? data.find((r) => r.id === id) : null;
+    const agencyName = row?.name ?? '';
+    const modalData: AgencyAssignedUsersModalData = {
+      agencyId: id,
+      agencyName,
+    };
+    this._dialog.open(AgencyAssignedUsersModalComponent, {
+      width: '600px',
+      data: modalData,
+    });
   }
 }

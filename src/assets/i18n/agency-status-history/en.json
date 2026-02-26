@@ -2,6 +2,9 @@
   "agency-status-history": {
     "list": {
       "title": "Agency Status History",
+      "search": {
+        "placeholder": "Search by agency..."
+      },
       "filters": {
         "agency": "Agency",
         "selectAgency": "Select an agency",
@@ -10,6 +13,7 @@
       },
       "table": {
         "columns": {
+          "auspiciador": "Sponsor",
           "previousStatus": "Previous Status",
           "status": "Status",
           "changedAt": "Date Changed",
@@ -18,7 +22,8 @@
         }
       },
       "buttons": {
-        "search": "Search"
+        "search": "Search",
+        "save": "Save"
       }
     }
   }

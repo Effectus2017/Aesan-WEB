@@ -40,8 +40,8 @@ export class AesanDashboardListComponent implements OnInit, OnDestroy, OnGeneric
     lastUpdated: new Date().toISOString()
   };
 
-  // Datos del dashboard
-  evaluatorName = 'Evaluadora Name'; // Obtener del servicio de auth
+  // Datos del dashboard (nombre desde token en ngOnInit)
+  evaluatorName = '';
 
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
@@ -52,6 +52,22 @@ export class AesanDashboardListComponent implements OnInit, OnDestroy, OnGeneric
   constructor() {}
 
   ngOnInit() {
+    // Obtener nombre del usuario desde el token
+    const userData = this._authService.getUserDataFromToken();
+    if (userData) {
+      const nameParts: string[] = [];
+      if (userData.name) {
+        nameParts.push(userData.name);
+      }
+      if (userData.lastName) {
+        nameParts.push(userData.lastName);
+      }
+      this.evaluatorName = nameParts.length > 0 ? nameParts.join(' ') : 'Evaluadora';
+    } else {
+      this.evaluatorName = 'Evaluadora';
+    }
+    this.headerConfig.agency = this.evaluatorName;
+
     // Obtener datos del resolver
     const resolvedData = this._route.snapshot.data['data'];
 

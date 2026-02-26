@@ -6,15 +6,19 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
-import { TranslocoModule } from '@ngneat/transloco';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyStatus } from 'app/shared/models/AgencyStatus';
 import { compareItems } from 'app/shared/utils';
+import { AgencyService } from 'app/shared/services/agency.service';
+import { NotificationService } from 'app/shared/services/notification.service';
 
 export interface StatusConfigModalData {
   /** Lista de estatus disponibles. */
   statuses: AgencyStatus[];
   /** Estatus seleccionado actualmente (opcional). */
   currentStatus?: AgencyStatus | null;
+  /** ID de la agencia. */
+  agencyId: number;
 }
 
 @Component({
@@ -37,23 +41,34 @@ export interface StatusConfigModalData {
 export class StatusConfigModalComponent implements OnInit {
   private _cdr = inject(ChangeDetectorRef);
   private _fb = inject(FormBuilder);
+  private _agencyService = inject(AgencyService);
+  private _notificationService = inject(NotificationService);
+  private _translocoService = inject(TranslocoService);
 
   form: FormGroup;
   listStatuses: AgencyStatus[] = [];
   compareItems = compareItems;
+  isLoading = false;
 
   constructor(
     public dialogRef: MatDialogRef<StatusConfigModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StatusConfigModalData
   ) {
-    // Crear el formulario reactivo
     this.form = this._fb.group({
-      status: [this.data.currentStatus, Validators.required]
+      status: [null, Validators.required]
     });
   }
 
   ngOnInit(): void {
     this.listStatuses = this.data.statuses || [];
+    
+    if (this.data.currentStatus) {
+      const currentStatus = this.listStatuses.find(s => s.id === this.data.currentStatus?.id);
+      if (currentStatus) {
+        this.form.patchValue({ status: currentStatus });
+      }
+    }
+    
     this._cdr.markForCheck();
   }
 
@@ -68,7 +83,32 @@ export class StatusConfigModalComponent implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
     const selectedStatus = this.form.get('status')?.value;
-    this.dialogRef.close(selectedStatus);
+
+    if (!selectedStatus || selectedStatus.id === this.data.currentStatus?.id) {
+      this.dialogRef.close(null);
+      return;
+    }
+
+    this.isLoading = true;
+    this._agencyService.updateAgencyStatus({ agencyId: this.data.agencyId, statusId: selectedStatus.id }).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this._notificationService.showSuccessDialog(
+          this._translocoService.translate('sponsor-evaluation.edit.messages.statusUpdated')
+        );
+        this.dialogRef.close(selectedStatus);
+        this._cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this._notificationService.showErrorDialog(
+          this._translocoService.translate('sponsor-evaluation.edit.messages.statusUpdateError')
+        );
+        console.error('Error al actualizar el estatus:', error);
+        this._cdr.markForCheck();
+      }
+    });
   }
 }

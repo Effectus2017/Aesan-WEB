@@ -68,6 +68,15 @@ export class AgencyService {
   }
 
   /**
+   * Obtiene la lista de usuarios AESAN asignados a una agencia.
+   * @param queryParameters Los parámetros de consulta
+   * @returns Objeto con data (lista) y count
+   */
+  getAssignedUsers(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-assigned-users`, getHttpOptions(queryParameters));
+  }
+
+  /**
    * Obtiene todas las agencias de la base de datos
    * @param queryParameters Los parámetros de consulta
    * @returns Las agencias

@@ -2,7 +2,7 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 import { FilterSchema } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 
 /** Keys que se envían como número en la request; si el valor no es válido se envía null. */
-const NUMERIC_FILTER_KEYS = new Set(['uieNumber', 'sdrNumber', 'einNumber']);
+const NUMERIC_FILTER_KEYS = new Set(['uieNumber', 'sdrNumber', 'einNumber', 'agencyId']);
 
 /**
  * Construye los requestParameters para un GET de lista que usa filtersSchema.

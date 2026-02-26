@@ -1,40 +1,18 @@
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
-  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
-
-  <div class="p-4 sm:p-6 border-b">
-    <form [formGroup]="filterForm" class="flex flex-wrap items-end gap-4">
-      <mat-form-field appearance="outline" class="w-full sm:w-64">
-        <mat-label>{{ 'agency-status-history.list.filters.agency' | transloco }}</mat-label>
-        <mat-select formControlName="agencyId" [compareWith]="compareById">
-          <mat-option [value]="null">{{ 'agency-status-history.list.filters.selectAgency' | transloco }}</mat-option>
-          @for (a of agencies; track a.id) {
-            <mat-option [value]="a.id">{{ a.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-full sm:w-40">
-        <mat-label>{{ 'agency-status-history.list.filters.from' | transloco }}</mat-label>
-        <input matInput type="date" formControlName="createdAtFrom" />
-      </mat-form-field>
-      <mat-form-field appearance="outline" class="w-full sm:w-40">
-        <mat-label>{{ 'agency-status-history.list.filters.to' | transloco }}</mat-label>
-        <input matInput type="date" formControlName="createdAtTo" />
-      </mat-form-field>
-      <button mat-flat-button color="primary" type="button" (click)="onSearch()">
-        {{ 'agency-status-history.list.buttons.search' | transloco }}
-      </button>
-    </form>
-  </div>
-
+  <!-- Header con título y botones -->
+  <app-generic-header [config]="headerConfig" [handler]="this" [searchFieldShow]="false"></app-generic-header>
+  <!-- Main -->
   <div class="flex-auto overflow-y-auto" cdkScrollable>
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
-  <mat-paginator
-    class="hidden sm:block"
-    [pageSizeOptions]="tableConfig.pageSizeOptions"
-    [pageSize]="tableConfig.pageSize"
-    [length]="tableConfig.length"
-    (page)="getPaginator($event)"
-    showFirstLastButtons
-  ></mat-paginator>
+  <!-- Paginador -->
+  <mat-paginator class="hidden sm:block" [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
+
+  <app-generic-filter-drawer
+    #filterDrawer
+    [filtersSchema]="filtersSchema"
+    [handler]="this"
+    [initialValues]="appliedFilters"
+    drawerName="agencyStatusHistoryListFilterDrawer">
+  </app-generic-filter-drawer>
 </div>

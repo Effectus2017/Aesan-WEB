@@ -18,12 +18,22 @@
           "actions": "Acciones"
         },
         "buttons": {
-          "edit": "Editar"
+          "edit": "Editar",
+          "viewAssignedUsers": "Usuarios asignados"
         }
       },
       "buttons": {
         "save": "Guardar"
       }
+    },
+    "agencyAssignedUsersModal": {
+      "title": "Usuarios AESAN asignados a la agencia",
+      "loading": "Cargando...",
+      "empty": "No hay usuarios asignados a esta agencia.",
+      "agencyLabel": "Agencia",
+      "columnName": "Nombre",
+      "columnEmail": "Correo electrónico",
+      "columnRole": "Rol"
     },
     "programSelector": {
       "title": "Seleccionar Programa",
@@ -318,7 +328,8 @@
         "noProgramsAssigned": "Esta agencia no tiene programas asignados que coincidan con el usuario.",
         "invalidForm": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
         "success": "Evaluación guardada exitosamente",
-        "error": "Error al guardar la evaluación"
+        "error": "Error al guardar la evaluación",
+        "statusUpdated": "El estatus se ha actualizado correctamente."
       }
     }
   }

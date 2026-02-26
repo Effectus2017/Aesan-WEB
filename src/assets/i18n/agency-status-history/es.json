@@ -2,6 +2,9 @@
   "agency-status-history": {
     "list": {
       "title": "Historial de Estados de Agencia",
+      "search": {
+        "placeholder": "Buscar por agencia..."
+      },
       "filters": {
         "agency": "Agencia",
         "selectAgency": "Seleccione una agencia",
@@ -10,6 +13,7 @@
       },
       "table": {
         "columns": {
+          "auspiciador": "Auspiciador",
           "previousStatus": "Estado Anterior",
           "status": "Estado",
           "changedAt": "Fecha de Cambio",
@@ -18,7 +22,8 @@
         }
       },
       "buttons": {
-        "search": "Buscar"
+        "search": "Buscar",
+        "save": "Guardar"
       }
     }
   }

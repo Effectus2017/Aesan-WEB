@@ -46,6 +46,11 @@ export const SPONSOR_EVALUATION_COLUMNS_SCHEMA: ColumnSchema[] = [
         key: 'edit',
         label: 'sponsor-evaluation.list.table.buttons.edit'
       },
+      {
+        key: 'viewAssignedUsers',
+        label: 'sponsor-evaluation.list.table.buttons.viewAssignedUsers',
+        icon: 'heroicons_outline:users'
+      }
     ]
   }
 ];

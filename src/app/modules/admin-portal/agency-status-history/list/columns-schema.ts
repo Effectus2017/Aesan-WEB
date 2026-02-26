@@ -2,9 +2,9 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
 
 export const AGENCY_STATUS_HISTORY_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
-    key: 'previousStatusName',
+    key: 'agencyName',
     type: 'text',
-    label: 'agency-status-history.list.table.columns.previousStatus',
+    label: 'agency-status-history.list.table.columns.auspiciador',
   },
   {
     key: 'statusName',
