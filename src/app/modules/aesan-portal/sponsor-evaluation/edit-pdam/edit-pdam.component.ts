@@ -192,6 +192,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       { id: 'edit-status', label: 'sponsor-evaluation.edit.settings.menuEditStatus', icon: 'mat_outline:label' },
       { id: 'edit-assigned-to', label: 'sponsor-evaluation.edit.settings.menuEditAssignedTo', icon: 'mat_outline:person' },
       { id: 'edit-appointment', label: 'sponsor-evaluation.edit.settings.menuEditAppointment', icon: 'mat_outline:event' },
+      { id: 'go-to-calendar', label: 'sponsor-evaluation.settings.goToCalendar', icon: 'mat_outline:calendar_today' },
     ],
   };
 
@@ -402,6 +403,10 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
             this._changeDetectorRef.markForCheck();
           }
         });
+        break;
+      }
+      case 'go-to-calendar': {
+        this._customRouterService.navigate([`sponsor-evaluation/calendar/${this.param.id}`]);
         break;
       }
       default:

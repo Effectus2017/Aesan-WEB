@@ -39,6 +39,10 @@ export default [
           data: editAesanSponsorEvaluationResolver,
         },
       },
+      {
+        path: 'calendar/:id',
+        loadComponent: () => import('../calendar/agency-calendar/agency-calendar.component').then(m => m.AgencyCalendarComponent),
+      },
     ],
   },
 ] as Routes;

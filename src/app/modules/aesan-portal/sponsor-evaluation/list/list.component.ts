@@ -193,6 +193,12 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
     event.preventDefault();
   }
 
+  onTableCalendar(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this._customRouterService.navigate([`sponsor-evaluation/calendar/${id}`]);
+  }
+
   /** Abre el modal de usuarios asignados a la agencia cuando se pulsa el botón viewAssignedUsers. */
   onTableAction(event: Event, action: string, id: number): void {
     event.stopPropagation();

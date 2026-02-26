@@ -19,7 +19,9 @@
         },
         "buttons": {
           "edit": "Editar",
-          "viewAssignedUsers": "Usuarios asignados"
+          "viewAssignedUsers": "Usuarios asignados",
+          "viewCalendar": "Ver calendario",
+          "viewCalendarTooltip": "Ver calendario de citas"
         }
       },
       "buttons": {
@@ -51,87 +53,88 @@
     },
     "edit": {
       "title": "Evaluación de Auspiciador",
-    "sections": {
-      "sponsorInformation": "Información del Auspiciador",
-      "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
-      "address": "Dirección",
-      "addressDescription": "Información de ubicación de la agencia",
-      "postalAddress": "Dirección Postal",
-      "postalAddressDescription": "Información de la dirección postal",
-      "userInformation": "Información del Usuario",
-      "userInformationDescription": "Datos de contacto del responsable"
-    },
-    "sites": {
-      "title": "Sitios Relacionados",
-      "description": "Lista de sitios asociados a esta agencia",
-      "table": {
-        "columns": {
-          "name": "Nombre",
-          "address": "Dirección",
-          "city": "Ciudad",
-          "region": "Región",
-          "siteCode": "Código de Sitio",
-          "generalEnrollment": "Matrícula General",
-          "isActive": "Activo",
-          "schoolName": "Escuela",
-          "actions": "Acciones"
+      "sections": {
+        "sponsorInformation": "Información del Auspiciador",
+        "sponsorInformationDescription": "Datos básicos de la agencia auspiciadora",
+        "address": "Dirección",
+        "addressDescription": "Información de ubicación de la agencia",
+        "postalAddress": "Dirección Postal",
+        "postalAddressDescription": "Información de la dirección postal",
+        "userInformation": "Información del Usuario",
+        "userInformationDescription": "Datos de contacto del responsable"
+      },
+      "sites": {
+        "title": "Sitios Relacionados",
+        "description": "Lista de sitios asociados a esta agencia",
+        "table": {
+          "columns": {
+            "name": "Nombre",
+            "address": "Dirección",
+            "city": "Ciudad",
+            "region": "Región",
+            "siteCode": "Código de Sitio",
+            "generalEnrollment": "Matrícula General",
+            "isActive": "Activo",
+            "schoolName": "Escuela",
+            "actions": "Acciones"
+          },
+          "buttons": {
+            "view": "Ver",
+            "edit": "Editar",
+            "viewStaff": "Ver Personal"
+          }
         },
-        "buttons": {
-          "view": "Ver",
-          "edit": "Editar",
-          "viewStaff": "Ver Personal"
+        "modal": {
+          "edit": {
+            "title": "Editar Sitio"
+          }
         }
       },
-      "modal": {
-        "edit": {
-          "title": "Editar Sitio"
-        }
-      }
-    },
-    "staffBySite": {
-      "modal": {
-        "title": "Personal Relacionado al Sitio"
-      },
-      "table": {
-        "columns": {
-          "fullName": "Nombre Completo",
-          "email": "Correo Electrónico",
-          "assignmentDate": "Fecha de Asignación",
-          "isPrimary": "Principal",
-          "isActive": "Activo"
-        }
-      }
-    },
-    "settings": {
-      "tooltip": "Configuración",
-      "menuEditStatus": "Cambiar Estatus",
-      "menuEditAssignedTo": "Cambiar Asignado a",
-      "menuEditAppointment": "Coordinar Cita",
-      "statusModal": {
-        "title": "Seleccionar Estatus",
-        "required": "Debe seleccionar un estatus"
-      },
-      "assignedToModal": {
-        "title": "Seleccionar Asignado a",
-        "required": "Debe seleccionar un usuario"
-      },
-      "appointmentModal": {
-        "title": "Coordinar Cita",
-        "appointmentCoordinated": {
-          "required": "Debe seleccionar si se coordinó la cita"
+      "staffBySite": {
+        "modal": {
+          "title": "Personal Relacionado al Sitio"
         },
-        "appointmentDate": {
-          "required": "Debe seleccionar la fecha de la cita"
-        },
-        "comments": {
-          "label": "Comentarios",
-          "placeholder": "Ingrese comentarios adicionales sobre la cita..."
-        },
-        "relatedSites": {
-          "title": "Sitios Relacionados"
+        "table": {
+          "columns": {
+            "fullName": "Nombre Completo",
+            "email": "Correo Electrónico",
+            "assignmentDate": "Fecha de Asignación",
+            "isPrimary": "Principal",
+            "isActive": "Activo"
+          }
         }
-      }
-    },
+      },
+      "settings": {
+        "tooltip": "Configuración",
+        "menuEditStatus": "Cambiar Estatus",
+        "menuEditAssignedTo": "Cambiar Asignado a",
+        "menuEditAppointment": "Coordinar Cita",
+        "goToCalendar": "Ir al calendario",
+        "statusModal": {
+          "title": "Seleccionar Estatus",
+          "required": "Debe seleccionar un estatus"
+        },
+        "assignedToModal": {
+          "title": "Seleccionar Asignado a",
+          "required": "Debe seleccionar un usuario"
+        },
+        "appointmentModal": {
+          "title": "Coordinar Cita",
+          "appointmentCoordinated": {
+            "required": "Debe seleccionar si se coordinó la cita"
+          },
+          "appointmentDate": {
+            "required": "Debe seleccionar la fecha de la cita"
+          },
+          "comments": {
+            "label": "Comentarios",
+            "placeholder": "Ingrese comentarios adicionales sobre la cita..."
+          },
+          "relatedSites": {
+            "title": "Sitios Relacionados"
+          }
+        }
+      },
       "fields": {
         "program": {
           "label": "Programa",
