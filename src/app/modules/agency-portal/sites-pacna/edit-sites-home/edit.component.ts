@@ -396,8 +396,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       },
       {
         id: 'calendar',
-        label: 'sites.edit.settings.calendar',
+        label: 'global.menu.calendar',
         icon: 'heroicons_outline:calendar',
+        iconColor: 'text-blue-500',
       },
     ],
     // Submit button

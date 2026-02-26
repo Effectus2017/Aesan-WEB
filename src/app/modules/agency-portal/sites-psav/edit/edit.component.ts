@@ -424,8 +424,9 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       },
       {
         id: 'calendar',
-        label: 'sites.edit.settings.calendar',
+        label: 'global.menu.calendar',
         icon: 'heroicons_outline:calendar',
+        iconColor: 'text-blue-500',
       },
     ],
     // Submit button

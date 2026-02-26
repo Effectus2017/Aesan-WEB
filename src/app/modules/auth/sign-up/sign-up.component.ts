@@ -107,15 +107,12 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   signUpForm: UntypedFormGroup;
   showAlert: boolean = false;
 
-  private _authService = inject(AuthService);
   private _formBuilder = inject(UntypedFormBuilder);
   private _customRouterService = inject(CustomRouterService);
   private _geoService = inject(GeoService);
   private _userService = inject(UserService);
-  private _programService = inject(ProgramService);
   private _dialog = inject(MatDialog);
   private _snackBar = inject(MatSnackBar);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _route = inject(ActivatedRoute);
@@ -347,14 +344,14 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      // Asignar ciudades
-      this.listCities = resolvedData.cities?.data ?? [];
+      // Asignar ciudades (getCitiesFromDb con isList: true devuelve array en body)
+      this.listCities = resolvedData.cities ?? [];
 
-      // Asignar programas
-      this.listPrograms = resolvedData.programs?.data ?? [];
+      // Asignar programas (getAllProgramsFromDb con isList: true devuelve array en body)
+      this.listPrograms = resolvedData.programs ?? [];
 
-      // Asignar opciones
-      const allOptions = [...resolvedData.options1.data, ...resolvedData.options2.data];
+      // Asignar opciones (getOptionSelectionByOptionKey devuelve { data, count } en body)
+      const allOptions = [...(resolvedData.options1?.data ?? []), ...(resolvedData.options2?.data ?? [])];
 
       // Yes No Options (1, 2)
       this.yesNoOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'yesNo');
@@ -654,7 +651,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       next: (response: HttpResponse<any>) => {
         this.listCities = response.body;
       },
-      error: (error) => {},
+      error: () => {},
       complete: () => {},
     });
   }
@@ -807,7 +804,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const typeOfApplicantId = formValues.typeOfApplicantId == null ? 0 : formValues.typeOfApplicantId;
     const publicAllianceContractId = formValues.publicAllianceContractId == null ? null : formValues.publicAllianceContractId;
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
-    const nationalYouthProgram = false; // Siempre false ya que el campo está oculto
     const isDayCareHomeId = formValues.isDayCareHomeId == null ? null : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
     const participatesInHeadStartProgramId =
       formValues.participatesInHeadStartProgramId == null ? null : formValues.participatesInHeadStartProgramId?.id || formValues.participatesInHeadStartProgramId;
@@ -1039,11 +1035,6 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     this._changeDetectorRef.markForCheck();
   }
 
-  // Actualiza validaciones y visibilidad (lógica) de exención contributiva para PACNA
-  // Mantener este método para compatibilidad con cambios en nonProfit
-  private updateTaxExemptionValidatorsForPacna(): void {
-    this.updateTaxExemptionValidators();
-  }
 
   // Indica si se deben mostrar los campos de exención contributiva en el template
   shouldShowTaxExemption(): boolean {

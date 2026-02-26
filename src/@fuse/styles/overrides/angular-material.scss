@@ -353,7 +353,39 @@
 
     /* Disabled */
     &.mat-form-field-disabled {
-        opacity: 0.7 !important;
+        opacity: 1 !important;
+
+        .mat-mdc-input-element:disabled,
+        .mat-mdc-select-disabled .mat-mdc-select-value {
+            color: rgba(0, 0, 0, 0.5) !important;
+            -webkit-text-fill-color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .mat-mdc-floating-label {
+            color: rgba(0, 0, 0, 0.5) !important;
+            -webkit-text-fill-color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .mat-mdc-select-arrow {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .dark & {
+            .mat-mdc-input-element:disabled,
+            .mat-mdc-select-disabled .mat-mdc-select-value {
+                color: rgba(255, 255, 255, 0.5) !important;
+                -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+            }
+
+            .mat-mdc-floating-label {
+                color: rgba(255, 255, 255, 0.5) !important;
+                -webkit-text-fill-color: rgba(255, 255, 255, 0.5) !important;
+            }
+
+            .mat-mdc-select-arrow {
+                color: rgba(255, 255, 255, 0.5) !important;
+            }
+        }
     }
 
     /* Invalid */

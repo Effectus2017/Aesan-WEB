@@ -19,7 +19,11 @@
         },
         "buttons": {
           "edit": "Edit",
-          "viewAssignedUsers": "Assigned users"
+          "editTooltip": "Open evaluation in new window",
+          "viewAssignedUsers": "Assigned users",
+          "viewAssignedUsersTooltip": "View users assigned to the agency",
+          "viewCalendar": "View calendar",
+          "viewCalendarTooltip": "View appointment calendar"
         }
       },
       "buttons": {
@@ -173,8 +177,8 @@
           "placeholder": "Select the assigned user"
         },
         "agency": {
-          "label": "Agency",
-          "placeholder": "Agency name"
+          "label": "Name",
+          "placeholder": "Name"
         },
         "uieNumber": {
           "label": "Unique Entity Identifier (UEI)",

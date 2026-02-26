@@ -19,7 +19,9 @@
         },
         "buttons": {
           "edit": "Editar",
+          "editTooltip": "Abrir evaluación en nueva ventana",
           "viewAssignedUsers": "Usuarios asignados",
+          "viewAssignedUsersTooltip": "Ver usuarios asignados a la agencia",
           "viewCalendar": "Ver calendario",
           "viewCalendarTooltip": "Ver calendario de citas"
         }
@@ -109,7 +111,6 @@
         "menuEditStatus": "Cambiar Estatus",
         "menuEditAssignedTo": "Cambiar Asignado a",
         "menuEditAppointment": "Coordinar Cita",
-        "goToCalendar": "Ir al calendario",
         "statusModal": {
           "title": "Seleccionar Estatus",
           "required": "Debe seleccionar un estatus"
@@ -149,8 +150,8 @@
           "placeholder": "Seleccione el usuario asignado"
         },
         "agency": {
-          "label": "Agencia",
-          "placeholder": "Nombre de la agencia"
+          "label": "Nombre",
+          "placeholder": "Nombre"
         },
         "uieNumber": {
           "label": "Identificador Único de Entidad (IUE)",

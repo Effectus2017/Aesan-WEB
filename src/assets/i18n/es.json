@@ -1,5 +1,8 @@
 {
     "global": {
+        "menu": {
+            "calendar": "Calendario"
+        },
         "buttons": {
             "close": "Cerrar",
             "save": "Guardar",

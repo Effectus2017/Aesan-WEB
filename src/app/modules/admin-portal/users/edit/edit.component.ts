@@ -134,16 +134,19 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         id: 'force-password',
         label: 'users.edit.buttons.force-password',
         icon: 'heroicons_solid:lock-closed',
+        iconColor: 'text-warn',
       },
       {
         id: 'update-password',
         label: 'users.edit.buttons.update-password',
         icon: 'heroicons_solid:key',
+        iconColor: 'text-primary',
       },
       {
         id: 'add-secondary-role',
         label: 'users.edit.secondaryRoles.add',
         icon: 'heroicons_solid:user-plus',
+        iconColor: 'text-primary',
       },
     ],
   };
@@ -243,9 +246,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.userRole = this._authService.getUserRole();
     const isAdmin = isAdminRole(this.userRole);
     this.headerConfig.settingsMenuItems = [
-      { id: 'force-password', label: 'users.edit.buttons.force-password', icon: 'heroicons_solid:lock-closed' },
-      { id: 'update-password', label: 'users.edit.buttons.update-password', icon: 'heroicons_solid:key' },
-      ...(isAdmin ? [{ id: 'add-secondary-role', label: 'users.edit.secondaryRoles.add', icon: 'heroicons_solid:user-plus' }] : []),
+      { id: 'force-password', label: 'users.edit.buttons.force-password', icon: 'heroicons_solid:lock-closed', iconColor: 'text-warn' },
+      { id: 'update-password', label: 'users.edit.buttons.update-password', icon: 'heroicons_solid:key', iconColor: 'text-primary' },
+      ...(isAdmin ? [{ id: 'add-secondary-role', label: 'users.edit.secondaryRoles.add', icon: 'heroicons_solid:user-plus', iconColor: 'text-primary' }] : []),
     ];
 
     // Obtener datos del resolver en lugar de suscribirse

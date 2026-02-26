@@ -224,7 +224,7 @@
           [disabled]="item.disabled"
           (click)="onSettingsMenuAction(item.id)">
           @if (item.icon) {
-          <mat-icon [svgIcon]="item.icon" [class]="item.iconColor || ''"></mat-icon>
+          <mat-icon class="mr-2" [svgIcon]="item.icon" [class]="item.iconColor || ''"></mat-icon>
           }
           <span>{{ item.label | transloco }}</span>
         </button>
