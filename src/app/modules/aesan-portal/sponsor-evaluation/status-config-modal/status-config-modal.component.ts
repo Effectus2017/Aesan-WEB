@@ -7,16 +7,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
 import { compareItems } from 'app/shared/utils';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 
 export interface StatusConfigModalData {
   /** Lista de estatus disponibles. */
-  statuses: AgencyStatus[];
+  statuses: AgencyStatusResponse[];
   /** Estatus seleccionado actualmente (opcional). */
-  currentStatus?: AgencyStatus | null;
+  currentStatus?: AgencyStatusResponse | null;
   /** ID de la agencia. */
   agencyId: number;
 }
@@ -46,7 +46,7 @@ export class StatusConfigModalComponent implements OnInit {
   private _translocoService = inject(TranslocoService);
 
   form: FormGroup;
-  listStatuses: AgencyStatus[] = [];
+  listStatuses: AgencyStatusResponse[] = [];
   compareItems = compareItems;
   isLoading = false;
 

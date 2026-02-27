@@ -65,7 +65,7 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
     })
   ]).pipe(
     map(([agency, agencyStatuses, cities, regions, programs, users, options]) => ({
-      agency: agency.body,
+      agency: agency,
       agencyStatuses: agencyStatuses.body,
       cities: cities.body,
       regions: regions.body,

@@ -26,7 +26,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 
 // DESCRICION DEL COMPONENTE
@@ -90,7 +90,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<Agency>(),
+    dataSource: new MatTableDataSource<AgencyResponse>(),
     dataSourceList: [],
     columnsSchema: VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA,
     displayedColumns: VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),

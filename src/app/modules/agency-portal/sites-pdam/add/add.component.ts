@@ -23,7 +23,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { merge, Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import {
@@ -433,7 +433,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Agencia Id
   agencyId: number = 0;
-  agency: Agency = null;
+  agency: AgencyResponse | null = null;
 
   // Propiedades para controlar visibilidad según programa
   isPDAM: boolean = true;

@@ -8,12 +8,14 @@ import { Token, TokenResponse } from '../../shared/models/user.types';
 import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
 import { SignUpRequest } from 'app/shared/models/Request/SignUpRequest';
 import { UnlockSessionRequest } from 'app/shared/models/Request/UnlockSessionRequest';
+import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private _authenticated: boolean = false;
   private _httpClient = inject(HttpClient);
   private _userService = inject(UserService);
+  private _agencyStatusStorageService = inject(AgencyStatusStorageService);
   private apiUrl = `${environment.baseHttpUrl}/auth`;
   private _permissions: string[] = [];
 
@@ -164,6 +166,7 @@ export class AuthService {
     // Remove agency-related data from local storage
     localStorage.removeItem('agencyPrograms');
     localStorage.removeItem('agencyIsDayCareHomeId');
+    this._agencyStatusStorageService.clearAgencyRestrictedStatus();
 
     // Set the authenticated flag to false
     this._authenticated = false;

@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AgencyStatusRequest } from 'app/shared/models/Request/AgencyStatusRequest';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -48,7 +48,7 @@ export class AddAgencyStatusComponent implements OnInit, OnGenericHeaderHandlers
   private _route = inject(ActivatedRoute);
 
   currentLang: string;
-  agencyStatuses: AgencyStatus[] = [];
+  agencyStatuses: AgencyStatusResponse[] = [];
   positionOptions: { label: string; value: number }[] = [];
   listIsActive: OptionSelection[] = [];
 

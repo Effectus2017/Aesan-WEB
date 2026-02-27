@@ -79,7 +79,7 @@ import { PermissionRequestFormDialogComponent } from '../../../../shared/compone
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
@@ -629,7 +629,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
   // Agencia Id
   // Agency ID
   agencyId: number = 0;
-  agency: Agency = null;
+  agency: AgencyResponse | null = null;
 
   // Sitio Id
   // Site ID

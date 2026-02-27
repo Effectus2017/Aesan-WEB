@@ -29,14 +29,6 @@
               <mat-option *ngFor="let status of listAgencyStatus" [value]="status">{{ status.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-
-          <!-- Users Monitor *  -->
-          <mat-form-field data-cy="monitor-field">
-            <mat-label>{{ "validation-to-program.edit.monitor.label" | transloco }}</mat-label>
-            <mat-select formControlName="monitor" [compareWith]="compareMonitors" data-cy="monitor-select">
-              <mat-option *ngFor="let monitor of listUsers" [value]="monitor">{{ monitor.firstName + " " + monitor.fatherLastName }}</mat-option>
-            </mat-select>
-          </mat-form-field>
         </div>
 
         <!-- Agency Information -->

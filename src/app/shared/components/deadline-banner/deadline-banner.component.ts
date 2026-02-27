@@ -9,7 +9,7 @@ import { BehaviorSubject, Observable, Subject, takeUntil, filter } from 'rxjs';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';

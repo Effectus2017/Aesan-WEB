@@ -23,7 +23,7 @@ export const initialDataFormsPdamSolicitudResolver: ResolveFn<any> = (route: Act
 
   return forkJoin([agencyService.getAgencyById(requestParameters)]).pipe(
     map(([agency]) => ({
-      agency: agency.body,
+      agency,
     }))
   );
 };

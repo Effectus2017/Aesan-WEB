@@ -19,7 +19,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericAddComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
@@ -264,7 +264,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     },
   ];
 
-  param: Agency;
+  param: AgencyResponse;
 
   temporarySchools: any[] = [];
   temporaryIncomeSources: any[] = [];
@@ -370,7 +370,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
     this._unsubscribeAll.complete();
   }
 
-  onSetForm(param: Agency) {
+  onSetForm(param: AgencyResponse) {
     console.log(param);
     this.param = param;
     this.headerConfig.formGroup.patchValue({

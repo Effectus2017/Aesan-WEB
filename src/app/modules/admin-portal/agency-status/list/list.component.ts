@@ -21,7 +21,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
@@ -65,7 +65,7 @@ export class AgencyStatusListComponent implements OnInit, OnDestroy, OnGenericTa
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<AgencyStatus>(),
+    dataSource: new MatTableDataSource<AgencyStatusResponse>(),
     dataSourceList: [],
     columnsSchema: AGENCY_STATUS_COLUMNS_SCHEMA,
     displayedColumns: AGENCY_STATUS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),

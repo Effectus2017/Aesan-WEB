@@ -4,15 +4,15 @@ import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
-import { AgencyStatus } from '../models/AgencyStatus';
+import { AgencyStatusResponse } from '../models/Response/AgencyStatusResponse';
 import { AgencyStatusRequest } from '../models/Request/AgencyStatusRequest';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AgencyStatusService {
-  private _agencyStatuses: BehaviorSubject<AgencyStatus[] | null> = new BehaviorSubject(null);
-  private _agencyStatus: BehaviorSubject<AgencyStatus | null> = new BehaviorSubject(null);
+  private _agencyStatuses: BehaviorSubject<AgencyStatusResponse[] | null> = new BehaviorSubject(null);
+  private _agencyStatus: BehaviorSubject<AgencyStatusResponse | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/agency-status`;
   private _httpClient = inject(HttpClient);
@@ -23,7 +23,7 @@ export class AgencyStatusService {
    * Obtiene todos los estados de agencia
    * @returns Los estados de agencia
    */
-  get agencyStatuses$(): Observable<AgencyStatus[] | null> {
+  get agencyStatuses$(): Observable<AgencyStatusResponse[] | null> {
     return this._agencyStatuses.asObservable();
   }
 
@@ -31,7 +31,7 @@ export class AgencyStatusService {
    * Obtiene un estado de agencia
    * @returns El estado de agencia
    */
-  get agencyStatus$(): Observable<AgencyStatus | null> {
+  get agencyStatus$(): Observable<AgencyStatusResponse | null> {
     return this._agencyStatus.asObservable();
   }
 
@@ -62,7 +62,7 @@ export class AgencyStatusService {
    * @param queryParameters Los parámetros de consulta
    * @returns El estado de agencia insertado
    */
-  insertAgencyStatus(agencyStatus: AgencyStatus | AgencyStatusRequest, queryParameters: QueryParameters): Observable<any> {
+  insertAgencyStatus(agencyStatus: AgencyStatusResponse | AgencyStatusRequest, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-agency-status`, agencyStatus, getHttpOptions(queryParameters));
   }
 
@@ -72,7 +72,7 @@ export class AgencyStatusService {
    * @param queryParameters Los parámetros de consulta
    * @returns El estado de agencia actualizado
    */
-  updateAgencyStatus(agencyStatus: AgencyStatus, queryParameters: QueryParameters): Observable<any> {
+  updateAgencyStatus(agencyStatus: AgencyStatusResponse, queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.put(`${this.apiUrl}/update-agency-status`, agencyStatus, getHttpOptions(queryParameters));
   }
 

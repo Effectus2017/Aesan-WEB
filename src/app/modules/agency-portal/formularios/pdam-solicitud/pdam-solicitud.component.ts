@@ -18,7 +18,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { GeoService } from 'app/shared/services/geo.service';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
@@ -120,7 +120,7 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
     { id: 2, name: 'Renovación' }
   ];
 
-  param: Agency;
+  param: AgencyResponse;
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
@@ -211,11 +211,11 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
     this._unsubscribeAll.complete();
   }
 
-  onSetForm(param: Agency) {
+  onSetForm(param: AgencyResponse) {
     this.param = param;
     this.sponsorName = param.name;
     this.representativeName = param.user?.firstName + ' ' + param.user?.fatherLastName;
-    this.programPersons = param.monitor?.firstName + ' ' + param.monitor?.fatherLastName;
+    this.programPersons = param.user ? `${param.user.firstName ?? ''} ${param.user.fatherLastName ?? ''}`.trim() || '' : '';
     this.postalAddress = param.postalAddress;
     this.physicalAddress = param.address;
     this.phoneNumber = param.phone;

@@ -29,30 +29,38 @@ export const initialDataAdminAesanPortalResolver: ResolveFn<any> = (route: Activ
       agencyId: agencyId,
     };
     return forkJoin([navigationService.get(), agencyService.getAgencyById(params)]).pipe(
-      tap(([navigation, agency]) => {
-        if (agency?.body?.programs) {
-          localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
+      tap(([navigation, agencyResponse]) => {
+        const agency = agencyResponse.body;
+        const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
+
+        if (agency?.programs) {
+          localStorage.setItem('agencyPrograms', JSON.stringify(agency.programs));
         }
-        const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
+
         if (isDayCareHomeOption) {
+
           const booleanValue = isDayCareHomeOption.booleanValue;
+
           if (booleanValue === null || booleanValue === undefined) {
             localStorage.setItem('agencyIsDayCareHome', 'null');
           } else {
             localStorage.setItem('agencyIsDayCareHome', String(booleanValue));
           }
+
         } else {
           localStorage.removeItem('agencyIsDayCareHome');
         }
-        const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
-        const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration
-          || agency?.body?.deadlineToCompleteRegistration;
+
+        const isCompleted = !!agency?.inscription?.completedRegistrationDate;
+        const deadline = agency?.inscription?.deadlineToCompleteRegistration;
         const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
+
         agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
+
       }),
       map(([navigation, agency]) => ({
         navigation,
-        agency: agency.body,
+        agency,
       }))
     );
   }
@@ -91,11 +99,15 @@ export const initialDataAgencyPortalResolver: ResolveFn<any> = (route: Activated
       navigationService.get(),
       agencyService.getAgencyById(params),
     ]).pipe(
-      tap(([navigation, agency]) => {
-        if (agency?.body?.programs) {
-          localStorage.setItem('agencyPrograms', JSON.stringify(agency.body.programs));
+      tap(([navigation, agencyResponse]) => {
+
+        const agency = agencyResponse.body;
+        const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
+
+        if (agency?.programs) {
+          localStorage.setItem('agencyPrograms', JSON.stringify(agency.programs));
         }
-        const isDayCareHomeOption = agency?.body?.inscription?.isDayCareHome;
+
         if (isDayCareHomeOption) {
           const booleanValue = isDayCareHomeOption.booleanValue;
           if (booleanValue === null || booleanValue === undefined) {
@@ -106,15 +118,15 @@ export const initialDataAgencyPortalResolver: ResolveFn<any> = (route: Activated
         } else {
           localStorage.removeItem('agencyIsDayCareHome');
         }
-        const isCompleted = !!agency?.body?.inscription?.completedRegistrationDate;
-        const deadline = agency?.body?.inscription?.deadlineToCompleteRegistration
-          || agency?.body?.deadlineToCompleteRegistration;
+        const isCompleted = !! agency?.inscription?.completedRegistrationDate;
+        const deadline = agency?.inscription?.deadlineToCompleteRegistration
         const isExpired = deadline ? _isDeadlineExpired(deadline) : false;
+
         agencyStatusStorageService.setAgencyRestrictedStatus({ isCompleted, isExpired });
       }),
       map(([navigation, agency]) => ({
         navigation,
-        agency: agency.body,
+        agency,
       }))
     );
   }

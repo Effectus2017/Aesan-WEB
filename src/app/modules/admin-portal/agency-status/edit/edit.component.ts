@@ -10,7 +10,7 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
@@ -106,7 +106,7 @@ export class EditAgencyStatusComponent implements OnInit, OnGenericHeaderHandler
       const selectedIsActive = this.form.get('isActive').value;
       const isActiveValue = selectedIsActive?.booleanValue ?? true;
 
-      const updated: AgencyStatus = {
+      const updated: AgencyStatusResponse = {
         id: this.agencyStatusId,
         name: this.form.get('name').value,
         nameEN: this.form.get('nameEN').value,

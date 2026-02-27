@@ -1,4 +1,4 @@
-import { Agency } from "./Agency";
+import { AgencyResponse } from './Response/AgencyResponse';
 import { AlternativeCommunication } from "./AlternativeCommunication";
 import { FederalFundingCertification } from "./FederalFundingCertification";
 import { FoodAuthority } from "./FoodAuthority";
@@ -14,7 +14,7 @@ export interface Program {
 
 export interface ProgramInscription {
     id: number;
-    agency: Agency;
+    agency: AgencyResponse;
     program: Program;
     applicationNumber: string;
     isPublic: boolean;

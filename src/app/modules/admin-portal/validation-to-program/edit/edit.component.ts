@@ -19,12 +19,12 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 
 import { GeoService } from 'app/shared/services/geo.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
-import { compareById, compareItems, compareMonitors, handleFormControls, maxDigitsValidator, alphanumericValidator } from 'app/shared/utils';
+import { compareById, compareItems, handleFormControls, maxDigitsValidator, alphanumericValidator } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { City } from 'app/shared/models/City';
@@ -100,7 +100,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   listUsers = [];
   listPositions: OptionSelection[] = [];
 
-  param: Agency;
+  param: AgencyResponse;
 
   // Lenguaje actual
   currentLang: string = 'es';
@@ -108,8 +108,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   // Compare methods
   compareById = compareById;
   compareItems = compareItems;
-  compareMonitors = compareMonitors;
-
   // Configuración del header
   headerConfig: GenericHeaderConfig = {
     title: 'validation-to-program.edit.title',
@@ -149,9 +147,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       // Datos del Administrador
       email: [{ value: null, disabled: true }, Validators.email],
       position: [{ value: null }],
-
-      // Monitor
-      monitor: [null],
     }),
     submitButtonText: 'validation-to-program.edit.submit',
     submitButtonShow: true,
@@ -195,7 +190,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
     this._unsubscribeAll.complete();
   }
 
-  onSetForm(param: Agency) {
+  onSetForm(param: AgencyResponse) {
     this.param = param;
 
     this.headerConfig.formGroup.patchValue({
@@ -225,7 +220,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       email: param.email || null,
       phone: param.phone || null,
       position: param.user?.position || null,
-      monitor: param.monitor || null,
     });
   }
 
@@ -270,7 +264,6 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       email: formValues.email,
       phone: formValues.phone,
       programs: formValues.program ? [formValues.program.id] : [],
-      monitorId: formValues.monitor ? formValues.monitor.id : null,
       assignedBy: assignedBy,
     };
 

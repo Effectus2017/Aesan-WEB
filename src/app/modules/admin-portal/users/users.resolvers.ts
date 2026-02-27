@@ -78,7 +78,7 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, roles, programs]) => ({
-      agencies: { data: agencies.body },
+      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
       roles: roles.body,
       programs: { data: programs.body }
     }))
@@ -107,7 +107,7 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: { data: agencies.body },
+      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
       user: user.body,
       roles: roles.body,
       permissions: permissions.body,
@@ -140,7 +140,7 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
     map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: { data: agencies.body },
+      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
       user: user.body,
       roles: roles.body,
       permissions: permissions.body,

@@ -28,8 +28,9 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { Agency, InscriptionResponse } from 'app/shared/models/Agency';
-import { AgencyStatus } from 'app/shared/models/AgencyStatus';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { InscriptionResponse } from 'app/shared/models/Response/InscriptionResponse';
+import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
 import { City } from 'app/shared/models/City';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { Program } from 'app/shared/models/Program';
@@ -119,7 +120,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
   // -----------------------------------------------------------------------------------------------------
-  listAgencyStatus: AgencyStatus[] = [];
+  listAgencyStatus: AgencyStatusResponse[] = [];
   listPrograms: Program[] = [];
   listCities: City[] = [];
   listRegions: Region[] = [];
@@ -134,7 +135,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   isDayCareHomeOptions: OptionSelection[] = [];
   listAdministrativePositions: OptionSelection[] = [];
 
-  param: Agency;
+  param: AgencyResponse;
   currentLang: string = 'es';
 
   compareById = compareById;
@@ -263,7 +264,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   // @ Funciones On (componentes genéricos)
   // -----------------------------------------------------------------------------------------------------
   /** Rellena el formulario con los datos de la agencia. */
-  onSetForm(param: Agency): void {
+  onSetForm(param: AgencyResponse): void {
     this.param = param;
 
     if (isNullOrUndefinedEmptyStringNullArray(param.programs)) {
@@ -290,7 +291,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       appointmentCoordinated: param.appointmentCoordinated,
       appointmentDate: param.appointmentDate,
       rejectionJustification: param.rejectionJustification,
-      monitor: param.monitor || null,
+      monitor: null,
       basicEducationRegistry: inscription?.basicEducationRegistry ?? null,
       nonProfit: inscription?.nonProfit ?? null,
       taxExemptionStatusId: inscription?.taxExemptionStatus ?? null,
@@ -359,7 +360,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
           maxHeight: '90vh',
           data: { statuses: this.listAgencyStatus, currentStatus, agencyId: this.param.id },
         });
-        dialogRef.afterClosed().subscribe((selectedStatus: AgencyStatus | null) => {
+        dialogRef.afterClosed().subscribe((selectedStatus: AgencyStatusResponse | null) => {
           if (selectedStatus) {
             this.headerConfig.formGroup.patchValue({ status: selectedStatus });
             this._changeDetectorRef.markForCheck();

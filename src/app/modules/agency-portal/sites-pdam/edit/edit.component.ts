@@ -75,7 +75,7 @@ import { PermissionRequestFormDialogComponent } from '../../../../shared/compone
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
@@ -500,7 +500,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   // Agencia Id
   // Agency ID
   agencyId: number = 0;
-  agency: Agency = null;
+  agency: AgencyResponse | null = null;
 
   // Sitio Id
   // Site ID

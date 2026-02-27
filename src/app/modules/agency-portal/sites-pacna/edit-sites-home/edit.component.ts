@@ -62,7 +62,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
@@ -436,7 +436,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Agencia Id
   // Agency ID
   agencyId: number = 0;
-  agency: Agency = null;
+  agency: AgencyResponse | null = null;
 
   // Sitio Id
   // Site ID

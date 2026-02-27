@@ -17,7 +17,7 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import {
   compare,
@@ -495,7 +495,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
   // Agencia Id
   agencyId: number = 0;
-  agency: Agency = null;
+  agency: AgencyResponse | null = null;
 
 
   // Propiedades para controlar visibilidad según programa

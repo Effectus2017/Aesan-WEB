@@ -31,7 +31,7 @@ import { DeliveryType } from 'app/shared/models/DeliveryType';
 import { SponsorType } from 'app/shared/models/SponsorType';
 import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
 import { AreaType } from 'app/shared/models/AreaType';
-import { Agency } from 'app/shared/models/Agency';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { KitchenType } from 'app/shared/models/KitchenType';
 import { GroupType } from 'app/shared/models/GroupType';
 import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
@@ -63,7 +63,7 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 
 export interface SiteEditModalData {
   site: Site;
-  agency?: Agency;
+  agency?: AgencyResponse;
 }
 
 @Component({
@@ -224,7 +224,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
 
   currentLang: string = 'es';
   agencyId: number = 0;
-  agency: Agency | null = null;
+  agency: AgencyResponse | null = null;
   isLoading: boolean = false;
 
   compareById = compareById;

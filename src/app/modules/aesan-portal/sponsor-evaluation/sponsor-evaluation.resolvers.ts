@@ -36,7 +36,7 @@ export const initialAesanSponsorEvaluationResolver = () => {
     _agencyService.getAllAgenciesFromDb(requestParameters),
   ]).pipe(
     map(([agencies]) => ({
-      agencies: agencies.body,
+      agencies: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [],
     }))
   );
 };
@@ -88,12 +88,12 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
         const administrativePositionOptions = optionsData.filter((option: any) => option.optionKey === 'administrativePosition');
 
         return {
-          agency: agency.body,
-          agencyStatuses: agencyStatuses.body,
-          cities: cities.body,
-          regions: regions.body,
-          programs: programs.body,
-          users: users.body,
+          agency,
+          agencyStatuses: agencyStatuses?.body ?? agencyStatuses,
+          cities: cities?.body ?? cities,
+          regions: regions?.body ?? regions,
+          programs: programs?.body ?? programs,
+          users: users?.body ?? users,
           yesNoOptions: yesNoOptions,
           exceptionStatusOptions: exceptionStatusOptions,
           taxExemptionTypeOptions: taxExemptionTypeOptions,

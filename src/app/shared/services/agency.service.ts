@@ -6,17 +6,15 @@ import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/QueryParameters';
 import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
 import { UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
-import { Agency } from '../models/Agency';
-import { AgencyStatus } from '../models/AgencyStatus';
+import { AgencyResponse } from '../models/Response/AgencyResponse';
+import { DataResponse } from '../models/Response/DataResponse';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AgencyService {
-  private _agencies: BehaviorSubject<Agency[] | null> = new BehaviorSubject(null);
-  private _agency: BehaviorSubject<Agency | null> = new BehaviorSubject(null);
-
-  private _agencyStatus: BehaviorSubject<AgencyStatus[] | null> = new BehaviorSubject(null);
+  private _agencies: BehaviorSubject<AgencyResponse[] | null> = new BehaviorSubject(null);
+  private _agency: BehaviorSubject<DataResponse<AgencyResponse> | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/agency`;
   private _httpClient = inject(HttpClient);
@@ -27,7 +25,7 @@ export class AgencyService {
    * Obtiene todas las agencias
    * @returns Las agencias
    */
-  get agencies$(): Observable<Agency[] | null> {
+  get agencies$(): Observable<AgencyResponse[] | null> {
     return this._agencies.asObservable();
   }
 
@@ -35,16 +33,8 @@ export class AgencyService {
    * Obtiene una agencia
    * @returns La agencia
    */
-  get agency$(): Observable<Agency | null> {
+  get agency$(): Observable<DataResponse<AgencyResponse> | null> {
     return this._agency.asObservable();
-  }
-
-  /**
-   * Obtiene todos los estados de la agencia
-   * @returns Los estados de la agencia
-   */
-  get agencyStatus$(): Observable<AgencyStatus[] | null> {
-    return this._agencyStatus.asObservable();
   }
 
   /**
@@ -52,8 +42,8 @@ export class AgencyService {
    * @param queryParameters Los parámetros de consulta
    * @returns La agencia
    */
-  getAgencyById(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-agency-by-id`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agency.next(response)));
+  getAgencyById(queryParameters: QueryParameters): Observable<DataResponse<AgencyResponse>> {
+    return this._httpClient.get<DataResponse<AgencyResponse>>(`${this.apiUrl}/get-agency-by-id`, getHttpOptions(queryParameters)).pipe(tap((response) => this._agency.next(response)));
   }
 
   /**
@@ -61,10 +51,10 @@ export class AgencyService {
    * @param queryParameters Los parámetros de consulta
    * @returns La agencia
    */
-  getAgencyByIdAndUserId(queryParameters: QueryParameters): Observable<any> {
+  getAgencyByIdAndUserId(queryParameters: QueryParameters): Observable<DataResponse<AgencyResponse>> {
     return this._httpClient
-      .get(`${this.apiUrl}/get-agency-by-id-and-user-id`, getHttpOptions(queryParameters))
-      .pipe(tap((response: any) => this._agency.next(response)));
+      .get<DataResponse<AgencyResponse>>(`${this.apiUrl}/get-agency-by-id-and-user-id`, getHttpOptions(queryParameters))
+      .pipe(tap((response) => this._agency.next(response)));
   }
 
   /**
@@ -82,7 +72,7 @@ export class AgencyService {
    * @returns Las agencias
    */
   getAllAgenciesFromDb(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.get(`${this.apiUrl}/get-all-agencies-from-db`, getHttpOptions(queryParameters)).pipe(tap((response: any) => this._agencies.next(response)));
+    return this._httpClient.get(`${this.apiUrl}/get-all-agencies-from-db`, getHttpOptions(queryParameters)).pipe(tap((response) => this._agencies.next(response.body)));
   }
 
   /**
