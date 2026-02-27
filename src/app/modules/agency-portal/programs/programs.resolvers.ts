@@ -1,12 +1,8 @@
-import { inject } from '@angular/core';
-import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { AgencyService } from 'app/shared/services/agency.service';
-import { GeoService } from 'app/shared/services/geo.service';
-import { ProgramService } from 'app/shared/services/program.service';
-import { UserService } from 'app/shared/services/user.service';
-import { forkJoin } from 'rxjs';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
+import { of } from 'rxjs';
 
-export const initialAgencyProgramRequestsResolver = () => {
-  return forkJoin();
+// Resolver placeholder para el módulo de programas (no usado actualmente en rutas)
+// Resolver placeholder for programs module (not currently used in routes)
+export const initialDataProgramsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  return of({});
 };

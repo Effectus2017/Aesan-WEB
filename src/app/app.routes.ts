@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { initialDataAgencyPortalResolver, initialDataResolver } from 'app/app.resolvers';
+import { initialDataAdminAesanPortalResolver, initialDataAgencyPortalResolver } from 'app/app.resolvers';
 import { AdminPortalGuard } from 'app/core/auth/guards/admin-portal.guard';
 import { AgencyPortalGuard } from 'app/core/auth/guards/agency-portal.guard';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
@@ -77,7 +77,7 @@ export const appRoutes: Route[] = [
       layout: 'modern',
     },
     resolve: {
-      initialData: initialDataResolver,
+      initialData: initialDataAdminAesanPortalResolver,
     },
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'sponsors' },
@@ -132,7 +132,7 @@ export const appRoutes: Route[] = [
       layout: 'modern',
     },
     resolve: {
-      initialData: initialDataResolver,
+      initialData: initialDataAdminAesanPortalResolver,
     },
     children: [
       { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes') },

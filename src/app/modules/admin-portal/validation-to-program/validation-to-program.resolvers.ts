@@ -61,6 +61,7 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',
       names: 'Administrador,Director,Coordinador(a) del Programa',
+      isList: true,
     })
   ]).pipe(
     map(([agency, agencyStatuses, cities, regions, programs, users, options]) => ({

@@ -215,7 +215,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       // Asignar datos directamente desde el resolver
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
-      this.allOptionSelections = resolvedData.options.data;
+      this.allOptionSelections = resolvedData.options;
       this.listStaffTypes = resolvedData.staffTypes;
       this.listStaffClassifications = resolvedData.staffClassifications;
 

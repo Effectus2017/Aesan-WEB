@@ -493,22 +493,22 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     if (resolvedData) {
       // Yes No Options
-      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
       // Estatus Options
-      this.isActiveOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
       this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
+        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community')
       );
-      this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-      this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+      this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
+      this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+      this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
 
       this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
+        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience')
       );
 
-      this.siteLocations = resolvedData.siteLocations || [];
+      this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
 
       // Catálogos
       this.organizationTypes = resolvedData.organizationTypes;

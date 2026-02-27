@@ -59,6 +59,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = () => {
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,tenureDurationUnit,yesNo,salaryOrigin',
       names: 'Administrador,Director,Coordinador(a) del Programa',
+      isList: true,
     }),
     staffTypeService.getAllStaffTypesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
     staffClassificationService.getAllStaffClassificationsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
@@ -166,6 +167,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             optionSelectionService.getOptionSelectionByOptionKey({
               optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
               names: null,
+              isList: true,
             }),
             // Staff types service
             staffTypeService.getAllStaffTypesFromDb(requestParameters),
@@ -197,6 +199,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             optionSelectionService.getOptionSelectionByOptionKey({
               optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
               names: null,
+              isList: true,
             }),
             // Staff types service
             staffTypeService.getAllStaffTypesFromDb(requestParameters),

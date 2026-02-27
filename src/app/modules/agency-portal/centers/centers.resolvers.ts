@@ -6,8 +6,13 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { forkJoin, map } from 'rxjs';
 
 // Resolver para la lista de centros
+// Resolver for centers list
 export const initialDataCentersListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // School service (centers are loaded via SchoolService)
+  // Servicio de escuelas (los centros se cargan vía SchoolService)
   const schoolService = inject(SchoolService);
+  // Auth service
+  // Servicio de autenticación
   const authService = inject(AuthService);
   const agencyId = authService.getAgencyId();
 

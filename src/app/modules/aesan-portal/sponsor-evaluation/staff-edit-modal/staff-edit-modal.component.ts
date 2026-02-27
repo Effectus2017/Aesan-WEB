@@ -272,11 +272,12 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     this._optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,reviewResult',
       names: null,
+      isList: true,
     }).subscribe();
 
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        const options = result.body?.data || result.body || [];
+        const options = (Array.isArray(result) ? result : result?.data) ?? [];
         this.listStatus = options.filter((opt: OptionSelection) => opt.optionKey === 'isActive');
         this.listAdministrativePositions = options.filter((opt: OptionSelection) => opt.optionKey === 'administrativePosition');
         this.listOperationalPositions = options.filter((opt: OptionSelection) => opt.optionKey === 'operationalPosition');

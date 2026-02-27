@@ -350,8 +350,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Asignar programas (getAllProgramsFromDb con isList: true devuelve array en body)
       this.listPrograms = resolvedData.programs ?? [];
 
-      // Asignar opciones (getOptionSelectionByOptionKey devuelve { data, count } en body)
-      const allOptions = [...(resolvedData.options1?.data ?? []), ...(resolvedData.options2?.data ?? [])];
+      // Asignar opciones (getOptionSelectionByOptionKey con isList: true devuelve la lista directamente en body)
+      const allOptions = [...(resolvedData.options1 ?? []), ...(resolvedData.options2 ?? [])];
 
       // Yes No Options (1, 2)
       this.yesNoOptions = allOptions.filter((option: OptionSelection) => option.optionKey === 'yesNo');

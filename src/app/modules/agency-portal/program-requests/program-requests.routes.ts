@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { AgencyProgramRequestsComponent } from './program-requests.component';
 import { AgencyProgramRequestsListComponent } from './list/list.component';
 import { AddProgramRequestComponent } from './add/add.component';
-import { initialAgencyProgramRequestsResolver } from './program-requests.resolvers';
+import { initialDataProgramRequestsListResolver } from './program-requests.resolvers';
 
 export default [
     {
@@ -13,7 +13,7 @@ export default [
                 path: '',
                 component: AgencyProgramRequestsListComponent,
                 resolve: {
-                    data: initialAgencyProgramRequestsResolver
+                    data: initialDataProgramRequestsListResolver
                 }
             },
             {

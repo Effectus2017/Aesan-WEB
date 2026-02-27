@@ -681,34 +681,34 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     if (resolvedData) {
       // Yes No Options
-      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
       // Tipo de residencial
-      this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+      this.typeOfResidential = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
       // Tipo de solicitante
-      this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
       // Opciones de Day Care Home
-      this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.publicAllianceContractOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
+      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+      this.publicAllianceContractOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
       // Estatus
-      this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.isActive = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Tipo de cocina
-      this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
+      this.kitchenTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
-      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
+      this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
-      this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
+      this.groupTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Comunidad
-      this.community = this.sortOptionsAlphabetically(resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community'));
+      this.community = this.sortOptionsAlphabetically(resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community'));
       // Caminantes / Walkers
-      this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
+      this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
       // Tipo de distribución / Distribution type
-      this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+      this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       // Tipo de sitio / Site type
-      this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
+      this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
       // Experiencia / Experience
-      this.experience = this.sortOptionsAlphabetically(resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience'));
+      this.experience = this.sortOptionsAlphabetically(resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience'));
       // Catálogos
       this.centerTypes = resolvedData.centerTypes;
       this.organizationTypes = resolvedData.organizationTypes;
@@ -2265,6 +2265,4 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       },
     });
   }
-
-
 }

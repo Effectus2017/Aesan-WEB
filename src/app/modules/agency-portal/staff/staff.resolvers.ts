@@ -122,6 +122,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
       names: null,
+      isList: true,
     }),
     // Staff types service
     // Servicio para tipos de staff

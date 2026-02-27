@@ -278,6 +278,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     this._optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       names: null,
+      isList: true,
     }).subscribe();
   }
 
@@ -476,7 +477,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     // Option Selections - Filter from options like the original component
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        const options = result.body?.data || result.body || [];
+        const options = (Array.isArray(result) ? result : result?.data) ?? [];
         this.yesNoOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'yesNo');
         this.typeOfApplicant = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfApplicant');
         this.typeOfResidential = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfResidential');

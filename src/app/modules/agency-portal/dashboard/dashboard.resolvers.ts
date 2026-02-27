@@ -1,19 +1,19 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import { forkJoin, map } from 'rxjs';
+import { map } from 'rxjs';
 import { AgencyDashboardService } from 'app/shared/services/agency-dashboard.service';
 
-export const initialDataAdminDashboardResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  return forkJoin([]);
-};
+// Resolver para el dashboard de la agencia
+// Resolver for agency dashboard
+export const initialDataDashboardResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Agency dashboard service
+  // Servicio de dashboard de agencia
+  const agencyDashboardService = inject(AgencyDashboardService);
 
-export const agencyDashboardResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  const _agencyDashboardService: AgencyDashboardService = inject(AgencyDashboardService);
-
-  return _agencyDashboardService.getDashboardMetrics().pipe(
+  return agencyDashboardService.getDashboardMetrics().pipe(
     map((response) => {
       // La respuesta puede venir directamente o dentro de response.body
-      return response?.body || response;
+      return response?.body ?? response;
     })
   );
 };

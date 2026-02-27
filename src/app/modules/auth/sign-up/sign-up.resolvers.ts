@@ -22,10 +22,12 @@ export const initialSignUpResolver: ResolveFn<any> = () => {
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority',
+      isList: true,
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',
       names: 'Administrador,Director,Coordinador(a) del Programa',
+      isList: true,
     }),
   ]).pipe(
     map(([cities, programs, options1, options2]) => ({

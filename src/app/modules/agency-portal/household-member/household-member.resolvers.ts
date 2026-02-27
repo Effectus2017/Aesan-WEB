@@ -4,7 +4,11 @@ import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { HouseholdMemberService } from 'app/shared/services/household-member.service';
 import { forkJoin, map } from 'rxjs';
 
+// Resolver para la lista de miembros del hogar
+// Resolver for household members list
 export const initialDataHouseholdMemberListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Household member service
+  // Servicio de miembros del hogar
   const householdMemberService = inject(HouseholdMemberService);
 
   const requestParameters: QueryParameters = {
@@ -20,7 +24,11 @@ export const initialDataHouseholdMemberListResolver: ResolveFn<any> = (route: Ac
   );
 };
 
+// Resolver para la edición de un miembro del hogar
+// Resolver for household member editing
 export const initialDataHouseholdMemberEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Household member service
+  // Servicio de miembros del hogar
   const householdMemberService = inject(HouseholdMemberService);
   const requestParameters: QueryParameters = {
     id: Number(route.paramMap.get('id')),

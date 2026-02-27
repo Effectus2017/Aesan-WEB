@@ -1037,12 +1037,15 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         next: (response: any) => {
 
           const data = response?.body || response;
+
           this.operatingDays = this.mapApiResponseToOperatingDays(data?.operatingDays || data?.data?.operatingDays || []);
           this.events = this.transformToCalendarEvents(this.operatingDays);
           // Extraer fechas límite de funcionamiento
+
           if (data?.operatingFromDate) {
             this.operatingFromDate = new Date(data.operatingFromDate);
           }
+
           if (data?.operatingToDate) {
             this.operatingToDate = new Date(data.operatingToDate);
           }
@@ -1063,8 +1066,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   /** Carga días de funcionamiento y actualiza el modal de tabla si está abierto. Retorna Observable para que el caller pueda esperar. */
   loadOperatingDaysAndUpdateModal(): Observable<unknown> {
+
     const month = this.viewDate.getMonth() + 1;
+
     const year = this.viewDate.getFullYear();
+
     const queryParameters: QueryParameters = {
       siteId: this.currentSiteId,
       month,

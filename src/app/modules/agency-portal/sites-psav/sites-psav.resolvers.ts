@@ -13,8 +13,13 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
 
 // Resolver para la lista de sitios PSAV
+// Resolver for PSAV sites list
 export const initialDataSitesPsavListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Site service
+  // Servicio de sitios
   const siteService = inject(SiteService);
+  // Auth service
+  // Servicio de autenticación
   const authService = inject(AuthService);
   const agencyId = authService.getAgencyId();
 
@@ -35,13 +40,26 @@ export const initialDataSitesPsavListResolver: ResolveFn<any> = (route: Activate
   );
 };
 
-// Resolver específico para PSAV
+// Resolver específico para PSAV (add/edit)
+// Resolver for PSAV program (add/edit)
 export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Delivery type service
+  // Servicio de tipos de entrega
   const deliveryTypeService = inject(DeliveryTypeService);
+  // Group type service
+  // Servicio de tipos de grupo
   const groupTypeService = inject(GroupTypeService);
+  // Organization type service
+  // Servicio de tipos de organización
   const organizationTypeService = inject(OrganizationTypeService);
+  // Site calendar service
+  // Servicio de calendario de sitios
   const siteCalendarService = inject(SiteCalendarService);
+  // Service type service
+  // Servicio de tipos de servicio
   const serviceTypeService = inject(ServiceTypeService);
+  // Kitchen type service
+  // Servicio de tipos de cocina
   const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
@@ -60,8 +78,8 @@ export const initialDataSitesPsavProgramResolver: ResolveFn<any> = (route: Activ
         groupTypes: groupTypes.body,
         organizationTypes: organizationTypes.body,
         allowedOperatingDays: allowedOperatingDays.body,
-        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
-        kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
+        serviceTypes: serviceTypes.body,
+        kitchenTypes: kitchenTypes.body,
       })
     )
   );

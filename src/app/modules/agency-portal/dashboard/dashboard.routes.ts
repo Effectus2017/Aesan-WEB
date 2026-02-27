@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { AgencyDashboardComponent } from './dashboard.component';
 import { AgencyDashboardListComponent } from './list/list.component';
-import { agencyDashboardResolver } from './dashboard.resolvers';
+import { initialDataDashboardResolver } from './dashboard.resolvers';
 
 export default [
     {
@@ -12,7 +12,7 @@ export default [
                 path: '',
                 component: AgencyDashboardListComponent,
                 resolve: {
-                    dashboard: agencyDashboardResolver
+                    dashboard: initialDataDashboardResolver
                 }
             },
         ]

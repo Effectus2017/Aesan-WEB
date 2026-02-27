@@ -265,7 +265,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const resolvedData = this._activatedRoute.snapshot.data['data'];
     if (resolvedData) {
       // Cargar opciones desde el resolver
-      this.allOptionSelections = resolvedData.options.data;
+      this.allOptionSelections = resolvedData.options;
       // Status
       this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Posiciones de miembros de junta

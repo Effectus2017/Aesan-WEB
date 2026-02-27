@@ -39,6 +39,7 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+      isList: true,
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -68,7 +69,6 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
     map(([options, kitchenTypes, cities, regions, organizationTypes, educationLevels, operatingPeriods, operatingPolicies, areaTypes]) => ({
       options: options.body,
       kitchenTypes: kitchenTypes.body,
-      siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
       cities: cities.body,
       regions: regions.body,
       organizationTypes: organizationTypes.body,
@@ -104,6 +104,7 @@ export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: Activa
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+      isList: true,
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -134,7 +135,6 @@ export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: Activa
       site: site.body,
       options: options.body,
       kitchenTypes: kitchenTypes.body,
-      siteLocations: options.body.data.filter((option: any) => option.optionKey === 'siteLocation'),
       cities: cities.body,
       regions: regions.body,
       organizationTypes: organizationTypes.body,

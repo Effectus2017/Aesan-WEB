@@ -176,7 +176,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       this.listPostalRegions = resolvedData.regions;
       this.listPrograms = resolvedData.programs;
       this.listUsers = resolvedData.users;
-      this.listPositions = resolvedData.options.data;
+      this.listPositions = resolvedData.options;
 
       // Configurar el formulario con los datos
       this.onSetForm(resolvedData.agency);

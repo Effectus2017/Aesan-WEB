@@ -1,20 +1,21 @@
 import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
+import { forkJoin, map } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { AgencyService } from 'app/shared/services/agency.service';
-import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';
-import { UserService } from 'app/shared/services/user.service';
-import { forkJoin, map } from 'rxjs';
 
-export const initialAgencyProgramRequestsResolver = () => {
-  const _agencyService: AgencyService = inject(AgencyService);
-  const _geoService: GeoService = inject(GeoService);
-  const _userService: UserService = inject(UserService);
-  const _authService: AuthService = inject(AuthService);
-  const _programService: ProgramService = inject(ProgramService);
-  const userId = _authService.getUserId();
-  const agencyId = _authService.getAgencyId();
+// Resolver para la lista de solicitudes de programas
+// Resolver for program requests list
+export const initialDataProgramRequestsListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Program service
+  // Servicio de programas
+  const programService = inject(ProgramService);
+  // Auth service
+  // Servicio de autenticación
+  const authService = inject(AuthService);
+
+  const agencyId = authService.getAgencyId();
 
   const requestParameters: QueryParameters = {
     take: 25,
@@ -23,7 +24,7 @@ export const initialAgencyProgramRequestsResolver = () => {
     alls: true,
   };
 
-  return forkJoin([_programService.getAllProgramInscriptions(requestParameters)]).pipe(
+  return forkJoin([programService.getAllProgramInscriptions(requestParameters)]).pipe(
     map(([programInscriptions]) => ({
       programInscriptions: programInscriptions.body,
     }))

@@ -16,9 +16,14 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 
 // Resolver para el calendario del sitio
+// Resolver for site calendar
 export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const siteId = Number(route.paramMap.get('id'));
+  // Site calendar service
+  // Servicio de calendario de sitios
   const siteCalendarService = inject(SiteCalendarService);
+  // Site service
+  // Servicio de sitios
   const siteService = inject(SiteService);
 
   // Obtener mes y año actual
@@ -41,8 +46,13 @@ export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: Activated
 };
 
 // Resolver para la lista de sitios
+// Resolver for sites list
 export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Site service
+  // Servicio de sitios
   const siteService = inject(SiteService);
+  // Auth service
+  // Servicio de autenticación
   const authService = inject(AuthService);
   const agencyId = authService.getAgencyId();
 
@@ -68,31 +78,54 @@ export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRou
 };
 
 // Resolver: escuela por schoolId (query param) para Agregar Sitio
-export const schoolForAddSiteResolver: ResolveFn<{ schoolId: number | null; schoolName: string | null }> = (route: ActivatedRouteSnapshot) => {
+// Resolver: school by schoolId (query param) for Add Site
+export const initialDataSitesAddSchoolResolver: ResolveFn<{ schoolId: number | null; schoolName: string | null }> = (route: ActivatedRouteSnapshot) => {
+  // School service
+  // Servicio de escuelas
+  const schoolService = inject(SchoolService);
+
   const schoolIdParam = route.queryParams['schoolId'];
   if (!schoolIdParam) {
     return of({ schoolId: null, schoolName: null });
   }
+
   const schoolId = +schoolIdParam;
-  const schoolService = inject(SchoolService);
+
   return schoolService.getSchoolById({ id: schoolId }).pipe(
-    map((response: { body?: { name?: string }; name?: string }) => {
-      const school = response?.body ?? response;
-      return { schoolId, schoolName: school?.name ?? null };
-    }),
+    map((response) => ({
+      schoolId,
+      schoolName: response.body?.name ?? null,
+    })),
     catchError(() => of({ schoolId, schoolName: null }))
   );
 };
 
-// Resolver específico para PDAM
+// Resolver específico para PDAM (add/edit)
+// Resolver for PDAM program (add/edit)
 export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  // Center type service
+  // Servicio de tipos de centro
   const centerTypeService = inject(CenterTypeService);
+  // Delivery type service
+  // Servicio de tipos de entrega
   const deliveryTypeService = inject(DeliveryTypeService);
+  // Sponsor type service
+  // Servicio de tipos de patrocinador
   const sponsorTypeService = inject(SponsorTypeService);
+  // Group type service
+  // Servicio de tipos de grupo
   const groupTypeService = inject(GroupTypeService);
+  // Organization type service
+  // Servicio de tipos de organización
   const organizationTypeService = inject(OrganizationTypeService);
+  // Site calendar service
+  // Servicio de calendario de sitios
   const siteCalendarService = inject(SiteCalendarService);
+  // Service type service
+  // Servicio de tipos de servicio
   const serviceTypeService = inject(ServiceTypeService);
+  // Kitchen type service
+  // Servicio de tipos de cocina
   const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
@@ -122,8 +155,8 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
         groupTypes: groupTypes.body,
         organizationTypes: organizationTypes.body,
         allowedOperatingDays: allowedOperatingDays.body,
-        serviceTypes: serviceTypes?.body ?? serviceTypes ?? [],
-        kitchenTypes: kitchenTypes?.body ?? kitchenTypes ?? [],
+        serviceTypes: serviceTypes.body,
+        kitchenTypes: kitchenTypes.body,
       })
     )
   );
