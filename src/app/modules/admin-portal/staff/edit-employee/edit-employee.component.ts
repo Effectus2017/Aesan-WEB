@@ -361,9 +361,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewJustification: param.reviewJustification,
       site: param.site,
       isPrimary: param.isPrimary,
-      salaryOrigins: param.salaryOriginIds?.length && this.listSalaryOrigins?.length
-        ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
-        : [],
+      salaryOrigins: param.salaryOrigins ?? [],
     });
 
     // Actualizar validaciones
@@ -513,7 +511,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       birthDate: birthDate,
       contractStartDate: contractStartDate,
       contractEndDate: contractEndDate,
-      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      salaryOrigins: formValues.salaryOrigins ?? [],
     };
 
     // Disable the form

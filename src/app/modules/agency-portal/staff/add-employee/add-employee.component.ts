@@ -22,7 +22,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
-import { compareById, generateTimeOptions, getEndTimeOptions, logFormValidationErrors, TimeOption } from 'app/shared/utils';
+import { compareById, generateTimeOptions, getEndTimeOptions, logFormValidationErrors, TimeOption, toIsoDateString } from 'app/shared/utils';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/StaffType';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
@@ -152,6 +152,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'staff.add.buttons.save',
+    submitDisabled: true, // Inicialmente deshabilitado hasta que el formulario sea válido
   };
 
   // Compare methods
@@ -243,11 +244,25 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       this.onBirthDateChange(birthDate);
     });
 
-    // Deshabilitar campos de contrato por defecto (solo se habilitan cuando hay clasificación)
+    // Actualizar estado del botón guardar según validez del formulario
+    this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup!.invalid;
+      this._changeDetectorRef.detectChanges();
+    });
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+
+    // Deshabilitar por defecto todos los campos dependientes de la clasificación (se habilitan al elegir clasificación)
     const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
     const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    const scheduleFromControl = this.headerConfig.formGroup.get('scheduleFrom');
+    const scheduleToControl = this.headerConfig.formGroup.get('scheduleTo');
     contractStartDateControl?.disable({ emitEvent: false });
     contractEndDateControl?.disable({ emitEvent: false });
+    scheduleFromControl?.disable({ emitEvent: false });
+    scheduleToControl?.disable({ emitEvent: false });
+    this.headerConfig.formGroup.get('middleName')?.disable({ emitEvent: false });
+    this.headerConfig.formGroup.get('motherLastName')?.disable({ emitEvent: false });
+    this.headerConfig.formGroup.get('salaryOrigins')?.disable({ emitEvent: false });
   }
 
   ngOnDestroy(): void {
@@ -278,16 +293,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
-    const formValues = this.headerConfig.formGroup.value;
+    // Usar getRawValue() para incluir controles que pueden haber estado deshabilitados (contractStartDate/contractEndDate)
+    const formValues = this.headerConfig.formGroup.getRawValue();
 
-    // Fecha de nacimiento
-    const birthDate: string = formValues.birthDate || null;
-
-    // Fecha de inicio de contrato
-    const contractStartDate: string | null = formValues.contractStartDate || null;
-
-    // Fecha de finalización de contrato
-    const contractEndDate: string | null = formValues.contractEndDate || null;
+    // Fechas en formato ISO (YYYY-MM-DD) para que el backend .NET las deserialice correctamente
+    const birthDate: string | null = toIsoDateString(formValues.birthDate) ?? null;
+    const contractStartDate: string | null = toIsoDateString(formValues.contractStartDate) ?? null;
+    const contractEndDate: string | null = toIsoDateString(formValues.contractEndDate) ?? null;
 
     // Status - establecer por defecto a 1 (Activo)
     const statusId: number = formValues.status?.id || 1;
@@ -333,47 +345,56 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       return;
     }
 
-    // Obtener las clasificaciones que NO son "Ambos" (las dos clasificaciones individuales)
-    const individualClassifications = this.listStaffClassifications
-      .filter(c => c.id !== staffClassificationId)
-      .sort((a, b) => a.sortOrder - b.sortOrder);
+    // Usar valores del formulario directamente. 1=Administrativo, 2=Operacional, 3=Ambos
+    let classificationContracts: Array<{
+      staffClassificationId: number;
+      positionId: number;
+      contractStartDate: string | null;
+      contractEndDate: string | null;
+      scheduleFrom: string | null;
+      scheduleTo: string | null;
+    }>;
+    let effectivePositionId: number;
+    let effectiveContractStart: string | null;
+    let effectiveContractEnd: string | null;
 
-    // Construir classificationContracts según clasificación
-    const isBothClassification = individualClassifications.length === 2;
-    const classificationContracts = isBothClassification
-      ? [
-          {
-            staffClassificationId: individualClassifications[0].id,
-            positionId: formValues.administrativePosition?.id ?? 0,
-            contractStartDate: formValues.administrativeContractStartDate ?? null,
-            contractEndDate: formValues.administrativeContractEndDate ?? null,
-            scheduleFrom: formValues.administrativeScheduleFrom || null,
-            scheduleTo: formValues.administrativeScheduleTo || null,
-          },
-          {
-            staffClassificationId: individualClassifications[1].id,
-            positionId: formValues.operationalPosition?.id ?? 0,
-            contractStartDate: formValues.operationalContractStartDate ?? null,
-            contractEndDate: formValues.operationalContractEndDate ?? null,
-            scheduleFrom: formValues.operationalScheduleFrom || null,
-            scheduleTo: formValues.operationalScheduleTo || null,
-          }
-        ]
-      : [
-          {
-            staffClassificationId: staffClassificationId,
-            positionId: positionId,
-            contractStartDate: contractStartDate,
-            contractEndDate: contractEndDate,
-            scheduleFrom: formValues.scheduleFrom || null,
-            scheduleTo: formValues.scheduleTo || null,
-          }
-        ];
-
-    // Para retrocompatibilidad con Staff table (positionId, contractStartDate, contractEndDate)
-    const effectivePositionId = isBothClassification ? (formValues.administrativePosition?.id ?? 0) : positionId;
-    const effectiveContractStart = isBothClassification ? (formValues.administrativeContractStartDate ?? null) : contractStartDate;
-    const effectiveContractEnd = isBothClassification ? (formValues.administrativeContractEndDate ?? null) : contractEndDate;
+    if (staffClassificationId === 3) {
+      classificationContracts = [
+        {
+          staffClassificationId: 1,
+          positionId: formValues.administrativePosition?.id ?? 0,
+          contractStartDate: toIsoDateString(formValues.administrativeContractStartDate) ?? null,
+          contractEndDate: toIsoDateString(formValues.administrativeContractEndDate) ?? null,
+          scheduleFrom: formValues.administrativeScheduleFrom || null,
+          scheduleTo: formValues.administrativeScheduleTo || null,
+        },
+        {
+          staffClassificationId: 2,
+          positionId: formValues.operationalPosition?.id ?? 0,
+          contractStartDate: toIsoDateString(formValues.operationalContractStartDate) ?? null,
+          contractEndDate: toIsoDateString(formValues.operationalContractEndDate) ?? null,
+          scheduleFrom: formValues.operationalScheduleFrom || null,
+          scheduleTo: formValues.operationalScheduleTo || null,
+        },
+      ];
+      effectivePositionId = formValues.administrativePosition?.id ?? 0;
+      effectiveContractStart = toIsoDateString(formValues.administrativeContractStartDate) ?? null;
+      effectiveContractEnd = toIsoDateString(formValues.administrativeContractEndDate) ?? null;
+    } else {
+      classificationContracts = [
+        {
+          staffClassificationId: staffClassificationId,
+          positionId: positionId,
+          contractStartDate: contractStartDate,
+          contractEndDate: contractEndDate,
+          scheduleFrom: formValues.scheduleFrom || null,
+          scheduleTo: formValues.scheduleTo || null,
+        },
+      ];
+      effectivePositionId = positionId;
+      effectiveContractStart = contractStartDate;
+      effectiveContractEnd = contractEndDate;
+    }
 
     // Crear staff request para empleados
     const staffRequest: any = {
@@ -394,7 +415,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
-      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      salaryOrigins: formValues.salaryOrigins ?? [],
       classificationContracts,
     };
 
@@ -403,6 +424,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     // Crear staff
     let isSuccess = false;
+    
     this._staffService.insertStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {
@@ -443,7 +465,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
 
-    // Si tiene clasificación, habilitar todos los campos
+    // Si tiene clasificación, habilitar todos los campos dependientes
     if (this.selectedClassification) {
       const firstNameControl = this.headerConfig.formGroup.get('firstName');
       const middleNameControl = this.headerConfig.formGroup.get('middleName');
@@ -452,12 +474,14 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const positionControl = this.headerConfig.formGroup.get('position');
       const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
       const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+      const scheduleFromControl = this.headerConfig.formGroup.get('scheduleFrom');
+      const scheduleToControl = this.headerConfig.formGroup.get('scheduleTo');
       const commentsControl = this.headerConfig.formGroup.get('comments');
       const birthDateControl = this.headerConfig.formGroup.get('birthDate');
       const emailControl = this.headerConfig.formGroup.get('email');
       const siteControl = this.headerConfig.formGroup.get('site');
+      const salaryOriginsControl = this.headerConfig.formGroup.get('salaryOrigins');
 
-      // Habilitar todos los campos
       firstNameControl?.enable({ emitEvent: false });
       middleNameControl?.enable({ emitEvent: false });
       fatherLastNameControl?.enable({ emitEvent: false });
@@ -465,10 +489,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       positionControl?.enable({ emitEvent: false });
       contractStartDateControl?.enable({ emitEvent: false });
       contractEndDateControl?.enable({ emitEvent: false });
+      scheduleFromControl?.enable({ emitEvent: false });
+      scheduleToControl?.enable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
       birthDateControl?.enable({ emitEvent: false });
       emailControl?.enable({ emitEvent: false });
       siteControl?.enable({ emitEvent: false });
+      salaryOriginsControl?.enable({ emitEvent: false });
     }
 
     this._changeDetectorRef.detectChanges();
@@ -521,40 +548,61 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const staffClassificationControl = this.headerConfig.formGroup.get('staffClassification');
     const birthDateControl = this.headerConfig.formGroup.get('birthDate');
     const firstNameControl = this.headerConfig.formGroup.get('firstName');
+    const middleNameControl = this.headerConfig.formGroup.get('middleName');
     const fatherLastNameControl = this.headerConfig.formGroup.get('fatherLastName');
+    const motherLastNameControl = this.headerConfig.formGroup.get('motherLastName');
     const positionControl = this.headerConfig.formGroup.get('position');
     const emailControl = this.headerConfig.formGroup.get('email');
+    const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
+    const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
+    const scheduleFromControl = this.headerConfig.formGroup.get('scheduleFrom');
+    const scheduleToControl = this.headerConfig.formGroup.get('scheduleTo');
+    const commentsControl = this.headerConfig.formGroup.get('comments');
+    const siteControl = this.headerConfig.formGroup.get('site');
+    const salaryOriginsControl = this.headerConfig.formGroup.get('salaryOrigins');
+    const administrativePositionControl = this.headerConfig.formGroup.get('administrativePosition');
+    const operationalPositionControl = this.headerConfig.formGroup.get('operationalPosition');
+    const administrativeContractStartDateControl = this.headerConfig.formGroup.get('administrativeContractStartDate');
+    const administrativeContractEndDateControl = this.headerConfig.formGroup.get('administrativeContractEndDate');
+    const administrativeScheduleFromControl = this.headerConfig.formGroup.get('administrativeScheduleFrom');
+    const administrativeScheduleToControl = this.headerConfig.formGroup.get('administrativeScheduleTo');
+    const operationalContractStartDateControl = this.headerConfig.formGroup.get('operationalContractStartDate');
+    const operationalContractEndDateControl = this.headerConfig.formGroup.get('operationalContractEndDate');
+    const operationalScheduleFromControl = this.headerConfig.formGroup.get('operationalScheduleFrom');
+    const operationalScheduleToControl = this.headerConfig.formGroup.get('operationalScheduleTo');
 
     // Para empleados: clasificación requerida, fecha de nacimiento requerida
     staffClassificationControl?.setValidators([Validators.required]);
     birthDateControl?.setValidators([Validators.required]);
     firstNameControl?.setValidators([Validators.required]);
     fatherLastNameControl?.setValidators([Validators.required]);
+
     if (this.selectedClassification?.id === 3) {
       positionControl?.clearValidators();
-      this.headerConfig.formGroup.get('administrativePosition')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('operationalPosition')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('administrativeContractStartDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('administrativeContractEndDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('administrativeScheduleTo')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('operationalContractStartDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('operationalContractEndDate')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('operationalScheduleFrom')?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('operationalScheduleTo')?.setValidators([Validators.required]);
+      administrativePositionControl?.setValidators([Validators.required]);
+      operationalPositionControl?.setValidators([Validators.required]);
+      administrativeContractStartDateControl?.setValidators([Validators.required]);
+      administrativeContractEndDateControl?.setValidators([Validators.required]);
+      administrativeScheduleFromControl?.setValidators([Validators.required]);
+      administrativeScheduleToControl?.setValidators([Validators.required]);
+      operationalContractStartDateControl?.setValidators([Validators.required]);
+      operationalContractEndDateControl?.setValidators([Validators.required]);
+      operationalScheduleFromControl?.setValidators([Validators.required]);
+      operationalScheduleToControl?.setValidators([Validators.required]);
     } else {
       positionControl?.setValidators([Validators.required]);
-      this.headerConfig.formGroup.get('administrativePosition')?.clearValidators();
-      this.headerConfig.formGroup.get('operationalPosition')?.clearValidators();
-      this.headerConfig.formGroup.get('administrativeContractStartDate')?.clearValidators();
-      this.headerConfig.formGroup.get('administrativeContractEndDate')?.clearValidators();
-      this.headerConfig.formGroup.get('administrativeScheduleFrom')?.clearValidators();
-      this.headerConfig.formGroup.get('administrativeScheduleTo')?.clearValidators();
-      this.headerConfig.formGroup.get('operationalContractStartDate')?.clearValidators();
-      this.headerConfig.formGroup.get('operationalContractEndDate')?.clearValidators();
-      this.headerConfig.formGroup.get('operationalScheduleFrom')?.clearValidators();
-      this.headerConfig.formGroup.get('operationalScheduleTo')?.clearValidators();
+      administrativePositionControl?.clearValidators();
+      operationalPositionControl?.clearValidators();
+      administrativeContractStartDateControl?.clearValidators();
+      administrativeContractEndDateControl?.clearValidators();
+      administrativeScheduleFromControl?.clearValidators();
+      administrativeScheduleToControl?.clearValidators();
+      operationalContractStartDateControl?.clearValidators();
+      operationalContractEndDateControl?.clearValidators();
+      operationalScheduleFromControl?.clearValidators();
+      operationalScheduleToControl?.clearValidators();
     }
+
     emailControl?.setValidators([Validators.required, Validators.email]);
     emailControl?.setAsyncValidators([emailExistsValidator(this._userService)]);
 
@@ -563,36 +611,37 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     firstNameControl?.updateValueAndValidity();
     fatherLastNameControl?.updateValueAndValidity();
     positionControl?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('administrativePosition')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('operationalPosition')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('administrativeContractStartDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('administrativeContractEndDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('administrativeScheduleFrom')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('administrativeScheduleTo')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('operationalContractStartDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('operationalContractEndDate')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('operationalScheduleFrom')?.updateValueAndValidity();
-    this.headerConfig.formGroup.get('operationalScheduleTo')?.updateValueAndValidity();
+    administrativePositionControl?.updateValueAndValidity();
+    operationalPositionControl?.updateValueAndValidity();
+    administrativeContractStartDateControl?.updateValueAndValidity();
+    administrativeContractEndDateControl?.updateValueAndValidity();
+    administrativeScheduleFromControl?.updateValueAndValidity();
+    administrativeScheduleToControl?.updateValueAndValidity();
+    operationalContractStartDateControl?.updateValueAndValidity();
+    operationalContractEndDateControl?.updateValueAndValidity();
+    operationalScheduleFromControl?.updateValueAndValidity();
+    operationalScheduleToControl?.updateValueAndValidity();
     emailControl?.updateValueAndValidity();
 
     // El campo de clasificación SIEMPRE debe estar habilitado
     staffClassificationControl?.enable({ emitEvent: false });
 
-    // Si no hay clasificación seleccionada, deshabilitar campos dependientes
+    // Si no hay clasificación seleccionada, deshabilitar todos los campos dependientes
     if (!this.selectedClassification) {
       firstNameControl?.disable({ emitEvent: false });
       fatherLastNameControl?.disable({ emitEvent: false });
       positionControl?.disable({ emitEvent: false });
       birthDateControl?.disable({ emitEvent: false });
       emailControl?.disable({ emitEvent: false });
-      const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
-      const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
-      const commentsControl = this.headerConfig.formGroup.get('comments');
-      const siteControl = this.headerConfig.formGroup.get('site');
+      middleNameControl?.disable({ emitEvent: false });
+      motherLastNameControl?.disable({ emitEvent: false });
       contractStartDateControl?.disable({ emitEvent: false });
       contractEndDateControl?.disable({ emitEvent: false });
+      scheduleFromControl?.disable({ emitEvent: false });
+      scheduleToControl?.disable({ emitEvent: false });
       commentsControl?.disable({ emitEvent: false });
       siteControl?.disable({ emitEvent: false });
+      salaryOriginsControl?.disable({ emitEvent: false });
     } else {
       // Si hay clasificación seleccionada, habilitar todos los campos
       firstNameControl?.enable({ emitEvent: false });
@@ -600,15 +649,19 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       positionControl?.enable({ emitEvent: false });
       birthDateControl?.enable({ emitEvent: false });
       emailControl?.enable({ emitEvent: false });
-      const contractStartDateControl = this.headerConfig.formGroup.get('contractStartDate');
-      const contractEndDateControl = this.headerConfig.formGroup.get('contractEndDate');
-      const commentsControl = this.headerConfig.formGroup.get('comments');
-      const siteControl = this.headerConfig.formGroup.get('site');
+      middleNameControl?.enable({ emitEvent: false });
+      motherLastNameControl?.enable({ emitEvent: false });
       contractStartDateControl?.enable({ emitEvent: false });
       contractEndDateControl?.enable({ emitEvent: false });
+      scheduleFromControl?.enable({ emitEvent: false });
+      scheduleToControl?.enable({ emitEvent: false });
       commentsControl?.enable({ emitEvent: false });
       siteControl?.enable({ emitEvent: false });
+      salaryOriginsControl?.enable({ emitEvent: false });
     }
+
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 
   /**

@@ -430,9 +430,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: param.tenureDuration,
       tenureDurationUnit: param.tenureDurationUnitId ? this.listTenureDurationUnits.find(u => u.id === param.tenureDurationUnitId) : null,
       receivesProgramSalary: param.receivesProgramSalaryId ? this.listReceivesProgramSalary.find(s => s.id === param.receivesProgramSalaryId) : null,
-      salaryOrigins: (param.salaryOriginIds?.length && this.listSalaryOrigins?.length)
-        ? param.salaryOriginIds.map((id: number) => this.listSalaryOrigins.find(o => o.id === id)).filter((o): o is OptionSelection => o != null)
-        : [],
+      salaryOrigins: param.salaryOrigins ?? [],
     });
 
     // Actualizar el validador de email con el email original
@@ -597,7 +595,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: tenureDuration ? parseInt(tenureDuration) : null,
       tenureDurationUnitId: tenureDurationUnit?.id || null,
       receivesProgramSalaryId: receivesProgramSalary?.id || null,
-      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      salaryOrigins: formValues.salaryOrigins ?? [],
     };
 
     // Disable the form

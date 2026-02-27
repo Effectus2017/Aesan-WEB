@@ -54,7 +54,7 @@ export interface Staff {
   receivesProgramSalaryId?: number; // Referencia a OptionSelection con optionKey = 'yesNo' (¿Recibe salario del programa?)
   receivesProgramSalaryName?: string;
   receivesProgramSalaryNameEN?: string;
-  /** Origen del Salario (selección múltiple: IDs de OptionSelection con optionKey = 'salaryOrigin') */
+  /** @deprecated Usar salaryOrigins. La API devuelve modelos completos. */
   salaryOriginIds?: number[];
 
   // Datos de la relación SchoolStaff

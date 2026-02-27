@@ -455,7 +455,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
     }
 
     // Origen del Salario (común para empleados y miembros de junta)
-    staffRequest.salaryOriginIds = formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [];
+    staffRequest.salaryOrigins = formValues.salaryOrigins ?? [];
 
     // Agregar campos de revisión solo si el usuario tiene permisos para verlos
     if (this.canViewReviewFields) {

@@ -373,7 +373,7 @@
           <!-- Origen del Salario (selección múltiple) -->
           <mat-form-field data-cy="salary-origin-field">
             <mat-label>{{ "staff.edit.salaryOrigin.label" | transloco }}</mat-label>
-            <mat-select formControlName="salaryOrigins" [placeholder]="'staff.edit.salaryOrigin.placeholder' | transloco" [compareWith]="compareById" multiple data-cy="salaryOrigins-select">
+            <mat-select formControlName="salaryOrigins" [placeholder]="'staff.edit.salaryOrigin.placeholder' | transloco" [compareWith]="compareItems" multiple data-cy="salaryOrigins-select">
               <mat-option *ngFor="let option of listSalaryOrigins" [value]="option" data-cy="salaryOrigin-option">
                 {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>

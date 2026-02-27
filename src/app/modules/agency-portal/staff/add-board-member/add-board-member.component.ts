@@ -148,6 +148,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
     // Submit button
     submitButtonShow: true,
     submitButtonText: 'staff.add.buttons.save',
+    submitDisabled: true, // Inicialmente deshabilitado hasta que el formulario sea válido
   };
 
   // Compare methods
@@ -217,6 +218,13 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
     this.headerConfig.formGroup.get('birthDate')?.valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((birthDate: any) => {
       this.onBirthDateChange(birthDate);
     });
+
+    // Actualizar estado del botón guardar según validez del formulario
+    this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup!.invalid;
+      this._changeDetectorRef.detectChanges();
+    });
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
   }
 
   ngOnDestroy(): void {
@@ -340,7 +348,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       tenureDuration: tenureDuration ? parseInt(tenureDuration) : null,
       tenureDurationUnitId: tenureDurationUnit?.id || null,
       receivesProgramSalaryId: receivesProgramSalary?.id || null,
-      salaryOriginIds: formValues.salaryOrigins?.map((o: OptionSelection) => o.id) ?? [],
+      salaryOrigins: formValues.salaryOrigins ?? [],
     };
 
     // Disable the form
@@ -513,6 +521,9 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
     tenureDurationControl?.enable({ emitEvent: false });
     tenureDurationUnitControl?.enable({ emitEvent: false });
     receivesProgramSalaryControl?.enable({ emitEvent: false });
+
+    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+    this._changeDetectorRef.detectChanges();
   }
 }
 

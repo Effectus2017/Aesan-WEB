@@ -383,6 +383,21 @@ export function toTimeDate(timeString: string | null): Date | null {
 }
 
 /**
+ * Convierte un valor de fecha (Date, string en formato locale o ISO) a string ISO YYYY-MM-DD para la API.
+ * Evita errores de deserialización en backend cuando el front envía fechas en formato locale (ej. 1/1/2025).
+ */
+export function toIsoDateString(value: Date | string | null | undefined): string | null {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'string' && value.trim() === '') return null;
+  const d = value instanceof Date ? value : new Date(value);
+  if (isNaN(d.getTime())) return null;
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
  * Custom validator to check minimum age
  * @param minAge Minimum age required
  * @returns Validator function that returns ValidationErrors or null
