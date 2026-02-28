@@ -1,6 +1,7 @@
 <div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
   <app-generic-header [config]="headerConfig" [handler]="this" [searchFieldShow]="false"></app-generic-header>
-  <div class="flex-auto overflow-y-auto" cdkScrollable>
+  <!-- Click en la lista cierra el drawer de filtros de inmediato (evita demora) -->
+  <div class="flex-auto overflow-y-auto" cdkScrollable (click)="filterDrawer?.close()">
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
   <mat-paginator class="hidden sm:block" [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
