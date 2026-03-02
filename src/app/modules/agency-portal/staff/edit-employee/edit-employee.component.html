@@ -344,6 +344,9 @@
               </mat-error>
             </mat-form-field>
           </div>
+          <div class="col-span-12" *ngIf="headerConfig.formGroup.hasError('schedulesOverlap')">
+            <p class="mat-error text-sm">{{ "staff.add.schedulesOverlap" | transloco }}</p>
+          </div>
         </ng-container>
 
         <!-- Email -->

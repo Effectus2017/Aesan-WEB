@@ -31,6 +31,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';
 
 @Component({
   selector: 'app-add-employee',
@@ -90,13 +91,16 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
   selectedClassification: StaffClassification | null = null;
 
   // Lista completa de opciones de selección
-  allOptionSelections: OptionSelection[] = [];
+  //allOptionSelections: OptionSelection[] = [];
 
   /** Opciones de hora cada 30 min para Desde/Hasta (como en sitios). */
   timeOptions: TimeOption[] = [];
 
   // Tipo de staff fijo (siempre será empleado)
   private employeeStaffType: StaffType | null = null;
+
+  /** Para mostrar el diálogo de solapamiento de horarios solo una vez por sesión de error. */
+  private _schedulesOverlapWarningShown = false;
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.add.title',
@@ -203,13 +207,13 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const resolvedData = this._activatedRoute.snapshot.data['data'];
     if (resolvedData) {
       // Cargar opciones desde el resolver
-      this.allOptionSelections = resolvedData.options;
+      //this.allOptionSelections = resolvedData.options;
       // Status
-      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.listStatus = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Poblar listas separadas
-      this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-      this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
-      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
+      this.listAdministrativePositions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+      this.listOperationalPositions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+      this.listSalaryOrigins = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -247,7 +251,14 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Actualizar estado del botón guardar según validez del formulario
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
       this.headerConfig.submitDisabled = this.headerConfig.formGroup!.invalid;
-      this._changeDetectorRef.detectChanges();
+      const hasOverlap = this.headerConfig.formGroup.hasError('schedulesOverlap');
+      if (hasOverlap && !this._schedulesOverlapWarningShown) {
+        this._schedulesOverlapWarningShown = true;
+        this._notificationService.showWarningDialog('staff.add.schedulesOverlap');
+      }
+      if (!hasOverlap) {
+        this._schedulesOverlapWarningShown = false;
+      }
     });
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
 
@@ -424,7 +435,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     // Crear staff
     let isSuccess = false;
-    
+
     this._staffService.insertStaff(staffRequest, {}).subscribe({
       next: (response) => {
         switch (response.body) {
@@ -460,10 +471,58 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
    * Maneja el cambio en la clasificación de staff
    */
   onClassificationChange(classification: StaffClassification): void {
+    const previousClassification = this.selectedClassification;
+    // Evitar reprocesar si el valor no cambió (p. ej. re-emisión del mat-select tras re-render)
+    if (previousClassification?.id === classification?.id) {
+      return;
+    }
     this.selectedClassification = classification;
 
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
+
+    // Actualizar validaciones en el siguiente tick para evitar stack overflow (updateValueAndValidity
+    // dispara statusChanges y el re-render del *ngIf puede hacer que el select vuelva a emitir)
+    setTimeout(() => {
+      this.updateValidations();
+      // Al pasar de Ambos a Administrativo u Operacional, rellenar campos únicos con el bloque que corresponda
+      if (previousClassification?.id === 3 && classification?.id === 1) {
+        this.headerConfig.formGroup.patchValue({
+          position: this.headerConfig.formGroup.get('administrativePosition')?.value,
+          contractStartDate: this.headerConfig.formGroup.get('administrativeContractStartDate')?.value,
+          contractEndDate: this.headerConfig.formGroup.get('administrativeContractEndDate')?.value,
+          scheduleFrom: this.headerConfig.formGroup.get('administrativeScheduleFrom')?.value,
+          scheduleTo: this.headerConfig.formGroup.get('administrativeScheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 3 && classification?.id === 2) {
+        this.headerConfig.formGroup.patchValue({
+          position: this.headerConfig.formGroup.get('operationalPosition')?.value,
+          contractStartDate: this.headerConfig.formGroup.get('operationalContractStartDate')?.value,
+          contractEndDate: this.headerConfig.formGroup.get('operationalContractEndDate')?.value,
+          scheduleFrom: this.headerConfig.formGroup.get('operationalScheduleFrom')?.value,
+          scheduleTo: this.headerConfig.formGroup.get('operationalScheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 1 && classification?.id === 3) {
+        // Al pasar de Administrativo a Ambos, rellenar bloque administrativo con los campos únicos
+        this.headerConfig.formGroup.patchValue({
+          administrativePosition: this.headerConfig.formGroup.get('position')?.value,
+          administrativeContractStartDate: this.headerConfig.formGroup.get('contractStartDate')?.value,
+          administrativeContractEndDate: this.headerConfig.formGroup.get('contractEndDate')?.value,
+          administrativeScheduleFrom: this.headerConfig.formGroup.get('scheduleFrom')?.value,
+          administrativeScheduleTo: this.headerConfig.formGroup.get('scheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 2 && classification?.id === 3) {
+        // Al pasar de Operacional a Ambos, rellenar bloque operacional con los campos únicos
+        this.headerConfig.formGroup.patchValue({
+          operationalPosition: this.headerConfig.formGroup.get('position')?.value,
+          operationalContractStartDate: this.headerConfig.formGroup.get('contractStartDate')?.value,
+          operationalContractEndDate: this.headerConfig.formGroup.get('contractEndDate')?.value,
+          operationalScheduleFrom: this.headerConfig.formGroup.get('scheduleFrom')?.value,
+          operationalScheduleTo: this.headerConfig.formGroup.get('scheduleTo')?.value,
+        });
+      }
+      this._changeDetectorRef.detectChanges();
+    }, 0);
 
     // Si tiene clasificación, habilitar todos los campos dependientes
     if (this.selectedClassification) {
@@ -589,6 +648,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       operationalContractEndDateControl?.setValidators([Validators.required]);
       operationalScheduleFromControl?.setValidators([Validators.required]);
       operationalScheduleToControl?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.setValidators([noOverlappingSchedulesValidator()]);
     } else {
       positionControl?.setValidators([Validators.required]);
       administrativePositionControl?.clearValidators();
@@ -601,6 +661,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       operationalContractEndDateControl?.clearValidators();
       operationalScheduleFromControl?.clearValidators();
       operationalScheduleToControl?.clearValidators();
+      this.headerConfig.formGroup.clearValidators();
     }
 
     emailControl?.setValidators([Validators.required, Validators.email]);
@@ -622,6 +683,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     operationalScheduleFromControl?.updateValueAndValidity();
     operationalScheduleToControl?.updateValueAndValidity();
     emailControl?.updateValueAndValidity();
+    this.headerConfig.formGroup.updateValueAndValidity();
 
     // El campo de clasificación SIEMPRE debe estar habilitado
     staffClassificationControl?.enable({ emitEvent: false });

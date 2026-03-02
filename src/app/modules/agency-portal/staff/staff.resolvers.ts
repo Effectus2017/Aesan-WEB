@@ -227,6 +227,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           optionSelectionService.getOptionSelectionByOptionKey({
             optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
             names: null,
+            isList: true,
           }),
           // Staff types service
           staffTypeService.getAllStaffTypesFromDb(requestParameters),
@@ -262,6 +263,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           optionSelectionService.getOptionSelectionByOptionKey({
             optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
             names: null,
+            isList: true,
           }),
           // Staff types service
           staffTypeService.getAllStaffTypesFromDb(requestParameters),

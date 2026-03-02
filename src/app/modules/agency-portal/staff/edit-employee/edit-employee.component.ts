@@ -48,6 +48,7 @@ import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
+import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 @Component({
@@ -110,6 +111,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   /** Opciones de hora para Desde/Hasta (rango cada 30 min), como en sitios. */
   timeOptions: TimeOption[] = [];
 
+  /** Para mostrar el diálogo de solapamiento de horarios solo una vez por sesión de error. */
+  private _schedulesOverlapWarningShown = false;
+
   // Propiedades específicas de empleados
   selectedClassification: StaffClassification | null = null;
 
@@ -123,7 +127,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   currentStaffType: string = 'employee';
 
   // Lista completa de opciones de selección
-  allOptionSelections: OptionSelection[] = [];
+  //allOptionSelections: OptionSelection[] = [];
   listSalaryOrigins: OptionSelection[] = [];
 
   // Parámetro del staff
@@ -292,15 +296,15 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const resolvedData = this._activatedRoute.snapshot.data['data'];
     if (resolvedData) {
       // Cargar opciones desde el resolver
-      this.allOptionSelections = resolvedData.options;
+      //this.allOptionSelections = resolvedData.options;
       // Status
-      this.listStatus = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.listStatus = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Posiciones administrativas y operacionales
-      this.listAdministrativePositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
-      this.listOperationalPositions = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
+      this.listAdministrativePositions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'administrativePosition');
+      this.listOperationalPositions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'operationalPosition');
       // Review result
-      this.reviewResult = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
-      this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
+      this.reviewResult = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'reviewResult');
+      this.listSalaryOrigins = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -324,9 +328,17 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         this.onClassificationChange(classification);
       });
 
-    // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
+    // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar (solo submitDisabled para evitar stack overflow)
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
-      this.updateSubmitButtonState();
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
+      const hasOverlap = this.headerConfig.formGroup.hasError('schedulesOverlap');
+      if (hasOverlap && !this._schedulesOverlapWarningShown) {
+        this._schedulesOverlapWarningShown = true;
+        this._notificationService.showWarningDialog('staff.add.schedulesOverlap');
+      }
+      if (!hasOverlap) {
+        this._schedulesOverlapWarningShown = false;
+      }
     });
 
     // Establecer el estado inicial del botón
@@ -446,6 +458,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       operationalContractEndDateControl?.setValidators([Validators.required]);
       operationalScheduleFromControl?.setValidators([Validators.required]);
       operationalScheduleToControl?.setValidators([Validators.required]);
+      this.headerConfig.formGroup.setValidators([noOverlappingSchedulesValidator()]);
     } else {
       positionControl?.setValidators([Validators.required]);
       contractStartDateControl?.setValidators([Validators.required]);
@@ -462,6 +475,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       operationalContractEndDateControl?.clearValidators();
       operationalScheduleFromControl?.clearValidators();
       operationalScheduleToControl?.clearValidators();
+      this.headerConfig.formGroup.clearValidators();
     }
     positionControl?.updateValueAndValidity();
     contractStartDateControl?.updateValueAndValidity();
@@ -478,6 +492,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     operationalContractEndDateControl?.updateValueAndValidity();
     operationalScheduleFromControl?.updateValueAndValidity();
     operationalScheduleToControl?.updateValueAndValidity();
+    this.headerConfig.formGroup.updateValueAndValidity();
 
     // Actualizar el validador de email con el email original
     const emailControl = this.headerConfig.formGroup.get('email');
@@ -762,78 +777,126 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
    * Maneja el cambio en la clasificación de staff
    */
   onClassificationChange(classification: StaffClassification): void {
+    const previousClassification = this.selectedClassification;
+    // Evitar reprocesar si el valor no cambió (p. ej. re-emisión del mat-select tras re-render)
+    if (previousClassification?.id === classification?.id) {
+      return;
+    }
     this.selectedClassification = classification;
 
     // Cargar posiciones según la clasificación
     this.loadPositionsByClassification();
 
-    const positionControl = this.headerConfig.formGroup.get('position');
-    const adminPosControl = this.headerConfig.formGroup.get('administrativePosition');
-    const operPosControl = this.headerConfig.formGroup.get('operationalPosition');
-    const adminContractStart = this.headerConfig.formGroup.get('administrativeContractStartDate');
-    const adminContractEnd = this.headerConfig.formGroup.get('administrativeContractEndDate');
-    const adminScheduleFrom = this.headerConfig.formGroup.get('administrativeScheduleFrom');
-    const adminScheduleTo = this.headerConfig.formGroup.get('administrativeScheduleTo');
-    const operContractStart = this.headerConfig.formGroup.get('operationalContractStartDate');
-    const operContractEnd = this.headerConfig.formGroup.get('operationalContractEndDate');
-    const operScheduleFrom = this.headerConfig.formGroup.get('operationalScheduleFrom');
-    const operScheduleTo = this.headerConfig.formGroup.get('operationalScheduleTo');
-    const contractStartDate = this.headerConfig.formGroup.get('contractStartDate');
-    const contractEndDate = this.headerConfig.formGroup.get('contractEndDate');
-    const scheduleFrom = this.headerConfig.formGroup.get('scheduleFrom');
-    const scheduleTo = this.headerConfig.formGroup.get('scheduleTo');
+    // Actualizar validaciones en el siguiente tick para evitar stack overflow (igual que en add-employee)
+    setTimeout(() => {
+      const positionControl = this.headerConfig.formGroup.get('position');
+      const adminPosControl = this.headerConfig.formGroup.get('administrativePosition');
+      const operPosControl = this.headerConfig.formGroup.get('operationalPosition');
+      const adminContractStart = this.headerConfig.formGroup.get('administrativeContractStartDate');
+      const adminContractEnd = this.headerConfig.formGroup.get('administrativeContractEndDate');
+      const adminScheduleFrom = this.headerConfig.formGroup.get('administrativeScheduleFrom');
+      const adminScheduleTo = this.headerConfig.formGroup.get('administrativeScheduleTo');
+      const operContractStart = this.headerConfig.formGroup.get('operationalContractStartDate');
+      const operContractEnd = this.headerConfig.formGroup.get('operationalContractEndDate');
+      const operScheduleFrom = this.headerConfig.formGroup.get('operationalScheduleFrom');
+      const operScheduleTo = this.headerConfig.formGroup.get('operationalScheduleTo');
+      const contractStartDate = this.headerConfig.formGroup.get('contractStartDate');
+      const contractEndDate = this.headerConfig.formGroup.get('contractEndDate');
+      const scheduleFrom = this.headerConfig.formGroup.get('scheduleFrom');
+      const scheduleTo = this.headerConfig.formGroup.get('scheduleTo');
 
-    if (this.selectedClassification?.id === 3) {
-      positionControl?.clearValidators();
-      contractStartDate?.clearValidators();
-      contractEndDate?.clearValidators();
-      scheduleFrom?.clearValidators();
-      scheduleTo?.clearValidators();
-      adminPosControl?.setValidators([Validators.required]);
-      operPosControl?.setValidators([Validators.required]);
-      adminContractStart?.setValidators([Validators.required]);
-      adminContractEnd?.setValidators([Validators.required]);
-      adminScheduleFrom?.setValidators([Validators.required]);
-      adminScheduleTo?.setValidators([Validators.required]);
-      operContractStart?.setValidators([Validators.required]);
-      operContractEnd?.setValidators([Validators.required]);
-      operScheduleFrom?.setValidators([Validators.required]);
-      operScheduleTo?.setValidators([Validators.required]);
-    } else {
-      positionControl?.setValidators([Validators.required]);
-      contractStartDate?.setValidators([Validators.required]);
-      contractEndDate?.setValidators([Validators.required]);
-      scheduleFrom?.setValidators([Validators.required]);
-      scheduleTo?.setValidators([Validators.required]);
-      adminPosControl?.clearValidators();
-      operPosControl?.clearValidators();
-      adminContractStart?.clearValidators();
-      adminContractEnd?.clearValidators();
-      adminScheduleFrom?.clearValidators();
-      adminScheduleTo?.clearValidators();
-      operContractStart?.clearValidators();
-      operContractEnd?.clearValidators();
-      operScheduleFrom?.clearValidators();
-      operScheduleTo?.clearValidators();
-    }
-    positionControl?.updateValueAndValidity();
-    contractStartDate?.updateValueAndValidity();
-    contractEndDate?.updateValueAndValidity();
-    scheduleFrom?.updateValueAndValidity();
-    scheduleTo?.updateValueAndValidity();
-    adminPosControl?.updateValueAndValidity();
-    operPosControl?.updateValueAndValidity();
-    adminContractStart?.updateValueAndValidity();
-    adminContractEnd?.updateValueAndValidity();
-    adminScheduleFrom?.updateValueAndValidity();
-    adminScheduleTo?.updateValueAndValidity();
-    operContractStart?.updateValueAndValidity();
-    operContractEnd?.updateValueAndValidity();
-    operScheduleFrom?.updateValueAndValidity();
-    operScheduleTo?.updateValueAndValidity();
+      if (this.selectedClassification?.id === 3) {
+        positionControl?.clearValidators();
+        contractStartDate?.clearValidators();
+        contractEndDate?.clearValidators();
+        scheduleFrom?.clearValidators();
+        scheduleTo?.clearValidators();
+        adminPosControl?.setValidators([Validators.required]);
+        operPosControl?.setValidators([Validators.required]);
+        adminContractStart?.setValidators([Validators.required]);
+        adminContractEnd?.setValidators([Validators.required]);
+        adminScheduleFrom?.setValidators([Validators.required]);
+        adminScheduleTo?.setValidators([Validators.required]);
+        operContractStart?.setValidators([Validators.required]);
+        operContractEnd?.setValidators([Validators.required]);
+        operScheduleFrom?.setValidators([Validators.required]);
+        operScheduleTo?.setValidators([Validators.required]);
+        this.headerConfig.formGroup.setValidators([noOverlappingSchedulesValidator()]);
+      } else {
+        positionControl?.setValidators([Validators.required]);
+        contractStartDate?.setValidators([Validators.required]);
+        contractEndDate?.setValidators([Validators.required]);
+        scheduleFrom?.setValidators([Validators.required]);
+        scheduleTo?.setValidators([Validators.required]);
+        adminPosControl?.clearValidators();
+        operPosControl?.clearValidators();
+        adminContractStart?.clearValidators();
+        adminContractEnd?.clearValidators();
+        adminScheduleFrom?.clearValidators();
+        adminScheduleTo?.clearValidators();
+        operContractStart?.clearValidators();
+        operContractEnd?.clearValidators();
+        operScheduleFrom?.clearValidators();
+        operScheduleTo?.clearValidators();
+        this.headerConfig.formGroup.clearValidators();
+      }
+      positionControl?.updateValueAndValidity();
+      contractStartDate?.updateValueAndValidity();
+      contractEndDate?.updateValueAndValidity();
+      scheduleFrom?.updateValueAndValidity();
+      scheduleTo?.updateValueAndValidity();
+      adminPosControl?.updateValueAndValidity();
+      operPosControl?.updateValueAndValidity();
+      adminContractStart?.updateValueAndValidity();
+      adminContractEnd?.updateValueAndValidity();
+      adminScheduleFrom?.updateValueAndValidity();
+      adminScheduleTo?.updateValueAndValidity();
+      operContractStart?.updateValueAndValidity();
+      operContractEnd?.updateValueAndValidity();
+      operScheduleFrom?.updateValueAndValidity();
+      operScheduleTo?.updateValueAndValidity();
+      this.headerConfig.formGroup.updateValueAndValidity();
 
-    // Actualizar el estado del botón
-    this.updateSubmitButtonState();
+      // Al pasar de Ambos a Administrativo u Operacional, rellenar campos únicos con el bloque que corresponda
+      if (previousClassification?.id === 3 && classification?.id === 1) {
+        this.headerConfig.formGroup.patchValue({
+          position: this.headerConfig.formGroup.get('administrativePosition')?.value,
+          contractStartDate: this.headerConfig.formGroup.get('administrativeContractStartDate')?.value,
+          contractEndDate: this.headerConfig.formGroup.get('administrativeContractEndDate')?.value,
+          scheduleFrom: this.headerConfig.formGroup.get('administrativeScheduleFrom')?.value,
+          scheduleTo: this.headerConfig.formGroup.get('administrativeScheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 3 && classification?.id === 2) {
+        this.headerConfig.formGroup.patchValue({
+          position: this.headerConfig.formGroup.get('operationalPosition')?.value,
+          contractStartDate: this.headerConfig.formGroup.get('operationalContractStartDate')?.value,
+          contractEndDate: this.headerConfig.formGroup.get('operationalContractEndDate')?.value,
+          scheduleFrom: this.headerConfig.formGroup.get('operationalScheduleFrom')?.value,
+          scheduleTo: this.headerConfig.formGroup.get('operationalScheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 1 && classification?.id === 3) {
+        // Al pasar de Administrativo a Ambos, rellenar bloque administrativo con los campos únicos
+        this.headerConfig.formGroup.patchValue({
+          administrativePosition: this.headerConfig.formGroup.get('position')?.value,
+          administrativeContractStartDate: this.headerConfig.formGroup.get('contractStartDate')?.value,
+          administrativeContractEndDate: this.headerConfig.formGroup.get('contractEndDate')?.value,
+          administrativeScheduleFrom: this.headerConfig.formGroup.get('scheduleFrom')?.value,
+          administrativeScheduleTo: this.headerConfig.formGroup.get('scheduleTo')?.value,
+        });
+      } else if (previousClassification?.id === 2 && classification?.id === 3) {
+        // Al pasar de Operacional a Ambos, rellenar bloque operacional con los campos únicos
+        this.headerConfig.formGroup.patchValue({
+          operationalPosition: this.headerConfig.formGroup.get('position')?.value,
+          operationalContractStartDate: this.headerConfig.formGroup.get('contractStartDate')?.value,
+          operationalContractEndDate: this.headerConfig.formGroup.get('contractEndDate')?.value,
+          operationalScheduleFrom: this.headerConfig.formGroup.get('scheduleFrom')?.value,
+          operationalScheduleTo: this.headerConfig.formGroup.get('scheduleTo')?.value,
+        });
+      }
+
+      this.updateSubmitButtonState();
+      this._changeDetectorRef.detectChanges();
+    }, 0);
   }
 
   /**

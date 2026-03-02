@@ -74,40 +74,6 @@ export const initialDataStaffAddResolver: ResolveFn<any> = () => {
   );
 };
 
-// export const initialDataStaffEditResolver: ResolveFn<any> = (route) => {
-//   const staffService = inject(StaffService);
-//   const geoService = inject(GeoService);
-//   const optionSelectionService = inject(OptionSelectionService);
-//   const staffTypeService = inject(StaffTypeService);
-//   const staffClassificationService = inject(StaffClassificationService);
-//   const staffRelationshipService = inject(StaffRelationshipService);
-
-//   const staffId = route.paramMap.get('id');
-
-//   return forkJoin([
-//     staffService.getStaffById({ staffId: Number(staffId), isList: false, isActive: false }),
-//     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-//     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-//     optionSelectionService.getOptionSelectionByOptionKey({
-//       optionKey: 'administrativePosition',
-//       names: 'Administrador,Director,Coordinador(a) del Programa',
-//     }),
-//     staffTypeService.getAllStaffTypesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-//     staffClassificationService.getAllStaffClassificationsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-//     staffRelationshipService.getRelationshipsByStaffId({ staffId: Number(staffId) }),
-//   ]).pipe(
-//     map(([staff, cities, regions, options, staffTypes, staffClassifications, relationships]) => ({
-//       staff: staff.body,
-//       cities: cities.body,
-//       regions: regions.body,
-//       options: options.body,
-//       staffTypes: staffTypes.body,
-//       staffClassifications: staffClassifications.body,
-//       relationships: relationships.body
-//     }))
-//   );
-// };
-
 
 export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
     // Staff id

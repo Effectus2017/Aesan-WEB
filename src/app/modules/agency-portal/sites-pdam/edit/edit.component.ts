@@ -527,21 +527,21 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     if (resolvedData) {
       // Yes No Options
-      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
       // Tipo de residencial
-      this.typeOfResidential = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+      this.typeOfResidential = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
       // Tipo de solicitante
-      this.typeOfApplicant = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
       // Estatus
-      this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.isActive = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       // Tipo de cocina
-      this.kitchenTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
+      this.kitchenTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
       // Site Location
-      this.siteLocations = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
+      this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
-      this.groupTypes = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'groupType');
+      this.groupTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'groupType');
       // Tipo de distribución / Distribution type
-      this.distributionType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+      this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       // Catálogos
       this.centerTypes = resolvedData.centerTypes;
       this.organizationTypes = resolvedData.organizationTypes;

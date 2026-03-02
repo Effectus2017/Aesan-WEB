@@ -98,6 +98,7 @@
       "title": "Agregar Personal",
       "information": "Información General",
       "information-description": "Complete la información general del personal",
+      "schedulesOverlap": "Los horarios del cargo administrativo y del operacional no pueden superponerse.",
       "firstName": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre",

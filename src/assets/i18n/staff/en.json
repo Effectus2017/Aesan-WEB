@@ -98,6 +98,7 @@
       "title": "Add Staff",
       "information": "General Information",
       "information-description": "Complete the general information of the staff",
+      "schedulesOverlap": "Administrative and operational position schedules cannot overlap.",
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",
