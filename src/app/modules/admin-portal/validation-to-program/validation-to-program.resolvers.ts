@@ -31,9 +31,9 @@ export const initialDataValidationToProgramListResolver: ResolveFn<any> = () => 
     programService.getAllProgramsFromDb(requestParameters)
   ]).pipe(
     map(([agencies, cities, programs]) => ({
-      agencies: agencies.body,
-      cities: cities.body,
-      programs: programs.body
+      agencies: agencies?.body ?? agencies,
+      cities: cities?.body ?? cities,
+      programs: programs?.body ?? programs
     }))
   );
 };

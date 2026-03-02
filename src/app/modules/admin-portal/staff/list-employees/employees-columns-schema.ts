@@ -1,5 +1,5 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
-import { StaffList } from 'app/shared/models/Staff';
+import { StaffTableResponse } from 'app/shared/models/Staff';
 
 export const EMPLOYEES_COLUMNS_SCHEMA: ColumnSchema[] = [
   {

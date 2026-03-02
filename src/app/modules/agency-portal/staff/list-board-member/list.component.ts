@@ -8,7 +8,7 @@ import { StaffService } from 'app/shared/services/staff.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { StaffList } from 'app/shared/models/Staff';
+import { StaffTableResponse } from 'app/shared/models/Staff';
 import { BOARD_MEMBERS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -74,7 +74,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<StaffList>(),
+    dataSource: new MatTableDataSource<StaffTableResponse>(),
     columnsSchema: BOARD_MEMBERS_COLUMNS_SCHEMA,
     displayedColumns: BOARD_MEMBERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -114,12 +114,8 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
-        // Filtrar solo miembros de junta en el resultado
-        const boardMembers = response.body.data.filter((staff: StaffList) =>
-          staff.staffTypeName === 'Miembro de la Junta' || staff.staffTypeName === 'Board Member'
-        );
-        this.tableConfig.dataSource.data = boardMembers;
-        this.tableConfig.length = boardMembers.length;
+        this.tableConfig.dataSource.data = response.body?.data ?? [];
+        this.tableConfig.length = response.body?.count ?? 0;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {
@@ -136,19 +132,10 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
     event.stopPropagation();
     event.preventDefault();
 
-    // Obtener el nombre del staff desde los datos de la tabla
-    const staff = this.tableConfig.dataSource.data.find((s: StaffList) => s.id === id);
-    const staffName = staff
-      ? `${staff.firstName || ''} ${staff.middleName || ''} ${staff.fatherLastName || ''} ${staff.motherLastName || ''}`.trim()
-      : undefined;
-
     const dialogRef = this._matDialog.open(ViewRelationshipsModalComponent, {
       width: '800px',
       maxWidth: '90vw',
-      data: {
-        staffId: id,
-        staffName: staffName,
-      },
+      data: { staffId: id },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

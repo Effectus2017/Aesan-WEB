@@ -8,7 +8,7 @@ import { StaffService } from 'app/shared/services/staff.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { StaffList } from 'app/shared/models/Staff';
+import { StaffTableResponse } from 'app/shared/models/Staff';
 import { EMPLOYEES_COLUMNS_SCHEMA } from './employees-columns-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -69,7 +69,7 @@ export class AdminListEmployeesComponent implements OnInit, OnDestroy, OnGeneric
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<StaffList>(),
+    dataSource: new MatTableDataSource<StaffTableResponse>(),
     columnsSchema: EMPLOYEES_COLUMNS_SCHEMA,
     displayedColumns: EMPLOYEES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,

@@ -7,7 +7,7 @@ import { StaffService } from 'app/shared/services/staff.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { StaffList } from 'app/shared/models/Staff';
+import { StaffTableResponse } from 'app/shared/models/Staff';
 import { EMPLOYEES_COLUMNS_SCHEMA } from './employees-columns-schema';
 import { EMPLOYEES_FILTERS_SCHEMA } from './employees-filters-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
@@ -79,7 +79,7 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   };
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<StaffList>(),
+    dataSource: new MatTableDataSource<StaffTableResponse>(),
     columnsSchema: EMPLOYEES_COLUMNS_SCHEMA,
     displayedColumns: EMPLOYEES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -91,35 +91,12 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
   };
 
   ngOnInit(): void {
-    // Obtener datos del resolver en lugar de suscribirse
     const resolvedData = this._route.snapshot.data['data'];
-
     if (resolvedData) {
-      const staffData = this.processStaffData(resolvedData.staff.data);
-      this.tableConfig.dataSource.data = staffData;
+      this.tableConfig.dataSource.data = resolvedData.staff.data ?? [];
       this.tableConfig.length = resolvedData.staff.count;
       this._changeDetectorRef.markForCheck();
     }
-  }
-
-  /** Procesa los datos del staff para agregar el campo displayPosition */
-  private processStaffData(staffList: StaffList[]): StaffList[] {
-    return staffList.map(staff => ({
-      ...staff,
-      displayPosition: this.getDisplayPosition(staff)
-    }));
-  }
-
-  /** Calcula el texto a mostrar en la columna Cargo según la clasificación */
-  private getDisplayPosition(staff: StaffList): string {
-    // Si la clasificación es "Ambos" (id 3) y tiene ambos cargos, mostrar ambos separados por " / "
-    if (staff.staffClassificationId === 3 &&
-        staff.administrativePositionName &&
-        staff.operationalPositionName) {
-      return `${staff.administrativePositionName} / ${staff.operationalPositionName}`;
-    }
-    // Si no, mostrar solo el cargo principal
-    return staff.positionName || '';
   }
 
   ngOnDestroy(): void {
@@ -172,10 +149,8 @@ export class ListEmployeesComponent implements OnInit, OnDestroy, OnGenericHeade
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
       next: (response) => {
-        // Filtrar solo empleados en el resultado y procesar datos
-        const employees = this.processStaffData(response.body.data);
-        this.tableConfig.dataSource.data = employees;
-        this.tableConfig.length = response.body.count;
+        this.tableConfig.dataSource.data = response.body?.data ?? [];
+        this.tableConfig.length = response.body?.count ?? 0;
         this._changeDetectorRef.markForCheck();
       },
       error: (error) => {

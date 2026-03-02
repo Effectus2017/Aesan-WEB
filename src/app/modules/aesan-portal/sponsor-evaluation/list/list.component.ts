@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { ProgramRequest } from 'app/shared/models/program-request.types';
+import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -42,7 +42,7 @@ import {
 export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatTable) table: MatTable<ProgramRequest>;
+  @ViewChild(MatTable) table: MatTable<AgencyResponse>;
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -69,7 +69,7 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
 
   // Configuración de la tabla
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<ProgramRequest>(),
+    dataSource: new MatTableDataSource<AgencyResponse>(),
     dataSourceList: [],
     columnsSchema: SPONSOR_EVALUATION_COLUMNS_SCHEMA,
     displayedColumns: SPONSOR_EVALUATION_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
@@ -126,9 +126,10 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe((result: any) => {
-      this.tableConfig.dataSource.data = result.body.data;
-      this.tableConfig.length = result.body.count;
-      this.tableConfig.dataSourceList = result.body.data;
+      const body = result?.body ?? result;
+      this.tableConfig.dataSource.data = body?.data ?? [];
+      this.tableConfig.length = body?.count ?? 0;
+      this.tableConfig.dataSourceList = body?.data ?? [];
       this._changeDetectorRef.markForCheck();
     });
   }

@@ -32,12 +32,12 @@ export const initialAesanSponsorEvaluationResolver = () => {
   };
 
   return forkJoin([
-    //_programService.getAllProgramInscriptions(requestParameters),
     _agencyService.getAllAgenciesFromDb(requestParameters),
   ]).pipe(
-    map(([agencies]) => ({
-      agencies: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [],
-    }))
+    map(([agencies]) => {
+      const raw = agencies?.body ?? agencies;
+      return { agencies: raw ?? { data: [], count: 0 } };
+    })
   );
 };
 

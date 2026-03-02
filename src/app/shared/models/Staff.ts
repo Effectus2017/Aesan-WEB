@@ -105,30 +105,22 @@ export interface StaffClassificationContract {
   isActive?: boolean;
 }
 
-export interface StaffList {
+/** Corresponde a Api.Models.Response.StaffTableResponse (solo columnas de la tabla). */
+export interface StaffTableResponse {
   id: number;
   firstName: string;
   middleName?: string;
   fatherLastName: string;
   motherLastName: string;
-  statusName: string;
-  positionName: string;
-  staffTypeName: string;
-  staffTypeNameEn: string;
-  staffClassificationId?: number;
   staffClassificationName?: string;
-  staffClassificationNameEn?: string;
-  administrativePositionName?: string;
-  administrativePositionNameEN?: string;
-  operationalPositionName?: string;
-  operationalPositionNameEN?: string;
-  displayPosition?: string; // Campo calculado para mostrar en la tabla
-  email: string;
-  cityName: string;
-  regionName: string;
-  userName?: string;
+  displayPosition?: string;
   isActive: boolean;
-  hasRelationships?: boolean;
-  isSiteAdmin?: boolean;
   comments?: string;
+}
+
+/** Corresponde a Api.Models.Response.StaffDropdownItemResponse (dropdowns). */
+export interface StaffDropdownItemResponse {
+  id: number;
+  name: string;
+  isActive: boolean;
 }

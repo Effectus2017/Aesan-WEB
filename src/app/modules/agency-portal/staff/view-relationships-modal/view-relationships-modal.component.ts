@@ -70,7 +70,7 @@ export class ViewRelationshipsModalComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialogRef: MatDialogRef<ViewRelationshipsModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { staffId: number; staffName?: string },
+    @Inject(MAT_DIALOG_DATA) public data: { staffId: number },
   ) {}
 
   ngOnInit(): void {
@@ -84,29 +84,23 @@ export class ViewRelationshipsModalComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Carga los datos del staff para mostrar el nombre
+   * Carga los datos del staff y construye el nombre completo para mostrarlo en el modal.
    */
   private loadStaffData(): void {
-    if (this.data.staffName) {
-      this.staffName = this.data.staffName;
-      return;
-    }
-
-    const queryParams: QueryParameters = {
-      id: this.data.staffId,
-    };
+    const queryParams: QueryParameters = { id: this.data.staffId };
 
     this._staffService.getStaffById(queryParams).subscribe({
       next: (response) => {
         if (response?.body) {
-          const staff = response.body;
-          this.staffName = `${staff.firstName || ''} ${staff.middleName || ''} ${staff.fatherLastName || ''} ${staff.motherLastName || ''}`.trim();
+          const s = response.body;
+          this.staffName = `${s.firstName ?? ''} ${s.middleName ?? ''} ${s.fatherLastName ?? ''} ${s.motherLastName ?? ''}`.trim();
           this._changeDetectorRef.markForCheck();
         }
       },
       error: (error) => {
         console.error('Error loading staff data:', error);
         this.staffName = this._translocoService.translate('staff.boardMembers.list.viewRelationships.unknownStaff');
+        this._changeDetectorRef.markForCheck();
       },
     });
   }
