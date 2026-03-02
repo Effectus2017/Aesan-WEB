@@ -9,7 +9,7 @@
             "table": {
                 "columns": {
                     "programName": "Programa",
-                    "agencyName": "Nombre de la Entidad Auspiciadora",
+                    "agencyName": "Nombre de la Entidad",
                     "stateDepartmentRegistration": "Registro Depto. Estado",
                     "address": "Dirección",
                     "city": "Municipio",

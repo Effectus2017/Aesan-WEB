@@ -1,0 +1,156 @@
+<div class="flex absolute inset-0 flex-col min-w-0">
+
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
+
+  <div class="overflow-y-auto flex-auto sm:p-6" cdkScrollable>
+    <div class="flex justify-center p-8 py-4 w-full rounded-full sm:justify-start">
+      <img
+        title="Avatar"
+        (click)="fileInput.click()"
+        class="object-cover rounded-full ring-4 ring-gray-400 cursor-pointer w-26 h-26"
+        [src]="imageURL ?? 'assets/images/avatars/profile.png'"
+        alt="Profile"
+        (error)="handleMissingImage($event)"
+        data-cy="avatar-image"
+      />
+      <input
+        hidden
+        onclick="this.value=null"
+        (change)="onFileSelected($event)"
+        #fileInput
+        type="file"
+        id="file"
+        data-cy="file-input"
+        [attr.aria-label]="'Select profile image'"
+      />
+    </div>
+    <form [formGroup]="headerConfig.formGroup" class="flex overflow-hidden flex-col col-span-12 sm:col-span-12">
+      <div class="grid grid-cols-12 gap-2 p-4 pt-4 sm:pt-4">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.firstName.label' | transloco }}</mat-label>
+              <input matInput formControlName="firstName" [placeholder]="'users.add.firstName.placeholder' | transloco" data-cy="firstName-input" [attr.aria-label]="'users.add.firstName.label' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('firstName').hasError('required')" data-cy="firstName-error">{{ 'users.add.firstName.required' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.middleName.label' | transloco }}</mat-label>
+              <input matInput formControlName="middleName" [placeholder]="'users.add.middleName.placeholder' | transloco" data-cy="middle-name-input" [attr.aria-label]="'users.add.middleName.label' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('middleName').hasError('required')" data-cy="middle-name-error">{{ 'users.add.middleName.required' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.fatherLastName.label' | transloco }}</mat-label>
+              <input matInput formControlName="fatherLastName" [placeholder]="'users.add.fatherLastName.placeholder' | transloco" data-cy="father-last-name-input" [attr.aria-label]="'users.add.fatherLastName.label' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('fatherLastName').hasError('required')" data-cy="father-last-name-error">{{ 'users.add.fatherLastName.required' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.motherLastName.label' | transloco }}</mat-label>
+              <input matInput formControlName="motherLastName" [placeholder]="'users.add.motherLastName.placeholder' | transloco" data-cy="mother-last-name-input" [attr.aria-label]="'users.add.motherLastName.label' | transloco" />
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.email.label' | transloco }}</mat-label>
+              <input matInput formControlName="email" [placeholder]="'users.add.email.placeholder' | transloco" data-cy="email-input" [attr.aria-label]="'users.add.email.label' | transloco" />
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('required')" data-cy="email-error">{{ 'users.add.email.required' | transloco }}</mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('invalidEmailFormat')" data-cy="email-format-error">{{ 'users.add.email.email' | transloco }}</mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('email').hasError('emailExists')" data-cy="email-exists-error">{{ 'users.add.email.exists' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto gt-xs:pr-3">
+              <mat-label>{{ 'users.add.username.label' | transloco }}</mat-label>
+              <input matInput formControlName="username" [placeholder]="'users.add.username.placeholder' | transloco" data-cy="username-input" [attr.aria-label]="'users.add.username.label' | transloco" autocomplete="username" />
+              <mat-error *ngIf="headerConfig.formGroup.get('username').hasError('required')" data-cy="username-error">{{ 'users.add.username.required' | transloco }}</mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('username').hasError('invalidEmailFormat')" data-cy="username-format-error">{{ 'users.add.username.email' | transloco }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'usersAgency.add.agency.label' | transloco }}</mat-label>
+              <mat-select
+                formControlName="agency"
+                [placeholder]="'usersAgency.add.agency.placeholder' | transloco"
+                [compareWith]="compareById"
+                data-cy="agency-select"
+                [attr.aria-label]="'usersAgency.add.agency.label' | transloco"
+              >
+                <mat-option *ngFor="let agency of listAgencies" [value]="agency" data-cy="agency-option">{{ agency.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('agency').hasError('required')" data-cy="agency-error">{{ 'usersAgency.add.agency.required' | transloco }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12 sm:grid-cols-2">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
+              <mat-select formControlName="role" [placeholder]="'users.add.role.placeholder' | transloco" [compareWith]="compareById" data-cy="role-select" [attr.aria-label]="'users.add.role.label' | transloco">
+                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">{{ currentLang === 'en' ? _role.displayNameEN : _role.displayName }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('role').hasError('required')" data-cy="role-error">{{ 'users.add.role.required' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.programs.label' | transloco }}</mat-label>
+              <mat-select formControlName="programs" multiple [placeholder]="'users.add.programs.placeholder' | transloco" [compareWith]="compareById" data-cy="programs-select" [attr.aria-label]="'users.add.programs.label' | transloco">
+                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'en' ? program.nameEN : program.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.city.label' | transloco }}</mat-label>
+              <mat-select formControlName="city" [placeholder]="'users.add.city.placeholder' | transloco" [compareWith]="compareById" (valueChange)="getRegionsByCityId($event, 'region')" data-cy="city-select" [attr.aria-label]="'users.add.city.label' | transloco">
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('city').hasError('required')" data-cy="city-error">{{ 'users.add.city.required' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.region.label' | transloco }}</mat-label>
+              <mat-select formControlName="region" [placeholder]="'users.add.region.placeholder' | transloco" [compareWith]="compareById" data-cy="region-select" [attr.aria-label]="'users.add.region.label' | transloco">
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('region').hasError('required')" data-cy="region-error">{{ 'users.add.region.required' | transloco }}</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+            <mat-form-field class="flex-auto" data-cy="current-password-field">
+              <mat-label>{{ 'users.add.current-password.label' | transloco }}</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="currentPassword" matInput type="password" [formControlName]="'currentPassword'" [placeholder]="'users.add.current-password.placeholder' | transloco" #currentPassword data-cy="current-password-input" [attr.aria-label]="'users.add.current-password.label' | transloco" autocomplete="current-password" />
+              <button mat-icon-button type="button" (click)="currentPassword.type === 'password' ? (currentPassword.type = 'text') : (currentPassword.type = 'password')" matSuffix data-cy="toggle-current-password" [attr.aria-label]="'Toggle password visibility'">
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="currentPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="headerConfig.formGroup.get('currentPassword').hasError('required')" data-cy="current-password-error">{{ 'users.add.current-password.required' | transloco }}</mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('currentPassword').hasError('minlength')" data-cy="current-password-minlength-error">{{ 'users.add.current-password.min-length' | transloco }}</mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto gt-xs:pr-3" data-cy="new-password-field">
+              <mat-label>{{ 'users.add.new-password.label' | transloco }}</mat-label>
+              <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
+              <input id="newPassword" matInput type="password" [formControlName]="'newPassword'" [placeholder]="'users.add.new-password.placeholder' | transloco" #newPassword data-cy="new-password-input" [attr.aria-label]="'users.add.new-password.label' | transloco" autocomplete="new-password" />
+              <button mat-icon-button type="button" (click)="newPassword.type === 'password' ? (newPassword.type = 'text') : (newPassword.type = 'password')" matSuffix data-cy="toggle-new-password" [attr.aria-label]="'Toggle password visibility'">
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                <mat-icon class="icon-size-5" *ngIf="newPassword.type === 'text'" [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+              </button>
+              <mat-error *ngIf="headerConfig.formGroup.get('newPassword').hasError('required')" data-cy="new-password-error">{{ 'users.add.new-password.required' | transloco }}</mat-error>
+              <mat-error *ngIf="headerConfig.formGroup.get('newPassword').hasError('minlength')" data-cy="new-password-minlength-error">{{ 'users.add.new-password.min-length' | transloco }}</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-span-12 mt-1 text-md text-hint">{{ 'users.add.password-requirements' | transloco }}</div>
+
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+            <mat-checkbox formControlName="isActive" [attr.aria-label]="'users.add.isActive.label' | transloco" data-cy="is-active-checkbox">{{ 'users.add.isActive.label' | transloco }}</mat-checkbox>
+            <mat-checkbox formControlName="isTemporalPasswordActived" [attr.aria-label]="'users.add.isTemporalPasswordActived.label' | transloco" data-cy="temporal-password-checkbox">{{ 'users.add.isTemporalPasswordActived.label' | transloco }}</mat-checkbox>
+            <mat-checkbox formControlName="emailConfirmed" [attr.aria-label]="'users.add.emailConfirmed.label' | transloco" data-cy="email-confirmed-checkbox">{{ 'users.add.emailConfirmed.label' | transloco }}</mat-checkbox>
+          </div>
+      </div>
+    </form>
+    <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
+      <p class="text-lg font-medium">{{ 'users.add.secondaryRoles.title' | transloco }}</p>
+    </div>
+    <div class="grid grid-cols-1 col-span-12 gap-4 px-4 mb-4 sm:grid-cols-1 sm:col-span-12">
+      <app-generic-table [config]="secondaryRolesTableConfig" [handler]="secondaryRolesTableHandler"></app-generic-table>
+    </div>
+  </div>
+</div>

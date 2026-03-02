@@ -9,7 +9,7 @@
             "table": {
                 "columns": {
                     "programName": "Program",
-                    "agencyName": "Name of the Sponsoring Entity",
+                    "agencyName": "Entity Name",
                     "stateDepartmentRegistration": "State Dept. Registration",
                     "address": "Address",
                     "city": "City",

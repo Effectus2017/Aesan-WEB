@@ -108,6 +108,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
       take: this.tableConfig.pageSize,
       skip: index,
       name: form.name || null,
+      isPropietary: true,
     };
 
     this._usersService.getAllUsersFromDbWithSP(requestParameters)

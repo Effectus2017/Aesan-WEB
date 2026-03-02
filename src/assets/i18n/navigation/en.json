@@ -3,6 +3,14 @@
         "agency": {
             "home": "Home"
         },
+        "nutre": {
+            "title": "NUTRE",
+            "users": "Users"
+        },
+        "auspiciadores": {
+            "title": "Sponsors",
+            "users": "Users"
+        },
         "users": {
             "title": "Users",
             "subtitle": "Users",

@@ -9,8 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatNativeDateModule } from '@angular/material/core';
-import { TranslocoModule } from '@ngneat/transloco';
-import { compareById } from 'app/shared/utils';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
+import { compareById, toIsoDateString } from 'app/shared/utils';
 import { AddSecondaryRoleModalData, AddSecondaryRoleModalResult, DTORole } from '../users.types';
 
 @Component({
@@ -45,6 +45,7 @@ export class AddSecondaryRoleModalComponent {
   constructor(
     public dialogRef: MatDialogRef<AddSecondaryRoleModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: AddSecondaryRoleModalData,
+    private _translocoService: TranslocoService,
   ) {
     const edit = data?.editRow;
     this.form = new FormGroup(
@@ -76,6 +77,11 @@ export class AddSecondaryRoleModalComponent {
   /** Función para mat-select compareWith (comparar roles por id). */
   roleCompareFn = compareById;
 
+  /** Idioma activo (es/en) para mostrar en el template el nombre del rol según idioma. */
+  get currentLang(): string {
+    return this._translocoService.getActiveLang() ?? 'es';
+  }
+
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones On (componentes genéricos)
   // -----------------------------------------------------------------------------------------------------
@@ -90,12 +96,8 @@ export class AddSecondaryRoleModalComponent {
     const role = formValues.role as DTORole;
     if (!role) return;
 
-    const validFrom: string | null = formValues.validFrom
-      ? (typeof formValues.validFrom === 'string' ? formValues.validFrom : (formValues.validFrom as Date).toISOString().slice(0, 10))
-      : null;
-    const validTo: string | null = formValues.validTo
-      ? (typeof formValues.validTo === 'string' ? formValues.validTo : (formValues.validTo as Date).toISOString().slice(0, 10))
-      : null;
+    const validFrom = toIsoDateString(formValues.validFrom);
+    const validTo = toIsoDateString(formValues.validTo);
 
     this.dialogRef.close({ role, validFrom, validTo });
   }

@@ -133,26 +133,19 @@ export const adminNavigation: FuseNavigationItem[] = [
     icon: 'heroicons_solid:user',
     children: [
       {
-        id: 'users.list',
-        title: 'navigation.users.list',
+        id: 'users.nutre',
+        title: 'navigation.nutre.title',
         type: 'basic',
-        icon: 'mat_solid:list',
+        icon: 'heroicons_solid:user',
         link: '/users',
       },
       {
-        id: 'roles.list',
-        title: 'navigation.users.roles',
+        id: 'users.auspiciadores',
+        title: 'navigation.auspiciadores.title',
         type: 'basic',
-        icon: 'mat_solid:lock',
-        link: '/users/roles',
+        icon: 'heroicons_solid:building-office-2',
+        link: '/users-agency',
       },
-      {
-        id: 'permissions.list',
-        title: 'navigation.users.permissions',
-        type: 'basic',
-        icon: 'mat_solid:lock',
-        link: '/permissions',
-      }
     ],
   },
   {

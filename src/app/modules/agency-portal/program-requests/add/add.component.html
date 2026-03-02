@@ -6,17 +6,17 @@
     <form [formGroup]="headerConfig.formGroup">
       <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
         <div class="grid grid-cols-1 col-span-12 gap-4 py-5 sm:grid-cols-1">
-          <p class="text-lg font-medium">Subtitulo de la seccion</p>
-          <p class="mb-6 text-secondary">Descripción de la seccion</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.sectionSubtitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.sectionDescription' | transloco }}</p>
         </div>
         <!-- Agency Name and IUE Number -->
         <div class="grid items-center grid-cols-1 col-span-12 gap-4 py-3 sm:grid-cols-2 sm:col-span-12">
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Nombre de la Entidad Auspiciadora</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.entityName' | transloco }}</span>
             <span class="text-base font-medium text-gray-400">{{ agencyInfo.name }}</span>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">IUE #</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.iueNumber' | transloco }}</span>
             <span class="text-base font-medium text-gray-400">{{ agencyInfo.uieNumber }}</span>
           </div>
         </div>
@@ -24,11 +24,11 @@
         <!-- Agency Address and City -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-3 sm:grid-cols-2 sm:col-span-12">
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Dirección</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.address' | transloco }}</span>
             <span class="text-base font-medium text-gray-400">{{ agencyInfo.address }}</span>
           </div>
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Nombre</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.name' | transloco }}</span>
             <span class="text-base font-bold text-gray-400"
               >{{ agencyInfo.user.firstName }} {{ agencyInfo.user.middleName }} {{ agencyInfo.user.fatherLastName }} {{ agencyInfo.user.motherLastName }}</span
             >
@@ -38,24 +38,24 @@
         <!-- Agency City and Admin Title -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-3 sm:grid-cols-2 sm:col-span-12">
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Pueblo</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.city' | transloco }}</span>
             <span class="text-base font-bold text-gray-400">{{ agencyInfo.city }}</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Region</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.region' | transloco }}</span>
             <span class="text-base font-bold text-gray-400">{{ agencyInfo.region }}</span>
           </div>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 py-3 sm:grid-cols-2 sm:col-span-12">
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Título del Administrador</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.adminTitle' | transloco }}</span>
             <span class="text-base font-bold text-gray-400">{{ agencyInfo.adminTitle }}</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Teléfono</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.phone' | transloco }}</span>
             <span class="text-base font-bold text-gray-400">{{ agencyInfo.phone }}</span>
           </div>
         </div>
@@ -63,26 +63,26 @@
         <!-- Agency Zip Code and Program -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-3 sm:grid-cols-2 sm:col-span-12">
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Codigo postal</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.zipCode' | transloco }}</span>
             <span class="text-base font-medium text-gray-400">{{ agencyInfo.zipCode }}</span>
           </div>
 
           <div class="grid grid-cols-2 gap-2">
-            <span class="text-lg font-medium">Programa al que desea participar</span>
+            <span class="text-lg font-medium">{{ 'program-requests.add.programToParticipate' | transloco }}</span>
             <span class="text-base font-medium text-gray-400">{{ agencyInfo.program }}</span>
           </div>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Subtitulo de la seccion</p>
-          <p class="mb-6 text-secondary">Descripción de la seccion</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.sectionSubtitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.sectionDescription' | transloco }}</p>
         </div>
 
         <!-- Entity and Schools -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <!-- Entity * -->
           <mat-form-field data-cy="entity-field">
-            <mat-label>¿La entidad es pública o privada?</mat-label>
+            <mat-label>{{ 'program-requests.add.entityPublicOrPrivate' | transloco }}</mat-label>
             <mat-select formControlName="entity" data-cy="entity-select">
               <mat-option *ngFor="let entity of listEntities" [value]="entity">{{ entity.name }}</mat-option>
             </mat-select>
@@ -90,8 +90,8 @@
 
           <!-- Numeros de escuelas * -->
           <mat-form-field data-cy="schools-field">
-            <mat-label>Número de escuelas</mat-label>
-            <input matInput type="number" formControlName="schools" min="1" max="100" [placeholder]="'Número de escuelas'" />
+            <mat-label>{{ 'program-requests.add.numberOfSchools' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="schools" min="1" max="100" [placeholder]="'program-requests.add.numberOfSchools' | transloco" />
           </mat-form-field>
         </div>
 
@@ -100,7 +100,7 @@
           <!-- Tax Exemption Type * -->
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="tax-exemption-type-field">
-              <mat-label>Requisito Exención Contributiva</mat-label>
+              <mat-label>{{ 'program-requests.add.taxExemptionRequirement' | transloco }}</mat-label>
               <mat-select formControlName="taxExemptionType" data-cy="tax-exemption-type-select">
                 <mat-option *ngFor="let taxExemptionType of listTaxExemptionTypes" [value]="taxExemptionType">{{ taxExemptionType.name }}</mat-option>
               </mat-select>
@@ -110,7 +110,7 @@
           <!-- Tax Exemption Status * -->
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="tax-exemption-status-field">
-              <mat-label>Estatus de Exención Contributiva</mat-label>
+              <mat-label>{{ 'program-requests.add.taxExemptionStatus' | transloco }}</mat-label>
               <mat-select formControlName="taxExemptionStatus" data-cy="tax-exemption-status-select">
                 <mat-option *ngFor="let exemptionStatus of listExemptionStatus" [value]="exemptionStatus">{{ exemptionStatus.name }}</mat-option>
               </mat-select>
@@ -123,7 +123,7 @@
           <div class="grid grid-cols-1 gap-2">
             <div class="flex items-center">
               <mat-form-field data-cy="basic-education-certification-field" class="flex-grow">
-                <mat-label>¿Bajo cual de las siguientes autoridades desea participar?</mat-label>
+                <mat-label>{{ 'program-requests.add.authorityToParticipate' | transloco }}</mat-label>
                 <mat-select formControlName="basicEducationCertification" data-cy="basic-education-certification-select">
                   <mat-option *ngFor="let basicEducationCertification of listBasicEducationCertifications" [value]="basicEducationCertification">{{
                     basicEducationCertification.name
@@ -135,9 +135,9 @@
                   *ngIf="headerConfig.formGroup.get('basicEducationCertification').value.id === 1"
                   class="ml-2"
                   mat-icon-button
-                  matTooltip="La Autoridad Escolar de Alimentos del Departamento de Educación le proveerá los alimentos, materiales de limpieza, menús, adiestramientos al personal del servicio de  alimentos, gas y servicio de fumigación entre otras cosas.  La entidad tiene que proveer los empleados del servicio de alimentos y las facilidades necesarias de la cafetería escolar con todo el equipo mínimo necesario."
+                  [matTooltip]="'program-requests.add.tooltipAea' | transloco"
                   matTooltipPosition="right"
-                  aria-label="Información"
+                  [attr.aria-label]="'program-requests.add.infoAriaLabel' | transloco"
                 >
                   <mat-icon>info</mat-icon>
                 </button>
@@ -145,9 +145,9 @@
                   *ngIf="headerConfig.formGroup.get('basicEducationCertification').value.id !== 1"
                   class="ml-2"
                   mat-icon-button
-                  matTooltip="La entidad solicitante será responsable de la administración del Programa de Servicios de Alimentos.  El Departamento de Educación reembolsará a la entidad participante una cantidad de dinero por cada ración servida a los estudiantes que cualifiquen para ello.  Con ese reembolso la entidad adquirirá los alimentos frescos, congelados y enlatados a usarse, pagará a los empleados del servicio de alimentos y adquirirá equipo para el mismo."
+                  [matTooltip]="'program-requests.add.tooltipDe' | transloco"
                   matTooltipPosition="right"
-                  aria-label="Información"
+                  [attr.aria-label]="'program-requests.add.infoAriaLabel' | transloco"
                 >
                   <mat-icon>info</mat-icon>
                 </button>
@@ -157,7 +157,7 @@
 
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="functioning-policy-field">
-              <mat-label>¿Bajo qué Política de Funcionamiento Desea Participar?</mat-label>
+              <mat-label>{{ 'program-requests.add.functioningPolicy' | transloco }}</mat-label>
               <mat-select formControlName="functioningPolicy" data-cy="functioning-policy-select">
                 <mat-option *ngFor="let functioningPolicy of listFunctioningPolicies" [value]="functioningPolicy">{{ functioningPolicy.name }}</mat-option>
               </mat-select>
@@ -167,14 +167,14 @@
 
         <!-- Subtitulo de la seccion -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Derechos Civiles</p>
-          <p class="mb-6 text-secondary">Material Informativo Sobre la Ley de Derechos Civiles y Programa</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.civilRightsTitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.civilRightsDescription' | transloco }}</p>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="civil-rights-survey-field">
-              <mat-label>¿Certifica que he completado el Cuestionario de Derechos Civiles Pre-Awards en sus instituciones?</mat-label>
+              <mat-label>{{ 'program-requests.add.civilRightsSurveyCertify' | transloco }}</mat-label>
               <mat-select formControlName="civilRightsSurveyCompleted" data-cy="civil-rights-survey-select">
                 <mat-option *ngFor="let civilRightsSurvey of listOfCivilRightsSurvey" [value]="civilRightsSurvey">{{ civilRightsSurvey.name }}</mat-option>
               </mat-select>
@@ -185,7 +185,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-field">
-              <mat-label>¿Necesita material informativo en otros idiomas además de español e inglés?</mat-label>
+              <mat-label>{{ 'program-requests.add.informativeMaterialOtherLanguages' | transloco }}</mat-label>
               <mat-select formControlName="informativeMaterialNeeded" data-cy="informative-material-select">
                 <mat-option *ngFor="let informativeMaterial of listOfInformativeMaterial" [value]="informativeMaterial">{{ informativeMaterial.name }}</mat-option>
               </mat-select>
@@ -193,12 +193,12 @@
           </div>
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-language-field">
-              <mat-label>Idiomas</mat-label>
+              <mat-label>{{ 'program-requests.add.languages' | transloco }}</mat-label>
               <input
                 matInput
                 type="text"
                 formControlName="informativeMaterialLanguage"
-                [placeholder]="'Idioma'"
+                [placeholder]="'program-requests.add.language' | transloco"
                 [disabled]="!headerConfig.formGroup.get('informativeMaterialNeeded').value"
               />
             </mat-form-field>
@@ -208,7 +208,7 @@
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-field">
-              <mat-label>¿Necesita intérpreta para diferentes idiomas?</mat-label>
+              <mat-label>{{ 'program-requests.add.interpretersNeeded' | transloco }}</mat-label>
               <mat-select formControlName="interpretersNeeded" data-cy="interpreters-needed-select">
                 <mat-option *ngFor="let interpretersNeeded of listOfAlternativeCommunicationMedia" [value]="interpretersNeeded">{{ interpretersNeeded.name }}</mat-option>
               </mat-select>
@@ -216,8 +216,8 @@
           </div>
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="informative-material-language-field">
-              <mat-label>Idiomas</mat-label>
-              <input matInput type="text" formControlName="interpretersLanguage" [placeholder]="'Idioma'" [disabled]="!headerConfig.formGroup.get('interpretersNeeded').value" />
+              <mat-label>{{ 'program-requests.add.languages' | transloco }}</mat-label>
+              <input matInput type="text" formControlName="interpretersLanguage" [placeholder]="'program-requests.add.language' | transloco" [disabled]="!headerConfig.formGroup.get('interpretersNeeded').value" />
             </mat-form-field>
           </div>
         </div>
@@ -226,11 +226,7 @@
           <div class="grid grid-cols-1 gap-2">
             <!-- Medio Alternativo -->
             <mat-form-field data-cy="alternative-communication-media-field">
-              <mat-label
-                matTooltip="¿Necesita medios alternatvios para la comunicación de la información del programa como Sistema Brailes para no videntes, letras grandes, cintas de audio, etc.?"
-                >¿Necesita medios alternatvios para la comunicación de la información del programa como Sistema Brailes para no videntes, letras grandes, cintas de audio,
-                etc.?</mat-label
-              >
+              <mat-label [matTooltip]="'program-requests.add.alternativeMediaLabel' | transloco">{{ 'program-requests.add.alternativeMediaLabel' | transloco }}</mat-label>
               <mat-select formControlName="alternativeCommunicationMedia" data-cy="alternative-communication-media-select">
                 <mat-option *ngFor="let alternativeCommunicationMedia of listOfAlternativeCommunicationMedia" [value]="alternativeCommunicationMedia">{{
                   alternativeCommunicationMedia.name
@@ -241,7 +237,7 @@
 
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="alternative-communication-media-type-field">
-              <mat-label>Tipo de Medio Alternativo</mat-label>
+              <mat-label>{{ 'program-requests.add.alternativeMediaType' | transloco }}</mat-label>
               <mat-select multiple formControlName="alternativeCommunicationMediaType" [disabled]="!headerConfig.formGroup.get('alternativeCommunicationMedia').value">
                 <mat-option *ngFor="let type of listOfAlternativeCommunicationMediaTypes" [value]="type">{{ type.name }}</mat-option>
               </mat-select>
@@ -251,8 +247,8 @@
 
         <!-- Subtitulo de la seccion -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Orgnaización de Sitios</p>
-          <p class="mb-6 text-secondary">Descripción de la seccion</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.sitesOrganizationTitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.sectionDescription' | transloco }}</p>
         </div>
 
         <!-- Tabla con lsita de escuelas -->
@@ -262,42 +258,42 @@
 
         <!-- Subtitulo de la seccion -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Merienda</p>
-          <p class="mb-6 text-secondary">Favor indicar el porciento (%) de elegibilidad en las categorías de gratis y reducido.</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.snackTitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.snackEligibilityDescription' | transloco }}</p>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-10">
           <mat-form-field data-cy="free-percentage-field">
-            <mat-label>% Gratis</mat-label>
-            <input matInput type="number" formControlName="freePercentage" [placeholder]="'% Gratis'" />
+            <mat-label>{{ 'program-requests.add.percentFree' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="freePercentage" [placeholder]="'program-requests.add.percentFree' | transloco" />
           </mat-form-field>
 
           <mat-form-field data-cy="free-percentage-field">
-            <mat-label>% Gratis</mat-label>
-            <input matInput type="number" formControlName="reducedPercentage" [placeholder]="'% Reducido'" />
+            <mat-label>{{ 'program-requests.add.percentReduced' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="reducedPercentage" [placeholder]="'program-requests.add.percentReduced' | transloco" />
           </mat-form-field>
 
           <mat-form-field data-cy="sub-total-percentage-field">
-            <mat-label>% Sub-Total</mat-label>
-            <input matInput type="number" formControlName="subTotalPercentage" [placeholder]="'% Sub-Total'" />
+            <mat-label>{{ 'program-requests.add.percentSubTotal' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="subTotalPercentage" [placeholder]="'program-requests.add.percentSubTotal' | transloco" />
           </mat-form-field>
 
           <mat-form-field data-cy="paid-percentage-field">
-            <mat-label>% Pagado</mat-label>
-            <input matInput type="number" formControlName="paidPercentage" [placeholder]="'% Pagado'" />
+            <mat-label>{{ 'program-requests.add.percentPaid' | transloco }}</mat-label>
+            <input matInput type="number" formControlName="paidPercentage" [placeholder]="'program-requests.add.percentPaid' | transloco" />
           </mat-form-field>
         </div>
 
         <!-- Subtitulo de la seccion -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Documentos</p>
-          <p class="mb-6 text-secondary">Documentos requeridos para solicitar el servicio de merienda:.</p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.documentsTitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.documentsDescription' | transloco }}</p>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-2">
             <mat-form-field data-cy="document-type-field">
-              <mat-label>Documentos</mat-label>
+              <mat-label>{{ 'program-requests.add.documentsLabel' | transloco }}</mat-label>
               <mat-select multiple formControlName="documentType">
                 <mat-option *ngFor="let type of listOfDocumentTypes" [value]="type">{{ type.name }}</mat-option>
               </mat-select>
@@ -307,23 +303,19 @@
 
         <!-- Subtitulo de la seccion -->
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="text-lg font-medium">Notificacion</p>
-          <p class="mb-6 text-secondary">
-            De acuerdo a la Oficina de Gerencia y Presupuesto de Estados Unidos (OMB, por sus siglas en inglés) toda Autoridad o Institución Auspiciadora cuya cuantía de fondos
-            federales recibidos (de todas las fuentes) en un año fiscal, sea de setecientos cincuenta mil dólares (750,000.00) o más, está obligada a realizar una auditoria en
-            cumplimiento con el Código de Regulaciones Federales 2 parte 200 sub-parte f (2 CFR 200 f).
-          </p>
+          <p class="text-lg font-medium">{{ 'program-requests.add.notificationTitle' | transloco }}</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.notificationOmbDescription' | transloco }}</p>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-10">
           <div class="grid grid-cols-1 gap-4">
-            <mat-checkbox  data-cy="checkbox1-field"> $750,000 o más en fondos federales en un año fiscal </mat-checkbox>
-            <mat-checkbox data-cy="checkbox2-field"> $749,999 o menos en fondos federales en un año fiscal </mat-checkbox>
+            <mat-checkbox data-cy="checkbox1-field">{{ 'program-requests.add.checkbox750kOrMore' | transloco }}</mat-checkbox>
+            <mat-checkbox data-cy="checkbox2-field">{{ 'program-requests.add.checkbox749kOrLess' | transloco }}</mat-checkbox>
           </div>
         </div>
 
         <div class="grid grid-cols-1 col-span-12 gap-4 py-7 sm:grid-cols-1">
-          <p class="mb-6 text-secondary">Certifico que nuestra institución ha recibido:</p>
+          <p class="mb-6 text-secondary">{{ 'program-requests.add.certifyReceived' | transloco }}</p>
         </div>
 
         <!-- Tabla con lista de funetes de ingresos -->

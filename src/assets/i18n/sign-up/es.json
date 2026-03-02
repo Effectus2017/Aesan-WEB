@@ -99,7 +99,7 @@
     "sponsor-information": "Información del Auspiciador",
     "sponsor-information-description": "Aquí puede agregar la información del auspiciador",
     "agency": {
-      "label": "Nombre de la Entidad Auspiciadora",
+      "label": "Nombre de la Entidad",
       "placeholder": "Ingresa el nombre de la entidad auspiciadora",
       "description": "Información del auspiciador",
       "required": "El nombre de la entidad auspiciadora es requerido"

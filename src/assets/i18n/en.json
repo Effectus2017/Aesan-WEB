@@ -198,6 +198,21 @@
             }
         }
     },
+    "usersAgency": {
+        "list": {
+            "title": "Agency Users"
+        },
+        "add": {
+            "title": "Add agency user",
+            "submit": "Save",
+            "back": "Back",
+            "agency": {
+                "label": "Sponsor",
+                "placeholder": "Select a sponsor",
+                "required": "Sponsor is required"
+            }
+        }
+    },
     "keyboard-shortcuts": {
         "modal": {
             "title": "Keyboard Shortcuts",

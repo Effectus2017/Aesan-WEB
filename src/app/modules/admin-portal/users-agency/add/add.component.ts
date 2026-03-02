@@ -9,12 +9,13 @@ import {
   UntypedFormBuilder,
   Validators,
   AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 
 import _ from 'lodash';
-import { UsersService } from '../../../../shared/services/users.service';
+import { UsersService } from 'app/shared/services/users.service';
 import { Subject, takeUntil } from 'rxjs';
 
 import { UploadService } from 'app/shared/services/upload.service';
@@ -23,7 +24,6 @@ import {
   AddSecondaryRoleModalResult,
   AddUserFormValue,
   AddUserResponse,
-  AgencyOption,
   DTORole,
   FuseConfirmationDialogOptions,
   ProgramOption,
@@ -31,7 +31,7 @@ import {
   SecondaryRoleFormRow,
   SecondaryRoleInput,
   SecondaryRoleTableRow,
-} from '../users.types';
+} from '../../users/users.types';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -42,7 +42,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { AuthService } from 'app/core/auth/auth.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { City } from 'app/shared/models/City';
@@ -53,19 +52,17 @@ import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { UserService } from 'app/shared/services/user.service';
-import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { emailFormatValidator } from 'app/shared/validators/email-format.validator';
 import { MatDialog } from '@angular/material/dialog';
-import { AddSecondaryRoleModalComponent } from '../add-secondary-role-modal/add-secondary-role-modal.component';
+import { AddSecondaryRoleModalComponent } from '../../users/add-secondary-role-modal/add-secondary-role-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { SECONDARY_ROLES_COLUMNS_SCHEMA } from '../edit/columns-schema';
+import { SECONDARY_ROLES_COLUMNS_SCHEMA } from '../../users/edit/columns-schema';
 import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
 
 @Component({
-  selector: 'app-users-add',
+  selector: 'app-users-agency-add',
   templateUrl: './add.component.html',
   imports: [
     FormsModule,
@@ -86,33 +83,22 @@ import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
     GenericTableComponent,
   ],
 })
-export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
-  // -----------------------------------------------------------------------------------------------------
-  // @ Subject de desuscripción
-  // -----------------------------------------------------------------------------------------------------
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
+export class UsersAgencyAddComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
+  private _unsubscribeAll = new Subject<any>();
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Inyecciones privadas
-  // -----------------------------------------------------------------------------------------------------
-  private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
-  private _usersService: UsersService = inject(UsersService);
-  private _geoService: GeoService = inject(GeoService);
-  private _uploadService: UploadService = inject(UploadService);
-  private _customRouter: CustomRouterService = inject(CustomRouterService);
-  private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
-  private _translocoService: TranslocoService = inject(TranslocoService);
-  private _fuseConfirmationService: FuseConfirmationService = inject(FuseConfirmationService);
-  private _route: ActivatedRoute = inject(ActivatedRoute);
-  private _userService: UserService = inject(UserService);
-  private _matDialog: MatDialog = inject(MatDialog);
-  private _authService: AuthService = inject(AuthService);
+  private _formBuilder = inject(UntypedFormBuilder);
+  private _usersService = inject(UsersService);
+  private _geoService = inject(GeoService);
+  private _uploadService = inject(UploadService);
+  private _customRouter = inject(CustomRouterService);
+  private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _translocoService = inject(TranslocoService);
+  private _fuseConfirmationService = inject(FuseConfirmationService);
+  private _route = inject(ActivatedRoute);
+  private _matDialog = inject(MatDialog);
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Variables
-  // -----------------------------------------------------------------------------------------------------
   headerConfig: GenericHeaderConfig = {
-    title: 'users.add.title',
+    title: 'usersAgency.add.title',
     formGroup: this._formBuilder.group(
       {
         username: new FormControl({ value: null, disabled: true }, [Validators.required, Validators.email, emailFormatValidator()]),
@@ -123,6 +109,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
+        agency: new FormControl(null, Validators.required),
         role: new FormControl(null, Validators.required),
         city: new FormControl(null, Validators.required),
         region: new FormControl(null, Validators.required),
@@ -132,20 +119,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         isTemporalPasswordActived: new FormControl(true),
         emailConfirmed: new FormControl(false),
       },
-      {
-        validators: this.onPassword.bind(this),
-      }
+      { validators: this.onPassword.bind(this) }
     ),
+    cancelButtonShow: true,
+    cancelButtonText: 'usersAgency.add.back',
     submitButtonShow: true,
-    submitButtonText: 'users.add.submit',
+    submitButtonText: 'usersAgency.add.submit',
     submitDisabled: true,
     settingsButtonShow: true,
     settingsMenuItems: [
-      {
-        id: 'add-secondary-role',
-        label: 'users.add.secondaryRoles.add',
-        icon: 'heroicons_solid:user-plus',
-      },
+      { id: 'add-secondary-role', label: 'users.add.secondaryRoles.add', icon: 'heroicons_solid:user-plus' },
     ],
   };
 
@@ -163,25 +146,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   fileResponse: FileResponse;
 
   listRoles = [];
+  listAgencies = [];
   listPrograms: ProgramOption[] = [];
   listCities: City[] = [];
   listRegions: Region[] = [];
   compareById = compareById;
 
-  /** Idioma activo de la UI (es/en) para mostrar nombres de roles en el idioma correcto. */
   currentLang = 'es';
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Constructor
-  // -----------------------------------------------------------------------------------------------------
-  constructor() {}
-
-  // -----------------------------------------------------------------------------------------------------
-  // @ Getters
-  // -----------------------------------------------------------------------------------------------------
-  /** Devuelve el handler de la tabla de roles secundarios (acciones por fila, p. ej. eliminar). */
   get secondaryRolesTableHandler(): OnGenericTableHandler {
-    const handler: OnGenericTableHandler = {
+    return {
       tableConfig: this.secondaryRolesTableConfig,
       onTableAction: (event: Event, action: string, id: string | number) => {
         event?.stopPropagation?.();
@@ -192,25 +166,18 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         }
       },
     };
-    return handler;
   }
 
-  /** Devuelve el FormArray de roles secundarios. */
   get secondaryRolesArray(): FormArray {
     return this.headerConfig.formGroup.get('secondaryRoles') as FormArray;
   }
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ ngOnInit / ngOnDestroy
-  // -----------------------------------------------------------------------------------------------------
-  /** Inicializa el formulario: carga roles y programas del resolver, sincroniza username con email y muestra/oculta Auspiciador según rol primario. */
-  ngOnInit() {
-    // Obtener datos del resolver en lugar de suscribirse
+  ngOnInit(): void {
     const resolvedData = this._route.snapshot.data['data'];
-
     if (resolvedData) {
-      this.listRoles = resolvedData.roles ?? [];
-      this.listPrograms = resolvedData.programs ?? [];
+      this.listRoles = resolvedData.roles?.data ?? [];
+      this.listAgencies = Array.isArray(resolvedData.agencies) ? resolvedData.agencies : (resolvedData.agencies?.data ?? []);
+      this.listPrograms = Array.isArray(resolvedData.programs) ? resolvedData.programs : (resolvedData.programs?.data ?? []);
       this.listCities = resolvedData.cities ?? [];
       this.listRegions = resolvedData.regions ?? [];
       this._changeDetectorRef.markForCheck();
@@ -222,12 +189,10 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
       this._changeDetectorRef.markForCheck();
     });
 
-    // Suscribirse a los cambios del campo email para sincronizar con username
     this.headerConfig.formGroup.get('email').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe((value) => {
       this.headerConfig.formGroup.get('username').setValue(value);
     });
 
-    // Sincronizar idioma de la UI para mostrar nombres de roles (displayName vs displayNameEN)
     this.currentLang = this._translocoService.getActiveLang() ?? 'es';
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang) => {
       this.currentLang = lang ?? 'es';
@@ -235,23 +200,17 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     });
   }
 
-  /** Cancela suscripciones al destruir el componente. */
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Funciones On (componentes genéricos)
-  // -----------------------------------------------------------------------------------------------------
-  /** Ejecuta la acción del menú de configuración del header (p. ej. abrir modal de agregar rol secundario). */
   onSettingsMenuAction(menuItemId: string): void {
     if (menuItemId === 'add-secondary-role') {
       this.openAddSecondaryRoleModal();
     }
   }
 
-  /** Llamado por el botón Submit del header; envía el formulario o marca errores. */
   onSubmit(): void {
     if (this.headerConfig.formGroup.valid) {
       this.submitForm(this.headerConfig.formGroup.value);
@@ -262,36 +221,30 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
     }
   }
 
-  /** Navega a la lista de usuarios sin guardar. */
-  onBack() {
-    this._customRouter.navigate(['users']);
+  onBack(): void {
+    this._customRouter.navigate(['..']);
   }
 
-  /** Captura el archivo elegido en el input y, si es imagen, lo sube como avatar. */
-  onFileSelected(event: Event) {
+  onCancel(event: Event): void {
+    event?.preventDefault?.();
+    event?.stopPropagation?.();
+    this.onBack();
+  }
+
+  onFileSelected(event: Event): void {
     event.stopPropagation();
     event.preventDefault();
-
     const target = event.target as HTMLInputElement;
-    this.fileToUpload = (target.files as FileList)[0];
-
-    // Imagen
-    let imagenTypes = ['image/jpeg', 'image/jpg', 'image/bmp', 'image/png'];
-    let imagenExt = ['jpeg', 'jpg', 'bmp', 'png'];
-
-    if (_.includes(imagenTypes, this.fileToUpload.type) || _.includes(imagenExt, this.fileToUpload.name)) {
+    this.fileToUpload = (target.files as FileList)?.[0];
+    const imagenTypes = ['image/jpeg', 'image/jpg', 'image/bmp', 'image/png'];
+    const imagenExt = ['jpeg', 'jpg', 'bmp', 'png'];
+    if (this.fileToUpload && (_.includes(imagenTypes, this.fileToUpload.type) || _.includes(imagenExt, this.fileToUpload.name))) {
       this.onUpload(this.fileToUpload, UploadFolderEnum.Imagen);
     }
   }
 
-  /** Sube el archivo como avatar de usuario y actualiza imageURL; muestra diálogo de error si falla. */
-  onUpload(file: File, folderTo: UploadFolderEnum) {
-    var requestParameters: QueryParameters = {
-      userId: null,
-      description: 'userProfile',
-      documentType: 'userProfile',
-    };
-
+  onUpload(file: File, folderTo: UploadFolderEnum): void {
+    const requestParameters: QueryParameters = { userId: null, description: 'userProfile', documentType: 'userProfile' };
     this._uploadService.uploadUserAvatar(requestParameters, file).subscribe({
       next: (result) => {
         if (result) {
@@ -300,28 +253,16 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         }
       },
       error: () => {
-        const options: FuseConfirmationDialogOptions = {
+        this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.edit.messages.upload.title'),
           message: this._translocoService.translate('users.edit.messages.upload.error'),
           icon: { show: true, name: 'heroicons_outline:exclamation-circle', color: 'error' as const },
-          actions: {
-            confirm: {
-              show: true,
-              label: this._translocoService.translate('dialog.error.confirm'),
-              color: 'primary' as const,
-            },
-            cancel: { show: false, label: undefined },
-          },
-        };
-        this._fuseConfirmationService.open(options);
+          actions: { confirm: { show: true, label: this._translocoService.translate('dialog.error.confirm'), color: 'primary' as const }, cancel: { show: false, label: undefined } },
+        });
       },
     });
   }
 
-  // -----------------------------------------------------------------------------------------------------
-  // @ Otras funciones públicas
-  // -----------------------------------------------------------------------------------------------------
-  /** Muestra diálogo de confirmación y, si el usuario confirma, elimina el rol secundario en el índice dado y sincroniza la tabla. */
   confirmRemoveSecondaryRole(index: number): void {
     const options: FuseConfirmationDialogOptions = {
       title: this._translocoService.translate('users.edit.secondaryRoles.table.buttons.delete'),
@@ -332,31 +273,19 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         cancel: { show: true, label: this._translocoService.translate('users.list.delete.cancel') },
       },
     };
-    this._fuseConfirmationService
-      .open(options)
-      .afterClosed()
-      .subscribe((result) => {
-        if (result === 'confirmed') {
-          this.removeSecondaryRole(index);
-          this.syncSecondaryRolesTableData();
-        }
-      });
+    this._fuseConfirmationService.open(options).afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        this.removeSecondaryRole(index);
+        this.syncSecondaryRolesTableData();
+      }
+    });
   }
 
-  /** Crea un FormGroup para una fila de rol secundario (rol, vigencia desde/hasta) con validador de rango de fechas. */
-  createSecondaryRoleGroup(
-    role?: DTORole | null,
-    validFrom?: string | Date | null,
-    validTo?: string | Date | null,
-  ): FormGroup {
+  createSecondaryRoleGroup(role?: DTORole | null, validFrom?: string | Date | null, validTo?: string | Date | null): FormGroup {
     const fromVal = toIsoDateString(validFrom);
     const toVal = toIsoDateString(validTo);
     return this._formBuilder.group(
-      {
-        role: new FormControl(role ?? null),
-        validFrom: new FormControl(fromVal),
-        validTo: new FormControl(toVal),
-      },
+      { role: new FormControl(role ?? null), validFrom: new FormControl(fromVal), validTo: new FormControl(toVal) },
       {
         validators: (g: AbstractControl) => {
           const from = g.get('validFrom')?.value;
@@ -364,62 +293,43 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           if (from && to && new Date(to) <= new Date(from)) return VALIDATION_ERRORS.DATE_RANGE;
           return null;
         },
-      },
+      }
     );
   }
 
-  /** Añade una fila vacía de rol secundario al formulario. */
   addSecondaryRole(): void {
     this.secondaryRolesArray.push(this.createSecondaryRoleGroup());
     this._changeDetectorRef.markForCheck();
   }
 
-  /** Quita la fila de rol secundario en el índice indicado del FormArray. */
   removeSecondaryRole(index: number): void {
     this.secondaryRolesArray.removeAt(index);
     this._changeDetectorRef.markForCheck();
   }
 
-  /** Actualiza la fuente de datos de la tabla de roles secundarios a partir del FormArray del formulario. */
   syncSecondaryRolesTableData(): void {
     this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
       const role = g.get('role')?.value as DTORole | null;
       const roleName = this.currentLang === 'en' ? (role?.displayNameEN ?? '') : (role?.displayName ?? '');
-      return {
-        id: i,
-        roleName,
-        validFrom: formatDateShort(g.get('validFrom')?.value),
-        validTo: formatDateShort(g.get('validTo')?.value),
-      };
-    }) as SecondaryRoleTableRow[];
+      return { id: i, roleName, validFrom: formatDateShort(g.get('validFrom')?.value), validTo: formatDateShort(g.get('validTo')?.value) } as SecondaryRoleTableRow;
+    });
     this._changeDetectorRef.markForCheck();
   }
 
-  /** Abre el modal para elegir un rol secundario; pasa lista de roles, rol primario y IDs ya usados para excluirlos. Al confirmar, añade la fila y sincroniza la tabla. */
   openAddSecondaryRoleModal(): void {
-    // Obtener el rol primario para excluirlo del backend
     const role = this.headerConfig.formGroup.get('role')?.value as DTORole | null;
     const primaryRoleId = role?.id ? String(role.id) : undefined;
-
-    // Obtener los IDs de roles secundarios ya asignados para excluirlos del backend
     const secondaryRoles = this.headerConfig.formGroup.get('secondaryRoles') as FormArray | null;
     const existingSecondaryRoleIds = (secondaryRoles?.controls ?? [])
       .map((c) => (c.get('role')?.value as DTORole)?.id)
       .filter((id) => id != null)
       .map((id) => String(id));
 
-    // Llamar al backend para obtener roles ya filtrados
     this._usersService.getAvailableSecondaryRoles(primaryRoleId, existingSecondaryRoleIds).subscribe({
       next: (response) => {
         const availableRoles = response?.body?.data ?? [];
-        const modalData: AddSecondaryRoleModalData = {
-          listRoles: availableRoles,
-        };
-        const dialogRef = this._matDialog.open(AddSecondaryRoleModalComponent, {
-          width: '500px',
-          maxWidth: '90vw',
-          data: modalData,
-        });
+        const modalData: AddSecondaryRoleModalData = { listRoles: availableRoles };
+        const dialogRef = this._matDialog.open(AddSecondaryRoleModalComponent, { width: '500px', maxWidth: '90vw', data: modalData });
         dialogRef.afterClosed().subscribe((result: AddSecondaryRoleModalResult) => {
           if (result?.role) {
             this.secondaryRolesArray.push(this.createSecondaryRoleGroup(result.role, result.validFrom, result.validTo));
@@ -427,34 +337,21 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           }
         });
       },
-      error: (error) => {
-        console.error('Error loading available secondary roles:', error);
-      }
+      error: () => {},
     });
   }
 
-  /** Validador del grupo: verifica que contraseña y confirmación coincidan. */
-  onPassword(formGroup: FormGroup) {
-    const { value: password } = formGroup.get('currentPassword');
-    const { value: confirmPassword } = formGroup.get('newPassword');
+  onPassword(formGroup: FormGroup): ValidationErrors | null {
+    const password = formGroup.get('currentPassword')?.value;
+    const confirmPassword = formGroup.get('newPassword')?.value;
     return password === confirmPassword ? null : VALIDATION_ERRORS.PASSWORD_NOT_MATCH;
   }
 
-  /** Validador del grupo: verifica que username y email coincidan. */
-  onUserName(formGroup: FormGroup) {
-    const { value: username } = formGroup.get('username');
-    const { value: email } = formGroup.get('email');
-    return username === email ? null : { emailNotMatch: true };
-  }
-
-  /** Valida datos del formulario, construye RequestUser y llama al servicio para crear el usuario; al terminar navega a la lista. */
-  submitForm(form: AddUserFormValue) {
-    const requestParameters: QueryParameters = {
-      agencyId: this._authService.getAgencyId(),
-    };
+  submitForm(form: AddUserFormValue & { agency?: { id: number } | null }): void {
+    const agencyId = form.agency?.id;
+    const requestParameters: QueryParameters = { agencyId: agencyId ?? undefined };
 
     const primaryRoleName = form.role?.name;
-
     const secondaryRolesPayload: SecondaryRoleInput[] = (form.secondaryRoles ?? [])
       .filter((row: SecondaryRoleFormRow) => row?.role?.name)
       .map((row: SecondaryRoleFormRow) => ({
@@ -488,46 +385,36 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
     this._usersService.add(_model, requestParameters).subscribe({
       next: (result: AddUserResponse) => {
-        if (result?.status === 200) {
-          this._changeDetectorRef.markForCheck();
-        }
+        if (result?.status === 200) this._changeDetectorRef.markForCheck();
       },
-      error: (error) => {},
-      complete: () => {
-        this.onBack();
-      },
+      error: () => {},
+      complete: () => this.onBack(),
     });
   }
 
-  /** Sustituye la URL de la imagen por la de avatar por defecto cuando la carga falla. */
-  handleMissingImage(event: Event) {
+  handleMissingImage(event: Event): void {
     this.imageURL = 'assets/images/avatars/profile.png';
   }
 
-  /** Carga las regiones por ciudad y actualiza el control de región; al cambiar ciudad se limpia o asigna la única región si hay una sola. */
   getRegionsByCityId(city: City, target: string): void {
     if (!city) return;
     const queryParameters: QueryParameters = { cityId: city.id };
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
       next: (response) => {
-        if (response?.body?.data) {
-          if (target === 'region') {
-            this.listRegions = response.body.data;
-            const regionControl = this.headerConfig.formGroup.get('region');
-            if (regionControl) {
-              if (this.listRegions.length === 1) {
-                this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
-              } else {
-                regionControl.setValue(null);
-              }
+        if (response?.body?.data && target === 'region') {
+          this.listRegions = response.body.data;
+          const regionControl = this.headerConfig.formGroup.get('region');
+          if (regionControl) {
+            if (this.listRegions.length === 1) {
+              this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+            } else {
+              regionControl.setValue(null);
             }
           }
         }
         this._changeDetectorRef.markForCheck();
       },
-      error: () => {
-        this._changeDetectorRef.markForCheck();
-      },
+      error: () => this._changeDetectorRef.markForCheck(),
     });
   }
 }

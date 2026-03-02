@@ -272,6 +272,16 @@
                 "label": "Assigned programs",
                 "placeholder": "Select one or more programs"
             },
+            "city": {
+                "label": "City",
+                "placeholder": "Select the city",
+                "required": "City is required"
+            },
+            "region": {
+                "label": "Region",
+                "placeholder": "Select the region",
+                "required": "Region is required"
+            },
             "isActive": {
                 "label": "Active User"
             },

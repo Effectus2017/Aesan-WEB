@@ -4,7 +4,7 @@ import { forkJoin, Observable, map } from 'rxjs';
 
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import { UsersService } from '../../../shared/services/users.service';
-import { AgencyService } from 'app/shared/services/agency.service';
+import { GeoService } from 'app/shared/services/geo.service';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -32,6 +32,7 @@ export class UsersListsResolver implements Resolve<any> {
     const requestParameters: QueryParameters = {
       take: 25,
       skip: 0,
+      isPropietary: true,
     };
 
     return forkJoin([this._usersService.getAllUsersFromDbWithSP(requestParameters)]).pipe(
@@ -43,7 +44,6 @@ export class UsersListsResolver implements Resolve<any> {
 }
 
 export const initialAgenciesUsersListResolver: ResolveFn<any> = () => {
-  const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
   const requestParameters: QueryParameters = {
     take: 25,
@@ -68,19 +68,21 @@ export const initialRolesResolver: ResolveFn<any> = () => {
 };
 
 export const initialAddUsersResolver: ResolveFn<any> = () => {
-  const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
   const programService = inject(ProgramService);
+  const geoService = inject(GeoService);
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getAllRolesFromDb({ aesanOnly: true }),
-    programService.getAllProgramsFromDb({ alls: true, isList: true })
+    programService.getAllProgramsFromDb({ alls: true, isList: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
   ]).pipe(
-    map(([agencies, roles, programs]) => ({
-      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
+    map(([roles, programs, cities, regions]) => ({
       roles: roles.body,
-      programs: { data: programs.body }
+      programs: programs?.body ?? [],
+      cities: cities?.body ?? [],
+      regions: regions?.body ?? [],
     }))
   );
 };
@@ -92,13 +94,11 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
  * @returns Observable<any>
  */
 export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
   const permissionService = inject(PermissionService);
   const programService = inject(ProgramService);
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getUserByIdWithSP({ userId: route.paramMap.get('id') }),
     usersService.getAllRolesFromDb({ aesanOnly: true }),
     permissionService.getUserPermissions({
@@ -106,12 +106,11 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
     }),
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
-    map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
+    map(([user, roles, permissions, programs]) => ({
       user: user.body,
       roles: roles.body,
       permissions: permissions.body,
-      programs: { data: programs.body }
+      programs: programs?.body ?? []
     }))
   );
 };
@@ -120,7 +119,6 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
  * Resolver para el perfil del usuario actual en admin-portal (misma estructura que edit).
  */
 export const initialProfileUsersResolver: ResolveFn<any> = () => {
-  const agencyService = inject(AgencyService);
   const usersService = inject(UsersService);
   const permissionService = inject(PermissionService);
   const programService = inject(ProgramService);
@@ -133,18 +131,16 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
   }
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
     usersService.getUserByIdWithSP({ userId }),
     usersService.getAllRolesFromDb({ aesanOnly: true }),
     permissionService.getUserPermissions({ userId }),
     programService.getAllProgramsFromDb({ alls: true, isList: true })
   ]).pipe(
-    map(([agencies, user, roles, permissions, programs]) => ({
-      agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
+    map(([user, roles, permissions, programs]) => ({
       user: user.body,
       roles: roles.body,
       permissions: permissions.body,
-      programs: { data: programs.body }
+      programs: programs?.body ?? []
     }))
   );
 };

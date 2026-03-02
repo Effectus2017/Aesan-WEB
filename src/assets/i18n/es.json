@@ -192,6 +192,21 @@
             }
         }
     },
+    "usersAgency": {
+        "list": {
+            "title": "Usuarios de Auspiciadores"
+        },
+        "add": {
+            "title": "Agregar usuario de auspiciador",
+            "submit": "Guardar",
+            "back": "Volver",
+            "agency": {
+                "label": "Auspiciador",
+                "placeholder": "Seleccione un auspiciador",
+                "required": "El auspiciador es requerido"
+            }
+        }
+    },
     "keyboard-shortcuts": {
         "modal": {
             "title": "Atajos de Teclado",

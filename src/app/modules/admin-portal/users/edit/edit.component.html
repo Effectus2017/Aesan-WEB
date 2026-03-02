@@ -117,7 +117,7 @@
                 [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
               >
                 <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
-                  {{ (_role.displayName || _role.DisplayName || _role.displayNameEN || _role.DisplayNameEN || _role.name || _role.Name) }}
+                  {{ currentLang === 'en' ? _role.displayNameEN : _role.displayName }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')">
@@ -151,7 +151,7 @@
                 data-cy="programs-select"
                 [attr.aria-label]="'users.edit.programs.label' | transloco"
               >
-                <mat-option *ngFor="let _program of listPrograms" [value]="_program" data-cy="program-option">{{ _program.name }}</mat-option>
+                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'en' ? program.nameEN : program.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

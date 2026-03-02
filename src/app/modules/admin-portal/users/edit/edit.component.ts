@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { QueryParameters } from 'app/shared/models/QueryParameters';
 import _ from 'lodash';
@@ -27,7 +27,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { compare, compareById, compareString, formatDateShort, handleFormControls, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compare, compareById, compareString, formatDateShort, handleFormControls, isNullOrUndefinedEmptyStringNullArray, toIsoDateString } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -96,6 +96,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _authService: AuthService = inject(AuthService);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
+
+  /** Ruta a la que volver al cancelar (por defecto 'users'). Usar 'users-agency' cuando se invoca desde el módulo de auspiciadores. */
+  @Input() returnToListPath = 'users';
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _translocoService = inject(TranslocoService);
   private _permissionsService: PermissionService = inject(PermissionService);
@@ -126,8 +129,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         isTemporalPasswordActived: new FormControl(null),
         emailConfirmed: new FormControl(null),
     }),
-    saveButtonShow: true,
-    saveButtonText: 'users.edit.buttons.save',
+    submitButtonShow: true,
+    submitButtonText: 'users.edit.buttons.save',
+    submitDisabled: true,
     settingsButtonShow: true,
     settingsMenuItems: [
       {
@@ -201,6 +205,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   /** true = mostrar campo Auspiciador (roles de agencia); false = ocultar y usar siempre AESAN. */
   showAgencyField = true;
 
+  /** Idioma activo de la UI (es/en) para mostrar nombres de roles en el idioma correcto. */
+  currentLang = 'es';
+
   compare = compare;
   compareById = compareById;
   compareString = compareString;
@@ -257,9 +264,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     if (resolvedData) {
       // Asignar datos directamente desde el resolver
       this.user = resolvedData.user;
-      this.listRoles = resolvedData.roles?.data ?? [];
-      this.listAgencies = resolvedData.agencies?.data ?? [];
-      this.listPrograms = resolvedData.programs?.data ?? [];
+      this.listRoles = resolvedData.roles ?? [];
+      this.listPrograms = resolvedData.programs ?? [];
       this._resolveAesanAgency();
 
       // Configurar permisos si existen
@@ -283,14 +289,21 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         this._changeDetectorRef.markForCheck();
       });
 
-      // Actualizar vista del header cuando cambie la validez del formulario (p. ej. validadores asíncronos)
+      this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
       this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
+        this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
         this._changeDetectorRef.markForCheck();
       });
 
       this._changeDetectorRef.markForCheck();
     }
 
+    // Sincronizar idioma de la UI para mostrar nombres de roles (displayName vs displayNameEN)
+    this.currentLang = this._translocoService.getActiveLang() ?? 'es';
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang) => {
+      this.currentLang = lang ?? 'es';
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   /** Cancela suscripciones al destruir el componente. */
@@ -319,8 +332,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     }
   }
 
-  /** Valida el formulario y llama a onUpdate con el valor actual, o muestra diálogo si el formulario es inválido. */
-  onSave(): void {
+  /** Llamado por el botón Submit del header; valida y actualiza o muestra diálogo si es inválido. */
+  onSubmit(): void {
     this._applyAgencyVisibilityByPrimaryRole();
     if (this.headerConfig.formGroup.valid) {
       this.onUpdate(this.headerConfig.formGroup.value);
@@ -351,9 +364,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.openAddSecondaryRoleModal();
   }
 
-  /** Navega a la lista de usuarios sin guardar. */
+  /** Navega a la lista de usuarios sin guardar (users o users-agency según returnToListPath). */
   onCancel(): void {
-    this._customRouter.navigate(['users']);
+    this._customRouter.navigate([this.returnToListPath]);
   }
 
   /** Abre el modal para agregar permiso al usuario. */
@@ -776,8 +789,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   /** Crea un FormGroup para una fila de rol secundario (rol, vigencia desde/hasta) con validador de rango de fechas. */
   createSecondaryRoleGroup(role?: DTORole | null, validFrom?: string | Date | null, validTo?: string | Date | null): FormGroup {
-    const fromVal = validFrom ? (typeof validFrom === 'string' ? validFrom : (validFrom as Date).toISOString().slice(0, 10)) : null;
-    const toVal = validTo ? (typeof validTo === 'string' ? validTo : (validTo as Date).toISOString().slice(0, 10)) : null;
+    const fromVal = toIsoDateString(validFrom);
+    const toVal = toIsoDateString(validTo);
     return this._formBuilder.group({
       role: new FormControl(role ?? null),
       validFrom: new FormControl(fromVal),
@@ -810,7 +823,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   syncSecondaryRolesTableData(): void {
     this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
       const role = g.get('role')?.value as DTORole | null;
-      const roleName = role?.displayName ?? role?.name ?? '';
+      const roleName = this.currentLang === 'en' ? (role?.displayNameEN ?? '') : (role?.displayName ?? '');
       return {
         id: i,
         roleName,
@@ -917,18 +930,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   /** Abre el modal para elegir un rol secundario; pasa lista de roles, rol primario y nombres ya usados. Al confirmar, añade la fila, sincroniza la tabla y guarda en backend. */
   openAddSecondaryRoleModal(): void {
     const formGroup = this.headerConfig.formGroup;
-    
+
     // Obtener el rol primario para excluirlo del backend
     const primaryRole = formGroup.get('primaryRole')?.value as DTORole | null;
     const primaryRoleId = primaryRole?.id ? String(primaryRole.id) : undefined;
-    
+
     // Obtener los IDs de roles secundarios ya asignados para excluirlos del backend
     const secondaryRoles = formGroup.get('secondaryRoles') as FormArray | null;
     const existingSecondaryRoleIds = (secondaryRoles?.controls ?? [])
       .map((c) => (c.get('role')?.value as DTORole)?.id)
       .filter((id) => id != null)
       .map((id) => String(id));
-    
+
     // Llamar al backend para obtener roles ya filtrados
     this._usersService.getAvailableSecondaryRoles(primaryRoleId, existingSecondaryRoleIds).subscribe({
       next: (response) => {
@@ -991,8 +1004,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       .filter((row) => row?.role?.name)
       .map((row) => ({
         roleName: row.role!.name ?? '',
-        validFrom: typeof row.validFrom === 'string' ? row.validFrom.slice(0, 10) : (row.validFrom ? new Date(row.validFrom).toISOString().slice(0, 10) : ''),
-        validTo: typeof row.validTo === 'string' ? row.validTo.slice(0, 10) : (row.validTo ? new Date(row.validTo).toISOString().slice(0, 10) : ''),
+        validFrom: toIsoDateString(row.validFrom) ?? '',
+        validTo: toIsoDateString(row.validTo) ?? '',
       }))
       .filter((s) => s.validFrom && s.validTo);
     if (secondaryRolesPayload.length === 0) secondaryRolesPayload = undefined;
@@ -1113,8 +1126,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
             .filter((s: UserSecondaryRoleStub) => s.roleName && s.validFrom && s.validTo)
             .map((s: SecondaryRoleInput) => ({
               roleName: s.roleName,
-              validFrom: typeof s.validFrom === 'string' ? s.validFrom.slice(0, 10) : '',
-              validTo: typeof s.validTo === 'string' ? s.validTo.slice(0, 10) : '',
+              validFrom: toIsoDateString(s.validFrom) ?? '',
+              validTo: toIsoDateString(s.validTo) ?? '',
             }))
         : undefined;
     } else {

@@ -55,6 +55,10 @@ export interface UserToken {
     programName?: string;
     /** Lista de IDs de programas asignados al usuario (Admin Portal). */
     programIds?: number[];
+    /** ID de ciudad para el registro Staff al crear usuario. */
+    cityId?: number;
+    /** ID de región para el registro Staff al crear usuario. */
+    regionId?: number;
   }
 
   export interface Token {
@@ -112,10 +116,11 @@ export interface UserToken {
     validTo?: string;
   }
 
-  /** Programa para select (id + name). */
+  /** Programa para select (id + name según idioma: name / nameEN). */
   export interface ProgramOption {
     id: number;
     name: string;
+    nameEN?: string;
   }
 
   /** Agencia para select (id + name). */
@@ -165,10 +170,12 @@ export interface UserToken {
     middleName?: string | null;
     fatherLastName?: string | null;
     motherLastName?: string | null;
-    primaryRole?: DTORole | null;
+    role?: DTORole | null;
     secondaryRoles?: SecondaryRoleFormRow[];
     agency?: AgencyOption | null;
     programs?: ProgramOption[];
+    city?: { id: number; name?: string } | null;
+    region?: { id: number; name?: string } | null;
     isActive?: boolean;
     isTemporalPasswordActived?: boolean;
     emailConfirmed?: boolean;

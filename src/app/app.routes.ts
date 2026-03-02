@@ -85,6 +85,8 @@ export const appRoutes: Route[] = [
       { path: 'sponsors', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
       // Users (Role: Admin)
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
+      // Users agency / auspiciadores (Role: Admin)
+      { path: 'users-agency', loadChildren: () => import('app/modules/admin-portal/users-agency/users-agency.routes') },
       // Documents (Role: Admin)
       { path: 'documents', loadChildren: () => import('app/modules/admin-portal/documents-files/documents.routes') },
       // Agency status (Role: Admin)

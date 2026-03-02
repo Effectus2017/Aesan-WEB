@@ -94,10 +94,10 @@
     "sponsor-information": "Sponsor Information",
     "sponsor-information-description": "Here you can add the sponsor information",
     "agency": {
-      "label": "Name of the Sponsoring Entity",
-      "placeholder": "Enter the name of the sponsoring entity",
+      "label": "Entity Name",
+      "placeholder": "Enter the entity name",
       "description": "Sponsor information",
-      "required": "The name of the sponsoring entity is required"
+      "required": "The entity name is required"
     },
     "state-department-registration": {
       "label": "State Department Registration Number",

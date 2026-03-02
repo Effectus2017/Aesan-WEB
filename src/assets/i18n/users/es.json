@@ -345,6 +345,16 @@
                 "label": "Programas asignados",
                 "placeholder": "Seleccione uno o más programas"
             },
+            "city": {
+                "label": "Municipio",
+                "placeholder": "Seleccione el municipio",
+                "required": "El municipio es requerido"
+            },
+            "region": {
+                "label": "Región",
+                "placeholder": "Seleccione la región",
+                "required": "La región es requerida"
+            },
             "isActive": {
                 "label": "Usuario Activo"
             },

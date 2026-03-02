@@ -119,42 +119,22 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12" [class.sm:grid-cols-2]="!showAgencyField" [class.sm:grid-cols-3]="showAgencyField">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12 sm:grid-cols-2">
             <mat-form-field class="flex-auto">
-              <mat-label>{{ 'users.add.primaryRole.label' | transloco }}</mat-label>
+              <mat-label>{{ 'users.add.role.label' | transloco }}</mat-label>
               <mat-select
-                formControlName="primaryRole"
-                [placeholder]="'users.add.primaryRole.placeholder' | transloco"
+                formControlName="role"
+                [placeholder]="'users.add.role.placeholder' | transloco"
                 [compareWith]="compareById"
-                data-cy="primary-role-select"
-                [attr.aria-label]="'users.add.primaryRole.label' | transloco"
+                data-cy="role-select"
+                [attr.aria-label]="'users.add.role.label' | transloco"
               >
-                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="primary-role-option">{{ _role.displayName || _role.DisplayName || _role.displayNameEN || _role.DisplayNameEN || _role.name || _role.Name }}</mat-option>
+                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">{{ currentLang === 'en' ? _role.displayNameEN : _role.displayName }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')" data-cy="primary-role-error">
-                {{ 'users.add.primaryRole.required' | transloco }}
+              <mat-error *ngIf="headerConfig.formGroup.get('role').hasError('required')" data-cy="role-error">
+                {{ 'users.add.role.required' | transloco }}
               </mat-error>
             </mat-form-field>
-
-            @if (showAgencyField) {
-              <mat-form-field class="flex-auto">
-                <mat-label>{{ 'users.add.agency.label' | transloco }}</mat-label>
-                <mat-select
-                  formControlName="agency"
-                  [placeholder]="'users.add.agency.placeholder' | transloco"
-                  [compareWith]="compareById"
-                  data-cy="agency-select"
-                  [attr.aria-label]="'users.add.agency.label' | transloco"
-                >
-                  <mat-option *ngFor="let _agency of listAgencies" [value]="_agency" data-cy="agency-option">
-                    {{ _agency.name }}
-                  </mat-option>
-                </mat-select>
-                <mat-error *ngIf="headerConfig.formGroup.get('agency').hasError('required')" data-cy="agency-error">
-                  {{ 'users.add.agency.required' | transloco }}
-                </mat-error>
-              </mat-form-field>
-            }
 
             <mat-form-field class="flex-auto">
               <mat-label>{{ 'users.add.programs.label' | transloco }}</mat-label>
@@ -166,39 +146,46 @@
                 data-cy="programs-select"
                 [attr.aria-label]="'users.add.programs.label' | transloco"
               >
-                <mat-option *ngFor="let _program of listPrograms" [value]="_program" data-cy="program-option">{{ _program.name }}</mat-option>
+                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'en' ? program.nameEN : program.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>
 
-          <!-- Nuevos checkboxes para estados del usuario -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
-            <mat-checkbox
-              formControlName="isActive"
-              [attr.aria-label]="'users.add.isActive.label' | transloco"
-              data-cy="is-active-checkbox"
-            >
-              {{ 'users.add.isActive.label' | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox
-              formControlName="isTemporalPasswordActived"
-              [attr.aria-label]="'users.add.isTemporalPasswordActived.label' | transloco"
-              data-cy="temporal-password-checkbox"
-            >
-              {{ 'users.add.isTemporalPasswordActived.label' | transloco }}
-            </mat-checkbox>
-
-            <mat-checkbox
-              formControlName="emailConfirmed"
-              [attr.aria-label]="'users.add.emailConfirmed.label' | transloco"
-              data-cy="email-confirmed-checkbox"
-            >
-              {{ 'users.add.emailConfirmed.label' | transloco }}
-            </mat-checkbox>
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.city.label' | transloco }}</mat-label>
+              <mat-select
+                formControlName="city"
+                [placeholder]="'users.add.city.placeholder' | transloco"
+                [compareWith]="compareById"
+                (valueChange)="getRegionsByCityId($event, 'region')"
+                data-cy="city-select"
+                [attr.aria-label]="'users.add.city.label' | transloco"
+              >
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('city').hasError('required')" data-cy="city-error">
+                {{ 'users.add.city.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ 'users.add.region.label' | transloco }}</mat-label>
+              <mat-select
+                formControlName="region"
+                [placeholder]="'users.add.region.placeholder' | transloco"
+                [compareWith]="compareById"
+                data-cy="region-select"
+                [attr.aria-label]="'users.add.region.label' | transloco"
+              >
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="headerConfig.formGroup.get('region').hasError('required')" data-cy="region-error">
+                {{ 'users.add.region.required' | transloco }}
+              </mat-error>
+            </mat-form-field>
           </div>
 
-          <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
             <mat-form-field class="flex-auto" data-cy="current-password-field">
               <mat-label>{{ 'users.add.current-password.label' | transloco }}</mat-label>
               <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:key'" matPrefix></mat-icon>
@@ -267,7 +254,34 @@
               </mat-error>
             </mat-form-field>
           </div>
-      <div class="mt-1 text-md text-hint">{{ 'users.add.password-requirements' | transloco }}</div>
+          <div class="col-span-12 mt-1 text-md text-hint">{{ 'users.add.password-requirements' | transloco }}</div>
+
+          <!-- Nuevos checkboxes para estados del usuario -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+            <mat-checkbox
+              formControlName="isActive"
+              [attr.aria-label]="'users.add.isActive.label' | transloco"
+              data-cy="is-active-checkbox"
+            >
+              {{ 'users.add.isActive.label' | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox
+              formControlName="isTemporalPasswordActived"
+              [attr.aria-label]="'users.add.isTemporalPasswordActived.label' | transloco"
+              data-cy="temporal-password-checkbox"
+            >
+              {{ 'users.add.isTemporalPasswordActived.label' | transloco }}
+            </mat-checkbox>
+
+            <mat-checkbox
+              formControlName="emailConfirmed"
+              [attr.aria-label]="'users.add.emailConfirmed.label' | transloco"
+              data-cy="email-confirmed-checkbox"
+            >
+              {{ 'users.add.emailConfirmed.label' | transloco }}
+            </mat-checkbox>
+          </div>
       </div>
     </form>
     <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
