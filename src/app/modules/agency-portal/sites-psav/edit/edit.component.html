@@ -184,13 +184,13 @@
           <mat-form-field data-cy="type-of-area-field">
             <mat-label>{{ "sites.edit.type-of-area.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field data-cy="location-type-field">
             <mat-label>{{ "sites.edit.location-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'locationType'" data-cy="location-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of locationTypes" [value]="option" data-cy="location-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of locationTypes" [value]="option" data-cy="location-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('locationType').hasError('required')">{{ "sites.edit.location-type.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -212,7 +212,7 @@
             <mat-label>{{ "sites.edit.non-profit.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="non-profit-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('nonProfit').hasError('required')">{{ "sites.edit.non-profit.required" | transloco }}</mat-error>
@@ -244,7 +244,7 @@
             <mat-label>{{ "sites.edit.organization-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'organizationType'" data-cy="organization-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of organizationTypes" [value]="option" data-cy="organization-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('organizationType').hasError('required')">{{ "sites.edit.organization-type.required" | transloco }}</mat-error>
@@ -319,7 +319,7 @@
             <mat-label>{{ "sites.edit.operating-days-of-week.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingDaysOfWeek'" multiple required data-cy="operating-days-of-week-select" [compareWith]="compareById">
               <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day" data-cy="operating-day-option-{{ day.id }}">
-                {{ currentLang === "en" ? day.nameEN : day.name }}
+                {{ currentLang === "es" ? day.name : day.nameEN }}
               </mat-option>
             </mat-select>
             <mat-hint>{{ "sites.edit.operating-days-of-week.description" | transloco }}</mat-hint>
@@ -368,14 +368,14 @@
           <mat-form-field data-cy="group-type-field">
             <mat-label>{{ "sites.edit.group-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'groupType'" (valueChange)="getKitchenTypesByGroupType($event)" data-cy="group-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of groupTypes" [value]="option" data-cy="group-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field data-cy="site-location-field">
             <mat-label>{{ "sites.edit.site-location.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'siteLocation'" data-cy="site-location-select" [compareWith]="compareById" [disabled]="isSiteLocationDisabled">
               <mat-option *ngFor="let option of siteLocations" [value]="option" data-cy="site-location-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-hint>{{ "sites.edit.site-location.hint" | transloco }}</mat-hint>
@@ -383,20 +383,20 @@
           <mat-form-field data-cy="delivery-type-field">
             <mat-label>{{ "sites.edit.delivery-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'deliveryType'" data-cy="delivery-type-select" [compareWith]="compareById" (selectionChange)="onDeliveryTypeChange($event.value)">
-              <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of deliveryTypes" [value]="option" data-cy="delivery-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field data-cy="kitchen-type-field" *ngIf="shouldShowKitchenTypeField">
             <mat-label>{{ "sites.edit.kitchen-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'kitchenType'" [disabled]="isKitchenTypeDisabled" data-cy="kitchen-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of kitchenTypes" [value]="option" data-cy="kitchen-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field data-cy="applicant-type-field">
             <mat-label>{{ "sites.edit.applicant-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'typeOfApplicant'" data-cy="applicant-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of typeOfApplicant" [value]="option" data-cy="applicant-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -412,7 +412,7 @@
             <mat-label>{{ "sites.edit.community.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'community'" data-cy="community-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of community" [value]="option" data-cy="community-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('community')?.hasError('required')">
@@ -422,7 +422,7 @@
           <mat-form-field data-cy="walkers-field">
             <mat-label>{{ "sites.edit.walkers.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'walkers'" data-cy="walkers-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of walkers" [value]="option" data-cy="walkers-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('walkers')?.hasError('required')">
               {{ "sites.edit.walkers.required" | transloco }}
@@ -431,7 +431,7 @@
           <mat-form-field data-cy="site-type-field">
             <mat-label>{{ "sites.edit.site-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'siteType'" data-cy="site-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of siteType" [value]="option" data-cy="site-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('siteType')?.hasError('required')">
               {{ "sites.edit.site-type.required" | transloco }}
@@ -440,7 +440,7 @@
           <mat-form-field data-cy="experience-field">
             <mat-label>{{ "sites.edit.experience.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'experience'" data-cy="experience-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of experience" [value]="option" data-cy="experience-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('experience')?.hasError('required')">
               {{ "sites.edit.experience.required" | transloco }}
@@ -456,7 +456,7 @@
             <mat-label>{{ "sites.edit.has-warehouse.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasWarehouse'" data-cy="has-warehouse-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-warehouse-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -464,7 +464,7 @@
             <mat-label>{{ "sites.edit.has-dining-room.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasDiningRoom'" data-cy="has-dining-room-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-dining-room-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>

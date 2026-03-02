@@ -310,7 +310,7 @@ export class UsersAgencyAddComponent implements OnInit, OnDestroy, OnGenericHead
   syncSecondaryRolesTableData(): void {
     this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
       const role = g.get('role')?.value as DTORole | null;
-      const roleName = this.currentLang === 'en' ? (role?.displayNameEN ?? '') : (role?.displayName ?? '');
+      const roleName = this.currentLang === 'es' ? (role?.displayName ?? '') : (role?.displayNameEN ?? '');
       return { id: i, roleName, validFrom: formatDateShort(g.get('validFrom')?.value), validTo: formatDateShort(g.get('validTo')?.value) } as SecondaryRoleTableRow;
     });
     this._changeDetectorRef.markForCheck();

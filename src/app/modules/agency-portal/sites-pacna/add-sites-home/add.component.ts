@@ -415,8 +415,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
    */
   private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
     return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
-      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
+      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
       return nameA.localeCompare(nameB);
     });
   }

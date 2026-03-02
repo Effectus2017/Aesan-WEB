@@ -25,7 +25,7 @@
             data-cy="related-staff-select"
           >
             <mat-option *ngFor="let staff of listStaff" [value]="staff" data-cy="related-staff-option">
-              {{ staff.firstName }} {{ staff.middleName }} {{ staff.fatherLastName }} {{ staff.secondFatherLastName }} - {{ currentLang === "en" ? staff.staffTypeNameEn : staff.staffTypeName }}
+              {{ staff.firstName }} {{ staff.middleName }} {{ staff.fatherLastName }} {{ staff.secondFatherLastName }} - {{ currentLang === "es" ? staff.staffTypeName : staff.staffTypeNameEn }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('relatedStaff')?.hasError('required')">
@@ -43,7 +43,7 @@
             data-cy="relationship-type-select"
           >
             <mat-option *ngFor="let type of listRelationshipTypes" [value]="type" data-cy="relationship-type-option">
-              {{ currentLang === "en" ? type.nameEN : type.name }}
+              {{ currentLang === "es" ? type.name : type.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('relationshipType')?.hasError('required')">

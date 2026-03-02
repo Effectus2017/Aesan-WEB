@@ -164,12 +164,12 @@ export class TemplateVariablesModalComponent implements OnInit, OnDestroy {
 
   getDescription(variable: TemplateVariable): string {
     const currentLang = this._transloco.getActiveLang();
-    return currentLang === 'en' ? variable.descriptionEN : variable.descriptionES;
+    return currentLang === 'es' ? variable.descriptionES : variable.descriptionEN;
   }
 
   getExample(variable: TemplateVariable): string {
     const currentLang = this._transloco.getActiveLang();
-    return currentLang === 'en' ? variable.exampleEN : variable.exampleES;
+    return currentLang === 'es' ? variable.exampleES : variable.exampleEN;
   }
 }
 

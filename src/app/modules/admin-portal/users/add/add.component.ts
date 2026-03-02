@@ -384,7 +384,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   syncSecondaryRolesTableData(): void {
     this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
       const role = g.get('role')?.value as DTORole | null;
-      const roleName = this.currentLang === 'en' ? (role?.displayNameEN ?? '') : (role?.displayName ?? '');
+      const roleName = this.currentLang === 'es' ? (role?.displayName ?? '') : (role?.displayNameEN ?? '');
       return {
         id: i,
         roleName,

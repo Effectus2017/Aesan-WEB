@@ -36,7 +36,7 @@
           <mat-form-field class="w-full">
             <mat-label>{{ "sponsor-evaluation.edit.fields.participatesInHeadStartProgram.label" | transloco }}</mat-label>
             <mat-select formControlName="participatesInHeadStartProgramId" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let option of participatesInHeadStartProgramOptions" [value]="option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of participatesInHeadStartProgramOptions" [value]="option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('participatesInHeadStartProgramId')?.hasError('required')">
               {{ "sponsor-evaluation.edit.fields.participatesInHeadStartProgram.required" | transloco }}
@@ -48,13 +48,13 @@
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionStatus.label" | transloco }}</mat-label>
             <mat-select formControlName="taxExemptionStatusId" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let status of exceptionStatusOptions" [value]="status">{{ currentLang === "en" ? status.nameEN : status.name }}</mat-option>
+              <mat-option *ngFor="let status of exceptionStatusOptions" [value]="status">{{ currentLang === "es" ? status.name : status.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.taxExemptionType.label" | transloco }}</mat-label>
             <mat-select formControlName="taxExemptionTypeId" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let type of taxExemptionTypeOptions" [value]="type">{{ currentLang === "en" ? type.nameEN : type.name }}</mat-option>
+              <mat-option *ngFor="let type of taxExemptionTypeOptions" [value]="type">{{ currentLang === "es" ? type.name : type.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -63,13 +63,13 @@
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfEntity.label" | transloco }}</mat-label>
             <mat-select formControlName="typeOfEntityId" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let entity of typeOfEntityOptions" [value]="entity">{{ currentLang === "en" ? entity.nameEN : entity.name }}</mat-option>
+              <mat-option *ngFor="let entity of typeOfEntityOptions" [value]="entity">{{ currentLang === "es" ? entity.name : entity.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.typeOfApplicant.label" | transloco }}</mat-label>
             <mat-select formControlName="typeOfApplicantId" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let applicant of typeOfApplicantOptions" [value]="applicant">{{ currentLang === "en" ? applicant.nameEN : applicant.name }}</mat-option>
+              <mat-option *ngFor="let applicant of typeOfApplicantOptions" [value]="applicant">{{ currentLang === "es" ? applicant.name : applicant.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
@@ -78,13 +78,13 @@
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDenied.label" | transloco }}</mat-label>
             <mat-select formControlName="stateFundsDenied" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDenied.label" | transloco }}</mat-label>
             <mat-select formControlName="federalFundsDenied" [compareWith]="compareItems" [disabled]="true">
-              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>

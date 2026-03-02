@@ -37,9 +37,11 @@ export function emailExistsValidator(
   debounceTimeMs: number = 500
 ): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
-    // Si el control no ha sido tocado o modificado por el usuario, no validar
-    // Esto evita que se ejecute la validación al cargar el formulario
-    if (!control.touched && !control.dirty) {
+    // En formularios de edición (cuando hay excludeEmail), requiere que sea tocado/modificado
+    // En formularios de creación (sin excludeEmail), se ejecuta en tiempo real
+    const isEditForm = !!excludeEmail;
+    
+    if (isEditForm && !control.touched && !control.dirty) {
       return of(null);
     }
 
@@ -77,7 +79,6 @@ export function emailExistsValidator(
           map((response: any) => {
             // Extraer el body del HttpResponse si viene como objeto completo
             const exists = response?.body !== undefined ? response.body : response;
-            // Solo retornar el objeto cuando existe es true, null cuando es false
             return exists === true ? { emailExists: true } : null;
           }),
           catchError(() => {

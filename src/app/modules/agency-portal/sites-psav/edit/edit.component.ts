@@ -476,8 +476,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
    */
   private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
     return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
-      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
+      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
       return nameA.localeCompare(nameB);
     });
   }
@@ -1618,7 +1618,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const dialogRef = this._dialog.open(PermissionRequestDialogComponent, {
       width: '500px',
       data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeName: this.currentLang === 'es' ? deliveryType.name : deliveryType.nameEN,
         deliveryTypeNameEN: deliveryType.nameEN,
       },
     });
@@ -1642,7 +1642,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const dialogRef = this._dialog.open(PermissionRequestFormDialogComponent, {
       width: '600px',
       data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeName: this.currentLang === 'es' ? deliveryType.name : deliveryType.nameEN,
         deliveryTypeNameEN: deliveryType.nameEN,
       },
     });

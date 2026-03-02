@@ -113,7 +113,7 @@ export interface StaffTableResponse {
   fatherLastName: string;
   motherLastName: string;
   staffClassificationName?: string;
-  displayPosition?: string;
+  positionName?: string;
   isActive: boolean;
   comments?: string;
 }

@@ -11,7 +11,7 @@
                 <mat-select [formControl]="headerConfig.formGroup?.get('status')!" (selectionChange)="onFilterChange()">
                     <mat-option *ngFor="let option of statusOptions" [value]="option.name">
                         <span *ngIf="option.name === 'All'">{{ 'email-logs.list.filters.status.all' | transloco }}</span>
-                        <span *ngIf="option.name !== 'All'">{{ currentLang === 'en' ? option.nameEN : option.name }}</span>
+                        <span *ngIf="option.name !== 'All'">{{ currentLang === 'es' ? option.name : option.nameEN }}</span>
                     </mat-option>
                 </mat-select>
             </mat-form-field>
@@ -22,7 +22,7 @@
                 <mat-select [formControl]="headerConfig.formGroup?.get('emailType')!" (selectionChange)="onFilterChange()">
                     <mat-option *ngFor="let option of emailTypeOptions" [value]="option.name">
                         <span *ngIf="option.name === 'All'">{{ 'email-logs.list.filters.emailType.all' | transloco }}</span>
-                        <span *ngIf="option.name !== 'All'">{{ currentLang === 'en' ? option.nameEN : option.name }}</span>
+                        <span *ngIf="option.name !== 'All'">{{ currentLang === 'es' ? option.name : option.nameEN }}</span>
                     </mat-option>
                 </mat-select>
             </mat-form-field>

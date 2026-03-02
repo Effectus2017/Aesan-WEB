@@ -20,7 +20,7 @@
           <mat-label>{{ 'users.edit.secondaryRoles.role' | transloco }}</mat-label>
           <mat-select formControlName="role" [compareWith]="roleCompareFn" [placeholder]="'users.edit.secondaryRoles.rolePlaceholder' | transloco">
             <mat-option [value]="null">{{ 'users.edit.secondaryRoles.rolePlaceholder' | transloco }}</mat-option>
-            <mat-option *ngFor="let role of rolesFiltered" [value]="role">{{ currentLang === 'en' ? role.displayNameEN : role.displayName }}</mat-option>
+            <mat-option *ngFor="let role of rolesFiltered" [value]="role">{{ currentLang === 'es' ? role.displayName : role.displayNameEN }}</mat-option>
           </mat-select>
         </mat-form-field>
         <div class="flex flex-row gap-4 w-full flex-wrap">

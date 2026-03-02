@@ -55,6 +55,9 @@ import { UpdatePasswordModalComponent } from '../update-password-modal/update-pa
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
+import { GeoService } from 'app/shared/services/geo.service';
+import { City } from 'app/shared/models/City';
+import { Region } from 'app/shared/models/Region';
 
 @Component({
   selector: 'app-users-edit',
@@ -104,6 +107,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   private _permissionsService: PermissionService = inject(PermissionService);
   private _matDialog: MatDialog = inject(MatDialog);
   private _userService: UserService = inject(UserService);
+  private _geoService: GeoService = inject(GeoService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
@@ -124,6 +128,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         primaryRole: new FormControl(null, Validators.required),
         secondaryRoles: this._formBuilder.array([]),
         agency: new FormControl(null),
+        city: new FormControl(null),
+        region: new FormControl(null),
         programs: new FormControl([] as { id: number; name: string }[]),
         isActive: new FormControl(null),
         isTemporalPasswordActived: new FormControl(null),
@@ -194,6 +200,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   listRoles: any[] = [];
   listAgencies: any[] = [];
+  listCities: City[] = [];
+  listRegions: Region[] = [];
   listPrograms: { id: number; name: string }[] = [];
 
   userRole: string = null;
@@ -266,6 +274,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       this.user = resolvedData.user;
       this.listRoles = resolvedData.roles ?? [];
       this.listPrograms = resolvedData.programs ?? [];
+      this.listCities = resolvedData.cities ?? [];
+      this.listRegions = resolvedData.regions ?? [];
       this._resolveAesanAgency();
 
       // Configurar permisos si existen
@@ -823,7 +833,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   syncSecondaryRolesTableData(): void {
     this.secondaryRolesTableConfig.dataSource.data = this.secondaryRolesArray.controls.map((g, i) => {
       const role = g.get('role')?.value as DTORole | null;
-      const roleName = this.currentLang === 'en' ? (role?.displayNameEN ?? '') : (role?.displayName ?? '');
+      const roleName = this.currentLang === 'es' ? (role?.displayName ?? '') : (role?.displayNameEN ?? '');
       return {
         id: i,
         roleName,
@@ -871,6 +881,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       emailConfirmed: this.user.emailConfirmed,
       primaryRole: selectedPrimaryRole,
       agency: selectedAgency,
+      city: this.user.city,
+      region: this.user.region,
       programs: selectedPrograms ?? [],
     });
     const secondaryRows = this.getSecondaryRolesFromUser();
@@ -915,6 +927,55 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       const from = s.validFrom ?? null;
       const to = s.validTo ?? null;
       return { role, validFrom: from, validTo: to };
+    });
+  }
+
+  /** Carga las regiones por ciudad y, si se indica regionId, asigna la región en el formulario (para onSetForm). */
+  private _loadRegionsByCityAndSetRegion(city: City, regionId?: number | null): void {
+    if (!city) return;
+    const queryParameters: QueryParameters = { cityId: city.id };
+    this._geoService.getRegionsByCityId(queryParameters).subscribe({
+      next: (response) => {
+        if (response?.body?.data) {
+          this.listRegions = response.body.data;
+          const regionControl = this.headerConfig.formGroup.get('region');
+          if (regionControl) {
+            if (regionId != null) {
+              const region = this.listRegions.find((r: Region) => r.id === regionId) ?? null;
+              this.headerConfig.formGroup.patchValue({ region });
+            } else if (this.listRegions.length === 1) {
+              this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+            } else {
+              regionControl.setValue(null);
+            }
+          }
+        }
+        this._changeDetectorRef.markForCheck();
+      },
+      error: () => this._changeDetectorRef.markForCheck(),
+    });
+  }
+
+  /** Carga las regiones por ciudad y actualiza el control de región; al cambiar ciudad se limpia o asigna la única región si hay una sola. */
+  getRegionsByCityId(city: City, target: string): void {
+    if (!city) return;
+    const queryParameters: QueryParameters = { cityId: city.id };
+    this._geoService.getRegionsByCityId(queryParameters).subscribe({
+      next: (response) => {
+        if (response?.body?.data && target === 'region') {
+          this.listRegions = response.body.data;
+          const regionControl = this.headerConfig.formGroup.get('region');
+          if (regionControl) {
+            if (this.listRegions.length === 1) {
+              this.headerConfig.formGroup.patchValue({ region: this.listRegions[0] });
+            } else {
+              regionControl.setValue(null);
+            }
+          }
+        }
+        this._changeDetectorRef.markForCheck();
+      },
+      error: () => this._changeDetectorRef.markForCheck(),
     });
   }
 
@@ -1171,6 +1232,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       primaryRoleName,
       secondaryRoles: secondaryRolesPayload,
       agencyId: agencyId,
+      cityId: form.city?.id,
+      regionId: form.region?.id,
       programIds: programIdsForUpdate?.length ? programIdsForUpdate : undefined,
       isActive: form.isActive,
       isTemporalPasswordActived: form.isTemporalPasswordActived,

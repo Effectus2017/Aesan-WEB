@@ -22,7 +22,7 @@
               <mat-label>{{ "sign-up.program-name.label" | transloco }}</mat-label>
               <mat-select id="program-select" [formControlName]="'program'" data-cy="program-select">
                 <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">
-                  {{ currentLang === "en" ? program.nameEN : program.name }}
+                  {{ currentLang === "es" ? program.name : program.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('program')?.hasError('required') && (signUpForm.get('program')?.touched || signUpForm.get('program')?.dirty)">
@@ -36,7 +36,7 @@
               <mat-label>{{ "sign-up.non-profit.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'nonProfit'" (selectionChange)="nonProfitChange($event)" data-cy="non-profit-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="non-profit-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('nonProfit')?.hasError('required') && (signUpForm.get('nonProfit')?.touched || signUpForm.get('nonProfit')?.dirty)">
@@ -53,7 +53,7 @@
               <mat-label>{{ "sign-up.basic-education-registry.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'basicEducationRegistry'" data-cy="basic-education-registry-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="basic-education-registry-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('basicEducationRegistry')?.hasError('required') && (signUpForm.get('basicEducationRegistry')?.touched || signUpForm.get('basicEducationRegistry')?.dirty)">
@@ -73,7 +73,7 @@
               <mat-label>{{ "sign-up.extended-hours.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'extendedHours'" data-cy="extended-hours-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="extended-hours-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
             </mat-form-field>
@@ -127,7 +127,7 @@
               <mat-label>{{ "sign-up.tax-exemption-status.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'taxExemptionStatusId'" (selectionChange)="checkTaxExemptionStatus()" data-cy="tax-exemption-status-input">
                 <mat-option *ngFor="let option of exceptionStatus" [value]="option.id" data-cy="tax-exemption-status-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('taxExemptionStatusId')?.hasError('required') && (signUpForm.get('taxExemptionStatusId')?.touched || signUpForm.get('taxExemptionStatusId')?.dirty)">
@@ -142,7 +142,7 @@
               <mat-label>{{ "sign-up.tax-exemption-type.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'taxExemptionTypeId'" data-cy="tax-exemption-type-input">
                 <mat-option *ngFor="let option of taxExemptionType" [value]="option.id" data-cy="tax-exemption-type-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('taxExemptionTypeId')?.hasError('required') && (signUpForm.get('taxExemptionTypeId')?.touched || signUpForm.get('taxExemptionTypeId')?.dirty)">
@@ -159,7 +159,7 @@
               <mat-label>{{ "sign-up.state-funds-denied.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'stateFundsDenied'" (selectionChange)="checkStateFundsDenied()" data-cy="state-funds-denied-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="state-funds-denied-option">{{
-                  currentLang === "en" ? option.nameEN : option.name
+                  currentLang === "es" ? option.name : option.nameEN
                 }}</mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('stateFundsDenied')?.hasError('required') && (signUpForm.get('stateFundsDenied')?.touched || signUpForm.get('stateFundsDenied')?.dirty)">
@@ -175,7 +175,7 @@
                 <mat-label>{{ "sign-up.federal-funds-denied.label" | transloco }}</mat-label>
                 <mat-select [formControlName]="'federalFundsDenied'" (selectionChange)="checkFederalFundsDenied()" data-cy="federal-funds-denied-select">
                   <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="federal-funds-denied-option">{{
-                    currentLang === "en" ? option.nameEN : option.name
+                    currentLang === "es" ? option.name : option.nameEN
                   }}</mat-option>
                 </mat-select>
                 <mat-error *ngIf="signUpForm.get('federalFundsDenied')?.hasError('required') && (signUpForm.get('federalFundsDenied')?.touched || signUpForm.get('federalFundsDenied')?.dirty)">
@@ -236,7 +236,7 @@
               <mat-label>{{ "sign-up.type-of-entity.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'typeOfEntityId'" (selectionChange)="checkTypeOfEntity()" data-cy="type-of-entity-input">
                 <mat-option *ngFor="let option of typeOfEntity" [value]="option.id" data-cy="type-of-entity-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('typeOfEntityId')?.hasError('required') && (signUpForm.get('typeOfEntityId')?.touched || signUpForm.get('typeOfEntityId')?.dirty)">
@@ -247,7 +247,7 @@
               <mat-label>{{ "sign-up.type-of-applicant.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'typeOfApplicantId'" data-cy="type-of-applicant-input">
                 <mat-option *ngFor="let option of typeOfApplicant" [value]="option.id" data-cy="type-of-applicant-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('typeOfApplicantId')?.hasError('required') && (signUpForm.get('typeOfApplicantId')?.touched || signUpForm.get('typeOfApplicantId')?.dirty)">
@@ -268,7 +268,7 @@
               <mat-label>{{ "sign-up.public-alliance-contract.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'publicAllianceContractId'" data-cy="public-alliance-contract-input">
                 <mat-option *ngFor="let option of publicAllianceContract" [value]="option.id" data-cy="public-alliance-contract-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('publicAllianceContractId')?.hasError('required') && (signUpForm.get('publicAllianceContractId')?.touched || signUpForm.get('publicAllianceContractId')?.dirty)">
@@ -280,7 +280,7 @@
               <mat-label>{{ "sign-up.is-day-care-home.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'isDayCareHomeId'" [compareWith]="compareItems" data-cy="is-day-care-home-input">
                 <mat-option *ngFor="let option of isDayCareHomeOptions" [value]="option" data-cy="is-day-care-home-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('isDayCareHomeId')?.hasError('required') && (signUpForm.get('isDayCareHomeId')?.touched || signUpForm.get('isDayCareHomeId')?.dirty)">
@@ -315,7 +315,7 @@
               <mat-label>{{ "sign-up.board-meets-regularly.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'boardMeetsRegularly'" (selectionChange)="checkBoardMeetsRegularly()" data-cy="board-meets-regularly-select">
                 <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="board-meets-regularly-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('boardMeetsRegularly')?.hasError('required') && (signUpForm.get('boardMeetsRegularly')?.touched || signUpForm.get('boardMeetsRegularly')?.dirty)">
@@ -337,7 +337,7 @@
                 data-cy="board-executive-authority-select"
               >
                 <mat-option *ngFor="let option of boardExecutiveAuthorityOptions" [value]="option.id" data-cy="board-executive-authority-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('boardExecutiveAuthority')?.hasError('required') && (signUpForm.get('boardExecutiveAuthority')?.touched || signUpForm.get('boardExecutiveAuthority')?.dirty)">
@@ -359,7 +359,7 @@
                 data-cy="participates-in-head-start-program-input"
               >
                 <mat-option *ngFor="let option of participatesInHeadStartProgramOptions" [value]="option" data-cy="participates-in-head-start-program-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('participatesInHeadStartProgramId')?.hasError('required') && (signUpForm.get('participatesInHeadStartProgramId')?.touched || signUpForm.get('participatesInHeadStartProgramId')?.dirty)">
@@ -689,7 +689,7 @@
               <mat-label>{{ "sign-up.admin-title.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'positionId'" data-cy="admin-title-select">
                 <mat-option *ngFor="let option of listAdministrativePositions" [value]="option.id" data-cy="admin-title-option">
-                  {{ currentLang === "en" ? option.nameEN : option.name }}
+                  {{ currentLang === "es" ? option.name : option.nameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('positionId')?.hasError('required') && (signUpForm.get('positionId')?.touched || signUpForm.get('positionId')?.dirty)">

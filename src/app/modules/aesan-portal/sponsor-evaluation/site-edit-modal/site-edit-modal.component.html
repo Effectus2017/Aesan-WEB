@@ -39,7 +39,7 @@
           <mat-label>{{ 'sites.edit.is-active.label' | transloco }}</mat-label>
           <mat-select formControlName="isActive" [compareWith]="compareById">
             <mat-option *ngFor="let option of isActive" [value]="option.booleanValue">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -193,7 +193,7 @@
           <mat-label>{{ 'sites.edit.type-of-area.label' | transloco }}</mat-label>
           <mat-select formControlName="areaType" [compareWith]="compareById">
             <mat-option *ngFor="let option of areaTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -202,7 +202,7 @@
           <mat-label>{{ 'sites.edit.location-type.label' | transloco }}</mat-label>
           <mat-select formControlName="locationType" required [compareWith]="compareById">
             <mat-option *ngFor="let option of locationTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('locationType')?.hasError('required')">
@@ -222,7 +222,7 @@
           <mat-label>{{ 'sites.edit.non-profit.label' | transloco }}</mat-label>
           <mat-select formControlName="nonProfit" required>
             <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('nonProfit')?.hasError('required')">
@@ -265,7 +265,7 @@
           <mat-label>{{ 'sites.edit.operating-policy.label' | transloco }}</mat-label>
           <mat-select formControlName="operatingPolicy" [compareWith]="compareById">
             <mat-option *ngFor="let option of operatingPolicies" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -277,7 +277,7 @@
           <mat-label>{{ 'sites.edit.pacna-fields.organized-athletic-programs.label' | transloco }}</mat-label>
           <mat-select formControlName="organizedAthleticPrograms">
             <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -289,7 +289,7 @@
           <mat-label>{{ 'sites.edit.pacna-fields.at-risk-service.label' | transloco }}</mat-label>
           <mat-select formControlName="atRiskService">
             <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -301,7 +301,7 @@
           <mat-label>{{ 'sites.edit.pacna-fields.public-alliance-contract.label' | transloco }}</mat-label>
           <mat-select formControlName="publicAllianceContractId">
             <mat-option *ngFor="let option of publicAllianceContractOptions" [value]="option.id">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -313,7 +313,7 @@
           <mat-label>{{ 'sites.edit.education-levels.label' | transloco }}</mat-label>
           <mat-select formControlName="educationLevels" required multiple [compareWith]="compareById">
             <mat-option *ngFor="let option of educationLevels" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('educationLevels')?.hasError('required')">
@@ -328,7 +328,7 @@
           <mat-label>{{ 'sites.edit.organization-type.label' | transloco }}</mat-label>
           <mat-select formControlName="organizationType" required [compareWith]="compareById">
             <mat-option *ngFor="let option of organizationTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('organizationType')?.hasError('required')">
@@ -343,7 +343,7 @@
           <mat-label>{{ 'sites.edit.center.label' | transloco }}</mat-label>
           <mat-select formControlName="centerType" required [compareWith]="compareById">
             <mat-option *ngFor="let option of centerTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
           <mat-error *ngIf="form.get('centerType')?.hasError('required')">
@@ -358,7 +358,7 @@
           <mat-label>{{ 'sites.edit.residential-type.label' | transloco }}</mat-label>
           <mat-select formControlName="typeOfResidential" [compareWith]="compareById">
             <mat-option *ngFor="let option of typeOfResidential" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -408,7 +408,7 @@
           <mat-label>{{ 'sites.edit.kitchen-type.label' | transloco }}</mat-label>
           <mat-select formControlName="kitchenType" [compareWith]="compareById">
             <mat-option *ngFor="let option of kitchenTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -417,7 +417,7 @@
           <mat-label>{{ 'sites.edit.site-location.label' | transloco }}</mat-label>
           <mat-select formControlName="siteLocation" [compareWith]="compareById">
             <mat-option *ngFor="let option of siteLocations" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -428,7 +428,7 @@
           <mat-label>{{ 'sites.edit.group-type.label' | transloco }}</mat-label>
           <mat-select formControlName="groupType" [compareWith]="compareById">
             <mat-option *ngFor="let option of groupTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -437,7 +437,7 @@
           <mat-label>{{ 'sites.edit.delivery-type.label' | transloco }}</mat-label>
           <mat-select formControlName="deliveryType" [compareWith]="compareById">
             <mat-option *ngFor="let option of deliveryTypes" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -448,7 +448,7 @@
           <mat-label>{{ 'sites.edit.sponsor-type.label' | transloco }}</mat-label>
           <mat-select formControlName="sponsorType" [compareWith]="compareById">
             <mat-option *ngFor="let option of sponsorType" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -457,7 +457,7 @@
           <mat-label>{{ 'sites.edit.applicant-type.label' | transloco }}</mat-label>
           <mat-select formControlName="typeOfApplicant" [compareWith]="compareById">
             <mat-option *ngFor="let option of typeOfApplicant" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -539,7 +539,7 @@
           <mat-label>{{ 'sites.edit.community.label' | transloco }}</mat-label>
           <mat-select formControlName="community" [compareWith]="compareById">
             <mat-option *ngFor="let option of community" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -548,7 +548,7 @@
           <mat-label>{{ 'sites.edit.walkers.label' | transloco }}</mat-label>
           <mat-select formControlName="walkers" [compareWith]="compareById">
             <mat-option *ngFor="let option of walkers" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -559,7 +559,7 @@
           <mat-label>{{ 'sites.edit.site-type.label' | transloco }}</mat-label>
           <mat-select formControlName="siteType" [compareWith]="compareById">
             <mat-option *ngFor="let option of siteType" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -568,7 +568,7 @@
           <mat-label>{{ 'sites.edit.experience.label' | transloco }}</mat-label>
           <mat-select formControlName="experience" [compareWith]="compareById">
             <mat-option *ngFor="let option of experience" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -580,7 +580,7 @@
           <mat-label>{{ 'sites.edit.review-result.label' | transloco }}</mat-label>
           <mat-select formControlName="reviewResult" [compareWith]="compareById">
             <mat-option *ngFor="let option of reviewResult" [value]="option">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>

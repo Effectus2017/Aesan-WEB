@@ -447,8 +447,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    */
   private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
     return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'en' ? a.nameEN : a.name).toLowerCase();
-      const nameB = (this.currentLang === 'en' ? b.nameEN : b.name).toLowerCase();
+      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
+      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
       return nameA.localeCompare(nameB);
     });
   }
@@ -1577,7 +1577,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       const enrichedSlots = slots.map((slot) => {
         const st = serviceTypes.find((s) => Number(s.id) === Number(slot.serviceTypeId));
         const slotWithName = slot as { serviceTypeName?: string };
-        const label = slotWithName.serviceTypeName ?? (currentLang === 'en' ? st?.nameEN : st?.name) ?? st?.name ?? st?.code;
+        const label = slotWithName.serviceTypeName ?? (currentLang === 'es' ? st?.name : st?.nameEN) ?? st?.name ?? st?.code;
         return { ...slot, serviceTypeName: label };
       });
       const booleans: Record<string, boolean> = {};

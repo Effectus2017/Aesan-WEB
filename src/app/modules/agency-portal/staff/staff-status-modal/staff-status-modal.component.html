@@ -17,7 +17,7 @@
           <mat-select formControlName="isActive">
             @for (option of data.isActiveOptions; track option.id) {
             <mat-option [value]="option.booleanValue">
-              {{ currentLang === 'en' ? option.nameEN : option.name }}
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
             </mat-option>
             }
           </mat-select>

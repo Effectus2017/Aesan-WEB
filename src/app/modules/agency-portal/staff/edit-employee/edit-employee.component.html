@@ -440,7 +440,7 @@
               data-cy="review-result-select"
             >
               <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>

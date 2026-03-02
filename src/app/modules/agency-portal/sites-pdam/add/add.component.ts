@@ -1517,7 +1517,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const dialogRef = this._dialog.open(PermissionRequestDialogComponent, {
       width: '500px',
       data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeName: this.currentLang === 'es' ? deliveryType.name : deliveryType.nameEN,
         deliveryTypeNameEN: deliveryType.nameEN,
       },
     });
@@ -1541,7 +1541,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const dialogRef = this._dialog.open(PermissionRequestFormDialogComponent, {
       width: '600px',
       data: {
-        deliveryTypeName: this.currentLang === 'en' ? deliveryType.nameEN : deliveryType.name,
+        deliveryTypeName: this.currentLang === 'es' ? deliveryType.name : deliveryType.nameEN,
         deliveryTypeNameEN: deliveryType.nameEN,
       },
     });
@@ -1909,7 +1909,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       const enrichedSlots = slots.map((slot) => {
         const st = serviceTypes.find((s) => Number(s.id) === Number(slot.serviceTypeId));
         const slotWithName = slot as { serviceTypeName?: string };
-        const label = slotWithName.serviceTypeName ?? (currentLang === 'en' ? st?.nameEN : st?.name) ?? st?.name ?? st?.code;
+        const label = slotWithName.serviceTypeName ?? (currentLang === 'es' ? st?.name : st?.nameEN) ?? st?.name ?? st?.code;
         return { ...slot, serviceTypeName: label };
       });
       const booleans: Record<string, boolean> = {};

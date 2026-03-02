@@ -59,10 +59,10 @@
       <div class="border-t pt-4">
         <div *ngFor="let item of getVisibleServiceTypesWithKeys(); trackBy: trackByServiceId" class="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-4">
           <mat-form-field>
-            <mat-label>{{ currentLang === "en" ? item.st.nameEN : item.st.name }}</mat-label>
+            <mat-label>{{ currentLang === "es" ? item.st.name : item.st.nameEN }}</mat-label>
             <mat-select [formControlName]="item.formKey.bool">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
           </mat-form-field>

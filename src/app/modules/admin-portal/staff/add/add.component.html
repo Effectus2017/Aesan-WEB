@@ -311,7 +311,7 @@
             <mat-label>{{ "staff.add.review-result.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'reviewResult'" [compareWith]="compareById" data-cy="review-result-select">
               <mat-option *ngFor="let option of reviewResult" [value]="option" data-cy="review-result-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('reviewResult')?.hasError('required')">

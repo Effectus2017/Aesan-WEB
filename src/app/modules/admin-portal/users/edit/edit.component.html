@@ -117,7 +117,7 @@
                 [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
               >
                 <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
-                  {{ currentLang === 'en' ? _role.displayNameEN : _role.displayName }}
+                  {{ currentLang === 'es' ? _role.displayName : _role.displayNameEN }}
                 </mat-option>
               </mat-select>
               <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')">
@@ -151,7 +151,34 @@
                 data-cy="programs-select"
                 [attr.aria-label]="'users.edit.programs.label' | transloco"
               >
-                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'en' ? program.nameEN : program.name }}</mat-option>
+                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'es' ? program.name : program.nameEN }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ "users.add.city.label" | transloco }}</mat-label>
+              <mat-select
+                formControlName="city"
+                [placeholder]="'users.add.city.placeholder' | transloco"
+                [compareWith]="compareById"
+                (selectionChange)="getRegionsByCityId($event.value, 'region')"
+                data-cy="city-select"
+                [attr.aria-label]="'users.add.city.label' | transloco"
+              >
+                <mat-option *ngFor="let city of listCities" [value]="city" data-cy="city-option">{{ city.name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field class="flex-auto">
+              <mat-label>{{ "users.add.region.label" | transloco }}</mat-label>
+              <mat-select
+                formControlName="region"
+                [placeholder]="'users.add.region.placeholder' | transloco"
+                [compareWith]="compareById"
+                data-cy="region-select"
+                [attr.aria-label]="'users.add.region.label' | transloco"
+              >
+                <mat-option *ngFor="let region of listRegions" [value]="region" data-cy="region-option">{{ region.name }}</mat-option>
               </mat-select>
             </mat-form-field>
           </div>

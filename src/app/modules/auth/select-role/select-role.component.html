@@ -39,7 +39,7 @@
             [attr.aria-label]="'select-role.placeholder' | transloco"
           >
             <mat-option *ngFor="let role of roles" [value]="role.name" [attr.data-cy]="'role-' + role.name">
-              {{ currentLang === 'en' ? role.displayNameEN : role.displayName }}
+              {{ currentLang === 'es' ? role.displayName : role.displayNameEN }}
             </mat-option>
           </mat-select>
         </mat-form-field>

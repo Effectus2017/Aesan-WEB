@@ -183,14 +183,14 @@
           <mat-form-field data-cy="type-of-area-field">
             <mat-label>{{ "sites.edit.type-of-area.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'areaType'" data-cy="type-of-area-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of areaTypes" [value]="option" data-cy="type-of-area-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('areaType').hasError('required')">{{ "sites.edit.type-of-area.required" | transloco }}</mat-error>
           </mat-form-field>
           <mat-form-field data-cy="location-type-field">
             <mat-label>{{ "sites.edit.location-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'locationType'" data-cy="location-type-select" [compareWith]="compareById">
-              <mat-option *ngFor="let option of locationTypes" [value]="option" data-cy="location-type-option">{{ currentLang === "en" ? option.nameEN : option.name }}</mat-option>
+              <mat-option *ngFor="let option of locationTypes" [value]="option" data-cy="location-type-option">{{ currentLang === "es" ? option.name : option.nameEN }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('locationType').hasError('required')">{{ "sites.edit.location-type.required" | transloco }}</mat-error>
           </mat-form-field>
@@ -263,7 +263,7 @@
             <mat-label>{{ "sites.edit.operating-days-of-week.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'operatingDaysOfWeek'" multiple required data-cy="operating-days-of-week-select" [compareWith]="compareById">
               <mat-option *ngFor="let day of availableDaysOfWeek" [value]="day" data-cy="operating-day-option-{{ day.id }}">
-                {{ currentLang === "en" ? day.nameEN : day.name }}
+                {{ currentLang === "es" ? day.name : day.nameEN }}
               </mat-option>
             </mat-select>
             <mat-hint>{{ "sites.edit.operating-days-of-week.description" | transloco }}</mat-hint>
@@ -311,7 +311,7 @@
             <mat-label>{{ "sites.edit.is-authorized-to-operate.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'isAuthorizedToOperate'" data-cy="is-authorized-to-operate-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="is-authorized-to-operate-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('isAuthorizedToOperate').hasError('required')">{{ "sites.edit.is-authorized-to-operate.required" | transloco }}</mat-error>
@@ -320,7 +320,7 @@
             <mat-label>{{ "sites.edit.has-family-department-license.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'hasFamilyDepartmentLicense'" data-cy="has-family-department-license-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="has-family-department-license-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('hasFamilyDepartmentLicense').hasError('required')">{{
@@ -403,7 +403,7 @@
             <mat-label>{{ "sites.edit.minors-live-with-provider.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'minorsLiveWithProvider'" data-cy="minors-live-with-provider-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="minors-live-with-provider-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('minorsLiveWithProvider').hasError('required')">{{
@@ -414,7 +414,7 @@
             <mat-label>{{ "sites.edit.relationship-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'relationshipType'" data-cy="relationship-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of relationshipTypeOptions" [value]="option" data-cy="relationship-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('relationshipType').hasError('required')">{{ "sites.edit.relationship-type.required" | transloco }}</mat-error>
@@ -423,7 +423,7 @@
             <mat-label>{{ "sites.edit.offers-service-to-immigrant-children.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'offersServiceToImmigrantChildren'" data-cy="offers-service-to-immigrant-children-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-immigrant-children-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToImmigrantChildren').hasError('required')">{{
@@ -442,7 +442,7 @@
             <mat-label>{{ "sites.edit.home-type.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'homeType'" data-cy="home-type-select" [compareWith]="compareById">
               <mat-option *ngFor="let option of homeTypeOptions" [value]="option" data-cy="home-type-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('homeType').hasError('required')">{{ "sites.edit.home-type.required" | transloco }}</mat-error>
@@ -451,7 +451,7 @@
             <mat-label>{{ "sites.edit.participant-types.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'participantTypes'" multiple data-cy="participant-types-select">
               <mat-option *ngFor="let option of participantTypeOptions" [value]="option.id" data-cy="participant-types-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('participantTypes').hasError('required')">{{ "sites.edit.participant-types.required" | transloco }}</mat-error>
@@ -464,7 +464,7 @@
               (selectionChange)="onOffersServiceToDifferentGroupsChange($event.value)"
             >
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="offers-service-to-different-groups-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('offersServiceToDifferentGroups').hasError('required')">{{
@@ -495,7 +495,7 @@
             <mat-label>{{ "sites.edit.breakfast.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'breakfast'" data-cy="breakfast-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="breakfast-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('breakfast')?.hasError('required')">
@@ -541,7 +541,7 @@
             <mat-label>{{ "sites.edit.snack-am.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAM'" data-cy="snack-am-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-am-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAM')?.hasError('required')">
@@ -588,7 +588,7 @@
             <mat-label>{{ "sites.edit.lunch.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'lunch'" data-cy="lunch-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="lunch-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('lunch')?.hasError('required')">
@@ -635,7 +635,7 @@
             <mat-label>{{ "sites.edit.snack-pm.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackPM'" data-cy="snack-pm-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-pm-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackPM')?.hasError('required')">
@@ -684,7 +684,7 @@
             <mat-label>{{ "sites.edit.dinner.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinner'" data-cy="dinner-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinner').hasError('required')">{{ "sites.edit.dinner.required" | transloco }}</mat-error>
@@ -731,7 +731,7 @@
             <mat-label>{{ "sites.edit.snack-night.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackNight'" data-cy="snack-night-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-night-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackNight')?.hasError('required')">
@@ -778,7 +778,7 @@
             <mat-label>{{ "sites.edit.dinner-extended.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinnerExtended'" data-cy="dinner-extended-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerExtended')?.hasError('required')">
@@ -825,7 +825,7 @@
             <mat-label>{{ "sites.edit.dinner-at-risk.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'dinnerAtRisk'" data-cy="dinner-at-risk-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="dinner-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('dinnerAtRisk')?.hasError('required')">
@@ -872,7 +872,7 @@
             <mat-label>{{ "sites.edit.snack-extended.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackExtended'" data-cy="snack-extended-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-extended-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackExtended')?.hasError('required')">
@@ -919,7 +919,7 @@
             <mat-label>{{ "sites.edit.snack-at-risk.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'snackAtRisk'" data-cy="snack-at-risk-select">
               <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue" data-cy="snack-at-risk-option">
-                {{ currentLang === "en" ? option.nameEN : option.name }}
+                {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('snackAtRisk')?.hasError('required')">
