@@ -524,6 +524,27 @@
             "edit": "Editar",
             "delete": "Eliminar"
           }
+        },
+        "modal": {
+          "relatedStaff": {
+            "label": "Personal Relacionado",
+            "placeholder": "Seleccione el personal relacionado",
+            "required": "Debe seleccionar un personal relacionado"
+          },
+          "relationshipType": {
+            "label": "Tipo de Relación",
+            "placeholder": "Seleccione el tipo de relación",
+            "required": "Debe seleccionar un tipo de relación"
+          },
+          "comment": {
+            "label": "Comentario",
+            "placeholder": "Ingrese un comentario sobre la relación (opcional)",
+            "maxLength": "El comentario no puede exceder 500 caracteres"
+          },
+          "buttons": {
+            "save": "Guardar",
+            "cancel": "Cancelar"
+          }
         }
       },
       "modal": {

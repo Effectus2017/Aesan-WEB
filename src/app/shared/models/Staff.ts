@@ -114,6 +114,11 @@ export interface StaffTableResponse {
   motherLastName: string;
   staffClassificationName?: string;
   positionName?: string;
+  staffTypeName?: string;
+  staffTypeNameEn?: string;
+  birthDate?: string;
+  email?: string;
+  hasRelationships?: boolean;
   isActive: boolean;
   comments?: string;
 }

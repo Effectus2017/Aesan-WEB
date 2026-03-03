@@ -27,12 +27,6 @@ export const BOARD_MEMBERS_COLUMNS_SCHEMA: ColumnSchema[] = [
     sortable: true,
   },
   {
-    key: 'cityName',
-    label: 'staff.boardMembers.list.table.columns.municipality',
-    type: 'text',
-    sortable: true,
-  },
-  {
     key: 'isActive',
     label: 'staff.boardMembers.list.table.columns.status',
     type: 'boolean',
