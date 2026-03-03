@@ -60,7 +60,7 @@
       <button
         type="button"
         [title]="getButtonTooltip(config.filterButtonTooltip, config.filterButtonDisabledTooltip, config.filterButtonPermission) || ('global.tooltips.header.filter' | transloco)"
-        class="text-white bg-[#f6a735] hover:bg-[#e09528]"
+        class="text-white bg-[#003C49] hover:bg-[#002d37]"
         mat-raised-button
         [appDisableIfNoPermission]="config.filterButtonPermission"
         (click)="onFilter()"
@@ -76,7 +76,7 @@
       <button
         type="button"
         [title]="getButtonTooltip(config.goToAddButtonTooltip, config.goToAddButtonDisabledTooltip, config.goToAddButtonPermission) || 'Agregar'"
-        class="text-white bg-[#F1A621]"
+        class="text-white bg-[#003C49]"
         mat-raised-button
         [color]="'primary'"
         [appDisableIfNoPermission]="config.goToAddButtonPermission"
