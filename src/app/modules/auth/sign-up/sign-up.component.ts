@@ -799,9 +799,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const stateFundsDenied = formValues.stateFundsDenied == null ? false : formValues.stateFundsDenied;
     const stateFundsDeniedReason = formValues.stateFundsDeniedReason;
     const taxExemptionStatusId = formValues.taxExemptionStatusId;
-    const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? 0 : formValues.taxExemptionTypeId;
+    const taxExemptionTypeId = formValues.taxExemptionTypeId == null ? null : formValues.taxExemptionTypeId;
     const typeOfEntityId = formValues.typeOfEntityId;
-    const typeOfApplicantId = formValues.typeOfApplicantId == null ? 0 : formValues.typeOfApplicantId;
+    const typeOfApplicantId = formValues.typeOfApplicantId == null ? null : formValues.typeOfApplicantId;
     const publicAllianceContractId = formValues.publicAllianceContractId == null ? null : formValues.publicAllianceContractId;
     // const nationalYouthProgram = formValues.nationalYouthProgram == null ? false : formValues.nationalYouthProgram;
     const isDayCareHomeId = formValues.isDayCareHomeId == null ? null : formValues.isDayCareHomeId?.id || formValues.isDayCareHomeId;
