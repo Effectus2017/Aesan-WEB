@@ -1,0 +1,14 @@
+
+Running 1 test using 1 worker
+
+Login successful, URL is: https://nutre-dev.local:4202/agency-portal/dashboard
+Navigated to schools list, URL is: https://nutre-dev.local:4202/agency-portal/schools
+Intercepted insert-school: {
+  agencyId: [1mnull[22m,
+  name: [32m'Marquardt, Nienow and Schinner School'[39m,
+  isActive: [33mtrue[39m
+}
+School "Marquardt, Nienow and Schinner School" registration test completed successfully.
+  ✓  1 [chromium-unauthenticated] › tests/PACNA/03-Registro-Escuela-PACNA.spec.ts:6:7 › PACNA - School Registration Flow › 03 - Successful School Registration (Happy Path) (6.5s)
+
+  1 passed (7.2s)

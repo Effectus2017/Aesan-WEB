@@ -56,6 +56,7 @@ export interface QueryParameters {
 
   // Campos para actualización del estado activo de escuela
   schoolId?: number;
+  schoolCode?: string;
   isActive?: boolean;
   inactiveJustification?: string;
   inactiveDate?: string | null; // Formato YYYY-MM-DD (solo fecha, sin hora)

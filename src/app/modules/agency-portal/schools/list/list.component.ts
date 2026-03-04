@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -25,6 +25,11 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { AddSchoolModalComponent } from '../add-modal/add-school-modal.component';
 import { EditSchoolModalComponent } from '../edit-modal/edit-school-modal.component';
 import { SitesModalComponent } from '../sites-modal/sites-modal.component';
+import { ViewChild } from '@angular/core';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
+import { SCHOOLS_FILTERS_SCHEMA } from './schools-filters-schema';
 
 @Component({
   selector: 'app-schools-list',
@@ -43,25 +48,28 @@ import { SitesModalComponent } from '../sites-modal/sites-modal.component';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _schoolService = inject(SchoolService);
-  private _changeDetectorRef = inject(ChangeDetectorRef);
   private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+
+  filtersSchema = SCHOOLS_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
 
   headerConfig: GenericHeaderConfig = {
     title: 'schools.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'schools.list.search.placeholder',
     submitButtonText: 'schools.list.buttons.save',
     customButtonShow: true,
@@ -69,6 +77,8 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     customButtonIcon: 'add',
     customButtonIconEnabled: true,
     customButtonPermission: 'school.create',
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig = {
@@ -93,7 +103,6 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       this.tableConfig.dataSource.data = resolvedData.schools.data;
       this.tableConfig.length = resolvedData.schools.count;
       this.tableConfig.dataSourceList = resolvedData.schools.data;
-      this._changeDetectorRef.markForCheck();
     }
   }
 
@@ -103,14 +112,38 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   }
 
   onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
-    }
+    this.getAll(0, this._buildFormForRequest());
+    this.headerConfig.clearVisible = true;
+  }
+
+  /** Abre o cierra el drawer de filtros. */
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  /** Recibe filtros aplicados desde el panel y recarga la lista. */
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this._buildFormForRequest());
+  }
+
+  /** Restablecer filtros del panel y recargar sin filtros adicionales. */
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
+  }
+
+  /** Construye el objeto form que usa getAll: búsqueda del header + filtros del panel. */
+  private _buildFormForRequest(): Record<string, unknown> {
+    const header = this.headerConfig.formGroup?.value ?? {};
+    return { ...header, ...this.appliedFilters };
   }
 
   getAll(index: number, form: any) {
     const name = form.name || null;
+    const isActive = form.isActive !== undefined && form.isActive !== null ? form.isActive : null;
+    const schoolCode = form.schoolCode || null;
     const pageSize = this.tableConfig.pageSize;
     const agencyId = this._authService.getAgencyId();
 
@@ -118,6 +151,8 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       take: pageSize,
       skip: index,
       name: name,
+      isActive: isActive,
+      schoolCode: schoolCode,
       alls: false,
       agencyId: agencyId,
     };
@@ -129,7 +164,6 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
           this.tableConfig.dataSource.data = response.body.data;
           this.tableConfig.length = response.body.count;
           this.tableConfig.dataSourceList = response.body.data;
-          this._changeDetectorRef.markForCheck();
         },
         error: (error) => {
           console.error('Error loading schools:', error);
@@ -140,7 +174,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   getPaginator(event?: PageEvent) {
     const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
     this.tableConfig.pageSize = event?.pageSize || this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+    this.getAll(index * this.tableConfig.pageSize, this._buildFormForRequest());
   }
 
   onClean(event: Event) {
@@ -148,7 +182,8 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     event.preventDefault();
     this.headerConfig.clearVisible = false;
     this.headerConfig.formGroup.reset();
-    this.getAll(0, this.headerConfig.formGroup.value);
+    this.appliedFilters = {};
+    this.getAll(0, this._buildFormForRequest());
   }
 
   onCustom() {
@@ -168,7 +203,6 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       if (result) {
         // Si se creó una escuela exitosamente, recargar la lista
         this.getAll(0, this.headerConfig.formGroup.value);
-        this._changeDetectorRef.markForCheck();
       }
     });
   }
@@ -194,7 +228,6 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.getAll(0, this.headerConfig.formGroup.value);
-        this._changeDetectorRef.markForCheck();
       }
     });
   }

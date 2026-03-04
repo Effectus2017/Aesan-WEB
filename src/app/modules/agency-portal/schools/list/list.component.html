@@ -2,9 +2,11 @@
   <!-- Header con título y botones -->
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
   <!-- Main -->
-  <div class="flex-auto overflow-y-auto" cdkScrollable>
+  <div class="flex-auto overflow-y-auto" cdkScrollable (click)="filterDrawer?.close()">
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
+  <!-- Panel de filtros dinámico -->
+  <app-generic-filter-drawer #filterDrawer [filtersSchema]="filtersSchema" [handler]="this"></app-generic-filter-drawer>
   <!-- Paginador -->
   <mat-paginator class="hidden sm:block" [pageSizeOptions]="tableConfig.pageSizeOptions" [pageSize]="tableConfig.pageSize" [length]="tableConfig.length" (page)="getPaginator($event)" showFirstLastButtons> </mat-paginator>
 </div>

@@ -17,7 +17,7 @@
       <div class="flex flex-col gap-6">
         <!-- Campo Nombre -->
         <mat-form-field>
-          <input matInput formControlName="name" [placeholder]="'schools.modal.name' | transloco" autocomplete="on"/>
+          <input matInput formControlName="name" [placeholder]="'schools.modal.name' | transloco" autocomplete="on" data-cy="school-name-input"/>
           <mat-error *ngIf="schoolForm.get('name')?.hasError('required')">
             {{ 'global.validation.required' | transloco }}
           </mat-error>
@@ -35,7 +35,7 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="schoolForm.invalid || loading" [appDisableIfNoPermission]="'school.create'">
+      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="schoolForm.invalid || loading" [appDisableIfNoPermission]="'school.create'" data-cy="school-add-submit-button">
         <span *ngIf="loading">{{ 'global.buttons.save' | transloco }}</span>
         <span *ngIf="!loading">{{ 'global.buttons.add' | transloco }}</span>
       </button>
