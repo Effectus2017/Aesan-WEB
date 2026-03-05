@@ -140,7 +140,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       tenureDuration: new FormControl('', [Validators.required]),
       tenureDurationUnit: new FormControl('', [Validators.required]),
       receivesProgramSalary: new FormControl('', [Validators.required]),
-      salaryOrigins: new FormControl([] as OptionSelection[]),
+      salaryOrigins: new FormControl([] as OptionSelection[], [Validators.required]),
     }),
     // Cancel button
     cancelButtonShow: true,

@@ -7,18 +7,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { StaffService } from 'app/shared/services/staff.service';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { Subject, takeUntil } from 'rxjs';
 import { Staff } from 'app/shared/models/Staff';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { FuseLoadingService } from '@fuse/services/loading';
-import { CreateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
-import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
+import { compareById } from 'app/shared/utils';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
+import { CreateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
 
@@ -35,6 +32,7 @@ import { filter } from 'rxjs/operators';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     TranslocoModule,
   ],
   styles: [`
@@ -54,20 +52,22 @@ import { filter } from 'rxjs/operators';
 })
 export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private _fuseLoadingService = inject(FuseLoadingService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
   private _router = inject(Router);
-  private _staffService = inject(StaffService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _staffRelationshipService = inject(StaffRelationshipService);
+  private _formBuilder = inject(FormBuilder);
 
   // Lists for selects
   listStaff: Staff[] = [];
   listRelationshipTypes: OptionSelection[] = [];
 
+  // Current language
+  currentLang: string = 'es';
+
   // Comparator for selects
+  compareById = compareById;
 
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
@@ -75,23 +75,34 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
     comment: new FormControl('', [Validators.maxLength(500)]),
   });
 
-  // Loading
-  isLoading: boolean = false; // Para el submit
-  isInitialLoading: boolean = false; // Para la carga inicial
+  // Loading state for submit
+  isLoading: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<AdminAddRelationshipModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { currentStaffId: number },
-    private _formBuilder: FormBuilder
+    @Inject(MAT_DIALOG_DATA) public data: {
+      currentStaffId: number;
+      staffList: Staff[];
+      relationshipTypes: OptionSelection[];
+    },
   ) {}
 
   ngOnInit(): void {
-    // Deshabilitar el auto mode del loading service para evitar ExpressionChangedAfterItHasBeenCheckedError
-    this._fuseLoadingService.setAutoMode(false);
+    // Asignar datos recibidos del padre
+    this.listStaff = this.data.staffList;
+    this.listRelationshipTypes = this.data.relationshipTypes;
 
-    this.loadInitialData();
+    // Obtener el idioma actual
+    this.currentLang = this._translocoService.getActiveLang();
 
-    // Suscribirse a cambios de navegación para cerrar el modal automáticamente
+    // Suscribirse a cambios de idioma
+    this._translocoService.langChanges$
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe((lang) => {
+        this.currentLang = lang;
+      });
+
+    // Cerrar modal si hay navegación
     this._router.events
       .pipe(
         filter(event => event instanceof NavigationStart),
@@ -103,68 +114,11 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Restaurar el auto mode del loading service
-    this._fuseLoadingService.setAutoMode(true);
-
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  /**
-   * Carga los datos iniciales (staff y tipos de relación) usando forkJoin
-   */
-  private loadInitialData(): void {
-    this.isInitialLoading = true;
-    this._changeDetectorRef.markForCheck();
-
-    const staffQueryParams: QueryParameters = {
-      take: 25,
-      skip: 0,
-      name: null,
-      alls: true,
-      excludeRelated: true,  // Excluir staff ya relacionado (modal Add)
-      isList: true,  // Mantener por compatibilidad
-      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
-      agencyId: null,
-    };
-
-    const relationshipQueryParams: QueryParameters = {
-      optionKey: 'relationshipType',
-      names: null,
-    };
-
-    // Ejecutar ambas requests en paralelo usando forkJoin
-    forkJoin({
-      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
-      relationshipTypes: this._optionSelectionService.getOptionSelectionByOptionKey(relationshipQueryParams)
-    }).subscribe({
-      next: (response) => {
-        // Procesar respuesta de staff
-        if (!isNullOrUndefinedEmptyStringNullArray(response.staff?.body?.data)) {
-          // Filtrar el staff actual para evitar auto-relación
-          this.listStaff = response.staff.body.data.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
-        }
-
-        // Procesar respuesta de relationship types
-        if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes?.body?.data)) {
-          this.listRelationshipTypes = response.relationshipTypes.body.data;
-        }
-
-        this.isInitialLoading = false;
-        this._changeDetectorRef.markForCheck();
-      },
-      error: (error) => {
-        console.error('Error loading initial data:', error);
-        this.isInitialLoading = false;
-        this._notificationService.showError(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
-        this._changeDetectorRef.markForCheck();
-      },
-    });
-  }
-
-  /**
-   * Envía el formulario para crear la relación
-   */
+  /** Maneja el envío del formulario */
   onSubmit(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -172,7 +126,7 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
-    this._fuseLoadingService.show();
+    this._changeDetectorRef.markForCheck();
 
     const formValues = this.form.value;
 
@@ -183,25 +137,20 @@ export class AdminAddRelationshipModalComponent implements OnInit, OnDestroy {
       comment: formValues.comment || undefined,
     };
 
-    this._staffRelationshipService.createRelationship(request, null).subscribe({
-      next: (response) => {
-        this._notificationService.showSuccess(this._translocoService.translate('staff.relationship.success.created'));
-        this.dialogRef.close(true);
+    this._staffRelationshipService.createRelationship(request, {}).subscribe({
+      next: () => {
+        this._notificationService.showSuccessDialog(this._translocoService.translate('staff.relationship.modal.success.createRelationship'));
+        this.dialogRef.close({ success: true, data: request });
       },
-      error: (error) => {
-        console.error('Error creating relationship:', error);
-        this._notificationService.showError(this._translocoService.translate('staff.relationship.error.create'));
-      },
-      complete: () => {
+      error: () => {
+        this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.createRelationship'));
         this.isLoading = false;
-        this._fuseLoadingService.hide();
-      }
+        this._changeDetectorRef.markForCheck();
+      },
     });
   }
 
-  /**
-   * Cierra el modal
-   */
+  /** Cancela la operación */
   onCancel(): void {
     this.dialogRef.close();
   }

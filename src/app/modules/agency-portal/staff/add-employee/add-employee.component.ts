@@ -148,7 +148,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       comments: new FormControl(null, [Validators.required]),
       // Sitio asignado (opcional)
       site: new FormControl(null),
-      salaryOrigins: new FormControl(null),
+      salaryOrigins: new FormControl([], [Validators.required]),
     }),
     // Cancel button
     cancelButtonShow: true,

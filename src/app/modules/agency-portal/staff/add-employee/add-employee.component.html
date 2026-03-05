@@ -301,6 +301,9 @@
                 {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('salaryOrigins')?.hasError('required')">
+              {{ "staff.add.salaryOrigin.required" | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 

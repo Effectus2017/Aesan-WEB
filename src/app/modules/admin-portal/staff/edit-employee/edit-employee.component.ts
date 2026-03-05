@@ -149,7 +149,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       // Sitio asignado
       site: new FormControl(null),
       isPrimary: new FormControl(false),
-      salaryOrigins: new FormControl([] as OptionSelection[]),
+      salaryOrigins: new FormControl([] as OptionSelection[], [Validators.required]),
       // Review result
       reviewResult: new FormControl(''),
       // Review date

@@ -471,7 +471,8 @@
       },
       "salaryOrigin": {
         "label": "Origen del Salario",
-        "placeholder": "Seleccione uno o más"
+        "placeholder": "Seleccione uno o más",
+        "required": "El campo origen del salario es requerido"
       },
       "comments": {
         "label": "Comentarios",
@@ -543,7 +544,10 @@
           },
           "buttons": {
             "save": "Guardar",
-            "cancel": "Cancelar"
+            "update": "Actualizar",
+            "cancel": "Cancelar",
+            "saving": "Guardando...",
+            "updating": "Actualizando..."
           }
         }
       },

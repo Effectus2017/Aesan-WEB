@@ -129,9 +129,9 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             geoService.getCitiesFromDb(requestParameters),
             // Regions service
             geoService.getRegionsFromDb(requestParameters),
-            // Staff positions service
+            // Staff positions service (incluye staffRelationshipType para modales)
             optionSelectionService.getOptionSelectionByOptionKey({
-              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
+              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
               names: null,
               isList: true,
             }),
@@ -161,9 +161,9 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             geoService.getCitiesFromDb(requestParameters),
             // Regions service
             geoService.getRegionsFromDb(requestParameters),
-            // Staff positions service
+            // Staff positions service (incluye staffRelationshipType para modales)
             optionSelectionService.getOptionSelectionByOptionKey({
-              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
+              optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
               names: null,
               isList: true,
             }),

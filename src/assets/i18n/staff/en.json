@@ -288,7 +288,8 @@
       },
       "salaryOrigin": {
         "label": "Salary Origin",
-        "placeholder": "Select one or more"
+        "placeholder": "Select one or more",
+        "required": "The salary origin field is required"
       },
       "relationships": {
         "label": "Staff Relationships",
@@ -581,7 +582,8 @@
       },
       "salaryOrigin": {
         "label": "Salary Origin",
-        "placeholder": "Select one or more"
+        "placeholder": "Select one or more",
+        "required": "The salary origin field is required"
       },
       "relationships": {
         "label": "Staff Relationships",

@@ -123,6 +123,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   listTenureDurationUnits: OptionSelection[] = [];
   listReceivesProgramSalary: OptionSelection[] = [];
   listSalaryOrigins: OptionSelection[] = [];
+  // Tipos de relación para modales
+  listRelationshipTypes: OptionSelection[] = [];
 
   // ViewChild para el contenedor del formulario
   @ViewChild('formContainer', { static: false }) formContainer!: ElementRef;
@@ -196,7 +198,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),
       receivesProgramSalary: new FormControl(''),
-      salaryOrigins: new FormControl([] as OptionSelection[]),
+      salaryOrigins: new FormControl([] as OptionSelection[], [Validators.required]),
     }),
     // Submit button
     submitButtonShow: true,
@@ -275,6 +277,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       this.listTenureDurationUnits = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'tenureDurationUnit');
       this.listReceivesProgramSalary = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'yesNo');
       this.listSalaryOrigins = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'salaryOrigin');
+      // Tipos de relación para modales (evita petición en cada modal)
+      this.listRelationshipTypes = this.allOptionSelections.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
 
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
@@ -449,12 +453,6 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     // Actualizar el estado inicial del botón de submit
     this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-
-    // Cargar sitio actualmente asignado al staff - COMENTADO: Ya no es necesario para miembros de la junta
-    // this.loadCurrentSiteAssignment(param.id);
-
-    // Cargar relaciones
-    this.loadStaffRelationships();
   }
 
   /**
@@ -792,53 +790,42 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   }
 
   /**
-   * Abre el modal para agregar una nueva relación
+   * Abre el modal para agregar una nueva relación.
+   * Usa los datos de relaciones ya cargados en la tabla para evitar peticiones duplicadas.
    */
   onAddRelationship(): void {
     const currentStaffId = this.headerConfig.formGroup.get('id')?.value;
     const agencyId = this._authService.getAgencyId();
 
-    // Consultar personas disponibles y relaciones existentes antes de abrir el modal
+    // Consultar solo la lista de staff (las relaciones ya están en la tabla)
     const staffQueryParams: QueryParameters = {
       take: 25,
       skip: 0,
       name: null,
-      alls: false,
+      alls: true,
       excludeRelated: false,
-      isList: false,
+      isList: true,
       staffTypeId: null,
       agencyId: agencyId,
     };
 
-    const relationshipQueryParams: QueryParameters = {
-      id: currentStaffId,
-      isActive: true,
-    };
-
-    // Consultar tanto el staff como las relaciones existentes
-    forkJoin({
-      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
-      relationships: this._staffRelationshipService.getRelationshipsByStaffId(relationshipQueryParams)
-    }).subscribe({
+    this._staffService.getAllStaffFromDb(staffQueryParams).subscribe({
       next: (response) => {
-        // Verificar que la respuesta de staff tenga datos
-        const staffData = response?.staff?.body?.data;
+        // Cuando isList=true, la respuesta es un array directo en body (no body.data)
+        const staffData = response?.body;
 
         if (!staffData || !Array.isArray(staffData) || staffData.length === 0) {
-          // Si no hay datos, mostrar mensaje y no abrir modal
           this._notificationService.showWarningDialog(
             this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff')
           );
           return;
         }
 
-        // Obtener IDs de personas ya relacionadas
-        // La respuesta de getRelationshipsByStaffId viene en response.body directamente
-        const relationshipsData = response?.relationships?.body || response?.relationships || [];
-        const relationships = Array.isArray(relationshipsData) ? relationshipsData : [];
+        // Usar las relaciones ya cargadas en la tabla (evita petición duplicada)
+        const existingRelationships = this.relationshipsTableConfig.dataSource.data || [];
         const relatedStaffIds = new Set<number>();
 
-        relationships.forEach((rel: any) => {
+        existingRelationships.forEach((rel: any) => {
           if (rel.relatedStaff?.id) {
             relatedStaffIds.add(rel.relatedStaff.id);
           }
@@ -852,19 +839,21 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
           (staff: Staff) => staff.id !== currentStaffId && !relatedStaffIds.has(staff.id)
         );
 
-        // Si no hay personas disponibles después de filtrar, mostrar mensaje y no abrir modal
         if (availableStaff.length === 0) {
           this._notificationService.showWarningDialog(
             this._translocoService.translate('staff.relationship.modal.warning.noAvailableStaff')
           );
           return;
         }
-        // Si hay personas disponibles, abrir el modal normalmente
+
+        // Abrir el modal pasando la lista de staff disponible y los tipos de relación
         const dialogRef = this._matDialog.open(AddRelationshipModalComponent, {
           width: '500px',
           maxWidth: '90vw',
           data: {
             currentStaffId: currentStaffId,
+            staffList: availableStaff,
+            relationshipTypes: this.listRelationshipTypes,
           },
         });
 
@@ -874,7 +863,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
           }
         });
       },
-      error: (error) => {
+      error: () => {
         this._notificationService.showErrorDialog(
           this._translocoService.translate('staff.relationship.modal.error.loadingData')
         );
@@ -905,31 +894,64 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     }
   }
 
+  /**
+   * Abre el modal para editar una relación existente.
+   * Carga el staff solo una vez y lo pasa al modal para evitar peticiones duplicadas.
+   */
   onTableEdit(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
 
-    // Buscar la relación por ID
     const relationship = this.relationshipsTableConfig.dataSource.data.find((rel: any) => rel.id === id);
 
-    if (relationship) {
-      // Abrir modal de edición
-      const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
-        width: '500px',
-        maxWidth: '90vw',
-        data: {
-          currentStaffId: this.headerConfig.formGroup.get('id')?.value,
-          relationship: relationship,
-        },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          // Recargar las relaciones si se actualizó correctamente
-          this.loadStaffRelationships();
-        }
-      });
+    if (!relationship) {
+      return;
     }
+
+    const currentStaffId = this.headerConfig.formGroup.get('id')?.value;
+    const agencyId = this._authService.getAgencyId();
+
+    // Cargar la lista de staff y pasarla al modal para evitar llamada duplicada
+    const staffQueryParams: QueryParameters = {
+      take: 25,
+      skip: 0,
+      name: null,
+      alls: false,
+      excludeRelated: false,
+      isList: true,
+      staffTypeId: null,
+      agencyId: agencyId,
+    };
+
+    this._staffService.getAllStaffFromDb(staffQueryParams).subscribe({
+      next: (response) => {
+        const staffData = response?.body || [];
+        // Filtrar el usuario actual
+        const filteredStaff = staffData.filter((staff: Staff) => staff.id !== currentStaffId);
+
+        const dialogRef = this._matDialog.open(EditRelationshipModalComponent, {
+          width: '500px',
+          maxWidth: '90vw',
+          data: {
+            currentStaffId: currentStaffId,
+            relationship: relationship,
+            staffList: filteredStaff,
+            relationshipTypes: this.listRelationshipTypes,
+          },
+        });
+
+        dialogRef.afterClosed().subscribe((result) => {
+          if (result) {
+            this.loadStaffRelationships();
+          }
+        });
+      },
+      error: () => {
+        this._notificationService.showErrorDialog(
+          this._translocoService.translate('staff.relationship.modal.error.loadingData')
+        );
+      },
+    });
   }
 
   /**

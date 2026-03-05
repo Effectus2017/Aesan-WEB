@@ -658,6 +658,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Método para enviar el formulario
   onSubmit() {
+    // Protección contra doble clic: si ya está cargando, ignorar
+    if (this.isLoading) return;
+
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria

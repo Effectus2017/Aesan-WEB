@@ -1198,6 +1198,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
    * Submits the school edit form
    */
   onSubmit() {
+    // Protección contra doble clic: si ya está cargando, ignorar
+    if (this.isLoading) return;
+
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');

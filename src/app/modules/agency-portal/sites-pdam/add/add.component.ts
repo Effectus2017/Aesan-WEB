@@ -138,6 +138,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private _fieldVisibilityService = inject(FieldVisibilityService);
   private _customRouterService = inject(CustomRouterService);
 
+  /** Evita que valueChanges dispare recálculo de días al hacer reset() tras guardar exitoso. */
+  private _isResettingForm = false;
+
   // catálogos
   listCities: City[] = [];
   listRegions: Region[] = [];
@@ -547,10 +550,12 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
   private setupFormListeners(): void {
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
+      if (this._isResettingForm) return;
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges.subscribe(() => {
+      if (this._isResettingForm) return;
       DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
     });
 
@@ -558,6 +563,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((value: DayOfWeekResponse[] | null) => {
+        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
         this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
         this._changeDetectorRef.markForCheck();
@@ -882,6 +888,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
   // Método para enviar el formulario
   onSubmit() {
+    // Protección contra doble clic: si ya está cargando, ignorar
+    if (this.isLoading) return;
+
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria
@@ -1158,7 +1167,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
         switch (result.body) {
           case true:
             this.isLoading = false;
+            this._isResettingForm = true;
             this.headerConfig.formGroup.reset();
+            this._isResettingForm = false;
 
             const baseYearControl = this.headerConfig.formGroup.get('baseYear');
             const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');

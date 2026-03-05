@@ -186,7 +186,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       reviewDate: new FormControl(''),
       // Review justification
       reviewJustification: new FormControl(''),
-      salaryOrigins: new FormControl([] as OptionSelection[]),
+      salaryOrigins: new FormControl([] as OptionSelection[], [Validators.required]),
     }),
     // Submit button
     submitButtonShow: true,

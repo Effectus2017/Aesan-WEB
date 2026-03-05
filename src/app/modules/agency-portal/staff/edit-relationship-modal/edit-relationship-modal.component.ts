@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, inject, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,22 +7,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { StaffService } from 'app/shared/services/staff.service';
-import { OptionSelectionService } from 'app/shared/services/option-selection.service';
+import { Subject, takeUntil } from 'rxjs';
 import { Staff } from 'app/shared/models/Staff';
 import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { isNullOrUndefinedEmptyStringNullArray, compareById } from 'app/shared/utils';
-// import { FuseLoadingService } from '@fuse/services/loading'; // Eliminado para evitar ExpressionChangedAfterItHasBeenCheckedError
+import { compareById } from 'app/shared/utils';
 import { UpdateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { AuthService } from 'app/core/auth/auth.service';
-import { NgZone } from '@angular/core';
 
 @Component({
   selector: 'app-edit-relationship-modal',
@@ -37,9 +32,9 @@ import { NgZone } from '@angular/core';
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     TranslocoModule,
   ],
-  // changeDetection: ChangeDetectionStrategy.OnPush, // Comentado para evitar problemas
   styles: [`
     @keyframes fadeIn {
       from {
@@ -57,16 +52,11 @@ import { NgZone } from '@angular/core';
 })
 export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
-  // private _fuseLoadingService = inject(FuseLoadingService); // Eliminado
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
   private _router = inject(Router);
-  private _staffService = inject(StaffService);
-  private _optionSelectionService = inject(OptionSelectionService);
   private _staffRelationshipService = inject(StaffRelationshipService);
-  private _authService = inject(AuthService);
-  private _ngZone = inject(NgZone);
 
   // Lists for selects
   listStaff: Staff[] = [];
@@ -81,23 +71,28 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
   form: FormGroup = this._formBuilder.group({
     relatedStaff: new FormControl('', [Validators.required]),
     relationshipType: new FormControl('', [Validators.required]),
-    comment: new FormControl('', [Validators.maxLength(500)]), // Campo para comentarios
+    comment: new FormControl('', [Validators.maxLength(500)]),
   });
 
-  // Loading
-  isLoading: boolean = false; // Para el submit
-  isInitialLoading: boolean = false; // Para la carga inicial
+  // Loading state for submit
+  isLoading: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<EditRelationshipModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
       currentStaffId: number;
-      relationship: any; // La relación existente a editar
+      relationship: any;
+      staffList: Staff[];
+      relationshipTypes: OptionSelection[];
     },
     private _formBuilder: FormBuilder
   ) {}
 
   ngOnInit(): void {
+    // Asignar datos recibidos del padre
+    this.listStaff = this.data.staffList;
+    this.listRelationshipTypes = this.data.relationshipTypes;
+
     // Obtener el idioma actual
     this.currentLang = this._translocoService.getActiveLang();
 
@@ -108,7 +103,7 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
         this.currentLang = lang;
       });
 
-    // Suscribirse a eventos de navegación para cerrar el modal
+    // Cerrar modal si hay navegación
     this._router.events
       .pipe(
         filter((event) => event instanceof NavigationStart),
@@ -118,8 +113,8 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
         this.dialogRef.close(false);
       });
 
-    // Cargar datos iniciales
-    this.onLoadInitialData();
+    // Pre-llenar el formulario con los datos recibidos del padre
+    this.populateForm();
   }
 
   ngOnDestroy(): void {
@@ -127,138 +122,60 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  onLoadInitialData(): void {
-    this.isInitialLoading = true;
-    this._changeDetectorRef.markForCheck();
-
-    const agencyId = this._authService.getAgencyId();
-
-    const staffQueryParams: QueryParameters = {
-      take: 25,
-      skip: 0,
-      name: null,
-      alls: false,
-      excludeRelated: false,
-      isList: true,
-      staffTypeId: null, // Cambiado de 2 a null para incluir empleados y miembros de junta
-      agencyId: agencyId,
-    };
-
-    const relationshipQueryParams: QueryParameters = {
-      optionKey: 'staffRelationshipType',
-      names: null,
-    };
-
-    // Ejecutar ambas requests en paralelo usando forkJoin
-    forkJoin({
-      staff: this._staffService.getAllStaffFromDb(staffQueryParams),
-      relationshipTypes: this._optionSelectionService.getOptionSelectionByOptionKey(relationshipQueryParams)
-    }).subscribe({
-      next: (response) => {
-        // Ejecutar todos los cambios fuera del ciclo de detección de cambios
-        this._ngZone.runOutsideAngular(() => {
-          // Procesar respuesta de staff
-          if (!isNullOrUndefinedEmptyStringNullArray(response.staff)) {
-            // Filtrar el usuario actual para evitar auto-relaciones
-            // Editar si lo necesita -- No cambiar
-            this.listStaff = response.staff.body.filter((staff: Staff) => staff.id !== this.data.currentStaffId);
-          }
-
-          // Procesar respuesta de relationship types
-          if (!isNullOrUndefinedEmptyStringNullArray(response.relationshipTypes)) {
-            this.listRelationshipTypes = response.relationshipTypes.body.data.filter((option: OptionSelection) => option.optionKey === 'staffRelationshipType');
-          }
-
-          // Pre-llenar el formulario después de que los datos se hayan cargado
-          this.onSetForm();
-        });
-
-        this.isInitialLoading = false;
-        // Una sola llamada a detectChanges después de todos los cambios
-        this._changeDetectorRef.detectChanges();
-      },
-      error: (error) => {
-        this.isInitialLoading = false;
-        this._notificationService.showErrorDialog(this._translocoService.translate('staff.relationship.modal.error.loadingData'));
-        this._changeDetectorRef.markForCheck();
-      },
-    });
-  }
-
-  private onSetForm(): void {
-
+  /** Pre-llena el formulario con los datos de la relación existente */
+  private populateForm(): void {
     if (this.data.relationship) {
-      // Intentar diferentes propiedades para encontrar los IDs
       const relationshipTypeId = this.data.relationship.relationshipTypeId ||
-                                this.data.relationship.relationshipType?.id ||
-                                this.data.relationship.relationshipTypeId;
-
+                                this.data.relationship.relationshipType?.id;
       const relatedStaffId = this.data.relationship.relatedStaffId ||
-                            this.data.relationship.relatedStaff?.id ||
-                            this.data.relationship.relatedStaffId;
+                            this.data.relationship.relatedStaff?.id;
 
-      // Buscar el tipo de relación por ID
       const relationshipType = this.listRelationshipTypes.find(type => type.id === relationshipTypeId);
-
-      // Buscar el staff relacionado por ID
       const relatedStaff = this.listStaff.find(staff => staff.id === relatedStaffId);
 
       if (relationshipType && relatedStaff) {
-        // Usar setValue para asegurar que se asignen correctamente
         this.form.setValue({
           relatedStaff: relatedStaff,
           relationshipType: relationshipType,
-          comment: this.data.relationship.comment || ''  // Usar el valor existente o string vacío por defecto
+          comment: this.data.relationship.comment || ''
         });
-
-        // Forzar la detección de cambios
         this._changeDetectorRef.markForCheck();
-        this._changeDetectorRef.detectChanges();
-
       }
     }
   }
 
-
+  /** Envía el formulario para actualizar la relación */
   async onSubmit(): Promise<void> {
     if (this.form.invalid) {
       return;
     }
 
-    try {
-      this.isLoading = true;
-      this._changeDetectorRef.detectChanges();
+    this.isLoading = true;
+    this._changeDetectorRef.markForCheck();
 
-      const formValue = this.form.value;
+    const formValue = this.form.value;
 
-      // Crear request de actualización
-      const updateRequest: UpdateStaffRelationshipRequest = {
-        id: this.data.relationship.id,
-        relationshipTypeId: formValue.relationshipType.id,
-        comment: formValue.comment // Incluir el campo comment en el request
-      };
+    const updateRequest: UpdateStaffRelationshipRequest = {
+      id: this.data.relationship.id,
+      relationshipTypeId: formValue.relationshipType.id,
+      comment: formValue.comment
+    };
 
-      // Llamar al servicio para actualizar
-      this._staffRelationshipService.updateRelationship(updateRequest, {}).subscribe({
-        next: (response) => {
-          this._notificationService.showSuccessDialog('Relación actualizada exitosamente');
-          this.dialogRef.close(true); // true indica que se actualizó correctamente
-        },
-        error: (error) => {
-          this._notificationService.showErrorDialog('Error al actualizar la relación');
-        }
-      });
-
-    } catch (error) {
-      this._notificationService.showErrorDialog('Error inesperado al actualizar la relación');
-    } finally {
-      this.isLoading = false;
-      this._changeDetectorRef.detectChanges();
-    }
+    this._staffRelationshipService.updateRelationship(updateRequest, {}).subscribe({
+      next: () => {
+        this._notificationService.showSuccessDialog('Relación actualizada exitosamente');
+        this.dialogRef.close(true);
+      },
+      error: () => {
+        this._notificationService.showErrorDialog('Error al actualizar la relación');
+        this.isLoading = false;
+        this._changeDetectorRef.markForCheck();
+      }
+    });
   }
 
-
+  /** Cancela la operación y cierra el modal */
   onCancel(): void {
-    this.dialogRef.close(true);
+    this.dialogRef.close(false);
   }
 }

@@ -851,6 +851,9 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    * Envía el formulario de edición de sitio (Day Care Home).
    */
   onSubmit() {
+    // Protección contra doble clic: si ya está cargando, ignorar
+    if (this.isLoading) return;
+
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');

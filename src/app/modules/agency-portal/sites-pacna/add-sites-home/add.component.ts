@@ -124,6 +124,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   private _fieldVisibilityService = inject(FieldVisibilityService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
 
+  /** Evita que valueChanges dispare recálculo de días al hacer reset() tras guardar exitoso. */
+  private _isResettingForm = false;
+
   // catálogos
   listCities: City[] = [];
   listRegions: Region[] = [];
@@ -522,12 +525,14 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
+        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
+        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
@@ -535,6 +540,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((value: DayOfWeekResponse[] | null) => {
+        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
         this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
         this._changeDetectorRef.markForCheck();
@@ -690,6 +696,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
   // Método para enviar el formulario
   onSubmit() {
+    // Protección contra doble clic: si ya está cargando, ignorar
+    if (this.isLoading) return;
+
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria
@@ -910,7 +919,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         switch (result.body) {
           case true:
             this.isLoading = false;
+            this._isResettingForm = true;
             this.headerConfig.formGroup.reset();
+            this._isResettingForm = false;
 
             const baseYearControl = this.headerConfig.formGroup.get('baseYear');
             const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');

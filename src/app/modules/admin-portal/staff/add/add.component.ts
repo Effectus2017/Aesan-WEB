@@ -157,7 +157,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
       tenureDuration: new FormControl(''),
       tenureDurationUnit: new FormControl(''),
       receivesProgramSalary: new FormControl(''),
-      salaryOrigins: new FormControl([] as OptionSelection[]),
+      salaryOrigins: new FormControl([] as OptionSelection[], [Validators.required]),
       // Campos de revisión (solo para administradores)
       reviewResult: new FormControl(''),
       reviewDate: new FormControl(''),
