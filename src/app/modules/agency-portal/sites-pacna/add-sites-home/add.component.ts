@@ -410,17 +410,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     return true; // Tabla siempre habilitada
   }
 
-   /**
-   * Ordena las opciones de community alfabéticamente según el idioma actual
-   */
-  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
-    return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
-      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
   constructor() {}
 
   ngOnInit(): void {
@@ -448,21 +437,15 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
-      // Yes No Options
-      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      // Estatus Options
-      this.isActiveOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'community')
-      );
-      this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.walkers = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      this.siteType = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'experience')
-      );
+      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
+      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+      this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
+      this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
+      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.areaTypes = resolvedData.areaTypes;
@@ -494,9 +477,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         this.isDayCareHomeId = isDayCareHomeIdFromQuery;
 
         // Obtener las opciones de isDayCareHome del resolver para determinar isDayCareHome (bool)
-        const isDayCareHomeOptions = resolvedData.options?.data?.filter(
+        const isDayCareHomeOptions = resolvedData.options.filter(
           (option: OptionSelection) => option.optionKey === 'isDayCareHome'
-        ) || [];
+        );
 
         const selectedOption = isDayCareHomeOptions.find(
           (opt: OptionSelection) => opt.id === isDayCareHomeIdFromQuery
@@ -524,11 +507,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       this.updateValidations();
     }
 
-    // Transloco
+    // Transloco (el orden de community/experience viene del backend cuando el resolver envía sortByNameKeys)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      this.community = this.sortOptionsAlphabetically(this.community);
-      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     this.setupFormListeners();

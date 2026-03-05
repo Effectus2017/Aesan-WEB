@@ -10,6 +10,9 @@
             "title": "Site List",
             "titleCenters": "Centers List",
             "titleHomes": "List of Homes",
+            "filters": {
+                "name": "Name"
+            },
             "table": {
                 "columns": {
                     "id": "Id",

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -18,7 +18,10 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
+import { SITES_PACNA_FILTERS_SCHEMA } from './filters-schema';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteTableResponse } from 'app/shared/models/Response/SiteTableResponse';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -42,11 +45,11 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _customRouterService = inject(CustomRouterService);
@@ -59,16 +62,25 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   isPACNAAgency = false;
   private _homeOptionId?: number;
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = SITES_PACNA_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
+
   headerConfig: GenericHeaderConfig = {
     title: 'sites.list.titleHomes',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'sites.list.search.placeholder',
     submitButtonText: 'sites.list.buttons.save',
-    goToAddButtonShow: true,
-    goToAddButtonPermission: 'site.create',
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
+    customButtonShow: true,
+    customButtonClass: 'bg-[#F39B1A] text-white',
+    customButtonIcon: 'add',
+    customButtonIconEnabled: true,
+    customButtonPermission: 'site.create',
   };
 
   tableConfig: GenericTableConfig = {
@@ -106,23 +118,34 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
     this._unsubscribeAll.complete();
   }
 
-  onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
-    }
+  onSearch(): void {}
+
+  onFilter(): void {
+    this.filterDrawer?.toggle();
   }
 
-  getAll(index: number, form: any) {
-    const name = form.name || null;
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  getAll(index: number): void {
     const pageSize = this.tableConfig.pageSize;
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
-      name: name,
       alls: false,
-      isDayCareHomeId: this._homeOptionId,
+      isDayCareHomeId: this._homeOptionId ?? undefined,
+      ...this.appliedFilters,
     };
 
     this._siteService.getAllSitesFromDb(requestParameters)
@@ -142,18 +165,16 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
       });
   }
 
-  getPaginator(event?: PageEvent) {
+  getPaginator(event?: PageEvent): void {
     const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
     this.tableConfig.pageSize = event?.pageSize || this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+    this.getAll(index * this.tableConfig.pageSize);
   }
 
-  onClean(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.headerConfig.clearVisible = false;
-    this.headerConfig.formGroup.reset();
-    this.getAll(0, this.headerConfig.formGroup.value);
+  onClean(_event: Event): void {}
+
+  onCustom(): void {
+    this._customRouterService.navigate(['sites-pacna/homes/add']);
   }
 
   onTableEdit(event: Event, id: number) {
@@ -166,10 +187,6 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
     event.stopPropagation();
     event.preventDefault();
     this._customRouterService.navigate([`sites-pacna/calendar/${id}`]);
-  }
-
-  onAdd() {
-    this._customRouterService.navigate(['sites-pacna/homes/add']);
   }
 
   private detectPACNAAgency(): void {

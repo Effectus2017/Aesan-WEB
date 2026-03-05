@@ -471,17 +471,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
   // Site ID
   siteId: number = 0;
 
-  /**
-   * Ordena las opciones de community alfabéticamente según el idioma actual
-   */
-  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
-    return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
-      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
   constructor() {}
 
   ngOnInit(): void {
@@ -515,16 +504,12 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
       // Tipo de grupo
       this.groupTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'groupType');
-      // Comunidad
-      this.community = this.sortOptionsAlphabetically(resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community'));
-      // Caminantes / Walkers
+      // Comunidad (orden viene del resolver común vía SP 101_)
+      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
       this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      // Tipo de distribución / Distribution type
       this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-      // Tipo de sitio / Site type
       this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      // Experiencia / Experience
-      this.experience = this.sortOptionsAlphabetically(resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience'));
+      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
 
       // Catálogos
       this.organizationTypes = resolvedData.organizationTypes;
@@ -555,11 +540,9 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       }
     });
 
-    // Transloco
+    // Transloco (el orden de community/experience viene ya del resolver común vía SP 101_)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      this.community = this.sortOptionsAlphabetically(this.community);
-      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     this.setupFormListeners();

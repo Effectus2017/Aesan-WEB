@@ -52,6 +52,12 @@ export interface QueryParameters {
    * Ejemplos: "yesNo", "exceptionStatus", "incomeFrequency", "taxExemptionType", "typeOfEntity", "typeOfApplicant"
    */
   optionKey?: string;
+  /** Option keys a ordenar por nombre (según idioma). Separados por coma (ej. "community,experience"). */
+  sortByNameKeys?: string;
+  /** Option keys a ordenar por NameEN. Separados por coma. */
+  sortByNameENKeys?: string;
+  /** Idioma para sortByNameKeys: "en" usa NameEN, sino Name. */
+  language?: string;
   optionNamesExclude?: string;
 
   // Campos para actualización del estado activo de escuela

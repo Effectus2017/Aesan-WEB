@@ -18,6 +18,7 @@ import { EducationLevelService } from 'app/shared/services/education-level.servi
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 // Resolver para la lista de sitios PACNA
 // Resolver for PACNA sites list
@@ -190,16 +191,19 @@ export const initialDataSitesPacnaCenterAddResolver: ResolveFn<any> = (route: Ac
   const optionSelectionService = inject(OptionSelectionService);
   const kitchenTypeService = inject(KitchenTypeService);
   const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
 
   const requestParameters = getCommonRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
 
   return forkJoin([
-    // Selection options service
-    // Servicio para opciones de selección
+    // Selection options service (orden por nombre para community, experience según idioma)
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
     }),
     // Types of kitchen (por programa: PACNA sin CGA)
     kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
@@ -246,19 +250,20 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
   const optionSelectionService = inject(OptionSelectionService);
   const kitchenTypeService = inject(KitchenTypeService);
   const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
 
   const requestParameters = getCommonRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
 
   return forkJoin([
-    // School service
-    // Servicio para operaciones de escuelas
-    siteService.getSiteById({ id: id }),
-    // Selection options service
-    // Servicio para opciones de selección
+    siteService.getSiteById({ id }),
+    // Opciones de selección (orden por nombre para community, experience según idioma)
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
     }),
     // Types of kitchen (por programa: PACNA sin CGA)
     kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PACNA }),

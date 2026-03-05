@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, QueryList, ViewChildren, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -17,7 +17,7 @@ import { AGENCY_DASHBOARD_COLUMNS_SCHEMA } from './columns-schema';
 import { ActivatedRoute } from '@angular/router';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { NgApexchartsModule } from 'ng-apexcharts';
+import { ChartComponent, NgApexchartsModule } from 'ng-apexcharts';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { FuseConfigService } from '@fuse/services/config';
@@ -84,6 +84,9 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   private _agencyService = inject(AgencyService);
   private _fuseConfigService = inject(FuseConfigService);
   private _unsubscribeAll = new Subject<void>();
+  private _destroyed = false;
+
+  @ViewChildren(ChartComponent) private _chartComponents!: QueryList<ChartComponent>;
 
   agencyDashboardCardsData = [...agencyDashboardCardsData];
   userName = 'Usuario';
@@ -240,6 +243,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._translocoService.selectTranslate('agency.dashboard.charts.rationsByMonth')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(translation => {
+        if (this._destroyed) return;
         if (this.rationsChartOptions.title) {
           this.rationsChartOptions.title.text = translation;
           this._changeDetectorRef.detectChanges();
@@ -249,6 +253,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._translocoService.selectTranslate('agency.dashboard.charts.coordinatedVisits')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(translation => {
+        if (this._destroyed) return;
         if (this.visitsChartOptions.title) {
           this.visitsChartOptions.title.text = translation;
           this._changeDetectorRef.detectChanges();
@@ -287,6 +292,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
    */
   private _loadAgencyCode(): void {
     this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
+      if (this._destroyed) return;
       if (!isNullOrUndefinedEmptyStringNullArray(result)) {
         const agency = result.body || result;
         if (agency && agency.agencyCode) {
@@ -330,6 +336,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._translocoService.selectTranslate('agency.dashboard.today')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((todayTranslation) => {
+        if (this._destroyed) return;
         this.headerConfig.subtitle = `${todayTranslation} ${this.currentDate}`;
         this._changeDetectorRef.detectChanges();
       });
@@ -342,6 +349,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._translocoService.selectTranslateObject('agency.dashboard.months')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(translations => {
+        if (this._destroyed) return;
         if (this.rationsChartOptions.xaxis) {
           this.rationsChartOptions.xaxis.categories = rationsByMonthData.map(item => 
             translations[item.monthKey] || item.monthKey
@@ -358,6 +366,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._translocoService.selectTranslateObject('agency.dashboard.visitTypes')
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(translations => {
+        if (this._destroyed) return;
         this.visitsChartOptions.labels = coordinatedVisitsData.map(item => 
           translations[item.nameKey] || item.nameKey
         );
@@ -385,6 +394,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
     this._fuseConfigService.config$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((config) => {
+        if (this._destroyed) return;
         const isDarkMode = config.scheme === 'dark';
         this._updateChartThemes(isDarkMode);
       });
@@ -394,6 +404,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
    * Actualiza los temas de los gráficos según el modo oscuro/claro
    */
   private _updateChartThemes(isDarkMode: boolean): void {
+    if (this._destroyed) return;
     const themeMode = isDarkMode ? 'dark' : 'light';
     const textColor = isDarkMode ? '#FFFFFF' : '#1E293B';
     const axisColor = isDarkMode ? '#94A3B8' : '#64748B';
@@ -441,6 +452,7 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
    * Actualiza las cards del dashboard con los datos del resolver
    */
   private updateDashboardCards(dashboardData: any): void {
+    if (this._destroyed) return;
     console.log('Updating dashboard cards with data:', dashboardData);
 
     // Crear un nuevo array con las cards actualizadas para asegurar que Angular detecte los cambios
@@ -464,6 +476,14 @@ export class AgencyDashboardListComponent implements OnInit, OnDestroy, OnGeneri
   }
 
   ngOnDestroy(): void {
+    this._destroyed = true;
+    this._chartComponents?.forEach((chart) => {
+      try {
+        chart.destroy();
+      } catch {
+        // Ignorar si el gráfico ya está destruido
+      }
+    });
     this._unsubscribeAll.next();
     this._unsubscribeAll.complete();
   }

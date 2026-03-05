@@ -198,17 +198,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   tableConfig: GenericTableConfig = this.servicesTableConfig;
 
 
-  /**
-   * Determina si se deben mostrar campos adicionales para diferentes grupos
-   * Se muestra cuando:
-   * 1. Es Day Care Home y offersServiceToDifferentGroups es true, O
-   * 2. Tiene salón comedor y la capacidad es menor que la matrícula general
-   */
-  shouldShowDifferentGroupsFields(): boolean {
-    return true; // Tabla siempre habilitada
-  }
-
-
   currentLang: string = 'es';
 
 
@@ -219,14 +208,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Tipo de localización
   // Type of location
   locationTypes: AreaType[] = [];
-
-  // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = false;
-  isPSAV: boolean = false;
-  isPACNA: boolean = false;
-  isPFHF: boolean = false;
-  isPDFE: boolean = false;
-  isAESAN: boolean = false;
 
   // Opciones de hora para los campos "hasta" - se filtran dinámicamente
   timeOptions: TimeOption[] = [];
@@ -442,17 +423,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Site ID
   siteId: number = 0;
 
-  /**
-   * Ordena las opciones de community alfabéticamente según el idioma actual
-   */
-  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
-    return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
-      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
   constructor() {}
 
   ngOnInit(): void {
@@ -471,13 +441,11 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
     if (resolvedData) {
-      // Yes No Options
-      this.yesNoOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      // Opciones de Day Care Home
-      this.relationshipTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.isActive = resolvedData.options.data.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+      this.isActive = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.listPostalRegions = resolvedData.regions;

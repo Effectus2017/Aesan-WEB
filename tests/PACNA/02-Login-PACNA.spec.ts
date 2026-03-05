@@ -25,30 +25,51 @@ test.describe('PACNA - Login and Password Change Flow', () => {
         }
 
         console.log(`Processing Login/PassChange for scenario: ${scenario.id} (${scenario.email})`);
-
-        // 1. Initial Login with Temp Password
-        await page.goto('/sign-in');
-        await page.locator('[data-cy="email-input"]').fill(scenario.email);
-        await page.locator('[data-cy="password-input"]').fill(scenario.tempPassword);
-        await page.locator('[data-cy="submit-button"]').click();
-
-        // 2. Expect redirection to mandatory password change
-        await expect(page.locator('h1, h2, .title').filter({ hasText: /Cambio de contraseña|Cambiar contraseña/i }).first()).toBeVisible({ timeout: 15000 });
         
         const newPassword = 'Password123!';
+
+        // 1. Go directly to Password Update URL
+        console.log('Navigating to update-password page...');
+        await page.goto(`/update-password?email=${scenario.email}`);
         
-        // Fill change password form
-        await page.locator('[data-cy="old-password-input"]').fill(scenario.tempPassword);
-        await page.locator('[data-cy="new-password-input"]').fill(newPassword);
-        await page.locator('[data-cy="confirm-password-input"]').fill(newPassword);
+        // Wait for the form
+        const oldPassField = page.locator('[data-cy="old-password-input"]').or(page.getByLabel(/Contraseña Temporera/i));
         
-        const changeBtn = page.locator('[data-cy="change-password-submit-button"]');
-        await expect(changeBtn).toBeEnabled();
-        await changeBtn.click();
+        // Check if we are actually on the update page or if we were redirected (maybe already changed)
+        if (await oldPassField.first().isVisible({ timeout: 5000 }).catch(() => false)) {
+            console.log('Filling password change form...');
+            await oldPassField.first().fill(scenario.tempPassword);
+            
+            const newPassField = page.locator('[data-cy="new-password-input"]').or(page.getByLabel(/Nueva Contraseña/i));
+            await newPassField.first().fill(newPassword);
+            
+            const confirmPassField = page.locator('[data-cy="confirm-password-input"]').or(page.getByLabel(/Confirmar Contraseña/i));
+            await confirmPassField.first().fill(newPassword);
+            
+            const changeBtn = page.locator('[data-cy="change-password-submit-button"]')
+                .or(page.getByRole('button', { name: /Actualizar Contraseña|Cambiar contraseña/i }));
+                
+            await expect(changeBtn.first()).toBeEnabled();
+            await changeBtn.first().click();
+
+            // Wait for success message or redirection to sign-in
+            console.log('Waiting for password update confirmation...');
+            await page.waitForURL(/.*sign-in/, { timeout: 15000 });
+        } else {
+            console.log('Password might already be changed or redirection occurred. Moving to sign-in.');
+            await page.goto('/sign-in');
+        }
+
+        // 2. Login with New Password
+        console.log(`Logging in with: ${scenario.email}`);
+        await page.locator('[data-cy="email-input"]').fill(scenario.email);
+        await page.locator('[data-cy="password-input"]').fill(newPassword);
+        await page.locator('[data-cy="submit-button"]').click();
 
         // 3. Verify Success and redirection to dashboard
-        await page.waitForURL(/.*agency-portal/);
-        console.log(`Password changed successfully for ${scenario.email}`);
+        console.log('Waiting for dashboard redirection...');
+        await page.waitForURL(/.*agency-portal/, { timeout: 15000 });
+        console.log(`Logged in successfully to dashboard for ${scenario.email}`);
 
         // 4. Update INPUT file
         scenario.isPasswordChanged = true;

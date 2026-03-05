@@ -1,8 +1,5 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest, HttpResponse } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
-import { environment } from 'environments/environment';
+import { Observable } from 'rxjs';
 
 interface CacheEntry {
   response: HttpResponse<any>;
@@ -35,54 +32,34 @@ function shouldExcludeFromCache(url: string): boolean {
 
 /**
  * Interceptor de caché HTTP
- * Cachea automáticamente las requests GET que no estén en la lista de exclusiones
+ * CACHE DESHABILITADO: siempre reenvía la request sin leer ni escribir caché
  */
 export const cacheInterceptor = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
-  // Solo cachear GET requests
-  if (req.method !== 'GET') {
-    return next(req);
-  }
+  // Cache deshabilitado en todo el proyecto: siempre pasar al siguiente handler
+  return next(req);
 
-  // Verificar si hay un header que indique no cachear
-  if (req.headers.get('X-No-Cache') === 'true') {
-    return next(req);
-  }
-
-  // Verificar si el endpoint está en la lista de exclusiones
-  if (shouldExcludeFromCache(req.url)) {
-    return next(req);
-  }
-
-  // Crear clave única para el caché (URL + query params)
-  const cacheKey = req.urlWithParams;
-  const cachedResponse = cache.get(cacheKey);
-  const now = Date.now();
-
-  // Si hay una respuesta cacheada y no ha expirado
-  if (cachedResponse && (now - cachedResponse.timestamp) < CACHE_DURATION) {
-    if (!environment.production) {
-      console.log(`✅ Cache hit: ${req.url}`);
-    }
-    return of(cachedResponse.response.clone());
-  }
-
-  // Hacer la request y cachear la respuesta
-  return next(req).pipe(
-    tap((event) => {
-      if (event instanceof HttpResponse) {
-        cache.set(cacheKey, {
-          response: event.clone(),
-          timestamp: now
-        });
-        if (!environment.production) {
-          console.log(`💾 Cache miss (stored): ${req.url}`);
-        }
-      }
-    })
-  );
+  // --- Código de caché comentado ---
+  // if (req.method !== 'GET') return next(req);
+  // if (req.headers.get('X-No-Cache') === 'true') return next(req);
+  // if (shouldExcludeFromCache(req.url)) return next(req);
+  // const cacheKey = req.urlWithParams;
+  // const cachedResponse = cache.get(cacheKey);
+  // const now = Date.now();
+  // if (cachedResponse && (now - cachedResponse.timestamp) < CACHE_DURATION) {
+  //   if (!environment.production) console.log(`✅ Cache hit: ${req.url}`);
+  //   return of(cachedResponse.response.clone());
+  // }
+  // return next(req).pipe(
+  //   tap((event) => {
+  //     if (event instanceof HttpResponse) {
+  //       cache.set(cacheKey, { response: event.clone(), timestamp: now });
+  //       if (!environment.production) console.log(`💾 Cache miss (stored): ${req.url}`);
+  //     }
+  //   })
+  // );
 };
 
 /**

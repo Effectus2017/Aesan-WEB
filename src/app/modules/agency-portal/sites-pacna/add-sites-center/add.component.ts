@@ -498,13 +498,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   agency: AgencyResponse | null = null;
 
 
-  // Propiedades para controlar visibilidad según programa
-  isPDAM: boolean = false;
-  isPSAV: boolean = false;
-  isPFHF: boolean = false;
-  isPDFE: boolean = false;
-  isAESAN: boolean = false;
-
   // Propiedad para controlar visibilidad del campo Tipo de Centro
   showCenterTypeField: boolean = false;
 
@@ -550,17 +543,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.servicesTableConfig;
 
-  /**
-   * Ordena las opciones de community alfabéticamente según el idioma actual
-   */
-  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
-    return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
-      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
   constructor() {}
 
   ngOnInit(): void {
@@ -594,9 +576,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       this.typeOfResidential = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
       this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community')
-      );
+      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
       this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
       this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
       this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
@@ -604,9 +584,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
       this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience')
-      );
+      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
 
       this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
 
@@ -646,11 +624,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       this.setupGroupTypeListener();
     }
 
-    // Transloco
+    // Transloco (el orden de community/experience viene ya del resolver vía SP 101_)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      this.community = this.sortOptionsAlphabetically(this.community);
-      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     // Actualizar validaciones de distributionType inicialmente
@@ -803,8 +779,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
           kitchenTypeControl?.clearValidators();
           kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
         } else {
-          // Para "Comedor", tipo de cocina es obligatorio
-          kitchenTypeControl?.setValidators([Validators.required]);
+          // PACNA: Tipo de cocina no se muestra en este módulo; no exigir ni cargar.
+          this.kitchenTypes = [];
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
+          kitchenTypeControl?.clearValidators();
           kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
         }
       } else {
@@ -1378,56 +1356,18 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     console.log('onTableAddSatelliteSite', event, element);
   }
 
-  // Método para obtener tipos de cocina según el tipo de grupo seleccionado
-  // Get kitchen types by group type
+  /**
+   * En PACNA el campo Tipo de Cocina no se muestra ni se usa.
+   * Solo se limpia el valor y las opciones al cambiar el tipo de grupo (sin llamar al API).
+   */
   getKitchenTypesByGroupType(groupType: OptionSelection): void {
     const kitchenTypeControl = this.headerConfig.formGroup.get('kitchenType');
 
-    if (!groupType) {
-      this.kitchenTypes = [];
-      kitchenTypeControl?.enable();
-      return;
-    }
-
-    // Verificar si es "Comedor" - solo cargar tipos de cocina para Comedor
-    const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-
-    if (!isComedor) {
-      // Si no es "Comedor", limpiar el valor y las opciones
-      this.kitchenTypes = [];
-      this.headerConfig.formGroup.patchValue({ kitchenType: null });
-      this._changeDetectorRef.detectChanges();
-      return;
-    }
-
-    // Habilitar el control solo para Comedor
-    kitchenTypeControl?.enable();
-
-    const queryParameters: QueryParameters = {
-      groupTypeId: groupType.id,
-      programId: PROGRAM_IDS.PACNA,
-    };
-
-    this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({
-      next: (response) => {
-        if (response) {
-          this.kitchenTypes = response.body;
-
-          // Si solo hay una opción disponible, auto-seleccionarla
-          if (this.kitchenTypes.length === 1) {
-            this.headerConfig.formGroup.patchValue({ kitchenType: this.kitchenTypes[0] });
-          } else {
-            // Si hay múltiples opciones, limpiar para que el usuario elija
-            this.headerConfig.formGroup.patchValue({ kitchenType: null });
-          }
-
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-      error: (error) => {
-        console.error('Error al cargar los tipos de cocina:', error);
-      },
-    });
+    this.kitchenTypes = [];
+    this.headerConfig.formGroup.patchValue({ kitchenType: null });
+    kitchenTypeControl?.clearValidators();
+    kitchenTypeControl?.updateValueAndValidity({ emitEvent: false });
+    this._changeDetectorRef.detectChanges();
   }
 
   /**
@@ -1657,9 +1597,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   }
 
   /**
-   * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
-   */
-  /**
    * Determina si se debe mostrar el campo de capacidad de salón comedor
    */
   shouldShowDiningRoomCapacity(): boolean {
@@ -1669,22 +1606,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   /**
    * Determina si se deben mostrar servicios por grupos cuando la capacidad es menor que la matrícula
    */
-  /**
-   * Determina si se deben mostrar campos adicionales para diferentes grupos
-   * Se muestra cuando la capacidad del salón comedor es menor que la matrícula general
-   */
-  shouldShowDifferentGroupsFields(): boolean {
-    return true; // Tabla siempre habilitada
-  }
-
-  /**
-   * Determina si se deben ocultar los campos de servicios individuales
-   * cuando se están usando servicios por grupos
-   */
-  shouldHideIndividualServiceFields(): boolean {
-    return true; // Siempre ocultar servicios individuales
-  }
-
   shouldShowServicesByGroupsForDiningRoom(): boolean {
     const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
     const capacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
@@ -2010,8 +1931,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     }));
   }
 
-
-
   // ===== MÉTODOS DE VALIDACIÓN PACNA =====
 
   /**
@@ -2045,29 +1964,11 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     this.pacnaValidationMessage = { type: null, message: null };
   }
 
-
-
   /**
-   * Verifica si se debe mostrar el campo de Tipo de Cocina
-   * Solo se muestra cuando:
-   * - El programa es PDAM
-   * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
+   * En PACNA el campo Tipo de Cocina no se muestra (solo se usa en PDAM).
    */
   get shouldShowKitchenTypeField(): boolean {
-    // Solo para PDAM
-    if (!this.isPDAM) {
-      return false;
-    }
-
-    // Verificar si el Tipo de Grupo seleccionado es "Comedor"
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-    if (groupType) {
-      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-      return isComedor;
-    }
-
     return false;
   }
-
 
 }

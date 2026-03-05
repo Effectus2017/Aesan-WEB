@@ -2,6 +2,10 @@
   "centers": {
     "list": {
       "title": "Lista de Centros",
+      "filters": {
+        "name": "Nombre",
+        "code": "Código"
+      },
       "search": {
         "placeholder": "Buscar por nombre"
       },

@@ -452,18 +452,6 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
   schoolId: number | null = null;
 
 
-  /**
-   * Ordena las opciones de community alfabéticamente según el idioma actual
-   */
-  private sortOptionsAlphabetically(options: OptionSelection[]): OptionSelection[] {
-    return [...options].sort((a, b) => {
-      const nameA = (this.currentLang === 'es' ? a.name : a.nameEN).toLowerCase();
-      const nameB = (this.currentLang === 'es' ? b.name : b.nameEN).toLowerCase();
-      return nameA.localeCompare(nameB);
-    });
-  }
-
-
   constructor() {}
 
   ngOnInit(): void {
@@ -497,16 +485,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Estatus Options
       this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
       this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      this.community = this.sortOptionsAlphabetically(
-        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community')
-      );
+      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
       this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
       this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
       this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
-
-      this.experience = this.sortOptionsAlphabetically(
-        resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience')
-      );
+      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
 
       this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
 
@@ -536,11 +519,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       }
     });
 
-    // Transloco
+    // Transloco (el orden de community/experience viene ya del resolver común vía SP 101_)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
-      this.community = this.sortOptionsAlphabetically(this.community);
-      this.experience = this.sortOptionsAlphabetically(this.experience);
     });
 
     // Actualizar validaciones de distributionType inicialmente

@@ -40,12 +40,13 @@ tests/
 ├── auth.setup.ts                   # Setup global de autenticación
 ├── .auth/                          # Estado de autenticación (gitignored)
 │   └── user.json                   # Estado guardado de la sesión
+├── PACNA/                         # Pruebas del programa PACNA
+├── PDAM/                          # Pruebas del programa PDAM
+├── PSAV/                          # Pruebas del programa PSAV
 ├── utils/
 │   ├── test-helpers.ts            # Utilidades principales para tests
 │   ├── auth-helper.ts             # Helper para gestión de autenticación
 │   └── accessibility-helper.ts    # Helper para árbol de accesibilidad (MCP)
-├── schools-add.spec.ts            # Tests para agregar escuelas
-├── login-working.spec.ts          # Tests de login
 └── screenshots/                    # Screenshots de tests fallidos
 ```
 

@@ -1,0 +1,19 @@
+--- COMANDOS PARA COPIAR Y PEGAR - FLUJO PACNA ---
+Ejecuta estos comandos desde la raíz de la carpeta 'Web'.
+
+PASO 1: Registro de Agencia (Genera nuevos datos dinámicos)
+npx playwright test tests/PACNA/01-Registro-PACNA.spec.ts --project=chromium-unauthenticated --headed
+
+PASO 2: Login e Inicio de Sesión (Cambia la clave a Password123! y va al dashboard)
+npx playwright test tests/PACNA/02-Login-PACNA.spec.ts --project=chromium-unauthenticated --headed
+
+PASO 3: Registro de Escuelas/Centros (Usa la sesión creada en el paso anterior)
+npx playwright test tests/PACNA/03-Registro-Escuela-PACNA.spec.ts --project=chromium-unauthenticated --headed
+
+--- OTROS COMANDOS ÚTILES ---
+
+Ver reporte visual del último test:
+npx playwright show-report
+
+Listar todos los tests disponibles:
+npx playwright test --list

@@ -11,6 +11,7 @@ import { forkJoin, map } from 'rxjs';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
+import { TranslocoService } from '@ngneat/transloco';
 
 // Request parameters comunes
 const getCommonRequestParameters = (): QueryParameters => ({
@@ -20,7 +21,7 @@ const getCommonRequestParameters = (): QueryParameters => ({
   isList: true,
 });
 
-// Resolver común para la creación de un sitio
+// Resolver común para la creación de un sitio (PSAV, etc.: orden community/experience por SP 101_)
 export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const geoService = inject(GeoService);
   const organizationTypeService = inject(OrganizationTypeService);
@@ -30,16 +31,18 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
   const optionSelectionService = inject(OptionSelectionService);
   const kitchenTypeService = inject(KitchenTypeService);
   const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
 
   const requestParameters = getCommonRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
 
   return forkJoin([
-    // Selection options service
-    // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
     }),
     // Types of kitchen
     // Tipos de cocina
@@ -80,7 +83,7 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
   );
 };
 
-// Resolver común para la edición de un sitio
+// Resolver común para la edición de un sitio (PSAV, etc.: orden community/experience por SP 101_)
 export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   const id = Number(route.paramMap.get('id'));
   const siteService = inject(SiteService);
@@ -92,19 +95,19 @@ export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: Activa
   const optionSelectionService = inject(OptionSelectionService);
   const kitchenTypeService = inject(KitchenTypeService);
   const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
 
   const requestParameters = getCommonRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
 
   return forkJoin([
-    // School service
-    // Servicio para operaciones de escuelas
-    siteService.getSiteById({ id: id }),
-    // Selection options service
-    // Servicio para opciones de selección
+    siteService.getSiteById({ id }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
     }),
     // Types of kitchen
     // Tipos de cocina
