@@ -140,6 +140,7 @@ export class GenericHeaderComponent {
   }
 
   onSubmit() {
+    if (this.isLoading) return;
     this.handler.onSubmit();
   }
 

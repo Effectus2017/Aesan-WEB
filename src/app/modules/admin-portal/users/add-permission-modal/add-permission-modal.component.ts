@@ -220,6 +220,7 @@ export class AddPermissionModalComponent implements OnInit, OnDestroy {
    * Maneja el envío del formulario
    */
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.selectedPermissions.length === 0) {
       return;
     }

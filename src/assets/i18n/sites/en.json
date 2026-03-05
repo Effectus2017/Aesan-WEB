@@ -237,17 +237,17 @@
             },
             "first-academic-class-start-time": {
                 "label": "Start of First Academic Class",
-                "placeholder": "Select time (optional)",
+                "placeholder": "Select time",
                 "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "last-academic-class-end-time": {
                 "label": "End of Last Academic Class",
-                "placeholder": "Select time (optional)",
+                "placeholder": "Select time",
                 "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
-                "placeholder": "Select the date when your entity began operating (optional)",
+                "placeholder": "Select the date when your entity began operating",
                 "required": "This field is required",
                 "hint": "The entity must have at least one year of service to be eligible",
                 "not-eligible": "The entity must have at least one year of service to be eligible for any program."
@@ -1095,12 +1095,12 @@
             },
             "first-academic-class-start-time": {
                 "label": "Start of First Academic Class",
-                "placeholder": "Select time (optional)",
+                "placeholder": "Select time",
                 "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "last-academic-class-end-time": {
                 "label": "End of Last Academic Class",
-                "placeholder": "Select time (optional)",
+                "placeholder": "Select time",
                 "outside-operating-hours": "Must be within the site operating hours (start and end)."
             },
             "operating-dates": {
@@ -1109,7 +1109,7 @@
             },
             "service-time": {
               "label": "Since when has your Entity offered services with an established registration?",
-                "placeholder": "Select the date when your entity began operating (optional)",
+                "placeholder": "Select the date when your entity began operating",
                 "required": "This field is required",
                 "hint": "The entity must have at least one year of service to be eligible",
                 "not-eligible": "The entity must have at least one year of service to be eligible for any program."

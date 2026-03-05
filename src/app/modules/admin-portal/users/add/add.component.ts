@@ -171,6 +171,8 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
   /** Idioma activo de la UI (es/en) para mostrar nombres de roles en el idioma correcto. */
   currentLang = 'es';
 
+  isLoading = false;
+
   // -----------------------------------------------------------------------------------------------------
   // @ Constructor
   // -----------------------------------------------------------------------------------------------------
@@ -253,6 +255,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Llamado por el botón Submit del header; envía el formulario o marca errores. */
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.submitForm(this.headerConfig.formGroup.value);
     } else {
@@ -449,6 +452,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
 
   /** Valida datos del formulario, construye RequestUser y llama al servicio para crear el usuario; al terminar navega a la lista. */
   submitForm(form: AddUserFormValue) {
+    this.isLoading = true;
     const requestParameters: QueryParameters = {
       agencyId: this._authService.getAgencyId(),
     };
@@ -492,8 +496,11 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
           this._changeDetectorRef.markForCheck();
         }
       },
-      error: (error) => {},
+      error: () => {
+        this.isLoading = false;
+      },
       complete: () => {
+        this.isLoading = false;
         this.onBack();
       },
     });

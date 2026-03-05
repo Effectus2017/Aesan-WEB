@@ -331,6 +331,7 @@ export class AdminAddStaffComponent implements OnInit, OnDestroy, OnGenericHeade
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       this._notificationService.showError(this._translocoService.translate('staff.add.error.incompleteFields'));

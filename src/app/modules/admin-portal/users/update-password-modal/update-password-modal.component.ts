@@ -107,6 +107,7 @@ export class UpdatePasswordModalComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.updatePasswordForm.invalid) {
       this.updatePasswordForm.markAllAsTouched();
       return;

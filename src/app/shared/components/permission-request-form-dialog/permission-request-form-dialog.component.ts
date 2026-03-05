@@ -31,6 +31,7 @@ export interface PermissionRequestFormDialogData {
 })
 export class PermissionRequestFormDialogComponent {
   form: FormGroup;
+  isLoading = false;
 
   constructor(
     public dialogRef: MatDialogRef<PermissionRequestFormDialogComponent>,
@@ -48,6 +49,7 @@ export class PermissionRequestFormDialogComponent {
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.form.valid) {
       // Cerrar el diálogo con el resultado
       this.dialogRef.close({

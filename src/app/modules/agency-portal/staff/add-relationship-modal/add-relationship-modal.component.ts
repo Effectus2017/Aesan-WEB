@@ -120,6 +120,7 @@ export class AddRelationshipModalComponent implements OnInit, OnDestroy {
 
   /** Maneja el envío del formulario */
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

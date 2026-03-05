@@ -216,6 +216,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   /** Idioma activo de la UI (es/en) para mostrar nombres de roles en el idioma correcto. */
   currentLang = 'es';
 
+  isLoading = false;
+
   compare = compare;
   compareById = compareById;
   compareString = compareString;
@@ -344,6 +346,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   /** Llamado por el botón Submit del header; valida y actualiza o muestra diálogo si es inválido. */
   onSubmit(): void {
+    if (this.isLoading) return;
     this._applyAgencyVisibilityByPrimaryRole();
     if (this.headerConfig.formGroup.valid) {
       this.onUpdate(this.headerConfig.formGroup.value);
@@ -1164,6 +1167,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   /** Valida el formulario, construye RequestUser y llama al servicio para actualizar el usuario; muestra diálogo de éxito o error. */
   onUpdate(form: any) {
+    this.isLoading = true;
     // si correo es null, no se puede actualizar
     if (isNullOrUndefinedEmptyStringNullArray(form.email) && isNullOrUndefinedEmptyStringNullArray(this.user.email)) {
       this.headerConfig.formGroup.get('email').setErrors(VALIDATION_ERRORS.REQUIRED);
@@ -1269,6 +1273,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         }
       },
       error: () => {
+        this.isLoading = false;
         // Mostrar mensaje de error
         this._fuseConfirmationService.open({
           title: this._translocoService.translate('users.update.error.title'),
@@ -1291,6 +1296,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         });
       },
       complete: () => {
+        this.isLoading = false;
         //this.enableEditableFormControls();
       },
     });

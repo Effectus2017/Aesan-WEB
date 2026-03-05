@@ -63,6 +63,7 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _route: ActivatedRoute = inject(ActivatedRoute);
 
   data: EmailLog[] = [];
+  isLoading = false;
   showOnlyFailed: boolean = false;
   selectedStatus: string = 'all';
   selectedEmailType: string = 'all';
@@ -210,6 +211,7 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   }
 
   onSubmit() {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup?.valid) {
       const email = this.headerConfig.formGroup.value.email;
       if (email && email.trim() !== '') {

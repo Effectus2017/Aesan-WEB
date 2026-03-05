@@ -105,6 +105,8 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
   // Lenguaje actual
   currentLang: string = 'es';
 
+  isLoading = false;
+
   // Compare methods
   compareById = compareById;
   compareItems = compareItems;
@@ -350,6 +352,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
    * Guarda los cambios en la agencia
    */
   onSubmit() {
+    if (this.isLoading) return;
     const queryParams: QueryParameters = {
       agencyId: this.param.id,
       statusId: 7, // Suponiendo que 7 es el ID para aprobar la agencia

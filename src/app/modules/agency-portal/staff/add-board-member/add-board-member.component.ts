@@ -247,6 +247,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Personal');

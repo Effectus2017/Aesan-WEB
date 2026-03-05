@@ -146,6 +146,7 @@ export class EditRelationshipModalComponent implements OnInit, OnDestroy {
 
   /** Envía el formulario para actualizar la relación */
   async onSubmit(): Promise<void> {
+    if (this.isLoading) return;
     if (this.form.invalid) {
       return;
     }

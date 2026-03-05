@@ -95,6 +95,7 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
   private _translocoService = inject(TranslocoService);
 
   readonly loading = signal(false);
+  isLoading = false;
   readonly categoryOptions = LOG_CATEGORIES;
 
   headerConfig: GenericHeaderConfig = {
@@ -218,6 +219,7 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     this.loadLogs();
   }
 

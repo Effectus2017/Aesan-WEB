@@ -324,9 +324,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Operating hours - Start and end times for operating days
       operatingStartTime: [null, Validators.required],
       operatingEndTime: [null, Validators.required],
-      // Horario Académico PDAM (opcional)
-      firstAcademicClassStartTime: [null],
-      lastAcademicClassEndTime: [null],
+      // Horario Académico PDAM (requerido)
+      firstAcademicClassStartTime: [null, Validators.required],
+      lastAcademicClassEndTime: [null, Validators.required],
       // Días de la semana en que opera el sitio (selección múltiple)
       // Days of the week the site operates (multiple selection)
       operatingDaysOfWeek: [[], Validators.required],

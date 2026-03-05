@@ -42,6 +42,7 @@ export class AgenciesUsersListComponent implements OnInit, OnDestroy, OnGenericT
   private _translocoService: TranslocoService = inject(TranslocoService);
 
   data: any[];
+  isLoading = false;
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.list.title',
@@ -90,6 +91,7 @@ export class AgenciesUsersListComponent implements OnInit, OnDestroy, OnGenericT
   }
 
   onSubmit() {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.getAll(0, this.headerConfig.formGroup.value);
     }
@@ -103,13 +105,22 @@ export class AgenciesUsersListComponent implements OnInit, OnDestroy, OnGenericT
 
   // Obtenemos segun los filtros seleccionados
   getAll(index: number, form: any) {
+    this.isLoading = true;
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
       name: form.name,
     };
 
-    this._usersService.getAllUsersFromDb(requestParameters).subscribe();
+    this._usersService.getAllUsersFromDb(requestParameters).subscribe({
+      next: () => {},
+      error: () => {
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
   }
 
   onClear(event: Event) {

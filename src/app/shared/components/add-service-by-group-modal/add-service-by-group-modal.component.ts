@@ -155,6 +155,7 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
 
   /** Errores de validación de servicios fuertes y tiempo mínimo entre servicios. */
   serviceValidationErrors: ServiceValidationErrors | null = null;
+  isLoading = false;
 
   // Wrappers para compatibilidad con mat-select
   compareByTimeWrapper = compareByTime;
@@ -650,6 +651,7 @@ export class AddServiceByGroupModalComponent implements OnInit, OnDestroy {
    * Guarda los cambios y cierra el diálogo
    */
   onSubmit(): void {
+    if (this.isLoading) return;
     this.serviceValidationErrors = null;
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();

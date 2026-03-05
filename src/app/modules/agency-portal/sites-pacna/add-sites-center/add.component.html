@@ -460,6 +460,7 @@
             <mat-datepicker-toggle matSuffix [for]="serviceTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #serviceTimePicker></mat-datepicker>
             <mat-hint>{{ "sites.add.service-time.hint" | transloco }}</mat-hint>
+            <mat-error *ngIf="headerConfig.formGroup.get('serviceTime')?.hasError('required')">{{ "sites.add.service-time.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 
@@ -473,6 +474,7 @@
                 {{ currentLang === "es" ? option.name : option.nameEN }}
               </mat-option>
             </mat-select>
+            <mat-error *ngIf="headerConfig.formGroup.get('sponsorType')?.hasError('required')">{{ "sites.add.sponsor-type.required" | transloco }}</mat-error>
           </mat-form-field>
         </div>
 

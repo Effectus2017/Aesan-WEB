@@ -75,6 +75,8 @@ export class UsersAgencyListComponent
   private _translocoService = inject(TranslocoService);
   private _route = inject(ActivatedRoute);
 
+  isLoading = false;
+
   headerConfig: GenericHeaderConfig = {
     title: 'usersAgency.list.title',
     formGroup: this._formBuilder.group({
@@ -120,6 +122,7 @@ export class UsersAgencyListComponent
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.getAll(0, this.headerConfig.formGroup.value);
     }

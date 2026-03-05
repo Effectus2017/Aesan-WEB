@@ -237,17 +237,17 @@
             },
             "first-academic-class-start-time": {
                 "label": "Inicio de la Primera Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)",
+                "placeholder": "Seleccione la hora",
                 "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "last-academic-class-end-time": {
                 "label": "Finalización de la Última Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)",
+                "placeholder": "Seleccione la hora",
                 "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
-                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar",
                 "required": "Este campo es requerido",
                 "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
                 "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."
@@ -1028,12 +1028,12 @@
             },
             "first-academic-class-start-time": {
                 "label": "Inicio de la Primera Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)",
+                "placeholder": "Seleccione la hora",
                 "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "last-academic-class-end-time": {
                 "label": "Finalización de la Última Clase Académica",
-                "placeholder": "Seleccione la hora (opcional)",
+                "placeholder": "Seleccione la hora",
                 "outside-operating-hours": "Debe estar dentro del horario de funcionamiento del sitio (inicio y fin)."
             },
             "operating-dates": {
@@ -1042,7 +1042,7 @@
             },
             "service-time": {
               "label": "¿Desde cuándo su Entidad ofrece servicios con una matrícula establecida?",
-                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar (opcional)",
+                "placeholder": "Seleccione la fecha cuando su entidad comenzó a operar",
                 "required": "Este campo es requerido",
                 "hint": "La entidad debe tener al menos un año de servicio para ser elegible",
                 "not-eligible": "La entidad debe tener al menos un año de servicio para ser elegible para cualquier programa."

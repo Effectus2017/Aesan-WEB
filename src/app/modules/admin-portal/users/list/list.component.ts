@@ -44,6 +44,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   private _route: ActivatedRoute = inject(ActivatedRoute);
 
   data: any[];
+  isLoading = false;
 
   headerConfig: GenericHeaderConfig = {
     title: 'users.list.title',
@@ -91,6 +92,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   }
 
   onSubmit() {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.getAll(0, this.headerConfig.formGroup.value);
     }
@@ -104,6 +106,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
 
   // Obtenemos segun los filtros seleccionados
   getAll(index: number, form: any) {
+    this.isLoading = true;
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
@@ -113,10 +116,18 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
 
     this._usersService.getAllUsersFromDbWithSP(requestParameters)
       .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((response) => {
-        this.tableConfig.dataSource.data = response.body.data;
-        this.tableConfig.length = response.body.count;
-        this._changeDetectorRef.markForCheck();
+      .subscribe({
+        next: (response) => {
+          this.tableConfig.dataSource.data = response.body.data;
+          this.tableConfig.length = response.body.count;
+          this._changeDetectorRef.markForCheck();
+        },
+        error: () => {
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
       });
   }
 

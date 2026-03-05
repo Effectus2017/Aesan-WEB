@@ -97,6 +97,8 @@ export class UsersAgencyAddComponent implements OnInit, OnDestroy, OnGenericHead
   private _route = inject(ActivatedRoute);
   private _matDialog = inject(MatDialog);
 
+  isLoading = false;
+
   headerConfig: GenericHeaderConfig = {
     title: 'usersAgency.add.title',
     formGroup: this._formBuilder.group(
@@ -212,6 +214,7 @@ export class UsersAgencyAddComponent implements OnInit, OnDestroy, OnGenericHead
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.submitForm(this.headerConfig.formGroup.value);
     } else {

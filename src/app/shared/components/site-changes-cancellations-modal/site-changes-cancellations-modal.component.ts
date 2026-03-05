@@ -48,6 +48,7 @@ export interface SiteChangesCancellationsModalData {
 })
 export class SiteChangesCancellationsModalComponent {
   form: FormGroup;
+  isLoading = false;
 
   constructor(
     public dialogRef: MatDialogRef<SiteChangesCancellationsModalComponent>,
@@ -81,6 +82,7 @@ export class SiteChangesCancellationsModalComponent {
   }
 
   onSubmit(): void {
+    if (this.isLoading) return;
     if (!this.isFormValid) {
       return;
     }

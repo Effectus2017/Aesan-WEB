@@ -428,7 +428,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
       // ¿Cuánto tiempo lleva el sitio ofreciendo servicios con una matrícula establecida?
       // How long has the site been providing services with an established enrollment?
-      serviceTime: [null],
+      serviceTime: [null, Validators.required],
       // Datos Operativos / Operational Data
       // Tipo de cocina - Tipo de instalación de cocina
       // Kitchen type - Type of kitchen facility
@@ -447,7 +447,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       deliveryType: [null],
       // Tipo de auspiciador - Tipo de patrocinio del sitio
       // Sponsor type - Type of site sponsorship
-      sponsorType: [null],
+      sponsorType: [null, Validators.required],
       // Tipo de solicitante - Tipo de solicitante del sitio
       // Type of applicant - Type of applicant of the site
       typeOfApplicant: [null],
