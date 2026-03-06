@@ -1398,12 +1398,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         } else {
           this._notificationService.showErrorDialog();
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
         // Enable the form
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
 
         const baseYearControl = this.headerConfig.formGroup.get('baseYear');
         const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
@@ -1629,6 +1629,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PACNA,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

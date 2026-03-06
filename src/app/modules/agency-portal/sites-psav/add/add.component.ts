@@ -54,7 +54,7 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/DeliveryType';
-import { ApiErrorBody } from 'app/shared/models/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/ApiError';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -877,17 +877,17 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     // Validar al menos un grupo con servicios
     if (this.servicesByGroups.length === 0) {
-      this._notificationService.showError('Debe agregar al menos un grupo con servicios');
+      this._notificationService.showWarningDialog('sites.validation.require-group-with-services');
       return;
     }
     const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
     if (servicesWithoutGroup.length > 0) {
-      this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+      this._notificationService.showWarningDialog('sites.validation.services-require-group-name');
       return;
     }
     this.syncChildGroupsFromServices();
     if (this.childGroups.length === 0) {
-      this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+      this._notificationService.showWarningDialog('sites.validation.require-at-least-one-group');
       return;
     }
 
@@ -920,7 +920,12 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
           default:
             this.isLoading = false;
-            this._notificationService.showErrorDialog();
+            const errorBody = result.body as ApiErrorBody | any;
+            if (errorBody?.message) {
+              this._notificationService.showErrorDialogWithRawMessage(errorBody.message);
+            } else {
+              this._notificationService.showErrorDialog();
+            }
             break;
         }
       },
@@ -942,9 +947,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         ) {
           this._notificationService.showError(body.message);
         } else {
-          this._notificationService.showErrorDialog();
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog();
+          }
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
@@ -1270,6 +1280,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PSAV,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

@@ -1215,7 +1215,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
             this._notificationService.showErrorDialog('dialog.error.no-response');
           }
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
@@ -1359,6 +1359,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PDAM,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

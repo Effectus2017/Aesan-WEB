@@ -1279,7 +1279,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         } else {
           this._notificationService.showErrorDialog();
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
@@ -1395,6 +1395,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PACNA,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

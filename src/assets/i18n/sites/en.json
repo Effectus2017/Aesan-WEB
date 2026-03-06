@@ -6,6 +6,11 @@
             "SiteDatesOutsideComedorRange": "The site operating dates must be within the school's Dining Room (Comedor) period.",
             "SchoolMustHaveComedorFirst": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor."
         },
+        "validation": {
+            "require-group-with-services": "You must add at least one group with services",
+            "services-require-group-name": "All services must have a group name",
+            "require-at-least-one-group": "There must be at least one group when there are services by groups"
+        },
         "list": {
             "title": "Site List",
             "titleCenters": "Centers List",

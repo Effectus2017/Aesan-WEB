@@ -1325,12 +1325,12 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
             this._notificationService.showErrorDialog('dialog.error.no-response');
           }
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
         // Enable the form
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
 
         const baseYearControl = this.headerConfig.formGroup.get('baseYear');
         const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
@@ -1594,6 +1594,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PDAM,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

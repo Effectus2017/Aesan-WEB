@@ -1129,17 +1129,17 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     // Validar al menos un grupo con servicios y sincronizar
     if (this.servicesByGroups.length === 0) {
-      this._notificationService.showError('Debe agregar al menos un grupo con servicios');
+      this._notificationService.showWarningDialog('sites.validation.require-group-with-services');
       return;
     }
     const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
     if (servicesWithoutGroup.length > 0) {
-      this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+      this._notificationService.showWarningDialog('sites.validation.services-require-group-name');
       return;
     }
     this.syncChildGroupsFromServices();
     if (this.childGroups.length === 0) {
-      this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+      this._notificationService.showWarningDialog('sites.validation.require-at-least-one-group');
       return;
     }
     siteRequest.childGroups = this.childGroups;
@@ -1180,12 +1180,12 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         } else {
           this._notificationService.showErrorDialog();
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
         // Enable the form
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
     });
   }
@@ -1438,6 +1438,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       groupTypeId: groupType.id,
+      programId: PROGRAM_IDS.PSAV,
     };
 
     this._deliveryTypeService.getDeliveryTypesByGroupType(queryParameters).subscribe({

@@ -972,7 +972,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         } else {
           this._notificationService.showErrorDialog();
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;
