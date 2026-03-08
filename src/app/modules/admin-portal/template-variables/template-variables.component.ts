@@ -9,7 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { TemplateVariableService } from 'app/shared/services/template-variable.service';
-import { TemplateVariable } from 'app/shared/models/TemplateVariable';
+import { TemplateVariable } from 'app/shared/models/log/TemplateVariable';
 import { copyToClipboard } from 'app/shared/utils';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Subject, takeUntil } from 'rxjs';

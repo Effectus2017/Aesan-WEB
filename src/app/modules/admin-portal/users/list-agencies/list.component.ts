@@ -13,7 +13,7 @@ import { GenericHeaderComponent } from "app/shared/components/generic-header/gen
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from "app/shared/components/generic-header/generic-header.interface";
 import { GenericTableComponent } from "app/shared/components/generic-table/generic-table.component";
 import { GenericTableConfig, OnGenericTableHandler } from "app/shared/components/generic-table/generic-table.interface";
-import { QueryParameters } from "app/shared/models/QueryParameters";
+import { QueryParameters } from "app/shared/models/common/QueryParameters";
 import { CustomRouterService } from "app/shared/services/custom-router.service";
 import { NotificationService } from "app/shared/services/notification.service";
 import { UsersService } from "app/shared/services/users.service";

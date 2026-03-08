@@ -10,11 +10,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule } from '@ngneat/transloco';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { Subject, takeUntil } from 'rxjs';
 import { SiteService } from 'app/shared/services/site.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { TranslocoService } from '@ngneat/transloco';
 
 export interface SiteStatusModalData {

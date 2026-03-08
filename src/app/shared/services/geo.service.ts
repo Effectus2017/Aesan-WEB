@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { City } from '../models/City';
-import { Region } from '../models/Region';
-import { CityRegion } from '../models/CityRegion';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { City } from '../models/location/City';
+import { Region } from '../models/location/Region';
+import { CityRegion } from '../models/location/CityRegion';
 
 @Injectable({
   providedIn: 'root',

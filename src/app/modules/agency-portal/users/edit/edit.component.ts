@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';

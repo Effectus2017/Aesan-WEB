@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AesanDashboardService } from 'app/shared/services/aesan-dashboard.service';
 import { map } from 'rxjs';
 

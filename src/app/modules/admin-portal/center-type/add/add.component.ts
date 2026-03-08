@@ -8,12 +8,12 @@ import { CenterTypeService } from 'app/shared/services/center-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { CenterType } from 'app/shared/models/CenterType';
+import { CenterType } from 'app/shared/models/catalog/CenterType';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { showSuccessDialog, showErrorDialog } from 'app/shared/utils';
 
 @Component({

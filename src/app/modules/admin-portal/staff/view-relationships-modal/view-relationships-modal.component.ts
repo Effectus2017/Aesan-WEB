@@ -9,7 +9,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { StaffService } from 'app/shared/services/staff.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { VIEW_RELATIONSHIPS_COLUMNS_SCHEMA } from './columns-schema';

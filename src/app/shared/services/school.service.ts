@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { School } from '../models/School';
-import { SchoolRequest } from "../models/Request/SchoolRequest";
+import { QueryParameters } from '../models/common/QueryParameters';
+import { School } from '../models/school/School';
+import { SchoolRequest } from "../models/request/SchoolRequest";
 
 @Injectable({
   providedIn: 'root',

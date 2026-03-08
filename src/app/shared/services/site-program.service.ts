@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { SiteProgramResponse, SiteProgramRequest } from '../models/SiteProgram';
+import { SiteProgramResponse, SiteProgramRequest } from '../models/site/SiteProgram';
 
 @Injectable({
   providedIn: 'root',

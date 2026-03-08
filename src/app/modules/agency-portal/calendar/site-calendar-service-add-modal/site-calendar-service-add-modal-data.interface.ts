@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
-import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
-import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
+import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
+import { SiteChildGroupResponse } from 'app/shared/models/response/SiteChildGroupResponse';
 
 export interface SiteCalendarServiceAddModalData {
   form: FormGroup;

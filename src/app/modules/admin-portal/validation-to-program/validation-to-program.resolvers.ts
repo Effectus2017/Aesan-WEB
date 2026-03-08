@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { ProgramService } from 'app/shared/services/program.service';

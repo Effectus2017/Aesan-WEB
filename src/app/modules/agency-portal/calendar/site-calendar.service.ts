@@ -2,10 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { getHttpOptions } from 'app/shared/utils';
-import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { SiteOperatingDayRequest } from 'app/shared/models/request/SiteOperatingDayRequest';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 
 @Injectable({
   providedIn: 'root'

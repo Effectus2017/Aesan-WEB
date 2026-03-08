@@ -9,7 +9,7 @@ import { OperatingPolicyService } from 'app/shared/services/operating-policy.ser
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
+import { OperatingPolicy } from 'app/shared/models/household/OperatingPolicy';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';

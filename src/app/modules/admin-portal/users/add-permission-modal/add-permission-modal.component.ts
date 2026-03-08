@@ -16,8 +16,8 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { TranslocoService } from '@ngneat/transloco';
-import { Permission } from 'app/shared/models/Permission';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { Permission } from 'app/shared/models/user/Permission';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 
 @Component({

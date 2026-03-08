@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -20,12 +20,12 @@ import { SPONSOR_EVALUATION_COLUMNS_SCHEMA } from './columns-schema';
 import { sponsorEvaluationColumnsData } from './columns-data';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { getProgramCodeById } from 'app/shared/const';
-import { Program } from 'app/shared/models/Program';
+import { Program } from 'app/shared/models/program/Program';
 import { ProgramSelectorModalComponent } from '../program-selector-modal/program-selector-modal.component';
 import {
   AgencyAssignedUsersModalComponent,

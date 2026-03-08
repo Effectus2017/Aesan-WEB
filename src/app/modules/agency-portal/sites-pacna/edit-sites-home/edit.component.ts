@@ -14,21 +14,21 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
-import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
+import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
+import { SiteEducationLevelRequest } from 'app/shared/models/request/SiteEducationLevelRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
+import { SiteChildGroupResponse } from 'app/shared/models/response/SiteChildGroupResponse';
 import {
   normalizeServiceSlotFromResponse,
   SiteChildGroupServiceSlotResponse
-} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+} from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import {
@@ -45,7 +45,7 @@ import {
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
-import { Site } from 'app/shared/models/Site';
+import { Site } from 'app/shared/models/site/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -56,13 +56,13 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { SERVICES_COLUMNS_SCHEMA } from '../../../../shared/components/add-service-by-group-modal/services-columns-schema';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from '../../../../shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
@@ -80,8 +80,8 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
-import { ApiErrorBody } from 'app/shared/models/ApiError';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
+import { ApiErrorBody } from 'app/shared/models/common/ApiError';
 
 @Component({
   selector: 'app-edit-sites-home',

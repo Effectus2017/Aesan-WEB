@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { OrganizationType } from '../models/OrganizationType';
-import { OrganizationTypeRequest } from '../models/Request/OrganizationTypeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { OrganizationType } from '../models/catalog/OrganizationType';
+import { OrganizationTypeRequest } from '../models/request/OrganizationTypeRequest';
 
 @Injectable({
   providedIn: 'root',

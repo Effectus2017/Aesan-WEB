@@ -1,4 +1,4 @@
-import { SiteChildGroupServiceSlotRequest } from '../Request/SiteChildGroupServiceSlotRequest';
+import { SiteChildGroupServiceSlotRequest } from '../request/SiteChildGroupServiceSlotRequest';
 
 /** Slot de servicio por grupo (SiteChildGroupService) desde la API. */
 export interface SiteChildGroupServiceSlotResponse {

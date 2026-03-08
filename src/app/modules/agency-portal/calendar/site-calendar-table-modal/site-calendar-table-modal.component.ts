@@ -18,7 +18,7 @@ import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disabl
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 import { getServiceTypeStyle, ServiceTypeStyle } from 'app/shared/constants/service-type-styles.constants';
 import { normalizeTime } from 'app/shared/utils';
-import { SiteCalendarServiceSlot } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { SiteCalendarServiceSlot } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import {
   LoadOperatingDaysAndUpdateModalResult,
   LoadOperatingDaysSubscribeObserver

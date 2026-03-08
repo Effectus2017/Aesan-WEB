@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TemplateVariableService } from 'app/shared/services/template-variable.service';
-import { TemplateVariable } from 'app/shared/models/TemplateVariable';
+import { TemplateVariable } from 'app/shared/models/log/TemplateVariable';
 import { copyToClipboard } from 'app/shared/utils';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';

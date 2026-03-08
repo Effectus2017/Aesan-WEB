@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
 import { UserService } from 'app/shared/services/user.service';
-import { TokenResponse } from 'app/shared/models/user.types';
+import { TokenResponse } from 'app/shared/models/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 import { RequestRoleExtensionModalComponent, RequestRoleExtensionModalData } from '../request-role-extension-modal/request-role-extension-modal.component';
 

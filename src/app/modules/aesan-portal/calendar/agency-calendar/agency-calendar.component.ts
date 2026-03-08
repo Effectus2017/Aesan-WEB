@@ -12,7 +12,7 @@ import { Location } from '@angular/common';
 import { CalendarEvent, CalendarModule, CalendarView } from 'angular-calendar';
 import { AgencyCalendarService } from '../agency-calendar.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { AgencyAppointment } from 'app/shared/models/AgencyAppointment';
+import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
 import { Subject, takeUntil } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 

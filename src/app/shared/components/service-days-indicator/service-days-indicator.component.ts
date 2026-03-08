@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { TranslocoService } from '@ngneat/transloco';
-import { ServiceSlotOperatingDate } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { ServiceSlotOperatingDate } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 
 /** Día de la semana: índice 0=Lunes, 6=Domingo. */
 /** Claves i18n para abreviaturas (ES: L,K,M,J,V,S,D; EN: M,T,W,Th,F,Sa,S). */

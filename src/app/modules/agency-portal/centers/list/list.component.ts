@@ -12,7 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { CENTERS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -23,7 +23,7 @@ import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filt
 import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { CENTERS_FILTERS_SCHEMA } from './filters-schema';
 import { SchoolService } from 'app/shared/services/school.service';
-import { School } from 'app/shared/models/School';
+import { School } from 'app/shared/models/school/School';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AddCenterModalComponent } from '../add-modal/add-center-modal.component';
 import { EditCenterModalComponent } from '../edit-modal/edit-center-modal.component';

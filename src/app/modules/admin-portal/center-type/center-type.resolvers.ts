@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { CenterTypeService } from 'app/shared/services/center-type.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { map } from 'rxjs';
 
 export const initialDataCenterTypeListResolver: ResolveFn<any> = () => {

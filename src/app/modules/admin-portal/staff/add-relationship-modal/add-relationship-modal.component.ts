@@ -10,12 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { Subject, takeUntil } from 'rxjs';
-import { Staff } from 'app/shared/models/Staff';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { Staff } from 'app/shared/models/staff/Staff';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { compareById } from 'app/shared/utils';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
-import { CreateStaffRelationshipRequest } from 'app/shared/models/StaffRelationship';
+import { CreateStaffRelationshipRequest } from 'app/shared/models/staff/StaffRelationship';
 import { Router, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
 

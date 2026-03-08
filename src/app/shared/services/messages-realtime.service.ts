@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
 import { environment } from '../../../environments/environment';
-import type { Message } from '../../shared/models/Message';
+import type { Message } from '../../shared/models/user/Message';
 import { AuthService } from '../../core/auth/auth.service';
 import { NotificationService } from '../services/notification.service';
 import { AudioService } from '../services/audio.service';

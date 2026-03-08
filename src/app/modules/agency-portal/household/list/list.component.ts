@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';

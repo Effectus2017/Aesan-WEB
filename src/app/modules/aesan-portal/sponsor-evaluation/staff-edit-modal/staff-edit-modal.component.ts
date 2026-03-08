@@ -15,19 +15,19 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { NgIf, NgForOf } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
-import { Staff } from 'app/shared/models/Staff';
+import { Staff } from 'app/shared/models/staff/Staff';
 import { StaffService } from 'app/shared/services/staff.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
-import { StaffType } from 'app/shared/models/StaffType';
-import { StaffClassification } from 'app/shared/models/StaffClassification';
-import { Site } from 'app/shared/models/Site';
-import { StaffRequest } from 'app/shared/models/Request/StaffRequest';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
+import { StaffType } from 'app/shared/models/staff/StaffType';
+import { StaffClassification } from 'app/shared/models/staff/StaffClassification';
+import { Site } from 'app/shared/models/site/Site';
+import { StaffRequest } from 'app/shared/models/request/StaffRequest';
 import { compareById, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
@@ -655,7 +655,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     this._staffService.updateStaff(staffRequest, {}).subscribe({
       next: () => {
         this.isLoading = false;
-        const successMessage = this.isEmployee 
+        const successMessage = this.isEmployee
           ? this._translocoService.translate('staff.edit.success.employee')
           : this._translocoService.translate('staff.edit.success.boardMember');
         this._notificationService.showSuccess(successMessage);

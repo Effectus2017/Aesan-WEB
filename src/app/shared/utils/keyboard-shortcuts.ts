@@ -1,4 +1,4 @@
-import { KeyboardShortcutConfig } from '../models/KeyboardShortcut';
+import { KeyboardShortcutConfig } from '../models/common/KeyboardShortcut';
 
 /**
  * Constantes para shortcuts comunes

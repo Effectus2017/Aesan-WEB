@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { DatePipe } from '@angular/common';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Message } from 'app/shared/models/Message';
+import { Message } from 'app/shared/models/user/Message';
 import { MessagesService } from 'app/shared/services/messages.service';
 
 export interface MessageDetailModalData {

@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import { SiteOperatingDay } from '../SiteOperatingDay';
+import { SiteOperatingDay } from '../site/SiteOperatingDay';
 
 export interface SiteCalendarAddModalData {
   form: FormGroup;

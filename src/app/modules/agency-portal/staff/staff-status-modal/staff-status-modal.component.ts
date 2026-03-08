@@ -8,11 +8,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { Subject, takeUntil } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 export interface StaffStatusModalData {
   staffId?: number; // ID del staff (solo en modo edición)

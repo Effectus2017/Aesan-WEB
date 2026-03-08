@@ -2,10 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, ReplaySubject, tap, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
-import { TokenResponse } from '../models/user.types';
+import { TokenResponse } from '../models/user/user.types';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { UserAgencyRequest } from '../models/agency/UserAgencyRequest';
 
 /**
  * Servicio para interactuar con los usuarios y sus datos.

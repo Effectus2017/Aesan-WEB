@@ -24,7 +24,7 @@ import {
   TimeOption
 } from 'app/shared/utils';
 import { ServiceTypeService } from 'app/shared/services/service-type.service';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 
 @Component({
   selector: 'app-site-calendar-service-add-modal',

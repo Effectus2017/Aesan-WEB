@@ -3,11 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { Site } from '../models/Site';
-import { SiteRequest } from '../models/Request/SiteRequest';
-import { SiteChildGroupRequest } from '../models/Request/SiteChildGroupRequest';
-import { SiteSatelliteResponse } from '../models/Response/SiteSatelliteResponse';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { Site } from '../models/site/Site';
+import { SiteRequest } from '../models/request/SiteRequest';
+import { SiteChildGroupRequest } from '../models/request/SiteChildGroupRequest';
+import { SiteSatelliteResponse } from '../models/response/SiteSatelliteResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -66,7 +66,7 @@ export class SiteService {
    * @param queryParameters Los parámetros de consulta
    * @returns El sitio insertado
    */
-  insertSite(site: SiteRequest, queryParameters: QueryParameters): Observable<any> {
+  insertSite(site: SiteRequest, queryParameters: QueryParameters | null): Observable<any> {
     return this._httpClient.post(`${this.apiUrl}/insert-site`, site, getHttpOptions(queryParameters));
   }
 

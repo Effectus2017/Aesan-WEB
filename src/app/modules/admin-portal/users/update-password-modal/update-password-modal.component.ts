@@ -15,7 +15,7 @@ import { isAdminRole } from 'app/shared/constants/role-keys';
 import { UsersService } from 'app/shared/services/users.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 export interface UpdatePasswordModalData {
   userId: string;

@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { HouseholdRequest } from '../models/Request/HouseholdRequest';
-import { Household } from '../models/Household';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { HouseholdRequest } from '../models/request/HouseholdRequest';
+import { Household } from '../models/household/Household';
 
 
 @Injectable({ providedIn: 'root' })

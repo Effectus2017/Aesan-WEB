@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { SiteOperatingDayService } from '../models/SiteOperatingDayService';
-import { SiteOperatingDayServiceRequest } from '../models/Request/SiteOperatingDayServiceRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { SiteOperatingDayService } from '../models/site/SiteOperatingDayService';
+import { SiteOperatingDayServiceRequest } from '../models/request/SiteOperatingDayServiceRequest';
 
 @Injectable({
   providedIn: 'root',

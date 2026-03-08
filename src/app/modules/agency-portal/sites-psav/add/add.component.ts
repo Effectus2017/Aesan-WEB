@@ -15,18 +15,18 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import {
   compare,
   compareById,
@@ -44,26 +44,26 @@ import {
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
-import { City } from 'app/shared/models/City';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/ApiError';
-import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';

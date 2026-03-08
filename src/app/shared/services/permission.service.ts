@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { Permission } from '../models/Permission';
-import { PermissionRequest } from '../models/Request/PermissionRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { Permission } from '../models/user/Permission';
+import { PermissionRequest } from '../models/request/PermissionRequest';
 
 @Injectable({
   providedIn: 'root',

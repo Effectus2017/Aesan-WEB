@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 import { FoodAuthority } from '../models/FoodAuthority';
 
 @Injectable({

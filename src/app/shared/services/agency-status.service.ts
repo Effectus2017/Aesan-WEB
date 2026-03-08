@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { AgencyStatusResponse } from '../models/Response/AgencyStatusResponse';
-import { AgencyStatusRequest } from '../models/Request/AgencyStatusRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { AgencyStatusResponse } from '../models/agency/AgencyStatusResponse';
+import { AgencyStatusRequest } from '../models/agency/AgencyStatusRequest';
 
 @Injectable({
   providedIn: 'root',

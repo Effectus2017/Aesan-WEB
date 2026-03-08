@@ -9,13 +9,13 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { OperatingPolicyRequest } from 'app/shared/models/Request/OperatingPolicyRequest';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
+import { OperatingPolicyRequest } from 'app/shared/models/request/OperatingPolicyRequest';
+import { OperatingPolicy } from 'app/shared/models/household/OperatingPolicy';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 @Component({
     selector: 'app-add-operating-policy',

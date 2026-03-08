@@ -8,13 +8,13 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { KitchenTypeRequest } from 'app/shared/models/Request/KitchenTypeRequest';
-import { KitchenType } from 'app/shared/models/KitchenType';
+import { KitchenTypeRequest } from 'app/shared/models/request/KitchenTypeRequest';
+import { KitchenType } from 'app/shared/models/catalog/KitchenType';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({

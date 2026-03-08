@@ -4,7 +4,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MessagesService } from 'app/shared/services/messages.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { Message } from 'app/shared/models/Message';
+import { Message } from 'app/shared/models/user/Message';
 
 @Component({
     selector: 'complete-button-banner',

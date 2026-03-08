@@ -6,7 +6,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { ProgramRequest } from 'app/shared/models/program-request.types';
+import { ProgramRequest } from 'app/shared/models/program/program-request.types';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
 import { fuseAnimations } from '@fuse/animations';
 import { UntypedFormBuilder } from '@angular/forms';

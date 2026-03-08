@@ -12,9 +12,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Subject, takeUntil } from 'rxjs';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { Permission } from 'app/shared/models/Permission';
+import { Permission } from 'app/shared/models/user/Permission';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { NgIf } from '@angular/common';
 

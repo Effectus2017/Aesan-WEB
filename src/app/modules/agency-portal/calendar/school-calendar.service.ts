@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
 import { getHttpOptions } from '../../../shared/utils';
-import { QueryParameters } from '../../../shared/models/QueryParameters';
+import { QueryParameters } from '../../../shared/models/common/QueryParameters';
 
 // Interfaces para los datos
 export interface SchoolOperatingDay {

@@ -5,7 +5,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 
-import { QueryParameters } from '../../../../shared/models/QueryParameters';
+import { QueryParameters } from '../../../../shared/models/common/QueryParameters';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { UsersService } from '../../../../shared/services/users.service';

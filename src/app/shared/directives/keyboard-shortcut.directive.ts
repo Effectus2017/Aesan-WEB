@@ -14,7 +14,7 @@ import {
   KeyboardShortcut,
   KeyboardShortcutConfig,
   KeyboardShortcutInput,
-} from '../models/KeyboardShortcut';
+} from '../models/common/KeyboardShortcut';
 import {
   formatShortcut,
   formatMultipleShortcuts,

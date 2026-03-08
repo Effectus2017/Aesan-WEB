@@ -8,7 +8,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';

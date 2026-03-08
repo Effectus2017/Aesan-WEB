@@ -13,7 +13,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { FuseDrawerComponent } from '@fuse/components/drawer';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { SPONSOR_TYPE_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -22,7 +22,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
-import { SponsorType } from 'app/shared/models/SponsorType';
+import { SponsorType } from 'app/shared/models/catalog/SponsorType';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({

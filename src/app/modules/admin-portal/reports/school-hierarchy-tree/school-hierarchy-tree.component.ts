@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import * as d3 from 'd3';
 import { ReportsService } from 'app/shared/services/reports.service';
-import { HierarchyStructureResponse, SponsorNode, SchoolNode, SiteNode } from 'app/shared/models/HierarchyStructure';
+import { HierarchyStructureResponse, SponsorNode, SchoolNode, SiteNode } from 'app/shared/models/common/HierarchyStructure';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';

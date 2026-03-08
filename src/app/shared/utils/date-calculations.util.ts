@@ -1,5 +1,5 @@
 import { FormGroup } from '@angular/forms';
-import { DayOfWeekResponse } from '../models/DayOfWeekResponse';
+import { DayOfWeekResponse } from '../models/calendar/DayOfWeekResponse';
 
 /**
  * Utilidades para cálculos de fechas y días operativos

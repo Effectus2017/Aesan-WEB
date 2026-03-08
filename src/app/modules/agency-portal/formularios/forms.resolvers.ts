@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 // Resolver para el formulario de solicitud PDAM
 // Resolver for PDAM request form

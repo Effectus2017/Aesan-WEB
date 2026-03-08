@@ -20,10 +20,10 @@ import {
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarService } from '../site-calendar.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteOperatingDayRequest } from 'app/shared/models/Request/SiteOperatingDayRequest';
-import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
-import { OperatingDayApiResponse } from 'app/shared/models/Response/OperatingDayApiResponse';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { SiteOperatingDayRequest } from 'app/shared/models/request/SiteOperatingDayRequest';
+import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
+import { OperatingDayApiResponse } from 'app/shared/models/response/OperatingDayApiResponse';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
 import { Observable, Subject, takeUntil } from 'rxjs';
@@ -34,19 +34,19 @@ import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-c
 import { SiteCalendarTableModalComponent } from '../site-calendar-table-modal/site-calendar-table-modal.component';
 import { SiteCalendarTableModalData } from '../site-calendar-table-modal/site-calendar-table-modal-data.interface';
 import { SiteOperatingDayServiceService } from 'app/shared/services/site-operating-day-service.service';
-import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
+import { SiteOperatingDayService } from 'app/shared/models/site/SiteOperatingDayService';
 import { SiteCalendarServiceEditModalComponent } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal.component';
 import { SiteCalendarServiceEditModalData } from '../site-calendar-service-edit-modal/site-calendar-service-edit-modal-data.interface';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { Site } from 'app/shared/models/Site';
+import { Site } from 'app/shared/models/site/Site';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 import {
   getServiceEventColorByTypeId,
   getServiceTypeStyle
 } from 'app/shared/constants/service-type-styles.constants';
 import { getGroupBorderColor } from 'app/shared/constants/child-group-styles.constants';
-import { HourSegmentClickEvent } from 'app/shared/models/HourSegmentClickEvent';
+import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentClickEvent';
 
 @Component({
   selector: 'app-site-calendar',

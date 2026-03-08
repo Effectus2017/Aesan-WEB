@@ -1,4 +1,4 @@
-import { SiteOperatingDayService } from '../SiteOperatingDayService';
+import { SiteOperatingDayService } from '../site/SiteOperatingDayService';
 
 export interface OperatingDayApiResponse {
   id: number;

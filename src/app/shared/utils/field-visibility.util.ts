@@ -1,6 +1,6 @@
 import { FormGroup, Validators } from '@angular/forms';
 import { ChangeDetectorRef } from '@angular/core';
-import { OrganizationType } from '../models/OrganizationType';
+import { OrganizationType } from '../models/catalog/OrganizationType';
 
 /**
  * Utilidades para manejo de visibilidad de campos

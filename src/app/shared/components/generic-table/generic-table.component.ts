@@ -11,7 +11,7 @@ import {
   SiteChildGroupServiceSlotResponse,
   ServiceSlotDisplay,
   ServiceSlotOperatingDate
-} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+} from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { getServiceTypeStyle, SERVICE_TYPE_STYLES_BY_INDEX } from 'app/shared/constants/service-type-styles.constants';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';

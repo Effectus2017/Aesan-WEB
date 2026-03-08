@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ProgramRequest } from '../models/program-request.types';
+import { ProgramRequest } from '../models/program/program-request.types';
 import { environment } from 'environments/environment';
 import { AuthService } from 'app/core/auth/auth.service';
 

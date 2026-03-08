@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { DeliveryType } from '../models/DeliveryType';
-import { DeliveryTypeRequest } from '../models/Request/DeliveryTypeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { DeliveryType } from '../models/catalog/DeliveryType';
+import { DeliveryTypeRequest } from '../models/request/DeliveryTypeRequest';
 
 @Injectable({
   providedIn: 'root',

@@ -6,7 +6,7 @@ import { MatSortModule, MatSort } from '@angular/material/sort';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { ProgramRequest } from 'app/shared/models/program-request.types';
+import { ProgramRequest } from 'app/shared/models/program/program-request.types';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
 import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
@@ -20,7 +20,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { programRequestsColumnsData } from './columns-data';
 import { ProgramService } from 'app/shared/services/program.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({

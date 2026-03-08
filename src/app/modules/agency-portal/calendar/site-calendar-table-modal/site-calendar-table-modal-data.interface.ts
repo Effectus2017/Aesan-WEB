@@ -1,7 +1,7 @@
 import { CalendarEvent } from 'angular-calendar';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { SiteCalendarTableModalComponent } from './site-calendar-table-modal.component';
-import { SiteChildGroupResponse } from 'app/shared/models/Response/SiteChildGroupResponse';
+import { SiteChildGroupResponse } from 'app/shared/models/response/SiteChildGroupResponse';
 
 export interface SiteCalendarTableModalData {
   date: Date;

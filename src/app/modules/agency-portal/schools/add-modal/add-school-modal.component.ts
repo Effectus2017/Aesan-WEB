@@ -9,9 +9,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
 import { SchoolService } from '../../../../shared/services/school.service';
-import { SchoolRequest } from "app/shared/models/Request/SchoolRequest";
+import { SchoolRequest } from "app/shared/models/request/SchoolRequest";
 import { AuthService } from '../../../../core/auth/auth.service';
-import { QueryParameters } from '../../../../shared/models/QueryParameters';
+import { QueryParameters } from '../../../../shared/models/common/QueryParameters';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({

@@ -15,7 +15,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { MatInputModule } from '@angular/material/input';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { VALIDATION_TO_PROGRAM_COLUMNS_SCHEMA } from './columns-schema';
 import { VALIDATION_TO_PROGRAM_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -26,7 +26,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 
 // DESCRICION DEL COMPONENTE

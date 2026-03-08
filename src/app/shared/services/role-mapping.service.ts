@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { UsersService } from './users.service';
-import { Role } from '../models/user.types';
+import { Role } from '../models/user/user.types';
 
 export interface RoleInfo {
   role: string;

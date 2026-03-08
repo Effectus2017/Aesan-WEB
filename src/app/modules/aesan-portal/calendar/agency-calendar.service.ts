@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AgencyCalendarResponse } from 'app/shared/models/AgencyAppointment';
-import { AgencyAppointmentRequest } from 'app/shared/models/Request/AgencyAppointmentRequest';
+import { AgencyCalendarResponse } from 'app/shared/models/agency/AgencyAppointment';
+import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +12,7 @@ export class AgencyCalendarService {
 
   getAppointments(agencyId: number, month?: number, year?: number): Observable<AgencyCalendarResponse> {
     let params = new HttpParams().set('AgencyId', agencyId.toString());
-    
+
     if (month) {
       params = params.set('Month', month.toString());
     }

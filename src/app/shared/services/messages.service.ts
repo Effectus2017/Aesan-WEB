@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { Message } from '../models/Message';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { Message } from '../models/user/Message';
 import { MessagesRealtimeService } from './messages-realtime.service';
 import { BrowserNotificationService } from './browser-notification.service';
 

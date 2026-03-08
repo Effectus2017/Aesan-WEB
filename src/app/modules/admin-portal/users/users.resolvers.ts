@@ -2,7 +2,7 @@ import { inject, Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, ResolveFn, RouterStateSnapshot } from '@angular/router';
 import { forkJoin, Observable, map } from 'rxjs';
 
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { UsersService } from '../../../shared/services/users.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { PermissionService } from 'app/shared/services/permission.service';

@@ -1,7 +1,7 @@
 import { PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 
 export interface ImageConfig {
   defaultImage?: string;

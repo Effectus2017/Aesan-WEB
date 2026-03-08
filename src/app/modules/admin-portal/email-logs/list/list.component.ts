@@ -24,9 +24,9 @@ import { Subject, takeUntil } from "rxjs";
 import { EMAIL_LOGS_COLUMNS_SCHEMA } from "./columns-schema";
 import { ToastrModule } from 'ngx-toastr';
 import { TranslocoService, TranslocoModule } from "@ngneat/transloco";
-import { EmailLog } from "app/shared/models/EmailLog";
-import { OptionSelection } from "app/shared/models/OptionSelection";
-import { QueryParameters } from "app/shared/models/QueryParameters";
+import { EmailLog } from 'app/shared/models/log/EmailLog';
+import { OptionSelection } from "app/shared/models/common/OptionSelection";
+import { QueryParameters } from "app/shared/models/common/QueryParameters";
 
 @Component({
     selector: 'app-list-email-logs',

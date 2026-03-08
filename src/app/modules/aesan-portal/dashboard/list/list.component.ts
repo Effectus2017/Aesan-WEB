@@ -8,9 +8,9 @@ import { SharedModule } from 'app/shared/shared.module';
 import { aesanDashboardCardsData } from './columns-data';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { ActivatedRoute } from '@angular/router';
-import { AesanDashboardResponse } from 'app/shared/models/AesanDashboardResponse';
+import { AesanDashboardResponse } from 'app/shared/models/dashboard/AesanDashboardResponse';
 import { AesanDashboardService } from 'app/shared/services/aesan-dashboard.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({

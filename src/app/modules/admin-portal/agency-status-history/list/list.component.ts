@@ -14,7 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AGENCY_STATUS_HISTORY_COLUMNS_SCHEMA } from './columns-schema';
 import { AGENCY_STATUS_HISTORY_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -25,7 +25,7 @@ import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/compone
 import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyStatusHistoryService } from 'app/shared/services/agency-status-history.service';
-import { AgencyStatusHistory } from 'app/shared/models/AgencyStatusHistory';
+import { AgencyStatusHistory } from 'app/shared/models/agency/AgencyStatusHistory';
 
 @Component({
   selector: 'app-agency-status-history-list',

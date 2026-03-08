@@ -8,7 +8,7 @@ import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
+import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';

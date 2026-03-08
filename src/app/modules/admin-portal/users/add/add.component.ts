@@ -10,7 +10,7 @@ import {
   Validators,
   AbstractControl,
 } from '@angular/forms';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { TranslocoService, TranslocoModule } from '@ngneat/transloco';
 
 import _ from 'lodash';
@@ -45,8 +45,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { compareById, formatDateShort, isNullOrUndefinedEmptyStringNullArray, toIsoDateString } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';

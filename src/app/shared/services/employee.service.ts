@@ -2,9 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
-import { QueryParameters } from '../models/QueryParameters';
-import { Employee } from '../models/Employee';
-import { EmployeeRequest } from '../models/Request/EmployeeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { Employee } from '../models/employee/Employee';
+import { EmployeeRequest } from '../models/request/EmployeeRequest';
 import { getHttpOptions } from '../utils';
 
 @Injectable({

@@ -9,13 +9,13 @@ import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
-import { StaffTypeRequest } from 'app/shared/models/Request/StaffTypeRequest';
-import { StaffType } from 'app/shared/models/StaffType';
+import { StaffTypeRequest } from 'app/shared/models/request/StaffTypeRequest';
+import { StaffType } from 'app/shared/models/staff/StaffType';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 @Component({
     selector: 'app-edit-staff-type',

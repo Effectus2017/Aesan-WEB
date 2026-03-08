@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { AgencyRestrictedStatusPayload } from 'app/shared/models/AgencyRestrictedStatusPayload';
+import { AgencyRestrictedStatusPayload } from 'app/shared/models/agency/AgencyRestrictedStatusPayload';
 
 /**
  * Interfaz para el estado de restricción de la agencia (incluye timestamp interno).

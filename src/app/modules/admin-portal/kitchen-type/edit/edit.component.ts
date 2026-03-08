@@ -9,7 +9,7 @@ import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { KitchenType } from 'app/shared/models/KitchenType';
+import { KitchenType } from 'app/shared/models/catalog/KitchenType';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';

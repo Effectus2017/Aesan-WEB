@@ -8,7 +8,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
 import { MatSelectModule } from '@angular/material/select';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';

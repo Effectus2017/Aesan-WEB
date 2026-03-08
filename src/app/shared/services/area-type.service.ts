@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { AreaType } from '../models/AreaType';
-import { AreaTypeRequest } from '../models/Request/AreaTypeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { AreaType } from '../models/catalog/AreaType';
+import { AreaTypeRequest } from '../models/request/AreaTypeRequest';
 
 @Injectable({
   providedIn: 'root',

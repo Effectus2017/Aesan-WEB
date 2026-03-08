@@ -12,7 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { OPERATING_POLICY_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -20,7 +20,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { OperatingPolicyService } from 'app/shared/services/operating-policy.service';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
+import { OperatingPolicy } from 'app/shared/models/household/OperatingPolicy';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({

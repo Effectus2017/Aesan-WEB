@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { Constants } from '../const';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 import { getHttpOptions } from '../utils';
 
 @Injectable({

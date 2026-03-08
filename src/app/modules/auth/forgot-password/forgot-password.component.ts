@@ -10,7 +10,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UsersService } from 'app/shared/services/users.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { finalize } from 'rxjs';
 

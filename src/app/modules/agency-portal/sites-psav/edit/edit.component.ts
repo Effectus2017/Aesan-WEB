@@ -11,28 +11,28 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { ActivatedRoute } from '@angular/router';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
+import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
 import {
   compareById,
   isNullOrUndefinedEmptyStringNullArray,
@@ -47,18 +47,18 @@ import {
   compareByTime,
   TimeOption,
 } from 'app/shared/utils';
-import { Site } from 'app/shared/models/Site';
+import { Site } from 'app/shared/models/site/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { ApiErrorBody } from 'app/shared/models/ApiError';
-import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { MatTableDataSource } from '@angular/material/table';
 
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
@@ -66,7 +66,7 @@ import { PermissionRequestFormDialogComponent } from '../../../../shared/compone
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';

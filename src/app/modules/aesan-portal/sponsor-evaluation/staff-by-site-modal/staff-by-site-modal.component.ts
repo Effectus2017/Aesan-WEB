@@ -9,7 +9,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SiteStaffResponse } from 'app/shared/models/Response/SiteStaffResponse';
+import { SiteStaffResponse } from 'app/shared/models/response/SiteStaffResponse';
 import { STAFF_BY_SITE_COLUMNS_SCHEMA } from './columns-schema';
 
 export interface StaffBySiteModalData {

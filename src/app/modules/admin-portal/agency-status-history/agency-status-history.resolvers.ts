@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { map } from 'rxjs';
 import { AgencyStatusHistoryService } from 'app/shared/services/agency-status-history.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 /**
  * Resolver para obtener los datos iniciales del listado de historial de estados.

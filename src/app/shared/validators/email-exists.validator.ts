@@ -2,7 +2,7 @@ import { AbstractControl, AsyncValidatorFn, ValidationErrors } from '@angular/fo
 import { Observable, of } from 'rxjs';
 import { debounceTime, switchMap, map, catchError, first } from 'rxjs/operators';
 import { UserService } from '../services/user.service';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 
 /**
  * Validador asíncrono que verifica si un correo electrónico ya existe en el sistema

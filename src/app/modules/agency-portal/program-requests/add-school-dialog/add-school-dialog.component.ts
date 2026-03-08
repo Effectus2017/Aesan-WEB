@@ -16,14 +16,14 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DarkModeTextDirective } from 'app/shared/directives/dark-mode-text.directive';
-import { EducationLevel } from 'app/shared/models/EducationLevel';
-import { OperatingPeriod } from 'app/shared/models/OperatingPeriod';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { Facility } from 'app/shared/models/Facility';
-import { MealType } from 'app/shared/models/MealType';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
+import { EducationLevel } from 'app/shared/models/catalog/EducationLevel';
+import { OperatingPeriod } from 'app/shared/models/program/OperatingPeriod';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
+import { Facility } from 'app/shared/models/catalog/Facility';
+import { MealType } from 'app/shared/models/catalog/MealType';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
 import { EducationLevelService } from 'app/shared/services/education-level.service';
 import { OperatingPeriodService } from 'app/shared/services/operating-period.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -31,7 +31,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { FacilityService } from 'app/shared/services/facility.service';
 import { MealTypeService } from 'app/shared/services/meal-type.service';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 @Component({
     selector: 'add-school-dialog',

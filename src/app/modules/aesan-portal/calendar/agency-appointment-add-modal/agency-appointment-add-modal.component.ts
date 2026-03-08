@@ -9,7 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule } from '@ngneat/transloco';
-import { AgencyAppointmentRequest } from 'app/shared/models/Request/AgencyAppointmentRequest';
+import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
 
 @Component({
   selector: 'aesan-agency-appointment-add-modal',
@@ -81,7 +81,7 @@ export class AgencyAppointmentAddModalComponent implements OnInit {
     }
 
     const value = this.form.value;
-    
+
     // Format Date to YYYY-MM-DD using local time
     // Get month and day carefully matching local time.
     const year = this.date.getFullYear();

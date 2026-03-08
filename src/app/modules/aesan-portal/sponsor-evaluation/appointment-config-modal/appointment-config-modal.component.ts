@@ -9,7 +9,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 
 export interface AppointmentConfigModalData {
   /** Opciones de Sí/No para "Cita Coordinada". */

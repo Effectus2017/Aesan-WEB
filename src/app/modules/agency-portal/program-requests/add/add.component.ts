@@ -19,15 +19,15 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericAddComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { GeoService } from 'app/shared/services/geo.service';
 import { UserService } from 'app/shared/services/user.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { AgencyRequest } from 'app/shared/models/Request/AgencyRequest';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { AgencyRequest } from 'app/shared/models/agency/AgencyRequest';
 import { compareByProperty } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { City } from 'app/shared/models/City';
+import { City } from 'app/shared/models/location/City';
 import { HttpResponse } from '@angular/common/http';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,8 +37,8 @@ import { incomeSourcesData, schoolsColumnsData } from './columns-data';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { AddSchoolDialogComponent } from '../add-school-dialog/add-school-dialog.component';
 import { AddIncomeSourceDialogComponent } from '../add-income-source-dialog/add-income-source-dialog.component';
-import { UserAgencyRequest } from 'app/shared/models/Request/UserAgencyRequest';
-import { UserRequest } from 'app/shared/models/Request/UserRequest';
+import { UserAgencyRequest } from 'app/shared/models/agency/UserAgencyRequest';
+import { UserRequest } from 'app/shared/models/request/UserRequest';
 
 
 @Component({

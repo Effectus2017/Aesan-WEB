@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Program } from 'app/shared/models/Program';
+import { Program } from 'app/shared/models/program/Program';
 import { compareById } from 'app/shared/utils';
 
 export interface ProgramSelectorModalData {

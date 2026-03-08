@@ -17,7 +17,7 @@ import {
   AUTH_ERROR_I18N_SIGN_IN_NO_AGENCY_ASSIGNED,
   AUTH_ERROR_QUERY_NO_AGENCY_ASSIGNED,
 } from 'app/shared/constants/auth-error-keys';
-import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
+import { LoginRequest } from 'app/shared/models/request/LoginRequest';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';

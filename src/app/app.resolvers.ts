@@ -3,7 +3,7 @@ import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { forkJoin, map, tap } from 'rxjs';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 

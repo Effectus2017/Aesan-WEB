@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { SiteService } from 'app/shared/services/site.service';
 import { forkJoin, map } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';

@@ -26,9 +26,9 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { UploadService } from 'app/shared/services/upload.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AgencyFilesService } from 'app/shared/services/agency-files.service';
-import { AgencyFile } from 'app/shared/models/AgencyFile';
+import { AgencyFile } from 'app/shared/models/agency/AgencyFile';
 
 @Component({
     selector: 'app-documents-list',

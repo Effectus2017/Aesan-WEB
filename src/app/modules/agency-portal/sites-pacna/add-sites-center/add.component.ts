@@ -17,8 +17,8 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import {
   compare,
   compareById,
@@ -33,34 +33,34 @@ import {
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
-import { City } from 'app/shared/models/City';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
-import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
-import { SiteParticipantRequest } from 'app/shared/models/Request/SiteParticipantRequest';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
+import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
+import { SiteEducationLevelRequest } from 'app/shared/models/request/SiteEducationLevelRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
+import { SiteParticipantRequest } from 'app/shared/models/request/SiteParticipantRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
+import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { CenterType } from 'app/shared/models/CenterType';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { SponsorType } from 'app/shared/models/SponsorType';
-import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
+import { CenterType } from 'app/shared/models/catalog/CenterType';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
+import { SponsorType } from 'app/shared/models/catalog/SponsorType';
+import { EducationLevelResponse } from 'app/shared/models/response/EducationLevelResponse';
 import { AuthService } from 'app/core/auth/auth.service';
-import { ApiErrorBody } from 'app/shared/models/ApiError';
-import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
-import { ValidationMessage } from 'app/shared/models/ValidationMessage';
+import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
+import { ValidationMessage } from 'app/shared/models/common/ValidationMessage';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
@@ -75,7 +75,7 @@ import { PermissionRequestFormDialogComponent } from 'app/shared/components/perm
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 import { PermissionRequestDialogComponent } from 'app/shared/components/permission-request-dialog/permission-request-dialog.component';
 import { ServiceByGroupDialogData, ServiceByGroupDialogResult, AddServiceByGroupModalComponent } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';

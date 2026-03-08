@@ -21,9 +21,9 @@ import {
   dateToMinutes,
   timeToMinutes,
 } from 'app/shared/utils';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
-import { SiteChildGroupServiceSlotRequest } from 'app/shared/models/Request/SiteChildGroupServiceSlotRequest';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
+import { SiteChildGroupServiceSlotRequest } from 'app/shared/models/request/SiteChildGroupServiceSlotRequest';
 import { ServiceTypeIds, ServiceTypes } from 'app/shared/constants/service-type.constants';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';

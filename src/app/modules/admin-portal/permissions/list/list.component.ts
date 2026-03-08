@@ -13,7 +13,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { PERMISSIONS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -21,7 +21,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { PermissionService } from 'app/shared/services/permission.service';
-import { Permission } from 'app/shared/models/Permission';
+import { Permission } from 'app/shared/models/user/Permission';
 
 @Component({
     selector: 'app-permissions-list',

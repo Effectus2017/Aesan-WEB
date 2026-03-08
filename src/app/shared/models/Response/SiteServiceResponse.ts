@@ -1,4 +1,4 @@
-import { OptionSelection } from '../OptionSelection';
+import { OptionSelection } from '../common/OptionSelection';
 
 export interface SiteServiceResponse {
   id: number;

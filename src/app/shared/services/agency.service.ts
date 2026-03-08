@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
-import { UpdateAgencyInscriptionRequest, UpdateAgencyProgramRequest } from '../models/Request/AgencyRequest';
-import { AgencyResponse } from '../models/Response/AgencyResponse';
-import { DataResponse } from '../models/Response/DataResponse';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { UserAgencyRequest } from '../models/agency/UserAgencyRequest';
+import { UpdateAgencyInscriptionRequest } from '../models/agency/UpdateAgencyInscriptionRequest';
+import { UpdateAgencyProgramRequest } from '../models/agency/UpdateAgencyProgramRequest';
+import { AgencyResponse } from '../models/agency/AgencyResponse';
+import { DataResponse } from '../models/data/DataResponse';
+
 
 @Injectable({
   providedIn: 'root',

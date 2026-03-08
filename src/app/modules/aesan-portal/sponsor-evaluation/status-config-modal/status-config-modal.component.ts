@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
+import { AgencyStatusResponse } from 'app/shared/models/agency/AgencyStatusResponse';
 import { compareItems } from 'app/shared/utils';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { NotificationService } from 'app/shared/services/notification.service';
@@ -61,14 +61,14 @@ export class StatusConfigModalComponent implements OnInit {
 
   ngOnInit(): void {
     this.listStatuses = this.data.statuses || [];
-    
+
     if (this.data.currentStatus) {
       const currentStatus = this.listStatuses.find(s => s.id === this.data.currentStatus?.id);
       if (currentStatus) {
         this.form.patchValue({ status: currentStatus });
       }
     }
-    
+
     this._cdr.markForCheck();
   }
 

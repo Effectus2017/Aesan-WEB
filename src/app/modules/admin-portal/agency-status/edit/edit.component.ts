@@ -10,8 +10,8 @@ import { AgencyStatusService } from 'app/shared/services/agency-status.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { AgencyStatusResponse } from 'app/shared/models/Response/AgencyStatusResponse';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { AgencyStatusResponse } from 'app/shared/models/agency/AgencyStatusResponse';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -75,23 +75,23 @@ export class EditAgencyStatusComponent implements OnInit, OnGenericHeaderHandler
 
     if (resolvedData) {
       this.agencyStatusId = resolvedData.agencyStatus.id;
-      
+
       // Filtrar opciones de isActive
       this.listIsActive = resolvedData.isActiveOptions?.data || [];
-      
+
       // Mapear el valor booleano del resolver al objeto OptionSelection
       const isActiveOption = this.listIsActive.find(opt => opt.booleanValue === resolvedData.agencyStatus.isActive);
-      
+
       this.form.patchValue({
         name: resolvedData.agencyStatus.name,
         nameEN: resolvedData.agencyStatus.nameEN,
         displayOrder: resolvedData.agencyStatus.displayOrder,
       });
-      
+
       if (isActiveOption) {
         this.form.patchValue({ isActive: isActiveOption });
       }
-      
+
       this._cdr.markForCheck();
     }
   }

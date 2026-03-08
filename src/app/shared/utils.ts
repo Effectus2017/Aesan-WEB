@@ -1,8 +1,8 @@
 import { HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { formatDate } from '@angular/common';
-import { getApiErrorMessage } from './models/ApiError';
+import { getApiErrorMessage } from './models/common/ApiError';
 import { Constants } from './const';
-import { QueryParameters } from './models/QueryParameters';
+import { QueryParameters } from './models/common/QueryParameters';
 import { throwError } from 'rxjs';
 import { UntypedFormGroup, FormGroup } from '@angular/forms';
 import { AbstractControl, ValidationErrors } from '@angular/forms';

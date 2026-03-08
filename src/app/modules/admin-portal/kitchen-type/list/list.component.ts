@@ -13,7 +13,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { KITCHEN_TYPE_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -21,7 +21,7 @@ import { OnGenericTableHandler } from 'app/shared/components/generic-table/gener
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
-import { KitchenType } from 'app/shared/models/KitchenType';
+import { KitchenType } from 'app/shared/models/catalog/KitchenType';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({

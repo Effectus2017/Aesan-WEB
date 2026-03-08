@@ -9,7 +9,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SiteCalendarAddModalData } from 'app/shared/models/Response/SiteCalendarAddModalData';
+import { SiteCalendarAddModalData } from 'app/shared/models/response/SiteCalendarAddModalData';
 
 @Component({
   selector: 'app-site-calendar-add-modal',

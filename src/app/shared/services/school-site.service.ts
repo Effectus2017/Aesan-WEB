@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError, of } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { SchoolSiteResponse } from '../models/Response/SchoolSiteResponse';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { SchoolSiteResponse } from '../models/response/SchoolSiteResponse';
 
 @Injectable({
   providedIn: 'root',

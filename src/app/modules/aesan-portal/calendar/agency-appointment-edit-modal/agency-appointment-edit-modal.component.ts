@@ -9,8 +9,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule } from '@ngneat/transloco';
-import { AgencyAppointmentRequest } from 'app/shared/models/Request/AgencyAppointmentRequest';
-import { AgencyAppointment } from 'app/shared/models/AgencyAppointment';
+import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
+import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
 
 @Component({
   selector: 'aesan-agency-appointment-edit-modal',
@@ -41,7 +41,7 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: { appointment: AgencyAppointment }
   ) {
     this.appointment = data.appointment;
-    
+
     // Parse date for Title
     const [year, month, day] = this.appointment.date.split('T')[0].split('-').map(Number);
     this.date = new Date(year, month - 1, day);
@@ -89,7 +89,7 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
     }
 
     const value = this.form.value;
-    
+
     const year = this.date.getFullYear();
     const month = String(this.date.getMonth() + 1).padStart(2, '0');
     const day = String(this.date.getDate()).padStart(2, '0');

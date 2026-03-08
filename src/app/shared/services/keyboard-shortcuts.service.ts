@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { KeyboardShortcut, KeyboardShortcutConfig, ShortcutCategory } from '../models/KeyboardShortcut';
+import { KeyboardShortcut, KeyboardShortcutConfig, ShortcutCategory } from '../models/common/KeyboardShortcut';
 
 @Injectable({
   providedIn: 'root',

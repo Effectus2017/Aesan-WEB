@@ -4,10 +4,10 @@ import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/shared/services/user.service';
 import { environment } from 'environments/environment';
 import { Observable, of, switchMap, throwError } from 'rxjs';
-import { Token, TokenResponse } from '../../shared/models/user.types';
-import { LoginRequest } from 'app/shared/models/Request/LoginRequest';
-import { SignUpRequest } from 'app/shared/models/Request/SignUpRequest';
-import { UnlockSessionRequest } from 'app/shared/models/Request/UnlockSessionRequest';
+import { Token, TokenResponse } from '../../shared/models/user/user.types';
+import { LoginRequest } from 'app/shared/models/request/LoginRequest';
+import { SignUpRequest } from 'app/shared/models/request/SignUpRequest';
+import { UnlockSessionRequest } from 'app/shared/models/request/UnlockSessionRequest';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
 
 @Injectable({ providedIn: 'root' })

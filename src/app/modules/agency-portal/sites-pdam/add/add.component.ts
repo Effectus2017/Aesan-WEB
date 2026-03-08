@@ -15,7 +15,7 @@ import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -23,9 +23,9 @@ import { NgForOf, NgIf } from '@angular/common';
 import { merge, Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { OperatingPolicy } from 'app/shared/models/OperatingPolicy';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { OperatingPolicy } from 'app/shared/models/household/OperatingPolicy';
 import {
   compare,
   compareById,
@@ -42,31 +42,31 @@ import {
   compareByTime,
   TimeOption,
 } from 'app/shared/utils';
-import { City } from 'app/shared/models/City';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
-import { SiteEducationLevelRequest } from 'app/shared/models/Request/SiteEducationLevelRequest';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
+import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
+import { SiteEducationLevelRequest } from 'app/shared/models/request/SiteEducationLevelRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
-import { DeliveryType } from 'app/shared/models/DeliveryType';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/ApiError';
-import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { CenterType } from 'app/shared/models/CenterType';
-import { OrganizationType } from 'app/shared/models/OrganizationType';
-import { SponsorType } from 'app/shared/models/SponsorType';
-import { EducationLevelResponse } from 'app/shared/models/Response/EducationLevelResponse';
+import { CenterType } from 'app/shared/models/catalog/CenterType';
+import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
+import { SponsorType } from 'app/shared/models/catalog/SponsorType';
+import { EducationLevelResponse } from 'app/shared/models/response/EducationLevelResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
@@ -87,7 +87,7 @@ import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 
 @Component({
   selector: 'app-sites-add',
@@ -1162,7 +1162,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Disable the form
     this.headerConfig.formGroup.disable();
 
-    this._siteService.insertSite(siteRequest, {}).subscribe({
+    this._siteService.insertSite(siteRequest, null).subscribe({
       next: (result: any) => {
         switch (result.body) {
           case true:

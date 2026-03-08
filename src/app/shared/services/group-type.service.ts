@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { GroupType } from '../models/GroupType';
-import { GroupTypeRequest } from '../models/Request/GroupTypeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { GroupType } from '../models/catalog/GroupType';
+import { GroupTypeRequest } from '../models/request/GroupTypeRequest';
 
 @Injectable({
   providedIn: 'root',

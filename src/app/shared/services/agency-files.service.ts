@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { AgencyFile } from '../models/AgencyFile';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { AgencyFile } from '../models/agency/AgencyFile';
 
 @Injectable({
   providedIn: 'root',

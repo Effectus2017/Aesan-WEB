@@ -9,8 +9,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { SiteCalendarEditModalData } from 'app/shared/models/Response/SiteCalendarEditModalData';
-import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
+import { SiteCalendarEditModalData } from 'app/shared/models/response/SiteCalendarEditModalData';
+import { SiteOperatingDayService } from 'app/shared/models/site/SiteOperatingDayService';
 import { Subject, takeUntil } from 'rxjs';
 import { NotificationService } from 'app/shared/services/notification.service';
 

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, Input, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import _ from 'lodash';
 import { UsersService } from '../../../../shared/services/users.service';
 import { ActivatedRoute } from '@angular/router';
@@ -45,7 +45,7 @@ import { GenericTableComponent } from 'app/shared/components/generic-table/gener
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { PERMISSIONS_COLUMNS_SCHEMA, SECONDARY_ROLES_COLUMNS_SCHEMA } from './columns-schema';
 import { MatTableDataSource } from '@angular/material/table';
-import { Permission } from 'app/shared/models/Permission';
+import { Permission } from 'app/shared/models/user/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
@@ -56,8 +56,8 @@ import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
 import { GeoService } from 'app/shared/services/geo.service';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
 
 @Component({
   selector: 'app-users-edit',

@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { MessageTemplate } from '../models/MessageTemplate';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { MessageTemplate } from '../models/log/MessageTemplate';
 
 @Injectable({
   providedIn: 'root',

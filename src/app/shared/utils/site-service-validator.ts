@@ -1,4 +1,4 @@
-import { SiteServiceRequest } from '../models/Request/SiteServiceRequest';
+import { SiteServiceRequest } from '../models/request/SiteServiceRequest';
 
 /**
  * Valida y limpia un SiteServiceRequest antes de enviarlo al backend.

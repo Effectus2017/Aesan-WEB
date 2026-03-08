@@ -18,7 +18,7 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { GeoService } from 'app/shared/services/geo.service';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { FuseConfirmationService } from '@fuse/services/confirmation';

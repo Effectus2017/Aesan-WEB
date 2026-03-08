@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
-import { SponsorType } from '../models/SponsorType';
-import { SponsorTypeRequest } from '../models/Request/SponsorTypeRequest';
+import { QueryParameters } from '../models/common/QueryParameters';
+import { SponsorType } from '../models/catalog/SponsorType';
+import { SponsorTypeRequest } from '../models/request/SponsorTypeRequest';
 
 @Injectable({
   providedIn: 'root',

@@ -12,7 +12,7 @@ import { MessageTemplateService } from 'app/shared/services/message-template.ser
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MessageTemplate } from 'app/shared/models/MessageTemplate';
+import { MessageTemplate } from 'app/shared/models/log/MessageTemplate';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';

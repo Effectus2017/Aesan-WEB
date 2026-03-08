@@ -20,7 +20,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import {
   compareById,
   compareItems,
@@ -34,18 +34,18 @@ import {
 import { AuthService } from 'app/core/auth/auth.service';
 import { isAdminRole } from 'app/shared/constants/role-keys';
 import { provideNativeDateAdapter } from '@angular/material/core';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
-import { StaffType } from 'app/shared/models/StaffType';
-import { Staff } from 'app/shared/models/Staff';
+import { StaffType } from 'app/shared/models/staff/StaffType';
+import { Staff } from 'app/shared/models/staff/Staff';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
-import { StaffClassification } from 'app/shared/models/StaffClassification';
+import { StaffClassification } from 'app/shared/models/staff/StaffClassification';
 import { StaffStatusModalComponent, StaffStatusModalData } from '../staff-status-modal/staff-status-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
-import { Site } from 'app/shared/models/Site';
+import { Site } from 'app/shared/models/site/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';

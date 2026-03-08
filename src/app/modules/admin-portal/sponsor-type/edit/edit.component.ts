@@ -9,7 +9,7 @@ import { SponsorTypeService } from 'app/shared/services/sponsor-type.service';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { SponsorType } from 'app/shared/models/SponsorType';
+import { SponsorType } from 'app/shared/models/catalog/SponsorType';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';

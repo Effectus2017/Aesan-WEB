@@ -12,7 +12,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { TranslocoModule } from '@ngneat/transloco';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { SITES_PACNA_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -23,7 +23,7 @@ import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filt
 import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { SITES_PACNA_FILTERS_SCHEMA } from './filters-schema';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteTableResponse } from 'app/shared/models/Response/SiteTableResponse';
+import { SiteTableResponse } from 'app/shared/models/response/SiteTableResponse';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';

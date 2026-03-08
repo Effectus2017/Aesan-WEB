@@ -2,13 +2,13 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 import { getHttpOptions } from '../utils';
 import {
   DTOStaffRelationship,
   CreateStaffRelationshipRequest,
   UpdateStaffRelationshipRequest
-} from '../models/StaffRelationship';
+} from '../models/staff/StaffRelationship';
 
 @Injectable({
   providedIn: 'root'

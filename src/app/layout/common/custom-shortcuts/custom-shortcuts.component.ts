@@ -8,7 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AuthService } from 'app/core/auth/auth.service';
 import { isAgencyRole } from 'app/shared/constants/role-keys';
 import { FuseConfirmationService } from '@fuse/services/confirmation';

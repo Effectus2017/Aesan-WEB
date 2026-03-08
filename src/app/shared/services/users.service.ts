@@ -2,11 +2,11 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, map, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 import { DTORole, RequestUser } from '../../modules/admin-portal/users/users.types';
 import { getHttpOptions, handleError } from '../utils';
-import { TokenResponse } from '../models/user.types';
-import { UserAgencyRequest } from '../models/Request/UserAgencyRequest';
+import { TokenResponse } from '../models/user/user.types';
+import { UserAgencyRequest } from '../models/agency/UserAgencyRequest';
 import { UploadService } from './upload.service';
 
 export type { DTORole };

@@ -8,7 +8,7 @@ import { EmployeeService } from 'app/shared/services/employee.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { EmployeeRequest } from 'app/shared/models/Request/EmployeeRequest';
+import { EmployeeRequest } from 'app/shared/models/request/EmployeeRequest';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { NgIf, NgForOf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -21,14 +21,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
-import { City } from 'app/shared/models/City';
-import { Region } from 'app/shared/models/Region';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
+import { City } from 'app/shared/models/location/City';
+import { Region } from 'app/shared/models/location/Region';
 import { compare, comparePostal, isNullOrUndefinedEmptyStringNullArray, minimumAgeValidator } from 'app/shared/utils';
 import { AuthService } from 'app/core/auth/auth.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { GeoService } from 'app/shared/services/geo.service';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
 

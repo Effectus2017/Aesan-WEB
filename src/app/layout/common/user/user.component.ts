@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 import { FuseConfigService } from '@fuse/services/config';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { KeyboardShortcutsComponent } from 'app/layout/common/keyboard-shortcuts/keyboard-shortcuts.component';
-import { TokenResponse } from 'app/shared/models/user.types';
+import { TokenResponse } from 'app/shared/models/user/user.types';
 import { UserService } from 'app/shared/services/user.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { TranslocoService } from '@ngneat/transloco';

@@ -10,7 +10,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { UnlockSessionRequest } from 'app/shared/models/Request/UnlockSessionRequest';
+import { UnlockSessionRequest } from 'app/shared/models/request/UnlockSessionRequest';
 import { UserService } from 'app/shared/services/user.service';
 
 @Component({

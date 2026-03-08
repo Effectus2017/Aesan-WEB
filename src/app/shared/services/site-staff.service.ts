@@ -3,10 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { QueryParameters } from '../models/QueryParameters';
+import { QueryParameters } from '../models/common/QueryParameters';
 
-import { SiteStaffRequest, UpdateSiteStaffRequest } from '../models/Request/SiteStaffRequest';
-import { SiteStaff } from "../models/SiteStaff.1";
+import { SiteStaffRequest, UpdateSiteStaffRequest } from '../models/request/SiteStaffRequest';
+import { SiteStaff } from '../models/site/SiteStaff.1';
 
 @Injectable({
   providedIn: 'root',

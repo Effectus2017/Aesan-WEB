@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
-import { TemplateVariable } from '../models/TemplateVariable';
+import { TemplateVariable } from '../models/log/TemplateVariable';
 
 @Injectable({
   providedIn: 'root',

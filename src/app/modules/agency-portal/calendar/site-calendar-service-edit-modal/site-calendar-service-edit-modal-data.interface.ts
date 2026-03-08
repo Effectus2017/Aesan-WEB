@@ -1,6 +1,6 @@
 import { FormGroup } from '@angular/forms';
-import { SiteOperatingDayService } from 'app/shared/models/SiteOperatingDayService';
-import { SiteOperatingDay } from 'app/shared/models/SiteOperatingDay';
+import { SiteOperatingDayService } from 'app/shared/models/site/SiteOperatingDayService';
+import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
 
 export interface SiteCalendarServiceEditModalData {
   form: FormGroup;

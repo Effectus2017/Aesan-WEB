@@ -35,8 +35,8 @@ import { LogsService } from 'app/shared/services/logs.service';
 import { Subject, takeUntil } from 'rxjs';
 import { LOGS_COLUMNS_SCHEMA } from './columns-schema';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { CentralLogEntry } from 'app/shared/models/CentralLogEntry';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { CentralLogEntry } from 'app/shared/models/log/CentralLogEntry';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 const LOG_CATEGORIES = [
   { value: 'Audit', labelKey: 'logs.list.categories.audit' },

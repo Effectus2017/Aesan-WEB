@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { ServiceSlotOperatingDate } from '../models/Response/SiteChildGroupServiceSlotResponse';
+import { ServiceSlotOperatingDate } from '../models/response/SiteChildGroupServiceSlotResponse';
 
 /** Formatea un string de tiempo "HH:mm:ss", "HH:mm" o "HH:mm:ss.ffffff" a "4:00 PM". */
 export function formatTimeForDisplay(timeStr: string | undefined): string {

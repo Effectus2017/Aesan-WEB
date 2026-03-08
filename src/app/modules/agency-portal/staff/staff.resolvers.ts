@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { StaffService } from 'app/shared/services/staff.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';

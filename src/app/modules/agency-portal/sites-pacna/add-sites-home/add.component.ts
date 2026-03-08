@@ -18,8 +18,8 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { AgencyResponse } from 'app/shared/models/Response/AgencyResponse';
-import { OptionSelection } from 'app/shared/models/OptionSelection';
+import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import {
   compare,
   compareById,
@@ -34,24 +34,24 @@ import {
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
-import { City } from 'app/shared/models/City';
-import { QueryParameters } from 'app/shared/models/QueryParameters';
-import { Region } from 'app/shared/models/Region';
+import { City } from 'app/shared/models/location/City';
+import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
-import { SiteRequest } from 'app/shared/models/Request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/Request/SiteServiceRequest';
-import { SiteChildGroupRequest } from 'app/shared/models/Request/SiteChildGroupRequest';
+import { SiteRequest } from 'app/shared/models/request/SiteRequest';
+import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
+import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatMenuModule } from '@angular/material/menu';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
-import { AreaType } from 'app/shared/models/AreaType';
-import { DayOfWeekResponse } from 'app/shared/models/DayOfWeekResponse';
+import { AreaType } from 'app/shared/models/catalog/AreaType';
+import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { ApiErrorBody } from 'app/shared/models/ApiError';
+import { ApiErrorBody } from 'app/shared/models/common/ApiError';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -68,14 +68,14 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
-import { ServiceTypeByProgram } from 'app/shared/models/ServiceTypeByProgram';
+import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 import {
   SiteChildGroupServiceSlotResponse,
   ServiceSlotOperatingDate
-} from 'app/shared/models/Response/SiteChildGroupServiceSlotResponse';
+} from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 
 @Component({
   selector: 'app-add-sites-home',
@@ -955,7 +955,15 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
         const body = err?.error as ApiErrorBody | undefined;
-        if (
+        if (err?.status === 400 && body?.code === 'MissingStrongService') {
+          const key =
+            body.programId === 1
+              ? 'sites.validation.mandatoryServicePdam'
+              : 'sites.validation.mandatoryServicePsavPacna';
+          this._notificationService.showWarningDialogWithRawMessage(
+            this._translocoService.translate(key)
+          );
+        } else if (
           err?.status === 400 &&
           (body?.code === 'FirstSiteMustBeComedor' ||
             body?.code === 'SchoolMustHaveComedorFirst' ||
@@ -965,7 +973,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
           this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.code === 'InsufficientTimeBetweenServices' &&
           body?.message
         ) {
           this._notificationService.showError(body.message);

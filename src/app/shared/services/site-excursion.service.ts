@@ -2,8 +2,8 @@ import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
-import { SiteExcursion } from '../models/SiteExcursion';
-import { SiteExcursionRequest } from '../models/Request/SiteExcursionRequest';
+import { SiteExcursion } from '../models/site/SiteExcursion';
+import { SiteExcursionRequest } from '../models/request/SiteExcursionRequest';
 
 @Injectable({
   providedIn: 'root',
