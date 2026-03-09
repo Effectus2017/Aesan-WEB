@@ -123,7 +123,7 @@ export class NotificationService {
 
   /**
    * Muestra un diálogo de advertencia con un mensaje en texto plano (sin traducir).
-   * Útil para mostrar el mensaje que devuelve el servidor/API (p. ej. SiteDatesOutsideComedorRange).
+   * Útil para mostrar el mensaje que devuelve el servidor/API (p. ej. SITE_DATES_OUTSIDE_COMEDOR_RANGE).
    */
   showWarningDialogWithRawMessage(message: string): void {
     this.fuseConfirmationService.open({

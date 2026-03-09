@@ -1201,9 +1201,9 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FirstSiteMustBeComedor' ||
-            body?.code === 'SchoolMustHaveComedorFirst' ||
-            body?.code === 'SiteDatesOutsideComedorRange') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
@@ -1366,8 +1366,14 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       next: (response) => {
         if (response && response.body) {
           this.deliveryTypes = response.body;
-          // Limpiar la selección actual de deliveryType para que el usuario elija uno nuevo
-          this.headerConfig.formGroup.patchValue({ deliveryType: null });
+          // Solo limpiar si el valor actual ya no es válido para este tipo de grupo (evita borrar por respuesta tardía o tras error al guardar)
+          const currentDeliveryType = this.headerConfig.formGroup.get('deliveryType')?.value;
+          if (currentDeliveryType) {
+            const isValid = this.deliveryTypes.some((dt: DeliveryType) => dt.id === currentDeliveryType.id);
+            if (!isValid) {
+              this.headerConfig.formGroup.patchValue({ deliveryType: null });
+            }
+          }
           this._changeDetectorRef.detectChanges();
         }
       },

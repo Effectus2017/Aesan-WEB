@@ -38,6 +38,9 @@
         "search": {
           "placeholder": "Search employees..."
         },
+        "filters": {
+          "name": "Name"
+        },
         "table": {
           "columns": {
             "fullName": "Full Name",

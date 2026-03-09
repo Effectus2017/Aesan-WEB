@@ -2,9 +2,9 @@
     "sites": {
         "title": "Sitios",
         "error": {
-            "FirstSiteMustBeComedor": "El primer sitio de la escuela debe ser de tipo Comedor.",
-            "SiteDatesOutsideComedorRange": "Las fechas de funcionamiento del sitio deben estar dentro del periodo del Comedor de la escuela.",
-            "SchoolMustHaveComedorFirst": "La escuela debe tener un sitio Comedor antes de agregar otros sitios. El primer sitio de la escuela debe ser de tipo Comedor."
+            "FIRST_SITE_MUST_BE_COMEDOR": "El primer sitio de la escuela debe ser de tipo Comedor.",
+            "SITE_DATES_OUTSIDE_COMEDOR_RANGE": "Las fechas de funcionamiento del sitio deben estar dentro del periodo del Comedor de la escuela.",
+            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "La escuela debe tener un sitio Comedor antes de agregar otros sitios. El primer sitio de la escuela debe ser de tipo Comedor."
         },
         "validation": {
             "require-group-with-services": "Debe agregar al menos un grupo con servicios",

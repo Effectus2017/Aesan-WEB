@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation, inject } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -14,11 +14,14 @@ import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { SITES_PSAV_COLUMNS_SCHEMA } from './columns-schema';
+import { SITES_PSAV_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteTableResponse } from 'app/shared/models/response/SiteTableResponse';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -41,11 +44,11 @@ import { PROGRAM_IDS } from 'app/shared/const';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SitesPsavListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class SitesPsavListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _customRouterService = inject(CustomRouterService);
@@ -54,13 +57,18 @@ export class SitesPsavListComponent implements OnInit, OnDestroy, OnGenericTable
   private _route = inject(ActivatedRoute);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = SITES_PSAV_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
+
   headerConfig: GenericHeaderConfig = {
     title: 'sites.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
-    searchInputPlaceholder: 'sites.list.search.placeholder',
+    searchFieldShow: false,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
     submitButtonText: 'sites.list.buttons.save',
     goToAddButtonShow: true,
     goToAddButtonPermission: 'site.create',
@@ -97,25 +105,36 @@ export class SitesPsavListComponent implements OnInit, OnDestroy, OnGenericTable
     this._unsubscribeAll.complete();
   }
 
-  onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
-    }
+  onSearch(): void {}
+
+  onFilter(): void {
+    this.filterDrawer?.toggle();
   }
 
-  getAll(index: number, form: any) {
-    const name = form.name || null;
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  getAll(index: number): void {
     const pageSize = this.tableConfig.pageSize;
     const agencyId = this._authService.getAgencyId();
 
     const requestParameters: QueryParameters = {
       take: pageSize,
       skip: index,
-      name: name,
       alls: false,
       agencyId: agencyId,
       programId: PROGRAM_IDS.PSAV,
+      ...this.appliedFilters,
     };
 
     this._siteService.getAllSitesFromDb(requestParameters)
@@ -135,19 +154,13 @@ export class SitesPsavListComponent implements OnInit, OnDestroy, OnGenericTable
       });
   }
 
-  getPaginator(event?: PageEvent) {
+  getPaginator(event?: PageEvent): void {
     const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
     this.tableConfig.pageSize = event?.pageSize || this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
+    this.getAll(index * this.tableConfig.pageSize);
   }
 
-  onClean(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.headerConfig.clearVisible = false;
-    this.headerConfig.formGroup.reset();
-    this.getAll(0, this.headerConfig.formGroup.value);
-  }
+  onClean(_event: Event): void {}
 
   onTableEdit(event: Event, id: number) {
     event.stopPropagation();

@@ -1311,9 +1311,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FirstSiteMustBeComedor' ||
-            body?.code === 'SchoolMustHaveComedorFirst' ||
-            body?.code === 'SiteDatesOutsideComedorRange') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);

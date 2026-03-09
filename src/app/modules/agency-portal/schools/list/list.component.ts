@@ -29,7 +29,7 @@ import { ViewChild } from '@angular/core';
 import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
 import { GenericFilterResult } from 'app/shared/components/generic-table/generic-table.interface';
 import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
-import { SCHOOLS_FILTERS_SCHEMA } from './schools-filters-schema';
+import { SCHOOLS_FILTERS_SCHEMA } from './filters-schema';
 
 @Component({
   selector: 'app-schools-list',

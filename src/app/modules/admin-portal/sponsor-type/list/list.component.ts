@@ -117,30 +117,23 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
   onFiltersApply(filters: GenericFilterResult): void {
     this.appliedFilters = { ...filters };
     this.filterDrawer?.close();
-    this.getAll(0, this._buildFormForRequest());
+    this.getAll(0);
     this._changeDetectorRef.markForCheck();
   }
 
   onFiltersReset(): void {
     this.appliedFilters = {};
-    this.getAll(0, this._buildFormForRequest());
+    this.getAll(0);
     this._changeDetectorRef.markForCheck();
   }
 
-  private _buildFormForRequest(): Record<string, unknown> {
-    const header = this.headerConfig.formGroup?.value ?? {};
-    return { ...header, ...this.appliedFilters };
-  }
-
-  getAll(index: number, form: any) {
-    const requestParameters = {
+  getAll(index: number): void {
+    const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: (form.name ?? null) || null,
       userId: this._authService.getUserId(),
-      ...(form.nameEN != null && form.nameEN !== '' && { nameEN: form.nameEN }),
-      ...(form.isActive !== undefined && form.isActive !== null && { isActive: form.isActive }),
-    } as QueryParameters;
+      ...this.appliedFilters,
+    };
     this._sponsorTypeService.getAllSponsorTypesFromDb(requestParameters).subscribe();
   }
 
@@ -154,9 +147,9 @@ export class SponsorTypeListComponent implements OnInit, OnDestroy, OnGenericTab
     this._customRouterService.navigate(['sponsor-type/add']);
   }
 
-  getPaginator(event?: PageEvent) {
-    const index = event && event.pageIndex ? event.pageIndex : 0;
-    this.tableConfig.pageSize = event ? event.pageSize : this.tableConfig.pageSize;
-    this.getAll(index * this.tableConfig.pageSize, this._buildFormForRequest());
+  getPaginator(event?: PageEvent): void {
+    const index = event && event.pageIndex !== undefined ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event?.pageSize ?? this.tableConfig.pageSize;
+    this.getAll(index * this.tableConfig.pageSize);
   }
 }

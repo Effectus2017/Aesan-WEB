@@ -1385,13 +1385,17 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          body?.code === 'SiteDatesOutsideComedorRange' &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
+        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
           body?.message
         ) {
           this._notificationService.showError(body.message);

@@ -955,7 +955,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
         const body = err?.error as ApiErrorBody | undefined;
-        if (err?.status === 400 && body?.code === 'MissingStrongService') {
+        if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE') {
           const key =
             body.programId === 1
               ? 'sites.validation.mandatoryServicePdam'
@@ -965,15 +965,15 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
           );
         } else if (
           err?.status === 400 &&
-          (body?.code === 'FirstSiteMustBeComedor' ||
-            body?.code === 'SchoolMustHaveComedorFirst' ||
-            body?.code === 'SiteDatesOutsideComedorRange') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          body?.code === 'InsufficientTimeBetweenServices' &&
+          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
           body?.message
         ) {
           this._notificationService.showError(body.message);

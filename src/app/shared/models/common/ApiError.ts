@@ -4,7 +4,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export interface ApiErrorBody {
   code?: string;
   message?: string;
-  /** Presente en algunos errores de validación (p. ej. MissingStrongService). */
+  /** Presente en algunos errores de validación (p. ej. MISSING_STRONG_SERVICE). */
   programId?: number;
 }
 

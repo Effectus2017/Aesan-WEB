@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { ViewEncapsulation } from '@angular/core';
 import { EmployeeService } from 'app/shared/services/employee.service';
@@ -10,14 +10,17 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { EmployeeList } from 'app/shared/models/employee/Employee';
 import { EMPLOYEES_COLUMNS_SCHEMA } from './columns-schema';
+import { EMPLOYEES_LIST_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { RouterModule } from '@angular/router';
 import { TranslocoModule } from '@ngneat/transloco';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -43,11 +46,11 @@ import { NotificationService } from 'app/shared/services/notification.service';
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _employeeService = inject(EmployeeService);
   private _customRouterService = inject(CustomRouterService);
@@ -57,14 +60,19 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _notificationService = inject(NotificationService);
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = EMPLOYEES_LIST_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
+
   headerConfig: GenericHeaderConfig = {
     title: 'employees.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl('')
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
     goToAddButtonShow: true,
-    searchInputPlaceholder: 'employees.list.search.placeholder'
   };
 
   tableConfig: GenericTableConfig = {
@@ -95,15 +103,30 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
     this._unsubscribeAll.complete();
   }
 
-  onSearch(): void {
-    this.getAll(0, this.headerConfig.formGroup.value);
+  onSearch(): void {}
+
+  onFilter(): void {
+    this.filterDrawer?.toggle();
   }
 
-  getAll(index: number, form: any): void {
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  getAll(index: number): void {
     const queryParams: QueryParameters = {
       take: this.tableConfig.pageSize,
-      skip: index * this.tableConfig.pageSize,
-      name: form.name || undefined
+      skip: index,
+      ...this.appliedFilters,
     };
 
     this._employeeService.getAllEmployeesFromDb(queryParams).subscribe({
@@ -116,6 +139,12 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
         console.error('Error loading employees:', error);
       }
     });
+  }
+
+  getPaginator(event?: PageEvent): void {
+    const pageIndex = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event?.pageSize ?? this.tableConfig.pageSize;
+    this.getAll(pageIndex * this.tableConfig.pageSize);
   }
 
   onAdd(): void {
@@ -149,7 +178,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       if (result === 'confirmed') {
         this._employeeService.deleteEmployee(queryParams).subscribe({
           next: () => {
-            this.getAll(0, this.headerConfig.formGroup.value);
+            this.getAll(0);
           },
           error: (error) => {
             console.error('Error deleting employee:', error);
@@ -183,7 +212,7 @@ export class ListComponent implements OnInit, OnDestroy, OnGenericTableHandler, 
       if (result === 'confirmed') {
         this._employeeService.convertEmployeeToUser(queryParams).subscribe({
           next: () => {
-            this.getAll(0, this.headerConfig.formGroup.value);
+            this.getAll(0);
           },
           error: (error) => {
             console.error('Error converting employee to user:', error);

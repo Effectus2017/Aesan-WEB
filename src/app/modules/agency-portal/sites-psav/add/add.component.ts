@@ -686,21 +686,11 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const postalRegionId: number = formValues.postalRegion?.id;
 
     // Horario de desayuno
-    const breakfastFrom: string = toTimeString(formValues.breakfastFrom);
-    const breakfastTo: string = toTimeString(formValues.breakfastTo);
     // Horario de almuerzo
-    const lunchFrom: string = toTimeString(formValues.lunchFrom);
-    const lunchTo: string = toTimeString(formValues.lunchTo);
     // Horario de merienda AM
-    const snackAMFrom: string = toTimeString(formValues.snackAMFrom);
-    const snackAMTo: string = toTimeString(formValues.snackAMTo);
     // Horario de merienda PM
-    const snackPMFrom: string = toTimeString(formValues.snackPMFrom);
-    const snackPMTo: string = toTimeString(formValues.snackPMTo);
 
     // Horario de cena
-    const dinnerFrom: string = toTimeString(formValues.dinnerFrom);
-    const dinnerTo: string = toTimeString(formValues.dinnerTo);
     // Tipo de organización
     const organizationTypeId: number = formValues.organizationType?.id;
     // Días de operación
@@ -863,13 +853,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Justificación de revisión
       // Review justification
       reviewJustification: formValues.reviewJustification ?? null,
-
-
       // Matrícula General
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
-
-
       // IDs de programas de la agencia para determinar lógica de días de funcionamiento
       // Agency program IDs to determine operating days logic
       programIds: this.agency?.programs?.map((p: any) => p.id) || [],
@@ -934,15 +920,17 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FirstSiteMustBeComedor' ||
-            body?.code === 'SchoolMustHaveComedorFirst' ||
-            body?.code === 'SiteDatesOutsideComedorRange') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
+        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
           body?.message
         ) {
           this._notificationService.showError(body.message);
@@ -1287,8 +1275,14 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       next: (response) => {
         if (response && response.body) {
           this.deliveryTypes = response.body;
-          // Limpiar la selección actual de deliveryType para que el usuario elija uno nuevo
-          this.headerConfig.formGroup.patchValue({ deliveryType: null });
+          // Solo limpiar si el valor actual ya no es válido para este tipo de grupo (evita borrar por respuesta tardía o tras error al guardar)
+          const currentDeliveryType = this.headerConfig.formGroup.get('deliveryType')?.value;
+          if (currentDeliveryType) {
+            const isValid = this.deliveryTypes.some((dt: DeliveryType) => dt.id === currentDeliveryType.id);
+            if (!isValid) {
+              this.headerConfig.formGroup.patchValue({ deliveryType: null });
+            }
+          }
           this._changeDetectorRef.detectChanges();
         }
       },

@@ -2,9 +2,9 @@
     "sites": {
         "title": "Sites",
         "error": {
-            "FirstSiteMustBeComedor": "The first site of the school must be of type Dining Room (Comedor).",
-            "SiteDatesOutsideComedorRange": "The site operating dates must be within the school's Dining Room (Comedor) period.",
-            "SchoolMustHaveComedorFirst": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor."
+            "FIRST_SITE_MUST_BE_COMEDOR": "The first site of the school must be of type Dining Room (Comedor).",
+            "SITE_DATES_OUTSIDE_COMEDOR_RANGE": "The site operating dates must be within the school's Dining Room (Comedor) period.",
+            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor."
         },
         "validation": {
             "require-group-with-services": "You must add at least one group with services",

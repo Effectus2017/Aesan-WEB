@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntypedFormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { ViewEncapsulation } from '@angular/core';
 import { StaffService } from 'app/shared/services/staff.service';
@@ -10,8 +10,11 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { StaffTableResponse } from 'app/shared/models/staff/Staff';
 import { BOARD_MEMBERS_COLUMNS_SCHEMA } from './columns-schema';
+import { BOARD_MEMBERS_FILTERS_SCHEMA } from './filters-schema';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -45,11 +48,11 @@ import { ViewRelationshipsModalComponent } from '../view-relationships-modal/vie
     RouterModule,
     GenericTableComponent,
     GenericHeaderComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler, OnGenericFilterHandlers {
   private _formBuilder = inject(UntypedFormBuilder);
   private _staffService = inject(StaffService);
   private _customRouterService = inject(CustomRouterService);
@@ -59,18 +62,23 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   private _matDialog = inject(MatDialog);
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = BOARD_MEMBERS_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
+
   headerConfig: GenericHeaderConfig = {
     title: 'staff.boardMembers.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl('')
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
     customButtonShow: true,
     customButtonClass: 'text-white bg-[#F1A621]',
     customButtonIcon: 'mat_outline:add',
     customButtonIconEnabled: true,
     customButtonPermission: 'staff.create',
-    searchInputPlaceholder: 'staff.boardMembers.list.search.placeholder'
   };
 
   tableConfig: GenericTableConfig = {
@@ -101,15 +109,33 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
     this._unsubscribeAll.complete();
   }
 
-  onSearch(): void {
-    this.getAll(0, this.headerConfig.formGroup.value);
+  onSearch(): void {}
+
+  onFilter(): void {
+    this.filterDrawer?.toggle();
   }
 
-  getAll(index: number, form: any): void {
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  getAll(index: number): void {
+    const agencyId = this._authService.getAgencyId();
     const queryParams: QueryParameters = {
       take: this.tableConfig.pageSize,
-      skip: index * this.tableConfig.pageSize,
-      name: form.name || null
+      skip: index,
+      staffTypeId: 2,
+      agencyId: agencyId ?? undefined,
+      ...this.appliedFilters,
     };
 
     this._staffService.getAllStaffFromDb(queryParams).subscribe({
@@ -140,7 +166,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.getAll(0, this.headerConfig.formGroup.value);
+        this.getAll(0);
       }
     });
   }
@@ -159,8 +185,7 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
     this._staffService.deleteStaff(queryParams).subscribe({
       next: (response) => {
         if (response.body) {
-          // Recargar la lista después de eliminar
-          this.getAll(0, this.headerConfig.formGroup.value);
+          this.getAll(0);
         }
       },
       error: (error) => {
@@ -170,6 +195,8 @@ export class ListBoardMembersComponent implements OnInit, OnDestroy, OnGenericHe
   }
 
   onPageChange(event: any): void {
-    this.getAll(event.pageIndex, this.headerConfig.formGroup.value);
+    const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event.pageIndex : 0;
+    this.tableConfig.pageSize = event?.pageSize ?? this.tableConfig.pageSize;
+    this.getAll(index * this.tableConfig.pageSize);
   }
 }

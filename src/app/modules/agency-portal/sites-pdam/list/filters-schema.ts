@@ -1,9 +1,9 @@
 import { FilterSchema } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 
-export const EMPLOYEES_FILTERS_SCHEMA: FilterSchema[] = [
+export const SITES_PDAM_FILTERS_SCHEMA: FilterSchema[] = [
   {
     key: 'name',
     type: 'text',
-    label: 'staff.employees.list.table.columns.fullName',
+    label: 'sites.list.filters.name',
   },
 ];

@@ -1,7 +1,15 @@
 <div class="flex flex-col flex-auto min-w-0">
-  <!-- Header -->
-  <app-generic-header [config]="headerConfig" [handler]="this"> </app-generic-header>
+  <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
 
-  <!-- Table -->
-  <app-generic-table [config]="tableConfig" [handler]="this"> </app-generic-table>
+  <div class="flex-auto overflow-y-auto" cdkScrollable (click)="filterDrawer?.close()">
+    <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
+  </div>
+
+  <app-generic-filter-drawer
+    #filterDrawer
+    [filtersSchema]="filtersSchema"
+    [handler]="this"
+    [initialValues]="appliedFilters"
+    drawerName="employeesListFilterDrawer">
+  </app-generic-filter-drawer>
 </div>

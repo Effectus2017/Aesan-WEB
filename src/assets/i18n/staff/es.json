@@ -38,6 +38,9 @@
         "search": {
           "placeholder": "Buscar empleados..."
         },
+        "filters": {
+          "name": "Nombre"
+        },
         "table": {
           "columns": {
             "fullName": "Nombre Completo",
