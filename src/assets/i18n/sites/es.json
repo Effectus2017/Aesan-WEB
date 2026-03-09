@@ -639,8 +639,8 @@
                 "save": "Guardar"
             },
             "daycare-home-fields": {
-                "title": "Hogar de Cuidado Diurno",
-                "description": "Información específica para hogares de cuidado diurno del programa PACNA"
+                "title": "Información del Hogar",
+                "description": "Información específica para hogares"
             },
             "is-authorized-to-operate": {
                 "label": "¿Este hogar está autorizado a funcionar?",
@@ -1427,8 +1427,8 @@
                 "required": "La localización es requerida"
             },
             "daycare-home-fields": {
-                "title": "Hogar de Cuidado Diurno",
-                "description": "Información específica para hogares de cuidado diurno del programa PACNA"
+                "title": "Información del Hogar",
+                "description": "Información específica para hogares"
             },
             "is-authorized-to-operate": {
                 "label": "¿Este hogar está autorizado a funcionar?",

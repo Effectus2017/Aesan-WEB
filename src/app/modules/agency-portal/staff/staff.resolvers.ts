@@ -105,7 +105,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     alls: false,
     agencyId: agencyId,
     isList: true, // Para lista de sitios
-    isDayCareHomeId: isDayCareHomeId,
+    //isDayCareHomeId: isDayCareHomeId,
   };
 
   return forkJoin([
@@ -203,7 +203,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
     alls: false,
     agencyId: agencyId,
     isList: true, // Para lista de sitios
-    isDayCareHomeId: isDayCareHomeId,
+    //isDayCareHomeId: isDayCareHomeId,
   };
 
   // Primero obtener los datos del staff para determinar si es empleado

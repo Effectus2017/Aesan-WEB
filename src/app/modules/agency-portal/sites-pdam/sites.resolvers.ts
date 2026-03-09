@@ -56,18 +56,12 @@ export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRou
   const authService = inject(AuthService);
   const agencyId = authService.getAgencyId();
 
-  // Leer isDayCareHomeId de los query parameters
-  const isDayCareHomeId = route.queryParams['isDayCareHomeId']
-    ? parseInt(route.queryParams['isDayCareHomeId'], 10)
-    : undefined;
-
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: false,
     isList: false,
     agencyId: agencyId,
-    isDayCareHomeId: isDayCareHomeId,
   };
 
   return forkJoin([siteService.getAllSitesFromDb(requestParameters)]).pipe(

@@ -51,7 +51,7 @@ export const initialDataSitesPacnaListResolver: ResolveFn<any> = (route: Activat
         alls: false,
         isList: false,
         agencyId: agencyId,
-        isDayCareHomeId: homeOptionId,
+        //isDayCareHomeId: homeOptionId,
       };
 
       return siteService.getAllSitesFromDb(requestParameters);

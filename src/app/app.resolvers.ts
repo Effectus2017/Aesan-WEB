@@ -60,7 +60,7 @@ export const initialDataAdminAesanPortalResolver: ResolveFn<any> = (route: Activ
       }),
       map(([navigation, agency]) => ({
         navigation,
-        agency,
+        agency: agency.body,
       }))
     );
   }
@@ -126,7 +126,7 @@ export const initialDataAgencyPortalResolver: ResolveFn<any> = (route: Activated
       }),
       map(([navigation, agency]) => ({
         navigation,
-        agency,
+        agency: agency.body,
       }))
     );
   }

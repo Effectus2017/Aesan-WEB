@@ -18,7 +18,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
+import { AgencyResponse } from  'app/shared/models/agency/AgencyResponse';
 import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import {
   compare,
@@ -123,9 +123,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
-
-  /** Evita que valueChanges dispare recálculo de días al hacer reset() tras guardar exitoso. */
-  private _isResettingForm = false;
 
   // catálogos
   listCities: City[] = [];
@@ -525,14 +522,12 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
-        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
     this.headerConfig.formGroup.get('operatingToDate')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
-        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
       });
 
@@ -540,7 +535,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((value: DayOfWeekResponse[] | null) => {
-        if (this._isResettingForm) return;
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
         this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
         this._changeDetectorRef.markForCheck();
@@ -696,9 +690,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
   // Método para enviar el formulario
   onSubmit() {
-    // Protección contra doble clic: si ya está cargando, ignorar
-    if (this.isLoading) return;
-
     // Validar formulario
     if (this.headerConfig.formGroup.invalid) {
       // Log detallado de campos inválidos usando función utilitaria
@@ -919,9 +910,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         switch (result.body) {
           case true:
             this.isLoading = false;
-            this._isResettingForm = true;
             this.headerConfig.formGroup.reset();
-            this._isResettingForm = false;
 
             const baseYearControl = this.headerConfig.formGroup.get('baseYear');
             const renewalYearControl = this.headerConfig.formGroup.get('renewalYear');
@@ -955,32 +944,24 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
         const body = err?.error as ApiErrorBody | undefined;
-        if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE') {
-          const key =
-            body.programId === 1
-              ? 'sites.validation.mandatoryServicePdam'
-              : 'sites.validation.mandatoryServicePsavPacna';
-          this._notificationService.showWarningDialogWithRawMessage(
-            this._translocoService.translate(key)
-          );
-        } else if (
+        if (
           err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
-            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
-            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
+          (body?.code === 'FirstSiteMustBeComedor' ||
+            body?.code === 'SchoolMustHaveComedorFirst' ||
+            body?.code === 'SiteDatesOutsideComedorRange') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
+          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
           body?.message
         ) {
           this._notificationService.showError(body.message);
         } else {
           this._notificationService.showErrorDialog();
         }
-        this.headerConfig.formGroup.enable({ emitEvent: false });
+        this.headerConfig.formGroup.enable();
       },
       complete: () => {
         this.isLoading = false;

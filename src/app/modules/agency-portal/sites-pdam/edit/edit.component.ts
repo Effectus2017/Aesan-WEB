@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -21,7 +21,6 @@ import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SiteRequest } from 'app/shared/models/request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
 import { SiteEducationLevelRequest } from 'app/shared/models/request/SiteEducationLevelRequest';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
@@ -44,7 +43,6 @@ import {
   getEndTimeOptions,
   isTimeWithinOperatingRange,
   timeStringToDate,
-  dateToMinutes,
   compareByTime,
   TimeOption,
 } from 'app/shared/utils';
@@ -55,7 +53,6 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
 import {
-  SiteChildGroupServiceSlotMinimal,
   SiteChildGroupServiceSlotResponse
 } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -72,12 +69,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PermissionRequestDialogComponent } from '../../../../shared/components/permission-request-dialog/permission-request-dialog.component';
 import { PermissionRequestFormDialogComponent } from '../../../../shared/components/permission-request-form-dialog/permission-request-form-dialog.component';
-import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { AreaTypeService } from 'app/shared/services/area-type.service';
-import { AgencyService } from 'app/shared/services/agency.service';
 import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { OperatingPolicy } from 'app/shared/models/household/OperatingPolicy';
-import { PROGRAM_IDS, isPDAMProgram } from 'app/shared/const';
+import { PROGRAM_IDS } from 'app/shared/const';
 import { CfrInfoDialogComponent } from 'app/shared/components/cfr-info-dialog/cfr-info-dialog.component';
 import { NumericOnlyDirective } from 'app/shared/directives/numeric-only.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
@@ -90,17 +85,12 @@ import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByPro
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
-import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
-import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
-import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { FieldVisibilityUtil } from 'app/shared/utils/field-visibility.util';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
-import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
-import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 
 @Component({
   selector: 'app-sites-edit',
@@ -133,12 +123,14 @@ import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if
 ],
 })
 export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
-  // Subject para suscribirse a todos los observables al destruir el componente
-  // Subject to unsubscribe from all observables on component destroy
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  // Inyección de dependencias y servicios
-  // Dependency injection and services
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
@@ -152,12 +144,11 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   private _route = inject(ActivatedRoute);
   private _notificationService = inject(NotificationService);
   private _customRouterService = inject(CustomRouterService);
-  private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
-  private _fieldVisibilityService = inject(FieldVisibilityService);
 
-  // Catálogos
-  // Catalogs
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   listCities: City[] = [];
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
@@ -476,13 +467,6 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
   servicesCardLoading = false;
 
-  // Required by OnGenericTableHandler interface
-  get tableConfig(): GenericTableConfig {
-    // Retornar el config de servicios (siempre en modo grupos)
-    return this.servicesTableConfig;
-  }
-
-  // Agregar esta propiedad
   protected readonly window = window;
 
   // Compare methods
@@ -506,80 +490,94 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   // Site ID
   siteId: number = 0;
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
   constructor() {}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Getters
+  // -----------------------------------------------------------------------------------------------------
+  /** Retorna el config de la tabla (servicios por grupos). Requerido por OnGenericTableHandler. */
+  get tableConfig(): GenericTableConfig {
+    return this.servicesTableConfig;
+  }
+
+  /** Indica si debe mostrarse el campo Tipo de cocina (cuando el tipo de grupo es Comedor). */
+  get shouldShowKitchenTypeField(): boolean {
+    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
+    if (groupType) {
+      return groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+    }
+    return false;
+  }
+
+  /** Indica si se deben mostrar los campos de provisión (política 3, 4 o 5). */
+  get shouldShowProvisionFields(): boolean {
+    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
+    if (operatingPolicy?.id) {
+      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
+    }
+    return false;
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
+  /** Inicializa idioma, opciones de hora, agencia y datos de resolvers; configura validaciones y listeners. */
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
 
     // Generar opciones de hora
     this.initializeTimeOptions();
 
-    // Configurar FieldVisibilityService SOLO para distributionType
-    this._fieldVisibilityService.setActiveConfig('sites');
-
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
-    // Combinar datos de resolvers comunes y específicos del programa
+    // Agencia desde el resolver general del portal (initialDataAgencyPortalResolver)
+    const initialData = this._route.pathFromRoot.find((r) => r.snapshot.data['initialData'])?.snapshot.data['initialData'] as { agency?: AgencyResponse } | undefined;
+    this.agency = initialData?.agency;
+
     const commonData = this._route.snapshot.data['commonData'];
     const programData = this._route.snapshot.data['programData'];
-    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
-    if (resolvedData) {
-      // Yes No Options
-      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      // Tipo de residencial
-      this.typeOfResidential = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
-      // Tipo de solicitante
-      this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      // Estatus
-      this.isActive = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      // Tipo de cocina
-      this.kitchenTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'kitchenType');
-      // Site Location
-      this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
-      // Tipo de grupo
-      this.groupTypes = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'groupType');
-      // Tipo de distribución / Distribution type
-      this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-      // Catálogos
-      this.centerTypes = resolvedData.centerTypes;
-      this.organizationTypes = resolvedData.organizationTypes;
-      this.educationLevels = resolvedData.educationLevels;
-      this.kitchenTypes = resolvedData.kitchenTypes;
-      this.groupTypes = resolvedData.groupTypes;
-      this.sponsorType = resolvedData.sponsorTypes;
+    if (commonData && programData) {
+      // Opciones desde commonData
+      this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+      this.typeOfResidential = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+      this.typeOfApplicant = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+      this.isActive = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+      this.siteLocations = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
+      this.distributionType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
 
-      // Filtrar operating policies según si la agencia es recurrente
-      this.operatingPolicies = this.filterOperatingPolicies(resolvedData.operatingPolicies, this.agency?.isRecurrent || false);
+      // Catálogos: commonData
+      this.educationLevels = commonData.educationLevels;
+      this.listCities = commonData.cities;
+      this.listRegions = commonData.regions;
+      this.listPostalRegions = commonData.regions;
+      this.areaTypes = commonData.areaTypes;
+      this.locationTypes = commonData.areaTypes;
+      this.operatingPolicies = this.filterOperatingPolicies(commonData.operatingPolicies, this.agency?.isRecurrent || false);
 
-      this.deliveryTypes = resolvedData.deliveryTypes;
-      this.listCities = resolvedData.cities;
-      this.listRegions = resolvedData.regions;
-      this.listPostalRegions = resolvedData.regions;
-      this.areaTypes = resolvedData.areaTypes;
-      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+      // Catálogos: programData (PDAM)
+      this.centerTypes = programData.centerTypes;
+      this.organizationTypes = programData.organizationTypes;
+      this.kitchenTypes = programData.kitchenTypes;
+      this.groupTypes = programData.groupTypes;
+      this.sponsorType = programData.sponsorTypes;
+      this.deliveryTypes = programData.deliveryTypes;
+      this.availableDaysOfWeek = (programData.allowedOperatingDays as DayOfWeekResponse[]) || null;
 
-      // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = (resolvedData.allowedOperatingDays as DayOfWeekResponse[]) || null;
-
-      // Usar la sitio del resolver
-      // Use site from resolver
-      this.onSetForm(resolvedData.site);
+      // Sitio desde commonData (initialDataSitesCommonEditResolver)
+      this.onSetForm(commonData.site);
 
       this._changeDetectorRef.markForCheck();
     }
 
-    // Obtener datos de la agencia para determinar campos visibles
-    this._agencyService.agency$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
-      if (!isNullOrUndefinedEmptyStringNullArray(result)) {
-        this.agency = result.body;
-
-        // Configurar validaciones
-        this.updateValidations();
-        this.updatePersonInChargeValidations();
-      }
-    });
+    if (this.agency) {
+      this.updateValidations();
+      this.updatePersonInChargeValidations();
+    }
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -595,6 +593,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     });
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private setupFormListeners(): void {
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
@@ -614,9 +615,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         this._changeDetectorRef.markForCheck();
       });
 
-    // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
+    // Listener para cambios en groupType que afectan siteLocation, kitchenType y deliveryTypes
     this.headerConfig.formGroup.get('groupType')?.valueChanges.subscribe((groupType) => {
-      this.updateDistributionTypeValidation();
       this.getSiteLocationByGroupType(groupType);
       this.loadDeliveryTypesByGroupType(groupType);
 
@@ -777,6 +777,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     this.timeOptions = generateTimeOptions();
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Otras funciones públicas
+  // -----------------------------------------------------------------------------------------------------
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    * NOTA: Este método también se usa para operatingEndTime, por lo que NO se comenta
@@ -820,46 +823,35 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     return timeStringToDate(timeString);
   }
 
-  // Manejar cambio de non-profit para programa PDAM
+  /** Muestra el diálogo de elegibilidad CFR cuando el usuario selecciona "No" en sin fines de lucro. */
   nonProfitChange(event?: any): void {
-    // Obtener el valor directamente del evento si está disponible
-    // El evento contiene el booleanValue (true para "Sí", false para "No")
     const nonProfitValue = event?.value !== undefined ? event.value : this.headerConfig.formGroup.value.nonProfit;
 
-    // Solo mostrar el diálogo cuando se selecciona explícitamente "No" (false)
-    // No mostrar si es null, undefined o true
     if (nonProfitValue !== false) {
       return;
     }
 
-    const programs = this.agency?.programs || [];
-    const selectedProgram = programs.find((p) => p.id === PROGRAM_IDS.PDAM);
-
-    // Verificar elegibilidad para PDAM cuando no es sin fines de lucro
-    if (selectedProgram && isPDAMProgram(selectedProgram)) {
-      this._dialog.open(CfrInfoDialogComponent, {
-        data: {
-          title: this._translocoService.translate('sites.edit.pdam-not-eligible.title'),
-          message: this._translocoService.translate('sites.edit.pdam-not-eligible.message'),
-          cfrLink: {
-            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
-            text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text'),
-          },
+    this._dialog.open(CfrInfoDialogComponent, {
+      data: {
+        title: this._translocoService.translate('sites.edit.pdam-not-eligible.title'),
+        message: this._translocoService.translate('sites.edit.pdam-not-eligible.message'),
+        cfrLink: {
+          url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
+          text: this._translocoService.translate('sites.edit.pdam-not-eligible.cfr-link-text'),
         },
-        disableClose: false,
-        panelClass: ['mat-dialog-container', 'dialog-responsive'],
-      });
-    }
+      },
+      disableClose: false,
+      panelClass: ['mat-dialog-container', 'dialog-responsive'],
+    });
   }
 
+  /** Completa el Subject de desuscripción para liberar suscripciones. */
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  /**
-   * Actualiza las validaciones de personInCharge para PDAM
-   */
+  /** Actualiza las validaciones requeridas del grupo personInCharge. */
   private updatePersonInChargeValidations(): void {
     const personInChargeGroup = this.headerConfig.formGroup.get('personInCharge') as FormGroup;
 
@@ -867,7 +859,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       return;
     }
 
-    // Restaurar validaciones requeridas para PDAM
+    // Restaurar validaciones requeridas
     const firstNameControl = personInChargeGroup.get('firstName');
     const fatherLastNameControl = personInChargeGroup.get('fatherLastName');
     const sitePhoneControl = personInChargeGroup.get('sitePhone');
@@ -896,7 +888,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   private updateValidations(): void {
-    // Restaurar validaciones requeridas para PDAM
+    // Restaurar validaciones requeridas
     this.restoreRequiredValidations();
   }
 
@@ -924,7 +916,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       }
     });
 
-    // educationLevels es requerido para PDAM
+    // educationLevels es requerido
     const educationLevelsControl = this.headerConfig.formGroup.get('educationLevels');
     if (educationLevelsControl) {
       educationLevelsControl.setValidators([Validators.required]);
@@ -936,6 +928,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     this._changeDetectorRef.detectChanges();
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones On (componentes genéricos)
+  // -----------------------------------------------------------------------------------------------------
   onSetForm(param: Site): void {
     this.param = param;
     this.servicesTableConfig.operatingDaysOfWeek = param.operatingDaysOfWeek ?? [];
@@ -958,24 +953,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const residentialType = param.residentialType;
     const operatingPolicy = param.operatingPolicy;
     const educationLevels = param.educationLevels || [];
-    // Buscar el tipo de organización en el array para asegurar coincidencia correcta con compareById
-    // Find organization type in array to ensure correct matching with compareById and get all properties including requiresCenterType
-    let organizationType = param.organizationType;
-    if (organizationType) {
-      const organizationTypeFromArray = this.organizationTypes.find((option) => option.id === organizationType.id);
-      if (organizationTypeFromArray) {
-        organizationType = organizationTypeFromArray;
-      }
-    }
-    // Buscar el tipo de centro en el array para asegurar coincidencia correcta con compareById
-    // Find center type in array to ensure correct matching with compareById
-    let centerType = param.centerType;
-    if (centerType) {
-      const centerTypeFromArray = this.centerTypes.find((option) => option.id === centerType.id);
-      if (centerTypeFromArray) {
-        centerType = centerTypeFromArray;
-      }
-    }
+    const organizationType = param.organizationType;
+    const centerType = param.centerType;
     const areaType = param.areaType;
     const locationType = param.locationType;
 
@@ -1068,13 +1047,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Ensure areaType field remains disabled
     this.headerConfig.formGroup.get('areaType')?.disable();
 
-    // Actualizar validaciones de distributionType basado en groupType
-    this.updateDistributionTypeValidation();
-
     // Inicializar showCenterTypeField basado en el organizationType cargado
     // Esto es necesario porque valueChanges solo se dispara cuando el valor cambia, no cuando se establece con patchValue
-    // Usar FieldVisibilityUtil para mantener consistencia con el listener
-    // Nota: organizationType ya fue buscado en el array organizationTypes arriba para obtener todas las propiedades incluyendo requiresCenterType
     if (organizationType) {
       const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
         this.headerConfig.formGroup,
@@ -1363,7 +1337,6 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
    * @returns Array con la ruta de navegación
    */
   private getTargetRoute(): string[] {
-    // Este componente es específico para PDAM
     return ['sites-pdam'];
   }
 
@@ -1521,27 +1494,15 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     });
   }
 
-  // Método para obtener tipos de cocina según el tipo de grupo seleccionado
-  // Get kitchen types by group type
+  /** Obtiene los tipos de cocina según el tipo de grupo; el servidor devuelve lista vacía si no aplica. */
   getKitchenTypesByGroupType(groupType: OptionSelection): void {
     if (!groupType) {
       this.kitchenTypes = [];
+      this.headerConfig.formGroup.patchValue({ kitchenType: null });
       this.isKitchenTypeDisabled = false;
       return;
     }
 
-    // Verificar si es "Comedor" - solo cargar tipos de cocina para Comedor
-    const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-
-    if (!isComedor) {
-      // Si no es "Comedor", limpiar el valor y las opciones
-      this.kitchenTypes = [];
-      this.headerConfig.formGroup.patchValue({ kitchenType: null });
-      this._changeDetectorRef.detectChanges();
-      return;
-    }
-
-    // Para "Comedor", usar la API para obtener los tipos de cocina válidos
     this.isKitchenTypeDisabled = false;
 
     const queryParameters: QueryParameters = {
@@ -1551,36 +1512,25 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     this._kitchenTypeService.getKitchenTypesByGroupType(queryParameters).subscribe({
       next: (response) => {
-        if (response) {
-          this.kitchenTypes = response.body;
+        this.kitchenTypes = response?.body ?? [];
 
-          // Para "Comedor", limpiar la selección para que el usuario elija
+        if (this.kitchenTypes.length === 0) {
           this.headerConfig.formGroup.patchValue({ kitchenType: null });
-
-          this._changeDetectorRef.detectChanges();
+        } else if (this.kitchenTypes.length === 1) {
+          this.headerConfig.formGroup.patchValue({ kitchenType: this.kitchenTypes[0] });
+        } else {
+          this.headerConfig.formGroup.patchValue({ kitchenType: null });
         }
+
+        this._changeDetectorRef.detectChanges();
       },
       error: (error) => {
         console.error('Error al cargar los tipos de cocina:', error);
+        this.kitchenTypes = [];
+        this.headerConfig.formGroup.patchValue({ kitchenType: null });
+        this._changeDetectorRef.detectChanges();
       },
     });
-  }
-
-  /**
-   * Verifica si se debe mostrar el campo de Tipo de Cocina
-   * Solo se muestra cuando:
-   * - El programa es PDAM
-   * - Y el Tipo de Grupo seleccionado es "Comedor" (Dining Room)
-   */
-  get shouldShowKitchenTypeField(): boolean {
-    // Verificar si el Tipo de Grupo seleccionado es "Comedor"
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-    if (groupType) {
-      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
-      return isComedor;
-    }
-
-    return false;
   }
 
   /**
@@ -1805,63 +1755,6 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         });
       }
     });
-  }
-
-  /**
-   * Verifica si debe mostrar el campo Tipo de Distribución usando FieldVisibilityService
-   */
-  shouldShowDistributionType(): boolean {
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-
-    // Obtener el tipo de grupo como string para el servicio
-    const groupTypeKey = this.getGroupTypeKey(groupType);
-
-    return this._fieldVisibilityService.shouldShowField('distributionType', groupTypeKey);
-  }
-
-  /**
-   * Actualiza las validaciones condicionales usando FieldVisibilityService
-   */
-  private updateDistributionTypeValidation(): void {
-    const groupType = this.headerConfig.formGroup.get('groupType')?.value;
-    const distributionTypeControl = this.headerConfig.formGroup.get('distributionType');
-
-    // Obtener el tipo de grupo como string para el servicio
-    const groupTypeKey = this.getGroupTypeKey(groupType);
-
-    const isRequired = this._fieldVisibilityService.isFieldRequired('distributionType', groupTypeKey);
-
-    if (isRequired) {
-      // Requerir distribución type
-      distributionTypeControl?.setValidators([Validators.required]);
-      distributionTypeControl?.enable();
-    } else {
-      // No requerir para otros tipos y deshabilitar el campo
-      distributionTypeControl?.clearValidators();
-      distributionTypeControl?.setValue(null); // Limpiar el valor
-      distributionTypeControl?.disable();
-      distributionTypeControl?.markAsUntouched(); // Limpiar estado de validación
-    }
-
-    distributionTypeControl?.updateValueAndValidity();
-
-    // Actualizar el estado del botón después de cambiar las validaciones
-    this.headerConfig.submitDisabled = this.headerConfig.formGroup.invalid;
-    this._changeDetectorRef.detectChanges();
-  }
-
-  /**
-   * Actualiza la visibilidad del campo Tipo de Centro y Tipo de Institución Residencial basado en el tipo de organización seleccionado
-   */
-
-  /**
-   * Convierte el objeto groupType a la clave usada en la configuración
-   */
-  private getGroupTypeKey(groupType: any): string {
-    if (!groupType) return '';
-
-    // Usar directamente el nombre del groupType
-    return groupType.name || groupType.nameEN || '';
   }
 
   // Método para obtener Site Location según el tipo de grupo seleccionado
@@ -2262,18 +2155,5 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       numberOfChildren: service.numberOfChildren,
       serviceSlots: service.serviceSlots ?? [],
     }));
-  }
-
-
-
-  get shouldShowProvisionFields(): boolean {
-    const operatingPolicy = this.headerConfig.formGroup.get('operatingPolicy')?.value;
-
-    // Verificar si la política seleccionada es 3, 4 o 5
-    if (operatingPolicy && operatingPolicy.id) {
-      return operatingPolicy.id === 3 || operatingPolicy.id === 4 || operatingPolicy.id === 5;
-    }
-
-    return false;
   }
 }
