@@ -493,9 +493,8 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
 
       this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
 
-      // Catálogos
+      // Catálogos (kitchen types se cargan por getKitchenTypesByGroupType al elegir tipo de grupo)
       this.organizationTypes = resolvedData.organizationTypes;
-      this.kitchenTypes = resolvedData.kitchenTypes;
       this.groupTypes = resolvedData.groupTypes;
 
       this.deliveryTypes = resolvedData.deliveryTypes;

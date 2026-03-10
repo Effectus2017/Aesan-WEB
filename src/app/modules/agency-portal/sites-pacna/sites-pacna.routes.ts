@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PacnaProgramGuard } from 'app/core/auth/guards/pacna-program.guard';
 import { SitesPacnaComponent } from './sites-pacna.component';
-import { initialDataSitesPacnaListResolver, initialDataSitesPacnaProgramResolver, initialDataSitesPacnaProgramEditResolver } from './sites-pacna.resolvers';
+import { initialDataSitesPacnaListResolver, initialDataSitesPacnaProgramAddResolver, initialDataSitesPacnaProgramEditResolver } from './sites-pacna.resolvers';
 import { initialDataSiteCalendarResolver, initialDataSitesAddSchoolResolver } from '../sites-pdam/sites.resolvers';
 import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
 import { initialDataSitesPacnaCenterAddResolver, initialDataSitesPacnaCenterEditResolver } from './sites-pacna.resolvers';
@@ -29,7 +29,7 @@ export default [
         data: { permission: 'site.create' },
         resolve: {
           commonData: initialDataSitesCommonAddResolver,
-          programData: initialDataSitesPacnaProgramResolver,
+          programData: initialDataSitesPacnaProgramAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },
@@ -41,7 +41,7 @@ export default [
         data: { permission: 'site.create' },
         resolve: {
           commonData: initialDataSitesPacnaCenterAddResolver,
-          programData: initialDataSitesPacnaProgramResolver,
+          programData: initialDataSitesPacnaProgramAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },
@@ -64,7 +64,7 @@ export default [
         data: { permission: 'site.create' },
         resolve: {
           commonData: initialDataSitesCommonAddResolver,
-          programData: initialDataSitesPacnaProgramResolver,
+          programData: initialDataSitesPacnaProgramAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },

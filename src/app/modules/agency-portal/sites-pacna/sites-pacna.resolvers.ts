@@ -62,9 +62,9 @@ export const initialDataSitesPacnaListResolver: ResolveFn<any> = (route: Activat
   );
 };
 
-// Resolver específico para PACNA (add/edit)
-// Resolver for PACNA program (add/edit)
-export const initialDataSitesPacnaProgramResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+// Resolver específico para PACNA (add)
+// Resolver for PACNA program (add)
+export const initialDataSitesPacnaProgramAddResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
   // Center type service
   // Servicio de tipos de centro
   const centerTypeService = inject(CenterTypeService);
@@ -118,30 +118,17 @@ export const initialDataSitesPacnaProgramResolver: ResolveFn<any> = (route: Acti
   );
 };
 
-// Resolver específico para PACNA Edit
+// Resolver específico para PACNA Edit (con kitchen types para que compareById funcione en formularios de edición)
 // Resolver for PACNA program edit
 export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  // Center type service
-  // Servicio de tipos de centro
   const centerTypeService = inject(CenterTypeService);
-  // Delivery type service
-  // Servicio de tipos de entrega
   const deliveryTypeService = inject(DeliveryTypeService);
-  // Sponsor type service
-  // Servicio de tipos de patrocinador
   const sponsorTypeService = inject(SponsorTypeService);
-  // Group type service
-  // Servicio de tipos de grupo
   const groupTypeService = inject(GroupTypeService);
-  // Organization type service
-  // Servicio de tipos de organización
   const organizationTypeService = inject(OrganizationTypeService);
-  // Site calendar service
-  // Servicio de calendario de sitios
   const siteCalendarService = inject(SiteCalendarService);
-  // Service type service
-  // Servicio de tipos de servicio
   const serviceTypeService = inject(ServiceTypeService);
+  const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
@@ -151,6 +138,7 @@ export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: 
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
     serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
+    kitchenTypeService.getKitchenTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
   ]).pipe(
     map(
       ([
@@ -161,6 +149,7 @@ export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: 
         organizationTypes,
         allowedOperatingDays,
         serviceTypes,
+        kitchenTypes,
       ]) => ({
         centerTypes: centerTypes.body,
         deliveryTypes: deliveryTypes.body,
@@ -169,6 +158,7 @@ export const initialDataSitesPacnaProgramEditResolver: ResolveFn<any> = (route: 
         organizationTypes: organizationTypes.body,
         allowedOperatingDays: allowedOperatingDays.body,
         serviceTypes: serviceTypes.body,
+        kitchenTypes: kitchenTypes.body,
       })
     )
   );

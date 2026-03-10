@@ -116,7 +116,14 @@ import { PROGRAM_IDS } from 'app/shared/const';
 ],
 })
 export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
@@ -133,6 +140,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   private _dialog = inject(MatDialog);
   private _fieldVisibilityService = inject(FieldVisibilityService);
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   /** Evita que valueChanges dispare recálculo de días al hacer reset() tras guardar exitoso. */
   private _isResettingForm = false;
 
@@ -546,13 +556,20 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.servicesTableConfig;
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
   constructor() {}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
+  /** Inicializa el componente: idioma, opciones de hora, datos de resolvers (agencia, escuela, commonData, programData), catálogos, validaciones y listeners del formulario. */
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
 
     // Generar opciones de hora
-    this.initializeTimeOptions();
+    this.timeOptions = generateTimeOptions();
 
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
@@ -560,72 +577,56 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // Agencia desde el resolver general del portal (initialDataAgencyPortalResolver)
+    const initialData = this._route.parent?.snapshot.data['initialData'];
     // schoolId y schoolName desde el resolver (schoolData)
-    const schoolData = this._route.snapshot.data['schoolData'] as { schoolId: number | null; schoolName: string | null } | undefined;
-    if (schoolData) {
-      this.schoolId = schoolData.schoolId;
-      this.schoolName = schoolData.schoolName;
-    }
-
-    // Combinar datos de resolvers comunes y específicos del programa
+    const schoolData = this._route.snapshot.data['schoolData'];
+    // Common data from the resolver (commonData)
     const commonData = this._route.snapshot.data['commonData'];
+    // Program data from the resolver (programData)
     const programData = this._route.snapshot.data['programData'];
-    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
-    if (resolvedData) {
-      // Yes No Options
-      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      // Estatus Options
-      this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.typeOfResidential = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
-      this.typeOfApplicant = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
-      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.publicAllianceContractOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
-      this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      this.distributionType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
-      this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
+    this.agency = initialData?.agency;
+    this.schoolId = schoolData?.schoolId ?? null;
+    this.schoolName = schoolData?.schoolName ?? null;
 
-      this.siteLocations = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
+    // Opciones desde commonData
+    this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    this.isActiveOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+    this.typeOfResidential = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+    this.typeOfApplicant = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+    this.community = commonData.options.filter((option: OptionSelection) => option.optionKey === 'community');
+    this.relationshipTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+    this.homeTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+    this.participantTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+    this.publicAllianceContractOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
+    this.walkers = commonData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
+    this.distributionType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+    this.siteType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
+    this.experience = commonData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
+    this.siteLocations = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
 
-      // Catálogos
-      this.centerTypes = resolvedData.centerTypes;
-      this.organizationTypes = resolvedData.organizationTypes;
-      this.educationLevels = resolvedData.educationLevels;
-      this.kitchenTypes = resolvedData.kitchenTypes;
-      this.groupTypes = resolvedData.groupTypes;
-      this.sponsorType = resolvedData.sponsorTypes;
+    // Catálogos: commonData
+    this.listCities = commonData.cities;
+    this.listRegions = commonData.regions;
+    this.listPostalRegions = commonData.regions;
+    this.areaTypes = commonData.areaTypes;
+    this.locationTypes = commonData.areaTypes;
+    this.organizationTypes = commonData.organizationTypes;
+    this.educationLevels = commonData.educationLevels;
+    this.kitchenTypes = commonData.kitchenTypes;
 
+    // Catálogos: programData (PACNA)
+    this.centerTypes = programData.centerTypes;
+    this.groupTypes = programData.groupTypes;
+    this.sponsorType = programData.sponsorTypes;
+    this.deliveryTypes = programData.deliveryTypes;
+    this.availableDaysOfWeek = programData.allowedOperatingDays;
 
-      this.deliveryTypes = resolvedData.deliveryTypes;
-      this.listCities = resolvedData.cities;
-      this.listRegions = resolvedData.regions;
-      this.areaTypes = resolvedData.areaTypes;
-      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+    this._changeDetectorRef.markForCheck();
 
-      // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
-
-      // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
-
-      this._changeDetectorRef.markForCheck();
-    }
-
-    // Obtener datos de la agencia desde el resolver padre
-    // Los datos ya están disponibles desde initialDataAgencyPortalResolver
-    const parentData = this._route.parent?.snapshot.data['initialData'];
-    const agencyFromResolver = parentData?.agency;
-
-    if (agencyFromResolver) {
-      this.agency = agencyFromResolver;
-
-      // Configurar validaciones y listeners
-      this.updateValidations();
-      this.setupGroupTypeListener();
-    }
+    this.updateValidations();
+    this.setupGroupTypeListener();
 
     // Transloco (el orden de community/experience viene ya del resolver vía SP 101_)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -649,6 +650,14 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       });
   }
 
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private setupFormListeners(): void {
     // Escuchar cambios en las fechas para calcular automáticamente los días
     this.headerConfig.formGroup.get('operatingFromDate')?.valueChanges.subscribe(() => {
@@ -726,13 +735,9 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     }
   }
 
-  /**
-   * Genera todas las opciones de hora (cada 30 minutos)
-   */
-  private initializeTimeOptions(): void {
-    this.timeOptions = generateTimeOptions();
-  }
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Otras funciones públicas
+  // -----------------------------------------------------------------------------------------------------
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
    * NOTA: Este método también se usa para operatingEndTime, por lo que NO se comenta
@@ -760,12 +765,6 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
   timeStringToDateWrapper(timeString: string): Date | null {
     return timeStringToDate(timeString);
   }
-
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
-  }
-
 
   private setupGroupTypeListener(): void {
     // Listener para cambios en groupType que afectan distributionType, siteLocation, kitchenType y deliveryTypes
@@ -914,8 +913,10 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     }
   }
 
-
-  // Método para enviar el formulario
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones On (componentes genéricos)
+  // -----------------------------------------------------------------------------------------------------
+  /** Envía el formulario de alta de sitio. */
   onSubmit() {
     // Protección contra doble clic: si ya está cargando, ignorar
     if (this.isLoading) return;

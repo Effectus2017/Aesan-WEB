@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PdamProgramGuard } from 'app/core/auth/guards/pdam-program.guard';
 import { SitesComponent } from './sites.component';
-import { initialDataSiteCalendarResolver, initialDataSitesPdamProgramResolver, initialDataSitesAddSchoolResolver } from './sites.resolvers';
+import { initialDataSiteCalendarResolver, initialDataSitesPdamProgramAddResolver, initialDataSitesPdamProgramEditResolver, initialDataSitesAddSchoolResolver } from './sites.resolvers';
 import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
 
 
@@ -18,7 +18,7 @@ export default [
         data: { permission: 'site.create' },
         resolve: {
           commonData: initialDataSitesCommonAddResolver,
-          programData: initialDataSitesPdamProgramResolver,
+          programData: initialDataSitesPdamProgramAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },
@@ -30,7 +30,7 @@ export default [
         runGuardsResolvers: 'always',
         resolve: {
           commonData: initialDataSitesCommonEditResolver,
-          programData: initialDataSitesPdamProgramResolver,
+          programData: initialDataSitesPdamProgramEditResolver,
         },
       },
       {

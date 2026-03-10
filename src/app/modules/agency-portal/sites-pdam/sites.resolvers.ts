@@ -14,6 +14,7 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { ServiceTypeService } from 'app/shared/services/service-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { PROGRAM_IDS } from 'app/shared/const';
+import { Observable } from 'rxjs';
 
 // Resolver para el calendario del sitio
 // Resolver for site calendar
@@ -94,32 +95,59 @@ export const initialDataSitesAddSchoolResolver: ResolveFn<{ schoolId: number | n
   );
 };
 
-// Resolver específico para PDAM (add/edit)
-// Resolver for PDAM program (add/edit)
-export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  // Center type service
-  // Servicio de tipos de centro
+/** Carga datos de programa PDAM (sin kitchen types; se cargan por group type en el componente). */
+function resolvePdamProgramData(): Observable<any> {
   const centerTypeService = inject(CenterTypeService);
-  // Delivery type service
-  // Servicio de tipos de entrega
   const deliveryTypeService = inject(DeliveryTypeService);
-  // Sponsor type service
-  // Servicio de tipos de patrocinador
   const sponsorTypeService = inject(SponsorTypeService);
-  // Group type service
-  // Servicio de tipos de grupo
   const groupTypeService = inject(GroupTypeService);
-  // Organization type service
-  // Servicio de tipos de organización
   const organizationTypeService = inject(OrganizationTypeService);
-  // Site calendar service
-  // Servicio de calendario de sitios
   const siteCalendarService = inject(SiteCalendarService);
-  // Service type service
-  // Servicio de tipos de servicio
   const serviceTypeService = inject(ServiceTypeService);
-  // Kitchen type service
-  // Servicio de tipos de cocina
+
+  return forkJoin([
+    centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    sponsorTypeService.getSponsorTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PDAM }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+  ]).pipe(
+    map(
+      ([
+        centerTypes,
+        deliveryTypes,
+        sponsorTypes,
+        groupTypes,
+        organizationTypes,
+        allowedOperatingDays,
+        serviceTypes,
+      ]) => ({
+        centerTypes: centerTypes.body,
+        deliveryTypes: deliveryTypes.body,
+        sponsorTypes: sponsorTypes.body,
+        groupTypes: groupTypes.body,
+        organizationTypes: organizationTypes.body,
+        allowedOperatingDays: allowedOperatingDays.body,
+        serviceTypes: serviceTypes.body,
+      })
+    )
+  );
+}
+
+/** Resolver de datos de programa PDAM para alta de sitio (sin kitchen types; se cargan por group type). */
+export const initialDataSitesPdamProgramAddResolver: ResolveFn<any> = () => resolvePdamProgramData();
+
+/** Carga datos de programa PDAM para edición, incluyendo kitchen types para que compareById funcione en el formulario. */
+function resolvePdamProgramDataEdit(): Observable<any> {
+  const centerTypeService = inject(CenterTypeService);
+  const deliveryTypeService = inject(DeliveryTypeService);
+  const sponsorTypeService = inject(SponsorTypeService);
+  const groupTypeService = inject(GroupTypeService);
+  const organizationTypeService = inject(OrganizationTypeService);
+  const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
   const kitchenTypeService = inject(KitchenTypeService);
 
   return forkJoin([
@@ -154,4 +182,7 @@ export const initialDataSitesPdamProgramResolver: ResolveFn<any> = (route: Activ
       })
     )
   );
-};
+}
+
+/** Resolver de datos de programa PDAM para edición de sitio (con kitchen types para el combo). */
+export const initialDataSitesPdamProgramEditResolver: ResolveFn<any> = () => resolvePdamProgramDataEdit();

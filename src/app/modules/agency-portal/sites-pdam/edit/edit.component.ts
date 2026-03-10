@@ -52,16 +52,18 @@ import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
-import {
-  SiteChildGroupServiceSlotResponse
-} from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
+import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { SiteChildGroupServiceSlotRequest } from 'app/shared/models/request/SiteChildGroupServiceSlotRequest';
-import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
+import {
+  AddServiceByGroupModalComponent,
+  ServiceByGroupDialogData,
+  ServiceByGroupDialogResult,
+} from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { AreaType } from 'app/shared/models/catalog/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
@@ -119,8 +121,8 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     LatitudeDirective,
     LongitudeDirective,
     DynamicGridDirective,
-    MatProgressSpinnerModule
-],
+    MatProgressSpinnerModule,
+  ],
 })
 export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
   // -----------------------------------------------------------------------------------------------------
@@ -459,7 +461,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     pageSize: 10,
     fullScreen: false,
     viewMode: 'cards',
-    operatingDaysOfWeek: []
+    operatingDaysOfWeek: [],
   };
 
   // Lista de servicios por grupos (en memoria hasta el envío)
@@ -535,44 +537,44 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     this.agencyId = this._authService.getAgencyId();
 
     // Agencia desde el resolver general del portal (initialDataAgencyPortalResolver)
-    const initialData = this._route.pathFromRoot.find((r) => r.snapshot.data['initialData'])?.snapshot.data['initialData'] as { agency?: AgencyResponse } | undefined;
-    this.agency = initialData?.agency;
-
+    const initialData = this._route.snapshot.data['initialData'];
+    // Common data from the resolver (commonData)
     const commonData = this._route.snapshot.data['commonData'];
+    // Program data from the resolver (programData)
     const programData = this._route.snapshot.data['programData'];
 
-    if (commonData && programData) {
-      // Opciones desde commonData
-      this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      this.typeOfResidential = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
-      this.typeOfApplicant = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
-      this.isActive = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.siteLocations = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
-      this.distributionType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
+    this.agency = initialData?.agency;
 
-      // Catálogos: commonData
-      this.educationLevels = commonData.educationLevels;
-      this.listCities = commonData.cities;
-      this.listRegions = commonData.regions;
-      this.listPostalRegions = commonData.regions;
-      this.areaTypes = commonData.areaTypes;
-      this.locationTypes = commonData.areaTypes;
-      this.operatingPolicies = this.filterOperatingPolicies(commonData.operatingPolicies, this.agency?.isRecurrent || false);
+    // Opciones desde commonData
+    this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    this.typeOfResidential = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfResidential');
+    this.typeOfApplicant = commonData.options.filter((option: OptionSelection) => option.optionKey === 'typeOfApplicant');
+    this.isActive = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+    this.siteLocations = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteLocation');
+    this.distributionType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'distributionType');
 
-      // Catálogos: programData (PDAM)
-      this.centerTypes = programData.centerTypes;
-      this.organizationTypes = programData.organizationTypes;
-      this.kitchenTypes = programData.kitchenTypes;
-      this.groupTypes = programData.groupTypes;
-      this.sponsorType = programData.sponsorTypes;
-      this.deliveryTypes = programData.deliveryTypes;
-      this.availableDaysOfWeek = (programData.allowedOperatingDays as DayOfWeekResponse[]) || null;
+    // Catálogos: commonData
+    this.educationLevels = commonData.educationLevels;
+    this.listCities = commonData.cities;
+    this.listRegions = commonData.regions;
+    this.listPostalRegions = commonData.regions;
+    this.areaTypes = commonData.areaTypes;
+    this.locationTypes = commonData.areaTypes;
+    this.operatingPolicies = this.filterOperatingPolicies(commonData.operatingPolicies, this.agency?.isRecurrent || false);
 
-      // Sitio desde commonData (initialDataSitesCommonEditResolver)
-      this.onSetForm(commonData.site);
+    // Catálogos: programData (PDAM) — edit incluye kitchenTypes en el resolver para que compareById funcione
+    this.centerTypes = programData.centerTypes;
+    this.organizationTypes = programData.organizationTypes;
+    this.kitchenTypes = programData.kitchenTypes;
+    this.groupTypes = programData.groupTypes;
+    this.sponsorType = programData.sponsorTypes;
+    this.deliveryTypes = programData.deliveryTypes;
+    this.availableDaysOfWeek = (programData.allowedOperatingDays as DayOfWeekResponse[]) || null;
 
-      this._changeDetectorRef.markForCheck();
-    }
+    // Sitio desde commonData (initialDataSitesCommonEditResolver)
+    this.onSetForm(commonData.site);
+
+    this._changeDetectorRef.markForCheck();
 
     if (this.agency) {
       this.updateValidations();
@@ -607,8 +609,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     });
 
     // Escuchar cambios en los días seleccionados para recalcular los días operativos y actualizar tarjetas Servicios Activos
-    this.headerConfig.formGroup.get('operatingDaysOfWeek')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('operatingDaysOfWeek')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe((value: DayOfWeekResponse[] | null) => {
         DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
         this.servicesTableConfig.operatingDaysOfWeek = value ?? [];
@@ -660,7 +663,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       .get('organizationType')
       ?.valueChanges.pipe(
         skip(1), // Saltar el primer valor (inicialización)
-        takeUntil(this._unsubscribeAll)
+        takeUntil(this._unsubscribeAll),
       )
       .subscribe((organizationType: OrganizationType) => {
         const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(this.headerConfig.formGroup, organizationType, 'centerType', this._changeDetectorRef, (disabled) => {
@@ -674,8 +677,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // No se necesita suscripción a cambios de isActive ya que se gestiona desde el modal
 
     // Listener para cambios en hasDiningRoom
-    this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('hasDiningRoom')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe((hasDiningRoom: boolean) => {
         const capacityControl = this.headerConfig.formGroup.get('diningRoomCapacity');
         if (hasDiningRoom === false) {
@@ -694,15 +698,17 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       });
 
     // Listener para cambios en diningRoomCapacity y generalEnrollment para validar
-    this.headerConfig.formGroup.get('diningRoomCapacity')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('diningRoomCapacity')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
       });
 
-    this.headerConfig.formGroup.get('generalEnrollment')?.valueChanges
-      .pipe(takeUntil(this._unsubscribeAll))
+    this.headerConfig.formGroup
+      .get('generalEnrollment')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => {
         this.validateDiningRoomCapacity();
         this._changeDetectorRef.detectChanges();
@@ -717,10 +723,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Validar horas académicas cuando cambien las horas de funcionamiento
     const operatingStartControl = this.headerConfig.formGroup.get('operatingStartTime');
     const operatingEndControl = this.headerConfig.formGroup.get('operatingEndTime');
-    merge(
-      operatingStartControl?.valueChanges ?? [],
-      operatingEndControl?.valueChanges ?? []
-    )
+    merge(operatingStartControl?.valueChanges ?? [], operatingEndControl?.valueChanges ?? [])
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe(() => this.validateAcademicTimesWithinOperatingHours());
   }
@@ -736,16 +739,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const lastControl = group.get('lastAcademicClassEndTime');
     if (!firstControl || !lastControl) return;
 
-    const firstValid = isTimeWithinOperatingRange(
-      firstControl.value,
-      operatingStartTime,
-      operatingEndTime
-    );
-    const lastValid = isTimeWithinOperatingRange(
-      lastControl.value,
-      operatingStartTime,
-      operatingEndTime
-    );
+    const firstValid = isTimeWithinOperatingRange(firstControl.value, operatingStartTime, operatingEndTime);
+    const lastValid = isTimeWithinOperatingRange(lastControl.value, operatingStartTime, operatingEndTime);
 
     if (firstValid) {
       const err = firstControl.errors;
@@ -1050,21 +1045,15 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Inicializar showCenterTypeField basado en el organizationType cargado
     // Esto es necesario porque valueChanges solo se dispara cuando el valor cambia, no cuando se establece con patchValue
     if (organizationType) {
-      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(
-        this.headerConfig.formGroup,
-        organizationType,
-        'centerType',
-        this._changeDetectorRef,
-        (disabled) => {
-          this.headerConfig.submitDisabled = disabled;
-        }
-      );
+      const result = FieldVisibilityUtil.updateCenterTypeFieldVisibility(this.headerConfig.formGroup, organizationType, 'centerType', this._changeDetectorRef, (disabled) => {
+        this.headerConfig.submitDisabled = disabled;
+      });
       this.showCenterTypeField = result.showCenterTypeField;
     }
 
     // Cargar grupos con serviceSlots desde param.childGroups
     if (param.childGroups && param.childGroups.length > 0) {
-      this.childGroups = param.childGroups.map(group => ({
+      this.childGroups = param.childGroups.map((group) => ({
         id: group.id,
         siteId: this.param.id,
         groupName: group.groupName,
@@ -1239,7 +1228,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     // Validar y sincronizar grupos si hay servicios por grupos
     if (this.servicesByGroups.length > 0) {
       // Validar que todos los servicios tengan groupName
-      const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
+      const servicesWithoutGroup = this.servicesByGroups.filter((s) => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
         this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
         return;
@@ -1285,9 +1274,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
-            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
-            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' || body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' || body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
@@ -1377,18 +1364,15 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result && result.action === 'redirect-to-changes-form') {
-        const changesDialogRef = this._dialog.open(
-          SiteChangesCancellationsModalComponent,
-          {
-            data: {
-              siteId: result.siteId,
-              endOfOperationDate: result.inactiveDate ?? null,
-            } as SiteChangesCancellationsModalData,
-            width: '600px',
-            maxWidth: '90vw',
-            panelClass: ['mat-dialog-container', 'dialog-responsive'],
-          }
-        );
+        const changesDialogRef = this._dialog.open(SiteChangesCancellationsModalComponent, {
+          data: {
+            siteId: result.siteId,
+            endOfOperationDate: result.inactiveDate ?? null,
+          } as SiteChangesCancellationsModalData,
+          width: '600px',
+          maxWidth: '90vw',
+          panelClass: ['mat-dialog-container', 'dialog-responsive'],
+        });
         changesDialogRef.afterClosed().subscribe(() => {
           // Por ahora no se actualiza el formulario ni se llama al backend
         });
@@ -1646,7 +1630,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
             postalRegion: regionToSet, // Usar la región de la lista para que coincida exactamente
             postalZipCode: physicalZipCode,
           },
-          { emitEvent: false }
+          { emitEvent: false },
         ); // emitEvent: false para evitar que se dispare valueChange en postalCity
 
         // Forzar detección de cambios para actualizar la vista
@@ -1659,7 +1643,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
             postalCity: physicalCity,
             postalZipCode: physicalZipCode,
           },
-          { emitEvent: false }
+          { emitEvent: false },
         );
       }
 
@@ -1825,14 +1809,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const enrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const capacityNum = Number(capacity);
     const enrollmentNum = Number(enrollment);
-    return (
-      hasDiningRoom &&
-      capacity != null &&
-      enrollment != null &&
-      !Number.isNaN(capacityNum) &&
-      !Number.isNaN(enrollmentNum) &&
-      capacityNum < enrollmentNum
-    );
+    return hasDiningRoom && capacity != null && enrollment != null && !Number.isNaN(capacityNum) && !Number.isNaN(enrollmentNum) && capacityNum < enrollmentNum;
   }
 
   /**
@@ -1864,10 +1841,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const hasDiningRoom = this.headerConfig.formGroup.get('hasDiningRoom')?.value === true;
     const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
-    const totalChildren = this.servicesByGroups.reduce(
-      (sum, g) => sum + Number(g.numberOfChildren ?? 0),
-      0
-    );
+    const totalChildren = this.servicesByGroups.reduce((sum, g) => sum + Number(g.numberOfChildren ?? 0), 0);
     const maxEnrollment = Number(generalEnrollment);
     if (maxEnrollment != null && !Number.isNaN(maxEnrollment) && totalChildren > maxEnrollment) {
       this._notificationService.showErrorDialog('sites.edit.groups.total-exceeds-enrollment');
@@ -1875,9 +1849,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     }
     if (hasDiningRoom && diningRoomCapacity != null) {
       const capacityNum = Number(diningRoomCapacity);
-      const exceeds = this.servicesByGroups.some(
-        (g) => Number(g.numberOfChildren ?? 0) > capacityNum
-      );
+      const exceeds = this.servicesByGroups.some((g) => Number(g.numberOfChildren ?? 0) > capacityNum);
       if (exceeds) {
         this._notificationService.showErrorDialog('sites.edit.groups.group-exceeds-capacity');
         return false;
@@ -1915,7 +1887,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         yesNoOptions: this.yesNoOptions,
         generalEnrollment: generalEnrollment,
         diningRoomCapacity: diningRoomCapacity,
-        existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        existingGroups: this.servicesByGroups.map((s) => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
         isPDAM: true,
         isPACNA: false,
         isPSAV: false,
@@ -1934,9 +1906,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       if (result) {
         this.servicesCardLoading = true;
         this._changeDetectorRef?.markForCheck();
-        const newId = this.servicesByGroups.length > 0
-          ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1
-          : 1;
+        const newId = this.servicesByGroups.length > 0 ? Math.max(...this.servicesByGroups.map((s) => s.id || 0)) + 1 : 1;
         this.servicesByGroups.push({ ...result, id: newId });
         this.updateServicesTableDataSource();
         this.syncChildGroupsFromServices();
@@ -1962,47 +1932,47 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     }
     const generalEnrollment = this.headerConfig.formGroup.get('generalEnrollment')?.value;
     const diningRoomCapacity = this.headerConfig.formGroup.get('diningRoomCapacity')?.value;
-      const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
-      const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
-      const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
-      const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
-        data: {
-          id: serviceToEdit.id,
-          groupName: serviceToEdit.groupName,
-          numberOfChildren: serviceToEdit.numberOfChildren,
-          serviceSlots: serviceToEdit.serviceSlots ?? [],
-          isEdit: true,
-          yesNoOptions: this.yesNoOptions,
-          generalEnrollment: generalEnrollment,
-          diningRoomCapacity: diningRoomCapacity,
-          existingGroups: this.servicesByGroups.map(s => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
-          isPDAM: true,
-          isPACNA: false,
-          isPSAV: false,
-          operatingStartTime: operatingStartTime,
-          operatingEndTime: operatingEndTime,
-          serviceTypes: programData?.serviceTypes ?? [],
-        } as ServiceByGroupDialogData,
-        width: '90vw',
-        maxWidth: '1200px',
-        height: '90vh',
-        maxHeight: '800px',
-        disableClose: true,
-      });
+    const operatingStartTime = this.headerConfig.formGroup.get('operatingStartTime')?.value;
+    const operatingEndTime = this.headerConfig.formGroup.get('operatingEndTime')?.value;
+    const programData = this._route.snapshot.data['programData'] as { serviceTypes?: unknown[] } | undefined;
+    const dialogRef = this._dialog.open(AddServiceByGroupModalComponent, {
+      data: {
+        id: serviceToEdit.id,
+        groupName: serviceToEdit.groupName,
+        numberOfChildren: serviceToEdit.numberOfChildren,
+        serviceSlots: serviceToEdit.serviceSlots ?? [],
+        isEdit: true,
+        yesNoOptions: this.yesNoOptions,
+        generalEnrollment: generalEnrollment,
+        diningRoomCapacity: diningRoomCapacity,
+        existingGroups: this.servicesByGroups.map((s) => ({ id: s.id, numberOfChildren: s.numberOfChildren })),
+        isPDAM: true,
+        isPACNA: false,
+        isPSAV: false,
+        operatingStartTime: operatingStartTime,
+        operatingEndTime: operatingEndTime,
+        serviceTypes: programData?.serviceTypes ?? [],
+      } as ServiceByGroupDialogData,
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      disableClose: true,
+    });
 
-      dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
-        if (result) {
-          this.servicesCardLoading = true;
-          this._changeDetectorRef?.markForCheck();
-          const index = this.servicesByGroups.findIndex((s) => s.id === id);
-          if (index !== -1) {
-            this.servicesByGroups[index] = { ...result, id };
-            this.updateServicesTableDataSource();
-            this.syncChildGroupsFromServices();
-            this.saveChildGroupsToBackend();
-          }
+    dialogRef.afterClosed().subscribe((result: ServiceByGroupDialogResult) => {
+      if (result) {
+        this.servicesCardLoading = true;
+        this._changeDetectorRef?.markForCheck();
+        const index = this.servicesByGroups.findIndex((s) => s.id === id);
+        if (index !== -1) {
+          this.servicesByGroups[index] = { ...result, id };
+          this.updateServicesTableDataSource();
+          this.syncChildGroupsFromServices();
+          this.saveChildGroupsToBackend();
         }
-      });
+      }
+    });
   }
 
   onTableDelete(event: Event, id: number): void {
@@ -2017,32 +1987,35 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       groupName: serviceToDelete.groupName,
     });
 
-    this._notificationService.showConfirmationDialogWithCallback({
-      message: confirmMessage,
-      icon: {
-        show: true,
-        name: 'heroicons_outline:trash',
-        color: 'warn'
+    this._notificationService.showConfirmationDialogWithCallback(
+      {
+        message: confirmMessage,
+        icon: {
+          show: true,
+          name: 'heroicons_outline:trash',
+          color: 'warn',
+        },
+        actions: {
+          confirm: {
+            label: 'users.list.actions.delete',
+            color: 'warn',
+          },
+        },
       },
-      actions: {
-        confirm: {
-          label: 'users.list.actions.delete',
-          color: 'warn'
+      (result) => {
+        if (result === 'confirmed') {
+          this.servicesCardLoading = true;
+          this._changeDetectorRef?.markForCheck();
+          const index = this.servicesByGroups.findIndex((s) => s.id === id);
+          if (index !== -1) {
+            this.servicesByGroups.splice(index, 1);
+            this.updateServicesTableDataSource();
+            this.syncChildGroupsFromServices();
+            this.saveChildGroupsToBackend();
+          }
         }
-      }
-    }, (result) => {
-      if (result === 'confirmed') {
-        this.servicesCardLoading = true;
-        this._changeDetectorRef?.markForCheck();
-        const index = this.servicesByGroups.findIndex((s) => s.id === id);
-        if (index !== -1) {
-          this.servicesByGroups.splice(index, 1);
-          this.updateServicesTableDataSource();
-          this.syncChildGroupsFromServices();
-          this.saveChildGroupsToBackend();
-        }
-      }
-    });
+      },
+    );
   }
 
   private saveChildGroupsToBackend(): void {
@@ -2060,9 +2033,9 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         isOffered: slot.isOffered,
         fromTime: slot.fromTime ?? (slot as { from?: string }).from ?? undefined,
         toTime: slot.toTime ?? (slot as { to?: string }).to ?? undefined,
-        operatingDates: (slot.operatingDates ?? []).map((od: string | { date?: string }) =>
-          typeof od === 'string' ? od : (od as { date?: string }).date
-        ).filter((d): d is string => typeof d === 'string'),
+        operatingDates: (slot.operatingDates ?? [])
+          .map((od: string | { date?: string }) => (typeof od === 'string' ? od : (od as { date?: string }).date))
+          .filter((d): d is string => typeof d === 'string'),
       })),
     }));
     this._siteService.updateSiteChildGroups(siteId, payload).subscribe({
@@ -2125,9 +2098,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
         let fromVal = s?.from ?? s?.fromTime;
         let toVal = s?.to ?? s?.toTime;
         if ((fromVal == null || toVal == null) && s?.operatingDates?.length) {
-          const firstWithTimes = (s.operatingDates as { from?: string; to?: string; From?: string; To?: string }[]).find(
-            (od) => (od.from ?? od.From) && (od.to ?? od.To)
-          );
+          const firstWithTimes = (s.operatingDates as { from?: string; to?: string; From?: string; To?: string }[]).find((od) => (od.from ?? od.From) && (od.to ?? od.To));
           if (firstWithTimes) {
             fromVal = fromVal ?? firstWithTimes.from ?? (firstWithTimes as { From?: string }).From;
             toVal = toVal ?? firstWithTimes.to ?? (firstWithTimes as { To?: string }).To;
@@ -2147,7 +2118,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   private syncChildGroupsFromServices(): void {
-    this.childGroups = this.servicesByGroups.map(service => ({
+    this.childGroups = this.servicesByGroups.map((service) => ({
       id: service.id,
       siteId: this.param?.id || 0,
       groupName: service.groupName,
