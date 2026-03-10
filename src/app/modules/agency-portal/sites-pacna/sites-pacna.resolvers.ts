@@ -289,3 +289,109 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
     }))
   );
 };
+
+// Request parameters para PACNA hogares (mismo que centros)
+const getHomeRequestParameters = (): QueryParameters => ({
+  take: 25,
+  skip: 0,
+  alls: true,
+  isList: true,
+});
+
+// Resolver común para la creación de un sitio PACNA Hogar (solo datos usados: options, cities, regions, areaTypes)
+export const initialDataSitesPacnaHomeAddResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const geoService = inject(GeoService);
+  const optionSelectionService = inject(OptionSelectionService);
+  const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
+
+  const requestParameters = getHomeRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
+
+  return forkJoin([
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey:
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract,isDayCareHome',
+      isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
+    }),
+    geoService.getCitiesFromDb(requestParameters),
+    geoService.getRegionsFromDb(requestParameters),
+    areaTypeService.getAllAreaTypesFromDb(requestParameters),
+  ]).pipe(
+    map(([options, cities, regions, areaTypes]) => ({
+      options: options.body,
+      cities: cities.body,
+      regions: regions.body,
+      areaTypes: areaTypes.body,
+    }))
+  );
+};
+
+// Resolver común para la edición de un sitio PACNA Hogar (solo datos usados: site, options, cities, regions, areaTypes)
+export const initialDataSitesPacnaHomeEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const id = Number(route.paramMap.get('id'));
+  const siteService = inject(SiteService);
+  const geoService = inject(GeoService);
+  const optionSelectionService = inject(OptionSelectionService);
+  const areaTypeService = inject(AreaTypeService);
+  const translocoService = inject(TranslocoService);
+
+  const requestParameters = getHomeRequestParameters();
+  const language = translocoService.getActiveLang() ?? 'es';
+
+  return forkJoin([
+    siteService.getSiteById({ id }),
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey:
+        'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
+      isList: true,
+      sortByNameKeys: 'community,experience',
+      language,
+    }),
+    geoService.getCitiesFromDb(requestParameters),
+    geoService.getRegionsFromDb(requestParameters),
+    areaTypeService.getAllAreaTypesFromDb(requestParameters),
+  ]).pipe(
+    map(([site, options, cities, regions, areaTypes]) => ({
+      site: site.body,
+      options: options.body,
+      cities: cities.body,
+      regions: regions.body,
+      areaTypes: areaTypes.body,
+    }))
+  );
+};
+
+// Resolver de programa PACNA solo para Hogares (add): solo allowedOperatingDays y serviceTypes
+export const initialDataSitesPacnaProgramHomeAddResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
+
+  return forkJoin([
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
+  ]).pipe(
+    map(([allowedOperatingDays, serviceTypes]) => ({
+      allowedOperatingDays: allowedOperatingDays.body,
+      serviceTypes: serviceTypes.body,
+    }))
+  );
+};
+
+// Resolver de programa PACNA solo para Hogares (edit): solo allowedOperatingDays y serviceTypes
+export const initialDataSitesPacnaProgramHomeEditResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const siteCalendarService = inject(SiteCalendarService);
+  const serviceTypeService = inject(ServiceTypeService);
+
+  return forkJoin([
+    siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
+    serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
+  ]).pipe(
+    map(([allowedOperatingDays, serviceTypes]) => ({
+      allowedOperatingDays: allowedOperatingDays.body,
+      serviceTypes: serviceTypes.body,
+    }))
+  );
+};

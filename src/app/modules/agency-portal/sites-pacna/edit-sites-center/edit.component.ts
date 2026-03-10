@@ -37,7 +37,7 @@ import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
 import { SponsorType } from 'app/shared/models/catalog/SponsorType';
 import { GroupType } from 'app/shared/models/catalog/GroupType';
 import { KitchenType } from 'app/shared/models/catalog/KitchenType';
-import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
 import {
   compareById,
   isNullOrUndefinedEmptyStringNullArray,
@@ -1341,7 +1341,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         } else if (err?.status === 400 && body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' && body?.message) {
           this._notificationService.showError(body.message);
         } else {
-          this._notificationService.showErrorDialog();
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },

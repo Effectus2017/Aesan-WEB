@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup, AbstractControl } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder, FormGroup } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -27,10 +27,8 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  dateToMinutes,
   compareByTime,
   TimeOption
 } from 'app/shared/utils';
@@ -40,7 +38,6 @@ import { Region } from 'app/shared/models/location/Region';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SiteRequest } from 'app/shared/models/request/SiteRequest';
-import { SiteServiceRequest } from 'app/shared/models/request/SiteServiceRequest';
 import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupRequest';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatMenuModule } from '@angular/material/menu';
@@ -51,7 +48,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/catalog/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -65,13 +62,11 @@ import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zi
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
-import { validateAndCleanSiteService } from 'app/shared/utils/site-service-validator';
 import { SiteStatusModalComponent, SiteStatusModalData } from 'app/shared/components/site-status-modal/site-status-modal.component';
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
-import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 import {
   SiteChildGroupServiceSlotResponse,
   ServiceSlotOperatingDate
@@ -108,7 +103,14 @@ import {
 ],
 })
 export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
+  private _unsubscribeAll = new Subject<any>();
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
@@ -124,6 +126,9 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   private _fieldVisibilityService = inject(FieldVisibilityService);
   private _fuseConfirmationService = inject(FuseConfirmationService);
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   // catálogos
   listCities: City[] = [];
   listRegions: Region[] = [];
@@ -355,8 +360,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   agencyId: number = 0;
   agency: AgencyResponse | null = null;
 
-  // Propiedad para controlar visibilidad cuando es Day Care Home
-  isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
   showDifferentGroupsFields: boolean = false;
 
@@ -402,117 +405,79 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
   // Configuración de tabla requerida por OnGenericTableHandler
   tableConfig: GenericTableConfig = this.servicesTableConfig;
 
-
-  /**
-   * Determina si se deben mostrar campos adicionales para diferentes grupos
-   */
-  shouldShowDifferentGroupsFields(): boolean {
-    return true; // Tabla siempre habilitada
-  }
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
   constructor() {}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Getters
+  // -----------------------------------------------------------------------------------------------------
+  /** Indica si se deben mostrar campos adicionales para diferentes grupos (tabla siempre habilitada). */
+  shouldShowDifferentGroupsFields(): boolean {
+    return true;
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
+  /** Inicializa el componente: idioma, opciones de hora, datos de resolvers (agencia, escuela, commonData, programData), catálogos, validaciones y listeners. */
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
 
-    // Generar opciones de hora
-    this.initializeTimeOptions();
+    this.timeOptions = generateTimeOptions();
 
     // Configurar FieldVisibilityService SOLO para distributionType
     this._fieldVisibilityService.setActiveConfig('sites');
 
-    // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
+    // Agencia desde el resolver general del portal (initialDataAgencyPortalResolver)
+    const initialData = this._route.parent?.snapshot.data['initialData'];
     // schoolId y schoolName desde el resolver (schoolData)
-    const schoolData = this._route.snapshot.data['schoolData'] as { schoolId: number | null; schoolName: string | null } | undefined;
-    if (schoolData) {
-      this.schoolId = schoolData.schoolId;
-      this.schoolName = schoolData.schoolName;
-    }
-
-    // Combinar datos de resolvers comunes y específicos del programa
+    const schoolData = this._route.snapshot.data['schoolData'];
+    // Common data from the resolver (commonData)
     const commonData = this._route.snapshot.data['commonData'];
+    // Program data from the resolver (programData)
     const programData = this._route.snapshot.data['programData'];
-    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
-    if (resolvedData) {
-      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      this.isActiveOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.community = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'community');
-      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.walkers = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
-      this.siteType = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
-      this.experience = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
-      this.listCities = resolvedData.cities;
-      this.listRegions = resolvedData.regions;
-      this.areaTypes = resolvedData.areaTypes;
-      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+    this.agency = initialData?.agency;
+    this.schoolId = schoolData?.schoolId ?? null;
+    this.schoolName = schoolData?.schoolName ?? null;
 
-      // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = resolvedData.allowedOperatingDays || [];
+    // Opciones desde commonData
+    this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    this.isActiveOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
+    this.community = commonData.options.filter((option: OptionSelection) => option.optionKey === 'community');
+    this.relationshipTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+    this.homeTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+    this.participantTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+    this.walkers = commonData.options.filter((option: OptionSelection) => option.optionKey === 'walkers');
+    this.siteType = commonData.options.filter((option: OptionSelection) => option.optionKey === 'siteType');
+    this.experience = commonData.options.filter((option: OptionSelection) => option.optionKey === 'experience');
+    this.publicAllianceContractOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'publicAllianceContract');
 
-      this._changeDetectorRef.markForCheck();
-    }
+    // Catálogos: commonData
+    this.listCities = commonData.cities;
+    this.listRegions = commonData.regions;
+    this.listPostalRegions = commonData.regions;
+    this.areaTypes = commonData.areaTypes;
+    this.locationTypes = commonData.areaTypes;
 
-    // Obtener datos de la agencia desde el resolver padre
-    // Los datos ya están disponibles desde initialDataAgencyPortalResolver
-    const parentData = this._route.parent?.snapshot.data['initialData'];
-    const agencyFromResolver = parentData?.agency;
+    // Catálogos: programData (PACNA home)
+    this.availableDaysOfWeek = programData.allowedOperatingDays;
 
-    if (agencyFromResolver) {
-      this.agency = agencyFromResolver;
-      const programs = this.agency.programs || [];
+    // Formulario solo para Day Care Home: id desde la inscripción de la agencia
+    this.isDayCareHomeId = this.agency?.inscription?.isDayCareHome?.id ?? null;
 
-      // Leer isDayCareHomeId de los query parameters
-      const queryParams = this._route.snapshot.queryParams;
-      const isDayCareHomeIdFromQuery = queryParams['isDayCareHomeId']
-        ? parseInt(queryParams['isDayCareHomeId'], 10)
-        : null;
+    this._changeDetectorRef.markForCheck();
 
-      // Si hay isDayCareHomeId en query params, usarlo directamente
-      if (isDayCareHomeIdFromQuery !== null && resolvedData) {
-        this.isDayCareHomeId = isDayCareHomeIdFromQuery;
-
-        // Obtener las opciones de isDayCareHome del resolver para determinar isDayCareHome (bool)
-        const isDayCareHomeOptions = resolvedData.options.filter(
-          (option: OptionSelection) => option.optionKey === 'isDayCareHome'
-        );
-
-        const selectedOption = isDayCareHomeOptions.find(
-          (opt: OptionSelection) => opt.id === isDayCareHomeIdFromQuery
-        );
-
-        // Si el ID corresponde a "Sí" (booleanValue === true), entonces isDayCareHome = true
-        // Si el ID corresponde a "No" (booleanValue === false), entonces isDayCareHome = false
-        // Si el ID corresponde a "Ambos" (booleanValue === null), entonces isDayCareHome = true (para mostrar campos)
-        this.isDayCareHome = selectedOption
-          ? (selectedOption.booleanValue === true || selectedOption.booleanValue == null)
-          : false;
-      } else {
-        // Si no hay query param, usar el valor de la agencia como antes (solo para nuevos sitios)
-        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
-        if (isDayCareHomeOption) {
-          this.isDayCareHomeId = isDayCareHomeOption.id;
-          this.isDayCareHome = isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null;
-        } else {
-          this.isDayCareHomeId = null;
-          this.isDayCareHome = false;
-        }
-      }
-
-      // Configurar validaciones y listeners
-      this.updateValidations();
-    }
+    this.updateValidations();
 
     // Transloco (el orden de community/experience viene del backend cuando el resolver envía sortByNameKeys)
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
       this.currentLang = lang;
     });
-
-    this.setupFormListeners();
 
     // Días de operación para tarjetas Servicios Activos (inicial desde formulario)
     this.servicesTableConfig.operatingDaysOfWeek =
@@ -549,14 +514,14 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       });
   }
 
-  private setupFormListeners(): void {}
-
-  /**
-   * Genera todas las opciones de hora (cada 30 minutos)
-   */
-  private initializeTimeOptions(): void {
-    this.timeOptions = generateTimeOptions();
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
   }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
 
   /**
    * Obtiene las opciones filtradas para un campo "hasta" basado en la hora "desde"
@@ -593,13 +558,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     const slot = slots.find((s: SiteChildGroupServiceSlotResponse) => s.serviceTypeId === serviceTypeId);
     return slot?.operatingDates ?? [];
   }
-
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
-  }
-
-
 
   private updateValidations(): void {
     // Este formulario es exclusivo para Day Care Home, configurar validaciones requeridas
@@ -641,7 +599,6 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     // Configurar validaciones de personInCharge
     this.updatePersonInChargeValidations();
   }
-
 
   /**
    * Actualiza las validaciones de personInCharge para Day Care Home
@@ -946,22 +903,29 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         const body = err?.error as ApiErrorBody | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FirstSiteMustBeComedor' ||
-            body?.code === 'SchoolMustHaveComedorFirst' ||
-            body?.code === 'SiteDatesOutsideComedorRange') &&
+          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
+            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
+            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
+        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
+          this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          (body?.code === 'MissingStrongService' || body?.code === 'InsufficientTimeBetweenServices') &&
+          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
           body?.message
         ) {
           this._notificationService.showError(body.message);
         } else {
-          this._notificationService.showErrorDialog();
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
-        this.headerConfig.formGroup.enable();
+        this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {
         this.isLoading = false;

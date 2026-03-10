@@ -54,7 +54,7 @@ import { OrganizationType } from 'app/shared/models/catalog/OrganizationType';
 import { SponsorType } from 'app/shared/models/catalog/SponsorType';
 import { EducationLevelResponse } from 'app/shared/models/response/EducationLevelResponse';
 import { AuthService } from 'app/core/auth/auth.service';
-import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { ValidationMessage } from 'app/shared/models/common/ValidationMessage';
 import { NotificationService } from 'app/shared/services/notification.service';
@@ -1280,7 +1280,12 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
         ) {
           this._notificationService.showError(body.message);
         } else {
-          this._notificationService.showErrorDialog();
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },

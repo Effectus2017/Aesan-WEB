@@ -81,7 +81,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
-import { ApiErrorBody } from 'app/shared/models/common/ApiError';
+import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
 
 @Component({
   selector: 'app-edit-sites-home',
@@ -113,12 +113,14 @@ import { ApiErrorBody } from 'app/shared/models/common/ApiError';
 ],
 })
 export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
-  // Subject para suscribirse a todos los observables al destruir el componente
-  // Subject to unsubscribe from all observables on component destroy
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
+  private _unsubscribeAll = new Subject<any>();
 
-  // Inyección de dependencias y servicios
-  // Dependency injection and services
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private _formBuilder = inject(UntypedFormBuilder);
   private _siteService = inject(SiteService);
   private _geoService = inject(GeoService);
@@ -130,11 +132,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   private _route = inject(ActivatedRoute);
   private _notificationService = inject(NotificationService);
   private _customRouterService = inject(CustomRouterService);
-  private _agencyService = inject(AgencyService);
   private _dialog = inject(MatDialog);
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   // Catálogos
-  // Catalogs
   listCities: City[] = [];
   listRegions: Region[] = [];
   listPostalRegions: Region[] = [];
@@ -159,7 +162,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Status
   isActive: OptionSelection[] = [];
 
-  isDayCareHome: boolean = false;
   isDayCareHomeId: number | null = null;
 
 
@@ -218,11 +220,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
 
   // Parámetro del sitio
-  // Site parameter
   param: Site | null;
 
-  // Configuración del header y formulario reactivo
-  // Header config and reactive form
   headerConfig: GenericHeaderConfig = {
     title: 'sites.edit.title',
     formGroup: this._formBuilder.group({
@@ -423,73 +422,56 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
   // Site ID
   siteId: number = 0;
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
   constructor() {}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
+  /** Inicializa el componente: idioma, opciones de hora, datos de resolvers (agencia, commonData, programData), catálogos, formulario desde site, validaciones y listeners. */
   ngOnInit(): void {
     this.currentLang = this._translocoService.getActiveLang();
 
-    // Generar opciones de hora
     this.timeOptions = generateTimeOptions();
 
-    // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
-    // Obtener datos del resolver en lugar de suscribirse
-    // Combinar datos de resolvers comunes y específicos del programa
+    // Agencia desde el resolver general del portal (initialDataAgencyPortalResolver)
+    const initialData = this._route.snapshot.parent?.data['initialData'];
+    // Common data from the resolver (commonData)
     const commonData = this._route.snapshot.data['commonData'];
+    // Program data from the resolver (programData)
     const programData = this._route.snapshot.data['programData'];
-    const resolvedData = commonData && programData ? { ...commonData, ...programData } : null;
 
-    if (resolvedData) {
-      this.yesNoOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
-      this.relationshipTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
-      this.homeTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
-      this.participantTypeOptions = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
-      this.isActive = resolvedData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
-      this.listCities = resolvedData.cities;
-      this.listRegions = resolvedData.regions;
-      this.listPostalRegions = resolvedData.regions;
-      this.areaTypes = resolvedData.areaTypes;
-      this.locationTypes = resolvedData.areaTypes; // Usar los mismos valores que AreaType
+    this.agency = initialData?.agency;
 
-      // Cargar días permitidos desde el resolver
-      this.availableDaysOfWeek = resolvedData.allowedOperatingDays || [];
+    // Opciones desde commonData
+    this.yesNoOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'yesNo');
+    this.relationshipTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'relationshipType');
+    this.homeTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'homeType');
+    this.participantTypeOptions = commonData.options.filter((option: OptionSelection) => option.optionKey === 'participantType');
+    this.isActive = commonData.options.filter((option: OptionSelection) => option.optionKey === 'isActive');
 
-      this.onSetForm(resolvedData.site);
+    // Catálogos: commonData
+    this.listCities = commonData.cities;
+    this.listRegions = commonData.regions;
+    this.listPostalRegions = commonData.regions;
+    this.areaTypes = commonData.areaTypes;
+    this.locationTypes = commonData.areaTypes;
 
-      this._changeDetectorRef.markForCheck();
-    }
+    // Catálogos: programData (PACNA home)
+    this.availableDaysOfWeek = programData.allowedOperatingDays;
 
-    // Obtener datos de la agencia desde el resolver padre
-    const parentData = this._route.snapshot.parent?.data['initialData'];
-    if (parentData?.agency) {
-      this.agency = parentData.agency;
-      const programs = this.agency.programs || [];
+    this.onSetForm(commonData.site);
 
-      // Obtener el valor de isDayCareHome de la inscripción o del sitio
-      // Si el sitio tiene isDayCareHomeId, usarlo; si no, usar el de la agencia
-      if (resolvedData?.site?.isDayCareHomeId) {
-        this.isDayCareHomeId = resolvedData.site.isDayCareHomeId;
-        const isDayCareHomeOption = resolvedData.site.isDayCareHome;
-        this.isDayCareHome = isDayCareHomeOption
-          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-          : false;
-      } else {
-        // Convertir OptionSelection a boolean:
-        // - Si booleanValue === true (Sí) → true
-        // - Si booleanValue === null/undefined pero existe OptionSelection (Ambos) → true
-        // - Si booleanValue === false (No) o no existe → false
-        const isDayCareHomeOption = this.agency?.inscription?.isDayCareHome;
-        this.isDayCareHomeId = isDayCareHomeOption?.id || null;
-        this.isDayCareHome = isDayCareHomeOption
-          ? (isDayCareHomeOption.booleanValue === true || isDayCareHomeOption.booleanValue == null)
-          : false;
-      }
+    // Formulario solo para Day Care Home: id del sitio editado o desde la inscripción de la agencia
+    this.isDayCareHomeId = commonData.site?.isDayCareHomeId ?? this.agency?.inscription?.isDayCareHome?.id ?? null;
 
-      // IMPORTANTE: Re-ejecutar updateValidations después de establecer isDayCareHome
-      // para asegurar que las validaciones se apliquen correctamente
-      this.updateValidations();
-    }
+    this._changeDetectorRef.markForCheck();
+
+    this.updateValidations();
 
     // Transloco
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang: string) => {
@@ -529,6 +511,15 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       });
   }
 
+  /** Limpia suscripciones al destruir el componente. */
+  ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+  }
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private setupFormListeners(): void {
     // Listener para cambios en hasDiningRoom
     this.headerConfig.formGroup.get('hasDiningRoom')?.valueChanges
@@ -589,11 +580,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
    */
   timeStringToDateWrapper(timeString: string): Date | null {
     return timeStringToDate(timeString);
-  }
-
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
   }
 
   private updateValidations(): void {
@@ -694,7 +680,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     const postalRegion = param.postalRegion;
 
     const areaType = param.areaType;
-    const locationType = param.locationType;
 
     // Días y horas de funcionamiento
     const operatingDaysOfWeek: DayOfWeekResponse[] = param.operatingDaysOfWeek || [];
@@ -752,14 +737,6 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       locationType: param.locationType,
       siteCode: param.siteCode || '',
     });
-
-    // Establecer isDayCareHomeId del sitio si existe
-    if (param.isDayCareHomeId) {
-      this.isDayCareHomeId = param.isDayCareHomeId;
-      if (param.isDayCareHome) {
-        this.isDayCareHome = param.isDayCareHome.booleanValue === true || param.isDayCareHome.booleanValue == null;
-      }
-    }
 
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
@@ -1012,7 +989,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         ) {
           this._notificationService.showError(body.message);
         } else {
-          this._notificationService.showErrorDialog();
+          const message = getApiErrorMessage(err);
+          if (message) {
+            this._notificationService.showErrorDialogWithRawMessage(message);
+          } else {
+            this._notificationService.showErrorDialog('dialog.error.no-response');
+          }
         }
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },

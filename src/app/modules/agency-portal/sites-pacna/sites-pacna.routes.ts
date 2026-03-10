@@ -2,9 +2,16 @@ import { Routes } from '@angular/router';
 import { PermissionGuard } from 'app/core/auth/guards/permission.guard';
 import { PacnaProgramGuard } from 'app/core/auth/guards/pacna-program.guard';
 import { SitesPacnaComponent } from './sites-pacna.component';
-import { initialDataSitesPacnaListResolver, initialDataSitesPacnaProgramAddResolver, initialDataSitesPacnaProgramEditResolver } from './sites-pacna.resolvers';
+import {
+  initialDataSitesPacnaListResolver,
+  initialDataSitesPacnaProgramAddResolver,
+  initialDataSitesPacnaProgramEditResolver,
+  initialDataSitesPacnaHomeAddResolver,
+  initialDataSitesPacnaHomeEditResolver,
+  initialDataSitesPacnaProgramHomeAddResolver,
+  initialDataSitesPacnaProgramHomeEditResolver,
+} from './sites-pacna.resolvers';
 import { initialDataSiteCalendarResolver, initialDataSitesAddSchoolResolver } from '../sites-pdam/sites.resolvers';
-import { initialDataSitesCommonAddResolver, initialDataSitesCommonEditResolver } from 'app/shared/resolvers/sites-common.resolvers';
 import { initialDataSitesPacnaCenterAddResolver, initialDataSitesPacnaCenterEditResolver } from './sites-pacna.resolvers';
 
 export default [
@@ -28,8 +35,8 @@ export default [
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
-          commonData: initialDataSitesCommonAddResolver,
-          programData: initialDataSitesPacnaProgramAddResolver,
+          commonData: initialDataSitesPacnaHomeAddResolver,
+          programData: initialDataSitesPacnaProgramHomeAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },
@@ -63,8 +70,8 @@ export default [
         canActivate: [PacnaProgramGuard, PermissionGuard],
         data: { permission: 'site.create' },
         resolve: {
-          commonData: initialDataSitesCommonAddResolver,
-          programData: initialDataSitesPacnaProgramAddResolver,
+          commonData: initialDataSitesPacnaHomeAddResolver,
+          programData: initialDataSitesPacnaProgramHomeAddResolver,
           schoolData: initialDataSitesAddSchoolResolver,
         },
       },
@@ -75,8 +82,8 @@ export default [
         data: { permission: 'site.edit' },
         runGuardsResolvers: 'always',
         resolve: {
-          commonData: initialDataSitesCommonEditResolver,
-          programData: initialDataSitesPacnaProgramEditResolver,
+          commonData: initialDataSitesPacnaHomeEditResolver,
+          programData: initialDataSitesPacnaProgramHomeEditResolver,
         },
       },
       {
