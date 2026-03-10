@@ -37,7 +37,7 @@ import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
 import { SponsorType } from 'app/shared/models/catalog/SponsorType';
 import { GroupType } from 'app/shared/models/catalog/GroupType';
 import { KitchenType } from 'app/shared/models/catalog/KitchenType';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
 import {
   compareById,
   isNullOrUndefinedEmptyStringNullArray,
@@ -272,8 +272,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     ],
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25, 50],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
     fullScreen: false,
     operatingDaysOfWeek: [],
   };
@@ -1329,30 +1329,12 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         }
       },
       error: (err: HttpErrorResponse) => {
-        const body = err?.error as ApiErrorBody | undefined;
-        if (
-          err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' || body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' || body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
-          body?.message
-        ) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' && body?.message) {
-          this._notificationService.showError(body.message);
-        } else {
-          const message = getApiErrorMessage(err);
-          if (message) {
-            this._notificationService.showErrorDialogWithRawMessage(message);
-          } else {
-            this._notificationService.showErrorDialog('dialog.error.no-response');
-          }
-        }
+        this.isLoading = false;
         this.headerConfig.formGroup.enable({ emitEvent: false });
+        // Error is now handled by the global errorInterceptor
       },
       complete: () => {
         this.isLoading = false;
-        // Enable the form
         this.headerConfig.formGroup.enable({ emitEvent: false });
 
         const baseYearControl = this.headerConfig.formGroup.get('baseYear');

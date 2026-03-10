@@ -42,6 +42,7 @@ import {
   timeToMinutes,
   dateToMinutes,
   compareByTime,
+  getApiErrorMessage,
   TimeOption
 } from 'app/shared/utils';
 import { City } from 'app/shared/models/location/City';
@@ -54,7 +55,8 @@ import { GroupTypeService } from 'app/shared/services/group-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { DeliveryType } from 'app/shared/models/catalog/DeliveryType';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
+import { ErrorCode } from 'app/shared/models/errors/ErrorCode';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -219,8 +221,8 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
     ],
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25, 50],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
     fullScreen: false,
     viewMode: 'cards',
     operatingDaysOfWeek: []
@@ -905,7 +907,7 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
           default:
             this.isLoading = false;
-            const errorBody = result.body as ApiErrorBody | any;
+            const errorBody = result.body as BaseApiException | any;
             if (errorBody?.message) {
               this._notificationService.showErrorDialogWithRawMessage(errorBody.message);
             } else {
@@ -916,20 +918,20 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
-        const body = err?.error as ApiErrorBody | undefined;
+        const body = err?.error as BaseApiException | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
-            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
-            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
+          (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR ||
+            body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST ||
+            body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
+        } else if (err?.status === 400 && body?.code === ErrorCode.MISSING_STRONG_SERVICE && body?.message) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
         } else if (
           err?.status === 400 &&
-          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
+          body?.code === ErrorCode.INSUFFICIENT_TIME_BETWEEN_SERVICES &&
           body?.message
         ) {
           this._notificationService.showError(body.message);

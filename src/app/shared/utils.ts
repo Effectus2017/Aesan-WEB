@@ -1,6 +1,6 @@
 import { HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { formatDate } from '@angular/common';
-import { getApiErrorMessage } from './models/common/ApiError';
+import { BaseApiException } from './models/errors/BaseApiException';
 import { Constants } from './const';
 import { QueryParameters } from './models/common/QueryParameters';
 import { throwError } from 'rxjs';
@@ -257,18 +257,61 @@ export function queryParameters(model: QueryParameters) {
 }
 
 export function handleError(error: HttpErrorResponse) {
-  let errorMessage = '';
-  if (error.error instanceof ErrorEvent) {
-    // Get client-side error
-    errorMessage = error.error.message;
-  } else {
-    // Get server-side error (body object, body string, or message)
-    const apiMessage = getApiErrorMessage(error);
-    errorMessage = apiMessage || `Error Code: ${error.status}\nMessage: ${error.message}`;
-  }
+  const errorMessage = getApiErrorMessage(error);
   return throwError(() => {
     return errorMessage;
   });
+}
+
+/**
+ * Extrae el mensaje de error de una respuesta de la API o un HttpErrorResponse.
+ * @param error Error recibido de la API o HttpErrorResponse
+ * @returns Mensaje de error formateado como string
+ */
+export function getApiErrorMessage(error: any): string {
+  if (!error) {
+    return 'Ocurrió un error inesperado';
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  // Si es HttpErrorResponse, buscar en el cuerpo
+  if (error instanceof HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      return error.error.message;
+    }
+
+    if (error.error) {
+      // Error del lado del servidor
+      const serverError = error.error;
+
+      // Intentar extraer mensaje de BaseApiException
+      if (typeof serverError === 'object') {
+        const apiEx = serverError as BaseApiException;
+        if (apiEx.message) {
+          return apiEx.message;
+        }
+      }
+
+      // Si el error es un string directo
+      if (typeof serverError === 'string' && serverError.length > 0) {
+        return serverError;
+      }
+    }
+
+    // Fallback para HttpErrorResponse sin cuerpo con mensaje
+    return `Error ${error.status}: ${error.statusText || 'Error del servidor'}`;
+  }
+
+  // Intentar extraer de objeto genérico
+  if (typeof error === 'object' && error.message) {
+    return error.message;
+  }
+
+  return 'Ocurrió un error inesperado';
 }
 
 export function disableAllControlsExcept(form: UntypedFormGroup, exceptions: string | string[]): void {

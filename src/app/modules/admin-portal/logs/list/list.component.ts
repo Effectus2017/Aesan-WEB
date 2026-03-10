@@ -118,8 +118,8 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
     ),
     handler: this,
     showPaginator: true,
-    pageSize: 20,
-    pageSizeOptions: [10, 20, 50, 100],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
     fullScreen: true,
   };

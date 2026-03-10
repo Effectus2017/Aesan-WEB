@@ -60,8 +60,8 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
     displayedColumns: STAFF_BY_SITE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSize: 15,
-    pageSizeOptions: [10, 15, 25, 50],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
     fullScreen: true,
   };

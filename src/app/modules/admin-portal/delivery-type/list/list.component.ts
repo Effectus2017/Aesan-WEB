@@ -70,8 +70,8 @@ export class DeliveryTypeListComponent implements OnInit, OnDestroy, OnGenericTa
     displayedColumns: DELIVERY_TYPE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
-    pageSize: 15,
-    pageSizeOptions: [15, 50, 100],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
     fullScreen: true,
   };

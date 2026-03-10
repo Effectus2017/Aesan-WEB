@@ -34,8 +34,8 @@ export class HouseholdMemberIncomeListComponent implements OnDestroy {
     this.tableConfig = {
       columnsSchema: COLUMNS_SCHEMA as ColumnSchema[],
       data: [],
-      pageSize: 10,
-      pageSizeOptions: [10, 25, 50],
+      pageSize: 25,
+      pageSizeOptions: [25, 50, 100],
       length: 0,
       loading: false,
     };
