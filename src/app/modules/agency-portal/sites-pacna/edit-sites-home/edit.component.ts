@@ -1476,6 +1476,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       return;
     }
     const payload = this.childGroups.map((g) => ({
+      id: g.id ?? 0,
       groupName: g.groupName,
       numberOfChildren: g.numberOfChildren,
       serviceSlots: (g.serviceSlots ?? []).map((slot) => ({
