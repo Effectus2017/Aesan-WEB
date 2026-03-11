@@ -28,7 +28,7 @@ export const initialDataSitesPsavListResolver: ResolveFn<any> = (route: Activate
     take: 25,
     skip: 0,
     alls: false,
-    isList: false,
+    forDropdown: false,
     agencyId: agencyId,
     programId: PROGRAM_IDS.PSAV,
   };

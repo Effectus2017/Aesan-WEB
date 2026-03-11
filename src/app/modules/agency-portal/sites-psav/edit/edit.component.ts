@@ -1326,7 +1326,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       cityId: city.id,
-      isList: true,
+      forDropdown: true,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({

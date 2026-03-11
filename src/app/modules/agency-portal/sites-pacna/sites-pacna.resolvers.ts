@@ -35,11 +35,11 @@ export const initialDataSitesPacnaListResolver: ResolveFn<any> = (route: Activat
   const agencyId = authService.getAgencyId();
 
   // Cargar opciones de isDayCareHome para obtener el ID de Hogares
-  const optionsParams: QueryParameters = { optionKey: 'isDayCareHome', isList: true };
+  const optionsParams: QueryParameters = { optionKey: 'isDayCareHome', forDropdown: true };
 
   return optionSelectionService.getOptionSelectionByOptionKey(optionsParams).pipe(
     switchMap((optionsResponse) => {
-      // Obtener el ID de la opción "Hogar" (booleanValue === true). Con isList: true el body es la lista directamente.
+      // Obtener el ID de la opción "Hogar" (booleanValue === true). Con forDropdown: true el body es la lista directamente.
       const options = optionsResponse?.body ?? [];
       const homeOption = options.find((option: any) => option?.booleanValue === true);
       const homeOptionId = homeOption?.id;
@@ -49,7 +49,7 @@ export const initialDataSitesPacnaListResolver: ResolveFn<any> = (route: Activat
         take: 25,
         skip: 0,
         alls: false,
-        isList: false,
+        forDropdown: false,
         agencyId: agencyId,
         //isDayCareHomeId: homeOptionId,
       };
@@ -169,7 +169,7 @@ const getCommonRequestParameters = (): QueryParameters => ({
   take: 25,
   skip: 0,
   alls: true,
-  isList: true,
+  forDropdown: true,
 });
 
 // Resolver común para la creación de un sitio PACNA Centro (sin operatingPolicies)
@@ -191,7 +191,7 @@ export const initialDataSitesPacnaCenterAddResolver: ResolveFn<any> = (route: Ac
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),
@@ -251,7 +251,7 @@ export const initialDataSitesPacnaCenterEditResolver: ResolveFn<any> = (route: A
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),
@@ -295,7 +295,7 @@ const getHomeRequestParameters = (): QueryParameters => ({
   take: 25,
   skip: 0,
   alls: true,
-  isList: true,
+  forDropdown: true,
 });
 
 // Resolver común para la creación de un sitio PACNA Hogar (solo datos usados: options, cities, regions, areaTypes)
@@ -312,7 +312,7 @@ export const initialDataSitesPacnaHomeAddResolver: ResolveFn<any> = (route: Acti
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract,isDayCareHome',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),
@@ -346,7 +346,7 @@ export const initialDataSitesPacnaHomeEditResolver: ResolveFn<any> = (route: Act
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),

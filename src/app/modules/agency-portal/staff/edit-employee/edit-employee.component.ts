@@ -756,7 +756,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const requestParameters: QueryParameters = {
       id: this.param.id,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
 

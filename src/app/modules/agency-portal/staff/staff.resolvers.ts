@@ -25,7 +25,7 @@ export const initialDataStaffBoardMembersListResolver: ResolveFn<any> = (route: 
     take: 25,
     skip: 0,
     alls: false,
-    isList: false,
+    forDropdown: false,
     staffTypeId: 2,
     agencyId: agencyId,
   };
@@ -48,7 +48,7 @@ export const initialDataStaffEmployeesListResolver: ResolveFn<any> = (route: Act
     take: 25,
     skip: 0,
     alls: false,
-    isList: false,
+    forDropdown: false,
     staffTypeId: 1,
     agencyId: agencyId,
   };
@@ -88,7 +88,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     take: 25,
     skip: 0,
     alls: true,
-    isList: true,
+    forDropdown: true,
   };
 
   const agencyId = authService.getAgencyId();
@@ -104,7 +104,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     skip : 0,
     alls: false,
     agencyId: agencyId,
-    isList: true, // Para lista de sitios
+    forDropdown: true, // Para lista de sitios (forDropdown)
     //isDayCareHomeId: isDayCareHomeId,
   };
 
@@ -122,7 +122,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
       names: null,
-      isList: true,
+      forDropdown: true,
     }),
     // Staff types service
     // Servicio para tipos de staff
@@ -178,7 +178,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
 
   const requestParametersId: QueryParameters = {
     id: staffId,
-    isList: false,
+    forDropdown: false,
     isActive: false,
   };
 
@@ -186,7 +186,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
     take: 25,
     skip: 0,
     alls: true,
-    isList: true
+    forDropdown: true
   };
 
   const agencyId = authService.getAgencyId();
@@ -202,7 +202,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
     skip : 0,
     alls: false,
     agencyId: agencyId,
-    isList: true, // Para lista de sitios
+    forDropdown: true, // Para lista de sitios (forDropdown)
     //isDayCareHomeId: isDayCareHomeId,
   };
 
@@ -227,7 +227,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           optionSelectionService.getOptionSelectionByOptionKey({
             optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
             names: null,
-            isList: true,
+            forDropdown: true,
           }),
           // Staff types service
           staffTypeService.getAllStaffTypesFromDb(requestParameters),
@@ -263,7 +263,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           optionSelectionService.getOptionSelectionByOptionKey({
             optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
             names: null,
-            isList: true,
+            forDropdown: true,
           }),
           // Staff types service
           staffTypeService.getAllStaffTypesFromDb(requestParameters),

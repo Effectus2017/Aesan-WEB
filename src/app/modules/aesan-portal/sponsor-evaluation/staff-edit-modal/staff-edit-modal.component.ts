@@ -209,7 +209,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       take: 25,
       skip: 0,
       alls: true,
-      isList: true,
+      forDropdown: true,
     };
 
     // Cities
@@ -266,13 +266,13 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       take: 25,
       skip: 0,
       alls: true,
-      isList: true,
+      forDropdown: true,
     };
 
     this._optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,reviewResult',
       names: null,
-      isList: true,
+      forDropdown: true,
     }).subscribe();
 
     this._optionSelectionService.options$.pipe(takeUntil(this._unsubscribeAll)).subscribe((result: any) => {
@@ -557,7 +557,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     if (city?.id) {
       const queryParameters: QueryParameters = {
         cityId: city.id,
-        isList: true,
+        forDropdown: true,
       };
       this._geoService.getRegionsByCityId(queryParameters).subscribe({
         next: (result: any) => {

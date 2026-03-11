@@ -1481,7 +1481,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
 
     const queryParameters: QueryParameters = {
       cityId: city.id,
-      isList: true,
+      forDropdown: true,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({

@@ -18,7 +18,7 @@ export const initialDataStaffBoardMembersListResolver: ResolveFn<any> = () => {
     excludeRelated: false,
     staffTypeId: 2,
     agencyId: null,
-    isList: false,
+    forDropdown: false,
   };
 
   return forkJoin([staffService.getAllStaffFromDb(requestParameters)]).pipe(
@@ -37,7 +37,7 @@ export const initialDataStaffEmployeesListResolver: ResolveFn<any> = () => {
     excludeRelated: false,
     staffTypeId: 1,
     agencyId: null,
-    isList: false,
+    forDropdown: false,
   };
 
   return forkJoin([staffService.getAllStaffFromDb(requestParameters)]).pipe(
@@ -54,15 +54,15 @@ export const initialDataStaffAddResolver: ResolveFn<any> = () => {
   const staffClassificationService = inject(StaffClassificationService);
 
   return forkJoin([
-    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition,tenureDurationUnit,yesNo,salaryOrigin',
       names: 'Administrador,Director,Coordinador(a) del Programa',
-      isList: true,
+      forDropdown: true,
     }),
-    staffTypeService.getAllStaffTypesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    staffClassificationService.getAllStaffClassificationsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    staffTypeService.getAllStaffTypesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    staffClassificationService.getAllStaffClassificationsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
   ]).pipe(
     map(([cities, regions, options, staffTypes, staffClassifications]) => ({
       cities: cities.body,
@@ -101,7 +101,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
 
     const requestParametersId: QueryParameters = {
       id: staffId,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
 
@@ -109,7 +109,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
       take: 25,
       skip: 0,
       alls: true,
-      isList: true
+      forDropdown: true
     };
 
     // Primero obtener los datos del staff para determinar si es empleado
@@ -133,7 +133,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             optionSelectionService.getOptionSelectionByOptionKey({
               optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
               names: null,
-              isList: true,
+              forDropdown: true,
             }),
             // Staff types service
             staffTypeService.getAllStaffTypesFromDb(requestParameters),
@@ -165,7 +165,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             optionSelectionService.getOptionSelectionByOptionKey({
               optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
               names: null,
-              isList: true,
+              forDropdown: true,
             }),
             // Staff types service
             staffTypeService.getAllStaffTypesFromDb(requestParameters),

@@ -344,13 +344,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
-      // Asignar ciudades (getCitiesFromDb con isList: true devuelve array en body)
+      // Asignar ciudades (getCitiesFromDb con forDropdown: true devuelve array en body)
       this.listCities = resolvedData.cities ?? [];
 
-      // Asignar programas (getAllProgramsFromDb con isList: true devuelve array en body)
+      // Asignar programas (getAllProgramsFromDb con forDropdown: true devuelve array en body)
       this.listPrograms = resolvedData.programs ?? [];
 
-      // Asignar opciones (getOptionSelectionByOptionKey con isList: true devuelve la lista directamente en body)
+      // Asignar opciones (getOptionSelectionByOptionKey con forDropdown: true devuelve la lista directamente en body)
       const allOptions = [...(resolvedData.options1 ?? []), ...(resolvedData.options2 ?? [])];
 
       // Yes No Options (1, 2)

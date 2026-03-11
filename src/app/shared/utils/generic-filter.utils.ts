@@ -11,7 +11,7 @@ const NUMERIC_FILTER_KEYS = new Set(['uieNumber', 'sdrNumber', 'einNumber', 'age
  *
  * @param filtersSchema Schema de filtros del módulo (p. ej. VALIDATION_TO_PROGRAM_FILTERS_SCHEMA).
  * @param form Objeto form (header + appliedFilters).
- * @param baseParams Parámetros fijos de la lista (take, skip, alls, isList, etc.).
+ * @param baseParams Parámetros fijos de la lista (take, skip, alls, forDropdown, etc.).
  * @returns Objeto con baseParams más un valor por cada key del schema.
  */
 export function buildRequestParamsFromFiltersSchema<T extends Record<string, unknown>>(

@@ -18,7 +18,7 @@ export const initialDataEmployeesListResolver: ResolveFn<any> = (route: Activate
     take: 25,
     skip: 0,
     alls: false,
-    isList: false,
+    forDropdown: false,
   };
 
   return forkJoin([employeeService.getAllEmployeesFromDb(requestParameters)]).pipe(
@@ -45,7 +45,7 @@ export const initialDataEmployeesAddResolver: ResolveFn<any> = (route: Activated
     take: 25,
     skip: 0,
     alls: true,
-    isList: true,
+    forDropdown: true,
   };
 
   return forkJoin([
@@ -85,7 +85,7 @@ export const initialDataEmployeesEditResolver: ResolveFn<any> = (route: Activate
     take: 25,
     skip: 0,
     alls: true,
-    isList: true,
+    forDropdown: true,
   };
 
   return forkJoin([

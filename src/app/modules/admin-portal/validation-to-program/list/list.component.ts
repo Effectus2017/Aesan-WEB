@@ -172,7 +172,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       take: pageSize,
       skip: index,
       alls: true,
-      isList: false,
+      forDropdown: false,
       isPropietary: false,
       ...this.appliedFilters,
     };

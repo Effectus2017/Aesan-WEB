@@ -672,7 +672,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     const requestParameters: QueryParameters = {
       id: this.param.id,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
 
@@ -801,7 +801,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       name: null,
       alls: true,
       excludeRelated: false,
-      isList: true,
+      forDropdown: true,
       staffTypeId: null,
       agencyId: null,
     };
@@ -913,7 +913,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       name: null,
       alls: true,
       excludeRelated: false,
-      isList: true,
+      forDropdown: true,
       staffTypeId: null,
       agencyId: null,
     };
@@ -1006,7 +1006,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   loadStaffRelationships(): void {
     const requestParameters: QueryParameters = {
       id: this.headerConfig.formGroup.get('id')?.value,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
     this._staffRelationshipService.getRelationshipsByStaffId(requestParameters).subscribe();

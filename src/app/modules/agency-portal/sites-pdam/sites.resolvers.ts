@@ -61,7 +61,7 @@ export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRou
     take: 25,
     skip: 0,
     alls: false,
-    isList: false,
+    forDropdown: false,
     agencyId: agencyId,
   };
 

@@ -32,11 +32,11 @@ export const usersAgencyAddResolver: ResolveFn<unknown> = () => {
   const geoService = inject(GeoService);
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, isList: true, isPropietary: false }),
+    agencyService.getAllAgenciesFromDb({ alls: true, forDropdown: true, isPropietary: false }),
     usersService.getAllRolesFromDb({ aesanOnly: true }),
-    programService.getAllProgramsFromDb({ alls: true, isList: true }),
-    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    programService.getAllProgramsFromDb({ alls: true, forDropdown: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
   ]).pipe(
     map(([agencies, roles, programs, cities, regions]) => ({
       agencies: { data: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [] },
