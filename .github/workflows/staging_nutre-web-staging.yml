@@ -27,6 +27,10 @@ jobs:
         with:
           node-version: '22.x'
 
+      - name: Clean before build
+        run: |
+          rm -rf node_modules dist .angular
+
       - name: npm install, build, and test
         run: |
           npm install --force
