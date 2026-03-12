@@ -74,7 +74,10 @@
         "switch-role-aesan-only": "Solo disponible para usuarios AESAN",
         "sign-out": "Cerrar sesión",
         "dark-mode": "Modo oscuro",
-        "light-mode": "Modo claro"
+        "light-mode": "Modo claro",
+        "profile-tooltip": "Ver y editar tu perfil",
+        "sign-out-tooltip": "Cerrar sesión y salir de la aplicación",
+        "programs-tooltip": "Programa(s) asignado(s) a la agencia"
     },
     "reset-password": {
         "title": "Restablecer Contraseña",

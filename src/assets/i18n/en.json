@@ -80,7 +80,10 @@
         "switch-role-aesan-only": "Only available for AESAN users",
         "sign-out": "Sign out",
         "dark-mode": "Dark mode",
-        "light-mode": "Light mode"
+        "light-mode": "Light mode",
+        "profile-tooltip": "View and edit your profile",
+        "sign-out-tooltip": "Sign out and exit the application",
+        "programs-tooltip": "Program(s) assigned to the agency"
     },
     "reset-password": {
         "title": "Reset Password",

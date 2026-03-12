@@ -5,6 +5,7 @@ import { authInterceptor } from 'app/core/auth/auth.interceptor';
 // import { cacheInterceptor } from './cache.interceptor';
 import { metricsInterceptor } from './metrics.interceptor';
 import { fuseLoadingInterceptor } from '@fuse/services/loading';
+import { errorInterceptor } from 'app/shared/interceptors/error.interceptor';
 
 /**
  * Configuración consolidada de HTTP Client con todos los interceptores
@@ -16,7 +17,8 @@ export function provideHttpClientWithInterceptors(): EnvironmentProviders {
       authInterceptor,        // 1. Agrega token de autenticación
       // cacheInterceptor,    // 2. Cache deshabilitado
       metricsInterceptor,    // 2. Registra métricas de rendimiento
-      fuseLoadingInterceptor // 3. Maneja loading states
+      fuseLoadingInterceptor, // 3. Maneja loading states
+      errorInterceptor        // 4. Maneja errores globales
     ])
   );
 }

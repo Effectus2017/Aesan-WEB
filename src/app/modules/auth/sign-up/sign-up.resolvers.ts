@@ -13,21 +13,21 @@ export const initialSignUpResolver: ResolveFn<any> = () => {
   return forkJoin([
     geoService.getCitiesFromDb({
       alls: true,
-      isList: true,
+      forDropdown: true,
     }),
     programService.getAllProgramsFromDb({
       alls: false,
       names: 'PDAM,PSAV,PACNA',
-      isList: true,
+      forDropdown: true,
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority',
-      isList: true,
+      forDropdown: true,
     }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',
       names: 'Administrador,Director,Coordinador(a) del Programa',
-      isList: true,
+      forDropdown: true,
     }),
   ]).pipe(
     map(([cities, programs, options1, options2]) => ({

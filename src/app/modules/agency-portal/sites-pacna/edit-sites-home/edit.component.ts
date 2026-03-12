@@ -81,7 +81,7 @@ import { validateAndCleanSiteService } from 'app/shared/utils/site-service-valid
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
 import { TimeValidationUtil } from 'app/shared/utils/time-validation.util';
 import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
 
 @Component({
   selector: 'app-edit-sites-home',
@@ -184,8 +184,8 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
     ],
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25, 50],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
     fullScreen: false,
     viewMode: 'cards',
     operatingDaysOfWeek: []
@@ -971,36 +971,12 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         }
       },
       error: (err: HttpErrorResponse) => {
-        const body = err?.error as ApiErrorBody | undefined;
-        if (
-          err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
-            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
-            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
-          body?.message
-        ) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (
-          err?.status === 400 &&
-          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
-          body?.message
-        ) {
-          this._notificationService.showError(body.message);
-        } else {
-          const message = getApiErrorMessage(err);
-          if (message) {
-            this._notificationService.showErrorDialogWithRawMessage(message);
-          } else {
-            this._notificationService.showErrorDialog('dialog.error.no-response');
-          }
-        }
+        this.isLoading = false;
         this.headerConfig.formGroup.enable({ emitEvent: false });
+        // Error is now handled by the global errorInterceptor
       },
       complete: () => {
         this.isLoading = false;
-        // Enable the form
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },
     });
@@ -1134,7 +1110,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     const queryParameters: QueryParameters = {
       cityId: city.id,
-      isList: true,
+      forDropdown: true,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
@@ -1476,6 +1452,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       return;
     }
     const payload = this.childGroups.map((g) => ({
+      id: g.id ?? 0,
       groupName: g.groupName,
       numberOfChildren: g.numberOfChildren,
       serviceSlots: (g.serviceSlots ?? []).map((slot) => ({

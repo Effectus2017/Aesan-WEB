@@ -26,6 +26,7 @@ import { KeyboardShortcutsModalComponent } from 'app/shared/components/keyboard-
     <button
       *ngIf="menuItem"
       mat-menu-item
+      [matTooltip]="'keyboard-shortcuts.button.tooltip' | transloco"
       (click)="openModal()">
       <mat-icon [svgIcon]="'heroicons_outline:key'"></mat-icon>
       <span>{{ 'keyboard-shortcuts.button.menu-item' | transloco }}</span>

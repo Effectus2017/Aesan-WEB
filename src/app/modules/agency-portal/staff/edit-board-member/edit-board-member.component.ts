@@ -675,7 +675,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
     const requestParameters: QueryParameters = {
       id: this.param.id,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
 
@@ -805,14 +805,14 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       name: null,
       alls: true,
       excludeRelated: false,
-      isList: true,
+      forDropdown: true,
       staffTypeId: null,
       agencyId: agencyId,
     };
 
     this._staffService.getAllStaffFromDb(staffQueryParams).subscribe({
       next: (response) => {
-        // Cuando isList=true, la respuesta es un array directo en body (no body.data)
+        // Cuando forDropdown=true, la respuesta es un array directo en body (no body.data)
         const staffData = response?.body;
 
         if (!staffData || !Array.isArray(staffData) || staffData.length === 0) {
@@ -919,7 +919,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       name: null,
       alls: false,
       excludeRelated: false,
-      isList: true,
+      forDropdown: true,
       staffTypeId: null,
       agencyId: agencyId,
     };
@@ -1016,7 +1016,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   loadStaffRelationships(): void {
     const requestParameters: QueryParameters = {
       id: this.headerConfig.formGroup.get('id')?.value,
-      isList: false,
+      forDropdown: false,
       isActive: false,
     };
     this._staffRelationshipService.getRelationshipsByStaffId(requestParameters).subscribe();

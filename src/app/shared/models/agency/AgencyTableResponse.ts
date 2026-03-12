@@ -7,7 +7,7 @@ import { InscriptionResponse } from './InscriptionResponse';
 
 /**
  * Modelo de respuesta para filas de la tabla de agencias.
- * Misma estructura que AgencyResponse (contrato get-all-agencies-from-db cuando isList=false).
+ * Misma estructura que AgencyResponse (contrato get-all-agencies-from-db cuando forDropdown=false).
  * Se puede ir reduciendo de a poco según necesidad.
  */
 export interface AgencyTableResponse {

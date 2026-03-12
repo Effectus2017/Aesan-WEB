@@ -18,7 +18,7 @@ const getCommonRequestParameters = (): QueryParameters => ({
   take: 25,
   skip: 0,
   alls: true,
-  isList: true,
+  forDropdown: true,
 });
 
 // Resolver común para la creación de un sitio (PSAV, etc.: orden community/experience por SP 101_)
@@ -40,7 +40,7 @@ export const initialDataSitesCommonAddResolver: ResolveFn<any> = (route: Activat
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),
@@ -105,7 +105,7 @@ export const initialDataSitesCommonEditResolver: ResolveFn<any> = (route: Activa
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey:
         'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
-      isList: true,
+      forDropdown: true,
       sortByNameKeys: 'community,experience',
       language,
     }),

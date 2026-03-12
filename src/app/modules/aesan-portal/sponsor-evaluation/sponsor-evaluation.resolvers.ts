@@ -65,16 +65,16 @@ export class editAesanSponsorEvaluationResolver implements Resolve<any> {
     };
     return forkJoin([
       this._agencyService.getAgencyByIdAndUserId(requestParameters),
-      this._agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-      this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, isList: true }),
-      this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, excludeAdministrators: true }),
-      this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority,administrativePosition', isList: true }),
-      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, isList: false })
+      this._agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+      this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, forDropdown: true }),
+      this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, forDropdown: true, excludeAdministrators: true }),
+      this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority,administrativePosition', forDropdown: true }),
+      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, forDropdown: false })
     ]).pipe(
       map(([agency, agencyStatuses, cities, regions, programs, users, allOptions, sites]) => {
-        // Filtrar las opciones por optionKey como en sign-up. Con isList: true el body es la lista directamente.
+        // Filtrar las opciones por optionKey como en sign-up. Con forDropdown: true el body es la lista directamente.
         const optionsData = allOptions.body ?? [];
         const yesNoOptions = optionsData.filter((option: any) => option.optionKey === 'yesNo');
         const exceptionStatusOptions = optionsData.filter((option: any) => option.optionKey === 'exceptionStatus');

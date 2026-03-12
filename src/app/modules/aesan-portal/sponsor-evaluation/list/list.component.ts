@@ -116,7 +116,7 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
       skip: index,
       name: form.name || null,
       alls: false,
-      isList: false,
+      forDropdown: false,
       userId: userId,
       isPropietary: false,
       regionId: null,

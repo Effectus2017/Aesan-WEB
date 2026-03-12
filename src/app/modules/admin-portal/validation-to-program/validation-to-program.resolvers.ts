@@ -53,15 +53,15 @@ export const initialDataValidationToProgramEditResolver: ResolveFn<any> = (route
 
   return forkJoin([
     agencyService.getAgencyById({ agencyId: Number(agencyId) }),
-    agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, isList: true, excludeAdministrators: true }),
+    agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    programService.getAllProgramsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, forDropdown: true, excludeAdministrators: true }),
     optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'administrativePosition',
       names: 'Administrador,Director,Coordinador(a) del Programa',
-      isList: true,
+      forDropdown: true,
     })
   ]).pipe(
     map(([agency, agencyStatuses, cities, regions, programs, users, options]) => ({

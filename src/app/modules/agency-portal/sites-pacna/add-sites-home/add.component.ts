@@ -30,6 +30,8 @@ import {
   getEndTimeOptions,
   timeStringToDate,
   compareByTime,
+  dateToMinutes,
+  getApiErrorMessage,
   TimeOption
 } from 'app/shared/utils';
 import { City } from 'app/shared/models/location/City';
@@ -48,7 +50,7 @@ import { AreaTypeService } from 'app/shared/services/area-type.service';
 import { AreaType } from 'app/shared/models/catalog/AreaType';
 import { DayOfWeekResponse } from 'app/shared/models/calendar/DayOfWeekResponse';
 import { AgencyService } from 'app/shared/services/agency.service';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
 
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -392,8 +394,8 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     ],
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25, 50],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
     fullScreen: false,
     viewMode: 'cards',
     operatingDaysOfWeek: []
@@ -894,38 +896,17 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
             break;
           default:
             this.isLoading = false;
+            // No need for showDialog here if the interceptor will handle non-true results 
+            // from the backend (if they are 4xx/5xx). 
+            // If the backend returns 200 with false, we might still need a message.
             this._notificationService.showErrorDialog();
             break;
         }
       },
       error: (err: HttpErrorResponse) => {
         this.isLoading = false;
-        const body = err?.error as ApiErrorBody | undefined;
-        if (
-          err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' ||
-            body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' ||
-            body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
-          body?.message
-        ) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === 'MISSING_STRONG_SERVICE' && body?.message) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (
-          err?.status === 400 &&
-          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
-          body?.message
-        ) {
-          this._notificationService.showError(body.message);
-        } else {
-          const message = getApiErrorMessage(err);
-          if (message) {
-            this._notificationService.showErrorDialogWithRawMessage(message);
-          } else {
-            this._notificationService.showErrorDialog('dialog.error.no-response');
-          }
-        }
         this.headerConfig.formGroup.enable({ emitEvent: false });
+        // Error is now handled by the global errorInterceptor
       },
       complete: () => {
         this.isLoading = false;
@@ -1036,6 +1017,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
         }
       },
       error: (error) => {
+        const body = error?.error as BaseApiException | undefined;
         console.error('Error al obtener el tipo de área para la ciudad:', error);
       },
     });

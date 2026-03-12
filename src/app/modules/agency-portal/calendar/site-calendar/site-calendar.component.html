@@ -88,11 +88,20 @@
                     <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'sites.calendar.legend.holiday' |
                         transloco }}</span>
                 </div>
-                <div class="flex gap-2 items-center">
-                    <span class="w-4 h-4 rounded" style="background-color: #2196f3;"></span>
-                    <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'sites.calendar.legend.service' |
-                        transloco }}</span>
-                </div>
+                @if (serviceTypeLegendItems.length > 0) {
+                    @for (item of serviceTypeLegendItems; track item.serviceTypeId) {
+                        <div class="flex gap-2 items-center">
+                            <span class="text-base leading-none" aria-hidden="true">{{ item.icon }}</span>
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ item.name }}</span>
+                        </div>
+                    }
+                } @else {
+                    <div class="flex gap-2 items-center">
+                        <span class="w-4 h-4 rounded" style="background-color: #2196f3;"></span>
+                        <span class="text-sm text-gray-600 dark:text-gray-400">{{ 'sites.calendar.legend.service' |
+                            transloco }}</span>
+                    </div>
+                }
             </div>
         </div>
 

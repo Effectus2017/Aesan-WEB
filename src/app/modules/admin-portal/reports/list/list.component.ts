@@ -67,8 +67,8 @@ export class ReportsListComponent implements OnInit, OnDestroy, OnGenericTableHa
     displayedColumns: REPORTS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: false,
-    pageSize: 15,
-    pageSizeOptions: [15, 50, 100],
+    pageSize: 25,
+    pageSizeOptions: [25, 50, 100],
     length: 0,
     fullScreen: true,
   };

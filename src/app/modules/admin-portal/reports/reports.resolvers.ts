@@ -18,7 +18,7 @@ export const SchoolHierarchyTreeResolver: ResolveFn<any> = (route) => {
 
   // Solo cargar auspiciadores
   // NO cargar la jerarquía si no hay un selectedSponsorId
-  return agencyService.getAllAgenciesFromDb({ take: 10000000, skip: 0, alls: true, isList: true, isPropietary: false })
+  return agencyService.getAllAgenciesFromDb({ take: 10000000, skip: 0, alls: true, forDropdown: true, isPropietary: false })
     .pipe(
       map((agencies) => ({
         agencies: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [],

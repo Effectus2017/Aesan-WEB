@@ -44,6 +44,7 @@ import {
   isTimeWithinOperatingRange,
   timeStringToDate,
   compareByTime,
+  getApiErrorMessage,
   TimeOption,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/site/Site';
@@ -51,7 +52,8 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { ApiErrorBody, getApiErrorMessage } from 'app/shared/models/common/ApiError';
+import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
+import { ErrorCode } from 'app/shared/models/errors/ErrorCode';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { MatTableDataSource } from '@angular/material/table';
@@ -457,8 +459,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     ],
     handler: this,
     showPaginator: true,
-    pageSizeOptions: [5, 10, 25, 50],
-    pageSize: 10,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
     fullScreen: false,
     viewMode: 'cards',
     operatingDaysOfWeek: [],
@@ -1271,10 +1273,10 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       },
       error: (err: HttpErrorResponse) => {
         console.error('[Edit Site] updateSite error:', err);
-        const body = err?.error as ApiErrorBody | undefined;
+        const body = err?.error as BaseApiException | undefined;
         if (
           err?.status === 400 &&
-          (body?.code === 'FIRST_SITE_MUST_BE_COMEDOR' || body?.code === 'SCHOOL_MUST_HAVE_COMEDOR_FIRST' || body?.code === 'SITE_DATES_OUTSIDE_COMEDOR_RANGE') &&
+          (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR || body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST || body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
           body?.message
         ) {
           this._notificationService.showWarningDialogWithRawMessage(body.message);
@@ -1435,7 +1437,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
     const queryParameters: QueryParameters = {
       cityId: city.id,
-      isList: true,
+      forDropdown: true,
     };
 
     this._geoService.getRegionsByCityId(queryParameters).subscribe({
@@ -2026,6 +2028,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       return;
     }
     const payload = this.childGroups.map((g) => ({
+      id: g.id ?? 0,
       groupName: g.groupName,
       numberOfChildren: g.numberOfChildren,
       serviceSlots: (g.serviceSlots ?? []).map((slot) => ({

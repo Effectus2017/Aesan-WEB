@@ -73,10 +73,10 @@ export const initialAddUsersResolver: ResolveFn<any> = () => {
   const geoService = inject(GeoService);
 
   return forkJoin([
-    usersService.getAllRolesFromDb({ aesanOnly: true, isList: true }),
-    programService.getAllProgramsFromDb({ alls: true, isList: true }),
-    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    usersService.getAllRolesFromDb({ aesanOnly: true, forDropdown: true }),
+    programService.getAllProgramsFromDb({ alls: true, forDropdown: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
   ]).pipe(
     map(([roles, programs, cities, regions]) => ({
       roles: roles?.body ?? [],
@@ -101,13 +101,13 @@ export const initialEditUsersResolver: ResolveFn<any> = (route: ActivatedRouteSn
 
   return forkJoin([
     usersService.getUserByIdWithSP({ userId: route.paramMap.get('id') }),
-    usersService.getAllRolesFromDb({ aesanOnly: true, isList: true }),
+    usersService.getAllRolesFromDb({ aesanOnly: true, forDropdown: true }),
     permissionService.getUserPermissions({
       userId: route.paramMap.get('id'),
     }),
-    programService.getAllProgramsFromDb({ alls: true, isList: true }),
-    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, isList: true }),
-    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, isList: true }),
+    programService.getAllProgramsFromDb({ alls: true, forDropdown: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
   ]).pipe(
     map(([user, roles, permissions, programs, cities, regions]) => ({
       user: user.body,
@@ -137,9 +137,9 @@ export const initialProfileUsersResolver: ResolveFn<any> = () => {
 
   return forkJoin([
     usersService.getUserByIdWithSP({ userId }),
-    usersService.getAllRolesFromDb({ aesanOnly: true, isList: true }),
+    usersService.getAllRolesFromDb({ aesanOnly: true, forDropdown: true }),
     permissionService.getUserPermissions({ userId }),
-    programService.getAllProgramsFromDb({ alls: true, isList: true })
+    programService.getAllProgramsFromDb({ alls: true, forDropdown: true })
   ]).pipe(
     map(([user, roles, permissions, programs]) => ({
       user: user.body,

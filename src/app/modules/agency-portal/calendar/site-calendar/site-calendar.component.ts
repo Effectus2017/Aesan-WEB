@@ -45,6 +45,7 @@ import {
   getServiceEventColorByTypeId,
   getServiceTypeStyle
 } from 'app/shared/constants/service-type-styles.constants';
+import { ServiceTypes } from 'app/shared/constants/service-type.constants';
 import { getGroupBorderColor } from 'app/shared/constants/child-group-styles.constants';
 import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentClickEvent';
 
@@ -1378,6 +1379,26 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   /** Eventos de servicio para los iconos en la fila inferior de la celda. */
   getServiceIconEvents(day: { events?: CalendarEvent[] }): CalendarEvent[] {
     return (day?.events ?? []).filter(e => this.isServiceEvent(e));
+  }
+
+  /** Ítems de leyenda de servicios: icono + nombre por cada tipo de servicio presente en el mes actual, ordenados por displayOrder. */
+  get serviceTypeLegendItems(): { serviceTypeId: number; icon: string; name: string }[] {
+    const serviceEvents = this.events.filter(e => (e.meta as { isService?: boolean })?.isService === true);
+    const uniqueIds = [...new Set(serviceEvents.map(e => (e.meta as { serviceTypeId?: number })?.serviceTypeId).filter((id): id is number => id != null))];
+    const items = uniqueIds.map(serviceTypeId => {
+      const style = getServiceTypeStyle(serviceTypeId);
+      const option = ServiceTypes.find(s => s.id === serviceTypeId);
+      const name = option
+        ? (this.currentLanguage === 'es' ? option.name : option.nameEN)
+        : (this.translocoService.translate('sites.calendar.day-events.service-fallback') ?? 'Servicio');
+      return { serviceTypeId, icon: style.icon, name };
+    });
+    const byOrder = (a: { serviceTypeId: number }, b: { serviceTypeId: number }) => {
+      const orderA = ServiceTypes.find(s => s.id === a.serviceTypeId)?.displayOrder ?? 999;
+      const orderB = ServiceTypes.find(s => s.id === b.serviceTypeId)?.displayOrder ?? 999;
+      return orderA - orderB;
+    };
+    return items.sort(byOrder);
   }
 
   /** Indica si el día es feriado (para aplicar tono deshabilitado a los iconos). */

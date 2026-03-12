@@ -278,7 +278,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     this._optionSelectionService.getOptionSelectionByOptionKey({
       optionKey: 'yesNo,typeOfResidential,typeOfApplicant,isActive,community,walkers,services,distributionType,siteType,experience,reviewResult,relationshipType,homeType,participantType,siteLocation,publicAllianceContract',
       names: null,
-      isList: true,
+      forDropdown: true,
     }).subscribe();
   }
 
@@ -375,7 +375,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
       take: 25,
       skip: 0,
       alls: true,
-      isList: true,
+      forDropdown: true,
     };
 
     // Cities - Load using getCitiesFromDb like the original component
@@ -944,7 +944,7 @@ export class SiteEditModalComponent implements OnInit, OnDestroy {
     if (city?.id) {
       const queryParameters: QueryParameters = {
         cityId: city.id,
-        isList: true,
+        forDropdown: true,
       };
       this._geoService.getRegionsByCityId(queryParameters).subscribe({
         next: (result: any) => {

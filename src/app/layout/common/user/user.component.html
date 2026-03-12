@@ -44,7 +44,7 @@
   </ng-container>
   <mat-divider class="my-2" *ngIf="userAgency"></mat-divider>
   <ng-container *ngIf="programsDisplay">
-    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default">
+    <div class="flex items-center gap-3 px-3 py-2 min-h-[48px] cursor-default" [matTooltip]="'common.programs-tooltip' | transloco">
       <mat-icon [svgIcon]="'heroicons_outline:academic-cap'" class="text-gray-500 dark:text-gray-400 shrink-0"></mat-icon>
       <span class="flex-1 text-sm text-gray-600 dark:text-gray-300">{{ programsDisplay }}</span>
     </div>
@@ -70,14 +70,14 @@
     </span>
   </ng-container>
   <!-- <mat-divider class="my-2"></mat-divider> -->
-  <button mat-menu-item (click)="navigateToProfile()">
+  <button mat-menu-item (click)="navigateToProfile()" [matTooltip]="'common.profile-tooltip' | transloco">
     <mat-icon [svgIcon]="'heroicons_outline:user-circle'"></mat-icon>
     <span>{{ 'common.profile' | transloco }}</span>
   </button>
   <theme-toggle [menuItem]="true"></theme-toggle>
   <keyboard-shortcuts [menuItem]="true"></keyboard-shortcuts>
   <mat-divider class="my-2"></mat-divider>
-  <button mat-menu-item (click)="signOut()">
+  <button mat-menu-item (click)="signOut()" [matTooltip]="'common.sign-out-tooltip' | transloco">
     <mat-icon [svgIcon]="'heroicons_outline:arrow-right-on-rectangle'"></mat-icon>
     <span>{{ 'common.sign-out' | transloco }}</span>
   </button>
