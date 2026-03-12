@@ -18,7 +18,9 @@
             "ES2022",
             "dom"
         ],
-
+        "paths": {
+            "app/*": ["app/*"]
+        }
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false
