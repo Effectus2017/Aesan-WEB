@@ -480,6 +480,7 @@
       "comments": {
         "label": "Comentarios",
         "placeholder": "Ingrese comentarios adicionales (opcional):",
+        "required": "La descripci?n es requerida",
         "employee": {
           "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"

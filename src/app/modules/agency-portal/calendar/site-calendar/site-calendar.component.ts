@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -57,6 +58,7 @@ import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentCli
     CalendarModule,
     MatButtonModule,
     MatIconModule,
+    MatMenuModule,
     MatTooltipModule,
     MatDialogModule,
     MatFormFieldModule,
@@ -1381,24 +1383,13 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     return (day?.events ?? []).filter(e => this.isServiceEvent(e));
   }
 
-  /** Ítems de leyenda de servicios: icono + nombre por cada tipo de servicio presente en el mes actual, ordenados por displayOrder. */
+  /** Ítems de leyenda de servicios: icono + nombre por cada tipo de servicio (siempre todos), ordenados por displayOrder. */
   get serviceTypeLegendItems(): { serviceTypeId: number; icon: string; name: string }[] {
-    const serviceEvents = this.events.filter(e => (e.meta as { isService?: boolean })?.isService === true);
-    const uniqueIds = [...new Set(serviceEvents.map(e => (e.meta as { serviceTypeId?: number })?.serviceTypeId).filter((id): id is number => id != null))];
-    const items = uniqueIds.map(serviceTypeId => {
-      const style = getServiceTypeStyle(serviceTypeId);
-      const option = ServiceTypes.find(s => s.id === serviceTypeId);
-      const name = option
-        ? (this.currentLanguage === 'es' ? option.name : option.nameEN)
-        : (this.translocoService.translate('sites.calendar.day-events.service-fallback') ?? 'Servicio');
-      return { serviceTypeId, icon: style.icon, name };
+    return ServiceTypes.map(option => {
+      const style = getServiceTypeStyle(option.id);
+      const name = this.currentLanguage === 'es' ? option.name : option.nameEN;
+      return { serviceTypeId: option.id, icon: style.icon, name };
     });
-    const byOrder = (a: { serviceTypeId: number }, b: { serviceTypeId: number }) => {
-      const orderA = ServiceTypes.find(s => s.id === a.serviceTypeId)?.displayOrder ?? 999;
-      const orderB = ServiceTypes.find(s => s.id === b.serviceTypeId)?.displayOrder ?? 999;
-      return orderA - orderB;
-    };
-    return items.sort(byOrder);
   }
 
   /** Indica si el día es feriado (para aplicar tono deshabilitado a los iconos). */

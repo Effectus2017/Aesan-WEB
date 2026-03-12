@@ -729,7 +729,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     const experienceId = param.experienceId;
 
     // Obtener los días de operación seleccionados, con fallback a días permitidos
-    // Convertir operatingDaysOfWeek (number[]) a formato DayOfWeekResponse[]
+    // operatingDaysOfWeek ya viene como DayOfWeekResponse[] desde el backend
     const operatingDaysOfWeek = param.operatingDaysOfWeek;
 
     this.headerConfig.formGroup.patchValue({

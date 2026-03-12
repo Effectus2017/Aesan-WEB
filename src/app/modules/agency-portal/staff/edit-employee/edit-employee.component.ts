@@ -176,8 +176,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       birthDate: new FormControl('', [Validators.required]),
       // Email
       email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
-      // Comments
-      comments: new FormControl(''),
+      // Comments (descripción requerida)
+      comments: new FormControl('', [Validators.required]),
       // Sitio asignado (opcional)
       site: new FormControl(null),
       // Review result

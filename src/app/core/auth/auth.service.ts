@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/shared/services/user.service';
@@ -9,6 +9,7 @@ import { LoginRequest } from 'app/shared/models/request/LoginRequest';
 import { SignUpRequest } from 'app/shared/models/request/SignUpRequest';
 import { UnlockSessionRequest } from 'app/shared/models/request/UnlockSessionRequest';
 import { AgencyStatusStorageService } from 'app/shared/services/agency-status-storage.service';
+import { SKIP_GLOBAL_ERROR } from 'app/shared/interceptors/error.context';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -124,7 +125,11 @@ export class AuthService {
       return throwError('User is already logged in.');
     }
 
-    return this._httpClient.post(`${this.apiUrl}/login`, credentials).pipe(
+    return this._httpClient
+      .post(`${this.apiUrl}/login`, credentials, {
+        context: new HttpContext().set(SKIP_GLOBAL_ERROR, true),
+      })
+      .pipe(
       switchMap((response: any) => {
         const token: Token = response as Token;
         try {
