@@ -537,6 +537,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this.sponsorType = programData.sponsorTypes;
     this.deliveryTypes = programData.deliveryTypes;
     this.availableDaysOfWeek = programData.allowedOperatingDays;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     this._changeDetectorRef.markForCheck();
 

@@ -528,6 +528,9 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Cargar días permitidos desde el resolver
       this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
+      // Catálogo de tipos de servicio para mostrar nombre en tarjetas (PACNA/PSAV)
+      this.servicesTableConfig.serviceTypes = resolvedData.serviceTypes ?? [];
+
       // Usar la sitio del resolver
       // Use site from resolver
       this.onSetForm(resolvedData.site);

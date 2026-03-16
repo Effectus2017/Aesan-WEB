@@ -121,4 +121,9 @@ export interface QueryParameters {
   logTo?: string; // ISO date
   page?: number;
   pageSize?: number;
+
+  // Filtros registro de correos (get-failed-email-logs / get-email-logs-by-email)
+  status?: string;
+  emailType?: string;
+  showOnlyFailed?: boolean;
 }

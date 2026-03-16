@@ -1,9 +1,6 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
-import { QueryParameters } from 'app/shared/models/common/QueryParameters';
-import { SiteService } from 'app/shared/services/site.service';
+import { ResolveFn } from '@angular/router';
 import { forkJoin, map, Observable } from 'rxjs';
-import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { DeliveryTypeService } from 'app/shared/services/delivery-type.service';
 import { GroupTypeService } from 'app/shared/services/group-type.service';
@@ -11,34 +8,6 @@ import { OrganizationTypeService } from 'app/shared/services/organization-type.s
 import { ServiceTypeService } from 'app/shared/services/service-type.service';
 import { KitchenTypeService } from 'app/shared/services/kitchen-type.service';
 import { SiteCalendarService } from '../calendar/site-calendar.service';
-
-// Resolver para la lista de sitios PSAV
-// Resolver for PSAV sites list
-export const initialDataSitesPsavListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  // Site service
-  // Servicio de sitios
-  const siteService = inject(SiteService);
-  // Auth service
-  // Servicio de autenticación
-  const authService = inject(AuthService);
-  const agencyId = authService.getAgencyId();
-
-  // Filtrar por agencyId y programId PSAV (sin isDayCareHomeId ya que PSAV no tiene homes/centers)
-  const requestParameters: QueryParameters = {
-    take: 25,
-    skip: 0,
-    alls: false,
-    forDropdown: false,
-    agencyId: agencyId,
-    programId: PROGRAM_IDS.PSAV,
-  };
-
-  return forkJoin([siteService.getAllSitesFromDb(requestParameters)]).pipe(
-    map(([sites]) => ({
-      sites: sites.body,
-    }))
-  );
-};
 
 /** Carga datos de programa PSAV para add (sin kitchen types; se cargan por group type en el componente). */
 function resolvePsavProgramDataAdd(): Observable<any> {

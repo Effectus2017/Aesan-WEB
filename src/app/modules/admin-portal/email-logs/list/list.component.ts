@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, inject, ChangeDetectorRef } from "@angular/core";
+import { Component, ViewEncapsulation, OnInit, OnDestroy, inject, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -15,17 +15,19 @@ import { FuseConfirmationService } from "@fuse/services/confirmation";
 import { GenericHeaderComponent } from "app/shared/components/generic-header/generic-header.component";
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from "app/shared/components/generic-header/generic-header.interface";
 import { GenericTableComponent } from "app/shared/components/generic-table/generic-table.component";
-import { GenericTableConfig, OnGenericTableHandler } from "app/shared/components/generic-table/generic-table.interface";
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from "app/shared/components/generic-table/generic-table.interface";
+import { OnGenericFilterHandlers } from "app/shared/components/generic-filter-panel/generic-filter-panel.interface";
+import { GenericFilterDrawerComponent } from "app/shared/components/generic-filter-drawer/generic-filter-drawer.component";
 import { CustomRouterService } from "app/shared/services/custom-router.service";
 import { NotificationService } from "app/shared/services/notification.service";
 import { EmailLogService } from "app/shared/services/email-log.service";
 import { isNullOrUndefinedEmptyStringNullArray } from "app/shared/utils";
 import { Subject, takeUntil } from "rxjs";
 import { EMAIL_LOGS_COLUMNS_SCHEMA } from "./columns-schema";
+import { EMAIL_LOGS_FILTERS_SCHEMA } from "./filters-schema";
 import { ToastrModule } from 'ngx-toastr';
 import { TranslocoService, TranslocoModule } from "@ngneat/transloco";
 import { EmailLog } from 'app/shared/models/log/EmailLog';
-import { OptionSelection } from "app/shared/models/common/OptionSelection";
 import { QueryParameters } from "app/shared/models/common/QueryParameters";
 
 @Component({
@@ -40,18 +42,17 @@ import { QueryParameters } from "app/shared/models/common/QueryParameters";
         MatButtonModule,
         MatIconModule,
         MatPaginatorModule,
-        MatTableModule,
-        MatInputModule,
-        MatSelectModule,
-        MatCheckboxModule,
-        RouterModule,
-        GenericHeaderComponent,
-        GenericTableComponent,
-        ToastrModule,
+    MatTableModule,
+    MatInputModule,
+    RouterModule,
+    GenericHeaderComponent,
+    GenericTableComponent,
+    GenericFilterDrawerComponent,
+    ToastrModule,
         TranslocoModule
     ]
 })
-export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
@@ -62,24 +63,21 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   private _translocoService: TranslocoService = inject(TranslocoService);
   private _route: ActivatedRoute = inject(ActivatedRoute);
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = EMAIL_LOGS_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
   data: EmailLog[] = [];
-  isLoading = false;
-  showOnlyFailed: boolean = false;
-  selectedStatus: string = 'all';
-  selectedEmailType: string = 'all';
-  currentLang: string = this._translocoService.getActiveLang();
 
   headerConfig: GenericHeaderConfig = {
     title: 'email-logs.list.title',
     formGroup: this._formBuilder.group({
       email: new FormControl(''),
-      status: new FormControl('All'),
-      emailType: new FormControl('All'),
-      showOnlyFailed: new FormControl(false),
     }),
     searchFieldShow: true,
     searchInputPlaceholder: 'email-logs.list.search.placeholder',
     goToAddButtonShow: false,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig = {
@@ -94,41 +92,17 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
     fullScreen: true,
   };
 
-  statusOptions: OptionSelection[] = [];
-  emailTypeOptions: OptionSelection[] = [];
-
   constructor() {}
 
   trackByFn(index: number, item: any): any {
     return item.id || index;
   }
 
-  ngOnInit() {
-    // Obtener datos del resolver
+  ngOnInit(): void {
     const resolvedData = this._route.snapshot.data['data'];
-
-    if (resolvedData && resolvedData.options) {
-      const options = resolvedData.options?.data || [];
-
-      // Filtrar opciones por optionKey
-      this.statusOptions = options
-        .filter((option: OptionSelection) => option.optionKey === 'emailLogStatus' && option.isActive);
-
-      this.emailTypeOptions = options
-        .filter((option: OptionSelection) => option.optionKey === 'emailLogType' && option.isActive);
-
+    if (resolvedData?.options) {
       this._changeDetectorRef.markForCheck();
     }
-
-    // Suscribirse a cambios de idioma
-    this._translocoService.langChanges$
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe((lang: string) => {
-        this.currentLang = lang;
-        this._changeDetectorRef.markForCheck();
-      });
-
-    // Cargar logs fallidos por defecto al iniciar
     this.loadFailedLogs();
   }
 
@@ -138,9 +112,16 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   }
 
   loadFailedLogs() {
-    const email = this.headerConfig.formGroup?.value.email || undefined;
+    const form = { ...this.headerConfig.formGroup?.value, ...this.appliedFilters } as Record<string, unknown>;
+    const email = form.email != null && String(form.email).trim() !== '' ? String(form.email).trim() : undefined;
+    const status = form.status != null && String(form.status) !== 'All' ? String(form.status) : undefined;
+    const emailType = form.emailType != null && String(form.emailType) !== 'All' ? String(form.emailType) : undefined;
+    const showOnlyFailed = form.showOnlyFailed === true;
     const queryParameters: QueryParameters = {
-      email: email
+      ...(email != null && { email }),
+      ...(status != null && { status }),
+      ...(emailType != null && { emailType }),
+      ...(showOnlyFailed && { showOnlyFailed: true }),
     };
     this._emailLogService.getFailedEmailLogs(queryParameters)
       .pipe(takeUntil(this._unsubscribeAll))
@@ -162,8 +143,15 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
       return;
     }
 
+    const form = { ...this.headerConfig.formGroup?.value, ...this.appliedFilters } as Record<string, unknown>;
+    const status = form.status != null && String(form.status) !== 'All' ? String(form.status) : undefined;
+    const emailType = form.emailType != null && String(form.emailType) !== 'All' ? String(form.emailType) : undefined;
+    const showOnlyFailed = form.showOnlyFailed === true;
     const queryParameters: QueryParameters = {
-      email: email
+      email: email.trim(),
+      ...(status != null && { status }),
+      ...(emailType != null && { emailType }),
+      ...(showOnlyFailed && { showOnlyFailed: true }),
     };
     this._emailLogService.getEmailLogsByEmail(queryParameters)
       .pipe(takeUntil(this._unsubscribeAll))
@@ -179,22 +167,17 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
       });
   }
 
-  applyFilters() {
+  applyFilters(): void {
     let filteredData = [...this.data];
-    const formValue = this.headerConfig.formGroup?.value;
+    const filters = this.appliedFilters;
 
-    // Filtrar por estado
-    if (formValue?.status && formValue.status !== 'All') {
-      filteredData = filteredData.filter(log => log.status === formValue.status);
+    if (filters['status'] != null && filters['status'] !== '' && String(filters['status']) !== 'All') {
+      filteredData = filteredData.filter(log => log.status === String(filters['status']));
     }
-
-    // Filtrar por tipo de correo
-    if (formValue?.emailType && formValue.emailType !== 'All') {
-      filteredData = filteredData.filter(log => log.emailType === formValue.emailType);
+    if (filters['emailType'] != null && filters['emailType'] !== '' && String(filters['emailType']) !== 'All') {
+      filteredData = filteredData.filter(log => log.emailType === String(filters['emailType']));
     }
-
-    // Filtrar solo fallidos
-    if (formValue?.showOnlyFailed) {
+    if (filters['showOnlyFailed'] === true) {
       filteredData = filteredData.filter(log => log.status === 'Failed');
     }
 
@@ -211,7 +194,6 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   }
 
   onSubmit() {
-    if (this.isLoading) return;
     if (this.headerConfig.formGroup?.valid) {
       const email = this.headerConfig.formGroup.value.email;
       if (email && email.trim() !== '') {
@@ -237,24 +219,14 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
   onClear(event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    this.headerConfig.formGroup?.reset({
-      email: '',
-      status: 'All',
-      emailType: 'All',
-      showOnlyFailed: false
-    });
+    this.headerConfig.formGroup?.reset({ email: '' });
     this.loadFailedLogs();
   }
 
   onClean(event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    this.headerConfig.formGroup?.reset({
-      email: '',
-      status: 'All',
-      emailType: 'All',
-      showOnlyFailed: false
-    });
+    this.headerConfig.formGroup?.reset({ email: '' });
     this.headerConfig.clearVisible = false;
     this.loadFailedLogs();
   }
@@ -390,8 +362,28 @@ export class EmailLogsListComponent implements OnInit, OnDestroy, OnGenericTable
     });
   }
 
-  onFilterChange() {
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
     this.applyFilters();
+    const email = this.headerConfig.formGroup?.value?.email != null && String(this.headerConfig.formGroup.value.email).trim() !== '' ? String(this.headerConfig.formGroup.value.email).trim() : null;
+    if (email) {
+      this.loadLogsByEmail(email);
+    } else {
+      this.loadFailedLogs();
+    }
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.filterDrawer?.close();
+    this.loadFailedLogs();
+    this._changeDetectorRef.markForCheck();
   }
 
   onAdd() {

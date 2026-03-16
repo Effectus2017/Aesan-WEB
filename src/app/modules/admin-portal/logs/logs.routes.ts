@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { LogsComponent } from './logs.component';
-import { LogsListComponent } from './list/list.component';
+import { initialDataLogsListResolver } from './logs.resolvers';
 
 export default [
   {
@@ -10,7 +10,10 @@ export default [
       {
         path: '',
         pathMatch: 'full',
-        component: LogsListComponent,
+        loadComponent: () => import('./list/list.component').then((c) => c.LogsListComponent),
+        resolve: {
+          data: initialDataLogsListResolver,
+        },
       },
     ],
   },

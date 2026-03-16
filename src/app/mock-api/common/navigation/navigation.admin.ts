@@ -96,18 +96,26 @@ export const adminNavigation: FuseNavigationItem[] = [
         link: '/operating-policy',
       },
       {
-        id: 'administration.email-templates',
-        title: 'navigation.administration.email-templates',
-        type: 'basic',
+        id: 'administration.email',
+        title: 'navigation.administration.email',
+        type: 'collapsable',
         icon: 'heroicons_solid:envelope',
-        link: '/email-template',
-      },
-      {
-        id: 'administration.email-logs',
-        title: 'navigation.administration.email-logs',
-        type: 'basic',
-        icon: 'heroicons_solid:envelope-open',
-        link: '/email-logs',
+        children: [
+          {
+            id: 'administration.email-templates',
+            title: 'navigation.administration.email-templates',
+            type: 'basic',
+            icon: 'heroicons_solid:envelope',
+            link: '/email-template',
+          },
+          {
+            id: 'administration.email-logs',
+            title: 'navigation.administration.email-logs',
+            type: 'basic',
+            icon: 'heroicons_solid:envelope-open',
+            link: '/email-logs',
+          },
+        ],
       },
       {
         id: 'administration.logs',

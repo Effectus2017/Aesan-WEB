@@ -463,6 +463,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
     // Catálogos: programData (PACNA home)
     this.availableDaysOfWeek = programData.allowedOperatingDays;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     this.onSetForm(commonData.site);
 

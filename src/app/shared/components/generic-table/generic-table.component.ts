@@ -35,6 +35,11 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   @Input() handler: OnGenericTableHandler;
   @Input() darkMode: boolean = false;
   @Input() viewMode: 'table' | 'cards' | 'auto' = 'table';
+  /**
+   * Catálogo de tipos de servicio por programa (id, name, nameEN).
+   * Si no se pasa, se usa config.serviceTypes. Permite resolver el nombre cuando el slot no trae serviceTypeName (PACNA/PSAV).
+   */
+  @Input() serviceTypes: Array<{ id: number; name: string; nameEN?: string }> | null = null;
 
   @ContentChild(TemplateRef) cardTemplate: TemplateRef<any>;
   @Input() customCardTemplate: TemplateRef<any> | null = null;
@@ -210,21 +215,49 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
   }
 
   /**
+   * Catálogo efectivo de tipos de servicio: @Input serviceTypes o config.serviceTypes.
+   */
+  private _getServiceTypes(): Array<{ id: number; name: string; nameEN?: string }> | null {
+    if (this.serviceTypes != null && this.serviceTypes.length > 0) return this.serviceTypes;
+    const fromConfig = this.config?.serviceTypes;
+    if (fromConfig != null && fromConfig.length > 0) return fromConfig;
+    return null;
+  }
+
+  /**
+   * Resuelve el nombre de un tipo de servicio por id usando el catálogo (idioma actual).
+   */
+  private _resolveServiceTypeName(serviceTypeId: number): string | null {
+    const types = this._getServiceTypes();
+    if (!types?.length) return null;
+    const found = types.find((t) => t.id === serviceTypeId);
+    if (!found) return null;
+    const lang = this._translocoService.getActiveLang() ?? 'es';
+    return lang === 'en' && found.nameEN ? found.nameEN : found.name;
+  }
+
+  /**
    * Slots de servicio ofrecidos en el elemento (desde serviceSlots cuando no hay columnas boolean rellenadas).
    * Usado como fallback para mostrar servicios dentro de la card (PDAM, PACNA, PSAV).
+   * Si el slot no trae serviceTypeName, se resuelve por serviceTypeId con config/serviceTypes.
    */
   getActiveServiceSlots(element: any): ServiceSlotDisplay[] {
     const slots = element?.serviceSlots ?? [];
     if (!Array.isArray(slots)) return [];
     return slots
       .filter((s: SiteChildGroupServiceSlotResponse) => !!s?.isOffered)
-      .map((s: SiteChildGroupServiceSlotResponse) => ({
-        from: s?.from ?? s?.fromTime,
-        to: s?.to ?? s?.toTime,
-        label: s?.serviceTypeName ?? (s as ServiceSlotDisplay).label,
-        serviceTypeName: s?.serviceTypeName,
-        serviceTypeId: s?.serviceTypeId,
-      }));
+      .map((s: SiteChildGroupServiceSlotResponse) => {
+        const existingName = s?.serviceTypeName ?? (s as ServiceSlotDisplay).label ?? s?.serviceTypeNameEN;
+        const resolvedName = existingName || (s?.serviceTypeId != null ? this._resolveServiceTypeName(s.serviceTypeId) : null);
+        const displayName = existingName ?? resolvedName ?? undefined;
+        return {
+          from: s?.from ?? s?.fromTime,
+          to: s?.to ?? s?.toTime,
+          label: displayName,
+          serviceTypeName: displayName ?? s?.serviceTypeName,
+          serviceTypeId: s?.serviceTypeId,
+        };
+      });
   }
 
   /**
@@ -295,7 +328,11 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
     for (const slot of slots as SiteChildGroupServiceSlotResponse[]) {
       if (!slot?.isOffered) continue;
       const dates = slot?.operatingDates ?? [];
-      const serviceName = slot?.serviceTypeName ?? slot?.serviceTypeNameEN ?? 'Servicio';
+      const serviceName =
+        slot?.serviceTypeName ??
+        slot?.serviceTypeNameEN ??
+        (slot?.serviceTypeId != null ? this._resolveServiceTypeName(slot.serviceTypeId) : null) ??
+        'Servicio';
       for (const d of dates) {
         const isH = (d as { isHoliday?: boolean; IsHoliday?: boolean }).isHoliday ?? (d as { isHoliday?: boolean; IsHoliday?: boolean }).IsHoliday;
         const isW = (d as { isWeekend?: boolean; IsWeekend?: boolean }).isWeekend ?? (d as { isWeekend?: boolean; IsWeekend?: boolean }).IsWeekend;

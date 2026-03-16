@@ -623,6 +623,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     this.sponsorType = programData.sponsorTypes;
     this.deliveryTypes = programData.deliveryTypes;
     this.availableDaysOfWeek = programData.allowedOperatingDays;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     this._changeDetectorRef.markForCheck();
 

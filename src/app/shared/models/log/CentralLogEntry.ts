@@ -1,6 +1,8 @@
+import type { PagedResult } from '../common/PagedResult';
+
 /**
  * DTO unificado para entradas del centro de logs (todas las categorías).
- * Respuesta de GET /api/logs.
+ * Respuesta de GET /api/logs (cada elemento dentro de PagedResult.data).
  */
 export interface CentralLogEntry {
   category: string;
@@ -13,9 +15,5 @@ export interface CentralLogEntry {
   level?: string;
 }
 
-export interface LogsPageResponse {
-  items: CentralLogEntry[];
-  totalCount: number;
-  page: number;
-  pageSize: number;
-}
+/** Respuesta paginada de GET /api/logs (data + count). */
+export type LogsPagedResponse = PagedResult<CentralLogEntry>;

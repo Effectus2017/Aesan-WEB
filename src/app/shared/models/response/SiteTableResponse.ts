@@ -5,11 +5,6 @@ export interface SiteTableResponse {
   cityName: string;
   regionName: string;
   isActive: boolean;
-  groupTypeName?: string;
   generalEnrollment?: number;
-  siteNumber: number;
-  agencyCode?: string;
   siteCode?: string;
-  schoolName?: string;
-  schoolId?: number;
 }

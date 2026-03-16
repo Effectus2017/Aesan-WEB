@@ -68,6 +68,7 @@
             "center-types": "Tipos de Centro",
             "staff-types": "Tipos de Personal",
             "residential-types": "Tipos Residenciales",
+            "email": "Correo",
             "email-templates": "Templates de Email",
             "email-logs": "Registro de Correos",
             "logs": "Centro de logs",

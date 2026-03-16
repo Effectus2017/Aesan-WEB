@@ -11,6 +11,7 @@
       },
       "filters": {
         "category": "Category",
+        "dateRange": "Date range",
         "from": "From",
         "to": "To",
         "search": "Search"

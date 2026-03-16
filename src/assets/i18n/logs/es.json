@@ -11,6 +11,7 @@
       },
       "filters": {
         "category": "Categoría",
+        "dateRange": "Rango de fechas",
         "from": "Desde",
         "to": "Hasta",
         "search": "Buscar"

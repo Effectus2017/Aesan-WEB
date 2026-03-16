@@ -46,32 +46,6 @@ export const initialDataSiteCalendarResolver: ResolveFn<any> = (route: Activated
   );
 };
 
-// Resolver para la lista de sitios
-// Resolver for sites list
-export const initialDataSitesListResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
-  // Site service
-  // Servicio de sitios
-  const siteService = inject(SiteService);
-  // Auth service
-  // Servicio de autenticación
-  const authService = inject(AuthService);
-  const agencyId = authService.getAgencyId();
-
-  const requestParameters: QueryParameters = {
-    take: 25,
-    skip: 0,
-    alls: false,
-    forDropdown: false,
-    agencyId: agencyId,
-  };
-
-  return forkJoin([siteService.getAllSitesFromDb(requestParameters)]).pipe(
-    map(([sites]) => ({
-      sites: sites.body,
-    }))
-  );
-};
-
 // Resolver: escuela por schoolId (query param) para Agregar Sitio
 // Resolver: school by schoolId (query param) for Add Site
 export const initialDataSitesAddSchoolResolver: ResolveFn<{ schoolId: number | null; schoolName: string | null }> = (route: ActivatedRouteSnapshot) => {

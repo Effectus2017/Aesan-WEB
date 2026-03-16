@@ -508,6 +508,9 @@ export class AddSitePsavComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Cargar días permitidos desde el resolver
       this.availableDaysOfWeek = resolvedData.allowedOperatingDays;
 
+      // Catálogo de tipos de servicio para mostrar nombre en tarjetas (PACNA/PSAV)
+      this.servicesTableConfig.serviceTypes = resolvedData.serviceTypes ?? [];
+
       // Los tipos de cocina se cargan dinámicamente según el tipo de grupo
 
       this._changeDetectorRef.markForCheck();

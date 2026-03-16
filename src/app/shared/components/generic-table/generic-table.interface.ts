@@ -161,6 +161,11 @@ export interface GenericTableConfig<T = any> {
    * Formato: abreviaturas por idioma debajo del horario (ES: L K M J V S D; EN: M T W Th F Sa S).
    */
   operatingDaysOfWeek?: DayOfWeekResponse[];
+  /**
+   * Catálogo de tipos de servicio por programa (id, name, nameEN).
+   * Se usa para mostrar el nombre del servicio en tarjetas cuando el slot no trae serviceTypeName (PACNA/PSAV).
+   */
+  serviceTypes?: Array<{ id: number; name: string; nameEN?: string }>;
 }
 
 export interface OnGenericTableHandler {

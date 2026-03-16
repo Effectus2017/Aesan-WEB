@@ -675,6 +675,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     this.sponsorType = programData.sponsorTypes;
     this.deliveryTypes = programData.deliveryTypes;
     this.availableDaysOfWeek = programData.allowedOperatingDays;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     // Sitio desde commonData (initialDataSitesPacnaCenterEditResolver)
     this.onSetForm(commonData.site);

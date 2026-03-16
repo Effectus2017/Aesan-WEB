@@ -11,15 +11,6 @@ export default [
     path: '',
     component: SitesPsavComponent,
     children: [
-    //   {
-    //     path: '',
-    //     loadComponent: () => import('./list/list.component').then((c) => c.SitesPsavListComponent),
-    //     canActivate: [PsavProgramGuard, PermissionGuard],
-    //     data: { permission: 'site.view' },
-    //     resolve: {
-    //       data: initialDataSitesPsavListResolver,
-    //     },
-    //   },
       {
         path: 'add',
         loadComponent: () => import('./add/add.component').then((c) => c.AddSitePsavComponent),

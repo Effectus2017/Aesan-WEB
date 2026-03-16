@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/common/QueryParameters';
-import { LogsPageResponse } from '../models/log/CentralLogEntry';
+import { LogsPagedResponse } from '../models/log/CentralLogEntry';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +17,8 @@ export class LogsService {
    * Obtiene entradas de log paginadas por categoría (Audit, Email, Job, Application).
    * Requiere permiso según categoría: log.view.audit, log.view.email, log.view.job, log.view.errors.
    */
-  getLogsPaged(queryParameters: QueryParameters): Observable<LogsPageResponse> {
-    return this._httpClient.get<LogsPageResponse>(
+  getLogsPaged(queryParameters: QueryParameters): Observable<LogsPagedResponse> {
+    return this._httpClient.get<LogsPagedResponse>(
       this.apiUrl,
       getHttpOptions(queryParameters)
     );

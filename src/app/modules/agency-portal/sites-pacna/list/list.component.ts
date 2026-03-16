@@ -24,7 +24,6 @@ import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-pa
 import { SITES_PACNA_FILTERS_SCHEMA } from './filters-schema';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteTableResponse } from 'app/shared/models/response/SiteTableResponse';
-import { AuthService } from 'app/core/auth/auth.service';
 import { PROGRAM_IDS } from 'app/shared/const';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 
@@ -54,7 +53,6 @@ export class SitesPacnaListComponent implements OnInit, OnDestroy, OnGenericTabl
   private _siteService = inject(SiteService);
   private _customRouterService = inject(CustomRouterService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _authService = inject(AuthService);
   private _route = inject(ActivatedRoute);
   private _optionSelectionService = inject(OptionSelectionService);
   private _unsubscribeAll: Subject<any> = new Subject<any>();

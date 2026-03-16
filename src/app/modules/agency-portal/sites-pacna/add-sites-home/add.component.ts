@@ -468,6 +468,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
     // Catálogos: programData (PACNA home)
     this.availableDaysOfWeek = programData.allowedOperatingDays;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     // Formulario solo para Day Care Home: id desde la inscripción de la agencia
     this.isDayCareHomeId = this.agency?.inscription?.isDayCareHome?.id ?? null;

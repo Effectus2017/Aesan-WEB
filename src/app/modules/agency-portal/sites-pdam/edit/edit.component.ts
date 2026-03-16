@@ -572,6 +572,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     this.sponsorType = programData.sponsorTypes;
     this.deliveryTypes = programData.deliveryTypes;
     this.availableDaysOfWeek = (programData.allowedOperatingDays as DayOfWeekResponse[]) || null;
+    this.servicesTableConfig.serviceTypes = programData.serviceTypes ?? [];
 
     // Sitio desde commonData (initialDataSitesCommonEditResolver)
     this.onSetForm(commonData.site);

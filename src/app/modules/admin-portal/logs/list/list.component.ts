@@ -1,3 +1,4 @@
+/* cspell:disable */
 import {
   Component,
   ViewEncapsulation,
@@ -5,19 +6,14 @@ import {
   OnDestroy,
   inject,
   ChangeDetectorRef,
-  signal,
+  ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
@@ -28,40 +24,19 @@ import {
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import {
   GenericTableConfig,
+  GenericFilterResult,
   OnGenericTableHandler,
 } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { LogsService } from 'app/shared/services/logs.service';
 import { Subject, takeUntil } from 'rxjs';
 import { LOGS_COLUMNS_SCHEMA } from './columns-schema';
+import { LOGS_FILTERS_SCHEMA } from './filters-schema';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CentralLogEntry } from 'app/shared/models/log/CentralLogEntry';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
-
-const LOG_CATEGORIES = [
-  { value: 'Audit', labelKey: 'logs.list.categories.audit' },
-  { value: 'Email', labelKey: 'logs.list.categories.email' },
-  { value: 'Job', labelKey: 'logs.list.categories.job' },
-  { value: 'Application', labelKey: 'logs.list.categories.application' },
-];
-
-/** Fecha al inicio del día (00:00:00.000) en hora local, en ISO para la API. */
-function toLogFromIso(value: Date | string | null | undefined): string | undefined {
-  if (value == null) return undefined;
-  const d = typeof value === 'string' ? new Date(value) : value;
-  if (isNaN(d.getTime())) return undefined;
-  d.setHours(0, 0, 0, 0);
-  return d.toISOString();
-}
-
-/** Fecha al final del día (23:59:59.999) en hora local, en ISO para la API. */
-function toLogToIso(value: Date | string | null | undefined): string | undefined {
-  if (value == null) return undefined;
-  const d = typeof value === 'string' ? new Date(value) : value;
-  if (isNaN(d.getTime())) return undefined;
-  d.setHours(23, 59, 59, 999);
-  return d.toISOString();
-}
 
 @Component({
   selector: 'app-list-logs',
@@ -70,48 +45,49 @@ function toLogToIso(value: Date | string | null | undefined): string | undefined
   animations: fuseAnimations,
   imports: [
     ReactiveFormsModule,
-    MatFormFieldModule,
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
     MatTableModule,
-    MatInputModule,
-    MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatPaginatorModule,
     RouterModule,
     GenericHeaderComponent,
     GenericTableComponent,
+    GenericFilterDrawerComponent,
     TranslocoModule,
   ],
 })
-export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
-  private _unsubscribeAll = new Subject<void>();
+export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
+  private _unsubscribeAll = new Subject<any>();
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
   private _logsService = inject(LogsService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _fuseConfirmationService = inject(FuseConfirmationService);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
+  private _route = inject(ActivatedRoute);
 
-  readonly loading = signal(false);
-  isLoading = false;
-  readonly categoryOptions = LOG_CATEGORIES;
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   headerConfig: GenericHeaderConfig = {
     title: 'logs.list.title',
-    formGroup: new FormGroup({
-      logCategory: new FormControl<string>('Email', { nonNullable: true }),
-      logFrom: new FormControl<string | null>(null),
-      logTo: new FormControl<string | null>(null),
-    }),
+    formGroup: new FormGroup({}),
     searchFieldShow: false,
     goToAddButtonShow: false,
-    clearVisible: false,
+    clearVisible: true,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig<CentralLogEntry> = {
     dataSource: new MatTableDataSource<CentralLogEntry>([]),
+    dataSourceList: [],
     columnsSchema: LOGS_COLUMNS_SCHEMA,
     displayedColumns: LOGS_COLUMNS_SCHEMA.map((col) =>
       Array.isArray(col.key) ? col.key[0] : col.key
@@ -124,126 +100,85 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
     fullScreen: true,
   };
 
-  trackByFn(index: number, item: CentralLogEntry): number {
-    return item.id ?? index;
-  }
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = LOGS_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Constructor
+  // -----------------------------------------------------------------------------------------------------
+  constructor() {}
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
+
+  /** Inicializa el componente con los datos del resolver. */
   ngOnInit(): void {
-    this.loadLogs();
+    const resolvedData = this._route.snapshot.data['data'];
+    if (resolvedData?.logs) {
+      this.tableConfig.dataSource.data = resolvedData.logs.data ?? [];
+      this.tableConfig.length = resolvedData.logs.count ?? 0;
+      this.tableConfig.dataSourceList = resolvedData.logs.data ?? [];
+      this._changeDetectorRef.markForCheck();
+    }
   }
 
+  /** Limpia las suscripciones al destruir el componente. */
   ngOnDestroy(): void {
-    this._unsubscribeAll.next();
+    this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  loadLogs(): void {
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones On (componentes genéricos)
+  // -----------------------------------------------------------------------------------------------------
 
-    const category = this.headerConfig.formGroup?.get('logCategory')?.value;
-    if (!category?.trim()) {
-      this._notificationService.showWarning(
-        this._translocoService.translate('logs.list.selectCategory')
-      );
-      return;
-    }
-
-    const logFrom = this.headerConfig.formGroup?.get('logFrom')?.value;
-    const logTo = this.headerConfig.formGroup?.get('logTo')?.value;
-
-    const params: QueryParameters = {
-      logCategory: category.trim(),
-      page: 1,
-      pageSize: this.tableConfig.pageSize ?? 20,
-    };
-
-    const fromIso = toLogFromIso(logFrom);
-    const toIso = toLogToIso(logTo);
-
-    if (fromIso) params.logFrom = fromIso;
-    if (toIso) params.logTo = toIso;
-
-    this.loading.set(true);
-    this._logsService
-      .getLogsPaged(params)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response) => {
-          this.tableConfig.dataSource.data = response.items ?? [];
-          this.tableConfig.length = response.totalCount ?? 0;
-          this.loading.set(false);
-          this._changeDetectorRef.markForCheck();
-        },
-        error: () => {
-          this._notificationService.showError();
-          this.loading.set(false);
-          this._changeDetectorRef.markForCheck();
-        },
-      });
-  }
-
-  onPageChange(event: PageEvent): void {
-    const category = this.headerConfig.formGroup?.get('logCategory')?.value;
-    if (!category?.trim()) return;
-
-    const logFrom = this.headerConfig.formGroup?.get('logFrom')?.value;
-    const logTo = this.headerConfig.formGroup?.get('logTo')?.value;
-
-    const params: QueryParameters = {
-      logCategory: category.trim(),
-      page: event.pageIndex + 1,
-      pageSize: event.pageSize,
-    };
-    const fromIso = toLogFromIso(logFrom);
-    const toIso = toLogToIso(logTo);
-    if (fromIso) params.logFrom = fromIso;
-    if (toIso) params.logTo = toIso;
-
-    this.loading.set(true);
-    this._logsService
-      .getLogsPaged(params)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response) => {
-          this.tableConfig.dataSource.data = response.items ?? [];
-          this.tableConfig.length = response.totalCount ?? 0;
-          this.tableConfig.pageSize = event.pageSize;
-          this.loading.set(false);
-          this._changeDetectorRef.markForCheck();
-        },
-        error: () => {
-          this._notificationService.showError();
-          this.loading.set(false);
-          this._changeDetectorRef.markForCheck();
-        },
-      });
-  }
-
+  /** Ejecuta la búsqueda recargando con la primera página. */
   onSubmit(): void {
-    if (this.isLoading) return;
-    this.loadLogs();
+    this.getAll(0);
   }
 
+  /** Recarga los datos con la primera página (equivalente a búsqueda). */
   onSearch(): void {
-    this.loadLogs();
+    this.getAll(0);
   }
 
-  onClear(event: Event): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.headerConfig.formGroup?.reset({
-      logCategory: 'Email',
-      logFrom: null,
-      logTo: null,
-    });
-    this.tableConfig.dataSource.data = [];
-    this.tableConfig.length = 0;
+  /** Abre o cierra el drawer de filtros. */
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  /** Recibe filtros aplicados desde el panel y recarga la lista. */
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0);
     this._changeDetectorRef.markForCheck();
   }
 
+  /** Restablecer filtros del panel y recargar sin filtros adicionales. */
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Limpia filtros (categoría por defecto Email) y recarga. */
+  onClear(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.appliedFilters = { logCategory: 'Email' };
+    this.getAll(0);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Delega en onClear para limpiar el formulario y recargar. */
   onClean(event: Event): void {
     this.onClear(event);
   }
 
+  /** Navega a la fila o abre detalle al hacer clic en la tabla. */
   onTableView(event: Event, id: unknown): void {
     event.stopPropagation();
     event.preventDefault();
@@ -251,10 +186,12 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
     if (item) this.showDetail(item);
   }
 
+  /** Delega en onTableView para edición/visualización desde la tabla. */
   onTableEdit(event: Event, id: unknown): void {
     this.onTableView(event, id);
   }
 
+  /** Gestiona la acción 'view' de la tabla abriendo el detalle. */
   onTableAction(event: Event, action: string, id: unknown): void {
     event.stopPropagation();
     event.preventDefault();
@@ -264,6 +201,7 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
     }
   }
 
+  /** Abre detalle desde el enlace de relaciones de la tabla. */
   onTableViewRelationships(event: Event, id: unknown): void {
     event.stopPropagation();
     event.preventDefault();
@@ -271,12 +209,60 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
     if (item) this.showDetail(item);
   }
 
+  /** Maneja el evento de paginación y recarga la página correspondiente. */
   getPaginator(event?: PageEvent): void {
-    if (event) this.onPageChange(event);
+    if (event) {
+      if (event.pageSize != null) this.tableConfig.pageSize = event.pageSize;
+      this.getAll(event.pageIndex, event.pageSize);
+    }
   }
 
+  /** Handler de botón agregar (no usado en logs). */
   onAdd(): void {}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Otras funciones públicas
+  // -----------------------------------------------------------------------------------------------------
+
+  /** Obtiene los logs paginados según appliedFilters y actualiza la tabla (como sites-psav: getAll usa this.appliedFilters). */
+  getAll(index: number, pageSize?: number): void {
+    const category = (this.appliedFilters['logCategory'] as string)?.trim() ?? 'Email';
+    if (!category) {
+      this._notificationService.showWarning(
+        this._translocoService.translate('logs.list.selectCategory')
+      );
+      return;
+    }
+
+    const params: QueryParameters = {
+      logCategory: category,
+      page: index + 1,
+      pageSize: pageSize ?? this.tableConfig.pageSize ?? 25,
+    };
+    const logFrom = this.appliedFilters['logFrom'];
+    const logTo = this.appliedFilters['logTo'];
+    if (logFrom != null && logFrom !== '') params.logFrom = String(logFrom);
+    if (logTo != null && logTo !== '') params.logTo = String(logTo);
+
+    this._logsService
+      .getLogsPaged(params)
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response) => {
+          this.tableConfig.dataSource.data = response.data ?? [];
+          this.tableConfig.length = response.count ?? 0;
+          this.tableConfig.dataSourceList = response.data ?? [];
+          if (pageSize != null) this.tableConfig.pageSize = pageSize;
+          this._changeDetectorRef.markForCheck();
+        },
+        error: () => {
+          this._notificationService.showError();
+          this._changeDetectorRef.markForCheck();
+        },
+      });
+  }
+
+  /** Muestra el detalle de una entrada de log en un diálogo. */
   showDetail(item: CentralLogEntry): void {
     const message = `
       <div style="text-align: left; white-space: pre-wrap; max-height: 400px; overflow-y: auto;">
@@ -301,5 +287,10 @@ export class LogsListComponent implements OnInit, OnDestroy, OnGenericTableHandl
       },
       dismissible: true,
     });
+  }
+
+  /** trackBy para la tabla por id de entrada. */
+  trackByFn(index: number, item: CentralLogEntry): number {
+    return item.id ?? index;
   }
 }
