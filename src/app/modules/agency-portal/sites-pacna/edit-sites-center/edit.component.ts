@@ -1089,7 +1089,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     // Si el groupType es "Comedor", cargar las opciones válidas de kitchenTypes
     // y preservar el kitchenType original del sitio
     if (groupType) {
-      const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+      const isComedor = groupType.code === 'DINING_ROOM';
       if (isComedor && kitchenType) {
         // Llamar a getKitchenTypesByGroupType preservando el kitchenType original
         this.getKitchenTypesByGroupType(groupType, true, kitchenType);
@@ -1154,13 +1154,13 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
 
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('sites.validation.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
 
     if (isNullOrUndefinedEmptyStringNullArray(this.param)) {
-      this._notificationService.showError('No se puede editar una escuela que no existe');
+      this._notificationService.showError(this._translocoService.translate('sites.edit.error.schoolNotFound'));
       return;
     }
 
@@ -1579,7 +1579,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       },
       error: (error) => {
         console.error('Error al cargar los tipos de entrega:', error);
-        this._notificationService.showError('Error al cargar los tipos de entrega');
+        this._notificationService.showError(this._translocoService.translate('sites.error.loadDeliveryTypes'));
       },
     });
   }
@@ -1757,7 +1757,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       if (result && result.action === 'submit') {
         // Aquí se implementaría la lógica para enviar la solicitud de permiso
         // Por ahora, solo mostramos un mensaje de confirmación
-        this._notificationService.showSuccess('Solicitud de permiso enviada correctamente');
+        this._notificationService.showSuccess(this._translocoService.translate('sites.success.permissionRequestSent'));
 
         // El usuario puede continuar con el tipo de entrega seleccionado
         // No necesitamos hacer nada más aquí

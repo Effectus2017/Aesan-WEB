@@ -69,8 +69,8 @@ export const initialDataSitesAddSchoolResolver: ResolveFn<{ schoolId: number | n
   );
 };
 
-/** Carga datos de programa PDAM (sin kitchen types; se cargan por group type en el componente). */
-function resolvePdamProgramData(): Observable<any> {
+/** Carga datos de programa PDAM para add (sin kitchen types). Si la ruta tiene schoolId, se pasa para excluir Comedor cuando la escuela ya tiene uno. */
+function resolvePdamProgramDataAdd(route: ActivatedRouteSnapshot): Observable<any> {
   const centerTypeService = inject(CenterTypeService);
   const deliveryTypeService = inject(DeliveryTypeService);
   const sponsorTypeService = inject(SponsorTypeService);
@@ -79,11 +79,14 @@ function resolvePdamProgramData(): Observable<any> {
   const siteCalendarService = inject(SiteCalendarService);
   const serviceTypeService = inject(ServiceTypeService);
 
+  const schoolIdParam = route?.queryParams?.['schoolId'];
+  const schoolId = schoolIdParam != null && schoolIdParam !== '' ? +schoolIdParam : undefined;
+
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     sponsorTypeService.getSponsorTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
-    groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
+    groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PDAM, ...(schoolId != null && schoolId > 0 ? { schoolId } : {}) }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PDAM }),
     serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PDAM }),
@@ -110,8 +113,8 @@ function resolvePdamProgramData(): Observable<any> {
   );
 }
 
-/** Resolver de datos de programa PDAM para alta de sitio (sin kitchen types; se cargan por group type). */
-export const initialDataSitesPdamProgramAddResolver: ResolveFn<any> = () => resolvePdamProgramData();
+/** Resolver de datos de programa PDAM para alta de sitio (sin kitchen types; se cargan por group type). Pasa schoolId si existe para excluir Comedor cuando la escuela ya tiene uno. */
+export const initialDataSitesPdamProgramAddResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => resolvePdamProgramDataAdd(route);
 
 /** Carga datos de programa PDAM para edición, incluyendo kitchen types para que compareById funcione en el formulario. */
 function resolvePdamProgramDataEdit(): Observable<any> {

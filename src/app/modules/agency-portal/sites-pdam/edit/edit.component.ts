@@ -511,7 +511,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
   get shouldShowKitchenTypeField(): boolean {
     const groupType = this.headerConfig.formGroup.get('groupType')?.value;
     if (groupType) {
-      return groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+      return groupType.code === 'DINING_ROOM';
     }
     return false;
   }
@@ -629,7 +629,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       const kitchenTypeControl = this.headerConfig.formGroup.get('kitchenType');
 
       if (groupType) {
-        const isComedor = groupType.name === 'Comedor' || groupType.nameEN === 'Dining Room';
+        const isComedor = groupType.code === 'DINING_ROOM';
         if (!isComedor) {
           // Si no es "Comedor", limpiar el valor, opciones y validaciones de tipo de cocina
           this.kitchenTypes = [];
@@ -1114,13 +1114,13 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
 
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('sites.validation.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
 
     if (isNullOrUndefinedEmptyStringNullArray(this.param)) {
-      this._notificationService.showError('No se puede editar una escuela que no existe');
+      this._notificationService.showError(this._translocoService.translate('sites.edit.error.schoolNotFound'));
       return;
     }
 
@@ -1233,7 +1233,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       // Validar que todos los servicios tengan groupName
       const servicesWithoutGroup = this.servicesByGroups.filter((s) => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
-        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.services-require-group-name'));
         return;
       }
 
@@ -1242,7 +1242,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
 
       // Validar que haya grupos si hay servicios
       if (this.childGroups.length === 0) {
-        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.require-at-least-one-group'));
         return;
       }
     }
@@ -1551,7 +1551,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       },
       error: (error) => {
         console.error('Error al cargar los tipos de entrega:', error);
-        this._notificationService.showError('Error al cargar los tipos de entrega');
+        this._notificationService.showError(this._translocoService.translate('sites.error.loadDeliveryTypes'));
       },
     });
   }
@@ -1731,7 +1731,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       if (result && result.action === 'submit') {
         // Aquí se implementaría la lógica para enviar la solicitud de permiso
         // Por ahora, solo mostramos un mensaje de confirmación
-        this._notificationService.showSuccess('Solicitud de permiso enviada correctamente');
+        this._notificationService.showSuccess(this._translocoService.translate('sites.success.permissionRequestSent'));
 
         // El usuario puede continuar con el tipo de entrega seleccionado
         // No necesitamos hacer nada más aquí

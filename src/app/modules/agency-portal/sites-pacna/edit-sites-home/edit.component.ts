@@ -836,13 +836,13 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
 
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('sites.validation.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
 
     if (isNullOrUndefinedEmptyStringNullArray(this.param)) {
-      this._notificationService.showError('No se puede editar una escuela que no existe');
+      this._notificationService.showError(this._translocoService.translate('sites.edit.error.schoolNotFound'));
       return;
     }
 
@@ -908,7 +908,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
       // Validar que todos los servicios tengan groupName
       const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
-        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.services-require-group-name'));
         return;
       }
 
@@ -917,7 +917,7 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
 
       // Validar que haya grupos si hay servicios
       if (this.childGroups.length === 0) {
-        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.require-at-least-one-group'));
         return;
       }
     }

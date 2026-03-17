@@ -87,11 +87,14 @@ export const initialDataSitesPacnaProgramAddResolver: ResolveFn<any> = (route: A
   // Servicio de tipos de servicio
   const serviceTypeService = inject(ServiceTypeService);
 
+  const schoolIdParam = route?.queryParams?.['schoolId'];
+  const schoolId = schoolIdParam != null && schoolIdParam !== '' ? +schoolIdParam : undefined;
+
   return forkJoin([
     centerTypeService.getCenterTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     deliveryTypeService.getDeliveryTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     sponsorTypeService.getSponsorTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
-    groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
+    groupTypeService.getGroupTypesByProgram({ programId: PROGRAM_IDS.PACNA, ...(schoolId != null && schoolId > 0 ? { schoolId } : {}) }),
     organizationTypeService.getOrganizationTypesByProgram({ programId: PROGRAM_IDS.PACNA }),
     siteCalendarService.getAllowedDaysByProgramId({ programId: PROGRAM_IDS.PACNA }),
     serviceTypeService.getServiceTypesByProgram({ programId: PROGRAM_IDS.PACNA }),

@@ -4,9 +4,14 @@
         "error": {
             "FIRST_SITE_MUST_BE_COMEDOR": "El primer sitio de la escuela debe ser de tipo Comedor.",
             "SITE_DATES_OUTSIDE_COMEDOR_RANGE": "Las fechas de funcionamiento del sitio deben estar dentro del periodo del Comedor de la escuela.",
-            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "La escuela debe tener un sitio Comedor antes de agregar otros sitios. El primer sitio de la escuela debe ser de tipo Comedor."
+            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "La escuela debe tener un sitio Comedor antes de agregar otros sitios. El primer sitio de la escuela debe ser de tipo Comedor.",
+            "loadDeliveryTypes": "Error al cargar los tipos de entrega"
+        },
+        "success": {
+            "permissionRequestSent": "Solicitud de permiso enviada correctamente"
         },
         "validation": {
+            "incompleteFields": "Por favor, complete todos los campos requeridos",
             "require-group-with-services": "Debe agregar al menos un grupo con servicios",
             "services-require-group-name": "Todos los servicios deben tener un nombre de grupo",
             "require-at-least-one-group": "Debe haber al menos un grupo cuando hay servicios por grupos"
@@ -852,7 +857,8 @@
                 "error": "Error al guardar los servicios por grupo."
             },
             "error": {
-                "save-failed": "No se pudo guardar el sitio. La operación no se completó correctamente."
+                "save-failed": "No se pudo guardar el sitio. La operación no se completó correctamente.",
+                "schoolNotFound": "No se puede editar una escuela que no existe"
             },
             "time-range-invalid": "La hora de fin debe ser mayor que la hora de inicio",
             "service-time-range-error": {

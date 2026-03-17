@@ -4,9 +4,14 @@
         "error": {
             "FIRST_SITE_MUST_BE_COMEDOR": "The first site of the school must be of type Dining Room (Comedor).",
             "SITE_DATES_OUTSIDE_COMEDOR_RANGE": "The site operating dates must be within the school's Dining Room (Comedor) period.",
-            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor."
+            "SCHOOL_MUST_HAVE_COMEDOR_FIRST": "The school must have a Dining Room (Comedor) site before adding other sites. The first site of the school must be of type Comedor.",
+            "loadDeliveryTypes": "Error loading delivery types"
+        },
+        "success": {
+            "permissionRequestSent": "Permission request sent successfully"
         },
         "validation": {
+            "incompleteFields": "Please complete all required fields",
             "require-group-with-services": "You must add at least one group with services",
             "services-require-group-name": "All services must have a group name",
             "require-at-least-one-group": "There must be at least one group when there are services by groups"
@@ -919,7 +924,8 @@
                 "error": "Error saving services by group."
             },
             "error": {
-                "save-failed": "The site could not be saved. The operation did not complete successfully."
+                "save-failed": "The site could not be saved. The operation did not complete successfully.",
+                "schoolNotFound": "A school that does not exist cannot be edited"
             },
             "time-range-invalid": "End time must be greater than start time",
             "service-time-range-error": {

@@ -655,7 +655,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       // Log detallado de campos inválidos usando función utilitaria
       logFormValidationErrors(this.headerConfig.formGroup, 'Formulario de Sitio');
 
-      this._notificationService.showError('Por favor, complete todos los campos requeridos');
+      this._notificationService.showError(this._translocoService.translate('sites.validation.incompleteFields'));
       this.headerConfig.formGroup.markAllAsTouched();
       return;
     }
@@ -802,7 +802,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
       // Validar que todos los servicios tengan groupName
       const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
-        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.services-require-group-name'));
         return;
       }
 
@@ -811,7 +811,7 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
 
       // Validar que haya grupos si hay servicios
       if (this.childGroups.length === 0) {
-        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.require-at-least-one-group'));
         return;
       }
     }
@@ -820,12 +820,12 @@ export class AddSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericHe
     if (formValues.offersServiceToDifferentGroups && this.servicesByGroups.length > 0) {
       const servicesWithoutGroup = this.servicesByGroups.filter(s => !s.groupName || s.groupName.trim() === '');
       if (servicesWithoutGroup.length > 0) {
-        this._notificationService.showError('Todos los servicios deben tener un nombre de grupo');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.services-require-group-name'));
         return;
       }
       this.syncChildGroupsFromServices();
       if (this.childGroups.length === 0) {
-        this._notificationService.showError('Debe haber al menos un grupo cuando hay servicios por grupos');
+        this._notificationService.showError(this._translocoService.translate('sites.validation.require-at-least-one-group'));
         return;
       }
       siteRequest.childGroups = this.childGroups;
