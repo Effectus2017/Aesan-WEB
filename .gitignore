@@ -64,3 +64,4 @@ node_modules/
 /tests/.auth/
 /tests/screenshots/
 .cursorrules
+.cursor/rules

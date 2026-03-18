@@ -5,6 +5,12 @@
       "search": {
         "placeholder": "Search..."
       },
+      "filters": {
+        "name": "Agency Name",
+        "uieNumber": "Unique Entity Identifier (UEI)",
+        "einNumber": "EIN Number",
+        "ssPatronal": "Social Security Patronal"
+      },
       "table": {
         "columns": {
           "agencyName": "Agency Name",
@@ -44,14 +50,23 @@
       "label": "Program",
       "required": "You must select a program"
     },
-    "edit-pdam": {
-      "title": "Edit PDAM Evaluation"
+    "pdam": {
+      "title": "PDAM Evaluation"
     },
-    "edit-psav": {
-      "title": "Edit PSAV Evaluation"
+    "psav": {
+      "title": "PSAV Evaluation"
     },
-    "edit-pacna": {
-      "title": "Edit PACNA Evaluation"
+    "pacna": {
+      "title": "PACNA Evaluation"
+    },
+    "view-pdam": {
+      "title": "View PDAM Evaluation"
+    },
+    "view-psav": {
+      "title": "View PSAV Evaluation"
+    },
+    "view-pacna": {
+      "title": "View PACNA Evaluation"
     },
     "edit": {
       "title": "Sponsor Evaluation",
@@ -105,6 +120,9 @@
       "modal": {
         "edit": {
           "title": "Edit Site"
+        },
+        "view": {
+          "title": "View Site"
         }
       }
     },
@@ -356,7 +374,7 @@
         "no": "No"
       },
       "messages": {
-        "noProgramsAssigned": "This agency does not have programs assigned that match the user.",
+        "noProgramsAssigned": "This agency does not have any programs assigned.",
         "invalidForm": "The form is invalid. Please complete all required fields.",
         "success": "Evaluation saved successfully",
         "error": "Error saving evaluation",

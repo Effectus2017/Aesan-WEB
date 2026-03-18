@@ -1,5 +1,5 @@
-import { inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { inject } from '@angular/core';
+import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AgencyStatusService } from 'app/shared/services/agency-status.service';
@@ -9,13 +9,11 @@ import { ProgramService } from 'app/shared/services/program.service';
 import { UsersService } from 'app/shared/services/users.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { forkJoin, Observable, map } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 export const initialAesanSponsorEvaluationResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
-  const _geoService: GeoService = inject(GeoService);
   const _authService: AuthService = inject(AuthService);
-  const _programService: ProgramService = inject(ProgramService);
   const userId = _authService.getUserId();
 
   const requestParameters: QueryParameters = {
@@ -31,82 +29,54 @@ export const initialAesanSponsorEvaluationResolver = () => {
     alls: false,
   };
 
-  return forkJoin([
-    _agencyService.getAllAgenciesFromDb(requestParameters),
-  ]).pipe(
-    map(([agencies]) => {
-      const raw = agencies?.body ?? agencies;
-      return { agencies: raw ?? { data: [], count: 0 } };
-    })
+  return forkJoin([_agencyService.getAllAgenciesFromDb(requestParameters)]).pipe(
+    map(([agencies]) => ({
+      agencies: agencies.body,
+    }))
   );
 };
 
-@Injectable({
-  providedIn: 'root',
-})
-export class editAesanSponsorEvaluationResolver implements Resolve<any> {
-  private _agencyService: AgencyService = inject(AgencyService);
-  private _agencyStatusService: AgencyStatusService = inject(AgencyStatusService);
-  private _geoService: GeoService = inject(GeoService);
-  private _authService: AuthService = inject(AuthService);
-  private _programService: ProgramService = inject(ProgramService);
-  private _usersService: UsersService = inject(UsersService);
-  private _optionSelectionService: OptionSelectionService = inject(OptionSelectionService);
-  private _siteService: SiteService = inject(SiteService);
+/** Resolver para las vistas de evaluación (view-pdam, view-psav, view-pacna). Carga agencia, catálogos, opciones y sitios. */
+export const editAesanSponsorEvaluationResolver: ResolveFn<any> = (route: ActivatedRouteSnapshot) => {
+  const agencyService = inject(AgencyService);
+  const agencyStatusService = inject(AgencyStatusService);
+  const geoService = inject(GeoService);
+  const authService = inject(AuthService);
+  const programService = inject(ProgramService);
+  const usersService = inject(UsersService);
+  const optionSelectionService = inject(OptionSelectionService);
+  const siteService = inject(SiteService);
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any> {
-    const id = route.paramMap.get('id');
+  const id = Number(route.paramMap.get('id'));
+  const userId = authService.getUserId();
+  const requestParameters: QueryParameters = {
+    agencyId: id,
+    userId: userId,
+  };
 
-    const userId = this._authService.getUserId();
-
-    const requestParameters: QueryParameters = {
-      agencyId: Number(id),
-      userId: userId,
-    };
-    return forkJoin([
-      this._agencyService.getAgencyByIdAndUserId(requestParameters),
-      this._agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
-      this._geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
-      this._geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
-      this._programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, forDropdown: true }),
-      this._usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, forDropdown: true, excludeAdministrators: true }),
-      this._optionSelectionService.getOptionSelectionByOptionKey({ optionKey: 'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority,administrativePosition', forDropdown: true }),
-      this._siteService.getAllSitesFromDb({ agencyId: Number(id), take: 25, skip: 0, alls: false, forDropdown: false })
-    ]).pipe(
-      map(([agency, agencyStatuses, cities, regions, programs, users, allOptions, sites]) => {
-        // Filtrar las opciones por optionKey como en sign-up. Con forDropdown: true el body es la lista directamente.
-        const optionsData = allOptions.body ?? [];
-        const yesNoOptions = optionsData.filter((option: any) => option.optionKey === 'yesNo');
-        const exceptionStatusOptions = optionsData.filter((option: any) => option.optionKey === 'exceptionStatus');
-        const taxExemptionTypeOptions = optionsData.filter((option: any) => option.optionKey === 'taxExemptionType');
-        const typeOfEntityOptions = optionsData.filter((option: any) => option.optionKey === 'typeOfEntity');
-        const typeOfApplicantOptions = optionsData.filter((option: any) => option.optionKey === 'typeOfApplicant');
-        const publicAllianceContractOptions = optionsData.filter((option: any) => option.optionKey === 'publicAllianceContract');
-        const isDayCareHomeOptions = optionsData.filter((option: any) => option.optionKey === 'isDayCareHome');
-        const participatesInHeadStartProgramOptions = optionsData.filter((option: any) => option.optionKey === 'headStartProgram');
-        const boardExecutiveAuthorityOptions = optionsData.filter((option: any) => option.optionKey === 'boardExecutiveAuthority');
-        const administrativePositionOptions = optionsData.filter((option: any) => option.optionKey === 'administrativePosition');
-
-        return {
-          agency,
-          agencyStatuses: agencyStatuses?.body ?? agencyStatuses,
-          cities: cities?.body ?? cities,
-          regions: regions?.body ?? regions,
-          programs: programs?.body ?? programs,
-          users: users?.body ?? users,
-          yesNoOptions: yesNoOptions,
-          exceptionStatusOptions: exceptionStatusOptions,
-          taxExemptionTypeOptions: taxExemptionTypeOptions,
-          typeOfEntityOptions: typeOfEntityOptions,
-          typeOfApplicantOptions: typeOfApplicantOptions,
-          publicAllianceContractOptions: publicAllianceContractOptions,
-          isDayCareHomeOptions: isDayCareHomeOptions,
-          participatesInHeadStartProgramOptions: participatesInHeadStartProgramOptions,
-          boardExecutiveAuthorityOptions: boardExecutiveAuthorityOptions,
-          administrativePositionOptions: administrativePositionOptions,
-          sites: sites.body,
-        };
-      })
-    );
-  }
-}
+  return forkJoin([
+    agencyService.getAgencyByIdAndUserId(requestParameters),
+    agencyStatusService.getAllAgencyStatusFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
+    programService.getAllProgramsFromDb({ take: 25, skip: 0, names: 'PDAM,PSAV,PACNA', alls: false, forDropdown: true }),
+    usersService.getAllUsersFromDbWithSP({ take: 25, skip: 0, alls: false, forDropdown: true, excludeAdministrators: true }),
+    optionSelectionService.getOptionSelectionByOptionKey({
+      optionKey:
+        'yesNo,exceptionStatus,taxExemptionType,typeOfEntity,typeOfApplicant,publicAllianceContract,isDayCareHome,headStartProgram,boardExecutiveAuthority,administrativePosition',
+      forDropdown: true,
+    }),
+    siteService.getAllSitesFromDb({ agencyId: id, take: 25, skip: 0, alls: false, forDropdown: false }),
+  ]).pipe(
+    map(([agencyResponse, agencyStatuses, cities, regions, programs, users, allOptions, sites]) => ({
+      agency: agencyResponse.body,
+      agencyStatuses: agencyStatuses.body,
+      cities: cities.body,
+      regions: regions.body,
+      programs: programs.body,
+      users: users.body,
+      options: allOptions.body,
+      sites: sites.body,
+    }))
+  );
+};

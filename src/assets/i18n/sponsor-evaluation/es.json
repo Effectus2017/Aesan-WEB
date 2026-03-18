@@ -5,6 +5,12 @@
       "search": {
         "placeholder": "Buscar..."
       },
+      "filters": {
+        "name": "Nombre de Agencia",
+        "uieNumber": "Identificador Único de Entidad (IUE)",
+        "einNumber": "Número EIN",
+        "ssPatronal": "Seguro Social Patronal"
+      },
       "table": {
         "columns": {
           "agencyName": "Nombre de Agencia",
@@ -44,14 +50,23 @@
       "label": "Programa",
       "required": "Debe seleccionar un programa"
     },
-    "edit-pdam": {
-      "title": "Editar Evaluación PDAM"
+    "pdam": {
+      "title": "Evaluación PDAM"
     },
-    "edit-psav": {
-      "title": "Editar Evaluación PSAV"
+    "psav": {
+      "title": "Evaluación PSAV"
     },
-    "edit-pacna": {
-      "title": "Editar Evaluación PACNA"
+    "pacna": {
+      "title": "Evaluación PACNA"
+    },
+    "view-pdam": {
+      "title": "Ver Evaluación PDAM"
+    },
+    "view-psav": {
+      "title": "Ver Evaluación PSAV"
+    },
+    "view-pacna": {
+      "title": "Ver Evaluación PACNA"
     },
     "edit": {
       "title": "Evaluación de Auspiciador",
@@ -89,6 +104,9 @@
         "modal": {
           "edit": {
             "title": "Editar Sitio"
+          },
+          "view": {
+            "title": "Ver Sitio"
           }
         }
       },
@@ -329,7 +347,7 @@
         "no": "No"
       },
       "messages": {
-        "noProgramsAssigned": "Esta agencia no tiene programas asignados que coincidan con el usuario.",
+        "noProgramsAssigned": "Esta agencia no tiene programas asignados.",
         "invalidForm": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
         "success": "Evaluación guardada exitosamente",
         "error": "Error al guardar la evaluación",

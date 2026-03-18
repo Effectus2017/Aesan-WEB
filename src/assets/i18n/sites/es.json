@@ -1576,12 +1576,25 @@
                         "endTime": "Hasta",
                         "type": "Tipo",
                         "comment": "Comentario",
+                        "status": "Estado",
                         "actions": "Acciones"
                     },
+                    "statusActive": "Activo",
+                    "statusInactive": "Inactivo",
                     "buttons": {
                         "edit": "Editar",
                         "delete": "Eliminar",
                         "toggle": "Activar/Desactivar"
+                    },
+                    "menu": {
+                        "edit": "Editar",
+                        "setHoliday": "Marcar como feriado",
+                        "unsetHoliday": "Quitar feriado",
+                        "changeToHoliday": "Cambiar a Feriado",
+                        "changeToNormal": "Cambiar a Normal",
+                        "enableService": "Habilitar",
+                        "disableService": "Deshabilitar",
+                        "options": "Opciones"
                     }
                 },
                 "day-types": {
@@ -1594,6 +1607,7 @@
                 },
                 "operating-day-title": "Día de funcionamiento",
                 "section-operating-day": "Día de funcionamiento",
+                "section-operating-day-info": "Horario y tipo del día (normal, fin de semana o feriado).",
                 "section-active-services": "Servicios Activos",
                 "group-unnamed": "Sin grupo",
                 "service-fallback": "Servicio",

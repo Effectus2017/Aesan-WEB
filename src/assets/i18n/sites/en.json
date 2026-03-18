@@ -1638,12 +1638,25 @@
                         "endTime": "To",
                         "type": "Type",
                         "comment": "Comment",
+                        "status": "Status",
                         "actions": "Actions"
                     },
+                    "statusActive": "Active",
+                    "statusInactive": "Inactive",
                     "buttons": {
                         "edit": "Edit",
                         "delete": "Delete",
                         "toggle": "Activate/Deactivate"
+                    },
+                    "menu": {
+                        "edit": "Edit",
+                        "setHoliday": "Mark as holiday",
+                        "unsetHoliday": "Remove holiday",
+                        "changeToHoliday": "Change to Holiday",
+                        "changeToNormal": "Change to Normal",
+                        "enableService": "Enable",
+                        "disableService": "Disable",
+                        "options": "Options"
                     }
                 },
                 "day-types": {
@@ -1656,6 +1669,7 @@
                 },
                 "operating-day-title": "Operating day",
                 "section-operating-day": "Operating day",
+                "section-operating-day-info": "Schedule and day type (normal, weekend or holiday).",
                 "section-active-services": "Active Services",
                 "group-unnamed": "Ungrouped",
                 "service-fallback": "Service",

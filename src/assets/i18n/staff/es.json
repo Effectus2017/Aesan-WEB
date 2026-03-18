@@ -288,7 +288,8 @@
       },
       "salaryOrigin": {
         "label": "Origen del Salario",
-        "placeholder": "Seleccione uno o más"
+        "placeholder": "Seleccione uno o más",
+        "required": "El campo origen del salario es requerido"
       },
       "buttons": {
         "save": "Guardar",

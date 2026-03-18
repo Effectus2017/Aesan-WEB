@@ -15,8 +15,11 @@ import { GenericHeaderComponent } from 'app/shared/components/generic-header/gen
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { FormControl, UntypedFormBuilder } from '@angular/forms';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
+import { GenericFilterDrawerComponent } from 'app/shared/components/generic-filter-drawer/generic-filter-drawer.component';
+import { OnGenericFilterHandlers } from 'app/shared/components/generic-filter-panel/generic-filter-panel.interface';
 import { SPONSOR_EVALUATION_COLUMNS_SCHEMA } from './columns-schema';
+import { SPONSOR_EVALUATION_FILTERS_SCHEMA } from './filters-schema';
 import { sponsorEvaluationColumnsData } from './columns-data';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyService } from 'app/shared/services/agency.service';
@@ -37,12 +40,16 @@ import {
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent]
+    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent, GenericFilterDrawerComponent]
 })
-export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
+export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatTable) table: MatTable<AgencyResponse>;
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+
+  filtersSchema = SPONSOR_EVALUATION_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
 
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -55,16 +62,18 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   private _route = inject(ActivatedRoute);
   private _dialog = inject(MatDialog);
 
-  // Configuración del header
+  // Configuración del header (búsqueda solo desde el drawer de filtros)
   headerConfig: GenericHeaderConfig = {
     title: 'sponsor-evaluation.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'sponsor-evaluation.list.search.placeholder',
     submitButtonText: 'sponsor-evaluation.list.buttons.save',
     goToAddButtonShow: false,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   // Configuración de la tabla
@@ -108,13 +117,29 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
     }
   }
 
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this.headerConfig.formGroup.value);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this.headerConfig.formGroup.value);
+    this._changeDetectorRef.markForCheck();
+  }
+
   // Métodos para obtener datos
   getAll(index: number, form: any) {
     const userId = this._authService.getUserId();
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: form.name || null,
       alls: false,
       forDropdown: false,
       userId: userId,
@@ -123,6 +148,8 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
       cityId: null,
       programId: null,
       statusId: null,
+      ...this.appliedFilters,
+      name: (form?.name != null && form?.name !== '') ? form.name : (this.appliedFilters['name'] ?? null),
     };
 
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe((result: any) => {
@@ -144,11 +171,9 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   onClean(event: Event) {
     event.stopPropagation();
     event.preventDefault();
-    // quita el botón de limpiar
     this.headerConfig.clearVisible = false;
-    // resetea el formulario
     this.headerConfig.formGroup.reset();
-    // obtiene todos los datos
+    this.appliedFilters = {};
     this.getAll(0, this.headerConfig.formGroup.value);
   }
 
@@ -185,7 +210,7 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
 
   private _navigateToProgram(agencyId: number, program: Program): void {
     const programCode = getProgramCodeById(program.id)?.toLowerCase();
-    const route = programCode ? `sponsor-evaluation/edit-${programCode}/${agencyId}` : `sponsor-evaluation/edit/${agencyId}`;
+    const route = programCode ? `sponsor-evaluation/view-${programCode}/${agencyId}` : `sponsor-evaluation/edit/${agencyId}`;
     this._customRouterService.navigate([route]);
   }
 

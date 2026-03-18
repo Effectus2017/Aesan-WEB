@@ -4,6 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule, MatDialog } from '@angu
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CalendarEvent } from 'angular-calendar';
@@ -60,7 +61,7 @@ export interface ServiceGroup {
 @Component({
   selector: 'app-school-calendar-table-modal',
   standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatCardModule, MatTooltipModule, TranslocoModule, ReactiveFormsModule, DisableIfAgencyRestrictedDirective, KeyboardShortcutDirective],
+  imports: [CommonModule, MatDialogModule, MatButtonModule, MatIconModule, MatCardModule, MatMenuModule, MatTooltipModule, TranslocoModule, ReactiveFormsModule, DisableIfAgencyRestrictedDirective, KeyboardShortcutDirective],
   templateUrl: './site-calendar-table-modal.component.html',
   styles: [`
     @keyframes fadeIn {
@@ -76,9 +77,9 @@ export interface ServiceGroup {
       animation: fadeIn 1.0s ease-out;
     }
 
-    /* Icono editar verde como en generic table (Material no lo sobrescriba) */
-    .edit-icon-green mat-icon {
-      color: #4CAF50 !important;
+    /* Icono Editar con color primary del tema (como en generic-table; Material no lo sobrescriba) */
+    .menu-edit-icon {
+      color: var(--fuse-primary) !important;
     }
   `]
 })
@@ -95,6 +96,12 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
   /** Servicios agrupados por grupo (para vista agrupada - Opción B) */
   servicesGroupedByGroup: ServiceGroup[] = [];
+
+  /** Fila de día seleccionada para el menú contextual (tres puntos) */
+  selectedDayRow: DayRow | null = null;
+
+  /** Fila de servicio seleccionada para el menú contextual (tres puntos) */
+  selectedServiceRow: ServiceRow | null = null;
 
   constructor(public dialogRef: MatDialogRef<SiteCalendarTableModalComponent>, @Inject(MAT_DIALOG_DATA) public data: SiteCalendarTableModalData) {}
 
@@ -419,6 +426,50 @@ export class SiteCalendarTableModalComponent implements OnInit {
     if (this.data.handler && typeof (this.data.handler as any).onTableEditModal === 'function') {
       (this.data.handler as any).onTableEditModal(null, service.id);
     }
+  }
+
+  /** Delega al handler la acción de marcar/quitar feriado en el día seleccionado. */
+  onToggleDayHoliday(row: DayRow): void {
+    if (this.data.handler && typeof (this.data.handler as any).onTableAction === 'function') {
+      (this.data.handler as any).onTableAction(null, 'toggle-holiday', row.id);
+    }
+  }
+
+  /** Delega al handler la acción de habilitar/deshabilitar el servicio seleccionado. */
+  onToggleServiceEnabled(svc: ServiceRow): void {
+    if (this.data.handler && typeof (this.data.handler as any).onTableAction === 'function') {
+      (this.data.handler as any).onTableAction(null, 'toggle', svc.id);
+    }
+  }
+
+  /** Devuelve la clave i18n para la opción Cambiar a Feriado / Cambiar a Normal según el día seleccionado. */
+  getDayMenuHolidayLabel(): string {
+    if (!this.selectedDayRow?.meta) {
+      return 'sites.calendar.day-events.table.menu.changeToHoliday';
+    }
+    const meta = this.selectedDayRow.meta as { isHoliday?: boolean };
+    return meta.isHoliday ? 'sites.calendar.day-events.table.menu.changeToNormal' : 'sites.calendar.day-events.table.menu.changeToHoliday';
+  }
+
+  /** Devuelve el color del rectángulo del menú según el tipo de día al que se cambia (verde = normal, morado = feriado). */
+  getDayMenuHolidayToggleColor(): string {
+    if (!this.selectedDayRow?.meta) {
+      return '#9c27b0';
+    }
+    const meta = this.selectedDayRow.meta as { isHoliday?: boolean };
+    return meta.isHoliday ? '#4caf50' : '#9c27b0';
+  }
+
+  /** Devuelve el color de la leyenda según el tipo de día actual (normal, fin de semana, feriado). */
+  getDayTypeLegendColor(): string {
+    const meta = this.dayRows[0]?.meta as { isHoliday?: boolean; isWeekend?: boolean } | undefined;
+    if (meta?.isHoliday) {
+      return '#9c27b0';
+    }
+    if (meta?.isWeekend) {
+      return '#ff9800';
+    }
+    return '#4caf50';
   }
 
   private getServiceTitle(service: any): string {

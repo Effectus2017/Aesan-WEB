@@ -14,18 +14,18 @@
     <div class="flex flex-col gap-6 animate-slide-in">
       <!-- Card: Día de funcionamiento (mismo borde/sombra que en sitios: rounded-2xl border shadow) -->
       <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngIf="dayRows.length > 0">
-        <div class="flex items-center gap-2 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
-          <mat-icon class="text-primary icon-size-5 flex-shrink-0" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
-          <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
-            {{ 'sites.calendar.day-events.section-operating-day' | transloco }}
+        <div class="flex gap-2 items-center p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <mat-icon class="flex-shrink-0 text-primary icon-size-5" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
+          <h3 class="flex-1 m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
+            {{ dayRows[0]?.type || ('sites.calendar.day-events.operating-day-title' | transloco) }}
           </h3>
+          <span class="flex-shrink-0 w-4 h-4 rounded" [style.background-color]="getDayTypeLegendColor()" aria-hidden="true"></span>
         </div>
         <mat-card-content>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
                 <tr class="border-b border-gray-200 dark:border-gray-700">
-                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.title' | transloco }}</th>
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.type' | transloco }}</th>
@@ -35,14 +35,19 @@
               </thead>
               <tbody>
                 <tr *ngFor="let row of dayRows" class="border-b border-gray-100 dark:border-gray-700/50">
-                  <td class="px-3 py-2">{{ row.title }}</td>
                   <td class="px-3 py-2">{{ row.startTime }}</td>
                   <td class="px-3 py-2">{{ row.endTime }}</td>
                   <td class="px-3 py-2">{{ row.type }}</td>
                   <td class="px-3 py-2">{{ row.comment || '—' }}</td>
                   <td class="px-3 py-2 text-right">
-                    <button class="edit-icon-green" mat-icon-button type="button" [matTooltip]="'sites.calendar.day-events.table.buttons.edit' | transloco" [attr.aria-label]="'sites.calendar.day-events.table.buttons.edit' | transloco" (click)="onEditDay(row)">
-                      <mat-icon [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+                    <button
+                      mat-icon-button
+                      type="button"
+                      [matMenuTriggerFor]="dayMenu"
+                      [title]="'sites.calendar.day-events.table.menu.options' | transloco"
+                      [attr.aria-label]="'sites.calendar.day-events.table.menu.options' | transloco"
+                      (click)="selectedDayRow = row">
+                      <mat-icon [svgIcon]="'mat_solid:more_vert'" aria-hidden="true"></mat-icon>
                     </button>
                   </td>
                 </tr>
@@ -51,19 +56,27 @@
           </div>
         </mat-card-content>
       </mat-card>
+      <mat-menu #dayMenu="matMenu">
+        <button mat-menu-item type="button" [disabled]="!selectedDayRow" (click)="selectedDayRow && onEditDay(selectedDayRow)">
+          <mat-icon class="mr-2 menu-edit-icon" [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+          <span>{{ 'sites.calendar.day-events.table.menu.edit' | transloco }}</span>
+        </button>
+        <button mat-menu-item type="button" [disabled]="!selectedDayRow" (click)="selectedDayRow && onToggleDayHoliday(selectedDayRow)">
+          <span class="flex-shrink-0 mr-2 w-4 h-4 rounded" [style.background-color]="getDayMenuHolidayToggleColor()" aria-hidden="true"></span>
+          <span>{{ getDayMenuHolidayLabel() | transloco }}</span>
+        </button>
+      </mat-menu>
 
       <!-- Cards: un card por grupo (mismo borde/sombra que en sitios) -->
       <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700" *ngFor="let group of servicesGroupedByGroup">
-        <div class="flex items-center gap-2 p-4 bg-gray-50 border-b dark:bg-gray-800/50">
-          <mat-icon class="text-primary icon-size-5 flex-shrink-0" svgIcon="heroicons_outline:rectangle-group" aria-hidden="true"></mat-icon>
-          <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
+        <div class="flex gap-2 items-center p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <mat-icon class="flex-shrink-0 text-primary icon-size-5" svgIcon="heroicons_outline:rectangle-group" aria-hidden="true"></mat-icon>
+          <h3 class="flex-1 m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
             {{ group.groupName }}
           </h3>
+          
         </div>
         <mat-card-content>
-          <div class="px-4 pt-3 mb-3 text-xs font-semibold tracking-wider uppercase text-secondary">
-            {{ 'sites.calendar.day-events.section-active-services' | transloco }}
-          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
@@ -73,7 +86,8 @@
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.startTime' | transloco }}</th>
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.endTime' | transloco }}</th>
                   <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.comment' | transloco }}</th>
-                  <th class="px-3 py-2 w-28 font-medium text-right">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sites.calendar.day-events.table.columns.status' | transloco }}</th>
+                  <th *ngIf="!isHolidayDay()" class="px-3 py-2 w-28 font-medium text-right">{{ 'sites.calendar.day-events.table.columns.actions' | transloco }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -85,16 +99,16 @@
                   <td class="px-3 py-2">{{ svc.startTime }}</td>
                   <td class="px-3 py-2">{{ svc.endTime }}</td>
                   <td class="px-3 py-2">{{ svc.comment || '—' }}</td>
-                  <td class="px-3 py-2 text-right">
+                  <td class="px-3 py-2">{{ (svc.isEnabled !== false ? 'sites.calendar.day-events.table.statusActive' : 'sites.calendar.day-events.table.statusInactive') | transloco }}</td>
+                  <td *ngIf="!isHolidayDay()" class="px-3 py-2 text-right">
                     <button
-                      class="edit-icon-green"
                       mat-icon-button
                       type="button"
-                      [matTooltip]="'sites.calendar.day-events.table.buttons.edit' | transloco"
-                      [attr.aria-label]="'sites.calendar.day-events.table.buttons.edit' | transloco"
-                      [disabled]="svc.operatingDayIsHoliday"
-                      (click)="onEditService(svc)">
-                      <mat-icon [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+                      [matMenuTriggerFor]="serviceMenu"
+                      [title]="'sites.calendar.day-events.table.menu.options' | transloco"
+                      [attr.aria-label]="'sites.calendar.day-events.table.menu.options' | transloco"
+                      (click)="selectedServiceRow = svc">
+                      <mat-icon [svgIcon]="'mat_solid:more_vert'" aria-hidden="true"></mat-icon>
                     </button>
                   </td>
                 </tr>
@@ -103,6 +117,28 @@
           </div>
         </mat-card-content>
       </mat-card>
+      <mat-menu #serviceMenu="matMenu">
+        <button mat-menu-item type="button" [disabled]="!selectedServiceRow" (click)="selectedServiceRow && onEditService(selectedServiceRow)">
+          <mat-icon class="mr-2 menu-edit-icon" [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+          <span>{{ 'sites.calendar.day-events.table.menu.edit' | transloco }}</span>
+        </button>
+        <button
+          *ngIf="selectedServiceRow && !selectedServiceRow.operatingDayIsHoliday && selectedServiceRow.isEnabled !== false"
+          mat-menu-item
+          type="button"
+          (click)="selectedServiceRow && onToggleServiceEnabled(selectedServiceRow)">
+          <mat-icon [svgIcon]="'mat_solid:block'" class="mr-2 text-warn" aria-hidden="true"></mat-icon>
+          <span>{{ 'sites.calendar.day-events.table.menu.disableService' | transloco }}</span>
+        </button>
+        <button
+          *ngIf="selectedServiceRow && selectedServiceRow.isEnabled === false"
+          mat-menu-item
+          type="button"
+          (click)="selectedServiceRow && onToggleServiceEnabled(selectedServiceRow)">
+          <mat-icon [svgIcon]="'mat_solid:check_circle'" class="mr-2 text-primary" aria-hidden="true"></mat-icon>
+          <span>{{ 'sites.calendar.day-events.table.menu.enableService' | transloco }}</span>
+        </button>
+      </mat-menu>
 
       <!-- Si no hay día ni servicios, mensaje breve -->
       <div *ngIf="dayRows.length === 0 && servicesGroupedByGroup.length === 0" class="py-8 text-center text-gray-500 dark:text-gray-400">

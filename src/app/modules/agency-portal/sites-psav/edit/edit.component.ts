@@ -1169,26 +1169,27 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
         }
       },
       error: (err: HttpErrorResponse) => {
-        const body = err?.error as BaseApiException | undefined;
-        if (
-          err?.status === 400 &&
-          (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR ||
-            body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST ||
-            body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
-          body?.message
-        ) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (err?.status === 400 && body?.code === ErrorCode.MISSING_STRONG_SERVICE && body?.message) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else if (
-          err?.status === 400 &&
-          body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
-          body?.message
-        ) {
-          this._notificationService.showError(body.message);
-        } else {
-          this._notificationService.showErrorDialog();
-        }
+        // el interceptor global ya muestra el diálogo de error; se comentan para evitar duplicado
+        // const body = err?.error as BaseApiException | undefined;
+        // if (
+        //   err?.status === 400 &&
+        //   (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR ||
+        //     body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST ||
+        //     body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
+        //   body?.message
+        // ) {
+        //   this._notificationService.showWarningDialogWithRawMessage(body.message);
+        // } else if (err?.status === 400 && body?.code === ErrorCode.MISSING_STRONG_SERVICE && body?.message) {
+        //   this._notificationService.showWarningDialogWithRawMessage(body.message);
+        // } else if (
+        //   err?.status === 400 &&
+        //   body?.code === 'INSUFFICIENT_TIME_BETWEEN_SERVICES' &&
+        //   body?.message
+        // ) {
+        //   this._notificationService.showError(body.message);
+        // } else {
+        //   this._notificationService.showErrorDialog();
+        // }
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {

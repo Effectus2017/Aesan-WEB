@@ -5,9 +5,9 @@
     let-tooltipDelay="tooltipDelay" let-trackByEventId="trackByEventId" let-validateDrag="validateDrag">
     <div class="cal-cell-top" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y : 'monthCell'">
         <span aria-hidden="true">
-            <span class="cal-day-badge" *ngIf="getDayIndicatorEvents(day).length > 0"
+            <span class="cal-day-badge w-4 h-4 rounded flex-shrink-0" *ngIf="getDayIndicatorEvents(day).length > 0"
                 [matTooltip]="getDayTypeTooltip(day)"
-                [ngStyle]="{ backgroundColor: getBadgeBackgroundColor(day), minWidth: '15px', width: '15px', height: '15px', padding: 0, borderRadius: '50%' }"></span>
+                [style.background-color]="getBadgeBackgroundColor(day)"></span>
             <span class="cal-day-number">{{ day.date | calendarDate : 'monthViewDayNumber' : locale }}</span>
         </span>
     </div>
@@ -72,7 +72,7 @@
                     <span>{{ getOperatingDatesLabel() }}</span>
                 </div>
             </div>
-            <div class="flex flex-wrap gap-6 items-start">
+            <div class="flex flex-wrap gap-6 items-center">
                 <!-- Bloque 1: Tipos de día -->
                 <div class="flex flex-wrap gap-5 items-center">
                     <div class="flex gap-2 items-center">

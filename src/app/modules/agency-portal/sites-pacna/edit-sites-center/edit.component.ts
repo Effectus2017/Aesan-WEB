@@ -2068,7 +2068,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       error: () => {
         this.servicesCardLoading = false;
         this._changeDetectorRef?.markForCheck();
-        this._notificationService.showErrorDialog('sites.edit.childGroups.error');
+        // this._notificationService.showErrorDialog('sites.edit.childGroups.error'); // interceptor ya muestra el error
       },
     });
   }

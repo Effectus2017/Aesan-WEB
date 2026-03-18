@@ -45,11 +45,12 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { ProgramService } from 'app/shared/services/program.service';
 import { SiteService } from 'app/shared/services/site.service';
 import { SiteStaffService } from 'app/shared/services/site-staff.service';
-import { SiteEditModalComponent, SiteEditModalData } from '../site-edit-modal/site-edit-modal.component';
+import { SiteViewModalPdamComponent } from '../site-view-modal-pdam/site-view-modal-pdam.component';
+import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
 import { StatusConfigModalComponent } from '../status-config-modal/status-config-modal.component';
 import { AssignedToConfigModalComponent } from '../assigned-to-config-modal/assigned-to-config-modal.component';
 import { AppointmentConfigModalComponent } from '../appointment-config-modal/appointment-config-modal.component';
-import { compareById, compareItems, compareMonitors, comparePostal, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { compareById, compareItems, compareMonitors, comparePostal } from 'app/shared/utils';
 import { PDAM_SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
@@ -58,8 +59,8 @@ import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 
 @Component({
-  selector: 'app-aesan-sponsor-evaluation-edit-pdam',
-  templateUrl: './edit-pdam.component.html',
+  selector: 'app-aesan-sponsor-evaluation-view-pdam',
+  templateUrl: './view-pdam.component.html',
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
@@ -93,7 +94,7 @@ import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directi
     LongitudeDirective,
   ],
 })
-export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {
+export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericEditComponentHandler, OnGenericTableHandler {
   // -----------------------------------------------------------------------------------------------------
   // @ Subject de desuscripción
   // -----------------------------------------------------------------------------------------------------
@@ -226,20 +227,21 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     const resolvedData = this._route.snapshot.data['data'];
 
     if (resolvedData) {
+      const options = resolvedData.options ?? [];
       this.listCities = resolvedData.cities;
       this.listRegions = resolvedData.regions;
       this.listPostalRegions = resolvedData.regions;
       this.listPrograms = resolvedData.programs;
       this.listAgencyStatus = resolvedData.agencyStatuses;
       this.listUsers = resolvedData.users;
-      this.yesNoOptions = resolvedData.yesNoOptions;
-      this.exceptionStatusOptions = resolvedData.exceptionStatusOptions;
-      this.taxExemptionTypeOptions = resolvedData.taxExemptionTypeOptions;
-      this.typeOfEntityOptions = resolvedData.typeOfEntityOptions;
-      this.typeOfApplicantOptions = resolvedData.typeOfApplicantOptions;
-      this.publicAllianceContractOptions = resolvedData.publicAllianceContractOptions;
-      this.isDayCareHomeOptions = resolvedData.isDayCareHomeOptions || [];
-      this.listAdministrativePositions = resolvedData.administrativePositionOptions || [];
+      this.yesNoOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'yesNo');
+      this.exceptionStatusOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'exceptionStatus');
+      this.taxExemptionTypeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'taxExemptionType');
+      this.typeOfEntityOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfEntity');
+      this.typeOfApplicantOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'typeOfApplicant');
+      this.publicAllianceContractOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'publicAllianceContract');
+      this.isDayCareHomeOptions = options.filter((opt: OptionSelection) => opt.optionKey === 'isDayCareHome') ?? [];
+      this.listAdministrativePositions = options.filter((opt: OptionSelection) => opt.optionKey === 'administrativePosition') ?? [];
 
       this.currentLang = this._translocoService.getActiveLang();
 
@@ -267,7 +269,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   onSetForm(param: AgencyResponse): void {
     this.param = param;
 
-    if (isNullOrUndefinedEmptyStringNullArray(param.programs)) {
+    const hasPrograms = Array.isArray(param.programs) && param.programs.length > 0;
+    if (!hasPrograms) {
       this._notificationService.showError(this._translocoService.translate('sponsor-evaluation.edit.messages.noProgramsAssigned'));
       this._customRouterService.navigate(['sponsor-evaluation']);
       return;
@@ -344,7 +347,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
           this._notificationService.showErrorDialog();
         }
       },
-      error: () => this._notificationService.showErrorDialog(),
+      // error: el interceptor global ya muestra el diálogo de error
+      error: () => {},
       complete: () => this._customRouterService.navigate(['sponsor-evaluation/list']),
     });
   }
@@ -531,7 +535,7 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     this._siteService.getSiteById({ id: siteId }).subscribe({
       next: (response: any) => {
         if (response?.body) {
-          const dialogRef = this._dialog.open(SiteEditModalComponent, {
+          const dialogRef = this._dialog.open(SiteViewModalPdamComponent, {
             width: '90vw',
             maxWidth: '1200px',
             data: { site: response.body, agency: this.param } as SiteEditModalData,
@@ -541,7 +545,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
           });
         }
       },
-      error: () => this._notificationService.showError('Error al cargar el sitio'),
+      // error: el interceptor global ya muestra el error
+      error: () => {},
     });
   }
 
@@ -559,7 +564,8 @@ export class EditPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
           });
         }
       },
-      error: () => this._notificationService.showError('Error al cargar el personal del sitio'),
+      // error: el interceptor global ya muestra el error
+      error: () => {},
     });
   }
 

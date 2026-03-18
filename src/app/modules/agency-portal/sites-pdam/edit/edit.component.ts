@@ -1274,21 +1274,22 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       },
       error: (err: HttpErrorResponse) => {
         console.error('[Edit Site] updateSite error:', err);
-        const body = err?.error as BaseApiException | undefined;
-        if (
-          err?.status === 400 &&
-          (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR || body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST || body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
-          body?.message
-        ) {
-          this._notificationService.showWarningDialogWithRawMessage(body.message);
-        } else {
-          const message = getApiErrorMessage(err);
-          if (message) {
-            this._notificationService.showErrorDialogWithRawMessage(message);
-          } else {
-            this._notificationService.showErrorDialog('dialog.error.no-response');
-          }
-        }
+        // el interceptor global ya muestra el diálogo de error; se comentan para evitar duplicado
+        // const body = err?.error as BaseApiException | undefined;
+        // if (
+        //   err?.status === 400 &&
+        //   (body?.code === ErrorCode.FIRST_SITE_MUST_BE_COMEDOR || body?.code === ErrorCode.SCHOOL_MUST_HAVE_COMEDOR_FIRST || body?.code === ErrorCode.SITE_DATES_OUTSIDE_COMEDOR_RANGE) &&
+        //   body?.message
+        // ) {
+        //   this._notificationService.showWarningDialogWithRawMessage(body.message);
+        // } else {
+        //   const message = getApiErrorMessage(err);
+        //   if (message) {
+        //     this._notificationService.showErrorDialogWithRawMessage(message);
+        //   } else {
+        //     this._notificationService.showErrorDialog('dialog.error.no-response');
+        //   }
+        // }
         this.headerConfig.formGroup.enable({ emitEvent: false });
       },
       complete: () => {

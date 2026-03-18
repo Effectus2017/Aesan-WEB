@@ -2072,7 +2072,54 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       } else if (action === 'delete') {
         this.onTableDelete(event, id);
       }
+    } else {
+      // Fila de día de funcionamiento
+      if (action === 'edit') {
+        this.onTableEdit(event, id);
+      } else if (action === 'toggle-holiday') {
+        this.toggleOperatingDayHoliday(id);
+      }
     }
+  }
+
+  /**
+   * Cambia el estado feriado de un día de funcionamiento (marca como feriado o quita feriado).
+   */
+  private toggleOperatingDayHoliday(operatingDayId: number): void {
+    const operatingDay = this.getOperatingDayById(operatingDayId);
+    if (!operatingDay) {
+      return;
+    }
+    const startTime = this.formatTimeForBackend(operatingDay.startTime);
+    const endTime = this.formatTimeForBackend(operatingDay.endTime);
+    const isWeekend = operatingDay.isWeekend ?? false;
+    const request: SiteOperatingDayRequest = {
+      id: operatingDay.id,
+      siteId: this.currentSiteId,
+      operatingDate: operatingDay.date,
+      startTime,
+      endTime,
+      isOperating: true,
+      isWeekend,
+      isHoliday: !operatingDay.isHoliday,
+      comment: operatingDay.comment ?? ''
+    };
+    this.loading = true;
+    this.siteCalendarService.updateOperatingDay(request, { siteId: this.siteId }).subscribe({
+      next: () => {
+        this.loadOperatingDaysAndUpdateModal().subscribe({
+          next: () => {
+            this.loading = false;
+          },
+          error: () => {
+            this.loading = false;
+          }
+        });
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
   }
 
   onAddButtonClick(event?: Event): void {

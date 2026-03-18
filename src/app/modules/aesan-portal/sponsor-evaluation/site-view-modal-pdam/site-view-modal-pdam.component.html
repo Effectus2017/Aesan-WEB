@@ -1,0 +1,274 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120" *ngIf="site">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-shrink-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">
+      {{ 'sponsor-evaluation.edit.sites.modal.view.title' | transloco }}
+    </div>
+    <button mat-icon-button (click)="onClose()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Contenido solo lectura -->
+  <div class="flex flex-col flex-auto min-h-0 overflow-y-auto p-6">
+    <div class="flex flex-col gap-6">
+      <!-- Información General -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.information' | transloco }}</p>
+      </div>
+
+      <mat-form-field class="w-full">
+        <mat-label>{{ 'sites.edit.site-number.label' | transloco }}</mat-label>
+        <input matInput [value]="site.siteCode" readonly />
+      </mat-form-field>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.name.label' | transloco }}</mat-label>
+          <input matInput [value]="site.name" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.is-active.label' | transloco }}</mat-label>
+          <input matInput [value]="(site.isActive === true ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco))" readonly />
+        </mat-form-field>
+      </div>
+
+      <ng-container *ngIf="site.isActive === false">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.inactive-date.label' | transloco }}</mat-label>
+            <input matInput [value]="site.inactiveDate" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.inactive-justification.label' | transloco }}</mat-label>
+            <input matInput [value]="site.inactiveJustification" readonly />
+          </mat-form-field>
+        </div>
+      </ng-container>
+
+      <!-- Dirección Física -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.address.label' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.address.label' | transloco }}</mat-label>
+          <input matInput [value]="site.address" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.city.label' | transloco }}</mat-label>
+          <input matInput [value]="site.city?.name" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.region.label' | transloco }}</mat-label>
+          <input matInput [value]="site.region?.name" readonly />
+        </mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
+          <input matInput [value]="site.zipCode" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.latitude.label' | transloco }}</mat-label>
+          <input matInput [value]="site.latitude" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.longitude.label' | transloco }}</mat-label>
+          <input matInput [value]="site.longitude" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Dirección Postal -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.postal-address.label' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.postal-address.label' | transloco }}</mat-label>
+          <input matInput [value]="site.postalAddress" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.city.label' | transloco }}</mat-label>
+          <input matInput [value]="site.postalCity?.name" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.region.label' | transloco }}</mat-label>
+          <input matInput [value]="site.postalRegion?.name" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
+          <input matInput [value]="site.postalZipCode" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Tipo de área y localización -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.type-of-area.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.areaType)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.location-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.locationType)" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Información Administrativa -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrative-information.label' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.non-profit.label' | transloco }}</mat-label>
+          <input matInput [value]="site.nonProfit === true ? ('global.listFilters.yes' | transloco) : (site.nonProfit === false ? ('global.listFilters.no' | transloco) : '')" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.general-enrollment.label' | transloco }}</mat-label>
+          <input matInput [value]="site.generalEnrollment" readonly />
+        </mat-form-field>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.start-date.label' | transloco }}</mat-label>
+          <input matInput [value]="site.startDate" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.base-year.label' | transloco }}</mat-label>
+          <input matInput [value]="site.baseYear" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.renewal-year.label' | transloco }}</mat-label>
+          <input matInput [value]="site.renewalYear" readonly />
+        </mat-form-field>
+      </div>
+
+      <mat-form-field>
+        <mat-label>{{ 'sites.edit.operating-policy.label' | transloco }}</mat-label>
+        <input matInput [value]="optionName(site.operatingPolicy)" readonly />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'sites.edit.education-levels.label' | transloco }}</mat-label>
+        <input matInput [value]="educationLevelsDisplay" readonly />
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>{{ 'sites.edit.organization-type.label' | transloco }}</mat-label>
+        <input matInput [value]="optionName(site.organizationType)" readonly />
+      </mat-form-field>
+
+      <mat-form-field *ngIf="site.centerType">
+        <mat-label>{{ 'sites.edit.center.label' | transloco }}</mat-label>
+        <input matInput [value]="optionName(site.centerType)" readonly />
+      </mat-form-field>
+
+      <!-- Días de funcionamiento -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operating-dates.label' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.operating-from-date.label' | transloco }}</mat-label>
+          <input matInput [value]="site.operatingFromDate" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.operating-to-date.label' | transloco }}</mat-label>
+          <input matInput [value]="site.operatingToDate" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.operating-days-calculated.label' | transloco }}</mat-label>
+          <input matInput [value]="site.operatingDaysCalculated" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Datos Operativos -->
+      <div>
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operational-information.label' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.kitchen-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.kitchenType)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.site-location.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.siteLocation)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.group-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.groupType)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.delivery-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.deliveryType)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.sponsor-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.sponsorType)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.applicant-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.typeOfApplicant)" readonly />
+        </mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.has-warehouse.label' | transloco }}</mat-label>
+          <input matInput [value]="site.hasWarehouse ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.has-dining-room.label' | transloco }}</mat-label>
+          <input matInput [value]="site.hasDiningRoom ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco)" readonly />
+        </mat-form-field>
+      </div>
+
+      <!-- Administrador -->
+      <div *ngIf="site.personInCharge">
+        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.first-name.label' | transloco }}</mat-label>
+            <input matInput [value]="site.personInCharge.firstName" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.father-last-name.label' | transloco }}</mat-label>
+            <input matInput [value]="site.personInCharge.fatherLastName" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.site-phone.label' | transloco }}</mat-label>
+            <input matInput [value]="site.personInCharge.sitePhone" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
+            <input matInput [value]="site.personInCharge.mobilePhone" readonly />
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- Revisión -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.review-result.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(site.reviewResult)" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.review-date.label' | transloco }}</mat-label>
+          <input matInput [value]="site.reviewDate" readonly />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>{{ 'sites.edit.review-justification.label' | transloco }}</mat-label>
+          <input matInput [value]="site.reviewJustification" readonly />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()">
+      {{ 'global.buttons.close' | transloco }}
+    </button>
+  </div>
+</div>

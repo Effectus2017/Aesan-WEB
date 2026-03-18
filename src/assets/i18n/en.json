@@ -4,6 +4,7 @@
             "calendar": "Calendar"
         },
         "buttons": {
+            "back": "Back",
             "close": "Close",
             "save": "Save",
             "cancel": "Cancel",

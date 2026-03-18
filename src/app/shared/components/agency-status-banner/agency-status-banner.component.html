@@ -2,7 +2,7 @@
 <!-- DEBUG: showBanner={{showBanner}}, statusColor={{statusColor}}, agencyStatus={{agencyStatus}} -->
 <div
     *ngIf="showBanner"
-    [class]="'flex items-center px-3 py-1.5 rounded-lg shadow-sm border ' +
+    [class]="'flex items-center px-3 py-1.5 rounded-lg shadow-sm border hover:opacity-80 transition-opacity ' +
              (statusColor === 'green' ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : '') +
              (statusColor === 'red' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' : '') +
              (statusColor === 'yellow' ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' : '') +

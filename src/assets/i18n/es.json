@@ -4,6 +4,7 @@
             "calendar": "Calendario"
         },
         "buttons": {
+            "back": "Volver",
             "close": "Cerrar",
             "save": "Guardar",
             "cancel": "Cancelar",

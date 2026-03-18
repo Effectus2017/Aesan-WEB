@@ -8,7 +8,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { FuseConfigService } from '@fuse/services/config';
 import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { KeyboardShortcutsComponent } from 'app/layout/common/keyboard-shortcuts/keyboard-shortcuts.component';
@@ -17,7 +16,8 @@ import { UserService } from 'app/shared/services/user.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { TranslocoService } from '@ngneat/transloco';
 import { DTORole, UsersService } from 'app/shared/services/users.service';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
@@ -99,6 +99,20 @@ export class UserComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Indica si la ruta actual pertenece al portal de agencia.
+   */
+  get isAgencyPortal(): boolean {
+    return this._router?.url?.startsWith('/agency-portal') ?? false;
+  }
+
+  /**
+   * Mostrar opción "Cambiar rol" solo cuando el usuario puede cambiar de rol y no está en agency-portal.
+   */
+  get showSwitchRole(): boolean {
+    return this.canSwitchRole && !this.isAgencyPortal;
+  }
+
+  /**
    * Programas del usuario formateados para mostrar (separados por coma y espacio).
    */
   get programsDisplay(): string {
@@ -146,6 +160,15 @@ export class UserComponent implements OnInit, OnDestroy {
         this.isDarkMode = config.scheme === 'dark';
         // Guardar el tema en localStorage
         localStorage.setItem('theme', config.scheme);
+      });
+
+    this._router.events
+      .pipe(
+        filter((event): event is NavigationEnd => event instanceof NavigationEnd),
+        takeUntil(this._unsubscribeAll)
+      )
+      .subscribe(() => {
+        this._changeDetectorRef.markForCheck();
       });
   }
 

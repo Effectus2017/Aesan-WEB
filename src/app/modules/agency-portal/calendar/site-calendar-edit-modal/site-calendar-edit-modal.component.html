@@ -9,13 +9,13 @@
     </button>
   </div>
 
-  <!-- Form -->
+  <!-- Form (mismo fondo que modal Editar Servicio: bg-default) -->
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="data.form" (ngSubmit)="onSave()">
-    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
       <div class="flex flex-col gap-6 animate-slide-in">
-        <!-- Información del día -->
+        <!-- Información del día (mismo borde/sombra que Servicio: Almuerzo en modal Editar Servicio) -->
         <div class="flex flex-col gap-3">
-          <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-800">
+          <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
             <p class="text-sm text-gray-600 dark:text-gray-400">
               <strong>{{ 'sites.calendar.modals.edit-day.date' | transloco }}:</strong> {{ getFormattedDate() }}
             </p>
