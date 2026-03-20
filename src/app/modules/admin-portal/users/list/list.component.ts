@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, OnInit, OnDestroy, inject, ChangeDetectorRef } from "@angular/core";
+import { Component, ViewEncapsulation, OnInit, OnDestroy, inject, ChangeDetectorRef, ViewChild } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, FormControl } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
@@ -10,10 +10,12 @@ import { MatTableModule, MatTableDataSource } from "@angular/material/table";
 import { RouterModule } from "@angular/router";
 import { fuseAnimations } from "@fuse/animations";
 import { FuseConfirmationService } from "@fuse/services/confirmation";
+import { GenericFilterDrawerComponent } from "app/shared/components/generic-filter-drawer/generic-filter-drawer.component";
 import { GenericHeaderComponent } from "app/shared/components/generic-header/generic-header.component";
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from "app/shared/components/generic-header/generic-header.interface";
+import { OnGenericFilterHandlers } from "app/shared/components/generic-filter-panel/generic-filter-panel.interface";
 import { GenericTableComponent } from "app/shared/components/generic-table/generic-table.component";
-import { GenericTableConfig, OnGenericTableHandler } from "app/shared/components/generic-table/generic-table.interface";
+import { GenericTableConfig, GenericFilterResult, OnGenericTableHandler } from "app/shared/components/generic-table/generic-table.interface";
 import { QueryParameters } from "app/shared/models/common/QueryParameters";
 import { CustomRouterService } from "app/shared/services/custom-router.service";
 import { NotificationService } from "app/shared/services/notification.service";
@@ -21,6 +23,7 @@ import { UsersService } from "app/shared/services/users.service";
 import { isNullOrUndefinedEmptyStringNullArray } from "app/shared/utils";
 import { Subject, takeUntil } from "rxjs";
 import { USERS_COLUMNS_SCHEMA } from "./columns-schema";
+import { USERS_FILTERS_SCHEMA } from "./filters-schema";
 import { ToastrModule } from 'ngx-toastr';
 import { TranslocoService } from "@ngneat/transloco";
 
@@ -29,11 +32,17 @@ import { TranslocoService } from "@ngneat/transloco";
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatInputModule, RouterModule, GenericHeaderComponent, GenericTableComponent, ToastrModule]
+    imports: [FormsModule, ReactiveFormsModule, MatFormFieldModule, MatButtonModule, MatIconModule, MatPaginatorModule, MatTableModule, MatInputModule, RouterModule, GenericHeaderComponent, GenericTableComponent, GenericFilterDrawerComponent, ToastrModule]
 })
-export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers {
-
+export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
+  // -----
+  // @ Subject de desuscripción
+  // -----
   private _unsubscribeAll: Subject<any> = new Subject<any>();
+
+  // -----
+  // @ Inyecciones privadas
+  // -----
   private _formBuilder: UntypedFormBuilder = inject(UntypedFormBuilder);
   private _customRouter: CustomRouterService = inject(CustomRouterService);
   private _usersService: UsersService = inject(UsersService);
@@ -43,17 +52,19 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   private _translocoService: TranslocoService = inject(TranslocoService);
   private _route: ActivatedRoute = inject(ActivatedRoute);
 
-  data: any[];
-  isLoading = false;
-
+  // -----
+  // @ Variables
+  // -----
   headerConfig: GenericHeaderConfig = {
     title: 'users.list.title',
     formGroup: this._formBuilder.group({
       name: new FormControl(''),
     }),
-    searchFieldShow: true,
+    searchFieldShow: false,
     searchInputPlaceholder: 'global.search.placeholder',
     goToAddButtonShow: true,
+    filterButtonShow: true,
+    filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
   tableConfig: GenericTableConfig = {
@@ -68,16 +79,23 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     fullScreen: true,
   };
 
+  @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
+  filtersSchema = USERS_FILTERS_SCHEMA;
+  appliedFilters: GenericFilterResult = {};
+  data: any[];
+  isLoading = false;
+
+  // -----
+  // @ Constructor
+  // -----
   constructor() {}
 
-  trackByFn(index: number, item: any): any {
-    return item.id || index;
-  }
-
-  ngOnInit() {
-    // Obtener datos del resolver en lugar de suscribirse
+  // -----
+  // @ ngOnInit / ngOnDestroy
+  // -----
+  /** Inicializa el componente con los datos del resolver. */
+  ngOnInit(): void {
     const resolvedData = this._route.snapshot.data['data'];
-
     if (resolvedData && resolvedData.users) {
       this.tableConfig.dataSource.data = resolvedData.users.data;
       this.tableConfig.length = resolvedData.users.count;
@@ -85,32 +103,144 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     }
   }
 
+  /** Limpia las suscripciones al destruir el componente. */
   ngOnDestroy(): void {
-    // Unsubscribe from all subscriptions
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
   }
 
-  onSubmit() {
+  // -----
+  // @ Funciones On (componentes genéricos)
+  // -----
+  /** Envía el formulario y recarga la lista en la primera página. */
+  onSubmit(): void {
     if (this.isLoading) return;
     if (this.headerConfig.formGroup.valid) {
       this.getAll(0, this.headerConfig.formGroup.value);
     }
   }
 
-  getPaginator(event?: PageEvent) {
-    const index = !isNullOrUndefinedEmptyStringNullArray(event.pageIndex) ? event.pageIndex : 0;
-    this.tableConfig.pageSize = event.pageSize;
+  /** Actualiza la página o el tamaño de página y recarga la lista. */
+  getPaginator(event?: PageEvent): void {
+    const index = !isNullOrUndefinedEmptyStringNullArray(event?.pageIndex) ? event!.pageIndex : 0;
+    this.tableConfig.pageSize = event!.pageSize;
     this.getAll(index * this.tableConfig.pageSize, this.headerConfig.formGroup.value);
   }
 
-  // Obtenemos segun los filtros seleccionados
-  getAll(index: number, form: any) {
+  /** Abre o cierra el drawer de filtros. */
+  onFilter(): void {
+    this.filterDrawer?.toggle();
+  }
+
+  /** Aplica los filtros del drawer y recarga la lista. */
+  onFiltersApply(filters: GenericFilterResult): void {
+    this.appliedFilters = { ...filters };
+    this.filterDrawer?.close();
+    this.getAll(0, this.headerConfig.formGroup.value);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Restablece los filtros y recarga la lista. */
+  onFiltersReset(): void {
+    this.appliedFilters = {};
+    this.getAll(0, this.headerConfig.formGroup.value);
+    this._changeDetectorRef.markForCheck();
+  }
+
+  /** Limpia el formulario y los filtros aplicados y recarga la lista. */
+  onClear(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.headerConfig.formGroup.reset();
+    this.appliedFilters = {};
+    this.getAll(0, this.headerConfig.formGroup.value);
+  }
+
+  /** Navega a la edición del usuario. */
+  onTableEdit(event: Event, id: string): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this._customRouter.navigate([`users/edit/${id}`]);
+  }
+
+  /** Solicita confirmación y elimina el usuario si se confirma. */
+  onTableDelete(event: Event, id: string): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const confirmation = this._fuseConfirmationService.open({
+      title: this._translocoService.translate('users.list.delete.title'),
+      message: this._translocoService.translate('users.list.delete.message'),
+      actions: {
+        confirm: {
+          label: this._translocoService.translate('users.list.delete.confirm'),
+          color: 'warn'
+        },
+        cancel: {
+          label: this._translocoService.translate('users.list.delete.cancel')
+        }
+      },
+    });
+
+    confirmation.afterClosed().subscribe((result) => {
+      if (result === 'confirmed') {
+        const requestParameters: QueryParameters = { userId: id };
+        this._usersService.delete(requestParameters).subscribe({
+          next: (result: any) => {
+            switch (result.status) {
+              case 202:
+                this._notificationService.showSuccess(this._translocoService.translate('users.list.delete.success'));
+                this.getAll(0, this.headerConfig.formGroup.value);
+                break;
+              default:
+                this._notificationService.showWarning(this._translocoService.translate('users.list.delete.error'));
+                break;
+            }
+          },
+          error: () => {
+            this._notificationService.showError();
+          },
+          complete: () => {},
+        });
+      }
+    });
+  }
+
+  /** Navega al formulario de alta de usuario. */
+  onAdd(): void {
+    this._customRouter.navigate(['users/add']);
+  }
+
+  /** Recarga la lista con la primera página según el formulario del header. */
+  onSearch(): void {
+    if (this.headerConfig.formGroup.valid) {
+      this.getAll(0, this.headerConfig.formGroup.value);
+      this.headerConfig.clearVisible = true;
+    }
+  }
+
+  /** Limpia el formulario, oculta el botón limpiar y recarga sin filtros. */
+  onClean(event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.headerConfig.formGroup.reset();
+    this.headerConfig.clearVisible = false;
+    this.appliedFilters = {};
+    this.getAll(0, this.headerConfig.formGroup.value);
+  }
+
+  // -----
+  // @ Otras funciones públicas
+  // -----
+  /** Obtiene la lista de usuarios según los filtros aplicados y la paginación. */
+  getAll(index: number, form: any): void {
     this.isLoading = true;
+    const rawName = this.appliedFilters['name'];
+    const nameFromFilters: string | null = (rawName != null && rawName !== '' && typeof rawName === 'string') ? rawName : null;
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
-      name: form.name || null,
+      name: nameFromFilters,
       isPropietary: true,
     };
 
@@ -131,86 +261,8 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
       });
   }
 
-  onClear(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.headerConfig.formGroup.reset();
-    this.getAll(0, this.headerConfig.formGroup.value);
-  }
-
-  onTableEdit(event: Event, id: string) {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouter.navigate([`users/edit/${id}`]);
-  }
-
-  onTableDelete(event: Event, id: string) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    // Open the confirmation dialog
-    const confirmation = this._fuseConfirmationService.open({
-      title: this._translocoService.translate('users.list.delete.title'),
-      message: this._translocoService.translate('users.list.delete.message'),
-      actions: {
-        confirm: {
-          label: this._translocoService.translate('users.list.delete.confirm'),
-          color: 'warn'
-        },
-        cancel: {
-          label: this._translocoService.translate('users.list.delete.cancel')
-        }
-      },
-    });
-
-    // Subscribe to the confirmation dialog closed action
-    confirmation.afterClosed().subscribe((result) => {
-      // If the confirm button pressed...
-      if (result === 'confirmed') {
-        const requestParameters: QueryParameters = { userId: id };
-        this._usersService.delete(requestParameters).subscribe({
-          next: (result: any) => {
-            switch (result.status) {
-              case 202:
-                this._notificationService.showSuccess(this._translocoService.translate('users.list.delete.success'));
-                this.getAll(0, this.headerConfig.formGroup.value);
-                break;
-              default:
-                this._notificationService.showWarning(this._translocoService.translate('users.list.delete.error'));
-                break;
-            }
-          },
-          error: (error) => {
-            this._notificationService.showError();
-          },
-          complete: () => {},
-        });
-      }
-    });
-  }
-
-  onAdd(): void {
-    this._customRouter.navigate(['users/add']);
-  }
-
-  onSearch() {
-    if (this.headerConfig.formGroup.valid) {
-      this.getAll(0, this.headerConfig.formGroup.value);
-      this.headerConfig.clearVisible = true;
-    }
-  }
-
-  onClean(event: Event) {
-    event.stopPropagation();
-    event.preventDefault();
-
-    // Limpiar el formulario
-    this.headerConfig.formGroup.reset();
-
-    // Ocultar el botón de limpiar
-    this.headerConfig.clearVisible = false;
-
-    // Recargar los datos sin filtros
-    this.getAll(0, this.headerConfig.formGroup.value);
+  /** Función trackBy para la tabla. */
+  trackByFn(index: number, item: any): any {
+    return item.id || index;
   }
 }

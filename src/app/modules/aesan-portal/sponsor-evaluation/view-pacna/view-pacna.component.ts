@@ -181,7 +181,6 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       region: [null],
       latitude: [null],
       longitude: [null],
-      sameAsPhysicalAddress: [false],
       postalAddress: [null],
       postalZipCode: [null, [puertoRicoZipCodeValidator()]],
       postalCity: [null],
@@ -314,7 +313,6 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
       region: param.region || null,
       latitude: param.latitude || null,
       longitude: param.longitude || null,
-      sameAsPhysicalAddress: false,
       postalAddress: param.postalAddress || null,
       postalZipCode: param.postalZipCode || null,
       postalCity: param.postalCity || null,
@@ -488,27 +486,6 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
         }
       },
     });
-  }
-
-  /** Sincroniza la dirección postal con la dirección física si el checkbox está marcado. */
-  onCheckboxChange(event: any): void {
-    if (event.checked) {
-      this.headerConfig.formGroup.patchValue({
-        postalAddress: this.headerConfig.formGroup.value.address,
-        postalCity: this.headerConfig.formGroup.value.city,
-        postalZipCode: this.headerConfig.formGroup.value.zipCode,
-      });
-      if (this.headerConfig.formGroup.value.city) {
-        this.getRegionsByCityId(this.headerConfig.formGroup.value.city, 'postalRegion');
-      }
-    } else {
-      this.headerConfig.formGroup.patchValue({
-        postalAddress: '',
-        postalCity: '',
-        postalRegion: '',
-        postalZipCode: '',
-      });
-    }
   }
 
   openSiteEditModal(siteId: number): void {

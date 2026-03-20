@@ -40,7 +40,7 @@ const DAY_NAME_TO_INDEX: Record<string, number> = {
 export type DayType = 'normal' | 'weekend' | 'holiday' | 'extra' | 'inactive';
 
 /**
- * Indicador visual semanal: 7 círculos con abreviaturas por idioma (ES: L,K,M,J,V,S,D; EN: M,T,W,Th,F,Sa,S).
+ * Indicador visual semanal: 7 marcas rectangulares redondeadas (como en calendario) con abreviaturas por idioma.
  * Colores por tipo: normal (verde), fin de semana (naranja), feriado (morado).
  */
 @Component({
@@ -92,7 +92,7 @@ export class ServiceDaysIndicatorComponent {
     });
   }
 
-  /** Tipo de día para el círculo: holiday > weekend > extra (manual) > normal. */
+  /** Tipo de día para la marca: holiday > weekend > extra (manual) > normal. */
   getDayType(index: number): DayType {
     if (!this.isActive(index)) return 'inactive';
     const dates = this.getDatesForIndex(index);
@@ -125,11 +125,11 @@ export class ServiceDaysIndicatorComponent {
     inactive: 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400',
   } as const;
 
-  /** Clases CSS para el círculo según tipo de día (mismos colores que el calendario). */
+  /** Clases CSS para la marca rectangular redondeada (alineada con eventos del calendario). */
   getDayClasses(index: number): string {
     const type = this.getDayType(index);
     const base =
-      'inline-flex h-5 w-5 min-w-5 items-center justify-center rounded-full text-[10px] font-medium transition-colors';
+      'inline-flex h-5 min-h-5 min-w-5 shrink-0 items-center justify-center rounded px-0.5 text-[10px] font-medium leading-none transition-colors';
     return `${base} ${ServiceDaysIndicatorComponent.DAY_TYPE_COLORS[type]}`;
   }
 }

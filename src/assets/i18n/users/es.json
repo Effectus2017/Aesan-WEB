@@ -201,6 +201,9 @@
             "search": {
                 "placeholder": "Buscar usuario"
             },
+            "filters": {
+                "name": "Nombre y apellido"
+            },
             "columns": {
                 "firstName": "Nombre",
                 "fatherLastName": "Apellido",

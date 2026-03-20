@@ -1610,6 +1610,7 @@
                 "section-operating-day-info": "Horario y tipo del día (normal, fin de semana o feriado).",
                 "section-active-services": "Servicios Activos",
                 "group-unnamed": "Sin grupo",
+                "enrolled-children": "{{count}} Niños matriculados",
                 "service-fallback": "Servicio",
                 "confirm-delete-service": "¿Estás seguro de que quieres eliminar este servicio?",
                 "cannot-edit-holiday": "No se pueden editar servicios en días feriados",

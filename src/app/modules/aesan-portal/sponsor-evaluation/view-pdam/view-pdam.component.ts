@@ -181,7 +181,6 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       region: [null],
       latitude: [null],
       longitude: [null],
-      sameAsPhysicalAddress: [false],
       postalAddress: [null],
       postalZipCode: [null, [puertoRicoZipCodeValidator()]],
       postalCity: [null],
@@ -312,7 +311,6 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
       region: param.region || null,
       latitude: param.latitude ?? null,
       longitude: param.longitude ?? null,
-      sameAsPhysicalAddress: false,
       postalAddress: param.postalAddress || null,
       postalZipCode: param.postalZipCode ?? null,
       postalCity: param.postalCity || null,
@@ -493,27 +491,6 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     });
   }
 
-  /** Sincroniza la dirección postal con la dirección física si el checkbox está marcado. */
-  onCheckboxChange(event: any): void {
-    if (event.checked) {
-      this.headerConfig.formGroup.patchValue({
-        postalAddress: this.headerConfig.formGroup.value.address,
-        postalCity: this.headerConfig.formGroup.value.city,
-        postalZipCode: this.headerConfig.formGroup.value.zipCode,
-      });
-      if (this.headerConfig.formGroup.value.city) {
-        this.getRegionsByCityId(this.headerConfig.formGroup.value.city, 'postalRegion');
-      }
-    } else {
-      this.headerConfig.formGroup.patchValue({
-        postalAddress: '',
-        postalCity: '',
-        postalRegion: '',
-        postalZipCode: '',
-      });
-    }
-  }
-
   /** Obtiene la ubicación GPS actual del navegador. */
   getCurrentLocation(): void {
     if (navigator.geolocation) {
@@ -538,6 +515,7 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
           const dialogRef = this._dialog.open(SiteViewModalPdamComponent, {
             width: '90vw',
             maxWidth: '1200px',
+            panelClass: ['mat-dialog-container', 'dialog-responsive'],
             data: { site: response.body, agency: this.param } as SiteEditModalData,
           });
           dialogRef.afterClosed().subscribe((result) => {

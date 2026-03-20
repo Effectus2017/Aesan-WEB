@@ -78,7 +78,7 @@
         "light-mode": "Modo claro",
         "profile-tooltip": "Ver y editar tu perfil",
         "sign-out-tooltip": "Cerrar sesión y salir de la aplicación",
-        "programs-tooltip": "Programa(s) asignado(s) a la agencia"
+        "programs-tooltip": "Programa(s) asignado(s) al usuario"
     },
     "reset-password": {
         "title": "Restablecer Contraseña",

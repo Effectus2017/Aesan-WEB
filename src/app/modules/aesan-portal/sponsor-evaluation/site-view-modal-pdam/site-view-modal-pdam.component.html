@@ -1,6 +1,6 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120" *ngIf="site">
   <!-- Header -->
-  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-shrink-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+  <div class="flex flex-shrink-0 justify-between items-center pr-3 pl-6 h-16 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
     <div class="text-lg font-medium">
       {{ 'sponsor-evaluation.edit.sites.modal.view.title' | transloco }}
     </div>
@@ -9,264 +9,369 @@
     </button>
   </div>
 
-  <!-- Contenido solo lectura -->
-  <div class="flex flex-col flex-auto min-h-0 overflow-y-auto p-6">
-    <div class="flex flex-col gap-6">
-      <!-- Información General -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.information' | transloco }}</p>
+  <!-- Contenido solo lectura: FormGroup rellenado con patchValue (igual que edit) -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0 bg-default" [formGroup]="form">
+    <div class="grid grid-cols-12 gap-2 p-4 sm:pt-0">
+      <!-- Información -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ 'sites.edit.information' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.information-description' | transloco }}</p>
       </div>
 
-      <mat-form-field class="w-full">
-        <mat-label>{{ 'sites.edit.site-number.label' | transloco }}</mat-label>
-        <input matInput [value]="site.siteCode" readonly />
-      </mat-form-field>
-
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
+      <!-- ID y Nombre -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.id.label' | transloco }}</mat-label>
+          <input matInput formControlName="siteCode" disabled />
+          <mat-hint>{{ 'sites.edit.id.description' | transloco }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.name.label' | transloco }}</mat-label>
-          <input matInput [value]="site.name" readonly />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.is-active.label' | transloco }}</mat-label>
-          <input matInput [value]="(site.isActive === true ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco))" readonly />
+          <input matInput formControlName="name" disabled />
         </mat-form-field>
       </div>
 
-      <ng-container *ngIf="site.isActive === false">
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <mat-form-field>
-            <mat-label>{{ 'sites.edit.inactive-date.label' | transloco }}</mat-label>
-            <input matInput [value]="site.inactiveDate" readonly />
-          </mat-form-field>
-          <mat-form-field>
-            <mat-label>{{ 'sites.edit.inactive-justification.label' | transloco }}</mat-label>
-            <input matInput [value]="site.inactiveJustification" readonly />
-          </mat-form-field>
-        </div>
-      </ng-container>
-
-      <!-- Dirección Física -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.address.label' | transloco }}</p>
+      <!-- Dirección física -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <p class="text-lg font-medium">{{ 'sites.edit.address.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.address.description' | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.address.label' | transloco }}</mat-label>
-          <input matInput [value]="site.address" readonly />
+          <input matInput formControlName="address" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.city.label' | transloco }}</mat-label>
-          <input matInput [value]="site.city?.name" readonly />
+          <input matInput [value]="optionName(form.get('city')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.region.label' | transloco }}</mat-label>
-          <input matInput [value]="site.region?.name" readonly />
+          <input matInput [value]="optionName(form.get('region')?.value)" disabled />
         </mat-form-field>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
-          <input matInput [value]="site.zipCode" readonly />
+          <input matInput formControlName="zipCode" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.latitude.label' | transloco }}</mat-label>
-          <input matInput [value]="site.latitude" readonly />
+          <input matInput formControlName="latitude" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.longitude.label' | transloco }}</mat-label>
-          <input matInput [value]="site.longitude" readonly />
+          <input matInput formControlName="longitude" disabled />
         </mat-form-field>
       </div>
 
-      <!-- Dirección Postal -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.postal-address.label' | transloco }}</p>
+      <!-- Dirección postal -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <p class="text-lg font-medium">{{ 'sites.edit.postal-address.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.postal-address.description' | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-4">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.postal-address.label' | transloco }}</mat-label>
-          <input matInput [value]="site.postalAddress" readonly />
+          <input matInput formControlName="postalAddress" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.city.label' | transloco }}</mat-label>
-          <input matInput [value]="site.postalCity?.name" readonly />
+          <input matInput [value]="optionName(form.get('postalCity')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.region.label' | transloco }}</mat-label>
-          <input matInput [value]="site.postalRegion?.name" readonly />
+          <input matInput [value]="optionName(form.get('postalRegion')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.zip-code.label' | transloco }}</mat-label>
-          <input matInput [value]="site.postalZipCode" readonly />
+          <input matInput formControlName="postalZipCode" disabled />
         </mat-form-field>
       </div>
 
       <!-- Tipo de área y localización -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.type-of-area.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.areaType)" readonly />
+          <input matInput [value]="optionName(form.get('areaType')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.location-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.locationType)" readonly />
+          <input matInput [value]="optionName(form.get('locationType')?.value)" disabled />
         </mat-form-field>
       </div>
 
-      <!-- Información Administrativa -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrative-information.label' | transloco }}</p>
+      <!-- Información administrativa -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <p class="text-lg font-medium">{{ 'sites.edit.administrative-information.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.administrative-information.description' | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.non-profit.label' | transloco }}</mat-label>
-          <input matInput [value]="site.nonProfit === true ? ('global.listFilters.yes' | transloco) : (site.nonProfit === false ? ('global.listFilters.no' | transloco) : '')" readonly />
+          <mat-select formControlName="nonProfit" disabled>
+            <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.general-enrollment.label' | transloco }}</mat-label>
-          <input matInput [value]="site.generalEnrollment" readonly />
+          <input matInput formControlName="generalEnrollment" disabled />
         </mat-form-field>
       </div>
 
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <mat-form-field>
+      <!-- Fecha de inicio, Año base, Año de renovación (Provisión) - misma lógica que edit: solo política 3, 4 o 5 -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="shouldShowProvisionFields">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.start-date.label' | transloco }}</mat-label>
-          <input matInput [value]="site.startDate" readonly />
+          <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" disabled />
+          <mat-datepicker-toggle matSuffix [for]="startDatePicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #startDatePicker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.base-year.label' | transloco }}</mat-label>
-          <input matInput [value]="site.baseYear" readonly />
+          <input matInput formControlName="baseYear" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.renewal-year.label' | transloco }}</mat-label>
-          <input matInput [value]="site.renewalYear" readonly />
+          <input matInput formControlName="renewalYear" disabled />
         </mat-form-field>
       </div>
 
-      <mat-form-field>
-        <mat-label>{{ 'sites.edit.operating-policy.label' | transloco }}</mat-label>
-        <input matInput [value]="optionName(site.operatingPolicy)" readonly />
-      </mat-form-field>
+      <!-- Política de funcionamiento y Niveles educativos -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.operating-policy.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('operatingPolicy')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.education-levels.label' | transloco }}</mat-label>
+          <input matInput [value]="educationLevelsDisplay" disabled />
+        </mat-form-field>
+      </div>
 
-      <mat-form-field>
-        <mat-label>{{ 'sites.edit.education-levels.label' | transloco }}</mat-label>
-        <input matInput [value]="educationLevelsDisplay" readonly />
-      </mat-form-field>
-
-      <mat-form-field>
-        <mat-label>{{ 'sites.edit.organization-type.label' | transloco }}</mat-label>
-        <input matInput [value]="optionName(site.organizationType)" readonly />
-      </mat-form-field>
-
-      <mat-form-field *ngIf="site.centerType">
-        <mat-label>{{ 'sites.edit.center.label' | transloco }}</mat-label>
-        <input matInput [value]="optionName(site.centerType)" readonly />
-      </mat-form-field>
+      <!-- Tipo de organización, Tipo residencial, Tipo de centro - centro solo si requiresCenterType (como edit) -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" appDynamicGrid="2">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.organization-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('organizationType')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.residential-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('typeOfResidential')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full" *ngIf="shouldShowCenterTypeField">
+          <mat-label>{{ 'sites.edit.center.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('centerType')?.value)" disabled />
+        </mat-form-field>
+      </div>
 
       <!-- Días de funcionamiento -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operating-dates.label' | transloco }}</p>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ 'sites.edit.operating-dates.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.operating-dates.description' | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.operating-from-date.label' | transloco }}</mat-label>
-          <input matInput [value]="site.operatingFromDate" readonly />
+          <input matInput [matDatepicker]="operatingFromPicker" formControlName="operatingFromDate" disabled />
+          <mat-datepicker-toggle matSuffix [for]="operatingFromPicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #operatingFromPicker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.operating-to-date.label' | transloco }}</mat-label>
-          <input matInput [value]="site.operatingToDate" readonly />
+          <input matInput [matDatepicker]="operatingToPicker" formControlName="operatingToDate" disabled />
+          <mat-datepicker-toggle matSuffix [for]="operatingToPicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #operatingToPicker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.operating-days-calculated.label' | transloco }}</mat-label>
-          <input matInput [value]="site.operatingDaysCalculated" readonly />
+          <input matInput formControlName="operatingDaysCalculated" disabled />
+          <mat-hint>{{ 'sites.edit.operating-days-calculated.hint' | transloco }}</mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-3 sm:col-span-12">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.operating-days-of-week.label' | transloco }}</mat-label>
+          <input matInput [value]="operatingDaysOfWeekDisplay" disabled />
+          <mat-hint>{{ 'sites.edit.operating-days-of-week.description' | transloco }}</mat-hint>
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.operating-start-time.label' | transloco }}</mat-label>
+          <input matInput formControlName="operatingStartTime" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.operating-end-time.label' | transloco }}</mat-label>
+          <input matInput formControlName="operatingEndTime" disabled />
+        </mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-2 sm:col-span-12">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.first-academic-class-start-time.label' | transloco }}</mat-label>
+          <input matInput formControlName="firstAcademicClassStartTime" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.last-academic-class-end-time.label' | transloco }}</mat-label>
+          <input matInput formControlName="lastAcademicClassEndTime" disabled />
         </mat-form-field>
       </div>
 
-      <!-- Datos Operativos -->
-      <div>
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.operational-information.label' | transloco }}</p>
+      <!-- Datos operacionales -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 mt-4 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ 'sites.edit.operational-information.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.operational-information.description' | transloco }}</p>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.kitchen-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.kitchenType)" readonly />
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.service-time.label' | transloco }}</mat-label>
+          <input matInput [matDatepicker]="serviceTimePicker" formControlName="serviceTime" disabled />
+          <mat-datepicker-toggle matSuffix [for]="serviceTimePicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #serviceTimePicker></mat-datepicker>
+          <mat-hint>{{ 'sites.edit.service-time.hint' | transloco }}</mat-hint>
         </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.site-location.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.siteLocation)" readonly />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.group-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.groupType)" readonly />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.delivery-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.deliveryType)" readonly />
-        </mat-form-field>
-        <mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.sponsor-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.sponsorType)" readonly />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.applicant-type.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.typeOfApplicant)" readonly />
+          <input matInput [value]="optionName(form.get('sponsorType')?.value)" disabled />
         </mat-form-field>
       </div>
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <mat-form-field>
-          <mat-label>{{ 'sites.edit.has-warehouse.label' | transloco }}</mat-label>
-          <input matInput [value]="site.hasWarehouse ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco)" readonly />
+      <!-- Grupo, Ubicación, Entrega, Cocina (si Comedor), Solicitante - misma visibilidad que edit -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-5 sm:col-span-12" appDynamicGrid="4">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.group-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('groupType')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.site-location.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('siteLocation')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.delivery-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('deliveryType')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full" *ngIf="shouldShowKitchenTypeField">
+          <mat-label>{{ 'sites.edit.kitchen-type.label' | transloco }}</mat-label>
+          <input matInput [value]="optionName(form.get('kitchenType')?.value)" disabled />
+        </mat-form-field>
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.applicant-type.label' | transloco }}</mat-label>
+          <input matInput [value]="applicantDisplay" disabled />
+        </mat-form-field>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sites.edit.has-warehouse.label' | transloco }}</mat-label>
+          <mat-select formControlName="hasWarehouse" disabled>
+            <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.has-dining-room.label' | transloco }}</mat-label>
-          <input matInput [value]="site.hasDiningRoom ? ('global.listFilters.yes' | transloco) : ('global.listFilters.no' | transloco)" readonly />
+          <mat-select formControlName="hasDiningRoom" disabled>
+            <mat-option *ngFor="let option of yesNoOptions" [value]="option.booleanValue">
+              {{ currentLang === 'es' ? option.name : option.nameEN }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field class="w-full" *ngIf="form.get('hasDiningRoom')?.value && form.get('diningRoomCapacity')?.value != null">
+          <mat-label>{{ 'sites.edit.dining-room-capacity.label' | transloco }}</mat-label>
+          <input matInput formControlName="diningRoomCapacity" disabled />
         </mat-form-field>
       </div>
 
-      <!-- Administrador -->
-      <div *ngIf="site.personInCharge">
-        <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <mat-form-field>
+      <!-- Persona a cargo -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="form.get('personInCharge')?.get('firstName')?.value || form.get('personInCharge')?.get('sitePhone')?.value">
+        <p class="text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.administrator-authorized.description' | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12" *ngIf="form.get('personInCharge')?.get('firstName')?.value || form.get('personInCharge')?.get('sitePhone')?.value" formGroupName="personInCharge">
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-4 sm:grid-cols-4 sm:col-span-12">
+          <mat-form-field class="w-full">
             <mat-label>{{ 'sites.edit.person-in-charge.first-name.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.firstName" readonly />
+            <input matInput formControlName="firstName" disabled />
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="w-full">
+            <mat-label>{{ 'sites.edit.person-in-charge.middle-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="middleName" disabled />
+          </mat-form-field>
+          <mat-form-field class="w-full">
             <mat-label>{{ 'sites.edit.person-in-charge.father-last-name.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.fatherLastName" readonly />
+            <input matInput formControlName="fatherLastName" disabled />
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="w-full">
+            <mat-label>{{ 'sites.edit.person-in-charge.mother-last-name.label' | transloco }}</mat-label>
+            <input matInput formControlName="motherLastName" disabled />
+          </mat-form-field>
+        </div>
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
+          <mat-form-field class="w-full">
             <mat-label>{{ 'sites.edit.site-phone.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.sitePhone" readonly />
+            <input matInput formControlName="sitePhone" disabled />
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field class="w-full">
+            <mat-label>{{ 'sites.edit.extension.label' | transloco }}</mat-label>
+            <input matInput formControlName="extension" disabled />
+          </mat-form-field>
+          <mat-form-field class="w-full">
             <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.mobilePhone" readonly />
+            <input matInput formControlName="mobilePhone" disabled />
           </mat-form-field>
         </div>
       </div>
 
+      <!-- Satélites (misma sección que edit, solo lectura) -->
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1" *ngIf="site.satellites && site.satellites.length > 0">
+        <p class="text-lg font-medium">{{ 'sites.edit.satellites.label' | transloco }}</p>
+        <p class="mb-6 text-secondary">{{ 'sites.edit.satellites.description' | transloco }}</p>
+      </div>
+      <div
+        class="grid grid-cols-1 col-span-12 gap-4 mb-4 rounded-lg border border-gray-200 dark:border-gray-700 sm:grid-cols-1 sm:col-span-12"
+        *ngIf="site.satellites && site.satellites.length > 0"
+      >
+        <table class="w-full text-left">
+          <thead>
+            <tr class="border-b border-gray-200 dark:border-gray-700">
+              <th class="px-4 py-2 font-medium">{{ 'sites.list.table.columns.satelliteSiteName' | transloco }}</th>
+              <th class="px-4 py-2 font-medium">{{ 'sites.list.table.columns.assignmentDate' | transloco }}</th>
+              <th class="px-4 py-2 font-medium">{{ 'sites.list.table.columns.comment' | transloco }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let sat of site.satellites" class="border-b border-gray-100 dark:border-gray-800">
+              <td class="px-4 py-2">{{ sat.satelliteSiteName }}</td>
+              <td class="px-4 py-2">{{ sat.assignmentDate }}</td>
+              <td class="px-4 py-2">{{ sat.comment || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Revisión -->
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <mat-form-field>
+      <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12" *ngIf="form.get('reviewResult')?.value || form.get('reviewDate')?.value || form.get('reviewJustification')?.value">
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.review-result.label' | transloco }}</mat-label>
-          <input matInput [value]="optionName(site.reviewResult)" readonly />
+          <input matInput [value]="optionName(form.get('reviewResult')?.value)" disabled />
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.review-date.label' | transloco }}</mat-label>
-          <input matInput [value]="site.reviewDate" readonly />
+          <input matInput [matDatepicker]="reviewDatePicker" formControlName="reviewDate" disabled />
+          <mat-datepicker-toggle matSuffix [for]="reviewDatePicker" disabled></mat-datepicker-toggle>
+          <mat-datepicker #reviewDatePicker></mat-datepicker>
         </mat-form-field>
-        <mat-form-field>
+        <mat-form-field class="w-full">
           <mat-label>{{ 'sites.edit.review-justification.label' | transloco }}</mat-label>
-          <input matInput [value]="site.reviewJustification" readonly />
+          <input matInput formControlName="reviewJustification" disabled />
         </mat-form-field>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+  <div class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
     <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()">
       {{ 'global.buttons.close' | transloco }}
     </button>

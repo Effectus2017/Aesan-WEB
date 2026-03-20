@@ -1,18 +1,22 @@
 <div class="absolute inset-0 flex flex-col h-full min-w-0 overflow-hidden">
-    <!-- Header con título y botones -->
-    <app-generic-header [config]="headerConfig" [handler]="this" #rolesHeader></app-generic-header>
-    <!-- Main -->
-    <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable>
-      <app-generic-table [config]="tableConfig" [handler]="this" #rolesTable></app-generic-table>
-    </div>
-    <!-- Paginador -->
-    <mat-paginator
-      class="hidden sm:block"
-      [pageSizeOptions]="tableConfig.pageSizeOptions"
-      [pageSize]="tableConfig.pageSize"
-      [length]="tableConfig.length"
-      (page)="getPaginator($event)"
-      showFirstLastButtons
-    >
-    </mat-paginator>
+  <app-generic-header [config]="headerConfig" [handler]="this" #rolesHeader></app-generic-header>
+  <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable (click)="filterDrawer?.close()">
+    <app-generic-table [config]="tableConfig" [handler]="this" #rolesTable></app-generic-table>
   </div>
+  <mat-paginator
+    class="hidden sm:block"
+    [pageSizeOptions]="tableConfig.pageSizeOptions"
+    [pageSize]="tableConfig.pageSize"
+    [length]="tableConfig.length"
+    (page)="getPaginator($event)"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+  <app-generic-filter-drawer
+    #filterDrawer
+    [filtersSchema]="filtersSchema"
+    [handler]="this"
+    [initialValues]="appliedFilters"
+    drawerName="usersListFilterDrawer">
+  </app-generic-filter-drawer>
+</div>

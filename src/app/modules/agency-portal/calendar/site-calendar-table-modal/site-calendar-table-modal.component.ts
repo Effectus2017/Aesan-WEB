@@ -55,6 +55,8 @@ export interface ServiceRow {
 /** Grupo de servicios para la vista agrupada (Opción B) */
 export interface ServiceGroup {
   groupName: string;
+  /** Niños matriculados del grupo (desde `childGroups` del sitio, alineado con la vista Servicios). */
+  numberOfChildren: number;
   services: ServiceRow[];
 }
 
@@ -398,6 +400,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
     }
     this.servicesGroupedByGroup = Array.from(groupMap.entries()).map(([groupName, services]) => ({
       groupName,
+      numberOfChildren: this._resolveNumberOfChildrenForGroup(groupName, services),
       services
     }));
 
@@ -493,6 +496,27 @@ export class SiteCalendarTableModalComponent implements OnInit {
   /** Estilo (icono + color) por serviceTypeId para la columna Tipo. */
   getServiceTypeStyle(serviceTypeId: number | undefined | null): ServiceTypeStyle {
     return getServiceTypeStyle(serviceTypeId);
+  }
+
+  /**
+   * Obtiene la cantidad de niños matriculados del grupo usando `childGroupId` del primer servicio;
+   * si falta el id, intenta coincidencia por nombre (ES/EN).
+   */
+  private _resolveNumberOfChildrenForGroup(groupName: string, services: ServiceRow[]): number {
+    const groups = this.data.childGroups ?? [];
+    if (!groups.length || !services.length) {
+      return 0;
+    }
+    const meta = services[0].meta as { childGroupId?: number } | undefined;
+    let match = meta?.childGroupId != null ? groups.find((g) => g.id === meta.childGroupId) : undefined;
+    if (!match && groupName?.trim()) {
+      const key = groupName.trim();
+      match = groups.find(
+        (g) => g.groupName?.trim() === key || g.groupNameEN?.trim() === key
+      );
+    }
+    const n = match?.numberOfChildren;
+    return typeof n === 'number' && !Number.isNaN(n) ? n : 0;
   }
 
   private formatTimeValue(timeValue: any): string {

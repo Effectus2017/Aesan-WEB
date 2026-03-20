@@ -1672,6 +1672,7 @@
                 "section-operating-day-info": "Schedule and day type (normal, weekend or holiday).",
                 "section-active-services": "Active Services",
                 "group-unnamed": "Ungrouped",
+                "enrolled-children": "{{count}} enrolled children",
                 "service-fallback": "Service",
                 "confirm-delete-service": "Are you sure you want to delete this service?",
                 "cannot-edit-holiday": "Services cannot be edited on holidays",

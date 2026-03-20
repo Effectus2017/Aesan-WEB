@@ -1,6 +1,6 @@
 <div class="absolute inset-0 flex flex-col h-full min-w-0 overflow-hidden">
   <app-generic-header [config]="headerConfig" [handler]="this"></app-generic-header>
-  <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable>
+  <div class="flex-auto max-h-screen overflow-y-auto" cdkScrollable (click)="filterDrawer?.close()">
     <app-generic-table [config]="tableConfig" [handler]="this"></app-generic-table>
   </div>
   <mat-paginator
@@ -12,4 +12,11 @@
     showFirstLastButtons
   >
   </mat-paginator>
+  <app-generic-filter-drawer
+    #filterDrawer
+    [filtersSchema]="filtersSchema"
+    [handler]="this"
+    [initialValues]="appliedFilters"
+    drawerName="usersAgencyListFilterDrawer">
+  </app-generic-filter-drawer>
 </div>
