@@ -43,7 +43,6 @@ import { StaffStatusModalComponent, StaffStatusModalData } from '../staff-status
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteStaffService } from 'app/shared/services/site-staff.service';
 import { Site } from 'app/shared/models/site/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
@@ -97,7 +96,6 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
   private _fuseConfirmationService = inject(FuseConfirmationService);
   public fieldVisibilityService = inject(FieldVisibilityService);
   private _siteService = inject(SiteService);
-  private _siteStaffService = inject(SiteStaffService);
   private _activatedRoute = inject(ActivatedRoute);
   private _userService = inject(UserService);
 
@@ -537,11 +535,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     const fatherLastName: string = formValues.fatherLastName || '';
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
-    // const siteId: number = formValues.site?.id || null;
-    // const isPrimary: boolean = formValues.isPrimary || false;
-    const siteId: number = null; // COMENTADO: Ya no es necesario para miembros de la junta
-    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para miembros de la junta
+    const schoolId: number | null = null;
+    const isPrimary: boolean = false;
 
     // Loading
     this.isLoading = true;
@@ -583,7 +578,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      siteId: siteId,
+      schoolId: schoolId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,

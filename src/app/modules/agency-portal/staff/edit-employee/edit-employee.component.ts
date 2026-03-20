@@ -43,14 +43,14 @@ import { StaffClassification } from 'app/shared/models/staff/StaffClassification
 import { StaffStatusModalComponent, StaffStatusModalData } from '../staff-status-modal/staff-status-modal.component';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
-import { SiteService } from 'app/shared/services/site.service';
-import { SiteStaffService } from 'app/shared/services/site-staff.service';
-import { Site } from 'app/shared/models/site/Site';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
+import { School } from 'app/shared/models/school/School';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
+import { isAgencyPacnaProgram } from 'app/shared/const';
 @Component({
   selector: 'app-edit-employee',
   templateUrl: './edit-employee.component.html',
@@ -87,7 +87,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _matDialog = inject(MatDialog);
   public fieldVisibilityService = inject(FieldVisibilityService);
-  private _siteStaffService = inject(SiteStaffService);
+  private _schoolStaffService = inject(SchoolStaffService);
   private _activatedRoute = inject(ActivatedRoute);
   private _userService = inject(UserService);
 
@@ -99,8 +99,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   listStaffTypes: StaffType[] = [];
   // Lista de Clasificaciones de Staff
   listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
+  /** Escuelas de la agencia (resolver) para asignación opcional. */
+  listSchools: School[] = [];
+
+  /** PACNA: en UI se usa la nomenclatura «Centro» en lugar de «Escuela». */
+  useCenterLabelsForSchoolAssignment = false;
   // Resultado de revisión / Review result
   reviewResult: OptionSelection[] = [];
 
@@ -178,8 +181,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       email: new FormControl('', [Validators.required, Validators.email], [emailExistsValidator(this._userService, this.originalEmail)]),
       // Comments (descripción requerida)
       comments: new FormControl('', [Validators.required]),
-      // Sitio asignado (opcional)
-      site: new FormControl(null),
+      // Escuela asignada (opcional; `schoolId` en la actualización)
+      school: new FormControl(null),
       // Review result
       reviewResult: new FormControl(''),
       // Review date
@@ -251,6 +254,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   ngOnInit(): void {
+    this.useCenterLabelsForSchoolAssignment = isAgencyPacnaProgram();
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
@@ -314,10 +319,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       this.param = resolvedData.staff;
       this.onSetForm(resolvedData.staff);
 
-      // Cargar sitios desde el resolver
-      if (resolvedData.sites) {
-        this.listSites = resolvedData.sites;
-      }
+      const schoolsPayload = resolvedData.schools;
+      const rawSchools: School[] = Array.isArray(schoolsPayload)
+        ? schoolsPayload
+        : schoolsPayload?.data ?? [];
+      this.listSchools = rawSchools.filter((s) => s.isActive !== false);
     }
 
     // Suscribirse a cambios en la clasificación
@@ -400,7 +406,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       comments: param.comments,
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
-      site: param.site,
+      school: this._schoolFromStaff(param),
       salaryOrigins: param.salaryOrigins,
     });
 
@@ -502,9 +508,9 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       emailControl.updateValueAndValidity();
     }
 
-    // Cargar sitio actualmente asignado al staff
+    // Sincronizar escuela activa con SchoolStaff (puede sobreescribir el valor inicial del staff)
     if (param.id) {
-      this.loadCurrentSiteAssignment(param.id);
+      this.loadCurrentSchoolAssignment(param.id);
     }
 
     // 🔒 DESHABILITAR EL CONTROL staffType DEL FORMULARIO DESPUÉS de establecer el valor
@@ -571,8 +577,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const fatherLastName: string = formValues.fatherLastName || '';
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado (opcional)
-    const siteId: number = formValues.site?.id || null;
+    // Escuela asignada (opcional)
+    const schoolId: number | null = formValues.school?.id ?? null;
     const isPrimary: boolean = false;
 
     // Loading
@@ -668,7 +674,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      siteId: siteId,
+      schoolId: schoolId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
@@ -940,28 +946,49 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   /**
-   * Carga el sitio actualmente asignado al staff
+   * Resuelve la escuela del formulario a partir del DTO del staff (`schoolId` o sitio anidado).
    */
-  private loadCurrentSiteAssignment(staffId: number): void {
+  private _schoolFromStaff(param: Staff): School | null {
+    if (!this.listSchools.length) {
+      return null;
+    }
+    if (param.schoolId != null) {
+      const byId = this.listSchools.find((s) => s.id === param.schoolId);
+      if (byId) {
+        return byId;
+      }
+    }
+    const nestedSchoolId = param.site?.school?.id;
+    if (nestedSchoolId != null) {
+      return this.listSchools.find((s) => s.id === nestedSchoolId) ?? null;
+    }
+    return null;
+  }
+
+  /**
+   * Precarga la escuela activa según SchoolStaff para el empleado.
+   */
+  private loadCurrentSchoolAssignment(staffId: number): void {
     const queryParameters: QueryParameters = {
       staffId: staffId,
     };
-    this._siteStaffService.getSitesByStaff(queryParameters).subscribe({
-      next: (siteStaffs: any) => {
-        if (siteStaffs && siteStaffs.length > 0) {
-          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
-          if (activeAssignment && this.listSites.length > 0) {
-            const site = this.listSites.find((s) => s.id === activeAssignment.siteId);
-            if (site) {
+    this._schoolStaffService.getSchoolsByStaff(queryParameters).subscribe({
+      next: (assignments) => {
+        const list = assignments ?? [];
+        if (list.length > 0) {
+          const activeAssignment = list.find((a) => a.isActive);
+          if (activeAssignment && this.listSchools.length > 0) {
+            const school = this.listSchools.find((s) => s.id === activeAssignment.schoolId);
+            if (school) {
               this.headerConfig.formGroup.patchValue({
-                site: site,
+                school,
               });
             }
           }
         }
       },
       error: (err) => {
-        console.error('Error loading site assignment:', err);
+        console.error('Error loading school assignment:', err);
       },
     });
   }

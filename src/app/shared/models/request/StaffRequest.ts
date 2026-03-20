@@ -26,4 +26,7 @@ export interface StaffRequest {
     reviewResultId?: number;
     reviewDate?: Date;
     reviewJustification?: string;
+    /** Asignación SchoolStaff (escuela vinculada al sitio seleccionado en UI). */
+    schoolId?: number | null;
+    isPrimary?: boolean;
 }

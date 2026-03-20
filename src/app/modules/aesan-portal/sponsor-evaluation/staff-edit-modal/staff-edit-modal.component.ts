@@ -32,7 +32,7 @@ import { OptionSelectionService } from 'app/shared/services/option-selection.ser
 import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteStaffService } from 'app/shared/services/site-staff.service';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { isAdminRole } from 'app/shared/constants/role-keys';
 import { FieldVisibilityService } from 'app/shared/services/field-visibility.service';
@@ -74,7 +74,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
   private _staffTypeService = inject(StaffTypeService);
   private _staffClassificationService = inject(StaffClassificationService);
   private _siteService = inject(SiteService);
-  private _siteStaffService = inject(SiteStaffService);
+  private _schoolStaffService = inject(SchoolStaffService);
   private _authService = inject(AuthService);
   private _notificationService = inject(NotificationService);
   private _translocoService = inject(TranslocoService);
@@ -361,8 +361,11 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       comments: staff.comments,
       reviewDate: staff.reviewDate,
       reviewJustification: staff.reviewJustification,
-      site: staff.school,
       reviewResult: staff.reviewResultId ? this.reviewResult.find((r) => r.id === staff.reviewResultId) || null : null,
+      site:
+        staff.schoolId != null
+          ? this.listSites.find((s) => s.school?.id === staff.schoolId) ?? null
+          : null,
     });
 
     // Actualizar el validador de email con el email original
@@ -394,20 +397,24 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
     const queryParameters: QueryParameters = {
       staffId: staffId,
     };
-    this._siteStaffService.getSitesByStaff(queryParameters).subscribe({
-      next: (siteStaffs: any) => {
-        if (siteStaffs && siteStaffs.length > 0) {
-          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
+    this._schoolStaffService.getSchoolsByStaff(queryParameters).subscribe({
+      next: (assignments) => {
+        const list = assignments ?? [];
+        if (list.length > 0) {
+          const activeAssignment = list.find((a) => a.isActive);
           if (activeAssignment) {
-            this.form.patchValue({
-              site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
-              isPrimary: activeAssignment.isPrimary || false,
-            });
+            const site = this.listSites.find((s) => s.school?.id === activeAssignment.schoolId);
+            if (site) {
+              this.form.patchValue({
+                site,
+                isPrimary: activeAssignment.isPrimary || false,
+              });
+            }
           }
         }
       },
       error: (err) => {
-        console.error('Error loading site assignment:', err);
+        console.error('Error loading school assignment:', err);
       },
     });
   }
@@ -622,7 +629,7 @@ export class StaffEditModalComponent implements OnInit, OnDestroy {
       middleName: formValues.middleName || '',
       fatherLastName: formValues.fatherLastName || '',
       motherLastName: formValues.motherLastName || '',
-      siteId: formValues.site?.id || null,
+      schoolId: formValues.site?.school?.id ?? null,
       isPrimary: formValues.isPrimary || false,
     };
 

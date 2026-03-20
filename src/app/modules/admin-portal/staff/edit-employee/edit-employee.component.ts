@@ -36,7 +36,7 @@ import { StaffStatusModalComponent, StaffStatusModalData } from '../../../agency
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteStaffService } from 'app/shared/services/site-staff.service';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { Site } from 'app/shared/models/site/Site';
 
 @Component({
@@ -79,7 +79,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   private _matDialog = inject(MatDialog);
   public fieldVisibilityService = inject(FieldVisibilityService);
   private _siteService = inject(SiteService);
-  private _siteStaffService = inject(SiteStaffService);
+  private _schoolStaffService = inject(SchoolStaffService);
   private _activatedRoute = inject(ActivatedRoute);
 
   // Lista de Status
@@ -390,20 +390,24 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
    * Carga el sitio actualmente asignado al staff
    */
   private loadCurrentSiteAssignment(staffId: number): void {
-    this._siteStaffService.getSitesByStaff({ staffId }).subscribe({
-      next: (siteStaffs) => {
-        if (siteStaffs && siteStaffs.length > 0) {
-          const activeAssignment = siteStaffs.find((assignment: any) => assignment.isActive);
-          if (activeAssignment) {
-            this.headerConfig.formGroup.patchValue({
-              site: { id: activeAssignment.siteId, name: activeAssignment.siteName },
-              isPrimary: activeAssignment.isPrimary || false,
-            });
+    this._schoolStaffService.getSchoolsByStaff({ staffId }).subscribe({
+      next: (assignments) => {
+        const list = assignments ?? [];
+        if (list.length > 0) {
+          const activeAssignment = list.find((a) => a.isActive);
+          if (activeAssignment && this.listSites.length > 0) {
+            const site = this.listSites.find((s) => s.school?.id === activeAssignment.schoolId);
+            if (site) {
+              this.headerConfig.formGroup.patchValue({
+                site,
+                isPrimary: activeAssignment.isPrimary || false,
+              });
+            }
           }
         }
       },
       error: (err) => {
-        console.error('Error loading site assignment:', err);
+        console.error('Error loading school assignment:', err);
       },
     });
   }
@@ -462,7 +466,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const motherLastName: string = formValues.motherLastName || '';
 
     // Sitio asignado
-    const siteId: number = formValues.site?.id || null;
+    const schoolId: number | null = formValues.site?.school?.id ?? null;
     const isPrimary: boolean = formValues.isPrimary || false;
 
     // Loading
@@ -507,7 +511,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      siteId: siteId,
+      schoolId: schoolId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       contractStartDate: contractStartDate,

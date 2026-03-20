@@ -23,15 +23,14 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { AuthService } from 'app/core/auth/auth.service';
 import { compareById, generateTimeOptions, getEndTimeOptions, logFormValidationErrors, TimeOption, toIsoDateString } from 'app/shared/utils';
-import { StaffTypeService } from 'app/shared/services/staff-type.service';
 import { StaffType } from 'app/shared/models/staff/StaffType';
-import { StaffClassificationService } from 'app/shared/services/staff-classification.service';
 import { StaffClassification } from 'app/shared/models/staff/StaffClassification';
 import { ActivatedRoute } from '@angular/router';
-import { Site } from 'app/shared/models/site/Site';
+import { School } from 'app/shared/models/school/School';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';
+import { isAgencyPacnaProgram } from 'app/shared/const';
 
 @Component({
   selector: 'app-add-employee',
@@ -58,50 +57,27 @@ import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overla
   ],
 })
 export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
-  private _formBuilder = inject(UntypedFormBuilder);
-  private _staffService = inject(StaffService);
-  private _customRouterService = inject(CustomRouterService);
-  private _notificationService = inject(NotificationService);
-  private _translocoService = inject(TranslocoService);
+  // -----------------------------------------------------------------------------------------------------
+  // @ Subject de desuscripción
+  // -----------------------------------------------------------------------------------------------------
+  private _unsubscribeAll = new Subject<any>();
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Inyecciones privadas
+  // -----------------------------------------------------------------------------------------------------
+  private _activatedRoute = inject(ActivatedRoute);
   private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private _staffTypeService = inject(StaffTypeService);
-  private _staffClassificationService = inject(StaffClassificationService);
-  private _activatedRoute = inject(ActivatedRoute);
+  private _customRouterService = inject(CustomRouterService);
+  private _formBuilder = inject(UntypedFormBuilder);
+  private _notificationService = inject(NotificationService);
+  private _staffService = inject(StaffService);
+  private _translocoService = inject(TranslocoService);
   private _userService = inject(UserService);
 
-  // Lista de Status
-  listStatus: OptionSelection[] = [];
-  // Lista de Posiciones
-  listPositions: OptionSelection[] = [];
-  // Lista de Tipos de Staff
-  listStaffTypes: StaffType[] = [];
-  // Lista de Clasificaciones de Staff
-  listStaffClassifications: StaffClassification[] = [];
-  // Lista de Sitios
-  listSites: Site[] = [];
-
-  // Listas separadas para cada tipo de posición
-  listAdministrativePositions: OptionSelection[] = [];
-  listOperationalPositions: OptionSelection[] = [];
-  listSalaryOrigins: OptionSelection[] = [];
-
-  // Propiedades para controlar la visibilidad de campos
-  selectedClassification: StaffClassification | null = null;
-
-  // Lista completa de opciones de selección
-  //allOptionSelections: OptionSelection[] = [];
-
-  /** Opciones de hora cada 30 min para Desde/Hasta (como en sitios). */
-  timeOptions: TimeOption[] = [];
-
-  // Tipo de staff fijo (siempre será empleado)
-  private employeeStaffType: StaffType | null = null;
-
-  /** Para mostrar el diálogo de solapamiento de horarios solo una vez por sesión de error. */
-  private _schedulesOverlapWarningShown = false;
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Variables
+  // -----------------------------------------------------------------------------------------------------
   headerConfig: GenericHeaderConfig = {
     title: 'staff.add.title',
     formGroup: this._formBuilder.group({
@@ -146,8 +122,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       email: new FormControl(null, [Validators.email], [emailExistsValidator(this._userService)]),
       // Comentarios
       comments: new FormControl(null, [Validators.required]),
-      // Sitio asignado (opcional)
-      site: new FormControl(null),
+      // Escuela asignada (opcional; `schoolId` en el alta)
+      school: new FormControl(null),
       salaryOrigins: new FormControl([], [Validators.required]),
     }),
     // Cancel button
@@ -159,41 +135,65 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     submitDisabled: true, // Inicialmente deshabilitado hasta que el formulario sea válido
   };
 
-  // Compare methods
   compareById = compareById;
 
-  /** True si la clasificación es "Ambos" (id 3). */
+  agencyId: number = 0;
+
+  currentLang: string = 'es';
+
+  isLoading: boolean = false;
+
+  listStatus: OptionSelection[] = [];
+
+  listPositions: OptionSelection[] = [];
+
+  listStaffTypes: StaffType[] = [];
+
+  listStaffClassifications: StaffClassification[] = [];
+
+  /** Escuelas de la agencia (resolver `get-schools-by-agency`) para asignación opcional al crear empleado. */
+  listSchools: School[] = [];
+
+  /** PACNA: en UI se usa la nomenclatura «Centro» en lugar de «Escuela». */
+  useCenterLabelsForSchoolAssignment = false;
+
+  listAdministrativePositions: OptionSelection[] = [];
+
+  listOperationalPositions: OptionSelection[] = [];
+
+  listSalaryOrigins: OptionSelection[] = [];
+
+  selectedClassification: StaffClassification | null = null;
+
+  /** Opciones de hora cada 30 min para Desde/Hasta (como en sitios). */
+  timeOptions: TimeOption[] = [];
+
+  /** Tipo de staff fijo (siempre empleado). */
+  private employeeStaffType: StaffType | null = null;
+
+  /** Evita mostrar el aviso de solapamiento de horarios más de una vez por sesión de error. */
+  private _schedulesOverlapWarningShown = false;
+
+  // -----------------------------------------------------------------------------------------------------
+  // @ Getters
+  // -----------------------------------------------------------------------------------------------------
+  /** Indica si la clasificación seleccionada es "Ambos" (id 3). */
   get isClassificationBoth(): boolean {
     return this.selectedClassification?.id === 3;
   }
 
-  /**
-   * Opciones filtradas para el campo "Hasta" según la hora "Desde" seleccionada (como en sitios).
-   */
-  getScheduleToOptions(fromFieldName: string): TimeOption[] {
-    const fromControl = this.headerConfig.formGroup.get(fromFieldName);
-    if (!fromControl) return this.timeOptions;
-    return getEndTimeOptions(this.timeOptions, fromControl.value, '23:59');
-  }
-
-  // Agencia Id
-  agencyId: number = 0;
-
-  // Loading
-  isLoading: boolean = false;
-
-  // Lenguaje actual
-  currentLang: string = 'es';
-
-  /**
-   * Obtiene el label correcto para el campo de comentarios para empleados
-   */
+  /** Etiqueta traducida del campo de comentarios para empleados. */
   get commentsLabel(): string {
     return this._translocoService.translate('staff.add.comments.employee.label');
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ ngOnInit / ngOnDestroy
+  // -----------------------------------------------------------------------------------------------------
   ngOnInit(): void {
     this.timeOptions = generateTimeOptions();
+
+    this.useCenterLabelsForSchoolAssignment = isAgencyPacnaProgram();
 
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
@@ -218,10 +218,12 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Cargar datos desde el resolver
       this.listStaffTypes = resolvedData.staffTypes;
       this.listStaffClassifications = resolvedData.staffClassifications;
-      // Cargar sitios desde el resolver
-      if (resolvedData.sites) {
-        this.listSites = resolvedData.sites;
-      }
+      // Escuelas de la agencia (paginado amplio en el resolver)
+      const schoolsPayload = resolvedData.schools;
+      const rawSchools: School[] = Array.isArray(schoolsPayload)
+        ? schoolsPayload
+        : schoolsPayload?.data ?? [];
+      this.listSchools = rawSchools.filter((s) => s.isActive !== false);
 
       // Asignar tipo de staff "Empleado" (ID: 1) - este componente es únicamente para empleados
       this.employeeStaffType = this.listStaffTypes.find(staffType => staffType.id === 1);
@@ -281,20 +283,10 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this._unsubscribeAll.complete();
   }
 
-  /**
-   * Muestra el mensaje de éxito después de crear el staff
-   */
-  private showSuccessMessage(): void {
-    this._notificationService.showSuccessDialogWithCallback(
-      'staff.add.success.employee',
-      (result) => {
-        if (result === 'confirmed') {
-          this._customRouterService.navigate(['staff/employees']);
-        }
-      }
-    );
-  }
-
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones On (componentes genéricos)
+  // -----------------------------------------------------------------------------------------------------
+  /** Envía el formulario y crea el empleado vía API. */
   onSubmit(): void {
     if (this.isLoading) return;
     // Validar formulario
@@ -343,8 +335,8 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Apellido Materno
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado (opcional)
-    const siteId: number = formValues.site?.id || null;
+    // Escuela asignada (opcional)
+    const schoolId: number | null = formValues.school?.id ?? null;
     const isPrimary: boolean = false;
 
     // Loading
@@ -423,7 +415,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      siteId: siteId,
+      schoolId: schoolId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
@@ -451,7 +443,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
             break;
         }
       },
-      error: (err) => {
+      error: () => {
         this._notificationService.showErrorDialog(this._translocoService.translate('staff.add.error.general'));
         this.headerConfig.formGroup.enable();
       },
@@ -464,13 +456,12 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     });
   }
 
+  /** Navega a la lista de empleados sin guardar. */
   onCancel(): void {
     this._customRouterService.navigate(['staff/employees']);
   }
 
-  /**
-   * Maneja el cambio en la clasificación de staff
-   */
+  /** Reacciona al cambio de clasificación: sincroniza campos, listas de cargo y validadores. */
   onClassificationChange(classification: StaffClassification): void {
     const previousClassification = this.selectedClassification;
     // Evitar reprocesar si el valor no cambió
@@ -529,9 +520,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     }, 0);
   }
 
-  /**
-   * Maneja el cambio en la fecha de nacimiento para limpiar errores de validación
-   */
+  /** Limpia el estado de error del control de fecha de nacimiento al cambiar el valor. */
   onBirthDateChange(birthDate: any): void {
     if (!birthDate) {
       return;
@@ -556,22 +545,17 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     }
   }
 
-  /**
-   * Limpia los errores de validación sin cambiar los valores del formulario
-   */
-  private clearValidationErrors(): void {
-    Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
-      const control = this.headerConfig.formGroup.get(key);
-      if (control) {
-        control.markAsUntouched();
-        control.markAsPristine();
-      }
-    });
+  // -----------------------------------------------------------------------------------------------------
+  // @ Otras funciones públicas
+  // -----------------------------------------------------------------------------------------------------
+  /** Devuelve las opciones de hora "Hasta" filtradas según el valor de "Desde" del campo indicado. */
+  getScheduleToOptions(fromFieldName: string): TimeOption[] {
+    const fromControl = this.headerConfig.formGroup.get(fromFieldName);
+    if (!fromControl) return this.timeOptions;
+    return getEndTimeOptions(this.timeOptions, fromControl.value, '23:59');
   }
 
-  /**
-   * Actualiza las validaciones para empleados
-   */
+  /** Aplica validadores y habilita o deshabilita controles según la clasificación de empleado. */
   updateValidations(): void {
     const staffClassificationControl = this.headerConfig.formGroup.get('staffClassification');
     const birthDateControl = this.headerConfig.formGroup.get('birthDate');
@@ -586,7 +570,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     const scheduleFromControl = this.headerConfig.formGroup.get('scheduleFrom');
     const scheduleToControl = this.headerConfig.formGroup.get('scheduleTo');
     const commentsControl = this.headerConfig.formGroup.get('comments');
-    const siteControl = this.headerConfig.formGroup.get('site');
+    const schoolControl = this.headerConfig.formGroup.get('school');
     const salaryOriginsControl = this.headerConfig.formGroup.get('salaryOrigins');
     const administrativePositionControl = this.headerConfig.formGroup.get('administrativePosition');
     const operationalPositionControl = this.headerConfig.formGroup.get('operationalPosition');
@@ -680,7 +664,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     // Habilitar/deshabilitar campos globales (dependientes de la clasificación)
     const globalControls = [
       firstNameControl, fatherLastNameControl, birthDateControl, emailControl,
-      middleNameControl, motherLastNameControl, siteControl, salaryOriginsControl
+      middleNameControl, motherLastNameControl, schoolControl, salaryOriginsControl
     ];
 
     if (!this.selectedClassification) {
@@ -695,9 +679,7 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     this._changeDetectorRef.detectChanges();
   }
 
-  /**
-   * Carga las posiciones según la clasificación de staff
-   */
+  /** Rellena `listPositions` según la clasificación actual (administrativo, operacional o ambos). */
   loadPositionsByClassification(): void {
     if (!this.selectedClassification) {
       this.listPositions = [];
@@ -715,5 +697,30 @@ export class AddEmployeeComponent implements OnInit, OnDestroy, OnGenericHeaderH
     }
     this._changeDetectorRef.detectChanges();
   }
-}
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Funciones privadas
+  // -----------------------------------------------------------------------------------------------------
+  /** Muestra el diálogo de éxito y navega a la lista de empleados si el usuario confirma. */
+  private showSuccessMessage(): void {
+    this._notificationService.showSuccessDialogWithCallback(
+      'staff.add.success.employee',
+      (result) => {
+        if (result === 'confirmed') {
+          this._customRouterService.navigate(['staff/employees']);
+        }
+      }
+    );
+  }
+
+  /** Marca todos los controles como no tocados y prístinos sin alterar valores. */
+  private clearValidationErrors(): void {
+    Object.keys(this.headerConfig.formGroup.controls).forEach(key => {
+      const control = this.headerConfig.formGroup.get(key);
+      if (control) {
+        control.markAsUntouched();
+        control.markAsPristine();
+      }
+    });
+  }
+}

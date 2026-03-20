@@ -10,6 +10,7 @@ import { forkJoin, switchMap, of, map } from 'rxjs';
 import { StaffRelationshipService } from 'app/shared/services/staff-relationship.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { SiteService } from 'app/shared/services/site.service';
+import { SchoolService } from 'app/shared/services/school.service';
 
 // Resolver para la lista de staff
 // Resolver for staff list
@@ -81,6 +82,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
   // Site service
   // Servicio para operaciones de escuelas
   const siteService = inject(SiteService);
+  const schoolService = inject(SchoolService);
   // Auth service para obtener agency ID
   const authService = inject(AuthService);
 
@@ -108,6 +110,14 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     //isDayCareHomeId: isDayCareHomeId,
   };
 
+  const schoolsRequestParameters: QueryParameters = {
+    take: 500,
+    skip: 0,
+    alls: false,
+    forDropdown: true,
+    agencyId: agencyId,
+  };
+
   return forkJoin([
     // Geographic service
     // Servicio para operaciones geográficas
@@ -133,14 +143,16 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     // Sites service
     // Servicio para operaciones de escuelas
     siteService.getAllSitesFromDb(sitesRequestParameters),
+    schoolService.getSchoolsByAgencyId(schoolsRequestParameters),
   ]).pipe(
-    map(([cities, regions, options, staffTypes, staffClassifications, sites]) => ({
+    map(([cities, regions, options, staffTypes, staffClassifications, sites, schools]) => ({
       cities: cities.body,
       regions: regions.body,
       options: options.body,
       staffTypes: staffTypes.body,
       staffClassifications: staffClassifications.body,
       sites: sites.body,
+      schools: schools.body,
     }))
   );
 };
@@ -173,6 +185,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
   // Site service
   // Servicio para operaciones de escuelas
   const siteService = inject(SiteService);
+  const schoolService = inject(SchoolService);
   // Auth service para obtener agency ID
   const authService = inject(AuthService);
 
@@ -206,6 +219,14 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
     //isDayCareHomeId: isDayCareHomeId,
   };
 
+  const schoolsRequestParameters: QueryParameters = {
+    take: 500,
+    skip: 0,
+    alls: false,
+    forDropdown: true,
+    agencyId: agencyId,
+  };
+
   // Primero obtener los datos del staff para determinar si es empleado
   return staffService.getStaffById(requestParametersId).pipe(
     switchMap((staffData: any) => {
@@ -236,10 +257,11 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           // Sites service
           // Servicio para operaciones de sitios
           siteService.getAllSitesFromDb(sitesRequestParameters),
+          schoolService.getSchoolsByAgencyId(schoolsRequestParameters),
           // NO cargar relaciones para empleados
           of(null),
         ]).pipe(
-          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, relationships]) => ({
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, schools, relationships]) => ({
             staff: staff.body,
             cities: cities.body,
             regions: regions.body,
@@ -247,6 +269,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             staffTypes: staffTypes.body,
             staffClassifications: staffClassifications.body,
             sites: sites.body,
+            schools: schools.body,
             relationships: relationships, // null para empleados
           }))
         );
@@ -272,10 +295,11 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           // Sites service
           // Servicio para operaciones de sitios
           siteService.getAllSitesFromDb(sitesRequestParameters),
+          schoolService.getSchoolsByAgencyId(schoolsRequestParameters),
           // Staff relationships service (solo para no empleados)
           staffRelationshipService.getRelationshipsByStaffId(requestParametersId),
         ]).pipe(
-          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, relationships]) => ({
+          map(([staff, cities, regions, options, staffTypes, staffClassifications, sites, schools, relationships]) => ({
             staff: staff.body,
             cities: cities.body,
             regions: regions.body,
@@ -283,6 +307,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
             staffTypes: staffTypes.body,
             staffClassifications: staffClassifications.body,
             sites: sites.body,
+            schools: schools.body,
             relationships: relationships.body,
           }))
         );

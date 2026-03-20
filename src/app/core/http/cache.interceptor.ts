@@ -19,7 +19,7 @@ const EXCLUDED_ENDPOINTS = [
   '/get-operating-days', // días de funcionamiento y servicios del calendario (cambian al agregar/editar servicios)
   '/site/', // sitios (cambian al agregar/editar sitios)
   '/staff/', // personal (cambian al agregar/editar personal)
-  '/site-staff/', // personal por sitio (cambian al agregar/editar personal en un sitio)
+  '/school-staff/', // personal por escuela (cambian al agregar/editar asignación)
   '/get-all-agencies-from-db', // búsqueda/listado de agencias: filtros dinámicos, no cachear
 ];
 

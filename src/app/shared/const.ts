@@ -233,3 +233,24 @@ export function isPAFProgram(program: any): boolean {
 export function isPDAMOrPSAVProgram(program: any): boolean {
   return isPDAMProgram(program) || isPSAVProgram(program);
 }
+
+const AGENCY_PROGRAMS_STORAGE_KEY = 'agencyPrograms';
+
+/**
+ * Indica si la agencia en sesión incluye el programa PACNA (misma lógica que PacnaProgramGuard).
+ */
+export function isAgencyPacnaProgram(): boolean {
+  if (typeof localStorage === 'undefined') {
+    return false;
+  }
+  const raw = localStorage.getItem(AGENCY_PROGRAMS_STORAGE_KEY);
+  if (!raw) {
+    return false;
+  }
+  try {
+    const programs: Array<{ id?: number }> = JSON.parse(raw);
+    return Array.isArray(programs) && programs.some((p) => p?.id === PROGRAM_IDS.PACNA);
+  } catch {
+    return false;
+  }
+}

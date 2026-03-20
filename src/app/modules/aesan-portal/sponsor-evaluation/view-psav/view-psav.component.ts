@@ -42,7 +42,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { SiteStaffService } from 'app/shared/services/site-staff.service';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { SiteViewModalPsavComponent } from '../site-view-modal-psav/site-view-modal-psav.component';
 import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
 import { StatusConfigModalComponent } from '../status-config-modal/status-config-modal.component';
@@ -113,7 +113,7 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
   private _customRouterService = inject(CustomRouterService);
   private _route = inject(ActivatedRoute);
   private _siteService = inject(SiteService);
-  private _siteStaffService = inject(SiteStaffService);
+  private _schoolStaffService = inject(SchoolStaffService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
@@ -423,11 +423,21 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
     event.preventDefault();
   }
 
-  /** Abre el modal de personal del sitio. */
-  onTableViewStaff(event: Event, id: number): void {
+  /** Abre el modal de personal asociado a la escuela vinculada al sitio. */
+  onTableViewStaff(event: Event, siteId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this.openStaffBySiteModal(id);
+    const row = this.tableConfig.dataSource.data.find((s: { id: number; school?: { id?: number } }) => s.id === siteId);
+    const schoolId = row?.school?.id;
+    if (!schoolId) {
+      this._snackBar.open(
+        this._translocoService.translate('sponsor-evaluation.edit.sites.messages.noSchoolForSite'),
+        this._translocoService.translate('global.buttons.close'),
+        { duration: 5000 }
+      );
+      return;
+    }
+    this.openStaffBySchoolModal(siteId, schoolId);
   }
 
   /** Maneja acciones de la tabla. */
@@ -509,16 +519,15 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
     });
   }
 
-  openStaffBySiteModal(siteId: number): void {
-    this._siteStaffService.getStaffBySite({ siteId }).subscribe({
-      next: (response: any) => {
-        const staffList = response?.body?.data || response?.body;
+  openStaffBySchoolModal(siteId: number, schoolId: number): void {
+    this._schoolStaffService.getStaffBySchool({ schoolId }).subscribe({
+      next: (staffList) => {
         if (staffList != null) {
           import('../staff-by-site-modal/staff-by-site-modal.component').then((module) => {
             this._dialog.open(module.StaffBySiteModalComponent, {
               width: '90vw',
               maxWidth: '1200px',
-              data: { siteId, staffList },
+              data: { siteId, schoolId, staffList },
             });
           });
         }

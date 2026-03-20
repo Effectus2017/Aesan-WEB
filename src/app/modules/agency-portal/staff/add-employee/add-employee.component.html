@@ -265,7 +265,7 @@
             </mat-form-field>
           </div>
           <div class="col-span-12" *ngIf="headerConfig.formGroup.hasError('schedulesOverlap')">
-            <p class="mat-error text-sm">{{ "staff.add.schedulesOverlap" | transloco }}</p>
+            <p class="text-sm mat-error">{{ "staff.add.schedulesOverlap" | transloco }}</p>
           </div>
         </ng-container>
 
@@ -307,23 +307,57 @@
           </mat-form-field>
         </div>
 
-        <!-- Asignación de Sitio -->
+        <!-- Asignación opcional a escuela o centro (PACNA) -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">
-            {{ "staff.add.site-assignment" | transloco }}
+            {{
+              (useCenterLabelsForSchoolAssignment ? "staff.add.center-assignment" : "staff.add.school-assignment")
+                | transloco
+            }}
           </p>
-          <p class="mb-6 text-secondary">
-            {{ "staff.add.site-assignment-description" | transloco }}
+          <p class="mb-2 text-sm text-secondary">
+            {{
+              (useCenterLabelsForSchoolAssignment
+                ? "staff.add.center-assignment-description"
+                : "staff.add.school-assignment-description"
+              ) | transloco
+            }}
           </p>
         </div>
 
-        <!-- Campo de Sitio -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1 sm:col-span-12">
-          <mat-form-field data-cy="site-field">
-            <mat-label>{{ "staff.add.site.label" | transloco }}</mat-label>
-            <mat-select formControlName="site" [placeholder]="'staff.add.site.placeholder' | transloco" [compareWith]="compareById" data-cy="site-select">
-              <mat-option *ngFor="let site of listSites" [value]="site" data-cy="site-option"> {{ site.siteCode }} - {{ site.name }} </mat-option>
+        <div class="grid grid-cols-1 col-span-12 gap-4 mb-3 sm:grid-cols-1 sm:col-span-12">
+          <mat-form-field data-cy="school-assignment-field">
+            <mat-label>{{
+              (useCenterLabelsForSchoolAssignment ? "staff.add.centerPicker.label" : "staff.add.schoolPicker.label")
+                | transloco
+            }}</mat-label>
+            <mat-select
+              formControlName="school"
+              [placeholder]="
+                (useCenterLabelsForSchoolAssignment
+                  ? 'staff.add.centerPicker.placeholder'
+                  : 'staff.add.schoolPicker.placeholder'
+                ) | transloco
+              "
+              [compareWith]="compareById"
+              data-cy="school-assignment-select"
+            >
+              <mat-option *ngFor="let school of listSchools" [value]="school" data-cy="school-assignment-option">
+                {{ school.name }}{{ school.schoolCode != null && school.schoolCode !== '' ? ' (' + school.schoolCode + ')' : '' }}
+              </mat-option>
             </mat-select>
+            <mat-hint *ngIf="listSchools.length === 0" class="text-amber-700 dark:text-amber-400">
+              {{
+                (useCenterLabelsForSchoolAssignment
+                  ? "staff.add.centerPicker.emptyList"
+                  : "staff.add.schoolPicker.emptyList"
+                ) | transloco
+              }}
+            </mat-hint>
+            <mat-hint *ngIf="listSchools.length > 0">{{
+              (useCenterLabelsForSchoolAssignment ? "staff.add.centerPicker.hint" : "staff.add.schoolPicker.hint")
+                | transloco
+            }}</mat-hint>
           </mat-form-field>
         </div>
 

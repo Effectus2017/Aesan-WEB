@@ -300,11 +300,8 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
     // Apellido Materno
     const motherLastName: string = formValues.motherLastName || '';
 
-    // Sitio asignado - COMENTADO: Ya no es necesario para miembros de la junta
-    // const siteId: number = formValues.site?.id || null;
-    // const isPrimary: boolean = formValues.isPrimary || false;
-    const siteId: number = null; // COMENTADO: Ya no es necesario para miembros de la junta
-    const isPrimary: boolean = false; // COMENTADO: Ya no es necesario para miembros de la junta
+    const schoolId: number | null = null;
+    const isPrimary: boolean = false;
 
     // Loading
     this.isLoading = true;
@@ -338,7 +335,7 @@ export class AddBoardMemberComponent implements OnInit, OnDestroy, OnGenericHead
       middleName: middleName,
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
-      siteId: siteId,
+      schoolId: schoolId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,

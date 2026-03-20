@@ -228,6 +228,22 @@
         "hint": "Selecciona el sitio donde estará asignado el personal",
         "required": "El sitio es requerido"
       },
+      "school-assignment": "Asignaci\u00f3n a escuela",
+      "school-assignment-description": "Opcional. Se listan las escuelas registradas para su agencia.",
+      "center-assignment": "Asignaci\u00f3n a centro",
+      "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
+      "schoolPicker": {
+        "label": "Escuela",
+        "placeholder": "Seleccione escuela (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
+        "emptyList": "No hay escuelas activas para esta agencia. Registre escuelas en el m\u00f3dulo correspondiente."
+      },
+      "centerPicker": {
+        "label": "Centro",
+        "placeholder": "Seleccione centro (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con el centro elegido.",
+        "emptyList": "No hay centros activos para esta agencia. Registre centros en el m\u00f3dulo correspondiente."
+      },
       "assignmentType": {
         "label": "Tipo de Asignación",
         "placeholder": "Seleccione el tipo de asignación",
@@ -241,10 +257,10 @@
       "additional-information-description": "Información adicional del personal",
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional)",
-        "required": "La descripción es requerida",
+        "placeholder": "Indique funciones y tareas principales (obligatorio)",
+        "required": "La descripci\u00f3n es obligatoria",
         "employee": {
-          "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
+          "label": "Descripci\u00f3n breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"
         },
         "boardMember": {
@@ -253,8 +269,8 @@
         }
       },
       "review": {
-        "label": "Revisión",
-        "description": "Información sobre la revisión del empleado"
+        "label": "Revisi\u00f3n",
+        "description": "Informaci\u00f3n sobre la revisi\u00f3n del empleado"
       },
       "review-result": {
         "label": "Resultado de Revisión",
@@ -480,10 +496,10 @@
       },
       "comments": {
         "label": "Comentarios",
-        "placeholder": "Ingrese comentarios adicionales (opcional):",
-        "required": "La descripci?n es requerida",
+        "placeholder": "Indique funciones y tareas principales (obligatorio)",
+        "required": "La descripci\u00f3n es obligatoria",
         "employee": {
-          "label": "Descripción breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
+          "label": "Descripci\u00f3n breve de funciones y tareas principales de los Empleados Administrativos/Operativos",
           "placeholder": "Describa al empleado"
         },
         "boardMember": {
@@ -496,6 +512,22 @@
       "site": {
         "label": "Sitio Asignado",
         "placeholder": "Seleccione el sitio (opcional)"
+      },
+      "school-assignment": "Asignaci\u00f3n a escuela",
+      "school-assignment-description": "Opcional. Se listan las escuelas registradas para su agencia.",
+      "center-assignment": "Asignaci\u00f3n a centro",
+      "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
+      "schoolPicker": {
+        "label": "Escuela",
+        "placeholder": "Seleccione escuela (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
+        "emptyList": "No hay escuelas activas para esta agencia."
+      },
+      "centerPicker": {
+        "label": "Centro",
+        "placeholder": "Seleccione centro (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con el centro elegido.",
+        "emptyList": "No hay centros activos para esta agencia."
       },
       "assignmentType": {
         "label": "Tipo de Asignación",

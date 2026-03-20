@@ -108,11 +108,14 @@
           "view": {
             "title": "Ver Sitio"
           }
+        },
+        "messages": {
+          "noSchoolForSite": "Este sitio no tiene una escuela vinculada. No se puede listar el personal por escuela."
         }
       },
       "staffBySite": {
         "modal": {
-          "title": "Personal Relacionado al Sitio"
+          "title": "Personal de la escuela vinculada al sitio"
         },
         "table": {
           "columns": {

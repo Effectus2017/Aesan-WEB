@@ -114,7 +114,8 @@
         },
         "buttons": {
           "view": "View",
-          "edit": "Edit"
+          "edit": "Edit",
+          "viewStaff": "View staff"
         }
       },
       "modal": {
@@ -123,6 +124,23 @@
         },
         "view": {
           "title": "View Site"
+        }
+      },
+      "messages": {
+        "noSchoolForSite": "This site has no linked school. Staff cannot be listed by school."
+      }
+    },
+    "staffBySite": {
+      "modal": {
+        "title": "Staff for linked school"
+      },
+      "table": {
+        "columns": {
+          "fullName": "Full name",
+          "email": "Email",
+          "assignmentDate": "Assignment date",
+          "isPrimary": "Primary",
+          "isActive": "Active"
         }
       }
     },

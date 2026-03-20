@@ -9,12 +9,13 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { Subject } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { SiteStaffResponse } from 'app/shared/models/response/SiteStaffResponse';
+import { SchoolStaffResponse } from 'app/shared/models/response/SchoolStaffResponse';
 import { STAFF_BY_SITE_COLUMNS_SCHEMA } from './columns-schema';
 
 export interface StaffBySiteModalData {
   siteId: number;
-  staffList: SiteStaffResponse[];
+  schoolId?: number;
+  staffList: SchoolStaffResponse[];
 }
 
 @Component({
@@ -55,7 +56,7 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
   isInitialLoading: boolean = true;
 
   tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<SiteStaffResponse>([]),
+    dataSource: new MatTableDataSource<SchoolStaffResponse>([]),
     columnsSchema: STAFF_BY_SITE_COLUMNS_SCHEMA,
     displayedColumns: STAFF_BY_SITE_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
