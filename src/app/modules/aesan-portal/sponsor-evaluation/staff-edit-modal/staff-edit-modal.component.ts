@@ -14,6 +14,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NgIf, NgForOf } from '@angular/common';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { Staff } from 'app/shared/models/staff/Staff';
 import { StaffService } from 'app/shared/services/staff.service';
@@ -62,6 +63,7 @@ export interface StaffEditModalData {
     NgIf,
     NgForOf,
     MatTooltipModule,
+    MatProgressSpinnerModule,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './staff-edit-modal.component.html',

@@ -54,7 +54,18 @@
       <div class="flex gap-2">
         <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()">Cancelar</button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid">Guardar</button>
+      <button
+        mat-flat-button
+        type="submit"
+        [color]="'primary'"
+        [disabled]="form.invalid || isSubmitting"
+        [class.min-w-10]="isSubmitting">
+        @if (isSubmitting) {
+          <mat-spinner diameter="20" class="inline-block align-middle" aria-hidden="true"></mat-spinner>
+        } @else {
+          {{ 'global.buttons.save' | transloco }}
+        }
+      </button>
     </div>
   </form>
 </div>

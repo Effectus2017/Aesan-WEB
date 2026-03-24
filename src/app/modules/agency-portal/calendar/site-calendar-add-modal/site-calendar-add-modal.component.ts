@@ -1,7 +1,8 @@
-import { Component, Inject, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -10,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarAddModalData } from 'app/shared/models/response/SiteCalendarAddModalData';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-site-calendar-add-modal',
@@ -18,6 +20,7 @@ import { SiteCalendarAddModalData } from 'app/shared/models/response/SiteCalenda
     CommonModule,
     MatDialogModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -68,7 +71,9 @@ import { SiteCalendarAddModalData } from 'app/shared/models/response/SiteCalenda
 export class SiteCalendarAddModalComponent {
   timeOptions: { value: string; display: string }[] = [];
   timeOutsideSiteRangeError: string | null = null;
+  isSubmitting = false;
   private translocoService: TranslocoService = inject(TranslocoService);
+  private _cdr = inject(ChangeDetectorRef);
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarAddModalComponent>,
@@ -200,8 +205,25 @@ export class SiteCalendarAddModalComponent {
 
   onSave(): void {
     this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
-    if (this.data.form.valid && !this.timeOutsideSiteRangeError) {
-      this.dialogRef.close(this.data.form.value);
+    if (!this.data.form.valid || this.timeOutsideSiteRangeError || this.isSubmitting) {
+      return;
     }
+    const formValue = this.data.form.value as Record<string, unknown>;
+    if (this.data.commitSave) {
+      this.isSubmitting = true;
+      this.data.commitSave(formValue)
+        .pipe(
+          finalize(() => {
+            this.isSubmitting = false;
+            this._cdr.markForCheck();
+          })
+        )
+        .subscribe({
+          next: () => this.dialogRef.close(formValue),
+          error: () => {}
+        });
+      return;
+    }
+    this.dialogRef.close(this.data.form.value);
   }
 }

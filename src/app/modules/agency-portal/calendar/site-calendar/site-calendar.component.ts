@@ -27,8 +27,8 @@ import { OperatingDayApiResponse } from 'app/shared/models/response/OperatingDay
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { GenericTableConfig, OnGenericTableHandler } from '../../../../shared/components/generic-table/generic-table.interface';
 import { DAY_EVENTS_COLUMNS_SCHEMA } from './columns-schema';
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { EMPTY, Observable, Subject, takeUntil } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { FuseConfigService } from '@fuse/services/config';
 import { SiteCalendarEditModalComponent } from '../site-calendar-edit-modal/site-calendar-edit-modal.component';
 import { SiteCalendarAddModalComponent } from '../site-calendar-add-modal/site-calendar-add-modal.component';
@@ -500,7 +500,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: false
     });
 
-    const dialogRef = this.dialog.open(SiteCalendarAddModalComponent, {
+    this.dialog.open(SiteCalendarAddModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -508,13 +508,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         operatingDay: newDay,
         siteId: this.currentSiteId,
         siteOperatingStartTime: this.currentSite?.operatingStartTime,
-        siteOperatingEndTime: this.currentSite?.operatingEndTime
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.addOperatingDay(newDay, result);
+        siteOperatingEndTime: this.currentSite?.operatingEndTime,
+        commitSave: (formValue: Record<string, unknown>) => this.commitAddOperatingDay$(newDay, formValue)
       }
     });
   }
@@ -528,7 +523,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: dayData.isHoliday || false
     });
 
-    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -537,17 +532,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         operatingDay: dayData,
         siteId: this.currentSiteId,
         siteOperatingStartTime: this.currentSite?.operatingStartTime,
-        siteOperatingEndTime: this.currentSite?.operatingEndTime
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.action === 'delete') {
-          this.deleteOperatingDay(dayData);
-        } else {
-          this.updateOperatingDay(dayData, result);
-        }
+        siteOperatingEndTime: this.currentSite?.operatingEndTime,
+        commitSave: (formValue: Record<string, unknown>) => this.commitUpdateOperatingDay$(dayData, formValue, false),
+        commitDelete: () => this.commitDeleteOperatingDay$(dayData, false)
       }
     });
   }
@@ -564,7 +551,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: operatingDay.isHoliday || false
     });
 
-    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -574,17 +561,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         siteId: this.currentSiteId,
         fromTable: fromTable,
         siteOperatingStartTime: this.currentSite?.operatingStartTime,
-        siteOperatingEndTime: this.currentSite?.operatingEndTime
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.action === 'delete') {
-          this.deleteOperatingDay(operatingDay);
-        } else {
-          this.updateOperatingDay(operatingDay, result, fromTable);
-        }
+        siteOperatingEndTime: this.currentSite?.operatingEndTime,
+        commitSave: (formValue: Record<string, unknown>) =>
+          this.commitUpdateOperatingDay$(operatingDay, formValue, fromTable),
+        commitDelete: () => this.commitDeleteOperatingDay$(operatingDay, fromTable)
       }
     });
   }
@@ -602,7 +582,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       isHoliday: operatingDay.isHoliday || false
     });
 
-    const dialogRef = this.dialog.open(SiteCalendarEditModalComponent, {
+    this.dialog.open(SiteCalendarEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
@@ -611,20 +591,227 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
         operatingDay: operatingDay,
         siteId: this.currentSiteId,
         fromTable: true,
+        tableRowId: id,
         siteOperatingStartTime: this.currentSite?.operatingStartTime,
-        siteOperatingEndTime: this.currentSite?.operatingEndTime
+        siteOperatingEndTime: this.currentSite?.operatingEndTime,
+        commitSave: (formValue: Record<string, unknown>) =>
+          this.commitUpdateOperatingDay$(operatingDay, formValue, true),
+        commitDelete: () => this.commitDeleteOperatingDay$(operatingDay, true)
       }
     });
+  }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.action === 'delete') {
-          this.deleteOperatingDayFromTable(operatingDay, id);
-        } else {
-          this.updateOperatingDayFromTable(operatingDay, result, id);
+  /**
+   * Recarga mes actual del calendario sin usar el flag global `loading` (el envío se indica en el modal).
+   */
+  private reloadMonthOperatingDays$(): Observable<void> {
+    const month = this.viewDate.getMonth() + 1;
+    const year = this.viewDate.getFullYear();
+    const queryParameters: QueryParameters = {
+      siteId: this.currentSiteId,
+      month,
+      year
+    };
+    return this.siteCalendarService.getOperatingDays(queryParameters).pipe(
+      tap({
+        next: (response: unknown) => {
+          const data = (response as { body?: unknown })?.body ?? response;
+          const raw = data as {
+            operatingDays?: OperatingDayApiResponse[];
+            data?: { operatingDays?: OperatingDayApiResponse[] };
+            operatingFromDate?: string;
+            operatingToDate?: string;
+          };
+          this.operatingDays = this.mapApiResponseToOperatingDays(
+            raw?.operatingDays ?? raw?.data?.operatingDays ?? []
+          );
+          this.events = this.transformToCalendarEvents(this.operatingDays);
+          if (raw?.operatingFromDate) {
+            this.operatingFromDate = new Date(raw.operatingFromDate);
+          }
+          if (raw?.operatingToDate) {
+            this.operatingToDate = new Date(raw.operatingToDate);
+          }
+          if (!this.hasCalculatedInitialDate && this.operatingFromDate && this.operatingToDate) {
+            this.calculateInitialViewDate();
+          }
         }
+      }),
+      map(() => void 0)
+    );
+  }
+
+  /** Persiste un día nuevo; validación sin red devuelve EMPTY (el modal no cierra). */
+  commitAddOperatingDay$(operatingDay: SiteOperatingDay, formData: Record<string, unknown>): Observable<void> {
+    const operatingDate = new Date(operatingDay.date);
+    if (!this.isDateWithinOperatingRange(operatingDate)) {
+      this.notificationService.showWarningDialog('sites.calendar.date-out-of-range');
+      return EMPTY;
+    }
+    const startTime = this.formatTimeForBackend(formData['startTime']);
+    const endTime = this.formatTimeForBackend(formData['endTime']);
+    if (!this.isTimeWithinSiteOperatingRange(startTime, endTime)) {
+      this.notificationService.showWarningDialog('sites.calendar.modals.add-day.time-outside-site-hours');
+      return EMPTY;
+    }
+    const isWeekend = operatingDay.isWeekend || false;
+    const request: SiteOperatingDayRequest = {
+      siteId: this.currentSiteId,
+      operatingDate: operatingDay.date,
+      startTime,
+      endTime,
+      isOperating: true,
+      isWeekend,
+      isHoliday: !!formData['isHoliday'],
+      comment: (formData['comment'] as string) || ''
+    };
+    return this.siteCalendarService.createOperatingDay(request, { siteId: this.siteId }).pipe(
+      switchMap(() =>
+        this.currentTableModal
+          ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
+          : this.reloadMonthOperatingDays$()
+      )
+    );
+  }
+
+  /** Actualiza día de funcionamiento; `fromTable` define si se refresca el modal tabla. */
+  commitUpdateOperatingDay$(
+    operatingDay: SiteOperatingDay,
+    formData: Record<string, unknown>,
+    fromTable: boolean
+  ): Observable<void> {
+    const startTime = this.formatTimeForBackend(formData['startTime']);
+    const endTime = this.formatTimeForBackend(formData['endTime']);
+    if (!this.isTimeWithinSiteOperatingRange(startTime, endTime)) {
+      this.notificationService.showWarningDialog('sites.calendar.modals.add-day.time-outside-site-hours');
+      return EMPTY;
+    }
+    const isWeekend = operatingDay.isWeekend || false;
+    const request: SiteOperatingDayRequest = {
+      id: operatingDay.id,
+      siteId: this.currentSiteId,
+      operatingDate: operatingDay.date,
+      startTime,
+      endTime,
+      isOperating: true,
+      isWeekend,
+      isHoliday: !!formData['isHoliday'],
+      comment: (formData['comment'] as string) || ''
+    };
+    return this.siteCalendarService.updateOperatingDay(request, { siteId: this.siteId }).pipe(
+      switchMap(() =>
+        fromTable
+          ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
+          : this.reloadMonthOperatingDays$().pipe(
+              tap(() => {
+                if (this.selectedDate) {
+                  this.updateDayEventsTable(this.selectedDate);
+                } else {
+                  this.refreshDayEventsTable();
+                }
+              }),
+              map(() => void 0)
+            )
+      )
+    );
+  }
+
+  /** Elimina día de funcionamiento. */
+  commitDeleteOperatingDay$(operatingDay: SiteOperatingDay, fromTable: boolean): Observable<void> {
+    return this.siteCalendarService.deleteOperatingDay({ id: operatingDay.id }).pipe(
+      switchMap(() =>
+        fromTable
+          ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
+          : this.reloadMonthOperatingDays$().pipe(
+              tap(() => this.refreshDayEventsTable()),
+              map(() => void 0)
+            )
+      )
+    );
+  }
+
+  /** Actualiza servicio del día (tras obtener el registro actual en API). */
+  commitUpdateService$(
+    serviceId: number,
+    formData: Record<string, unknown>,
+    fallbackServiceTypeId: number
+  ): Observable<void> {
+    return this.siteOperatingDayServiceService.getServiceById(serviceId).pipe(
+      switchMap((currentService: SiteOperatingDayService) => {
+        const startTime = this.formatTimeForBackend(formData['startTime']);
+        const endTime = this.formatTimeForBackend(formData['endTime']);
+        const serviceTypeId =
+          (formData['serviceTypeId'] as number) || fallbackServiceTypeId || currentService.serviceTypeId;
+        const request = {
+          operatingDayId: currentService.operatingDayId,
+          serviceTypeId,
+          childGroupId: currentService.childGroupId,
+          startTime,
+          endTime,
+          isEnabled: formData['isEnabled'] !== undefined ? !!formData['isEnabled'] : true,
+          comment: (formData['comment'] as string) || ''
+        };
+        return this.siteOperatingDayServiceService.updateService(serviceId, request);
+      }),
+      switchMap(() =>
+        this.currentTableModal
+          ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
+          : this.reloadMonthOperatingDays$().pipe(
+              tap(() => {
+                if (this.selectedDate) {
+                  this.updateDayEventsTable(this.selectedDate);
+                }
+              }),
+              map(() => void 0)
+            )
+      )
+    );
+  }
+
+  /** Elimina servicio (sin segundo diálogo de confirmación; el modal ya confirmó). */
+  commitDeleteService$(serviceId: number): Observable<void> {
+    return this.siteOperatingDayServiceService.deleteService(serviceId).pipe(
+      switchMap(() =>
+        this.currentTableModal
+          ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
+          : this.reloadMonthOperatingDays$().pipe(
+              tap(() => {
+                if (this.selectedDate) {
+                  this.updateDayEventsTable(this.selectedDate);
+                }
+              }),
+              map(() => void 0)
+            )
+      )
+    );
+  }
+
+  /** Crea servicio desde el modal tabla; notificación de éxito en cadena. */
+  commitCreateService$(operatingDayId: number, result: Record<string, unknown>): Observable<void> {
+    const formatTimeForApi = (time: string): string => {
+      if (!time) return '00:00:00';
+      const parts = time.split(':');
+      if (parts.length === 3) {
+        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:${parts[2].padStart(2, '0')}`;
       }
-    });
+      if (parts.length === 2) {
+        return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}:00`;
+      }
+      return '00:00:00';
+    };
+    const request = {
+      operatingDayId,
+      childGroupId: result['childGroupId'] as number,
+      serviceTypeId: result['serviceTypeId'] as number,
+      startTime: formatTimeForApi(String(result['startTime'] ?? '')),
+      endTime: formatTimeForApi(String(result['endTime'] ?? '')),
+      comment: String(result['comment'] ?? ''),
+      isEnabled: result['isEnabled'] !== undefined ? !!result['isEnabled'] : true
+    };
+    return this.siteOperatingDayServiceService.createService(request).pipe(
+      switchMap(() => this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))),
+      tap(() => this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success'))
+    );
   }
 
   /** Convierte "08:00:00" o "08:00" a "08:00" (HH:mm). */
@@ -1907,26 +2094,20 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       operatingDay = undefined; // Ya tenemos los horarios en el servicio
     }
 
-    const dialogRef = this.dialog.open(SiteCalendarServiceEditModalComponent, {
+    this.dialog.open(SiteCalendarServiceEditModalComponent, {
       width: '600px',
       maxWidth: '90vw',
       data: {
         form: serviceForm,
         service: service,
         siteId: this.currentSiteId,
-        operatingDay: operatingDay
+        operatingDay: operatingDay,
+        operatingStartTime: this.currentSite?.operatingStartTime,
+        operatingEndTime: this.currentSite?.operatingEndTime,
+        commitSave: (formValue: Record<string, unknown>) =>
+          this.commitUpdateService$(service.id, formValue, service.serviceTypeId),
+        commitDelete: () => this.commitDeleteService$(service.id)
       } as SiteCalendarServiceEditModalData
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (result.action === 'delete') {
-          this.deleteService(service.id);
-        } else {
-          // Incluir el serviceTypeId del servicio original en el formData
-          this.updateService(service.id, { ...result, serviceTypeId: service.serviceTypeId });
-        }
-      }
     });
   }
 
@@ -2138,6 +2319,10 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       handler: this,
       siteId: this.currentSiteId,
       childGroups: this.currentSite?.childGroups ?? [],
+      siteOperatingStartTime: this.currentSite?.operatingStartTime,
+      siteOperatingEndTime: this.currentSite?.operatingEndTime,
+      commitAddOperatingDay: (op, fv) => this.commitAddOperatingDay$(op, fv),
+      commitCreateService: (operatingDayId, fv) => this.commitCreateService$(operatingDayId, fv),
       onEventAdded: () => {
         // Callback para actualizar la tabla cuando se agrega un evento
         // No recargar aquí para evitar llamadas duplicadas

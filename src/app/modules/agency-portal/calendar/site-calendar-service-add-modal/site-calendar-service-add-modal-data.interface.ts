@@ -1,4 +1,5 @@
 import { FormGroup } from '@angular/forms';
+import type { Observable } from 'rxjs';
 import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
 import { SiteChildGroupResponse } from 'app/shared/models/response/SiteChildGroupResponse';
 
@@ -21,5 +22,6 @@ export interface SiteCalendarServiceAddModalData {
     startTime?: string;
     endTime?: string;
   }>;
+  commitSave?: (formValue: Record<string, unknown>) => Observable<void>;
 }
 

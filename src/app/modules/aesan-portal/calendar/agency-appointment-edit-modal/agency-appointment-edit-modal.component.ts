@@ -1,8 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -11,6 +12,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule } from '@ngneat/transloco';
 import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
 import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
+import { AgencyAppointmentEditModalData } from '../agency-appointment-modals-data.interface';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'aesan-agency-appointment-edit-modal',
@@ -21,6 +24,7 @@ import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -34,11 +38,13 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
   appointment: AgencyAppointment;
   date: Date;
   timeOptions: { value: string; display: string }[] = [];
+  isSubmitting = false;
 
   constructor(
     private _fb: FormBuilder,
     private _dialogRef: MatDialogRef<AgencyAppointmentEditModalComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { appointment: AgencyAppointment }
+    @Inject(MAT_DIALOG_DATA) public data: AgencyAppointmentEditModalData,
+    private _cdr: ChangeDetectorRef
   ) {
     this.appointment = data.appointment;
 
@@ -84,7 +90,7 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
   }
 
   onSave(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.isSubmitting) {
       return;
     }
 
@@ -104,10 +110,38 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
       comment: value.comment
     };
 
+    if (this.data.commitSave) {
+      this.isSubmitting = true;
+      this.data.commitSave(request).pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+          this._cdr.markForCheck();
+        })
+      ).subscribe({
+        next: () => this._dialogRef.close({ action: 'save', request }),
+        error: () => {}
+      });
+      return;
+    }
+
     this._dialogRef.close({ action: 'save', request });
   }
 
   onDelete(): void {
+    if (this.isSubmitting) return;
+    if (this.data.commitDelete) {
+      this.isSubmitting = true;
+      this.data.commitDelete().pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+          this._cdr.markForCheck();
+        })
+      ).subscribe({
+        next: () => this._dialogRef.close({ action: 'delete', id: this.appointment.id }),
+        error: () => {}
+      });
+      return;
+    }
     this._dialogRef.close({ action: 'delete', id: this.appointment.id });
   }
 

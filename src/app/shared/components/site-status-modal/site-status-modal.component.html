@@ -93,11 +93,12 @@
           {{ 'sites.add.status-modal.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading">
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading" [class.min-w-10]="isLoading">
         @if (isLoading) {
-        <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
-        }
+        <mat-spinner diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        } @else {
         {{ 'sites.add.status-modal.save' | transloco }}
+        }
       </button>
     </div>
   </form>

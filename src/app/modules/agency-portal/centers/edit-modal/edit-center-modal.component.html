@@ -35,8 +35,9 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="centerForm.invalid || loading" [appDisableIfNoPermission]="'school.edit'">
-        <span>{{ 'global.buttons.save' | transloco }}</span>
+      <button mat-flat-button type="button" [color]="'primary'" (click)="onSave()" [disabled]="centerForm.invalid || loading" [class.min-w-10]="loading" [appDisableIfNoPermission]="'school.edit'">
+        <mat-spinner *ngIf="loading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        <span *ngIf="!loading">{{ 'global.buttons.save' | transloco }}</span>
       </button>
     </div>
   </form>

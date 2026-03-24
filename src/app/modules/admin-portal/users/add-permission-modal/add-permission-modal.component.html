@@ -11,8 +11,7 @@
   <form class="flex overflow-y-auto flex-col flex-auto p-6" [formGroup]="form" (ngSubmit)="onSubmit()">
     <!-- Loading for Initial Data -->
     <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
-      <mat-icon class="text-4xl text-secondary">admin_panel_settings</mat-icon>
-      <div class="text-secondary">{{ "global.loading" | transloco }}</div>
+      <mat-spinner diameter="40" aria-hidden="true"></mat-spinner>
     </div>
 
     <div *ngIf="!isInitialLoading" class="flex flex-col gap-6 animate-slide-in">
@@ -80,8 +79,9 @@
       <button mat-button type="button" (click)="onCancel()" [disabled]="isLoading || isInitialLoading" data-cy="cancel-button">
         {{ "global.buttons.cancel" | transloco }}
       </button>
-      <button mat-flat-button color="primary" type="submit" [disabled]="selectedPermissions.length === 0 || isLoading || isInitialLoading" data-cy="save-button">
-        {{ "users.permission.modal.add.buttons.assignSelected" | transloco }}
+      <button mat-flat-button color="primary" type="submit" [disabled]="selectedPermissions.length === 0 || isLoading || isInitialLoading" [class.min-w-10]="isLoading" data-cy="save-button">
+        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        <span *ngIf="!isLoading">{{ "users.permission.modal.add.buttons.assignSelected" | transloco }}</span>
       </button>
     </div>
   </form>

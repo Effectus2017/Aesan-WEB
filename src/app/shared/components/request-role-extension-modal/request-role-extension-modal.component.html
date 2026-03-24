@@ -47,10 +47,11 @@
         color="primary"
         type="submit"
         [disabled]="form.invalid || isLoading"
+        [class.min-w-10]="isLoading"
         data-cy="submit-button"
       >
-        <mat-progress-spinner *ngIf="isLoading" diameter="20" mode="indeterminate" class="mr-2 inline-block"></mat-progress-spinner>
-        {{ 'roleExtension.modal.submit' | transloco }}
+        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        <span *ngIf="!isLoading">{{ 'roleExtension.modal.submit' | transloco }}</span>
       </button>
     </div>
   </form>

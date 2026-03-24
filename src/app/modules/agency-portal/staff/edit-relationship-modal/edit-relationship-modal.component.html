@@ -74,8 +74,8 @@
           {{ "staff.edit.relationships.modal.buttons.cancel" | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" data-cy="save-button">
-        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block mr-2"></mat-spinner>
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="form.invalid || isLoading" [class.min-w-10]="isLoading" data-cy="save-button">
+        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
         <span *ngIf="!isLoading">{{ "staff.edit.relationships.modal.buttons.update" | transloco }}</span>
       </button>
     </div>

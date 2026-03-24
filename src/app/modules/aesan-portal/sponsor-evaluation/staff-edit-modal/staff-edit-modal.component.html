@@ -271,8 +271,9 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading">
-        {{ 'global.buttons.save' | transloco }}
+      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!form.valid || isLoading" [class.min-w-10]="isLoading">
+        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        <span *ngIf="!isLoading">{{ 'global.buttons.save' | transloco }}</span>
       </button>
     </div>
   </form>

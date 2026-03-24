@@ -434,9 +434,8 @@
                 ) | transloco
               }}
             </mat-hint>
-            <mat-hint *ngIf="listSchools.length > 0">{{
-              (useCenterLabelsForSchoolAssignment ? "staff.edit.centerPicker.hint" : "staff.edit.schoolPicker.hint")
-                | transloco
+            <mat-hint *ngIf="useCenterLabelsForSchoolAssignment && listSchools.length > 0">{{
+              "staff.edit.centerPicker.hint" | transloco
             }}</mat-hint>
           </mat-form-field>
         </div>

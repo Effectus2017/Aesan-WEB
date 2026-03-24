@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -11,7 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslocoModule } from '@ngneat/transloco';
 import { forkJoin } from 'rxjs';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { SiteCalendarServiceAddModalData } from './site-calendar-service-add-modal-data.interface';
 import { ServiceTypes, ServiceTypeOption } from 'app/shared/constants/service-type.constants';
 import { TranslocoService } from '@ngneat/transloco';
@@ -33,6 +34,7 @@ import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByPro
     CommonModule,
     MatDialogModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -73,13 +75,15 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
   timeValidationError: { nameA: string; nameB: string; minMinutes: number } | null = null;
   /** Error de solapamiento con otro servicio (horario ya en uso). */
   overlapValidationError: { nameA: string; nameB: string } | null = null;
+  isSubmitting = false;
   private destroy$ = new Subject<void>();
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceAddModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceAddModalData,
     private translocoService: TranslocoService,
-    private serviceTypeService: ServiceTypeService
+    private serviceTypeService: ServiceTypeService,
+    private _cdr: ChangeDetectorRef
   ) {
     this.currentLanguage = this.translocoService.getActiveLang() || 'es';
     this.serviceTypes = ServiceTypes;
@@ -498,6 +502,20 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
           minMinutes: timeError.minMinutes
         };
       }
+      return;
+    }
+    const formValue = this.data.form.value as Record<string, unknown>;
+    if (this.data.commitSave) {
+      this.isSubmitting = true;
+      this.data.commitSave(formValue).pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+          this._cdr.markForCheck();
+        })
+      ).subscribe({
+        next: () => this.dialogRef.close(this.data.form.value),
+        error: () => {}
+      });
       return;
     }
     this.dialogRef.close(this.data.form.value);

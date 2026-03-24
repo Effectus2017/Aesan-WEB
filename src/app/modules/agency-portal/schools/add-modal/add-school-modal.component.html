@@ -35,8 +35,8 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="schoolForm.invalid || loading" [appDisableIfNoPermission]="'school.create'" data-cy="school-add-submit-button">
-        <span *ngIf="loading">{{ 'global.buttons.save' | transloco }}</span>
+      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="schoolForm.invalid || loading" [class.min-w-10]="loading" [appDisableIfNoPermission]="'school.create'" data-cy="school-add-submit-button">
+        <mat-spinner *ngIf="loading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
         <span *ngIf="!loading">{{ 'global.buttons.add' | transloco }}</span>
       </button>
     </div>

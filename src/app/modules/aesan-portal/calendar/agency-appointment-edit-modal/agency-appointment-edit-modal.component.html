@@ -50,10 +50,21 @@
 
     <!-- Actions -->
     <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
-      <button mat-flat-button color="warn" type="button" (click)="onDelete()">Eliminar</button>
+      <button mat-flat-button color="warn" type="button" (click)="onDelete()" [disabled]="isSubmitting">Eliminar</button>
       <div class="flex gap-2">
-          <button type="button" mat-stroked-button (click)="onClose()">Cancelar</button>
-          <button type="submit" mat-flat-button [color]="'primary'" [disabled]="form.invalid">Guardar</button>
+          <button type="button" mat-stroked-button (click)="onClose()" [disabled]="isSubmitting">Cancelar</button>
+          <button
+            type="submit"
+            mat-flat-button
+            [color]="'primary'"
+            [disabled]="form.invalid || isSubmitting"
+            [class.min-w-10]="isSubmitting">
+            @if (isSubmitting) {
+              <mat-spinner diameter="20" class="inline-block align-middle" aria-hidden="true"></mat-spinner>
+            } @else {
+              {{ 'global.buttons.save' | transloco }}
+            }
+          </button>
       </div>
     </div>
   </form>

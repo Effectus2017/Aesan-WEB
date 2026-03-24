@@ -229,13 +229,13 @@
         "required": "El sitio es requerido"
       },
       "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Opcional. Se listan las escuelas registradas para su agencia.",
+      "school-assignment-description": "Se listan las escuelas registradas para su agencia.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
-        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
+        "hint": "",
         "emptyList": "No hay escuelas activas para esta agencia. Registre escuelas en el m\u00f3dulo correspondiente."
       },
       "centerPicker": {
@@ -514,13 +514,12 @@
         "placeholder": "Seleccione el sitio (opcional)"
       },
       "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Opcional. Se listan las escuelas registradas para su agencia.",
+      "school-assignment-description": "Se listan las escuelas registradas para su agencia.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
-        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
         "emptyList": "No hay escuelas activas para esta agencia."
       },
       "centerPicker": {

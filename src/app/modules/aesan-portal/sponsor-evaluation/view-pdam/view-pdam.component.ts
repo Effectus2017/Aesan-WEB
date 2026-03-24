@@ -439,16 +439,11 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   onTableViewStaff(event: Event, siteId: number): void {
     event.stopPropagation();
     event.preventDefault();
+
     const row = this.tableConfig.dataSource.data.find((s: { id: number; school?: { id?: number } }) => s.id === siteId);
+
     const schoolId = row?.school?.id;
-    if (!schoolId) {
-      this._snackBar.open(
-        this._translocoService.translate('sponsor-evaluation.edit.sites.messages.noSchoolForSite'),
-        this._translocoService.translate('global.buttons.close'),
-        { duration: 5000 }
-      );
-      return;
-    }
+
     this.openStaffBySchoolModal(siteId, schoolId);
   }
 

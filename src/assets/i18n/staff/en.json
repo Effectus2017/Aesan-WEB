@@ -237,7 +237,7 @@
       "schoolPicker": {
         "label": "School",
         "placeholder": "Select school (optional)",
-        "hint": "This links the employee to the selected school.",
+        "hint": "",
         "emptyList": "There are no active schools for this agency. Register schools in the corresponding module."
       },
       "centerPicker": {
@@ -560,7 +560,6 @@
       "schoolPicker": {
         "label": "School",
         "placeholder": "Select school (optional)",
-        "hint": "This links the employee to the selected school.",
         "emptyList": "There are no active schools for this agency."
       },
       "centerPicker": {

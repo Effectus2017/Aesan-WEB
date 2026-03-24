@@ -19,6 +19,7 @@ import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disabl
 import { KeyboardShortcutDirective } from 'app/shared/directives/keyboard-shortcut.directive';
 import { getServiceTypeStyle, ServiceTypeStyle } from 'app/shared/constants/service-type-styles.constants';
 import { normalizeTime } from 'app/shared/utils';
+import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
 import { SiteCalendarServiceSlot } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import {
   LoadOperatingDaysAndUpdateModalResult,
@@ -123,23 +124,27 @@ export class SiteCalendarTableModalComponent implements OnInit {
   }
 
   addEvent(): void {
+    const dayOfWeek = this.data.date.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
     // Crear formulario para el modal de agregar
     const addForm = this.formBuilder.group({
       startTime: ['08:00'],
       endTime: ['19:00'],
       comment: [''],
-      isWeekend: [false],
+      isWeekend: [isWeekend],
       isHoliday: [false],
     });
 
     // Crear un día vacío para el modal
-    const newDay = {
+    const newDay: SiteOperatingDay = {
       id: 0,
       siteId: this.data.siteId,
       date: this.data.date.toISOString().split('T')[0],
       startTime: '08:00',
       endTime: '19:00',
-      isWeekend: false,
+      isOperating: true,
+      isWeekend,
       isHoliday: false,
       comment: '',
       createdAt: new Date(),
@@ -153,17 +158,25 @@ export class SiteCalendarTableModalComponent implements OnInit {
         siteId: this.data.siteId,
         form: addForm,
         operatingDay: newDay,
+        siteOperatingStartTime: this.data.siteOperatingStartTime,
+        siteOperatingEndTime: this.data.siteOperatingEndTime,
+        commitSave: this.data.commitAddOperatingDay
+          ? (formValue: Record<string, unknown>) => this.data.commitAddOperatingDay!(newDay, formValue)
+          : undefined
       },
       disableClose: true,
       width: '600px',
     });
 
     addDialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Event added, processing result:', result);
-        // Procesar el resultado y agregar el evento usando el handler
-        this.processAddEventResult(newDay, result);
+      if (!result) return;
+      if (this.data.commitAddOperatingDay) {
+        if ((result as { isHoliday?: boolean }).isHoliday) {
+          this.cdr.detectChanges();
+        }
+        return;
       }
+      this.processAddEventResult(newDay, result);
     });
   }
 
@@ -646,12 +659,19 @@ export class SiteCalendarTableModalComponent implements OnInit {
             isDayCareHome: this.getIsDayCareHome(),
             operatingStartTime: operatingDay.startTime ?? undefined,
             operatingEndTime: operatingDay.endTime ?? undefined,
-            existingServiceSlots
+            existingServiceSlots,
+            commitSave: this.data.commitCreateService
+              ? (formValue: Record<string, unknown>) =>
+                  this.data.commitCreateService!(operatingDay.id, formValue)
+              : undefined
           } as SiteCalendarServiceAddModalData
         });
 
         dialogRef.afterClosed().subscribe(result => {
-          if (result) {
+          if (!result) return;
+          if (this.data.commitCreateService) {
+            return;
+          }
             // Convertir formato de tiempo de HH:mm a HH:mm:ss para que ASP.NET Core pueda parsearlo como TimeSpan
             const formatTimeForApi = (time: string): string => {
               if (!time) return '00:00:00';
@@ -758,7 +778,6 @@ export class SiteCalendarTableModalComponent implements OnInit {
                 this.notificationService.showError(errorMessage);
               }
             });
-          }
         });
       } else {
         console.warn('No se encontró el día de funcionamiento para esta fecha');

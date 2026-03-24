@@ -38,8 +38,6 @@ export class AddSecondaryRoleModalComponent {
   // -----------------------------------------------------------------------------------------------------
   form: FormGroup;
   rolesFiltered: DTORole[] = [];
-  isLoading = false;
-
   // -----------------------------------------------------------------------------------------------------
   // @ Constructor
   // -----------------------------------------------------------------------------------------------------
@@ -88,7 +86,6 @@ export class AddSecondaryRoleModalComponent {
   // -----------------------------------------------------------------------------------------------------
   /** Valida el formulario y cierra el diálogo con el rol y fechas seleccionados. */
   onSubmit(): void {
-    if (this.isLoading) return;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;

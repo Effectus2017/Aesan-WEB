@@ -5,6 +5,11 @@ import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.
  */
 export const PDAM_SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
+    key: 'schoolName',
+    type: 'text',
+    label: 'sponsor-evaluation.edit.sites.table.columns.schoolName',
+  },
+  {
     key: 'siteCode',
     type: 'text',
     label: 'sponsor-evaluation.edit.sites.table.columns.siteCode',
@@ -40,11 +45,7 @@ export const PDAM_SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'boolean',
     label: 'sponsor-evaluation.edit.sites.table.columns.isActive',
   },
-  {
-    key: 'schoolName',
-    type: 'text',
-    label: 'sponsor-evaluation.edit.sites.table.columns.schoolName',
-  },
+
   {
     key: 'actions',
     type: 'button',

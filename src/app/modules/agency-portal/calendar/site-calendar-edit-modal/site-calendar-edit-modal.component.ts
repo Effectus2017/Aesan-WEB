@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -12,6 +13,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { SiteCalendarEditModalData } from 'app/shared/models/response/SiteCalendarEditModalData';
 import { SiteOperatingDayService } from 'app/shared/models/site/SiteOperatingDayService';
 import { Subject, takeUntil } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { NotificationService } from 'app/shared/services/notification.service';
 
 @Component({
@@ -21,6 +23,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
     CommonModule,
     MatDialogModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -72,8 +75,10 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   timeOptions: { value: string; display: string }[] = [];
   conflictingServices: SiteOperatingDayService[] = [];
   timeOutsideSiteRangeError: string | null = null;
+  isSubmitting = false;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private translocoService: TranslocoService = inject(TranslocoService);
+  private _cdr = inject(ChangeDetectorRef);
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarEditModalComponent>,
@@ -407,12 +412,27 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
   }
 
   onSave(): void {
-    if (this.hasStartTimeConflict()) return;
+    if (this.hasStartTimeConflict() || this.isSubmitting) return;
     this.timeOutsideSiteRangeError = this.getTimeOutsideSiteRangeError();
     if (this.timeOutsideSiteRangeError) return;
-    if (this.data.form.valid) {
-      this.dialogRef.close(this.data.form.value);
+    if (!this.data.form.valid) return;
+    const formValue = this.data.form.value as Record<string, unknown>;
+    if (this.data.commitSave) {
+      this.isSubmitting = true;
+      this.data.commitSave(formValue)
+        .pipe(
+          finalize(() => {
+            this.isSubmitting = false;
+            this._cdr.markForCheck();
+          })
+        )
+        .subscribe({
+          next: () => this.dialogRef.close(formValue),
+          error: () => {}
+        });
+      return;
     }
+    this.dialogRef.close(this.data.form.value);
   }
 
   private _notificationService = inject(NotificationService);
@@ -432,9 +452,24 @@ export class SiteCalendarEditModalComponent implements OnInit, OnDestroy {
         }
       }
     }, (result) => {
-      if (result === 'confirmed') {
-        this.dialogRef.close({ action: 'delete' });
+      if (result !== 'confirmed' || this.isSubmitting) return;
+      if (this.data.commitDelete) {
+        this.isSubmitting = true;
+        this.data
+          .commitDelete()
+          .pipe(
+            finalize(() => {
+              this.isSubmitting = false;
+              this._cdr.markForCheck();
+            })
+          )
+          .subscribe({
+            next: () => this.dialogRef.close({ action: 'delete' }),
+            error: () => {}
+          });
+        return;
       }
+      this.dialogRef.close({ action: 'delete' });
     });
   }
 

@@ -72,8 +72,18 @@
           {{ 'global.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button #addButton mat-flat-button type="submit" [color]="'primary'" [disabled]="!data.form.valid || timeOutsideSiteRangeError">
-        {{ 'global.buttons.add' | transloco }}
+      <button
+        #addButton
+        mat-flat-button
+        type="submit"
+        [color]="'primary'"
+        [disabled]="!data.form.valid || !!timeOutsideSiteRangeError || isSubmitting"
+        [class.min-w-10]="isSubmitting">
+        @if (isSubmitting) {
+          <mat-spinner diameter="20" class="inline-block align-middle" aria-hidden="true"></mat-spinner>
+        } @else {
+          {{ 'global.buttons.add' | transloco }}
+        }
       </button>
     </div>
   </form>

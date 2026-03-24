@@ -119,8 +119,17 @@
           {{ 'sites.calendar.modals.add-service.buttons.cancel' | transloco }}
         </button>
       </div>
-      <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid()">
-        {{ 'sites.calendar.modals.add-service.buttons.save' | transloco }}
+      <button
+        mat-flat-button
+        type="submit"
+        [color]="'primary'"
+        [disabled]="!isFormValid() || isSubmitting"
+        [class.min-w-10]="isSubmitting">
+        @if (isSubmitting) {
+          <mat-spinner diameter="20" class="inline-block align-middle" aria-hidden="true"></mat-spinner>
+        } @else {
+          {{ 'sites.calendar.modals.add-service.buttons.save' | transloco }}
+        }
       </button>
     </div>
   </form>

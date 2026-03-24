@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -18,6 +19,7 @@ import {
   TimeOption
 } from 'app/shared/utils';
 import { NotificationService } from 'app/shared/services/notification.service';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-site-calendar-service-edit-modal',
@@ -26,6 +28,7 @@ import { NotificationService } from 'app/shared/services/notification.service';
     CommonModule,
     MatDialogModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
@@ -56,12 +59,14 @@ export class SiteCalendarServiceEditModalComponent {
   endTimeOptions: TimeOption[] = [];
   dayStartTime: string = '';
   dayEndTime: string = '';
+  isSubmitting = false;
 
   constructor(
     public dialogRef: MatDialogRef<SiteCalendarServiceEditModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteCalendarServiceEditModalData,
     private translocoService: TranslocoService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private _cdr: ChangeDetectorRef
   ) {
     console.log('Service edit modal constructor - data:', this.data);
     this.initializeTimeConstraints();
@@ -98,9 +103,24 @@ export class SiteCalendarServiceEditModalComponent {
         }
       }
     }, (result) => {
-      if (result === 'confirmed') {
-        this.dialogRef.close({ action: 'delete' });
+      if (result !== 'confirmed' || this.isSubmitting) return;
+      if (this.data.commitDelete) {
+        this.isSubmitting = true;
+        this.data
+          .commitDelete()
+          .pipe(
+            finalize(() => {
+              this.isSubmitting = false;
+              this._cdr.markForCheck();
+            })
+          )
+          .subscribe({
+            next: () => this.dialogRef.close({ action: 'delete' }),
+            error: () => {}
+          });
+        return;
       }
+      this.dialogRef.close({ action: 'delete' });
     });
   }
 
@@ -295,10 +315,24 @@ export class SiteCalendarServiceEditModalComponent {
     if (this.isHolidayDay()) {
       return;
     }
-    
-    if (this.data.form.valid && !this.isEndTimeInvalid()) {
-      this.dialogRef.close(this.data.form.value);
+    if (!this.data.form.valid || this.isEndTimeInvalid() || this.isSubmitting) {
+      return;
     }
+    const formValue = this.data.form.value as Record<string, unknown>;
+    if (this.data.commitSave) {
+      this.isSubmitting = true;
+      this.data.commitSave(formValue).pipe(
+        finalize(() => {
+          this.isSubmitting = false;
+          this._cdr.markForCheck();
+        })
+      ).subscribe({
+        next: () => this.dialogRef.close({ ...formValue, serviceTypeId: this.data.service.serviceTypeId }),
+        error: () => {}
+      });
+      return;
+    }
+    this.dialogRef.close(this.data.form.value);
   }
 
 

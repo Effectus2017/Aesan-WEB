@@ -1,4 +1,5 @@
 import { FormGroup } from '@angular/forms';
+import type { Observable } from 'rxjs';
 import { SiteOperatingDayService } from 'app/shared/models/site/SiteOperatingDayService';
 import { SiteOperatingDay } from 'app/shared/models/site/SiteOperatingDay';
 
@@ -10,4 +11,6 @@ export interface SiteCalendarServiceEditModalData {
   // Horas de funcionamiento del sitio (opcional, para validación de rango)
   operatingStartTime?: string; // Hora de inicio del día de funcionamiento del sitio
   operatingEndTime?: string; // Hora de fin del día de funcionamiento del sitio
+  commitSave?: (formValue: Record<string, unknown>) => Observable<void>;
+  commitDelete?: () => Observable<void>;
 }

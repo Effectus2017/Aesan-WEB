@@ -13,8 +13,14 @@ import { CalendarEvent, CalendarModule, CalendarView } from 'angular-calendar';
 import { AgencyCalendarService } from '../agency-calendar.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
-import { Subject, takeUntil } from 'rxjs';
+import { EMPTY, Subject, takeUntil } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
+import {
+  AgencyAppointmentAddModalData,
+  AgencyAppointmentEditModalData
+} from '../agency-appointment-modals-data.interface';
 
 @Component({
   selector: 'aesan-agency-calendar',
@@ -65,22 +71,59 @@ export class AgencyCalendarComponent implements OnInit, OnDestroy {
   }
 
   loadAppointments(): void {
+    this._loadAppointments$().pipe(takeUntil(this._unsubscribeAll)).subscribe({
+      error: () => {
+        this._snackBar.open('Error al cargar las citas', 'Cerrar', { duration: 3000 });
+      }
+    });
+  }
+
+  /** Recarga citas del mes visible (para encadenar tras crear/editar/eliminar). */
+  private _loadAppointments$() {
     const month = this.viewDate.getMonth() + 1;
     const year = this.viewDate.getFullYear();
+    return this._agencyCalendarService.getAppointments(this.agencyId, month, year).pipe(
+      tap((response) => {
+        this.agencyName = response.agencyName;
+        this.appointments = response.appointments;
+        this.mapToCalendarEvents();
+        this._changeDetectorRef.markForCheck();
+      }),
+      map(() => void 0)
+    );
+  }
 
-    this._agencyCalendarService.getAppointments(this.agencyId, month, year)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response) => {
-          this.agencyName = response.agencyName;
-          this.appointments = response.appointments;
-          this.mapToCalendarEvents();
-          this._changeDetectorRef.markForCheck();
-        },
-        error: (error) => {
-          this._snackBar.open('Error al cargar las citas', 'Cerrar', { duration: 3000 });
-        }
-      });
+  commitCreateAppointment$(request: AgencyAppointmentRequest) {
+    return this._agencyCalendarService.createAppointment(request).pipe(
+      switchMap(() => this._loadAppointments$()),
+      tap(() => this._snackBar.open('Cita agregada exitosamente', 'Cerrar', { duration: 3000 })),
+      catchError(() => {
+        this._snackBar.open('Error al agregar cita', 'Cerrar', { duration: 3000 });
+        return EMPTY;
+      })
+    );
+  }
+
+  commitUpdateAppointment$(request: AgencyAppointmentRequest) {
+    return this._agencyCalendarService.updateAppointment(request).pipe(
+      switchMap(() => this._loadAppointments$()),
+      tap(() => this._snackBar.open('Cita actualizada exitosamente', 'Cerrar', { duration: 3000 })),
+      catchError(() => {
+        this._snackBar.open('Error al actualizar cita', 'Cerrar', { duration: 3000 });
+        return EMPTY;
+      })
+    );
+  }
+
+  commitDeleteAppointment$(id: number) {
+    return this._agencyCalendarService.deleteAppointment(id).pipe(
+      switchMap(() => this._loadAppointments$()),
+      tap(() => this._snackBar.open('Cita eliminada exitosamente', 'Cerrar', { duration: 3000 })),
+      catchError(() => {
+        this._snackBar.open('Error al eliminar cita', 'Cerrar', { duration: 3000 });
+        return EMPTY;
+      })
+    );
   }
 
   mapToCalendarEvents(): void {
@@ -109,21 +152,14 @@ export class AgencyCalendarComponent implements OnInit, OnDestroy {
   }
 
   onDayClick(event: { day: { date: Date } }): void {
-    const dialogRef = this._dialog.open(AgencyAppointmentAddModalComponent, {
+    const data: AgencyAppointmentAddModalData = {
+      agencyId: this.agencyId,
+      date: event.day.date,
+      commitSave: (request) => this.commitCreateAppointment$(request)
+    };
+    this._dialog.open(AgencyAppointmentAddModalComponent, {
       width: '500px',
-      data: { agencyId: this.agencyId, date: event.day.date }
-    });
-
-    dialogRef.afterClosed().pipe(takeUntil(this._unsubscribeAll)).subscribe((request) => {
-      if (request) {
-        this._agencyCalendarService.createAppointment(request).pipe(takeUntil(this._unsubscribeAll)).subscribe({
-          next: () => {
-            this._snackBar.open('Cita agregada exitosamente', 'Cerrar', { duration: 3000 });
-            this.loadAppointments();
-          },
-          error: () => this._snackBar.open('Error al agregar cita', 'Cerrar', { duration: 3000 })
-        });
-      }
+      data
     });
   }
 
@@ -131,31 +167,14 @@ export class AgencyCalendarComponent implements OnInit, OnDestroy {
     const appointment = event.meta?.appointment;
     if (!appointment) return;
 
-    const dialogRef = this._dialog.open(AgencyAppointmentEditModalComponent, {
+    const data: AgencyAppointmentEditModalData = {
+      appointment,
+      commitSave: (request) => this.commitUpdateAppointment$(request),
+      commitDelete: () => this.commitDeleteAppointment$(appointment.id)
+    };
+    this._dialog.open(AgencyAppointmentEditModalComponent, {
       width: '500px',
-      data: { appointment }
-    });
-
-    dialogRef.afterClosed().pipe(takeUntil(this._unsubscribeAll)).subscribe((result) => {
-      if (!result) return;
-
-      if (result.action === 'save') {
-        this._agencyCalendarService.updateAppointment(result.request).pipe(takeUntil(this._unsubscribeAll)).subscribe({
-          next: () => {
-             this._snackBar.open('Cita actualizada exitosamente', 'Cerrar', { duration: 3000 });
-             this.loadAppointments();
-          },
-          error: () => this._snackBar.open('Error al actualizar cita', 'Cerrar', { duration: 3000 })
-        });
-      } else if (result.action === 'delete') {
-         this._agencyCalendarService.deleteAppointment(result.id).pipe(takeUntil(this._unsubscribeAll)).subscribe({
-          next: () => {
-             this._snackBar.open('Cita eliminada exitosamente', 'Cerrar', { duration: 3000 });
-             this.loadAppointments();
-          },
-          error: () => this._snackBar.open('Error al eliminar cita', 'Cerrar', { duration: 3000 })
-        });
-      }
+      data
     });
   }
 }
