@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -9,7 +9,6 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { ProgramRequestService } from 'app/shared/services/program-request.service';
-import { Subject, takeUntil } from 'rxjs';
 import { fuseAnimations } from '@fuse/animations';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
@@ -42,7 +41,7 @@ import {
     animations: fuseAnimations,
     imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, GenericHeaderComponent, GenericTableComponent, GenericFilterDrawerComponent]
 })
-export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
+export class AesanSponsorEvaluationListComponent implements OnInit, OnGenericTableHandler, OnGenericHeaderHandlers, OnGenericFilterHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatTable) table: MatTable<AgencyResponse>;
@@ -50,8 +49,6 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
 
   filtersSchema = SPONSOR_EVALUATION_FILTERS_SCHEMA;
   appliedFilters: GenericFilterResult = {};
-
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
 
   private _formBuilder = inject(UntypedFormBuilder);
   private _programRequestService: ProgramRequestService = inject(ProgramRequestService);
@@ -103,11 +100,6 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
       this.tableConfig.dataSourceList = resolvedData.agencies.data;
       this._changeDetectorRef.markForCheck();
     }
-  }
-
-  ngOnDestroy(): void {
-    this._unsubscribeAll.next(null);
-    this._unsubscribeAll.complete();
   }
 
   onSearch() {
@@ -217,12 +209,6 @@ export class AesanSponsorEvaluationListComponent implements OnInit, OnDestroy, O
   onTableDelete(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
-  }
-
-  onTableCalendar(event: Event, id: number): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this._customRouterService.navigate([`sponsor-evaluation/calendar/${id}`]);
   }
 
   /** Abre el modal de usuarios asignados a la agencia cuando se pulsa el botón viewAssignedUsers. */

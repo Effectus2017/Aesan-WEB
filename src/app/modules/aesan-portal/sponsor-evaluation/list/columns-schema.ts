@@ -48,13 +48,6 @@ export const SPONSOR_EVALUATION_COLUMNS_SCHEMA: ColumnSchema[] = [
         tooltip: 'sponsor-evaluation.list.table.buttons.editTooltip'
       },
       {
-        key: 'calendar',
-        label: 'sponsor-evaluation.list.table.buttons.viewCalendar',
-        icon: 'heroicons_outline:calendar',
-        color: 'accent',
-        tooltip: 'sponsor-evaluation.list.table.buttons.viewCalendarTooltip'
-      },
-      {
         key: 'viewAssignedUsers',
         label: 'sponsor-evaluation.list.table.buttons.viewAssignedUsers',
         icon: 'heroicons_outline:users',

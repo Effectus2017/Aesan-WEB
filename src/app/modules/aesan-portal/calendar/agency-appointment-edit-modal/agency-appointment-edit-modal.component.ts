@@ -10,8 +10,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule } from '@ngneat/transloco';
-import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
-import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
+import { SiteVisitRequest } from 'app/shared/models/agency/SiteVisitRequest';
+import { SiteVisit } from 'app/shared/models/agency/SiteVisit';
 import { AgencyAppointmentEditModalData } from '../agency-appointment-modals-data.interface';
 import { finalize } from 'rxjs/operators';
 
@@ -30,12 +30,13 @@ import { finalize } from 'rxjs/operators';
     MatDatepickerModule,
     MatIconModule,
     MatSelectModule,
-    TranslocoModule
-  ]
+    TranslocoModule,
+  ],
 })
 export class AgencyAppointmentEditModalComponent implements OnInit {
   form: FormGroup;
-  appointment: AgencyAppointment;
+  visit: SiteVisit;
+  visitTypes = this.data.visitTypes ?? [];
   date: Date;
   timeOptions: { value: string; display: string }[] = [];
   isSubmitting = false;
@@ -46,22 +47,20 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: AgencyAppointmentEditModalData,
     private _cdr: ChangeDetectorRef
   ) {
-    this.appointment = data.appointment;
-
-    // Parse date for Title
-    const [year, month, day] = this.appointment.date.split('T')[0].split('-').map(Number);
+    this.visit = data.visit;
+    const [year, month, day] = this.visit.date.split('T')[0].split('-').map(Number);
     this.date = new Date(year, month - 1, day);
   }
 
   ngOnInit(): void {
-    // Format start/endTime for Time Input HH:mm
-    const startTimeFormat = this.appointment.startTime.substring(0, 5);
-    const endTimeFormat = this.appointment.endTime.substring(0, 5);
+    const startTimeFormat = this.visit.startTime.substring(0, 5);
+    const endTimeFormat = this.visit.endTime.substring(0, 5);
 
     this.form = this._fb.group({
+      visitTypeId: [this.visit.visitTypeId, Validators.required],
       startTime: [startTimeFormat, [Validators.required, Validators.pattern('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$')]],
       endTime: [endTimeFormat, [Validators.required, Validators.pattern('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$')]],
-      comment: [this.appointment.comment || '']
+      comment: [this.visit.comment || ''],
     });
     this.generateTimeOptions();
   }
@@ -101,13 +100,15 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
     const day = String(this.date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
 
-    const request: AgencyAppointmentRequest = {
-      id: this.appointment.id,
-      agencyId: this.appointment.agencyId,
-      appointmentDate: dateStr,
+    const request: SiteVisitRequest = {
+      id: this.visit.id,
+      agencyId: this.data.agencyId,
+      siteId: this.data.siteId,
+      visitTypeId: value.visitTypeId,
+      visitDate: dateStr,
       startTime: value.startTime + ':00',
       endTime: value.endTime + ':00',
-      comment: value.comment
+      comment: value.comment,
     };
 
     if (this.data.commitSave) {
@@ -119,7 +120,7 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
         })
       ).subscribe({
         next: () => this._dialogRef.close({ action: 'save', request }),
-        error: () => {}
+        error: () => {},
       });
       return;
     }
@@ -137,12 +138,12 @@ export class AgencyAppointmentEditModalComponent implements OnInit {
           this._cdr.markForCheck();
         })
       ).subscribe({
-        next: () => this._dialogRef.close({ action: 'delete', id: this.appointment.id }),
-        error: () => {}
+        next: () => this._dialogRef.close({ action: 'delete', id: this.visit.id }),
+        error: () => {},
       });
       return;
     }
-    this._dialogRef.close({ action: 'delete', id: this.appointment.id });
+    this._dialogRef.close({ action: 'delete', id: this.visit.id });
   }
 
   onClose(): void {

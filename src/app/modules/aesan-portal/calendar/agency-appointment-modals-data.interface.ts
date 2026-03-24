@@ -1,15 +1,21 @@
 import type { Observable } from 'rxjs';
-import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
-import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
+import { SiteVisit } from 'app/shared/models/agency/SiteVisit';
+import { VisitTypeDropdownItem } from 'app/shared/models/agency/SiteVisit';
+import { SiteVisitRequest } from 'app/shared/models/agency/SiteVisitRequest';
 
 export interface AgencyAppointmentAddModalData {
   agencyId: number;
+  siteId: number;
+  visitTypes: VisitTypeDropdownItem[];
   date: Date;
-  commitSave?: (request: AgencyAppointmentRequest) => Observable<void>;
+  commitSave?: (request: SiteVisitRequest) => Observable<void>;
 }
 
 export interface AgencyAppointmentEditModalData {
-  appointment: AgencyAppointment;
-  commitSave?: (request: AgencyAppointmentRequest) => Observable<void>;
+  visit: SiteVisit;
+  agencyId: number;
+  siteId: number;
+  visitTypes: VisitTypeDropdownItem[];
+  commitSave?: (request: SiteVisitRequest) => Observable<void>;
   commitDelete?: () => Observable<void>;
 }

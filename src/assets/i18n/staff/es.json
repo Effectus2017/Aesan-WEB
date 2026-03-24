@@ -229,7 +229,7 @@
         "required": "El sitio es requerido"
       },
       "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Se listan las escuelas registradas para su agencia.",
+      "school-assignment-description": "Se listan las escuelas registradas.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {
@@ -514,7 +514,7 @@
         "placeholder": "Seleccione el sitio (opcional)"
       },
       "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Se listan las escuelas registradas para su agencia.",
+      "school-assignment-description": "Se listan las escuelas registradas.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {

@@ -1,0 +1,89 @@
+<!-- Misma estructura que site-calendar-table-modal (Servicios del día); una sola card de listado. -->
+<div class="flex flex-col -m-6 max-h-[95vh] min-w-120">
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">
+      {{ 'sponsor-evaluation.visitCalendar.dayModal.title' | transloco }}: {{ data.date | date: 'dd/MM/yyyy' }}
+    </div>
+    <button
+      mat-icon-button
+      type="button"
+      [mat-dialog-close]="null"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content: mismo fondo que site-calendar (bg-default) -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0 bg-default">
+    <div class="flex flex-col gap-6 animate-slide-in">
+      <mat-card class="overflow-hidden rounded-2xl border border-gray-200 shadow dark:border-gray-700">
+        <div class="flex gap-2 items-start p-4 bg-gray-50 border-b dark:bg-gray-800/50">
+          <mat-icon class="flex-shrink-0 text-primary icon-size-5" svgIcon="heroicons_outline:calendar-days" aria-hidden="true"></mat-icon>
+          <div class="flex-1 min-w-0">
+            <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
+              {{ 'sponsor-evaluation.visitCalendar.dayModal.cardTitle' | transloco }}
+            </h3>
+            <p class="m-0 mt-1 text-xs font-semibold tracking-wide uppercase text-secondary">
+              {{ 'sponsor-evaluation.visitCalendar.dayModal.sectionLabel' | transloco }}
+            </p>
+          </div>
+        </div>
+        <mat-card-content>
+          <div class="overflow-x-auto" *ngIf="visitsForDay.length > 0; else emptyDay">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="border-b border-gray-200 dark:border-gray-700">
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sponsor-evaluation.visitCalendar.dayModal.columns.type' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sponsor-evaluation.visitCalendar.dayModal.columns.start' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sponsor-evaluation.visitCalendar.dayModal.columns.end' | transloco }}</th>
+                  <th class="px-3 py-2 font-medium text-left">{{ 'sponsor-evaluation.visitCalendar.dayModal.columns.comment' | transloco }}</th>
+                  <th class="px-3 py-2 w-24 font-medium text-right">{{ 'sponsor-evaluation.visitCalendar.dayModal.columns.actions' | transloco }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let visit of visitsForDay" class="border-b border-gray-100 dark:border-gray-700/50">
+                  <td class="px-3 py-2 font-medium text-gray-800 dark:text-gray-100">{{ visit.visitTypeNameEs }}</td>
+                  <td class="px-3 py-2">{{ formatTimeForDisplay(visit.startTime) }}</td>
+                  <td class="px-3 py-2">{{ formatTimeForDisplay(visit.endTime) }}</td>
+                  <td class="px-3 py-2">{{ visit.comment || '—' }}</td>
+                  <td class="px-3 py-2 text-right">
+                    <button
+                      mat-icon-button
+                      type="button"
+                      [title]="'sponsor-evaluation.visitCalendar.dayModal.editAria' | transloco"
+                      [attr.aria-label]="'sponsor-evaluation.visitCalendar.dayModal.editAria' | transloco"
+                      (click)="onEditVisit(visit)">
+                      <mat-icon class="day-visit-edit-icon" [svgIcon]="'mat_solid:edit'" aria-hidden="true"></mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <ng-template #emptyDay>
+            <div class="py-8 text-center text-gray-500 dark:text-gray-400">
+              <p class="text-sm">{{ 'sponsor-evaluation.visitCalendar.dayModal.emptyHint' | transloco }}</p>
+            </div>
+          </ng-template>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Actions - Fixed footer (igual que site-calendar-table-modal) -->
+  <div class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" [mat-dialog-close]="null">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'primary'" (click)="onAddVisit()">
+        {{ 'sponsor-evaluation.visitCalendar.dayModal.addVisit' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

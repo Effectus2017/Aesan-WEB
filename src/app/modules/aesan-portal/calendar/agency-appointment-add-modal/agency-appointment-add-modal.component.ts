@@ -10,7 +10,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslocoModule } from '@ngneat/transloco';
-import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
+import { SiteVisitRequest } from 'app/shared/models/agency/SiteVisitRequest';
 import { AgencyAppointmentAddModalData } from '../agency-appointment-modals-data.interface';
 import { finalize } from 'rxjs/operators';
 
@@ -29,12 +29,14 @@ import { finalize } from 'rxjs/operators';
     MatDatepickerModule,
     MatIconModule,
     MatSelectModule,
-    TranslocoModule
-  ]
+    TranslocoModule,
+  ],
 })
 export class AgencyAppointmentAddModalComponent implements OnInit {
   form: FormGroup;
   agencyId: number;
+  siteId: number;
+  visitTypes = this.data.visitTypes ?? [];
   date: Date;
   timeOptions: { value: string; display: string }[] = [];
   isSubmitting = false;
@@ -46,14 +48,16 @@ export class AgencyAppointmentAddModalComponent implements OnInit {
     private _cdr: ChangeDetectorRef
   ) {
     this.agencyId = data.agencyId;
+    this.siteId = data.siteId;
     this.date = data.date;
   }
 
   ngOnInit(): void {
     this.form = this._fb.group({
+      visitTypeId: [null, Validators.required],
       startTime: ['', [Validators.required, Validators.pattern('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$')]],
       endTime: ['', [Validators.required, Validators.pattern('^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$')]],
-      comment: ['']
+      comment: [''],
     });
     this.generateTimeOptions();
   }
@@ -88,19 +92,19 @@ export class AgencyAppointmentAddModalComponent implements OnInit {
 
     const value = this.form.value;
 
-    // Format Date to YYYY-MM-DD using local time
-    // Get month and day carefully matching local time.
     const year = this.date.getFullYear();
     const month = String(this.date.getMonth() + 1).padStart(2, '0');
     const day = String(this.date.getDate()).padStart(2, '0');
     const dateStr = `${year}-${month}-${day}`;
 
-    const request: AgencyAppointmentRequest = {
+    const request: SiteVisitRequest = {
       agencyId: this.agencyId,
-      appointmentDate: dateStr,
-      startTime: value.startTime + ':00', // API expects timespan
+      siteId: this.siteId,
+      visitTypeId: value.visitTypeId,
+      visitDate: dateStr,
+      startTime: value.startTime + ':00',
       endTime: value.endTime + ':00',
-      comment: value.comment
+      comment: value.comment,
     };
 
     if (this.data.commitSave) {
@@ -112,7 +116,7 @@ export class AgencyAppointmentAddModalComponent implements OnInit {
         })
       ).subscribe({
         next: () => this._dialogRef.close(true),
-        error: () => {}
+        error: () => {},
       });
       return;
     }

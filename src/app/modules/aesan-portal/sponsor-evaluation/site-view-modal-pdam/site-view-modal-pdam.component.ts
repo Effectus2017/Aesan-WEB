@@ -133,8 +133,8 @@ export class SiteViewModalPdamComponent implements OnInit, OnDestroy {
   // -----
   // @ Getters
   // -----
-  get site(): Site | null {
-    return this.data?.site ?? null;
+  get site(): Site {
+    return this.data.site;
   }
 
   /** Muestra el nombre según idioma para opciones con name/nameEN. */
@@ -187,7 +187,7 @@ export class SiteViewModalPdamComponent implements OnInit, OnDestroy {
       .subscribe((lang: string) => {
         this.currentLang = lang;
       });
-    this.onSetForm(this.data?.site ?? null);
+    this.onSetForm(this.data.site);
     this.form.disable();
   }
 
@@ -210,8 +210,7 @@ export class SiteViewModalPdamComponent implements OnInit, OnDestroy {
     return isNaN(parsed.getTime()) ? null : parsed;
   }
 
-  onSetForm(param: Site | null): void {
-    if (!param) return;
+  onSetForm(param: Site): void {
     const city = param.city;
     const region = param.region;
     const postalCity = param.postalCity;

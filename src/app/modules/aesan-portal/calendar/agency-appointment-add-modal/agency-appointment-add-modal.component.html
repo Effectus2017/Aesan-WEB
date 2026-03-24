@@ -1,65 +1,91 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-100">
-  <!-- Header -->
+  <!-- Mismo patrón que site-calendar-service-add / edit (cabecera morada, icono + título) -->
   <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="text-lg font-medium">Agregar Cita</div>
-    <button mat-icon-button (click)="onClose()" [tabIndex]="-1" title="Cerrar">
-      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    <div class="flex gap-2 items-center">
+      <mat-icon class="text-current icon-size-5" [svgIcon]="'mat_solid:add'" aria-hidden="true"></mat-icon>
+      <span class="text-lg font-medium">
+        {{ 'sponsor-evaluation.visitCalendar.modal.addTitle' | transloco }}
+      </span>
+    </div>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="onClose()"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
     </button>
   </div>
 
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
-    <div class="flex overflow-y-auto flex-col flex-auto p-6">
+    <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
       <div class="flex flex-col gap-6 animate-slide-in">
-        
-        <!-- Información del día -->
-        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+        <div class="p-4 rounded-lg border border-gray-200 bg-gray-50 shadow-sm dark:border-gray-700 dark:bg-gray-800">
           <p class="text-sm text-gray-600 dark:text-gray-400">
-            <strong>Fecha de la Cita:</strong> {{ getFormattedDate() }}
+            <strong>{{ 'sponsor-evaluation.visitCalendar.modal.visitDateLabel' | transloco }}:</strong> {{ getFormattedDate() }}
           </p>
         </div>
 
-        <!-- Horarios -->
+        <mat-form-field class="w-full">
+          <mat-label>{{ 'sponsor-evaluation.visitCalendar.modal.visitType' | transloco }}</mat-label>
+          <mat-select formControlName="visitTypeId" required>
+            <mat-option *ngFor="let vt of visitTypes" [value]="vt.id">{{ vt.nameEs }}</mat-option>
+          </mat-select>
+          <mat-error *ngIf="form.get('visitTypeId')?.hasError('required')">
+            {{ 'sponsor-evaluation.visitCalendar.validation.required' | transloco }}
+          </mat-error>
+        </mat-form-field>
+
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <mat-form-field>
-              <mat-label>Hora de Inicio</mat-label>
-              <mat-select formControlName="startTime" required>
-                <mat-option *ngFor="let time of timeOptions" [value]="time.value">
-                  {{ time.display }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="form.get('startTime').hasError('required')">Requerido</mat-error>
+            <mat-label>{{ 'sponsor-evaluation.visitCalendar.modal.startTime' | transloco }}</mat-label>
+            <mat-select formControlName="startTime" required>
+              <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('startTime')?.hasError('required')">
+              {{ 'sponsor-evaluation.visitCalendar.validation.required' | transloco }}
+            </mat-error>
           </mat-form-field>
           <mat-form-field>
-              <mat-label>Hora de Fin</mat-label>
-              <mat-select formControlName="endTime" required>
-                <mat-option *ngFor="let time of timeOptions" [value]="time.value">
-                  {{ time.display }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="form.get('endTime').hasError('required')">Requerido</mat-error>
+            <mat-label>{{ 'sponsor-evaluation.visitCalendar.modal.endTime' | transloco }}</mat-label>
+            <mat-select formControlName="endTime" required>
+              <mat-option *ngFor="let time of timeOptions" [value]="time.value">
+                {{ time.display }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('endTime')?.hasError('required')">
+              {{ 'sponsor-evaluation.visitCalendar.validation.required' | transloco }}
+            </mat-error>
           </mat-form-field>
         </div>
 
-        <!-- Comentario -->
         <mat-form-field>
-          <mat-label>Comentarios</mat-label>
-          <textarea matInput formControlName="comment" rows="3"></textarea>
+          <mat-label>{{ 'sponsor-evaluation.visitCalendar.modal.comments' | transloco }}</mat-label>
+          <textarea
+            matInput
+            formControlName="comment"
+            rows="3"
+            [placeholder]="'sponsor-evaluation.visitCalendar.modal.commentPlaceholder' | transloco"></textarea>
         </mat-form-field>
-
       </div>
     </div>
 
-    <!-- Actions -->
-    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex flex-col justify-between gap-3 p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
       <div class="flex gap-2">
-        <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()">Cancelar</button>
+        <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()" class="!rounded-full px-6">
+          {{ 'global.buttons.cancel' | transloco }}
+        </button>
       </div>
       <button
         mat-flat-button
         type="submit"
         [color]="'primary'"
         [disabled]="form.invalid || isSubmitting"
-        [class.min-w-10]="isSubmitting">
+        [class.min-w-10]="isSubmitting"
+        class="!rounded-full px-6">
         @if (isSubmitting) {
           <mat-spinner diameter="20" class="inline-block align-middle" aria-hidden="true"></mat-spinner>
         } @else {

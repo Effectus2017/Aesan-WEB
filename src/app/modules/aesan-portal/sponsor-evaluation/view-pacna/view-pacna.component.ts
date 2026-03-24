@@ -22,7 +22,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpResponse } from '@angular/common/http';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { AuthService } from 'app/core/auth/auth.service';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
@@ -41,21 +40,19 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { SiteService } from 'app/shared/services/site.service';
-import { SchoolStaffService } from 'app/shared/services/school-staff.service';
-import { SiteViewModalPacnaCentroComponent } from '../site-view-modal-pacna-centro/site-view-modal-pacna-centro.component';
-import { SiteViewModalPacnaHogarComponent } from '../site-view-modal-pacna-hogar/site-view-modal-pacna-hogar.component';
-import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
 import { StatusConfigModalComponent } from '../status-config-modal/status-config-modal.component';
 import { AssignedToConfigModalComponent } from '../assigned-to-config-modal/assigned-to-config-modal.component';
 import { AppointmentConfigModalComponent } from '../appointment-config-modal/appointment-config-modal.component';
 import { compareById, compareItems, compareMonitors, comparePostal } from 'app/shared/utils';
-import { PACNA_SITES_COLUMNS_SCHEMA } from './columns-schema';
+import { READONLY_CENTERS_COLUMNS_SCHEMA, READONLY_SCHOOLS_COLUMNS_SCHEMA } from '../shared/readonly-school-columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { School } from 'app/shared/models/school/School';
+import { SitesModalComponent } from 'app/modules/agency-portal/schools/sites-modal/sites-modal.component';
+import { SitesCentersModalComponent } from 'app/modules/agency-portal/centers/sites-centers-modal/sites-modal.component';
 
 @Component({
   selector: 'app-aesan-sponsor-evaluation-view-pacna',
@@ -105,7 +102,6 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
   private _geoService = inject(GeoService);
-  private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService = inject(TranslocoService);
   private _notificationService = inject(NotificationService);
@@ -113,8 +109,6 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _route = inject(ActivatedRoute);
-  private _siteService = inject(SiteService);
-  private _schoolStaffService = inject(SchoolStaffService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
@@ -199,14 +193,39 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: PACNA_SITES_COLUMNS_SCHEMA,
-    displayedColumns: PACNA_SITES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: READONLY_CENTERS_COLUMNS_SCHEMA,
+    displayedColumns: READONLY_CENTERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSizeOptions: [25, 50, 100],
     pageSize: 25,
     fullScreen: false,
   };
+
+  centersTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: READONLY_CENTERS_COLUMNS_SCHEMA,
+    displayedColumns: READONLY_CENTERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
+    fullScreen: false,
+  };
+
+  homesTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<any>(),
+    columnsSchema: READONLY_SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: READONLY_SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: this,
+    showPaginator: true,
+    pageSizeOptions: [25, 50, 100],
+    pageSize: 25,
+    fullScreen: false,
+  };
+
+  centersData: School[] = [];
+  homesData: School[] = [];
 
   // -----------------------------------------------------------------------------------------------------
   // @ Constructor
@@ -242,11 +261,16 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
 
       this.currentLang = this._translocoService.getActiveLang();
 
-      if (resolvedData.sites) {
-        const sitesData = resolvedData.sites?.data ?? [];
-        this.tableConfig.dataSource.data = sitesData;
-        this.tableConfig.length = resolvedData.sites.count || 0;
-      }
+      this.centersData = resolvedData.centers?.data ?? [];
+      this.homesData = resolvedData.schools?.data ?? [];
+
+      this.centersTableConfig.dataSource.data = this.centersData;
+      this.centersTableConfig.length = resolvedData.centers?.count || this.centersData.length;
+
+      this.homesTableConfig.dataSource.data = this.homesData;
+      this.homesTableConfig.length = resolvedData.schools?.count || this.homesData.length;
+
+      this.tableConfig = this.centersTableConfig;
 
       this.onSetForm(resolvedData.agency);
       this._changeDetectorRef.detectChanges();
@@ -412,7 +436,10 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
         break;
       }
       case 'go-to-calendar': {
-        this._customRouterService.navigate([`sponsor-evaluation/calendar/${this.param.id}`]);
+        this._notificationService.showError(
+          this._translocoService.translate('sponsor-evaluation.edit.messages.noSitesForVisitCalendar'),
+          this._translocoService.translate('global.buttons.close')
+        );
         break;
       }
       default:
@@ -425,11 +452,10 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
 
   onTableAdd(event?: Event, tableId?: string): void {}
 
-  /** Abre el modal de edición del sitio. */
-  onTableEdit(event: Event, id: number): void {
+  /** Acción no disponible en modo de solo visualización. */
+  onTableEdit(event: Event, _id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this.openSiteEditModal(id);
   }
 
   /** Elimina un sitio (no implementado). */
@@ -438,28 +464,51 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     event.preventDefault();
   }
 
-  /** Abre el modal de personal asociado a la escuela vinculada al sitio. */
-  onTableViewStaff(event: Event, siteId: number): void {
+  /** Acción no disponible en modo de solo visualización. */
+  onTableViewStaff(event: Event, _siteId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    const row = this.tableConfig.dataSource.data.find((s: { id: number; school?: { id?: number } }) => s.id === siteId);
-    const schoolId = row?.school?.id;
-    if (!schoolId) {
-      this._snackBar.open(
-        this._translocoService.translate('sponsor-evaluation.edit.sites.messages.noSchoolForSite'),
-        this._translocoService.translate('global.buttons.close'),
-        { duration: 5000 }
-      );
+  }
+
+  /** Acción no disponible en modo de solo visualización. */
+  onTableCalendar(event: Event, _siteId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  /** Abre el modal de sitios vinculados al centro/hogar seleccionado. */
+  onTableSites(event: Event, schoolId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    const center = this.centersData.find((item) => item.id === schoolId);
+    const home = this.homesData.find((item) => item.id === schoolId);
+    if (center) {
+      this._dialog.open(SitesCentersModalComponent, {
+        width: '80%',
+        maxWidth: '1200px',
+        data: {
+          schoolId,
+          schoolName: center.name ?? '',
+        },
+      });
       return;
     }
-    this.openStaffBySchoolModal(siteId, schoolId);
+
+    this._dialog.open(SitesModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        schoolId,
+        schoolName: home?.name ?? '',
+      },
+    });
   }
 
   /** Maneja acciones de la tabla. */
-  onTableAction(event: Event, action: string, id: number): void {
+  onTableAction(event: Event, _action: string, _id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    if (action === 'edit') this.openSiteEditModal(id);
+    return;
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -498,64 +547,7 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     });
   }
 
-  openSiteEditModal(siteId: number): void {
-    this._siteService.getSiteById({ id: siteId }).subscribe({
-      next: (response: any) => {
-        if (response?.body) {
-          const isDayCareHome = this.param?.inscription?.isDayCareHome;
-          const isHogar = isDayCareHome?.booleanValue === true;
-          const ModalComponent = isHogar ? SiteViewModalPacnaHogarComponent : SiteViewModalPacnaCentroComponent;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const dialogRef = this._dialog.open(ModalComponent as any, {
-            width: '90vw',
-            maxWidth: '1200px',
-            data: { site: response.body, agency: this.param } as SiteEditModalData,
-          });
-          dialogRef.afterClosed().subscribe((result) => {
-            if (result) this.refreshSitesTable();
-          });
-        }
-      },
-      // error: el interceptor global ya muestra el error
-      error: () => {},
-    });
-  }
-
-  openStaffBySchoolModal(siteId: number, schoolId: number): void {
-    this._schoolStaffService.getStaffBySchool({ schoolId }).subscribe({
-      next: (staffList) => {
-        if (staffList != null) {
-          import('../staff-by-site-modal/staff-by-site-modal.component').then((module) => {
-            this._dialog.open(module.StaffBySiteModalComponent, {
-              width: '90vw',
-              maxWidth: '1200px',
-              data: { siteId, schoolId, staffList },
-            });
-          });
-        }
-      },
-      // error: el interceptor global ya muestra el error
-      error: () => {},
-    });
-  }
-
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones privadas
   // -----------------------------------------------------------------------------------------------------
-  /** Recarga la tabla de sitios después de una modificación. */
-  private refreshSitesTable(): void {
-    this._siteService.getAllSitesFromDb({ agencyId: this.param?.id || this._authService.getAgencyId() }).subscribe({
-      next: (response: any) => {
-        if (response?.body) {
-          const sitesData = response.body.data || response.body;
-          const sitesWithSchoolName = Array.isArray(sitesData)
-            ? sitesData.map((site: any) => ({ ...site, schoolName: site.school?.name || site.schoolName || '-' }))
-            : sitesData;
-          this.tableConfig.dataSource.data = sitesWithSchoolName;
-          this.tableConfig.length = response.body.count || (Array.isArray(sitesData) ? sitesData.length : 0);
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-    });
-  }
 }

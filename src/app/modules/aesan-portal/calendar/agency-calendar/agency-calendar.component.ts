@@ -1,26 +1,23 @@
+import { CommonModule, Location } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { AgencyAppointmentAddModalComponent } from '../agency-appointment-add-modal/agency-appointment-add-modal.component';
-import { AgencyAppointmentEditModalComponent } from '../agency-appointment-edit-modal/agency-appointment-edit-modal.component';
-import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslocoModule } from '@ngneat/transloco';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { CalendarEvent, CalendarModule, CalendarView } from 'angular-calendar';
-import { AgencyCalendarService } from '../agency-calendar.service';
-import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { AgencyAppointment } from 'app/shared/models/agency/AgencyAppointment';
 import { EMPTY, Subject, takeUntil } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AgencyAppointmentRequest } from 'app/shared/models/agency/AgencyAppointmentRequest';
-import {
-  AgencyAppointmentAddModalData,
-  AgencyAppointmentEditModalData
-} from '../agency-appointment-modals-data.interface';
+import { SiteVisit, SiteVisitCalendarResponse, VisitTypeDropdownItem } from 'app/shared/models/agency/SiteVisit';
+import { SiteVisitRequest } from 'app/shared/models/agency/SiteVisitRequest';
+import { VisitCalendarService } from 'app/shared/services/visit-calendar.service';
+import { AgencyAppointmentEditModalComponent } from '../agency-appointment-edit-modal/agency-appointment-edit-modal.component';
+import { AgencyAppointmentEditModalData } from '../agency-appointment-modals-data.interface';
+import { AgencyVisitDayModalComponent } from '../agency-visit-day-modal/agency-visit-day-modal.component';
+import { VisitCalendarPageData } from '../visit-calendar-page-data.interface';
 
 @Component({
   selector: 'aesan-agency-calendar',
@@ -28,41 +25,77 @@ import {
   styleUrls: ['./agency-calendar.component.scss'],
   encapsulation: ViewEncapsulation.None,
   standalone: true,
-  imports: [
-    CommonModule,
-    MatButtonModule,
-    MatIconModule,
-    TranslocoModule,
-    MatTooltipModule,
-    CalendarModule
-  ]
+  imports: [CommonModule, MatButtonModule, MatIconModule, TranslocoModule, MatTooltipModule, CalendarModule],
 })
 export class AgencyCalendarComponent implements OnInit, OnDestroy {
-  private _unsubscribeAll: Subject<any> = new Subject<any>();
-  private _agencyCalendarService = inject(AgencyCalendarService);
-  private _customRouterService = inject(CustomRouterService);
+  // -----
+  // @ Subject de desuscripción
+  // -----
+  private _unsubscribeAll = new Subject<any>();
+
+  // -----
+  // @ Inyecciones privadas
+  // -----
+  private _visitCalendarService = inject(VisitCalendarService);
+  private _translocoService = inject(TranslocoService);
   private _route = inject(ActivatedRoute);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _snackBar = inject(MatSnackBar);
   private _dialog = inject(MatDialog);
   private _location = inject(Location);
 
+  // -----
+  // @ Variables
+  // -----
   view: CalendarView = CalendarView.Month;
   CalendarView = CalendarView;
   viewDate: Date = new Date();
-  
-  agencyId: number;
+  agencyId!: number;
+  selectedSiteId!: number;
+  siteName: string = '';
   agencyName: string = '';
-  appointments: AgencyAppointment[] = [];
+  visitTypes: VisitTypeDropdownItem[] = [];
+  visits: SiteVisit[] = [];
   events: CalendarEvent[] = [];
 
+  // -----
+  // @ Constructor
+  // -----
+  constructor() {}
+
+  // -----
+  // @ ngOnInit / ngOnDestroy
+  // -----
+  /** Lee `route.snapshot.data['data']` (resolver) y arranca la carga de visitas, igual que site-calendar. */
   ngOnInit(): void {
-    this._route.params.pipe(takeUntil(this._unsubscribeAll)).subscribe((params) => {
-      this.agencyId = +params['id'];
-      if (this.agencyId) {
-        this.loadAppointments();
-      }
-    });
+    const resolved = this._route.snapshot.data['data'] as VisitCalendarPageData | undefined;
+    const siteIdParam = Number(this._route.snapshot.paramMap.get('siteId'));
+
+    if (!resolved || !siteIdParam || resolved.siteId !== siteIdParam) {
+      this._snackBar.open(
+        this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.invalidRoute'),
+        this._translocoService.translate('global.buttons.close'),
+        { duration: 4000 }
+      );
+      this._location.back();
+      return;
+    }
+
+    if (!resolved.site?.agencyId) {
+      this._snackBar.open(
+        this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.invalidSiteForAgency'),
+        this._translocoService.translate('global.buttons.close'),
+        { duration: 5000 }
+      );
+      this._location.back();
+      return;
+    }
+
+    this.selectedSiteId = resolved.siteId;
+    this.agencyId = resolved.site.agencyId;
+    this.siteName = resolved.site.name ?? '';
+    this.visitTypes = resolved.visitTypes ?? [];
+    this.loadVisits();
   }
 
   ngOnDestroy(): void {
@@ -70,111 +103,224 @@ export class AgencyCalendarComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
-  loadAppointments(): void {
-    this._loadAppointments$().pipe(takeUntil(this._unsubscribeAll)).subscribe({
+  // -----
+  // @ Funciones On (componentes genéricos / UI)
+  // -----
+  /** Vista mes: clic en celda del día. */
+  onDayClick(event: { day: { date: Date } }): void {
+    this._openVisitDayModal(event.day.date);
+  }
+
+  /** Vista semana: clic en cabecera del día (angular-calendar no expone `dayClicked` aquí). */
+  onWeekDayHeaderClick(event: { day: { date: Date } }): void {
+    this._openVisitDayModal(event.day.date);
+  }
+
+  /** Vista semana: clic en franja horaria. */
+  onWeekHourSegmentClick(event: { date: Date }): void {
+    this._openVisitDayModal(this._toCalendarDateOnly(event.date));
+  }
+
+  /** Vista día: clic en franja horaria. */
+  onDayViewHourSegmentClick(event: { date: Date }): void {
+    this._openVisitDayModal(this._toCalendarDateOnly(event.date));
+  }
+
+  /** Abre el modal «Visitas del día» (lista + agregar). */
+  private _openVisitDayModal(day: Date): void {
+    if (!this.visitTypes.length) {
+      this._snackBar.open(
+        this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.visitTypesNotLoaded'),
+        this._translocoService.translate('global.buttons.close'),
+        { duration: 4000 }
+      );
+      return;
+    }
+    const dayRef = this._toCalendarDateOnly(day);
+    this._dialog.open(AgencyVisitDayModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        date: dayRef,
+        getVisitsForDay: () => this._getVisitsForCalendarDay(dayRef),
+        visitTypes: this.visitTypes,
+        agencyId: this.agencyId,
+        siteId: this.selectedSiteId,
+        commitCreateVisit$: (request) => this.commitCreateVisit$(request),
+        commitUpdateVisit$: (request) => this.commitUpdateVisit$(request),
+        commitDeleteVisit$: (id) => this.commitDeleteVisit$(id),
+      },
+    });
+  }
+
+  /** Normaliza a medianoche local para filtrar visitas por fecha calendario. */
+  private _toCalendarDateOnly(d: Date): Date {
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+
+  /** Abre el modal de edición/borrado para el evento seleccionado en el calendario. */
+  onEventClick(event: CalendarEvent): void {
+    const visit = event.meta?.visit as SiteVisit | undefined;
+    if (!visit) return;
+
+    const data: AgencyAppointmentEditModalData = {
+      visit,
+      agencyId: this.agencyId,
+      siteId: this.selectedSiteId,
+      visitTypes: this.visitTypes,
+      commitSave: (request) => this.commitUpdateVisit$(request),
+      commitDelete: () => this.commitDeleteVisit$(visit.id),
+    };
+    this._dialog.open(AgencyAppointmentEditModalComponent, {
+      width: '500px',
+      data,
+    });
+  }
+
+  // -----
+  // @ Otras funciones públicas
+  // -----
+  /** Recarga las visitas del mes visible desde la API. */
+  loadVisits(): void {
+    this._loadVisits$().pipe(takeUntil(this._unsubscribeAll)).subscribe({
       error: () => {
-        this._snackBar.open('Error al cargar las citas', 'Cerrar', { duration: 3000 });
-      }
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.loadVisits'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 4000 }
+        );
+      },
     });
   }
 
-  /** Recarga citas del mes visible (para encadenar tras crear/editar/eliminar). */
-  private _loadAppointments$() {
-    const month = this.viewDate.getMonth() + 1;
-    const year = this.viewDate.getFullYear();
-    return this._agencyCalendarService.getAppointments(this.agencyId, month, year).pipe(
-      tap((response) => {
-        this.agencyName = response.agencyName;
-        this.appointments = response.appointments;
-        this.mapToCalendarEvents();
-        this._changeDetectorRef.markForCheck();
-      }),
-      map(() => void 0)
-    );
-  }
-
-  commitCreateAppointment$(request: AgencyAppointmentRequest) {
-    return this._agencyCalendarService.createAppointment(request).pipe(
-      switchMap(() => this._loadAppointments$()),
-      tap(() => this._snackBar.open('Cita agregada exitosamente', 'Cerrar', { duration: 3000 })),
-      catchError(() => {
-        this._snackBar.open('Error al agregar cita', 'Cerrar', { duration: 3000 });
-        return EMPTY;
-      })
-    );
-  }
-
-  commitUpdateAppointment$(request: AgencyAppointmentRequest) {
-    return this._agencyCalendarService.updateAppointment(request).pipe(
-      switchMap(() => this._loadAppointments$()),
-      tap(() => this._snackBar.open('Cita actualizada exitosamente', 'Cerrar', { duration: 3000 })),
-      catchError(() => {
-        this._snackBar.open('Error al actualizar cita', 'Cerrar', { duration: 3000 });
-        return EMPTY;
-      })
-    );
-  }
-
-  commitDeleteAppointment$(id: number) {
-    return this._agencyCalendarService.deleteAppointment(id).pipe(
-      switchMap(() => this._loadAppointments$()),
-      tap(() => this._snackBar.open('Cita eliminada exitosamente', 'Cerrar', { duration: 3000 })),
-      catchError(() => {
-        this._snackBar.open('Error al eliminar cita', 'Cerrar', { duration: 3000 });
-        return EMPTY;
-      })
-    );
-  }
-
-  mapToCalendarEvents(): void {
-    this.events = this.appointments.map(app => {
-      const [year, month, day] = app.date.split('T')[0].split('-').map(Number);
-      const [startH, startM] = app.startTime.split(':').map(Number);
-      const [endH, endM] = app.endTime.split(':').map(Number);
-
-      return {
-        id: app.id,
-        title: app.comment || 'Appointment',
-        start: new Date(year, month - 1, day, startH, startM),
-        end: new Date(year, month - 1, day, endH, endM),
-        color: { primary: '#1e293b', secondary: '#e2e8f0' },
-        meta: { appointment: app }
-      };
-    });
-  }
-
-  setView(view: CalendarView) {
+  /** Cambia la vista del calendario (mes / semana / día). */
+  setView(view: CalendarView): void {
     this.view = view;
   }
 
+  /** Vuelve a la pantalla anterior (evaluación patrocinio). */
   close(): void {
     this._location.back();
   }
 
-  onDayClick(event: { day: { date: Date } }): void {
-    const data: AgencyAppointmentAddModalData = {
-      agencyId: this.agencyId,
-      date: event.day.date,
-      commitSave: (request) => this.commitCreateAppointment$(request)
-    };
-    this._dialog.open(AgencyAppointmentAddModalComponent, {
-      width: '500px',
-      data
-    });
+  /** Persiste una visita nueva y refresca el calendario; usado por el modal de alta. */
+  commitCreateVisit$(request: SiteVisitRequest) {
+    return this._visitCalendarService.createVisit(request).pipe(
+      switchMap(() => this._loadVisits$()),
+      tap(() =>
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.messages.visitAdded'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 3000 }
+        )
+      ),
+      catchError(() => {
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.addVisit'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 4000 }
+        );
+        return EMPTY;
+      })
+    );
   }
 
-  onEventClick(event: CalendarEvent): void {
-    const appointment = event.meta?.appointment;
-    if (!appointment) return;
+  /** Actualiza una visita y refresca el calendario; usado por el modal de edición. */
+  commitUpdateVisit$(request: SiteVisitRequest) {
+    return this._visitCalendarService.updateVisit(request).pipe(
+      switchMap(() => this._loadVisits$()),
+      tap(() =>
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.messages.visitUpdated'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 3000 }
+        )
+      ),
+      catchError(() => {
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.updateVisit'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 4000 }
+        );
+        return EMPTY;
+      })
+    );
+  }
 
-    const data: AgencyAppointmentEditModalData = {
-      appointment,
-      commitSave: (request) => this.commitUpdateAppointment$(request),
-      commitDelete: () => this.commitDeleteAppointment$(appointment.id)
-    };
-    this._dialog.open(AgencyAppointmentEditModalComponent, {
-      width: '500px',
-      data
+  /** Elimina una visita y refresca el calendario; usado por el modal de edición. */
+  commitDeleteVisit$(id: number) {
+    return this._visitCalendarService.deleteVisit(id, { agencyId: this.agencyId }).pipe(
+      switchMap(() => this._loadVisits$()),
+      tap(() =>
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.messages.visitDeleted'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 3000 }
+        )
+      ),
+      catchError(() => {
+        this._snackBar.open(
+          this._translocoService.translate('sponsor-evaluation.visitCalendar.errors.deleteVisit'),
+          this._translocoService.translate('global.buttons.close'),
+          { duration: 4000 }
+        );
+        return EMPTY;
+      })
+    );
+  }
+
+  // -----
+  // @ Funciones privadas
+  // -----
+  /** Obtiene visitas del mes/año actual y actualiza `events` usando el cuerpo de la respuesta HTTP si aplica. */
+  private _loadVisits$() {
+    const month = this.viewDate.getMonth() + 1;
+    const year = this.viewDate.getFullYear();
+    return this._visitCalendarService
+      .getSiteVisitsFromDb({
+        agencyId: this.agencyId,
+        siteId: this.selectedSiteId,
+        month,
+        year,
+      })
+      .pipe(
+        tap((response: SiteVisitCalendarResponse | HttpResponse<SiteVisitCalendarResponse>) => {
+          const data = response instanceof HttpResponse ? response.body : response;
+          this.agencyName = data?.agencyName ?? '';
+          this.visits = data?.visits ?? [];
+          this._mapToCalendarEvents();
+          this._changeDetectorRef.markForCheck();
+        }),
+        map(() => void 0)
+      );
+  }
+
+  /** Visitas cuya fecha calendario coincide con `d` (mes cargado en API). */
+  private _getVisitsForCalendarDay(d: Date): SiteVisit[] {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const dayNum = String(d.getDate()).padStart(2, '0');
+    const key = `${y}-${m}-${dayNum}`;
+    return this.visits
+      .filter((v) => v.date.split('T')[0] === key)
+      .sort((a, b) => a.startTime.localeCompare(b.startTime));
+  }
+
+  /** Construye los `CalendarEvent` a partir de `visits`. */
+  private _mapToCalendarEvents(): void {
+    this.events = this.visits.map((v) => {
+      const [year, month, day] = v.date.split('T')[0].split('-').map(Number);
+      const [startH, startM] = v.startTime.split(':').map(Number);
+      const [endH, endM] = v.endTime.split(':').map(Number);
+      const titleParts = [v.visitTypeNameEs, v.comment].filter(Boolean);
+      return {
+        id: v.id,
+        title: titleParts.length ? titleParts.join(' — ') : v.visitTypeNameEs,
+        start: new Date(year, month - 1, day, startH, startM),
+        end: new Date(year, month - 1, day, endH, endM),
+        color: { primary: '#1e293b', secondary: '#e2e8f0' },
+        meta: { visit: v },
+      };
     });
   }
 }

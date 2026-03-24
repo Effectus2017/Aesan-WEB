@@ -42,8 +42,8 @@ export class SiteViewModalPacnaCentroComponent {
     this.currentLang = this._translocoService.getActiveLang();
   }
 
-  get site(): Site | null {
-    return this.data?.site ?? null;
+  get site(): Site {
+    return this.data.site;
   }
 
   /** Muestra el nombre según idioma para opciones con name/nameEN. */
@@ -53,7 +53,7 @@ export class SiteViewModalPacnaCentroComponent {
   }
 
   get educationLevelsDisplay(): string {
-    const levels = this.site?.educationLevels ?? [];
+    const levels = this.site.educationLevels ?? [];
     return levels.map((e) => this.optionName(e)).filter(Boolean).join(', ');
   }
 

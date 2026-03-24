@@ -12,11 +12,11 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 
 export interface AppointmentConfigModalData {
-  /** Opciones de Sí/No para "Cita Coordinada". */
+  /** Opciones de Sí/No para "Visita coordinada". */
   yesNoOptions: OptionSelection[];
   /** Valor actual de appointmentCoordinated (boolean). */
   currentAppointmentCoordinated?: boolean | null;
-  /** Fecha actual de la cita (opcional). */
+  /** Fecha actual de la visita (opcional). */
   currentAppointmentDate?: Date | null;
   /** Comentarios actuales (opcional). */
   currentComments?: string | null;

@@ -63,6 +63,13 @@ export const PACNA_SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
         label: 'sponsor-evaluation.edit.sites.table.buttons.viewStaff',
         icon: 'heroicons_outline:user-group',
       },
+      {
+        key: 'calendar',
+        label: 'sponsor-evaluation.edit.sites.table.buttons.visitCalendar',
+        icon: 'heroicons_outline:calendar',
+        color: 'accent',
+        tooltip: 'sponsor-evaluation.edit.sites.table.buttons.visitCalendarTooltip',
+      },
     ],
   },
 ];

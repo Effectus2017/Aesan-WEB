@@ -177,6 +177,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       {
         id: 'add',
         label: 'global.buttons.addPermission',
+        icon: 'mat_outline:add',
       },
     ],
     addMenuTooltip: 'global.tooltips.addPermission',

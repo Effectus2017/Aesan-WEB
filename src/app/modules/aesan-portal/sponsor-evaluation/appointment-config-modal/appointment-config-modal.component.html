@@ -11,7 +11,7 @@
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSave()">
     <div class="flex overflow-y-auto flex-col flex-auto p-6 bg-gray-50 dark:bg-gray-800">
       <div class="flex flex-col gap-4">
-        <!-- Cita Coordinada -->
+        <!-- Visita coordinada -->
         <mat-form-field>
           <mat-label>{{ 'sponsor-evaluation.edit.fields.appointmentCoordinated.label' | transloco }}</mat-label>
           <mat-select formControlName="appointmentCoordinated">
@@ -28,7 +28,7 @@
           }
         </mat-form-field>
 
-        <!-- Fecha de Cita -->
+        <!-- Fecha de visita -->
         <mat-form-field>
           <mat-label>{{ 'sponsor-evaluation.edit.fields.appointmentDate.label' | transloco }}</mat-label>
           <input matInput [matDatepicker]="pickerAppointment" formControlName="appointmentDate" />

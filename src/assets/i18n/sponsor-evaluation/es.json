@@ -27,9 +27,7 @@
           "edit": "Editar",
           "editTooltip": "Abrir evaluación en nueva ventana",
           "viewAssignedUsers": "Usuarios asignados",
-          "viewAssignedUsersTooltip": "Ver usuarios asignados a la agencia",
-          "viewCalendar": "Ver calendario",
-          "viewCalendarTooltip": "Ver calendario de citas"
+          "viewAssignedUsersTooltip": "Ver usuarios asignados a la agencia"
         }
       },
       "buttons": {
@@ -98,7 +96,9 @@
           "buttons": {
             "view": "Ver",
             "edit": "Editar",
-            "viewStaff": "Ver Personal"
+            "viewStaff": "Ver Personal",
+            "visitCalendar": "Calendario de visitas",
+            "visitCalendarTooltip": "Abrir calendario de visitas de este sitio"
           }
         },
         "modal": {
@@ -112,6 +112,18 @@
         "messages": {
           "noSchoolForSite": "Este sitio no tiene una escuela vinculada. No se puede listar el personal por escuela."
         }
+      },
+      "schools": {
+        "title": "Escuelas relacionadas",
+        "description": "Lista de escuelas asociadas a esta agencia"
+      },
+      "centers": {
+        "title": "Centros relacionados",
+        "description": "Lista de centros asociados a esta agencia"
+      },
+      "homes": {
+        "title": "Hogares relacionados",
+        "description": "Lista de hogares asociados a esta agencia"
       },
       "staffBySite": {
         "modal": {
@@ -131,7 +143,7 @@
         "tooltip": "Configuración",
         "menuEditStatus": "Cambiar Estatus",
         "menuEditAssignedTo": "Cambiar Asignado a",
-        "menuEditAppointment": "Coordinar Cita",
+        "menuEditAppointment": "Coordinar Visita",
         "statusModal": {
           "title": "Seleccionar Estatus",
           "required": "Debe seleccionar un estatus"
@@ -141,16 +153,16 @@
           "required": "Debe seleccionar un usuario"
         },
         "appointmentModal": {
-          "title": "Coordinar Cita",
+          "title": "Coordinar Visita",
           "appointmentCoordinated": {
-            "required": "Debe seleccionar si se coordinó la cita"
+            "required": "Debe seleccionar si se coordinó la visita"
           },
           "appointmentDate": {
-            "required": "Debe seleccionar la fecha de la cita"
+            "required": "Debe seleccionar la fecha de la visita"
           },
           "comments": {
             "label": "Comentarios",
-            "placeholder": "Ingrese comentarios adicionales sobre la cita..."
+            "placeholder": "Ingrese comentarios adicionales sobre la visita..."
           },
           "relatedSites": {
             "title": "Sitios Relacionados"
@@ -332,11 +344,11 @@
           "placeholder": "Número de teléfono"
         },
         "appointmentCoordinated": {
-          "label": "Cita Coordinada",
-          "placeholder": "Seleccione si se coordinó cita"
+          "label": "Visita coordinada",
+          "placeholder": "Seleccione si se coordinó la visita"
         },
         "appointmentDate": {
-          "label": "Fecha de Cita",
+          "label": "Fecha de visita",
           "placeholder": "Seleccione la fecha",
           "hint": "MM/DD/AAAA"
         },
@@ -354,7 +366,61 @@
         "invalidForm": "El formulario es inválido. Por favor, complete todos los campos requeridos.",
         "success": "Evaluación guardada exitosamente",
         "error": "Error al guardar la evaluación",
-        "statusUpdated": "El estatus se ha actualizado correctamente."
+        "statusUpdated": "El estatus se ha actualizado correctamente.",
+        "noSitesForVisitCalendar": "No hay sitios registrados para esta agencia. Añada un sitio o abra el calendario desde la fila de un sitio."
+      }
+    },
+    "visitCalendar": {
+      "title": "Calendario de visitas",
+      "siteLabel": "Sitio",
+      "backTooltip": "Volver a la evaluación",
+      "today": "Hoy",
+      "viewMonth": "Mes",
+      "viewWeek": "Semana",
+      "viewDay": "Día",
+      "errors": {
+        "loadSites": "Error al cargar los sitios de la agencia",
+        "loadSiteContext": "Error al cargar el sitio o los tipos de visita",
+        "loadVisits": "Error al cargar las visitas",
+        "addVisit": "Error al agregar la visita",
+        "updateVisit": "Error al actualizar la visita",
+        "deleteVisit": "Error al eliminar la visita",
+        "invalidRoute": "La ruta del calendario no es válida (falta el id de sitio).",
+        "invalidSiteForAgency": "No se encontró el sitio o no es válido.",
+        "visitTypesNotLoaded": "Espere a que se carguen los tipos de visita."
+      },
+      "messages": {
+        "visitAdded": "Visita agregada correctamente",
+        "visitUpdated": "Visita actualizada correctamente",
+        "visitDeleted": "Visita eliminada correctamente"
+      },
+      "dayModal": {
+        "title": "Visitas del día",
+        "cardTitle": "Visitas",
+        "sectionLabel": "Visitas programadas",
+        "emptyHint": "No hay visitas este día. Pulse Agregar para registrar una.",
+        "addVisit": "Agregar",
+        "editAria": "Editar visita",
+        "columns": {
+          "type": "Tipo",
+          "start": "Desde",
+          "end": "Hasta",
+          "comment": "Comentario",
+          "actions": "Acciones"
+        }
+      },
+      "modal": {
+        "addTitle": "Agregar visita",
+        "editTitle": "Editar visita",
+        "visitDateLabel": "Fecha de la visita",
+        "visitType": "Tipo de visita",
+        "startTime": "Hora de inicio",
+        "endTime": "Hora de fin",
+        "comments": "Comentarios",
+        "commentPlaceholder": "Notas u observaciones (opcional)"
+      },
+      "validation": {
+        "required": "Requerido"
       }
     }
   }

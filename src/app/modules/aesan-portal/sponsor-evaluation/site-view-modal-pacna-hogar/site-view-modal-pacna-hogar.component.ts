@@ -42,8 +42,8 @@ export class SiteViewModalPacnaHogarComponent {
     this.currentLang = this._translocoService.getActiveLang();
   }
 
-  get site(): Site | null {
-    return this.data?.site ?? null;
+  get site(): Site {
+    return this.data.site;
   }
 
   onClose(): void {

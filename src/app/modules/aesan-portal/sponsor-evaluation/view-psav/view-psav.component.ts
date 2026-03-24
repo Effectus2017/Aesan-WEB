@@ -22,7 +22,6 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpResponse } from '@angular/common/http';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
-import { AuthService } from 'app/core/auth/auth.service';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
 import { OnGenericEditComponentHandler } from 'app/shared/components/generic-interfaces/generic-interfaces.interface';
@@ -41,20 +40,18 @@ import { AgencyService } from 'app/shared/services/agency.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { GeoService } from 'app/shared/services/geo.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { SiteService } from 'app/shared/services/site.service';
-import { SchoolStaffService } from 'app/shared/services/school-staff.service';
-import { SiteViewModalPsavComponent } from '../site-view-modal-psav/site-view-modal-psav.component';
-import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
 import { StatusConfigModalComponent } from '../status-config-modal/status-config-modal.component';
 import { AssignedToConfigModalComponent } from '../assigned-to-config-modal/assigned-to-config-modal.component';
 import { AppointmentConfigModalComponent } from '../appointment-config-modal/appointment-config-modal.component';
 import { compareById, compareItems, compareMonitors, comparePostal } from 'app/shared/utils';
-import { PSAV_SITES_COLUMNS_SCHEMA } from './columns-schema';
+import { READONLY_SCHOOLS_COLUMNS_SCHEMA } from '../shared/readonly-school-columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { School } from 'app/shared/models/school/School';
+import { SitesModalComponent } from 'app/modules/agency-portal/schools/sites-modal/sites-modal.component';
 
 @Component({
   selector: 'app-aesan-sponsor-evaluation-view-psav',
@@ -104,7 +101,6 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
   private _formBuilder = inject(UntypedFormBuilder);
   private _agencyService = inject(AgencyService);
   private _geoService = inject(GeoService);
-  private _authService = inject(AuthService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService = inject(TranslocoService);
   private _notificationService = inject(NotificationService);
@@ -112,8 +108,6 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
   private _snackBar = inject(MatSnackBar);
   private _customRouterService = inject(CustomRouterService);
   private _route = inject(ActivatedRoute);
-  private _siteService = inject(SiteService);
-  private _schoolStaffService = inject(SchoolStaffService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
@@ -191,8 +185,8 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
 
   tableConfig: GenericTableConfig = {
     dataSource: new MatTableDataSource<any>(),
-    columnsSchema: PSAV_SITES_COLUMNS_SCHEMA,
-    displayedColumns: PSAV_SITES_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    columnsSchema: READONLY_SCHOOLS_COLUMNS_SCHEMA,
+    displayedColumns: READONLY_SCHOOLS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
     showPaginator: true,
     pageSizeOptions: [25, 50, 100],
@@ -233,10 +227,10 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
 
       this.currentLang = this._translocoService.getActiveLang();
 
-      if (resolvedData.sites) {
-        const sitesData = resolvedData.sites?.data ?? [];
-        this.tableConfig.dataSource.data = sitesData;
-        this.tableConfig.length = resolvedData.sites.count || 0;
+      if (resolvedData.schools) {
+        const schoolsData = resolvedData.schools?.data ?? [];
+        this.tableConfig.dataSource.data = schoolsData;
+        this.tableConfig.length = resolvedData.schools.count || 0;
       }
 
       this.onSetForm(resolvedData.agency);
@@ -397,7 +391,10 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
         break;
       }
       case 'go-to-calendar': {
-        this._customRouterService.navigate([`sponsor-evaluation/calendar/${this.param.id}`]);
+        this._notificationService.showError(
+          this._translocoService.translate('sponsor-evaluation.edit.messages.noSitesForVisitCalendar'),
+          this._translocoService.translate('global.buttons.close')
+        );
         break;
       }
       default:
@@ -410,11 +407,10 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
 
   onTableAdd(event?: Event, tableId?: string): void {}
 
-  /** Abre el modal de edición del sitio. */
-  onTableEdit(event: Event, id: number): void {
+  /** Acción no disponible en modo de solo visualización. */
+  onTableEdit(event: Event, _id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    this.openSiteEditModal(id);
   }
 
   /** Elimina un sitio (no implementado). */
@@ -423,28 +419,38 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
     event.preventDefault();
   }
 
-  /** Abre el modal de personal asociado a la escuela vinculada al sitio. */
-  onTableViewStaff(event: Event, siteId: number): void {
+  /** Acción no disponible en modo de solo visualización. */
+  onTableViewStaff(event: Event, _siteId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    const row = this.tableConfig.dataSource.data.find((s: { id: number; school?: { id?: number } }) => s.id === siteId);
-    const schoolId = row?.school?.id;
-    if (!schoolId) {
-      this._snackBar.open(
-        this._translocoService.translate('sponsor-evaluation.edit.sites.messages.noSchoolForSite'),
-        this._translocoService.translate('global.buttons.close'),
-        { duration: 5000 }
-      );
-      return;
-    }
-    this.openStaffBySchoolModal(siteId, schoolId);
+  }
+
+  /** Acción no disponible en modo de solo visualización. */
+  onTableCalendar(event: Event, _siteId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  /** Abre el modal con los sitios relacionados de la escuela seleccionada. */
+  onTableSites(event: Event, schoolId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+    const school = this.tableConfig.dataSource.data.find((item: School) => item.id === schoolId);
+    this._dialog.open(SitesModalComponent, {
+      width: '80%',
+      maxWidth: '1200px',
+      data: {
+        schoolId,
+        schoolName: school?.name ?? '',
+      },
+    });
   }
 
   /** Maneja acciones de la tabla. */
-  onTableAction(event: Event, action: string, id: number): void {
+  onTableAction(event: Event, _action: string, _id: number): void {
     event.stopPropagation();
     event.preventDefault();
-    if (action === 'edit') this.openSiteEditModal(id);
+    return;
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -500,60 +506,7 @@ export class ViewPSAVSponsorEvaluationComponent implements OnInit, OnDestroy, On
     }
   }
 
-  openSiteEditModal(siteId: number): void {
-    this._siteService.getSiteById({ id: siteId }).subscribe({
-      next: (response: any) => {
-        if (response?.body) {
-          const dialogRef = this._dialog.open(SiteViewModalPsavComponent, {
-            width: '90vw',
-            maxWidth: '1200px',
-            data: { site: response.body, agency: this.param } as SiteEditModalData,
-          });
-          dialogRef.afterClosed().subscribe((result) => {
-            if (result) this.refreshSitesTable();
-          });
-        }
-      },
-      // error: el interceptor global ya muestra el error
-      error: () => {},
-    });
-  }
-
-  openStaffBySchoolModal(siteId: number, schoolId: number): void {
-    this._schoolStaffService.getStaffBySchool({ schoolId }).subscribe({
-      next: (staffList) => {
-        if (staffList != null) {
-          import('../staff-by-site-modal/staff-by-site-modal.component').then((module) => {
-            this._dialog.open(module.StaffBySiteModalComponent, {
-              width: '90vw',
-              maxWidth: '1200px',
-              data: { siteId, schoolId, staffList },
-            });
-          });
-        }
-      },
-      // error: el interceptor global ya muestra el error
-      error: () => {},
-    });
-  }
-
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones privadas
   // -----------------------------------------------------------------------------------------------------
-  /** Recarga la tabla de sitios después de una modificación. */
-  private refreshSitesTable(): void {
-    this._siteService.getAllSitesFromDb({ agencyId: this.param?.id || this._authService.getAgencyId() }).subscribe({
-      next: (response: any) => {
-        if (response?.body) {
-          const sitesData = response.body.data || response.body;
-          const sitesWithSchoolName = Array.isArray(sitesData)
-            ? sitesData.map((site: any) => ({ ...site, schoolName: site.school?.name || site.schoolName || '-' }))
-            : sitesData;
-          this.tableConfig.dataSource.data = sitesWithSchoolName;
-          this.tableConfig.length = response.body.count || (Array.isArray(sitesData) ? sitesData.length : 0);
-          this._changeDetectorRef.detectChanges();
-        }
-      },
-    });
-  }
 }

@@ -1,29 +1,26 @@
 <div class="flex overflow-hidden absolute inset-0 flex-col min-w-0">
-    <!-- Header con título y botones -->
     <div class="flex flex-col gap-4 p-6 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-        <!-- Primera fila: Título y leyenda -->
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-start">
             <div class="flex flex-col gap-2">
-                <div class="flex gap-3 items-center">
+                <div class="flex gap-3 items-center flex-wrap">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        Calendario de Citas<span *ngIf="agencyName"> - {{ agencyName }}</span>
+                        {{ 'sponsor-evaluation.visitCalendar.title' | transloco }}<span *ngIf="agencyName"> — {{ agencyName }}</span>
                     </h3>
                     <button mat-icon-button (click)="close()"
-                        matTooltip="Volver a la agencia"
+                        [matTooltip]="'sponsor-evaluation.visitCalendar.backTooltip' | transloco"
                         class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                         <mat-icon>open_in_new</mat-icon>
                     </button>
                 </div>
-            </div>
-            <div class="flex flex-wrap gap-5">
+                <p *ngIf="siteName" class="text-sm text-gray-600 dark:text-gray-400">
+                    {{ 'sponsor-evaluation.visitCalendar.siteLabel' | transloco }}:
+                    <span class="font-medium text-gray-900 dark:text-gray-100">{{ siteName }}</span>
+                </p>
             </div>
         </div>
 
-        <!-- Segunda fila: Controles de navegación y vista -->
-        <div class="flex justify-between items-center">
-            <!-- Indicador de fecha actual y botones de navegación -->
-            <div class="flex gap-4 items-center">
-                <!-- Indicador de fecha actual -->
+        <div class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center">
+            <div class="flex flex-wrap gap-4 items-center">
                 <div class="flex gap-2 items-center px-3 py-1 bg-gray-100 rounded-lg dark:bg-gray-700">
                     <mat-icon class="text-gray-600 dark:text-gray-400">calendar_today</mat-icon>
                     <span class="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -31,49 +28,47 @@
                     </span>
                 </div>
 
-                <button mat-icon-button mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="loadAppointments()"
+                <button mat-icon-button mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="loadVisits()"
                     class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                     <mat-icon>chevron_left</mat-icon>
                 </button>
-                <button mat-button mwlCalendarToday [(viewDate)]="viewDate" (viewDateChange)="loadAppointments()"
+                <button mat-button mwlCalendarToday [(viewDate)]="viewDate" (viewDateChange)="loadVisits()"
                     class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                     <mat-icon>today</mat-icon>
-                    Hoy
+                    {{ 'sponsor-evaluation.visitCalendar.today' | transloco }}
                 </button>
-                <button mat-icon-button mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="loadAppointments()"
+                <button mat-icon-button mwlCalendarNextView [view]="view" [(viewDate)]="viewDate" (viewDateChange)="loadVisits()"
                     class="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
                     <mat-icon>chevron_right</mat-icon>
                 </button>
             </div>
 
-            <!-- Selector de vista -->
             <div class="flex gap-1 p-1 bg-gray-100 rounded-lg dark:bg-gray-700">
                 <button mat-button (click)="setView(CalendarView.Month)" [class.bg-white]="view === CalendarView.Month"
                     [class.dark:bg-gray-600]="view === CalendarView.Month"
                     [class.text-blue-600]="view === CalendarView.Month"
                     [class.dark:text-blue-400]="view === CalendarView.Month"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Mes
+                    {{ 'sponsor-evaluation.visitCalendar.viewMonth' | transloco }}
                 </button>
                 <button mat-button (click)="setView(CalendarView.Week)" [class.bg-white]="view === CalendarView.Week"
                     [class.dark:bg-gray-600]="view === CalendarView.Week"
                     [class.text-blue-600]="view === CalendarView.Week"
                     [class.dark:text-blue-400]="view === CalendarView.Week"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Semana
+                    {{ 'sponsor-evaluation.visitCalendar.viewWeek' | transloco }}
                 </button>
                 <button mat-button (click)="setView(CalendarView.Day)" [class.bg-white]="view === CalendarView.Day"
                     [class.dark:bg-gray-600]="view === CalendarView.Day"
                     [class.text-blue-600]="view === CalendarView.Day"
                     [class.dark:text-blue-400]="view === CalendarView.Day"
                     class="px-3 py-1 text-sm rounded-md transition-colors">
-                    Día
+                    {{ 'sponsor-evaluation.visitCalendar.viewDay' | transloco }}
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Main -->
     <div class="overflow-y-auto flex-auto h-full bg-white dark:bg-gray-900">
         <div class="h-full">
             <ng-container [ngSwitch]="view">
@@ -92,7 +87,8 @@
                     [viewDate]="viewDate"
                     [events]="events"
                     [locale]="'es'"
-                    (dayClicked)="onDayClick($event)"
+                    (dayHeaderClicked)="onWeekDayHeaderClick($event)"
+                    (hourSegmentClicked)="onWeekHourSegmentClick($event)"
                     (eventClicked)="onEventClick($event.event)"
                     class="h-full block">
                 </mwl-calendar-week-view>
@@ -102,7 +98,7 @@
                     [viewDate]="viewDate"
                     [events]="events"
                     [locale]="'es'"
-                    (dayClicked)="onDayClick($event)"
+                    (hourSegmentClicked)="onDayViewHourSegmentClick($event)"
                     (eventClicked)="onEventClick($event.event)"
                     class="h-full block">
                 </mwl-calendar-day-view>

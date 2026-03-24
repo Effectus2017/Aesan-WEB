@@ -1,3 +1,4 @@
+import { HttpResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -9,7 +10,12 @@ import { ProgramService } from 'app/shared/services/program.service';
 import { UsersService } from 'app/shared/services/users.service';
 import { OptionSelectionService } from 'app/shared/services/option-selection.service';
 import { SiteService } from 'app/shared/services/site.service';
-import { forkJoin, map } from 'rxjs';
+import { SchoolService } from 'app/shared/services/school.service';
+import { VisitCalendarService } from 'app/shared/services/visit-calendar.service';
+import { VisitTypeDropdownItem } from 'app/shared/models/agency/SiteVisit';
+import { SiteResponse } from 'app/shared/models/response/SiteResponse';
+import { VisitCalendarPageData } from '../calendar/visit-calendar-page-data.interface';
+import { forkJoin, map, of } from 'rxjs';
 
 export const initialAesanSponsorEvaluationResolver = () => {
   const _agencyService: AgencyService = inject(AgencyService);
@@ -46,6 +52,7 @@ export const editAesanSponsorEvaluationResolver: ResolveFn<any> = (route: Activa
   const usersService = inject(UsersService);
   const optionSelectionService = inject(OptionSelectionService);
   const siteService = inject(SiteService);
+  const schoolService = inject(SchoolService);
 
   const id = Number(route.paramMap.get('id'));
   const userId = authService.getUserId();
@@ -67,8 +74,10 @@ export const editAesanSponsorEvaluationResolver: ResolveFn<any> = (route: Activa
       forDropdown: true,
     }),
     siteService.getAllSitesFromDb({ agencyId: id, take: 25, skip: 0, alls: false, forDropdown: false }),
+    schoolService.getSchoolsByAgencyId({ agencyId: id, take: 25, skip: 0, alls: false, forDropdown: false }),
+    schoolService.getCentersByAgencyId({ agencyId: id, take: 25, skip: 0, alls: false, forDropdown: false }),
   ]).pipe(
-    map(([agencyResponse, agencyStatuses, cities, regions, programs, users, allOptions, sites]) => ({
+    map(([agencyResponse, agencyStatuses, cities, regions, programs, users, allOptions, sites, schools, centers]) => ({
       agency: agencyResponse.body,
       agencyStatuses: agencyStatuses.body,
       cities: cities.body,
@@ -77,6 +86,36 @@ export const editAesanSponsorEvaluationResolver: ResolveFn<any> = (route: Activa
       users: users.body,
       options: allOptions.body,
       sites: sites.body,
+      schools: schools.body,
+      centers: centers.body,
     }))
+  );
+};
+
+/** Calendario de visitas AESAN: mismo patrón que `initialDataSiteCalendarResolver` (forkJoin + `.body`). */
+export const visitCalendarPageResolver: ResolveFn<VisitCalendarPageData> = (route) => {
+  const siteService = inject(SiteService);
+  const visitCalendarService = inject(VisitCalendarService);
+
+  const siteId = Number(route.paramMap.get('siteId'));
+  if (!Number.isFinite(siteId) || siteId <= 0) {
+    return of({ siteId: 0, site: null, visitTypes: [] });
+  }
+
+  return forkJoin({
+    siteRes: siteService.getSiteById({ id: siteId }),
+    visitTypesRes: visitCalendarService.getAllVisitTypesFromDb({ alls: false, forDropdown: true }),
+  }).pipe(
+    map(({ siteRes, visitTypesRes }) => {
+      const site = (siteRes?.body ?? null) as SiteResponse | null;
+      const visitTypes: VisitTypeDropdownItem[] =
+        visitTypesRes instanceof HttpResponse ? (visitTypesRes.body ?? []) : (visitTypesRes as VisitTypeDropdownItem[]) ?? [];
+      const invalidSite = !site?.id || site.id !== siteId || !site.agencyId;
+      return {
+        siteId,
+        site: invalidSite ? null : site,
+        visitTypes,
+      };
+    })
   );
 };

@@ -27,9 +27,7 @@
           "edit": "Edit",
           "editTooltip": "Open evaluation in new window",
           "viewAssignedUsers": "Assigned users",
-          "viewAssignedUsersTooltip": "View users assigned to the agency",
-          "viewCalendar": "View calendar",
-          "viewCalendarTooltip": "View appointment calendar"
+          "viewAssignedUsersTooltip": "View users assigned to the agency"
         }
       },
       "buttons": {
@@ -98,6 +96,14 @@
         }
       }
     },
+    "centers": {
+      "title": "Related Centers",
+      "description": "List of centers associated with this agency"
+    },
+    "homes": {
+      "title": "Related Homes",
+      "description": "List of homes associated with this agency"
+    },
     "sites": {
       "title": "Related Sites",
       "description": "List of sites associated with this agency",
@@ -115,7 +121,9 @@
         "buttons": {
           "view": "View",
           "edit": "Edit",
-          "viewStaff": "View staff"
+          "viewStaff": "View staff",
+          "visitCalendar": "Visit calendar",
+          "visitCalendarTooltip": "Open visit calendar for this site"
         }
       },
       "modal": {
@@ -173,7 +181,7 @@
       "tooltip": "Settings",
       "menuEditStatus": "Change Status",
       "menuEditAssignedTo": "Change Assigned To",
-      "menuEditAppointment": "Schedule Appointment",
+      "menuEditAppointment": "Schedule visit",
       "statusModal": {
         "title": "Select Status",
         "required": "You must select a status"
@@ -183,16 +191,16 @@
         "required": "You must select a user"
       },
       "appointmentModal": {
-        "title": "Schedule Appointment",
+        "title": "Schedule visit",
         "appointmentCoordinated": {
-          "required": "You must select if the appointment was scheduled"
+          "required": "You must select if the visit was scheduled"
         },
         "appointmentDate": {
-          "required": "You must select the appointment date"
+          "required": "You must select the visit date"
         },
         "comments": {
           "label": "Comments",
-          "placeholder": "Enter additional comments about the appointment..."
+          "placeholder": "Enter additional comments about the visit..."
         },
         "relatedSites": {
           "title": "Related Sites"
@@ -374,11 +382,11 @@
           "placeholder": "Phone number"
         },
         "appointmentCoordinated": {
-          "label": "Appointment Coordinated",
-          "placeholder": "Select if appointment was coordinated"
+          "label": "Visit coordinated",
+          "placeholder": "Select if the visit was coordinated"
         },
         "appointmentDate": {
-          "label": "Appointment Date",
+          "label": "Visit date",
           "placeholder": "Select the date",
           "hint": "MM/DD/YYYY"
         },
@@ -396,7 +404,61 @@
         "invalidForm": "The form is invalid. Please complete all required fields.",
         "success": "Evaluation saved successfully",
         "error": "Error saving evaluation",
-        "statusUpdated": "Status has been updated successfully."
+        "statusUpdated": "Status has been updated successfully.",
+        "noSitesForVisitCalendar": "There are no registered sites for this agency. Add a site or open the calendar from a site row."
+      }
+    },
+    "visitCalendar": {
+      "title": "Visit calendar",
+      "siteLabel": "Site",
+      "backTooltip": "Back to evaluation",
+      "today": "Today",
+      "viewMonth": "Month",
+      "viewWeek": "Week",
+      "viewDay": "Day",
+      "errors": {
+        "loadSites": "Error loading agency sites",
+        "loadSiteContext": "Error loading site or visit types",
+        "loadVisits": "Error loading visits",
+        "addVisit": "Error adding visit",
+        "updateVisit": "Error updating visit",
+        "deleteVisit": "Error deleting visit",
+        "invalidRoute": "Invalid calendar route (missing site id).",
+        "invalidSiteForAgency": "Site was not found or is not valid.",
+        "visitTypesNotLoaded": "Wait for visit types to finish loading."
+      },
+      "messages": {
+        "visitAdded": "Visit added successfully",
+        "visitUpdated": "Visit updated successfully",
+        "visitDeleted": "Visit deleted successfully"
+      },
+      "dayModal": {
+        "title": "Visits for day",
+        "cardTitle": "Visits",
+        "sectionLabel": "Scheduled visits",
+        "emptyHint": "No visits on this day. Click Add to create one.",
+        "addVisit": "Add",
+        "editAria": "Edit visit",
+        "columns": {
+          "type": "Type",
+          "start": "From",
+          "end": "To",
+          "comment": "Comment",
+          "actions": "Actions"
+        }
+      },
+      "modal": {
+        "addTitle": "Add visit",
+        "editTitle": "Edit visit",
+        "visitDateLabel": "Visit date",
+        "visitType": "Visit type",
+        "startTime": "Start time",
+        "endTime": "End time",
+        "comments": "Comments",
+        "commentPlaceholder": "Notes or observations (optional)"
+      },
+      "validation": {
+        "required": "Required"
       }
     }
   }
