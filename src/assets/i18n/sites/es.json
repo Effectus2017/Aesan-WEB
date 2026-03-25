@@ -43,6 +43,8 @@
                 },
                 "buttons": {
                     "edit": "Editar",
+                    "viewSite": "Ver sitio",
+                    "viewSiteTooltip": "Abrir la ficha del sitio en una ventana emergente",
                     "calendar": "Calendario",
                     "satellites": "Satélites"
                 }

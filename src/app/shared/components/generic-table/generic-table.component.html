@@ -76,6 +76,10 @@
       />
       } @case ('date') {
       {{ col.key ? (getNestedValue(element, col.key) | date : "MM/dd/yyyy") : '' }}
+      } @case ('date-range') {
+      @if (col.keys && col.keys.length >= 2 && getNestedValue(element, col.keys[0]) && getNestedValue(element, col.keys[1])) {
+      {{ getNestedValue(element, col.keys[0]) | date : (col.format || "dd/MM/yyyy") }} - {{ getNestedValue(element, col.keys[1]) | date : (col.format || "dd/MM/yyyy") }}
+      }
       } @case ('date-time') {
       {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
       } @case ('text') {
@@ -183,6 +187,23 @@
           >
             <span class="sr-only">{{ "sites.list.table.buttons." + button.key | transloco }}</span>
             <mat-icon [svgIcon]="button.icon || 'heroicons_outline:calendar'" [attr.aria-hidden]="true" style="color: orange;"></mat-icon>
+          </button>
+        </div>
+        }
+
+        @if (button.key === 'viewSite') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+            (click)="onViewSite($event, element.id)"
+            [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
+          >
+            <span class="sr-only">{{ "sites.list.table.buttons." + button.key | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:rectangle-stack'" [attr.aria-hidden]="true" style="color: #2196F3;"></mat-icon>
           </button>
         </div>
         }
@@ -577,6 +598,10 @@
         />
         } @case ('date') {
         {{ col.key ? (getNestedValue(element, col.key) | date : "MM/dd/yyyy") : '' }}
+        } @case ('date-range') {
+        @if (col.keys && col.keys.length >= 2 && getNestedValue(element, col.keys[0]) && getNestedValue(element, col.keys[1])) {
+        {{ getNestedValue(element, col.keys[0]) | date : (col.format || "dd/MM/yyyy") }} - {{ getNestedValue(element, col.keys[1]) | date : (col.format || "dd/MM/yyyy") }}
+        }
         } @case ('date-time') {
         {{ col.key ? (getNestedValue(element, col.key) | date : "MMMM dd, yyyy") : '' }}
         } @case ('text') {
@@ -680,6 +705,23 @@
                   [disabled]="isButtonDisabled(button)"
                   [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
                   (click)="onCalendar($event, element.id)"
+                  [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
+              >
+                  {{ 'sites.list.table.buttons.' + button.key | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'viewSite') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+                  (click)="onViewSite($event, element.id)"
                   [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
               >
                   {{ 'sites.list.table.buttons.' + button.key | transloco }}

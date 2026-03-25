@@ -8,8 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { NgIf } from '@angular/common';
 
+import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { Site } from 'app/shared/models/site/Site';
 import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+
+/** Sitio en vista PACNA centro: la API puede devolver el catálogo resuelto además de `reviewResultId`. */
+type SitePacnaCentroViewRow = Site & { reviewResult?: OptionSelection };
 
 /**
  * Modal de solo lectura para ver datos de un sitio PACNA (centro).
@@ -27,6 +32,7 @@ import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData'
     MatIconModule,
     TranslocoModule,
     NgIf,
+    DynamicGridDirective,
   ],
   templateUrl: './site-view-modal-pacna-centro.component.html',
 })
@@ -42,8 +48,8 @@ export class SiteViewModalPacnaCentroComponent {
     this.currentLang = this._translocoService.getActiveLang();
   }
 
-  get site(): Site {
-    return this.data.site;
+  get site(): SitePacnaCentroViewRow {
+    return this.data.site as SitePacnaCentroViewRow;
   }
 
   /** Muestra el nombre según idioma para opciones con name/nameEN. */
@@ -55,6 +61,28 @@ export class SiteViewModalPacnaCentroComponent {
   get educationLevelsDisplay(): string {
     const levels = this.site.educationLevels ?? [];
     return levels.map((e) => this.optionName(e)).filter(Boolean).join(', ');
+  }
+
+  /** Campos del representante normalizados; la sección se muestra siempre en solo lectura. */
+  get personInChargeDisplay(): {
+    firstName: string;
+    middleName: string;
+    fatherLastName: string;
+    motherLastName: string;
+    sitePhone: string;
+    extension: string;
+    mobilePhone: string;
+  } {
+    const p = this.site.personInCharge;
+    return {
+      firstName: p?.firstName ?? '',
+      middleName: p?.middleName ?? '',
+      fatherLastName: p?.fatherLastName ?? '',
+      motherLastName: p?.motherLastName ?? '',
+      sitePhone: p?.sitePhone ?? '',
+      extension: p?.extension ?? '',
+      mobilePhone: p?.mobilePhone ?? '',
+    };
   }
 
   onClose(): void {

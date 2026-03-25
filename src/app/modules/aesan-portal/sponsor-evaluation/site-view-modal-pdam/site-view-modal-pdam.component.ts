@@ -168,6 +168,11 @@ export class SiteViewModalPdamComponent implements OnInit, OnDestroy {
     return gt?.code === 'DINING_ROOM';
   }
 
+  /** Igual que en sites-pdam/edit: capacidad del salón cuando el sitio indica que tiene salón comedor. */
+  get shouldShowDiningRoomCapacityField(): boolean {
+    return this.form.get('hasDiningRoom')?.value === true;
+  }
+
   get applicantDisplay(): string {
     const obj = this.form.get('typeOfApplicant')?.value;
     return this.optionName(obj);

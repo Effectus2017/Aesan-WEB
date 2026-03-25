@@ -18,8 +18,10 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.list.table.columns.groupTypeName',
   },
   {
-    key: 'operatingDaysFormatted',
-    type: 'text',
+    key: 'operatingDaysRange',
+    type: 'date-range',
+    keys: ['operatingFromDate', 'operatingToDate'],
+    format: 'dd/MM/yyyy',
     label: 'sites.list.table.columns.operatingDays',
   },
   {

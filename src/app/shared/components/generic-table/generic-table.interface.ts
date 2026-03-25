@@ -54,6 +54,7 @@ export interface ColumnSchema {
     | 'check'
     | 'image'
     | 'date'
+    | 'date-range'
     | 'date-time'
     | 'file-type'
     | 'file-size'
@@ -66,6 +67,7 @@ export interface ColumnSchema {
   imageConfig?: ImageConfig;
   fileTypeConfig?: FileTypeConfig;
   fileSizeConfig?: FileSizeConfig;
+  /** Para `date-range`: [fechaDesde, fechaHasta] (claves en el objeto fila). */
   keys?: string[];
   visible?: boolean;
   sortable?: boolean;
@@ -178,6 +180,8 @@ export interface OnGenericTableHandler {
   onTableDelete?: (event: Event, id: any) => void;
   onTableDownload?: (event: Event, id: any) => void;
   onTableCalendar?: (event: Event, id: any) => void;
+  /** Ver ficha de sitio (modal); el id es el de la fila de la tabla (p. ej. relación escuela–sitio). */
+  onTableViewSite?: (event: Event, id: any) => void;
   onTableSatellites?: (event: Event, id: any) => void;
   onTableSites?: (event: Event, id: any) => void;
   onTableViewStaff?: (event: Event, id: any) => void;

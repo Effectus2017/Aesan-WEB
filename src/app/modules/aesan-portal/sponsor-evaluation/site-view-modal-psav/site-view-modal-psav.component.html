@@ -217,24 +217,39 @@
         </mat-form-field>
       </div>
 
-      <div *ngIf="site.personInCharge">
+      <div>
         <p class="mb-2 text-lg font-medium">{{ 'sites.edit.administrator-authorized.label' | transloco }}</p>
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <p class="mb-4 text-secondary">{{ 'sites.edit.administrator-authorized.description' | transloco }}</p>
+        <div class="grid grid-cols-1 gap-4 mb-4 sm:grid-cols-4" appDynamicGrid="4">
           <mat-form-field>
             <mat-label>{{ 'sites.edit.person-in-charge.first-name.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.firstName" readonly />
+            <input matInput [value]="personInChargeDisplay.firstName" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.middle-name.label' | transloco }}</mat-label>
+            <input matInput [value]="personInChargeDisplay.middleName" readonly />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ 'sites.edit.person-in-charge.father-last-name.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.fatherLastName" readonly />
+            <input matInput [value]="personInChargeDisplay.fatherLastName" readonly />
           </mat-form-field>
           <mat-form-field>
+            <mat-label>{{ 'sites.edit.person-in-charge.mother-last-name.label' | transloco }}</mat-label>
+            <input matInput [value]="personInChargeDisplay.motherLastName" readonly />
+          </mat-form-field>
+        </div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-3" appDynamicGrid="3">
+          <mat-form-field>
             <mat-label>{{ 'sites.edit.site-phone.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.sitePhone" readonly />
+            <input matInput [value]="personInChargeDisplay.sitePhone" readonly />
+          </mat-form-field>
+          <mat-form-field>
+            <mat-label>{{ 'sites.edit.extension.label' | transloco }}</mat-label>
+            <input matInput [value]="personInChargeDisplay.extension" readonly />
           </mat-form-field>
           <mat-form-field>
             <mat-label>{{ 'sites.edit.mobile-phone.label' | transloco }}</mat-label>
-            <input matInput [value]="site.personInCharge.mobilePhone" readonly />
+            <input matInput [value]="personInChargeDisplay.mobilePhone" readonly />
           </mat-form-field>
         </div>
       </div>
@@ -257,7 +272,7 @@
   </div>
 
   <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
-    <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()">
+    <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()">
       {{ 'global.buttons.close' | transloco }}
     </button>
   </div>

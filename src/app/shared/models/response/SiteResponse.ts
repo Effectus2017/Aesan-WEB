@@ -102,6 +102,8 @@ export interface SiteResponse {
   siteTypeId?: number;
   experienceId?: number;
   reviewResultId?: number;
+  /** Catálogo resuelto (p. ej. PSAV/PACNA vista de sitio). */
+  reviewResult?: OptionSelection;
   reviewDate?: string;
   reviewJustification?: string;
 

@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Validators, ReactiveFormsModule, UntypedFormBuilder, AbstractControl } from '@angular/forms';
+import { Validators, ReactiveFormsModule, UntypedFormBuilder } from '@angular/forms';
 import { SiteService } from 'app/shared/services/site.service';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -40,12 +40,9 @@ import {
   toTimeString,
   logFormValidationErrors,
   generateTimeOptions,
-  filterStartTimeOptions,
   getEndTimeOptions,
   timeStringToDate,
-  dateToMinutes,
   compareByTime,
-  getApiErrorMessage,
   TimeOption,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/site/Site';
@@ -53,8 +50,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTimepickerModule } from '@angular/material/timepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { BaseApiException } from 'app/shared/models/errors/BaseApiException';
-import { ErrorCode } from 'app/shared/models/errors/ErrorCode';
 import { SiteChildGroupServiceSlotResponse } from 'app/shared/models/response/SiteChildGroupServiceSlotResponse';
 import { MatTableDataSource } from '@angular/material/table';
 
@@ -81,12 +76,10 @@ import {
 
 import { puertoRicoPhoneValidator } from 'app/shared/validators/puerto-rico-phone.validator';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
-import { operatingHoursRangeValidator } from 'app/shared/validators/operating-hours-range.validator';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { DateCalculationsUtil } from 'app/shared/utils/date-calculations.util';
-import { TimeValidationUtil, ServiceConfig } from 'app/shared/utils/time-validation.util';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from 'app/shared/components/site-satellites-modal/columns-schema';
 

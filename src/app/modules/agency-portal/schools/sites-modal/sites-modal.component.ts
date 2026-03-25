@@ -13,7 +13,7 @@ import { SITES_COLUMNS_SCHEMA } from './columns-schema';
 import { SchoolSiteTableResponse } from '../../../../shared/models/response/SchoolSiteTableResponse';
 import { MatTableDataSource } from '@angular/material/table';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
+import { Subject, takeUntil, debounceTime, distinctUntilChanged, finalize } from 'rxjs';
 import { CustomRouterService } from '../../../../shared/services/custom-router.service';
 import { SchoolSiteService } from '../../../../shared/services/school-site.service';
 import { QueryParameters } from '../../../../shared/models/common/QueryParameters';
@@ -115,54 +115,31 @@ export class SitesModalComponent implements OnInit, OnDestroy, OnGenericTableHan
       name: form.search || null
     };
 
-    this._schoolSiteService.getSitesBySchoolId(queryParameters)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (response: any) => {
-          const data = (response.body.data || []).map((site: SchoolSiteTableResponse) => {
-            // Formatear el rango de fechas de funcionamiento
-            if (site.operatingFromDate && site.operatingToDate) {
-              const fromDate = new Date(site.operatingFromDate);
-              const toDate = new Date(site.operatingToDate);
-              const formattedFrom = fromDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-              const formattedTo = toDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
-            } else {
-              (site as any).operatingDaysFormatted = '';
-            }
-            return site;
-          });
-          this.tableConfig.dataSource.data = data;
-          this.tableConfig.length = response.body.count || 0;
-          this.tableConfig.dataSourceList = data;
+    this._schoolSiteService
+      .getSitesBySchoolId(queryParameters)
+      .pipe(
+        takeUntil(this._unsubscribeAll),
+        finalize(() => {
           if (isInitialLoad) {
             this.isInitialLoading = false;
           }
           this._changeDetectorRef.markForCheck();
+        })
+      )
+      .subscribe({
+        next: (response: any) => {
+          const data = response?.body?.data || [];
+          this.tableConfig.dataSource.data = data;
+          this.tableConfig.length = response?.body?.count ?? 0;
+          this.tableConfig.dataSourceList = data;
         },
         error: (error) => {
           console.error('Error al obtener sitios de la escuela:', error);
-          // Fallback a datos pasados por el modal si hay error
-          const fallbackData = (this.data.data || []).map((site: SchoolSiteTableResponse) => {
-            if (site.operatingFromDate && site.operatingToDate) {
-              const fromDate = new Date(site.operatingFromDate);
-              const toDate = new Date(site.operatingToDate);
-              const formattedFrom = fromDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-              const formattedTo = toDate.toLocaleDateString('es-PR', { year: 'numeric', month: '2-digit', day: '2-digit' });
-              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
-            } else {
-              (site as any).operatingDaysFormatted = '';
-            }
-            return site;
-          });
+          const fallbackData = this.data.data || [];
           this.tableConfig.dataSource.data = fallbackData;
           this.tableConfig.length = this.data.data?.length || 0;
           this.tableConfig.dataSourceList = fallbackData;
-          if (isInitialLoad) {
-            this.isInitialLoading = false;
-          }
-          this._changeDetectorRef.markForCheck();
-        }
+        },
       });
   }
 

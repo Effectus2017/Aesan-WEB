@@ -115,21 +115,7 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: (response: any) => {
-          const data = (response.body.data || []).map((site: SchoolSiteTableResponse) => {
-            // Format operating date range
-            if (site.operatingFromDate && site.operatingToDate) {
-              const fromDate = new Date(site.operatingFromDate);
-              const toDate = new Date(site.operatingToDate);
-              // Use browser locale for date formatting
-              const locale = navigator.language || 'en-US';
-              const formattedFrom = fromDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
-              const formattedTo = toDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
-              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
-            } else {
-              (site as any).operatingDaysFormatted = '';
-            }
-            return site;
-          });
+          const data = response.body.data || [];
           this.tableConfig.dataSource.data = data;
           this.tableConfig.length = response.body.count || 0;
           this.tableConfig.dataSourceList = data;
@@ -141,20 +127,7 @@ export class SitesCentersModalComponent implements OnInit, OnDestroy, OnGenericT
         error: (error) => {
           console.error('Error loading center sites:', error);
           // Fallback to data passed by modal if there's an error
-          const fallbackData = (this.data.data || []).map((site: SchoolSiteTableResponse) => {
-            if (site.operatingFromDate && site.operatingToDate) {
-              const fromDate = new Date(site.operatingFromDate);
-              const toDate = new Date(site.operatingToDate);
-              // Use browser locale for date formatting
-              const locale = navigator.language || 'en-US';
-              const formattedFrom = fromDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
-              const formattedTo = toDate.toLocaleDateString(locale, { year: 'numeric', month: '2-digit', day: '2-digit' });
-              (site as any).operatingDaysFormatted = `${formattedFrom} - ${formattedTo}`;
-            } else {
-              (site as any).operatingDaysFormatted = '';
-            }
-            return site;
-          });
+          const fallbackData = this.data.data || [];
           this.tableConfig.dataSource.data = fallbackData;
           this.tableConfig.length = this.data.data?.length || 0;
           this.tableConfig.dataSourceList = fallbackData;

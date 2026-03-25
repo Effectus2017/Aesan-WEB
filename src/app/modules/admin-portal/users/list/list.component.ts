@@ -24,6 +24,7 @@ import { isNullOrUndefinedEmptyStringNullArray } from "app/shared/utils";
 import { Subject, takeUntil } from "rxjs";
 import { USERS_COLUMNS_SCHEMA } from "./columns-schema";
 import { USERS_FILTERS_SCHEMA } from "./filters-schema";
+import { AdminUserListRow } from "../users.types";
 import { ToastrModule } from 'ngx-toastr';
 import { TranslocoService } from "@ngneat/transloco";
 
@@ -67,8 +68,8 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
     filterButtonTooltip: 'global.tooltips.header.filter',
   };
 
-  tableConfig: GenericTableConfig = {
-    dataSource: new MatTableDataSource<any>(),
+  tableConfig: GenericTableConfig<AdminUserListRow> = {
+    dataSource: new MatTableDataSource<AdminUserListRow>([]),
     columnsSchema: USERS_COLUMNS_SCHEMA,
     displayedColumns: USERS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
     handler: this,
@@ -82,7 +83,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   @ViewChild('filterDrawer') filterDrawer!: GenericFilterDrawerComponent;
   filtersSchema = USERS_FILTERS_SCHEMA;
   appliedFilters: GenericFilterResult = {};
-  data: any[];
+  data: AdminUserListRow[] = [];
   isLoading = false;
 
   // -----
@@ -262,7 +263,7 @@ export class UsersListComponent implements OnInit, OnDestroy, OnGenericTableHand
   }
 
   /** Función trackBy para la tabla. */
-  trackByFn(index: number, item: any): any {
-    return item.id || index;
+  trackByFn(index: number, item: AdminUserListRow): string {
+    return item.id ?? String(index);
   }
 }

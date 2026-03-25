@@ -1,0 +1,81 @@
+<div
+  class="flex flex-col -m-6 max-h-screen min-w-120"
+  [appKeyboardShortcut]="null"
+  [compatibilityMode]="true"
+>
+  <!-- Header -->
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col">
+      <div class="text-lg font-medium">
+        {{ 'schools.sites.modal.title' | transloco }}: {{ data.schoolName }}
+      </div>
+    </div>
+    <button
+      mat-icon-button
+      [mat-dialog-close]="null"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco"
+    >
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0">
+    <div *ngIf="isInitialLoading" class="flex flex-col gap-3 justify-center items-center py-8">
+      <mat-icon class="text-4xl text-secondary">location_on</mat-icon>
+      <div class="text-secondary">{{ 'global.loading' | transloco }}</div>
+    </div>
+
+    <form *ngIf="!isInitialLoading" [formGroup]="searchForm" class="flex flex-col gap-6">
+      <!-- Campo de búsqueda -->
+      <mat-form-field>
+        <input
+          matInput
+          formControlName="search"
+          [placeholder]="'schools.sites.modal.search.placeholder' | transloco"
+          autocomplete="on"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          *ngIf="searchForm.get('search')?.value"
+          (click)="onClearSearch()"
+          type="button"
+          [attr.aria-label]="'global.buttons.clear' | transloco"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <!-- Tabla de sitios -->
+      <div class="flex-1 animate-slide-in">
+        <app-generic-table [config]="tableConfig" [handler]="this" [darkMode]="false"></app-generic-table>
+      </div>
+
+      <!-- Paginador -->
+      <mat-paginator
+        class="hidden sm:block animate-slide-in"
+        [pageSizeOptions]="tableConfig.pageSizeOptions"
+        [pageSize]="tableConfig.pageSize"
+        [length]="tableConfig.length"
+        (page)="getPaginator($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </form>
+  </div>
+
+  <!-- Actions - Fixed footer (sin Agregar: contexto solo lectura AESAN) -->
+  <div
+    class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center"
+  >
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" (click)="closeModal()">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

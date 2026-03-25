@@ -481,6 +481,11 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
           this.handler.onTableCalendar(event, element.id);
         }
         break;
+      case 'viewSite':
+        if (this.handler?.onTableViewSite) {
+          this.handler.onTableViewSite(event, element.id);
+        }
+        break;
       case 'satellites':
         if (this.handler?.onTableSatellites) {
           this.handler.onTableSatellites(event, element.id);
@@ -562,6 +567,13 @@ export class GenericTableComponent implements OnInit, OnDestroy, OnChanges, DoCh
    */
   onCalendar(event: Event, id: number): void {
     this.handler.onTableCalendar(event, id);
+  }
+
+  /** Abre la vista de sitio en modal (handler `onTableViewSite`). */
+  onViewSite(event: Event, id: number): void {
+    if (this.handler?.onTableViewSite) {
+      this.handler.onTableViewSite(event, id);
+    }
   }
 
   /**

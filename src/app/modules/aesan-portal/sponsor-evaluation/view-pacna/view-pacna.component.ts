@@ -51,8 +51,7 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { School } from 'app/shared/models/school/School';
-import { SitesModalComponent } from 'app/modules/agency-portal/schools/sites-modal/sites-modal.component';
-import { SitesCentersModalComponent } from 'app/modules/agency-portal/centers/sites-centers-modal/sites-modal.component';
+import { SitesBySchoolViewModalComponent } from '../sites-by-school-view-modal/sites-by-school-view-modal.component';
 
 @Component({
   selector: 'app-aesan-sponsor-evaluation-view-pacna',
@@ -482,24 +481,16 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     event.preventDefault();
     const center = this.centersData.find((item) => item.id === schoolId);
     const home = this.homesData.find((item) => item.id === schoolId);
-    if (center) {
-      this._dialog.open(SitesCentersModalComponent, {
-        width: '80%',
-        maxWidth: '1200px',
-        data: {
-          schoolId,
-          schoolName: center.name ?? '',
-        },
-      });
-      return;
-    }
-
-    this._dialog.open(SitesModalComponent, {
+    const schoolName = center?.name ?? home?.name ?? '';
+    const siteViewVariant = center ? 'pacna-centro' : 'pacna-hogar';
+    this._dialog.open(SitesBySchoolViewModalComponent, {
       width: '80%',
       maxWidth: '1200px',
       data: {
         schoolId,
-        schoolName: home?.name ?? '',
+        schoolName,
+        siteViewVariant,
+        agency: this.param,
       },
     });
   }

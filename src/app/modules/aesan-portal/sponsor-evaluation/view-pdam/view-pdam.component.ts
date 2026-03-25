@@ -53,7 +53,7 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { School } from 'app/shared/models/school/School';
-import { SitesModalComponent } from 'app/modules/agency-portal/schools/sites-modal/sites-modal.component';
+import { SitesBySchoolViewModalComponent } from '../sites-by-school-view-modal/sites-by-school-view-modal.component';
 
 @Component({
   selector: 'app-aesan-sponsor-evaluation-view-pdam',
@@ -448,12 +448,14 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     event.stopPropagation();
     event.preventDefault();
     const school = this.tableConfig.dataSource.data.find((item: School) => item.id === schoolId);
-    this._dialog.open(SitesModalComponent, {
+    this._dialog.open(SitesBySchoolViewModalComponent, {
       width: '80%',
       maxWidth: '1200px',
       data: {
         schoolId,
         schoolName: school?.name ?? '',
+        siteViewVariant: 'pdam',
+        agency: this.param,
       },
     });
   }

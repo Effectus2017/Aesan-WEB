@@ -1,7 +1,7 @@
 import { ColumnSchema } from 'app/shared/components/generic-table/generic-table.interface';
 
-// Esquema de columnas para el listado de sitios en el modal
-export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
+/** Igual que `SITES_COLUMNS_SCHEMA` del modal de Agencia, sin botón editar (solo calendario → ruta AESAN). */
+export const SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA: ColumnSchema[] = [
   {
     key: 'siteCode',
     type: 'text',
@@ -35,8 +35,11 @@ export const SITES_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'sites.list.table.columns.actions',
     buttons: [
       {
-        key: 'edit',
-        label: 'sites.list.table.buttons.edit',
+        key: 'viewSite',
+        label: 'sites.list.table.buttons.viewSite',
+        icon: 'heroicons_outline:rectangle-stack',
+        tooltip: 'sites.list.table.buttons.viewSiteTooltip',
+        permission: 'site.view',
         disableAgencyRestriction: true,
       },
       {

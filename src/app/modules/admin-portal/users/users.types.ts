@@ -61,6 +61,22 @@ export interface UserToken {
     regionId?: number;
   }
 
+  /**
+   * Fila del listado de usuarios (Admin Portal, `USERS_COLUMNS_SCHEMA` / generic-table).
+   * La API puede devolver más campos (`DTOUser`); esta interfaz cubre lo usado en columnas.
+   * No aplica a un dropdown de “lista de usuarios”; alta/edición usan `ProgramOption`, `DTORole`, etc.
+   */
+  export interface AdminUserListRow {
+    id: string;
+    imageURL?: string | null;
+    firstName?: string;
+    fatherLastName?: string;
+    email?: string;
+    rolesDisplay?: string;
+    programName?: string | null;
+    isActive?: boolean;
+  }
+
   export interface Token {
     token_type: string;
     access_token: string;
