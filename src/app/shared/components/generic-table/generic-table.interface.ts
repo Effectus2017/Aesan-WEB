@@ -168,6 +168,17 @@ export interface GenericTableConfig<T = any> {
    * Se usa para mostrar el nombre del servicio en tarjetas cuando el slot no trae serviceTypeName (PACNA/PSAV).
    */
   serviceTypes?: Array<{ id: number; name: string; nameEN?: string }>;
+  /**
+   * En vista tarjetas (p. ej. servicios por grupo), muestra el menú de tres puntos (editar/eliminar) en la cabecera de cada tarjeta.
+   * @default true
+   */
+  cardRowMenuShow?: boolean;
+  /**
+   * Dónde mostrar el bloque con nombre de grupo y niños matriculados en vista tarjetas.
+   * `inside`: franja gris dentro del borde de la tarjeta (por defecto).
+   * `above`: bloque encima de la tarjeta con más separación (p. ej. modales de solo lectura).
+   */
+  cardGroupHeaderPlacement?: 'inside' | 'above';
 }
 
 export interface OnGenericTableHandler {

@@ -107,6 +107,13 @@
           },
           "view": {
             "title": "Ver Sitio"
+          },
+          "services": {
+            "title": "Servicios del sitio",
+            "loadError": "No se pudieron cargar los tipos de servicio del programa.",
+            "empty": "Este sitio no tiene grupos con servicios registrados.",
+            "button": "Servicios",
+            "buttonTooltip": "Ver servicios por grupo del sitio"
           }
         },
         "messages": {

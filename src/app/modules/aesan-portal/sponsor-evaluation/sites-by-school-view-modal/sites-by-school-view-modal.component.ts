@@ -25,6 +25,8 @@ import { SiteViewModalPacnaCentroComponent } from '../site-view-modal-pacna-cent
 import { SiteViewModalPacnaHogarComponent } from '../site-view-modal-pacna-hogar/site-view-modal-pacna-hogar.component';
 import { SiteViewModalPdamComponent } from '../site-view-modal-pdam/site-view-modal-pdam.component';
 import { SiteViewModalPsavComponent } from '../site-view-modal-psav/site-view-modal-psav.component';
+import { SiteServicesViewModalComponent } from '../site-services-view-modal/site-services-view-modal.component';
+import { SiteServicesViewModalData } from '../site-services-view-modal/site-services-view-modal-data.interface';
 import { SitesBySchoolViewModalData } from './sites-by-school-view-modal-data.interface';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA } from './columns-schema';
@@ -161,6 +163,55 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
 
     this.dialogRef.close();
     this._customRouterService.navigate(['sponsor-evaluation/visit-calendar', siteId]);
+  }
+
+  /**
+   * Acciones de tabla no mapeadas por `key` en generic-table: abre el modal de servicios por grupo.
+   */
+  onTableAction(event: Event, action: string, rowId: number): void {
+    if (action === 'viewServices') {
+      this.onTableViewServices(event, rowId);
+    }
+  }
+
+  /** Abre el modal de solo lectura de servicios por grupo (mismo diseño que portal agencia). */
+  onTableViewServices(event: Event, rowId: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const element = this.tableConfig.dataSourceList.find((item) => item.id === rowId);
+    const siteId = element?.siteId;
+    if (!siteId) {
+      return;
+    }
+
+    this._siteService
+      .getSiteById({ id: siteId })
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: unknown) => {
+          const raw = response as { body?: SiteResponse };
+          const site = (raw?.body ?? raw) as SiteResponse;
+          if (!site) {
+            this._notificationService.showErrorDialog('dialog.error.message');
+            return;
+          }
+          const dialogData: SiteServicesViewModalData = {
+            site,
+            agency: this.data.agency,
+            siteViewVariant: this.data.siteViewVariant,
+          };
+          this._dialog.open(SiteServicesViewModalComponent, {
+            width: '80%',
+            maxWidth: '1200px',
+            maxHeight: '90vh',
+            data: dialogData,
+          });
+        },
+        error: () => {
+          this._notificationService.showErrorDialog('dialog.error.message');
+        },
+      });
   }
 
   /** Abre el modal de solo lectura del sitio según el programa (PDAM, PSAV o PACNA). */

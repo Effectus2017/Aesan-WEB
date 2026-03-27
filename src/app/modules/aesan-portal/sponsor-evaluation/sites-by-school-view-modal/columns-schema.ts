@@ -43,6 +43,14 @@ export const SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA: ColumnSchem
         disableAgencyRestriction: true,
       },
       {
+        key: 'viewServices',
+        label: 'sponsor-evaluation.edit.sites.modal.services.button',
+        icon: 'heroicons_outline:queue-list',
+        tooltip: 'sponsor-evaluation.edit.sites.modal.services.buttonTooltip',
+        permission: 'site.view',
+        disableAgencyRestriction: true,
+      },
+      {
         key: 'calendar',
         label: 'sites.list.table.buttons.calendar',
         icon: 'heroicons_outline:calendar',

@@ -198,6 +198,22 @@
         </div>
         }
 
+        @if (button.key === 'viewServices') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+            (click)="onButtonClick($event, button, element)"
+            [attr.aria-label]="button.label | transloco"
+          >
+            <span class="sr-only">{{ button.label | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:queue-list'" [attr.aria-hidden]="true" style="color: #0d9488;"></mat-icon>
+          </button>
+        </div>
+        }
+
         @if (button.key === 'satellites') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
@@ -314,8 +330,53 @@
         <ng-container *ngTemplateOutlet="customCardTemplate || cardTemplate; context: { $implicit: element }"></ng-container>
       } @else {
         <!-- Fallback specific card template -->
-            <div class="flex overflow-hidden flex-col h-full rounded-2xl border border-gray-200 shadow transition-shadow duration-300 bg-card dark:border-gray-700 hover:shadow-md">
-              <!-- Header de la tarjeta -->
+            <div
+              class="h-full min-w-0"
+              [class.contents]="config.cardGroupHeaderPlacement !== 'above'"
+              [class.flex]="config.cardGroupHeaderPlacement === 'above'"
+              [class.flex-col]="config.cardGroupHeaderPlacement === 'above'"
+              [class.gap-3]="config.cardGroupHeaderPlacement === 'above'"
+            >
+              @if (config.cardGroupHeaderPlacement === 'above') {
+              <div class="flex justify-between items-start px-0.5 sm:px-1 shrink-0">
+                <div>
+                  <div class="flex gap-2 items-center">
+                    <mat-icon class="text-primary icon-size-5" svgIcon="heroicons_outline:rectangle-group"></mat-icon>
+                    <h3 class="m-0 text-lg font-bold leading-tight text-gray-800 dark:text-gray-100">
+                      {{ element.groupName }}
+                    </h3>
+                  </div>
+                  <div class="flex gap-1.5 items-center mt-1 text-sm text-secondary">
+                    <mat-icon class="icon-size-4" svgIcon="heroicons_solid:users"></mat-icon>
+                    <span>{{ element.numberOfChildren || 0 }} Niños matriculados</span>
+                  </div>
+                </div>
+
+                @if (config.cardRowMenuShow !== false) {
+                <button type="button" mat-icon-button [matMenuTriggerFor]="cardMenu" aria-label="Opciones">
+                  <mat-icon svgIcon="mat_solid:more_vert"></mat-icon>
+                </button>
+                <mat-menu #cardMenu="matMenu">
+                  <button type="button" mat-menu-item (click)="onActionClick($event, 'edit', element)">
+                    <mat-icon svgIcon="mat_solid:edit" class="text-primary"></mat-icon>
+                    <span>Editar</span>
+                  </button>
+                  <button type="button" mat-menu-item (click)="onActionClick($event, 'delete', element)">
+                    <mat-icon svgIcon="mat_solid:delete" class="text-warn"></mat-icon>
+                    <span>Eliminar</span>
+                  </button>
+                </mat-menu>
+                }
+              </div>
+              }
+
+            <div
+              class="flex overflow-hidden flex-col h-full rounded-2xl border border-gray-200 shadow transition-shadow duration-300 bg-card dark:border-gray-700 hover:shadow-md"
+              [class.flex-1]="config.cardGroupHeaderPlacement === 'above'"
+              [class.min-h-0]="config.cardGroupHeaderPlacement === 'above'"
+            >
+              @if (config.cardGroupHeaderPlacement !== 'above') {
+              <!-- Header de la tarjeta (dentro del borde) -->
               <div class="flex justify-between items-start p-4 bg-gray-50 border-b dark:bg-gray-800/50">
                 <div>
                   <div class="flex gap-2 items-center">
@@ -330,6 +391,7 @@
                   </div>
                 </div>
 
+                @if (config.cardRowMenuShow !== false) {
                 <!-- Menú de Acciones -->
                 <button type="button" mat-icon-button [matMenuTriggerFor]="cardMenu" aria-label="Opciones">
                   <mat-icon svgIcon="mat_solid:more_vert"></mat-icon>
@@ -344,7 +406,9 @@
                     <span>Eliminar</span>
                   </button>
                 </mat-menu>
+                }
               </div>
+              }
 
               <!-- Cuerpo de la tarjeta -->
               <div class="flex-grow p-4">
@@ -540,6 +604,7 @@
                 </div>
               </div>
             </div>
+            </div>
 
       }
     }
@@ -701,6 +766,22 @@
                   [attr.aria-label]="'sites.list.table.buttons.' + button.key | transloco"
               >
                   {{ 'sites.list.table.buttons.' + button.key | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'viewServices') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+                  (click)="onButtonClick($event, button, element)"
+                  [attr.aria-label]="button.label | transloco"
+              >
+                  {{ button.label | transloco }}
               </button>
             </div>
             }

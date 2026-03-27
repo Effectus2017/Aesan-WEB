@@ -145,7 +145,7 @@
         (click)="onSubmit()"
         data-cy="generic-header-submit-button"
       >
-        <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+        <mat-icon *ngIf="isLoading" class="mr-2 icon-size-6">hourglass_empty</mat-icon>
         <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.submitButtonText | transloco) }}</span>
       </button>
     </div>
@@ -189,7 +189,7 @@
           [disabled]="isLoading || config.uploadButtonDisabled"
           data-cy="generic-header-upload-button"
       >
-          <mat-icon *ngIf="isLoading" class="mr-2">hourglass_empty</mat-icon>
+          <mat-icon *ngIf="isLoading" class="mr-2 icon-size-6">hourglass_empty</mat-icon>
           <span>{{ isLoading ? (config.submitLoadingText | transloco) : (config.uploadButtonText | transloco) }}</span>
       </button>
     </div>

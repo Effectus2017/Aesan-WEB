@@ -132,6 +132,13 @@
         },
         "view": {
           "title": "View Site"
+        },
+        "services": {
+          "title": "Site services",
+          "loadError": "Could not load program service types.",
+          "empty": "This site has no groups with registered services.",
+          "button": "Services",
+          "buttonTooltip": "View meal services by group for this site"
         }
       },
       "messages": {
