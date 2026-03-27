@@ -79,7 +79,7 @@
       "userInformationDescription": "Contact information of the responsible person"
     },
     "schools": {
-      "title": "Related Schools",
+      "title": "Sponsor Schools",
       "description": "List of schools associated with this agency",
       "table": {
         "columns": {

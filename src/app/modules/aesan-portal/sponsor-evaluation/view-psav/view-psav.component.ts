@@ -44,7 +44,7 @@ import { StatusConfigModalComponent } from '../status-config-modal/status-config
 import { AssignedToConfigModalComponent } from '../assigned-to-config-modal/assigned-to-config-modal.component';
 import { AppointmentConfigModalComponent } from '../appointment-config-modal/appointment-config-modal.component';
 import { compareById, compareItems, compareMonitors, comparePostal } from 'app/shared/utils';
-import { READONLY_SCHOOLS_COLUMNS_SCHEMA } from '../shared/readonly-school-columns-schema';
+import { READONLY_SCHOOLS_COLUMNS_SCHEMA } from './columns-schema';
 import { PuertoRicoZipCodeDirective } from 'app/shared/directives/puerto-rico-zip-code.directive';
 import { puertoRicoZipCodeValidator } from 'app/shared/validators/puerto-rico-zip-code.validator';
 import { LatitudeDirective } from 'app/shared/directives/latitude.directive';

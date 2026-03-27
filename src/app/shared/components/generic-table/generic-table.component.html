@@ -22,9 +22,7 @@
     <div *ngIf="config.addMenuShow" class="ml-auto" [matTooltip]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)" [matTooltipDisabled]="!getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission)">
       <button
         type="button"
-        title="Opciones"
         aria-label="Opciones"
-        [title]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission) || 'Opciones'"
         [attr.aria-label]="getAddMenuTooltip(config.addMenuTooltip, config.addMenuDisabledTooltip, config.addMenuPermission) || 'Opciones'"
         [disabled]="isAddMenuDisabledByPermission(config.addMenuPermission)"
         mat-icon-button
@@ -69,8 +67,6 @@
         [class]="col.imageConfig?.class || 'rounded-full object-cover'"
         alt="Profile"
         [attr.alt]="col.imageConfig?.alt || col.label | transloco"
-        title="Profile"
-        [attr.title]="col.imageConfig?.alt || col.label | transloco"
         [attr.aria-label]="col.imageConfig?.alt || col.label | transloco"
         (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
       />
@@ -109,7 +105,6 @@
         @if (button.key === 'edit') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -126,7 +121,6 @@
         @if (button.key === 'element') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -143,7 +137,6 @@
         @if (button.key === 'delete') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -160,7 +153,6 @@
         @if (button.key === 'download') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('users.list.actions.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -177,7 +169,6 @@
         @if (button.key === 'calendar') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -194,7 +185,6 @@
         @if (button.key === 'viewSite') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -211,7 +201,6 @@
         @if (button.key === 'satellites') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -228,7 +217,6 @@
         @if (button.key === 'sites') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -244,7 +232,6 @@
         @if (button.key === 'edit-modal' && !(element?.isService && element?.operatingDayIsHoliday)) {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -261,7 +248,6 @@
         @if (button.key === 'view') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || !element?.hasRelationships">
           <button
-            [title]="getButtonTooltip(button) || (button.label | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button) || !element?.hasRelationships"
@@ -279,7 +265,6 @@
         @if (button.key === 'viewStaff') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || (button.label | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -296,7 +281,6 @@
         @if (button.key === 'viewAssignedUsers') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
-            [title]="getButtonTooltip(button) || (button.label | transloco)"
             type="button"
             mat-icon-button
             [disabled]="isButtonDisabled(button)"
@@ -591,8 +575,6 @@
           [class]="col.imageConfig?.class || 'rounded-full object-cover'"
           alt="Profile"
           [attr.alt]="col.imageConfig?.alt || col.label | transloco"
-          title="Profile"
-          [attr.title]="col.imageConfig?.alt || col.label | transloco"
           [attr.aria-label]="col.imageConfig?.alt || col.label | transloco"
           (error)="handleMissingImage($event, col.imageConfig?.defaultImage || 'assets/images/avatars/profile.png')"
         />
@@ -631,7 +613,6 @@
             @if (button.key === 'edit') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -648,7 +629,6 @@
             @if (button.key === 'element') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('users.list.actions.edit' | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -665,7 +645,6 @@
             @if (button.key === 'delete') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('users.list.actions.delete' | transloco)"
                   type="button"
                   mat-flat-button
                   color="warm"
@@ -681,7 +660,6 @@
             @if (button.key === 'download') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('users.list.actions.download' | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -698,7 +676,6 @@
             @if (button.key === 'calendar') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -715,7 +692,6 @@
             @if (button.key === 'viewSite') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -732,7 +708,6 @@
             @if (button.key === 'satellites') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('sites.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -749,7 +724,6 @@
             @if (button.key === 'sites') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('schools.list.table.buttons.' + button.key | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -765,7 +739,6 @@
             @if (button.key === 'edit-modal' && !(element?.isService && element?.operatingDayIsHoliday)) {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || ('global.buttons.edit' | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -782,7 +755,6 @@
             @if (button.key === 'view') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button) || !element?.hasRelationships">
               <button
-                  [title]="getButtonTooltip(button) || (button.label | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
@@ -801,7 +773,6 @@
             @if (button.key === 'viewStaff') {
             <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
               <button
-                  [title]="getButtonTooltip(button) || (button.label | transloco)"
                   type="button"
                   mat-flat-button
                   color="primary"
