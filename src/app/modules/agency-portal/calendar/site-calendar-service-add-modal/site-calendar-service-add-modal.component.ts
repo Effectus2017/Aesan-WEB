@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -16,7 +17,6 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { SiteCalendarServiceAddModalData } from './site-calendar-service-add-modal-data.interface';
 import { ServiceTypes, ServiceTypeOption } from 'app/shared/constants/service-type.constants';
 import { TranslocoService } from '@ngneat/transloco';
-import { PROGRAM_IDS } from 'app/shared/const';
 import {
   generateTimeOptions,
   filterEndTimeOptions,
@@ -86,10 +86,9 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
     private _cdr: ChangeDetectorRef
   ) {
     this.currentLanguage = this.translocoService.getActiveLang() || 'es';
-    this.serviceTypes = ServiceTypes;
+    this.serviceTypes = [];
     this.initializeTimeConstraints();
     this.displayDate = this.parseDateSafe(this.data.operatingDay.date);
-    this.filterServiceTypes();
   }
 
   ngOnInit(): void {
@@ -101,6 +100,33 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  /**
+   * Extrae el array de tipos de servicio de la respuesta HTTP (observe: 'response' → body) o de un array directo.
+   */
+  private extractServiceTypesArray(res: unknown): ServiceTypeByProgram[] {
+    if (res == null) {
+      return [];
+    }
+    if (Array.isArray(res)) {
+      return res as ServiceTypeByProgram[];
+    }
+    if (typeof res === 'object' && res !== null && 'body' in res) {
+      const body = (res as HttpResponse<ServiceTypeByProgram[]>).body;
+      return Array.isArray(body) ? body : [];
+    }
+    return [];
+  }
+
+  /** Grupo seleccionado como número (el formulario/API pueden usar number o string). */
+  private getSelectedChildGroupId(): number | null {
+    const raw = this.data.form.get('childGroupId')?.value;
+    if (raw === null || raw === undefined || raw === '') {
+      return null;
+    }
+    const n = Number(raw);
+    return Number.isNaN(n) ? null : n;
   }
 
   private subscribeToChildGroupChanges(): void {
@@ -130,6 +156,8 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
       }
     }
     if (!programIds.length) {
+      this.serviceTypes = [...ServiceTypes].sort((a, b) => a.displayOrder - b.displayOrder);
+      this.filterServiceTypes();
       this.updateStartTimeOptions();
       return;
     }
@@ -141,7 +169,7 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
         const all: ServiceTypeByProgram[] = [];
         const seenIds = new Set<number>();
         for (const res of responses) {
-          const list = (res?.body ?? res ?? []) as ServiceTypeByProgram[];
+          const list = this.extractServiceTypesArray(res);
           for (const st of list) {
             if (!seenIds.has(st.id)) {
               seenIds.add(st.id);
@@ -150,9 +178,21 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
           }
         }
         this.serviceTypesByProgram = all;
+        this.serviceTypes = all
+          .map<ServiceTypeOption>((st) => ({
+            id: st.id,
+            name: st.name,
+            nameEN: st.nameEN,
+            code: st.code,
+            displayOrder: st.displayOrder
+          }))
+          .sort((a, b) => a.displayOrder - b.displayOrder);
+        this.filterServiceTypes();
         this.updateStartTimeOptions();
       },
       error: () => {
+        this.serviceTypes = [...ServiceTypes].sort((a, b) => a.displayOrder - b.displayOrder);
+        this.filterServiceTypes();
         this.updateStartTimeOptions();
       }
     });
@@ -187,52 +227,15 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
   }
 
   private filterServiceTypes(): void {
-    const programs = this.data.programs || [];
-    const isDayCareHome = this.data.isDayCareHome || false;
-
-    // Obtener programas desde localStorage si no están en data
-    let agencyPrograms: number[] = programs;
-    if (!programs || programs.length === 0) {
-      const programsJson = localStorage.getItem('agencyPrograms');
-      if (programsJson) {
-        const parsedPrograms = JSON.parse(programsJson);
-        agencyPrograms = parsedPrograms.map((p: any) => p.id);
-      }
-    }
-
-    const hasPSAV = agencyPrograms.includes(PROGRAM_IDS.PSAV);
-    const hasPACNA = agencyPrograms.includes(PROGRAM_IDS.PACNA);
-    const hasPDAM = agencyPrograms.includes(PROGRAM_IDS.PDAM);
-
-    // Servicios básicos disponibles para todos los programas
-    const basicServices: number[] = [
-      1, // Breakfast
-      2, // Lunch
-      3, // SnackAM
-      5  // SnackPM
-    ];
-
-    // Servicios específicos de PSAV
-    const psavServices: number[] = [
-      4,  // Dinner
-      6,  // SnackNight
-      7,  // DinnerExtended
-      8,  // DinnerAtRisk
-      9,  // SnackExtended
-      10  // SnackAtRisk
-    ];
-
-    // Filtrar servicios según programa y day care
-    let filtered = this.serviceTypes.filter(service => {
-      if (basicServices.includes(service.id)) return true;
-      if (psavServices.includes(service.id)) return hasPSAV;
-      return false;
-    });
+    const filtered = [...this.serviceTypes];
 
     // Excluir tipos ya existentes para el grupo seleccionado
-    const childGroupId = this.data.form.get('childGroupId')?.value;
+    const childGroupId = this.getSelectedChildGroupId();
     const existingSlots = this.data.existingServiceSlots ?? [];
-    const existingForGroup = existingSlots.filter((s) => s.childGroupId === childGroupId);
+    const existingForGroup =
+      childGroupId == null
+        ? []
+        : existingSlots.filter((s) => Number(s.childGroupId) === childGroupId);
     const existingTypeIds = new Set(existingForGroup.map((s) => s.serviceTypeId));
     this.filteredServiceTypes = filtered.filter((s) => !existingTypeIds.has(s.id));
     this.filteredServiceTypes.sort((a, b) => a.displayOrder - b.displayOrder);
@@ -280,10 +283,14 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
   /** Opciones de hora de inicio filtradas: excluir solapamientos y respetar tiempo mínimo tras servicios existentes del grupo. */
   private getFilteredStartTimeOptions(): TimeOption[] {
     const options = this.timeOptions;
-    const childGroupId = this.data.form.get('childGroupId')?.value;
+    const childGroupId = this.getSelectedChildGroupId();
     const existingSlots = this.data.existingServiceSlots ?? [];
     const existingForGroup = existingSlots.filter(
-      (s) => s.childGroupId === childGroupId && s.startTime != null && s.endTime != null
+      (s) =>
+        childGroupId != null &&
+        Number(s.childGroupId) === childGroupId &&
+        s.startTime != null &&
+        s.endTime != null
     );
     if (existingForGroup.length === 0) {
       return this.serviceTypesByProgram.length === 0 ? options : options;
@@ -317,10 +324,14 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
     let endOpts = filterEndTimeOptions(this.timeOptions, selectedStartTime, this.dayEndTime, operatingStartTime, operatingEndTime);
 
     // Excluir horas de fin que solapen con servicios existentes del mismo grupo
-    const childGroupId = this.data.form.get('childGroupId')?.value;
+    const childGroupId = this.getSelectedChildGroupId();
     const existingSlots = this.data.existingServiceSlots ?? [];
     const existingForGroup = existingSlots.filter(
-      (s) => s.childGroupId === childGroupId && s.startTime != null && s.endTime != null
+      (s) =>
+        childGroupId != null &&
+        Number(s.childGroupId) === childGroupId &&
+        s.startTime != null &&
+        s.endTime != null
     );
     if (selectedStartTime && existingForGroup.length > 0) {
       const startM = timeToMinutes(selectedStartTime);
@@ -429,7 +440,7 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
     | { kind: 'overlap'; nameA: string; nameB: string }
     | { kind: 'gap'; nameA: string; nameB: string; minMinutes: number }
     | null {
-    const childGroupId = this.data.form.get('childGroupId')?.value;
+    const childGroupId = this.getSelectedChildGroupId();
     const serviceTypeId = this.data.form.get('serviceTypeId')?.value;
     const startTime = this.data.form.get('startTime')?.value;
     const endTime = this.data.form.get('endTime')?.value;
@@ -444,7 +455,13 @@ export class SiteCalendarServiceAddModalComponent implements OnInit, OnDestroy {
     }
     const existingSlots = this.data.existingServiceSlots ?? [];
     const existingForGroup = existingSlots
-      .filter((s) => s.childGroupId === childGroupId && s.startTime != null && s.endTime != null)
+      .filter(
+        (s) =>
+          childGroupId != null &&
+          Number(s.childGroupId) === childGroupId &&
+          s.startTime != null &&
+          s.endTime != null
+      )
       .map((s) => ({
         serviceTypeId: s.serviceTypeId,
         startTime: s.startTime!,

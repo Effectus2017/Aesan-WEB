@@ -36,7 +36,12 @@
             [touchStartLongPress]="{ delay: 300, delta: 30 }"
             (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
             [attr.aria-hidden]="{} | calendarA11y : 'hideMonthCellEvents'">
-            <span *ngIf="isServiceEvent(event)" [ngClass]="{ 'opacity-40': isDayHoliday(day) }">{{ getServiceIcon(event) }}</span>
+            <span
+              *ngIf="isServiceEvent(event)"
+              [ngClass]="{ 'opacity-40': isDayHoliday(day) || isServiceDisabled(event) }"
+            >
+              {{ getServiceIcon(event) }}
+            </span>
         </div>
     </div>
 </ng-template>

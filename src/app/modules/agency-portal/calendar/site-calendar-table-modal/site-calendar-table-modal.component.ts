@@ -655,7 +655,10 @@ export class SiteCalendarTableModalComponent implements OnInit {
             operatingDay: operatingDay,
             siteId: this.data.siteId,
             childGroups,
-            programs: this.getAgencyPrograms(),
+            programs:
+              this.data.programIdsForServiceTypes && this.data.programIdsForServiceTypes.length > 0
+                ? this.data.programIdsForServiceTypes
+                : this.getAgencyPrograms(),
             isDayCareHome: this.getIsDayCareHome(),
             operatingStartTime: operatingDay.startTime ?? undefined,
             operatingEndTime: operatingDay.endTime ?? undefined,

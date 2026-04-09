@@ -117,7 +117,7 @@
           <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.addressDescription" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.address.label" | transloco }}</mat-label>
             <input matInput formControlName="address" readonly [placeholder]="'sponsor-evaluation.edit.fields.address.placeholder' | transloco" />
@@ -159,7 +159,7 @@
           <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.postalAddressDescription" | transloco }}</p>
         </div>
 
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.postalAddress.label" | transloco }}</mat-label>
             <input matInput formControlName="postalAddress" readonly [placeholder]="'sponsor-evaluation.edit.fields.postalAddress.placeholder' | transloco" />
@@ -170,12 +170,14 @@
               <mat-option *ngFor="let city of listCities" [value]="city">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+          <!--
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.region.label" | transloco }}</mat-label>
             <mat-select formControlName="postalRegion" [compareWith]="compareById" [disabled]="true">
               <mat-option *ngFor="let region of listPostalRegions" [value]="region">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+          -->
           <mat-form-field>
             <mat-label>{{ "sponsor-evaluation.edit.fields.zipCode.label" | transloco }}</mat-label>
             <input matInput formControlName="postalZipCode" readonly puertoRicoZipCode [placeholder]="'sponsor-evaluation.edit.fields.zipCode.placeholder' | transloco" type="text" inputmode="numeric" />

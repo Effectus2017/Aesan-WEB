@@ -21,4 +21,10 @@ export interface SiteCalendarTableModalData {
   siteOperatingEndTime?: string;
   commitAddOperatingDay?: (operatingDay: SiteOperatingDay, formValue: Record<string, unknown>) => Observable<void>;
   commitCreateService?: (operatingDayId: number, formValue: Record<string, unknown>) => Observable<void>;
+  /**
+   * IDs de programa para cargar tipos de servicio (get-service-types-by-program).
+   * Si se informa (p. ej. solo el programa del sitio según la ruta), el combo coincide con esa petición.
+   * Si no, el modal usa los programas de la agencia desde localStorage.
+   */
+  programIdsForServiceTypes?: number[];
 }

@@ -47,6 +47,7 @@ import {
   getServiceTypeStyle
 } from 'app/shared/constants/service-type-styles.constants';
 import { ServiceTypes } from 'app/shared/constants/service-type.constants';
+import { PROGRAM_IDS } from 'app/shared/const';
 import { getGroupBorderColor } from 'app/shared/constants/child-group-styles.constants';
 import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentClickEvent';
 
@@ -1379,10 +1380,8 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       const hasServices = day.services && day.services.length > 0;
       if (hasServices) {
         day.services.forEach((service: SiteOperatingDayService) => {
-          // Mostrar todos los servicios: los deshabilitados en feriados se muestran con tono apagado (opacity-40)
-          if (!service.isEnabled && !day.isHoliday) {
-            return; // No mostrar servicios deshabilitados salvo en feriados
-          }
+          // Mostrar todos los servicios en calendario.
+          // Los inactivos se diferencian con estilo atenuado en la plantilla.
 
           // Usar la misma fecha del día de funcionamiento para evitar problemas de zona horaria
           const serviceDate = new Date(operatingDate);
@@ -1586,6 +1585,12 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   isServiceEvent(event: CalendarEvent): boolean {
     const meta = event.meta as { isService?: boolean } | undefined;
     return !!meta?.isService;
+  }
+
+  /** Indica si el servicio del evento está inactivo. */
+  isServiceDisabled(event: CalendarEvent): boolean {
+    const meta = event.meta as { isService?: boolean; isEnabled?: boolean } | undefined;
+    return !!meta?.isService && meta?.isEnabled === false;
   }
 
   /** Eventos de día (operación, fin de semana, festivo) para la barra superior de la celda. */
@@ -2301,11 +2306,30 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     }
   }
 
+  /**
+   * Programa del calendario según la ruta (sites-pdam / sites-psav / sites-pacna).
+   * Así la lista de tipos de servicio coincide con una sola llamada get-service-types-by-program.
+   */
+  private resolveProgramIdsForServiceTypes(): number[] {
+    const url = this.router.url || '';
+    if (url.includes('/sites-pdam/')) {
+      return [PROGRAM_IDS.PDAM];
+    }
+    if (url.includes('/sites-psav/')) {
+      return [PROGRAM_IDS.PSAV];
+    }
+    if (url.includes('/sites-pacna/')) {
+      return [PROGRAM_IDS.PACNA];
+    }
+    return [];
+  }
+
   // Abrir modal con tabla de eventos del día
   openDayEventsModal(date: Date): void {
     if (this.readOnly) {
       return;
     }
+    const programIdsForServiceTypes = this.resolveProgramIdsForServiceTypes();
     const modalData: SiteCalendarTableModalData = {
       date: date,
       events: this.getDayEvents(date),
@@ -2315,6 +2339,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       childGroups: this.currentSite?.childGroups ?? [],
       siteOperatingStartTime: this.currentSite?.operatingStartTime,
       siteOperatingEndTime: this.currentSite?.operatingEndTime,
+      programIdsForServiceTypes: programIdsForServiceTypes.length ? programIdsForServiceTypes : undefined,
       commitAddOperatingDay: (op, fv) => this.commitAddOperatingDay$(op, fv),
       commitCreateService: (operatingDayId, fv) => this.commitCreateService$(operatingDayId, fv),
       onEventAdded: () => {
