@@ -43,6 +43,15 @@
       "columnEmail": "Correo electrónico",
       "columnRole": "Rol"
     },
+    "agencyBoardMembersModal": {
+      "title": "Miembros de la junta de gobierno",
+      "empty": "No hay miembros de junta registrados para esta agencia.",
+      "columnFullName": "Nombre completo",
+      "columnTitle": "Cargo",
+      "columnBirthDate": "Fecha de nacimiento",
+      "columnEmail": "Correo electrónico",
+      "columnStatus": "Activo"
+    },
     "programSelector": {
       "title": "Seleccionar Programa",
       "label": "Programa",
@@ -97,6 +106,7 @@
             "view": "Ver",
             "edit": "Editar",
             "viewStaff": "Ver Personal",
+            "viewStaffTooltip": "Ver personal asignado a esta escuela",
             "visitCalendar": "Calendario de visitas",
             "visitCalendarTooltip": "Abrir calendario de visitas de este sitio"
           }
@@ -136,9 +146,19 @@
         "title": "Hogares relacionados",
         "description": "Lista de hogares asociados a esta agencia"
       },
+      "sitesBySchoolModal": {
+        "buttons": {
+          "boardMembers": "Miembros de junta"
+        },
+        "tooltips": {
+          "boardRequiresAgency": "Se requiere el contexto de agencia para ver la junta.",
+          "boardMembersRow": "Miembro de la Junta"
+        }
+      },
       "staffBySite": {
         "modal": {
-          "title": "Personal de la escuela vinculada al sitio"
+          "title": "Personal de la escuela vinculada al sitio",
+          "titleBySchool": "Personal asignado a la escuela"
         },
         "table": {
           "columns": {

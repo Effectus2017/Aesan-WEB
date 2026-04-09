@@ -1,14 +1,28 @@
 <div class="flex flex-col -m-6 max-h-screen min-w-120">
-  <!-- Header - Fixed, outside scroll -->
-  <div class="flex flex-shrink-0 justify-between items-center pr-3 pl-6 h-16 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="flex flex-col">
-      <div class="text-lg font-medium">
-        {{ 'sponsor-evaluation.edit.staffBySite.modal.title' | transloco }}
+  <!-- Header: título + cerrar (mismo patrón que sites-by-school-view-modal / agency-board-members-modal) -->
+  <div class="flex justify-between items-center gap-2 pr-2 pl-6 min-h-16 flex-0 sm:pr-4 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col min-w-0 flex-1 py-2">
+      <div class="text-lg font-medium leading-tight truncate">
+        {{
+          (data.schoolName
+            ? 'sponsor-evaluation.edit.staffBySite.modal.titleBySchool'
+            : 'sponsor-evaluation.edit.staffBySite.modal.title'
+          ) | transloco
+        }}
       </div>
+      <div *ngIf="data.schoolName" class="text-sm opacity-90 truncate">{{ data.schoolName }}</div>
     </div>
-    <button mat-icon-button [mat-dialog-close]="null" [tabIndex]="-1" [title]="'global.buttons.close' | transloco" [attr.aria-label]="'global.buttons.close' | transloco">
-      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
-    </button>
+    <div class="flex flex-shrink-0 items-center">
+      <button
+        mat-icon-button
+        [mat-dialog-close]="null"
+        [tabIndex]="-1"
+        [title]="'global.buttons.close' | transloco"
+        [attr.aria-label]="'global.buttons.close' | transloco"
+      >
+        <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+      </button>
+    </div>
   </div>
 
   <!-- Content - Scrollable area -->
@@ -29,11 +43,15 @@
     </div>
   </div>
 
-  <!-- Actions - Fixed footer, outside scroll -->
-  <div class="flex flex-col flex-shrink-0 justify-end p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center">
-    <button mat-flat-button type="button" [color]="'primary'" (click)="onClose()" class="sm:ml-auto">
-      {{ 'global.buttons.close' | transloco }}
-    </button>
+  <!-- Pie: Cerrar rojo a la izquierda (mismo patrón que sites-by-school-view-modal) -->
+  <div
+    class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center"
+  >
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
   </div>
 </div>
 

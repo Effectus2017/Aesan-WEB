@@ -53,7 +53,9 @@ import { LatitudeDirective } from 'app/shared/directives/latitude.directive';
 import { LongitudeDirective } from 'app/shared/directives/longitude.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
 import { School } from 'app/shared/models/school/School';
+import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { SitesBySchoolViewModalComponent } from '../sites-by-school-view-modal/sites-by-school-view-modal.component';
+import { StaffBySiteModalComponent } from '../staff-by-site-modal/staff-by-site-modal.component';
 
 @Component({
   selector: 'app-aesan-sponsor-evaluation-view-pdam',
@@ -111,6 +113,7 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   private _customRouterService = inject(CustomRouterService);
   private _route = inject(ActivatedRoute);
   private _agencyStatusService = inject(AgencyStatusService);
+  private _schoolStaffService = inject(SchoolStaffService);
 
   // -----------------------------------------------------------------------------------------------------
   // @ Variables
@@ -431,10 +434,12 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     event.preventDefault();
   }
 
-  /** Acción no disponible en modo de solo visualización. */
-  onTableViewStaff(event: Event, _siteId: number): void {
+  /** Abre el modal de personal asignado a la escuela (fila de la tabla de escuelas). */
+  onTableViewStaff(event: Event, schoolId: number): void {
     event.stopPropagation();
     event.preventDefault();
+    const school = this.tableConfig.dataSource.data.find((item: School) => item.id === schoolId);
+    this._openSchoolStaffReadonlyModal(schoolId, school?.name ?? '');
   }
 
   /** Acción no disponible en modo de solo visualización. */
@@ -529,4 +534,28 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones privadas
   // -----------------------------------------------------------------------------------------------------
+  /** Carga SchoolStaff por escuela y abre el modal de solo lectura. */
+  private _openSchoolStaffReadonlyModal(schoolId: number, schoolName: string): void {
+    this._schoolStaffService
+      .getStaffBySchool({ schoolId })
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (list) => {
+          this._dialog.open(StaffBySiteModalComponent, {
+            width: '90vw',
+            maxWidth: '1000px',
+            maxHeight: '90vh',
+            data: {
+              siteId: 0,
+              schoolId,
+              schoolName,
+              staffList: list ?? [],
+            },
+          });
+        },
+        error: () => {
+          this._notificationService.showErrorDialog('dialog.error.message');
+        },
+      });
+  }
 }

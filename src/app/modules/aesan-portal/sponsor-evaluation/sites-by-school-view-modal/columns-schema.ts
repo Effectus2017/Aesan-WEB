@@ -65,6 +65,14 @@ export const SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA: ColumnSchem
         permission: 'site.view',
         disableAgencyRestriction: true,
       },
+      {
+        key: 'viewBoardMembers',
+        label: 'sponsor-evaluation.edit.sitesBySchoolModal.buttons.boardMembers',
+        icon: 'heroicons_outline:user-group',
+        tooltip: 'sponsor-evaluation.edit.sitesBySchoolModal.tooltips.boardMembersRow',
+        permission: 'site.view',
+        disableAgencyRestriction: true,
+      },
     ],
   },
 ];

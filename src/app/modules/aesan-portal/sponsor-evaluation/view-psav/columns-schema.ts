@@ -111,6 +111,14 @@ export const READONLY_SCHOOLS_COLUMNS_SCHEMA: ColumnSchema[] = [
     label: 'schools.list.table.columns.actions',
     buttons: [
       {
+        key: 'viewStaff',
+        label: 'sponsor-evaluation.edit.sites.table.buttons.viewStaff',
+        icon: 'heroicons_outline:user-group',
+        tooltip: 'sponsor-evaluation.edit.sites.table.buttons.viewStaffTooltip',
+        permission: 'site.view',
+        disableAgencyRestriction: true,
+      },
+      {
         key: 'sites',
         label: 'schools.list.table.buttons.sites',
         icon: 'heroicons_outline:building-office-2',

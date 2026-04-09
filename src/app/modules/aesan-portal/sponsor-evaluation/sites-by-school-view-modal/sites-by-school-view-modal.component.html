@@ -3,22 +3,24 @@
   [appKeyboardShortcut]="null"
   [compatibilityMode]="true"
 >
-  <!-- Header -->
-  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
-    <div class="flex flex-col">
-      <div class="text-lg font-medium">
+  <!-- Header: título + cerrar -->
+  <div class="flex justify-between items-center gap-2 pr-2 pl-6 min-h-16 flex-0 sm:pr-4 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col min-w-0 flex-1 py-2">
+      <div class="text-lg font-medium leading-tight truncate">
         {{ 'schools.sites.modal.title' | transloco }}: {{ data.schoolName }}
       </div>
     </div>
-    <button
-      mat-icon-button
-      [mat-dialog-close]="null"
-      [tabIndex]="-1"
-      [title]="'global.buttons.close' | transloco"
-      [attr.aria-label]="'global.buttons.close' | transloco"
-    >
-      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
-    </button>
+    <div class="flex flex-shrink-0 items-center">
+      <button
+        mat-icon-button
+        [mat-dialog-close]="null"
+        [tabIndex]="-1"
+        [title]="'global.buttons.close' | transloco"
+        [attr.aria-label]="'global.buttons.close' | transloco"
+      >
+        <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+      </button>
+    </div>
   </div>
 
   <!-- Content -->

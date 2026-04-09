@@ -8,7 +8,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { TranslocoModule } from '@ngneat/transloco';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { Subject, debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
@@ -21,6 +22,7 @@ import { CustomRouterService } from 'app/shared/services/custom-router.service';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { SchoolSiteService } from 'app/shared/services/school-site.service';
 import { SiteService } from 'app/shared/services/site.service';
+import { AgencyBoardMembersModalComponent } from '../agency-board-members-modal/agency-board-members-modal.component';
 import { SiteViewModalPacnaCentroComponent } from '../site-view-modal-pacna-centro/site-view-modal-pacna-centro.component';
 import { SiteViewModalPacnaHogarComponent } from '../site-view-modal-pacna-hogar/site-view-modal-pacna-hogar.component';
 import { SiteViewModalPdamComponent } from '../site-view-modal-pdam/site-view-modal-pdam.component';
@@ -46,6 +48,7 @@ import { SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA } from './column
     MatInputModule,
     MatPaginatorModule,
     TranslocoModule,
+    MatTooltipModule,
     GenericTableComponent,
     KeyboardShortcutDirective,
   ],
@@ -83,6 +86,7 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
   private _dialog = inject(MatDialog);
   private _siteService = inject(SiteService);
   private _notificationService = inject(NotificationService);
+  private _transloco = inject(TranslocoService);
 
   // -----
   // @ Variables
@@ -194,6 +198,12 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
   onTableAction(event: Event, action: string, rowId: number): void {
     if (action === 'viewServices') {
       this.onTableViewServices(event, rowId);
+      return;
+    }
+    if (action === 'viewBoardMembers') {
+      event.stopPropagation();
+      event.preventDefault();
+      this.openBoardMembersModal();
     }
   }
 
@@ -296,6 +306,26 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
   onClearSearch(): void {
     this.searchForm.get('search')?.setValue('');
     this.getAll(0, this.searchForm.value);
+  }
+
+  /** Abre el modal de miembros de junta de la agencia (solo lectura). */
+  openBoardMembersModal(): void {
+    const agencyId = this.data.agency?.id;
+    if (!agencyId) {
+      this._notificationService.showInfo(
+        this._transloco.translate('sponsor-evaluation.edit.sitesBySchoolModal.tooltips.boardRequiresAgency'),
+      );
+      return;
+    }
+    this._dialog.open(AgencyBoardMembersModalComponent, {
+      width: '90vw',
+      maxWidth: '1000px',
+      maxHeight: '90vh',
+      data: {
+        agencyId,
+        agencyName: this.data.agency?.name ?? '',
+      },
+    });
   }
 
   /** Paginación (igual que el modal de Agencia). */

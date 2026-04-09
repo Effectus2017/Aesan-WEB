@@ -43,6 +43,15 @@
       "columnEmail": "Email",
       "columnRole": "Role"
     },
+    "agencyBoardMembersModal": {
+      "title": "Board of directors members",
+      "empty": "No board members registered for this agency.",
+      "columnFullName": "Full name",
+      "columnTitle": "Title",
+      "columnBirthDate": "Birth date",
+      "columnEmail": "Email",
+      "columnStatus": "Active"
+    },
     "programSelector": {
       "title": "Select Program",
       "label": "Program",
@@ -122,6 +131,7 @@
           "view": "View",
           "edit": "Edit",
           "viewStaff": "View staff",
+          "viewStaffTooltip": "View staff assigned to this school",
           "visitCalendar": "Visit calendar",
           "visitCalendarTooltip": "Open visit calendar for this site"
         }
@@ -149,9 +159,19 @@
         "noSchoolForSite": "This site has no linked school. Staff cannot be listed by school."
       }
     },
+    "sitesBySchoolModal": {
+      "buttons": {
+        "boardMembers": "Board members"
+      },
+      "tooltips": {
+        "boardRequiresAgency": "Agency context is required to view the board.",
+        "boardMembersRow": "Board member"
+      }
+    },
     "staffBySite": {
       "modal": {
-        "title": "Staff for linked school"
+        "title": "Staff for linked school",
+        "titleBySchool": "Staff assigned to the school"
       },
       "table": {
         "columns": {

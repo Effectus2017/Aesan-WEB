@@ -15,6 +15,8 @@ import { STAFF_BY_SITE_COLUMNS_SCHEMA } from './columns-schema';
 export interface StaffBySiteModalData {
   siteId: number;
   schoolId?: number;
+  /** Contexto escuela (modal sitios por escuela en evaluación auspiciador). */
+  schoolName?: string;
   staffList: SchoolStaffResponse[];
 }
 
