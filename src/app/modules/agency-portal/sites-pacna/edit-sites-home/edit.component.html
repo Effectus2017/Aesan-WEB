@@ -139,7 +139,8 @@
         <!-- Municipio para Dirección Postal *  -->
         <!-- Region para Dirección Postal *  -->
         <!-- Código postal para Dirección Postal *  -->
-        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4 sm:col-span-12">
+        <!-- Región postal: ya no se solicita; postalRegionId se envía null desde TS -->
+        <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3 sm:col-span-12">
           <mat-form-field data-cy="postal-address-field">
             <mat-label>{{ "sites.edit.postal-address.label" | transloco }}</mat-label>
             <input matInput [formControlName]="'postalAddress'" placeholder="{{ 'sites.edit.postal-address.placeholder' | transloco }}" data-cy="postal-address-input" />
@@ -147,12 +148,13 @@
 
           <mat-form-field data-cy="postal-city-field">
             <mat-label>{{ "sites.edit.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')" [compareWith]="compareById">
+            <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" [compareWith]="compareById">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('postalCity').hasError('required')">{{ "sites.edit.city.required" | transloco }}</mat-error>
           </mat-form-field>
 
+          <!--
           <mat-form-field data-cy="postal-region-field">
             <mat-label>{{ "sites.edit.region.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compareById">
@@ -160,6 +162,7 @@
             </mat-select>
             <mat-error *ngIf="headerConfig.formGroup.get('postalRegion').hasError('required')">{{ "sites.edit.region.required" | transloco }}</mat-error>
           </mat-form-field>
+          -->
 
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "sites.edit.zip-code.label" | transloco }}</mat-label>

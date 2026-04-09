@@ -101,7 +101,7 @@
       "title": "Agregar Personal",
       "information": "Información General",
       "information-description": "Complete la información general del personal",
-      "schedulesOverlap": "Los horarios del cargo administrativo y del operacional no pueden superponerse.",
+      "schedulesOverlap": "Se notifica que las funciones administrativas y operacionales no podrán ser desempeñadas de manera simultánea, por lo que no se permitirá la duplicidad de horas en ambos roles.",
       "firstName": {
         "label": "Nombre",
         "placeholder": "Ingrese el nombre",
@@ -228,14 +228,14 @@
         "hint": "Selecciona el sitio donde estará asignado el personal",
         "required": "El sitio es requerido"
       },
-      "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Se listan las escuelas registradas.",
+      "school-assignment": "Asignaci\u00f3n de Escuela",
+      "school-assignment-description": "Escuela donde el personal estar\u00e1 prestando servicio.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
-        "hint": "",
+        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
         "emptyList": "No hay escuelas activas para esta agencia. Registre escuelas en el m\u00f3dulo correspondiente."
       },
       "centerPicker": {
@@ -513,13 +513,14 @@
         "label": "Sitio Asignado",
         "placeholder": "Seleccione el sitio (opcional)"
       },
-      "school-assignment": "Asignaci\u00f3n a escuela",
-      "school-assignment-description": "Se listan las escuelas registradas.",
+      "school-assignment": "Asignaci\u00f3n de Escuela",
+      "school-assignment-description": "Escuela donde el personal estar\u00e1 prestando servicio.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con la escuela elegida.",
         "emptyList": "No hay escuelas activas para esta agencia."
       },
       "centerPicker": {

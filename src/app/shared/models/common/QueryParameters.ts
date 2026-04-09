@@ -93,6 +93,9 @@ export interface QueryParameters {
   year?: number;  // Año
   operatingDayId?: number; // ID del día de funcionamiento
 
+  /** Habilitar/deshabilitar servicio (POST site-operating-day-service/toggle-service). */
+  isEnabled?: boolean;
+
   // Campo para filtrar sitios por IsDayCareHomeId (Sí, No, Ambos)
   isDayCareHomeId?: number | null;
 

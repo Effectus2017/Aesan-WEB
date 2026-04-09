@@ -736,7 +736,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     formData: Record<string, unknown>,
     fallbackServiceTypeId: number
   ): Observable<void> {
-    return this.siteOperatingDayServiceService.getServiceById(serviceId).pipe(
+    return this.siteOperatingDayServiceService.getServiceById({ id: serviceId }).pipe(
       switchMap((currentService: SiteOperatingDayService) => {
         const startTime = this.formatTimeForBackend(formData['startTime']);
         const endTime = this.formatTimeForBackend(formData['endTime']);
@@ -751,7 +751,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           isEnabled: formData['isEnabled'] !== undefined ? !!formData['isEnabled'] : true,
           comment: (formData['comment'] as string) || ''
         };
-        return this.siteOperatingDayServiceService.updateService(serviceId, request);
+        return this.siteOperatingDayServiceService.updateService(request, { id: serviceId });
       }),
       switchMap(() =>
         this.currentTableModal
@@ -770,7 +770,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   /** Elimina servicio (sin segundo diálogo de confirmación; el modal ya confirmó). */
   commitDeleteService$(serviceId: number): Observable<void> {
-    return this.siteOperatingDayServiceService.deleteService(serviceId).pipe(
+    return this.siteOperatingDayServiceService.deleteService({ id: serviceId }).pipe(
       switchMap(() =>
         this.currentTableModal
           ? this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))
@@ -808,7 +808,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       comment: String(result['comment'] ?? ''),
       isEnabled: result['isEnabled'] !== undefined ? !!result['isEnabled'] : true
     };
-    return this.siteOperatingDayServiceService.createService(request).pipe(
+    return this.siteOperatingDayServiceService.createService(request, {}).pipe(
       switchMap(() => this.loadOperatingDaysAndUpdateModal().pipe(map(() => void 0))),
       tap(() => this.notificationService.showSuccessDialog('sites.calendar.day-events.service-added-success'))
     );
@@ -2028,7 +2028,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       }
     }, (result) => {
       if (result === 'confirmed') {
-        this.siteOperatingDayServiceService.deleteService(serviceId).subscribe({
+        this.siteOperatingDayServiceService.deleteService({ id: serviceId }).subscribe({
           next: () => {
             this.loadOperatingDays();
             if (this.selectedDate) {
@@ -2111,62 +2111,19 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     });
   }
 
-  private updateService(serviceId: number, formData: any): void {
-    // Obtener el servicio actual para mantener los campos que no se editan
-    this.siteOperatingDayServiceService.getServiceById(serviceId).subscribe({
-      next: (currentService: SiteOperatingDayService) => {
-        // Convertir horarios a formato 24h con segundos para el backend
-        const startTime = this.formatTimeForBackend(formData.startTime);
-        const endTime = this.formatTimeForBackend(formData.endTime);
-
-        // Usar serviceTypeId del formData si está disponible, si no del servicio actual
-        const serviceTypeId = formData.serviceTypeId || currentService.serviceTypeId;
-
-        const request = {
-          operatingDayId: currentService.operatingDayId,
-          serviceTypeId: serviceTypeId,
-          childGroupId: currentService.childGroupId,
-          startTime: startTime,
-          endTime: endTime,
-          isEnabled: formData.isEnabled !== undefined ? formData.isEnabled : true,
-          comment: formData.comment || ''
-        };
-
-        console.log('Updating service with request:', request);
-
-        this.loading = true;
-        this.siteOperatingDayServiceService.updateService(serviceId, request).subscribe({
-          next: () => {
-            this.loadOperatingDaysAndUpdateModal().subscribe({
-              next: () => {
-                this.loading = false;
-              },
-              error: () => {
-                this.loading = false;
-              }
-            });
-          },
-          error: (error) => {
-            console.error('Error al actualizar servicio:', error);
-            this.loading = false;
-          }
-        });
-      },
-      error: (error) => {
-        console.error('Error al obtener servicio:', error);
-      }
-    });
-  }
-
   private toggleService(serviceId: number): void {
-    // Obtener el servicio actual para conocer su estado actual
-    this.siteOperatingDayServiceService.getServiceById(serviceId).subscribe({
+    const getByIdParams: QueryParameters = { id: serviceId };
+    this.siteOperatingDayServiceService.getServiceById(getByIdParams).subscribe({
       next: (currentService: SiteOperatingDayService) => {
-        // Cambiar el estado al opuesto
         const newState = !currentService.isEnabled;
 
+        const queryParameters: QueryParameters = {
+          id: serviceId,
+          isEnabled: newState
+        };
+
         this.loading = true;
-        this.siteOperatingDayServiceService.toggleService(serviceId, newState).subscribe({
+        this.siteOperatingDayServiceService.toggleService(queryParameters).subscribe({
           next: () => {
             this.loadOperatingDaysAndUpdateModal().subscribe({
               next: () => {

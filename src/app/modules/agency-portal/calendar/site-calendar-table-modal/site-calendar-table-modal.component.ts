@@ -710,7 +710,7 @@ export class SiteCalendarTableModalComponent implements OnInit {
 
             console.log('Request being sent:', request);
 
-            this.siteOperatingDayServiceService.createService(request).subscribe({
+            this.siteOperatingDayServiceService.createService(request, {}).subscribe({
               next: () => {
                 const refreshTable = (): void => {
                   this.refreshTableData();

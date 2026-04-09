@@ -17,7 +17,6 @@ export interface CfrInfoData {
 @Component({
   selector: 'app-cfr-info-dialog',
   templateUrl: './cfr-info-dialog.component.html',
-  styleUrls: ['./cfr-info-dialog.component.scss'],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   imports: [

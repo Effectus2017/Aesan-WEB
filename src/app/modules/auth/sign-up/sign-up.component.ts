@@ -1449,6 +1449,25 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // En PDAM, si está "En Proceso" (id 3), bloquear y mostrar CFR info
+    if (isPDAMProgram(selectedProgram) && statusId === 3) {
+      this.isEligible = false;
+      disableAllControlsExcept(this.signUpForm, 'program');
+      this._dialog.open(CfrInfoDialogComponent, {
+        data: {
+          title: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.title'),
+          message: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.message'),
+          cfrLink: {
+            url: 'https://www.ecfr.gov',
+            text: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.cfr-link-text'),
+          },
+        },
+        disableClose: false,
+        panelClass: ['mat-dialog-container', 'dialog-responsive'],
+      });
+      return;
+    }
+
     // Caso contrario, re-habilitar el formulario
     this.isEligible = true;
     enableAllControls(this.signUpForm);

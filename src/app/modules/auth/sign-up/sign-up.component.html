@@ -567,7 +567,8 @@
           <!-- City para Dirección Postal *  -->
           <!-- Region para Dirección Postal *  -->
           <!-- Postal Zip Code *  -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-4">
+          <!-- Región postal: ya no se solicita; postalRegionId se envía null desde TS -->
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-3">
             <!-- Postal Address *  -->
             <!-- cambiar texto a address unicamente -->
             <mat-form-field data-cy="postal-address-field">
@@ -580,14 +581,14 @@
             <!-- City para Dirección Postal *  -->
             <mat-form-field data-cy="postal-city-field">
               <mat-label>{{ "sign-up.city.label" | transloco }}</mat-label>
-              <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select" (valueChange)="getRegionsByCityId($event, 'postalRegion')">
+              <mat-select [formControlName]="'postalCity'" data-cy="postal-city-select">
                 <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
               </mat-select>
               <mat-error *ngIf="signUpForm.get('postalCity')?.hasError('required') && (signUpForm.get('postalCity')?.touched || signUpForm.get('postalCity')?.dirty)">
                 {{ "sign-up.city.required" | transloco }}
               </mat-error>
             </mat-form-field>
-            <!-- Region para Dirección Postal *  -->
+            <!--
             <mat-form-field data-cy="postal-region-field">
               <mat-label>{{ "sign-up.region.label" | transloco }}</mat-label>
               <mat-select [formControlName]="'postalRegion'" data-cy="postal-region-select" [compareWith]="compare">
@@ -597,6 +598,7 @@
                 {{ "sign-up.region.required" | transloco }}
               </mat-error>
             </mat-form-field>
+            -->
 
             <!-- Postal Zip Code *  -->
             <mat-form-field data-cy="postal-zip-code-field">

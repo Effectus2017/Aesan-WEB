@@ -17,7 +17,8 @@
       {{ 'dialog.cfr-info-link-text' | transloco }}<br>
       <a [href]="data.cfrLink.url"
          target="_blank"
-         class="cfr-link">
+         rel="noopener noreferrer"
+         class="text-indigo-600 underline cursor-pointer hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
         {{ data.cfrLink.text }}
       </a>
     </p>

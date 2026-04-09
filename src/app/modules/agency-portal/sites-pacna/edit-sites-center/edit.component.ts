@@ -370,7 +370,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       postalCity: [null, Validators.required],
       // Región postal - Campo requerido para la ubicación del sitio
       // Postal region - Required field for site location
-      postalRegion: [null, Validators.required],
+      postalRegion: [null],
       // Código postal - Campo requerido para la ubicación del sitio
       // Postal ZIP code - Required field for site location
       postalZipCode: ['', puertoRicoZipCodeValidator()],
@@ -1174,7 +1174,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     const cityId: number = formValues.city?.id;
     const regionId: number = formValues.region?.id;
     const postalCityId: number = formValues.postalCity?.id;
-    const postalRegionId: number = formValues.postalRegion?.id;
+    // const postalRegionId: number = formValues.postalRegion?.id; // Ya no se usa; API recibe postalRegionId null
     const educationLevelIds: number[] = formValues.educationLevels?.map((level: any) => level.id) || [];
     const organizationTypeId: number = formValues.organizationType?.id;
     const kitchenTypeId: number = formValues.kitchenType?.id;
@@ -1213,7 +1213,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       sameAsPhysicalAddress: formValues.sameAsPhysicalAddress ?? null,
       postalAddress: formValues.postalAddress || null,
       postalCityId: postalCityId || null,
-      postalRegionId: postalRegionId || null,
+      // postalRegionId: postalRegionId || null,
+      postalRegionId: null,
       postalZipCode: formValues.postalZipCode || null,
       latitude: formValues.latitude ?? null,
       longitude: formValues.longitude ?? null,
@@ -1498,6 +1499,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
                 regionControl.setValue(null);
               }
             }
+          }
+          /* Región postal deshabilitada en UI — lógica original conservada comentada:
           } else if (target === 'postalRegion') {
             this.listPostalRegions = response.body;
             const regionControl = this.headerConfig.formGroup.get('postalRegion');
@@ -1517,6 +1520,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
               }
             }
           }
+          */
         }
       },
       error: (error) => {
@@ -1642,6 +1646,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       const physicalRegion = this.headerConfig.formGroup.value.region;
       const physicalZipCode = this.headerConfig.formGroup.value.zipCode;
 
+      /* Lógica anterior (copiar región postal desde dirección física) — conservada comentada:
       // PRIMERO sincronizar la lista de regiones postales con las regiones físicas
       // Esto debe hacerse ANTES de establecer los valores para que el select funcione
       if (physicalCity && physicalRegion) {
@@ -1675,13 +1680,45 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
           { emitEvent: false },
         );
       }
+      */
+      // Región postal ya no se copia; postalRegionId null en API
+      if (physicalCity && physicalRegion) {
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalRegion: null,
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false },
+        );
+
+        this._changeDetectorRef.detectChanges();
+      } else {
+        this.headerConfig.formGroup.patchValue(
+          {
+            postalAddress: physicalAddress,
+            postalCity: physicalCity,
+            postalZipCode: physicalZipCode,
+          },
+          { emitEvent: false },
+        );
+      }
 
       this.headerConfig.formGroup.updateValueAndValidity();
     } else {
+      /* Limpieza anterior incluía postalRegion: ''
       this.headerConfig.formGroup.patchValue({
         postalAddress: '',
         postalCity: '',
         postalRegion: '',
+        postalZipCode: '',
+      });
+      */
+      this.headerConfig.formGroup.patchValue({
+        postalAddress: '',
+        postalCity: '',
+        postalRegion: null,
         postalZipCode: '',
       });
     }

@@ -232,6 +232,11 @@
       "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: 7 CFR 210.9(b).",
       "cfr-link-text": "7 CFR Part 210 -- National School Lunch Program"
     },
+    "pdam-tax-exemption-in-process": {
+      "title": "Información sobre Elegibilidad",
+      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: ######.",
+      "cfr-link-text": "######"
+    },
     "basic-education-not-eligible": {
       "title": "Información sobre Elegibilidad",
       "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente Ley: 212-218, sección 10 y 12 . Para conocer más información puede acceder al siguiente enlace:",

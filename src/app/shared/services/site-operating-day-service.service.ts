@@ -1,96 +1,65 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from 'environments/environment';
 import { getHttpOptions } from '../utils';
 import { QueryParameters } from '../models/common/QueryParameters';
 import { SiteOperatingDayService } from '../models/site/SiteOperatingDayService';
 import { SiteOperatingDayServiceRequest } from '../models/request/SiteOperatingDayServiceRequest';
 
+/**
+ * Misma forma que {@link SchoolService}: QueryParameters, getHttpOptions, BehaviorSubject + tap en GET.
+ */
 @Injectable({
   providedIn: 'root',
 })
 export class SiteOperatingDayServiceService {
+  private _services = new BehaviorSubject<SiteOperatingDayService[] | null>(null);
+  private _service = new BehaviorSubject<SiteOperatingDayService | null>(null);
+
   private apiUrl = `${environment.baseHttpUrl}/site-operating-day-service`;
   private _httpClient = inject(HttpClient);
 
-  constructor() {}
+  get services$(): Observable<SiteOperatingDayService[] | null> {
+    return this._services.asObservable();
+  }
 
-  /**
-   * Obtiene todos los servicios de un día de funcionamiento
-   * @param operatingDayId ID del día de funcionamiento
-   * @returns Lista de servicios del día
-   */
-  getServicesByOperatingDay(operatingDayId: number): Observable<SiteOperatingDayService[]> {
-    return this._httpClient.get<SiteOperatingDayService[]>(
-      `${this.apiUrl}`,
-      getHttpOptions({ operatingDayId })
-    );
+  get service$(): Observable<SiteOperatingDayService | null> {
+    return this._service.asObservable();
   }
 
   /**
-   * Obtiene un servicio por su ID
-   * @param id ID del servicio
-   * @returns El servicio encontrado
+   * Usa `observe: 'body'` (no el default global `observe: 'response'`) para que el observable
+   * emita el JSON del servicio, no HttpResponse; el tap alimenta el subject con el mismo DTO.
    */
-  getServiceById(id: number): Observable<SiteOperatingDayService> {
-    return this._httpClient.get<SiteOperatingDayService>(
-      `${this.apiUrl}/get-service-by-id`,
-      getHttpOptions({ id })
-    );
+  getServicesByOperatingDay(queryParameters: QueryParameters): Observable<SiteOperatingDayService[]> {
+    const options = { ...getHttpOptions(queryParameters), observe: 'body' as const };
+    return this._httpClient
+      .get<SiteOperatingDayService[]>(`${this.apiUrl}`, options)
+      .pipe(tap((list) => this._services.next(list)));
   }
 
-  /**
-   * Crea un nuevo servicio para un día de funcionamiento
-   * @param request Datos del servicio a crear
-   * @returns ID del servicio creado
-   */
-  createService(request: SiteOperatingDayServiceRequest): Observable<{ id: number }> {
-    return this._httpClient.post<{ id: number }>(
-      this.apiUrl,
-      request,
-      getHttpOptions({})
-    );
+  getServiceById(queryParameters: QueryParameters): Observable<SiteOperatingDayService> {
+    const options = { ...getHttpOptions(queryParameters), observe: 'body' as const };
+    return this._httpClient
+      .get<SiteOperatingDayService>(`${this.apiUrl}/get-service-by-id`, options)
+      .pipe(tap((dto) => this._service.next(dto)));
   }
 
-  /**
-   * Actualiza un servicio existente
-   * @param id ID del servicio
-   * @param request Datos actualizados del servicio
-   * @returns True si la operación fue exitosa
-   */
-  updateService(id: number, request: SiteOperatingDayServiceRequest): Observable<boolean> {
-    return this._httpClient.put<boolean>(
-      `${this.apiUrl}/update-service`,
-      request,
-      getHttpOptions({ id })
-    );
+  createService(request: SiteOperatingDayServiceRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}`, request, getHttpOptions(queryParameters));
   }
 
-  /**
-   * Elimina un servicio
-   * @param id ID del servicio
-   * @returns True si la operación fue exitosa
-   */
-  deleteService(id: number): Observable<boolean> {
-    return this._httpClient.delete<boolean>(
-      `${this.apiUrl}/delete-service`,
-      getHttpOptions({ id })
-    );
+  updateService(request: SiteOperatingDayServiceRequest, queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-service`, request, getHttpOptions(queryParameters));
   }
 
-  /**
-   * Habilita o deshabilita un servicio
-   * @param id ID del servicio
-   * @param isEnabled Estado a establecer (true = habilitado, false = deshabilitado)
-   * @returns True si la operación fue exitosa
-   */
-  toggleService(id: number, isEnabled: boolean): Observable<boolean> {
-    return this._httpClient.post<boolean>(
-      `${this.apiUrl}/toggle-service`,
-      isEnabled,
-      getHttpOptions({ id })
-    );
+  deleteService(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.delete(`${this.apiUrl}/delete-service`, getHttpOptions(queryParameters));
+  }
+
+  /** Id e isEnabled van en query (misma convención que el API). */
+  toggleService(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.post(`${this.apiUrl}/toggle-service`, null, getHttpOptions(queryParameters));
   }
 }
-

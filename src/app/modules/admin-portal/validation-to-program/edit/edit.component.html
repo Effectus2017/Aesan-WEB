@@ -196,6 +196,7 @@
         </div>
 
         <!-- Postal Address *  -->
+        <!-- Región postal: ya no se solicita; postalRegionId se envía null desde TS -->
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
           <!-- Postal Address *  -->
           <mat-form-field data-cy="postal-address-field">
@@ -212,17 +213,18 @@
           <!-- Postal City *  -->
           <mat-form-field data-cy="postal-city-field">
             <mat-label>{{ "validation-to-program.edit.postal.city.label" | transloco }}</mat-label>
-            <mat-select [formControlName]="'postalCity'" [compareWith]="compareItems" (valueChange)="getRegionsByCityId($event, 'postalRegion')" data-cy="postal-city-select">
+            <mat-select [formControlName]="'postalCity'" [compareWith]="compareItems" data-cy="postal-city-select">
               <mat-option *ngFor="let city of listCities" [value]="city" data-cy="postal-city-option">{{ city.name }}</mat-option>
             </mat-select>
           </mat-form-field>
-          <!-- Postal Region *  -->
+          <!--
           <mat-form-field data-cy="postal-region-field">
             <mat-label>{{ "validation-to-program.edit.postal.region.label" | transloco }}</mat-label>
             <mat-select [formControlName]="'postalRegion'" [compareWith]="compareItems" data-cy="postal-region-select">
               <mat-option *ngFor="let region of listPostalRegions" [value]="region" data-cy="postal-region-option">{{ region.name }}</mat-option>
             </mat-select>
           </mat-form-field>
+          -->
           <!-- Postal Zip Code *  -->
           <mat-form-field data-cy="postal-zip-code-field">
             <mat-label>{{ "validation-to-program.edit.postal.zip-code.label" | transloco }}</mat-label>

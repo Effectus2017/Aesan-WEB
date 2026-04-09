@@ -101,7 +101,7 @@
       "title": "Add Staff",
       "information": "General Information",
       "information-description": "Complete the general information of the staff",
-      "schedulesOverlap": "Administrative and operational position schedules cannot overlap.",
+      "schedulesOverlap": "Administrative and operational functions cannot be performed at the same time; duplicate hours across both roles are not allowed.",
       "firstName": {
         "label": "First Name",
         "placeholder": "Enter first name",
@@ -225,8 +225,8 @@
         "required": "ZIP code is required",
         "invalid": "The ZIP code must have the format ##### or #####-####"
       },
-      "school-assignment": "School assignment",
-      "school-assignment-description": "Optional. Schools registered for your agency are listed here.",
+      "school-assignment": "School Assignment",
+      "school-assignment-description": "School where the staff member will be providing service.",
       "center-assignment": "Center assignment",
       "center-assignment-description": "Optional. Centers registered for your agency are listed here.",
       "school": {
@@ -237,7 +237,7 @@
       "schoolPicker": {
         "label": "School",
         "placeholder": "Select school (optional)",
-        "hint": "",
+        "hint": "This links the employee to the selected school.",
         "emptyList": "There are no active schools for this agency. Register schools in the corresponding module."
       },
       "centerPicker": {
@@ -553,13 +553,14 @@
         "label": "Assigned Site",
         "placeholder": "Select site (optional)"
       },
-      "school-assignment": "School assignment",
-      "school-assignment-description": "Optional. Schools registered for your agency are listed here.",
+      "school-assignment": "School Assignment",
+      "school-assignment-description": "School where the staff member will be providing service.",
       "center-assignment": "Center assignment",
       "center-assignment-description": "Optional. Centers registered for your agency are listed here.",
       "schoolPicker": {
         "label": "School",
         "placeholder": "Select school (optional)",
+        "hint": "This links the employee to the selected school.",
         "emptyList": "There are no active schools for this agency."
       },
       "centerPicker": {
