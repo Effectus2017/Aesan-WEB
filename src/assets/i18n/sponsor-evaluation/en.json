@@ -139,6 +139,10 @@
           "empty": "This site has no groups with registered services.",
           "button": "Services",
           "buttonTooltip": "View meal services by group for this site"
+        },
+        "servicesCalendar": {
+          "title": "Site operating calendar",
+          "calendarButtonTooltip": "View site operating schedule and services calendar"
         }
       },
       "messages": {

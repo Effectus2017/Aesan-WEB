@@ -1,0 +1,35 @@
+<div class="flex flex-col -m-6 max-h-[90vh] min-h-0 w-[min(96vw,1400px)] h-[min(90vh,920px)]">
+  <div class="flex flex-shrink-0 justify-between items-center pr-3 pl-6 h-16 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">
+      {{ 'sponsor-evaluation.edit.sites.modal.servicesCalendar.title' | transloco }}
+    </div>
+    <button
+      mat-icon-button
+      type="button"
+      (click)="onClose()"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco"
+    >
+      <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+    </button>
+  </div>
+
+  <div class="flex flex-col flex-1 min-h-0 bg-default">
+    <app-site-calendar
+      class="flex flex-col flex-1 min-h-0"
+      [siteId]="data.siteId"
+      [siteName]="data.siteName ?? ''"
+      [readOnly]="true"
+      [embeddedInModal]="true"
+    />
+  </div>
+
+  <div
+    class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center"
+  >
+    <button mat-flat-button type="button" color="warn" (click)="onClose()">
+      {{ 'global.buttons.close' | transloco }}
+    </button>
+  </div>
+</div>

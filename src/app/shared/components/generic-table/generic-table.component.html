@@ -214,6 +214,22 @@
         </div>
         }
 
+        @if (button.key === 'visitCalendar') {
+        <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+          <button
+            type="button"
+            mat-icon-button
+            [disabled]="isButtonDisabled(button)"
+            [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+            (click)="onVisitCalendar($event, element.id)"
+            [attr.aria-label]="button.label | transloco"
+          >
+            <span class="sr-only">{{ button.label | transloco }}</span>
+            <mat-icon [svgIcon]="button.icon || 'heroicons_outline:calendar-days'" [attr.aria-hidden]="true" style="color: #7c3aed;"></mat-icon>
+          </button>
+        </div>
+        }
+
         @if (button.key === 'satellites') {
         <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
           <button
@@ -779,6 +795,22 @@
                   [disabled]="isButtonDisabled(button)"
                   [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
                   (click)="onButtonClick($event, button, element)"
+                  [attr.aria-label]="button.label | transloco"
+              >
+                  {{ button.label | transloco }}
+              </button>
+            </div>
+            }
+
+            @if (button.key === 'visitCalendar') {
+            <div [matTooltip]="getButtonTooltip(button)" [matTooltipDisabled]="!getButtonTooltip(button)">
+              <button
+                  type="button"
+                  mat-flat-button
+                  color="primary"
+                  [disabled]="isButtonDisabled(button)"
+                  [appDisableIfAgencyRestricted]="!button.disableAgencyRestriction"
+                  (click)="onVisitCalendar($event, element.id)"
                   [attr.aria-label]="button.label | transloco"
               >
                   {{ button.label | transloco }}

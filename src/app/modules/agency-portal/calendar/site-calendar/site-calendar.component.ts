@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, inject, booleanAttribute } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -52,6 +52,7 @@ import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentCli
 
 @Component({
   selector: 'app-site-calendar',
+  standalone: true,
   styleUrls: ['./site-calendar.component.scss'],
   imports: [
     CommonModule,
@@ -73,6 +74,10 @@ import { HourSegmentClickEvent } from 'app/shared/models/calendar/HourSegmentCli
 export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   @Input() siteId?: number;
   @Input() siteName: string = '';
+  /** Solo consulta: sin edición, arrastre ni modales de mutación (p. ej. portal AESAN embebido en diálogo). */
+  @Input({ transform: booleanAttribute }) readOnly = false;
+  /** Ajusta layout para `MatDialog` (sin `absolute inset-0` en el contenedor raíz). */
+  @Input({ transform: booleanAttribute }) embeddedInModal = false;
   @Output() dayToggled = new EventEmitter<{date: Date, isOperating: boolean}>();
 
   private siteCalendarService: SiteCalendarService = inject(SiteCalendarService);
@@ -279,7 +284,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onDayClick(event: any) {
-    if (this.loading) return;
+    if (this.readOnly || this.loading) return;
 
     let date: Date | null = null;
 
@@ -367,6 +372,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onEventClick({ event }: { event: CalendarEvent }) {
+    if (this.readOnly) {
+      return;
+    }
     // Verificar si es un servicio o un día de funcionamiento
     const isService = event.meta?.isService === true;
     const isPlaceholderForHoliday = (event.meta as { isPlaceholderForHoliday?: boolean })?.isPlaceholderForHoliday === true;
@@ -382,7 +390,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onEventTimesChanged({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
-    if (this.loading) return;
+    if (this.readOnly || this.loading) return;
 
     // Solo permitir arrastrar días de funcionamiento, no servicios
     const isService = event.meta?.isService === true;
@@ -407,7 +415,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onEventResized({ event, newStart, newEnd }: { event: CalendarEvent, newStart: Date, newEnd: Date }) {
-    if (this.loading) return;
+    if (this.readOnly || this.loading) return;
 
     // Solo permitir redimensionar días de funcionamiento, no servicios
     const isService = event.meta?.isService === true;
@@ -431,7 +439,7 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onHourSegmentClicked(event: HourSegmentClickEvent) {
-    if (this.loading) return;
+    if (this.readOnly || this.loading) return;
     const date = event.date;
     const dayData = this.findDayData(date);
     if (dayData) {
@@ -444,6 +452,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openAddDayDialog(date: Date) {
+    if (this.readOnly) {
+      return;
+    }
     // Verificar si la agencia está restringida antes de continuar
     if (this.agencyStatusStorageService.isAgencyRestricted()) {
       const status = this.agencyStatusStorageService.getAgencyRestrictedStatus();
@@ -515,6 +526,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openEditDayDialog(dayData: SiteOperatingDay) {
+    if (this.readOnly) {
+      return;
+    }
     // Preparar el formulario con los datos actuales
     this.editForm.patchValue({
       startTime: dayData.startTime || '08:00',
@@ -540,6 +554,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   openEditEventDialog(event: CalendarEvent, fromTable: boolean = false) {
+    if (this.readOnly) {
+      return;
+    }
     const operatingDay = event.meta as SiteOperatingDay;
 
     // Preparar el formulario con los datos actuales
@@ -571,6 +588,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método específico para editar desde la tabla
   openEditEventDialogFromTable(event: CalendarEvent, id: any) {
+    if (this.readOnly) {
+      return;
+    }
     const operatingDay = event.meta as SiteOperatingDay;
 
     // Preparar el formulario con los datos actuales
@@ -1198,6 +1218,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
       .subscribe({
         next: (siteResponse: any) => {
           this.currentSite = siteResponse?.body;
+          if (this.currentSite?.name) {
+            this.siteName = this.currentSite.name;
+          }
           // Luego cargar los días de funcionamiento
           this.loadOperatingDays();
         },
@@ -1243,6 +1266,11 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
           // Calcular el mes inicial solo la primera vez que se cargan las fechas límite
           if (!this.hasCalculatedInitialDate && this.operatingFromDate && this.operatingToDate) {
             this.calculateInitialViewDate();
+          }
+
+          const nameFromApi = (data as { siteName?: string })?.siteName;
+          if (nameFromApi) {
+            this.siteName = nameFromApi;
           }
 
           this.loading = false;
@@ -2045,6 +2073,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Método para abrir modal de edición de servicio
   openEditServiceDialog(service: SiteOperatingDayService): void {
+    if (this.readOnly) {
+      return;
+    }
     // Obtener el operatingDay para verificar si es feriado
     // Priorizar búsqueda por ID, que es más preciso y evita errores de comparación de fechas
     let operatingDay: SiteOperatingDay | undefined;
@@ -2261,6 +2292,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   }
 
   onAddButtonClick(event?: Event): void {
+    if (this.readOnly) {
+      return;
+    }
     // Abrir modal para agregar evento al día seleccionado
     if (this.selectedDate) {
       this.openAddDayDialog(this.selectedDate);
@@ -2269,6 +2303,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   // Abrir modal con tabla de eventos del día
   openDayEventsModal(date: Date): void {
+    if (this.readOnly) {
+      return;
+    }
     const modalData: SiteCalendarTableModalData = {
       date: date,
       events: this.getDayEvents(date),
@@ -2356,6 +2393,9 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
    * Usa la ruta actual para determinar el programa (PDAM, PSAV, PACNA) y navegar al edit correcto.
    */
   navigateToSite(): void {
+    if (this.readOnly) {
+      return;
+    }
     if (!this.currentSiteId || this.currentSiteId === 0) {
       return;
     }

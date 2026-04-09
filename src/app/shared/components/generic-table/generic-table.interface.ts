@@ -191,6 +191,8 @@ export interface OnGenericTableHandler {
   onTableDelete?: (event: Event, id: any) => void;
   onTableDownload?: (event: Event, id: any) => void;
   onTableCalendar?: (event: Event, id: any) => void;
+  /** Calendario de visitas (p. ej. AESAN); el id es el de la fila de la tabla. */
+  onTableVisitCalendar?: (event: Event, id: any) => void;
   /** Ver ficha de sitio (modal); el id es el de la fila de la tabla (p. ej. relación escuela–sitio). */
   onTableViewSite?: (event: Event, id: any) => void;
   onTableSatellites?: (event: Event, id: any) => void;

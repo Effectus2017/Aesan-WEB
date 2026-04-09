@@ -27,6 +27,8 @@ import { SiteViewModalPdamComponent } from '../site-view-modal-pdam/site-view-mo
 import { SiteViewModalPsavComponent } from '../site-view-modal-psav/site-view-modal-psav.component';
 import { SiteServicesViewModalComponent } from '../site-services-view-modal/site-services-view-modal.component';
 import { SiteServicesViewModalData } from '../site-services-view-modal/site-services-view-modal-data.interface';
+import { SiteServicesCalendarViewModalComponent } from '../site-services-calendar-view-modal/site-services-calendar-view-modal.component';
+import { SiteServicesCalendarViewModalData } from '../site-services-calendar-view-modal/site-services-calendar-view-modal-data.interface';
 import { SitesBySchoolViewModalData } from './sites-by-school-view-modal-data.interface';
 import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { SPONSOR_EVALUATION_SITES_BY_SCHOOL_VIEW_COLUMNS_SCHEMA } from './columns-schema';
@@ -153,8 +155,29 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
     this.getAll(0, this.searchForm.value);
   }
 
-  /** Navega al calendario de visitas AESAN y cierra el modal. */
+  /** Abre el modal de calendario de operación/servicios del sitio (solo lectura). */
   onTableCalendar(event: Event, id: number): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    const element = this.tableConfig.dataSourceList.find((item) => item.id === id);
+    const siteId = element?.siteId || id;
+
+    const dialogData: SiteServicesCalendarViewModalData = {
+      siteId,
+      siteName: element?.siteName,
+    };
+
+    this._dialog.open(SiteServicesCalendarViewModalComponent, {
+      width: '96vw',
+      maxWidth: '1400px',
+      maxHeight: '90vh',
+      data: dialogData,
+    });
+  }
+
+  /** Navega al calendario de visitas AESAN a pantalla completa y cierra el modal de sitios por escuela. */
+  onTableVisitCalendar(event: Event, id: number): void {
     event.stopPropagation();
     event.preventDefault();
 
