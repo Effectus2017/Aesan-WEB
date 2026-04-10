@@ -5,7 +5,7 @@ export interface AgencyRequest {
   name?: string;
   statusId?: number;
   sdrNumber?: number;
-  uieNumber?: number;
+  uieNumber?: string | null;
   einNumber?: number;
   address?: string;
   zipCode?: string;

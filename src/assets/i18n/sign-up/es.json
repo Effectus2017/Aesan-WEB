@@ -165,7 +165,8 @@
       "label": "Identificador Único de Entidad (IUE)",
       "placeholder": "Ingresa el Identificador Único de Entidad (IUE)",
       "required": "El Identificador Único de Entidad (IUE) es requerido",
-      "maxDigits": "El Identificador Único de Entidad (IUE) debe tener máximo 12 dígitos",
+      "length": "El Identificador Único de Entidad (IUE) debe tener exactamente 12 caracteres",
+      "alphanumeric": "El Identificador Único de Entidad (IUE) solo puede contener letras y números",
       "exists": "Este Identificador Único de Entidad (IUE) ya está registrado",
       "valid": "Este Identificador Único de Entidad (IUE) está disponible"
     },

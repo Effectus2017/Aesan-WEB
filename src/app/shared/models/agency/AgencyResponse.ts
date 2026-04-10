@@ -13,7 +13,7 @@ export interface AgencyResponse {
   name?: string;
   statusId?: number;
   sdrNumber?: number;
-  uieNumber?: number;
+  uieNumber?: string | null;
   einNumber?: number;
   agencyCode?: string;
   address?: string;

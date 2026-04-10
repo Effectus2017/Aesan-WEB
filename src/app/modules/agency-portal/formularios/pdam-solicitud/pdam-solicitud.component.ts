@@ -77,7 +77,7 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
   postalAddress: string;
   physicalAddress: string;
   phoneNumber: string;
-  uieNumber: number;
+  uieNumber: string;
   corporationNumber: number;
   employerNumber: number;
   latitude: number;
@@ -219,7 +219,7 @@ export class AgencyPDAMSolicitudComponent implements OnInit, OnDestroy, OnGeneri
     this.postalAddress = param.postalAddress;
     this.physicalAddress = param.address;
     this.phoneNumber = param.phone;
-    this.uieNumber = param.uieNumber;
+    this.uieNumber = param.uieNumber ?? '';
     this.corporationNumber = param.sdrNumber;
     this.employerNumber = param.einNumber;
     this.latitude = param.latitude;

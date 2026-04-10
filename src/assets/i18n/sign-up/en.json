@@ -159,7 +159,8 @@
       "label": "Unique Entity Identifier (UEI)",
       "placeholder": "Enter the Unique Entity Identifier (UEI)",
       "required": "Unique Entity Identifier (UEI) is required",
-      "maxDigits": "The Unique Entity Identifier (UEI) must have a maximum of 12 digits",
+      "length": "The Unique Entity Identifier (UEI) must be exactly 12 characters",
+      "alphanumeric": "The Unique Entity Identifier (UEI) can only contain letters and numbers",
       "exists": "This Unique Entity Identifier (UEI) is already registered"
     },
     "ein": {

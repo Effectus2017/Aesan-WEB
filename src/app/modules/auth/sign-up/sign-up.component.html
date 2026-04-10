@@ -387,17 +387,18 @@
                 matInput
                 [formControlName]="'uieNumber'"
                 placeholder="{{ 'sign-up.uie.placeholder' | transloco }}"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                numericOnly
                 maxlength="12"
+                autocomplete="off"
                 data-cy="uie-input"
               />
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('required') && (signUpForm.get('uieNumber')?.touched || signUpForm.get('uieNumber')?.dirty)">
                 {{ "sign-up.uie.required" | transloco }}
               </mat-error>
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('maxDigits')">
-                {{ "sign-up.uie.maxDigits" | transloco }}
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('minlength') || signUpForm.get('uieNumber')?.hasError('maxlength')">
+                {{ "sign-up.uie.length" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('alphanumeric')">
+                {{ "sign-up.uie.alphanumeric" | transloco }}
               </mat-error>
               <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('uieExists')">
                 {{ "sign-up.uie.exists" | transloco }}

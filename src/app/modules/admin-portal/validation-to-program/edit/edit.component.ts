@@ -119,7 +119,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       status: [null, Validators.required],
 
       // Datos de la Agencia
-      uieNumber: [null, [Validators.required, maxDigitsValidator(12)]],
+      uieNumber: [null, [Validators.required, Validators.minLength(12), Validators.maxLength(12), alphanumericValidator()]],
       sdrNumber: [null, [Validators.required, maxDigitsValidator(10)]],
       einNumber: [null, [Validators.required, maxDigitsValidator(9)]],
 
@@ -246,6 +246,9 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
 
     const assignedBy = this._authService.getUserId();
 
+    const uieTrimmed = (formValues.uieNumber ?? '').trim();
+    const uieNumber = uieTrimmed ? uieTrimmed.toUpperCase() : '';
+
     // Construir el objeto de actualización
     const agencyRequest: AgencyRequest = {
       name: formValues.name,
@@ -253,7 +256,7 @@ export class EditValidationToProgramComponent implements OnInit, OnDestroy, OnGe
       regionId: formValues.region?.id,
       statusId: formValues.status?.id,
       sdrNumber: formValues.sdrNumber ? parseInt(formValues.sdrNumber.toString(), 10) : 0,
-      uieNumber: formValues.uieNumber && formValues.uieNumber.toString().trim() !== '' ? parseInt(formValues.uieNumber.toString(), 10) || 0 : 0,
+      uieNumber,
       einNumber: formValues.einNumber ? parseInt(formValues.einNumber.toString(), 10) : 0,
       address: formValues.address,
       zipCode: formValues.zipCode,

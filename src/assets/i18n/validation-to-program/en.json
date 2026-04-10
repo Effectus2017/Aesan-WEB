@@ -72,6 +72,8 @@
             "uieNumber": {
                 "label": "Unique Entity Identifier (UEI)",
                 "placeholder": "Enter Unique Entity Identifier (UEI)",
+                "required": "Unique Entity Identifier (UEI) is required",
+                "length": "Unique Entity Identifier (UEI) must be exactly 12 characters",
                 "maxlength": "Unique Entity Identifier (UEI) must have a maximum of 12 characters",
                 "alphanumeric": "Unique Entity Identifier (UEI) can only contain letters and numbers"
             },

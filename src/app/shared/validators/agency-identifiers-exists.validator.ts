@@ -4,90 +4,63 @@ import { debounceTime, switchMap, map, catchError, first } from 'rxjs/operators'
 import { UserService } from '../services/user.service';
 import { QueryParameters } from '../models/common/QueryParameters';
 
+const IUE_ALPHANUMERIC_12 = /^[A-Za-z0-9]{12}$/;
+
 /**
  * Validador asíncrono que verifica si un IUE (Identificador Único de Entidad) ya existe en el sistema.
- * Solo valida cuando el campo tiene la cantidad exacta de dígitos requeridos para optimizar las peticiones HTTP.
+ * Solo valida cuando el campo tiene exactamente 12 caracteres alfanuméricos (para reducir peticiones HTTP).
  *
  * @param userService Servicio de usuario para realizar la verificación
  * @param debounceTimeMs Tiempo de espera antes de realizar la validación (default: 1000ms)
- * @param requiredDigits Cantidad exacta de dígitos requeridos para validar (default: 12)
  * @returns AsyncValidatorFn que retorna { uieExists: true } si el IUE existe, null si no existe
  *
  * @example
  * uieNumber: new FormControl('', [
  *   Validators.required,
- *   maxDigitsValidator(12)
+ *   Validators.minLength(12),
+ *   Validators.maxLength(12),
+ *   alphanumericValidator()
  * ], [
- *   uieExistsValidator(this._userService, 1000, 12)
+ *   uieExistsValidator(this._userService, 1000)
  * ])
  */
-export function uieExistsValidator(
-  userService: UserService,
-  debounceTimeMs: number = 1000,
-  requiredDigits: number = 12
-): AsyncValidatorFn {
+export function uieExistsValidator(userService: UserService, debounceTimeMs: number = 1000): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
-    // Si no hay valor, retornar null (no hay error)
     if (!control.value) {
       return of(null);
     }
 
-    // Convertir a string si es número
-    const uieNumber = typeof control.value === 'string' ? control.value.trim() : control.value.toString().trim();
-
-    if (uieNumber === '') {
+    if (typeof control.value !== 'string') {
       return of(null);
     }
 
-    // Validar formato básico (solo números) antes de hacer la llamada
-    const numericRegex = /^\d+$/;
-    if (!numericRegex.test(uieNumber)) {
-      return of(null); // Si el formato no es válido, no validar existencia
+    const uieNumber = control.value.trim();
+
+    if (uieNumber === '' || !IUE_ALPHANUMERIC_12.test(uieNumber)) {
+      return of(null);
     }
 
-    // ⭐ Solo validar cuando tenga la cantidad exacta de dígitos requeridos
-    if (uieNumber.length !== requiredDigits) {
-      return of(null); // No validar si no está completo, evita peticiones innecesarias
-    }
-
-    // Si el campo tiene un valor inicial y está completo, validar inmediatamente
-    // (sin debounce) para detectar duplicados al cargar el formulario
     const isInitialValue = control.pristine && control.untouched;
     const debounce = isInitialValue ? 0 : debounceTimeMs;
 
     return of(uieNumber).pipe(
       debounceTime(debounce),
       switchMap((uieValue: string) => {
-        if (!uieValue || uieValue.trim() === '') {
+        if (!uieValue || uieValue.trim() === '' || !IUE_ALPHANUMERIC_12.test(uieValue.trim())) {
           return of(null);
         }
 
-        // Convertir a número (las validaciones ya se hicieron arriba)
-        const parsedNumber = Number(uieValue.trim());
-
         const queryParameters: QueryParameters = {
-          uieNumber: parsedNumber,
+          uieNumber: uieValue.trim().toUpperCase(),
         };
 
         return userService.checkUieExists(queryParameters).pipe(
-          first(), // Completar el Observable después de la primera emisión
-          map((response: any) => {
-            // Extraer el body del HttpResponse si viene como objeto completo
-            const exists = response?.body !== undefined ? response.body : response;
-            console.log('IUE - Valor recibido del backend:', exists, 'Tipo:', typeof exists);
-            console.log('IUE - exists === true:', exists === true);
-            console.log('IUE - exists === false:', exists === false);
-            // Solo retornar el objeto cuando existe es true, null cuando es false
-            const result = exists === true ? { uieExists: true } : null;
-            console.log('IUE - Resultado del validador:', result);
-            return result;
+          first(),
+          map((response: unknown) => {
+            const exists = (response as { body?: boolean })?.body !== undefined ? (response as { body: boolean }).body : response;
+            return exists === true ? { uieExists: true } : null;
           }),
-          catchError((error) => {
-            // En caso de error de red, no bloquear (retornar null)
-            // Pero loguear el error para debugging
-            console.error('Error al verificar IUE:', error);
-            return of(null);
-          })
+          catchError(() => of(null))
         );
       })
     );

@@ -86,11 +86,7 @@ export class UserService {
    * @returns Un observable que emite un booleano (true si existe, false si no existe).
    */
   checkUieExists(queryParameters: QueryParameters): Observable<boolean> {
-    return this._httpClient.get<boolean>(`${this.apiUrl}/check-uie-exists`, getHttpOptions(queryParameters)).pipe(
-      tap((response: any) => {
-        console.log('IUE - Respuesta HTTP recibida:', response, 'Tipo:', typeof response);
-      })
-    );
+    return this._httpClient.get<boolean>(`${this.apiUrl}/check-uie-exists`, getHttpOptions(queryParameters));
   }
 
   /**

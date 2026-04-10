@@ -209,7 +209,11 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Validadores optimizados: solo validan cuando el campo tiene la cantidad exacta de dígitos
       // y usan un debounce de 1000ms para reducir peticiones HTTP
       sdrNumber: [null, [Validators.required, maxDigitsValidator(10)], [sdrExistsValidator(this._userService, 1000, 10)]],
-      uieNumber: [null, [Validators.required, maxDigitsValidator(12)], [uieExistsValidator(this._userService, 1000, 12)]],
+      uieNumber: [
+        null,
+        [Validators.required, Validators.minLength(12), Validators.maxLength(12), alphanumericValidator()],
+        [uieExistsValidator(this._userService, 1000)],
+      ],
       einNumber: [null, [Validators.required, maxDigitsValidator(9)], [einExistsValidator(this._userService, 1000, 9)]],
 
       // Datos de la Agencia
@@ -763,16 +767,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Continuar con el registro (el validador asíncrono emailExistsValidator ya verificó el email)
-    // El backend también verificará el email como última línea de defensa
-    this.proceedWithRegistration(formValues, cityId, regionId, postalCityId, postalRegionId, programId);
-  }
-
-  /**
-   * Continúa con el proceso de registro después de validar el correo
-   */
-  private proceedWithRegistration(formValues: any, cityId: number, regionId: number, postalCityId: number, postalRegionId: number, programId: number): void {
-    // Disable the form
+    // Validador asíncrono emailExistsValidator: el backend también valida el email al registrar.
     this.signUpForm.disable();
 
     // Hide the alert
@@ -780,7 +775,8 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
 
     const name = formValues.name;
     const sdrNumber: number = formValues.sdrNumber ? parseInt(formValues.sdrNumber) : 0;
-    const uieNumber: number = formValues.uieNumber && formValues.uieNumber.toString().trim() !== '' ? parseInt(formValues.uieNumber.toString(), 10) || 0 : 0;
+    const uieTrimmed = (formValues.uieNumber ?? '').trim();
+    const uieNumber = uieTrimmed ? uieTrimmed.toUpperCase() : '';
     const einNumber: number = formValues.einNumber ? parseInt(formValues.einNumber) : 0;
     const address: string = formValues.address;
     const zipCode: string = formValues.zipCode;
@@ -824,7 +820,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         name: name,
         // Datos de la Agencia
         sdrNumber: sdrNumber,
-        uieNumber: uieNumber,
+        uieNumber,
         einNumber: einNumber,
         // Dirección Física
         address: address,

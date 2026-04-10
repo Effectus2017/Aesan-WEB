@@ -89,7 +89,7 @@ export class AddProgramRequestComponent implements OnInit, OnDestroy, OnGenericH
   // Información de solo lectura
   agencyInfo = {
     name: 'FONDITA DE JUAN',
-    uieNumber: '7454839948',
+    uieNumber: '007454839948',
     address: 'calle Esperanza Urb. Corazón',
     city: 'Caguas',
     region: 'San Juan',
