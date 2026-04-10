@@ -3,9 +3,9 @@ import { formatDate } from '@angular/common';
 import { BaseApiException } from './models/errors/BaseApiException';
 import { Constants } from './const';
 import { QueryParameters } from './models/common/QueryParameters';
-import { throwError } from 'rxjs';
+import { Subject, takeUntil, throwError } from 'rxjs';
 import { UntypedFormGroup, FormGroup } from '@angular/forms';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl, ValidationErrors, Validators } from '@angular/forms';
 
 /**
  * Compara dos elementos
@@ -968,4 +968,45 @@ export function normalizeTime(time: string): string {
     return `${parts[0].padStart(2, '0')}:${parts[1].padStart(2, '0')}`;
   }
   return time;
+}
+
+/**
+ * Aplica validadores del SDR según el valor actual de `nonProfit` (llamar tras cargar datos en edición).
+ */
+export function applySdrNumberValidatorsForNonProfit(form: FormGroup): void {
+  const nonProfitCtrl = form.get('nonProfit');
+  const sdrCtrl = form.get('sdrNumber');
+  if (!nonProfitCtrl || !sdrCtrl) {
+    return;
+  }
+  const isNp = nonProfitCtrl.value;
+  if (isNp === true) {
+    sdrCtrl.setValidators([Validators.required, maxDigitsValidator(10)]);
+  } else {
+    sdrCtrl.clearValidators();
+    sdrCtrl.setValue(null, { emitEvent: false });
+  }
+  sdrCtrl.updateValueAndValidity({ emitEvent: false });
+}
+
+/**
+ * Valida SDR (hasta 10 dígitos) y lo enlaza al control `nonProfit` (obligatorio solo si OSFL = sí).
+ */
+export function bindSdrNumberToNonProfit(form: FormGroup, unsubscribe: Subject<unknown>): void {
+  applySdrNumberValidatorsForNonProfit(form);
+  form.get('nonProfit')?.valueChanges.pipe(takeUntil(unsubscribe)).subscribe(() => applySdrNumberValidatorsForNonProfit(form));
+}
+
+/**
+ * Valor numérico de SDR para el payload del sitio cuando `nonProfit` es verdadero.
+ */
+export function parseSiteSdrNumberForPayload(nonProfit: boolean | null | undefined, raw: unknown): number | null {
+  if (nonProfit !== true) {
+    return null;
+  }
+  if (raw == null || String(raw).trim() === '') {
+    return null;
+  }
+  const n = Number(String(raw).replace(/\D/g, ''));
+  return Number.isFinite(n) && n > 0 ? n : null;
 }

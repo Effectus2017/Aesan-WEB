@@ -44,6 +44,9 @@ import {
   timeStringToDate,
   compareByTime,
   TimeOption,
+  bindSdrNumberToNonProfit,
+  parseSiteSdrNumberForPayload,
+  applySdrNumberValidatorsForNonProfit,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/site/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -394,6 +397,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      sdrNumber: [null],
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -544,6 +548,8 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
     });
 
     this.setupFormListeners();
+
+    bindSdrNumberToNonProfit(this.headerConfig.formGroup, this._unsubscribeAll);
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
@@ -791,8 +797,11 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       areaType: areaType,
       locationType: locationType,
       generalEnrollment: param.generalEnrollment,
+      sdrNumber: param.sdrNumber ?? null,
       siteCode: param.siteCode || '',
     });
+
+    applySdrNumberValidatorsForNonProfit(this.headerConfig.formGroup);
 
     // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
     DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
@@ -1124,6 +1133,7 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
+      sdrNumber: parseSiteSdrNumberForPayload(formValues.nonProfit, formValues.sdrNumber),
     };
 
     // Validar al menos un grupo con servicios y sincronizar

@@ -49,6 +49,9 @@ import {
   timeStringToDate,
   compareByTime,
   TimeOption,
+  bindSdrNumberToNonProfit,
+  parseSiteSdrNumberForPayload,
+  applySdrNumberValidatorsForNonProfit,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/site/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -490,6 +493,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.pattern(/^\d+$/)]],
+      sdrNumber: [null],
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -692,6 +696,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
     });
 
     this.setupFormListeners();
+
+    bindSdrNumberToNonProfit(this.headerConfig.formGroup, this._unsubscribeAll);
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
@@ -1039,6 +1045,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       areaType: areaType,
       locationType: locationType,
       generalEnrollment: param.generalEnrollment,
+      sdrNumber: param.sdrNumber ?? null,
       administratorBirthDate: param.dayCareHome?.administratorBirthDate,
       siteCode: param.siteCode || '',
       relationshipType: param.relationshipType,
@@ -1072,6 +1079,8 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       // Load existing participants
       participantTypes: param.participants?.filter((p) => p.isActive).map((p) => p.participantType.id) || [],
     });
+
+    applySdrNumberValidatorsForNonProfit(this.headerConfig.formGroup);
 
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
@@ -1264,6 +1273,7 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
+      sdrNumber: parseSiteSdrNumberForPayload(formValues.nonProfit, formValues.sdrNumber),
       // ¿El sitio ofrece programas atléticos organizados que participan en deportes competitivos interescolares o a nivel comunitario?
       // Does the site offer organized athletic programs engaged in interscholastic or community level competitive sports?
       organizedAthleticPrograms: formValues.organizedAthleticPrograms ?? null,

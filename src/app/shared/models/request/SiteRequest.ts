@@ -94,6 +94,9 @@ export interface SiteRequest {
     // Matrícula General
     generalEnrollment?: number;
 
+    /** Número de Registro del Departamento de Estado (SDR). Obligatorio cuando nonProfit es verdadero. */
+    sdrNumber?: number | null;
+
     // Número de Sitio
     siteNumber?: number;
 

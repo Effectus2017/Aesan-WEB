@@ -46,6 +46,9 @@ import {
   compareByTime,
   getApiErrorMessage,
   TimeOption,
+  bindSdrNumberToNonProfit,
+  parseSiteSdrNumberForPayload,
+  applySdrNumberValidatorsForNonProfit,
 } from 'app/shared/utils';
 import { Site } from 'app/shared/models/site/Site';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -403,6 +406,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
+      sdrNumber: [null],
     }),
     // Cancel button
     cancelButtonShow: true,
@@ -590,6 +594,8 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
     });
 
     this.setupFormListeners();
+
+    bindSdrNumberToNonProfit(this.headerConfig.formGroup, this._unsubscribeAll);
 
     // Suscribirse a cambios de validación del formulario para actualizar el estado del botón de guardar
     this.headerConfig.formGroup.statusChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(() => {
@@ -1030,7 +1036,10 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       areaType: areaType,
       locationType: locationType,
       generalEnrollment: param.generalEnrollment,
+      sdrNumber: param.sdrNumber ?? null,
     });
+
+    applySdrNumberValidatorsForNonProfit(this.headerConfig.formGroup);
 
     // Validar horas académicas tras cargar datos (pueden venir fuera del rango de funcionamiento)
     this.validateAcademicTimesWithinOperatingHours();
@@ -1214,6 +1223,7 @@ export class EditSitePdamComponent implements OnInit, OnDestroy, OnGenericHeader
       inactiveJustification: formValues.inactiveJustification ?? null,
       inactiveDate: formValues.inactiveDate ?? null,
       generalEnrollment: formValues.generalEnrollment ?? null,
+      sdrNumber: parseSiteSdrNumberForPayload(formValues.nonProfit, formValues.sdrNumber),
     };
 
     // ===== CREAR SCHOOL EDUCATION LEVEL REQUEST =====

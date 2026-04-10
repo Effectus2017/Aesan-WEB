@@ -45,6 +45,8 @@ import {
   compareByTime,
   getApiErrorMessage,
   TimeOption,
+  bindSdrNumberToNonProfit,
+  parseSiteSdrNumberForPayload,
 } from 'app/shared/utils';
 import { City } from 'app/shared/models/location/City';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
@@ -407,6 +409,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Matrícula General - Campo requerido con valor numérico
       // General Enrollment - Required numeric field
       generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
+      sdrNumber: [null],
 
       // Estado activo del sitio
       // Site active status
@@ -553,6 +556,8 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
     });
 
     this.setupFormListeners();
+
+    bindSdrNumberToNonProfit(this.headerConfig.formGroup, this._unsubscribeAll);
 
     this.servicesTableConfig.operatingDaysOfWeek = this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
 
@@ -1110,6 +1115,7 @@ export class AddSitePdamComponent implements OnInit, OnDestroy, OnGenericHeaderH
       // Matrícula General
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
+      sdrNumber: parseSiteSdrNumberForPayload(formValues.nonProfit, formValues.sdrNumber),
 
       // IDs de programas de la agencia para determinar lógica de días de funcionamiento
       // Agency program IDs to determine operating days logic

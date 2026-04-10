@@ -708,6 +708,12 @@
                 "label": "Matrícula General",
                 "placeholder": "Matrícula General"
             },
+            "sdr-number": {
+                "label": "Número de Registro del Departamento de Estado",
+                "placeholder": "Ingrese el número de registro",
+                "required": "Este campo es requerido para organizaciones sin fines de lucro",
+                "max-digits": "El número no puede superar 10 dígitos"
+            },
             "id": {
                 "label": "ID",
                 "description": "Código único del sitio generado automáticamente"
@@ -1423,6 +1429,12 @@
             "general-enrollment": {
                 "label": "Matrícula General",
                 "placeholder": "Matrícula General"
+            },
+            "sdr-number": {
+                "label": "Número de Registro del Departamento de Estado",
+                "placeholder": "Ingrese el número de registro",
+                "required": "Este campo es requerido para organizaciones sin fines de lucro",
+                "max-digits": "El número no puede superar 10 dígitos"
             },
             "id": {
                 "label": "ID",

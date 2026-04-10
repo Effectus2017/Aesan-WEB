@@ -149,6 +149,9 @@ export interface SiteResponse {
   // Matrícula General
   generalEnrollment?: number;
 
+  /** Número de Registro del Departamento de Estado (SDR) */
+  sdrNumber?: number | null;
+
   // Número de Sitio y Código de Agencia
   siteNumber?: number;
   agencyCode?: string;

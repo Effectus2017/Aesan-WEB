@@ -716,6 +716,12 @@
                 "label": "General Enrollment",
                 "placeholder": "General Enrollment"
             },
+            "sdr-number": {
+                "label": "Department of State Registration Number",
+                "placeholder": "Enter the registration number",
+                "required": "This field is required for non-profit organizations",
+                "max-digits": "The number cannot exceed 10 digits"
+            },
             "id": {
                 "label": "ID",
                 "description": "Unique site code generated automatically"
@@ -1485,6 +1491,12 @@
             "general-enrollment": {
                 "label": "General Enrollment",
                 "placeholder": "General Enrollment"
+            },
+            "sdr-number": {
+                "label": "Department of State Registration Number",
+                "placeholder": "Enter the registration number",
+                "required": "This field is required for non-profit organizations",
+                "max-digits": "The number cannot exceed 10 digits"
             },
             "id": {
                 "label": "ID",

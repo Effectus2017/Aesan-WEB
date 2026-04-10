@@ -32,7 +32,9 @@ import {
   dateToMinutes,
   compareByTime,
   getApiErrorMessage,
-  TimeOption
+  TimeOption,
+  bindSdrNumberToNonProfit,
+  parseSiteSdrNumberForPayload,
 } from 'app/shared/utils';
 import { City } from 'app/shared/models/location/City';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
@@ -457,6 +459,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Matrícula General
       // General Enrollment
       generalEnrollment: [null, [Validators.required, Validators.pattern(/^\d+$/)]],
+      sdrNumber: [null],
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
@@ -639,6 +642,8 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
     this.updateDistributionTypeValidation();
 
     this.setupFormListeners();
+
+    bindSdrNumberToNonProfit(this.headerConfig.formGroup, this._unsubscribeAll);
 
     this.servicesTableConfig.operatingDaysOfWeek =
       this.headerConfig.formGroup.get('operatingDaysOfWeek')?.value ?? [];
@@ -1146,6 +1151,7 @@ export class AddSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneric
       // Matrícula General
       // General Enrollment
       generalEnrollment: formValues.generalEnrollment ?? null,
+      sdrNumber: parseSiteSdrNumberForPayload(formValues.nonProfit, formValues.sdrNumber),
 
       // ===== CAMPOS ESPECÍFICOS PARA PACNA =====
 
