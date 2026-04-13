@@ -13,7 +13,7 @@
       <div class="flex flex-col gap-4">
         <!-- Campo Estatus -->
         <mat-form-field>
-          <mat-label>{{ 'staff.edit.status-modal.status.label' | transloco }}</mat-label>
+          <mat-label>{{ 'sites.add.status-modal.status.label' | transloco }}</mat-label>
           <mat-select formControlName="isActive">
             @for (option of data.isActiveOptions; track option.id) {
             <mat-option [value]="option.booleanValue">
@@ -23,10 +23,50 @@
           </mat-select>
           @if (form.get('isActive')?.hasError('required')) {
           <mat-error>
-            {{ 'staff.edit.status-modal.status.required' | transloco }}
+            {{ 'sites.add.status-modal.status.required' | transloco }}
           </mat-error>
           }
         </mat-form-field>
+
+        @if (form.get('isActive')?.value === false) {
+        <mat-form-field>
+          <mat-label>{{ 'sites.add.status-modal.inactive-date.label' | transloco }}</mat-label>
+          <input
+            matInput
+            [matDatepicker]="pickerInactiveDate"
+            formControlName="inactiveDate"
+            [max]="maxInactiveDate"
+            [placeholder]="'sites.add.status-modal.inactive-date.placeholder' | transloco"
+          />
+          <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInactiveDate></mat-datepicker>
+          @if (form.get('inactiveDate')?.hasError('required')) {
+          <mat-error>
+            {{ 'sites.add.status-modal.inactive-date.required' | transloco }}
+          </mat-error>
+          }
+          @if (form.get('inactiveDate')?.hasError('matDatepickerMax')) {
+          <mat-error>
+            {{ 'staff.edit.status-modal.inactive-date.max' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>{{ 'sites.add.status-modal.inactive-justification.label' | transloco }}</mat-label>
+          <textarea
+            matInput
+            formControlName="inactiveJustification"
+            [placeholder]="'sites.add.status-modal.inactive-justification.placeholder' | transloco"
+            rows="3">
+          </textarea>
+          @if (form.get('inactiveJustification')?.hasError('required')) {
+          <mat-error>
+            {{ 'sites.add.status-modal.inactive-justification.required' | transloco }}
+          </mat-error>
+          }
+        </mat-form-field>
+        }
       </div>
     </div>
 
@@ -34,17 +74,16 @@
     <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
       <div class="flex gap-2">
         <button mat-flat-button type="button" [color]="'warn'" (click)="onCancel()" [disabled]="isLoading">
-          {{ 'staff.edit.status-modal.cancel' | transloco }}
+          {{ 'sites.add.status-modal.cancel' | transloco }}
         </button>
       </div>
       <button mat-flat-button type="submit" [color]="'primary'" [disabled]="!isFormValid || isLoading" [class.min-w-10]="isLoading">
         @if (isLoading) {
         <mat-spinner diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
         } @else {
-        {{ 'staff.edit.status-modal.save' | transloco }}
+        {{ 'sites.add.status-modal.save' | transloco }}
         }
       </button>
     </div>
   </form>
 </div>
-

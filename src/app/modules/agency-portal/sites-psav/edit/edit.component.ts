@@ -803,9 +803,6 @@ export class EditSitePsavComponent implements OnInit, OnDestroy, OnGenericHeader
 
     applySdrNumberValidatorsForNonProfit(this.headerConfig.formGroup);
 
-    // Recalcular Total de Días de Funcionamiento tras cargar datos (valueChanges no se dispara con patchValue)
-    DateCalculationsUtil.calculateOperatingDays(this.headerConfig.formGroup);
-
     // Auto-seleccionar areaType si es null y hay una ciudad seleccionada
     // Auto-select areaType if it's null and there's a city selected
     if (!areaType && city) {

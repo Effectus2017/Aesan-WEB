@@ -47,8 +47,12 @@ export class NotificationService {
       message: this.translocoService.translate(message),
       actions: {
         confirm: {
+          show: true,
           label: this.translocoService.translate('dialog.success.confirm'),
           color: 'primary',
+        },
+        cancel: {
+          show: false,
         },
       },
     });
@@ -163,8 +167,12 @@ export class NotificationService {
       message: this.translocoService.translate(message),
       actions: {
         confirm: {
+          show: true,
           label: this.translocoService.translate('dialog.success.confirm'),
           color: 'primary',
+        },
+        cancel: {
+          show: false,
         },
       },
     });

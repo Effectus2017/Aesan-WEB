@@ -653,6 +653,8 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
       data: {
         staffId: this.param.id,
         isActive: currentIsActive,
+        inactiveDate: this.param.inactiveDate ?? null,
+        inactiveJustification: this.param.inactiveJustification ?? null,
         isActiveOptions: this.listStatus
       } as StaffStatusModalData,
       disableClose: false,
@@ -662,7 +664,24 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
     });
 
     dialogRef.afterClosed().subscribe((result) => {
+      if (result?.action === 'submit' && result.pendingSuccessConfirmation) {
+        this._notificationService.showSuccessDialogWithCallback(
+          'staff.edit.status-updated-successfully',
+          () => {
+            if (result.isActive === false) {
+              this._customRouterService.navigate(['staff/board-members']);
+            } else {
+              this.reloadStaffData();
+            }
+          },
+        );
+        return;
+      }
       if (result && result.action === 'submit') {
+        if (result.isActive === false) {
+          this._customRouterService.navigate(['staff/board-members']);
+          return;
+        }
         this.reloadStaffData();
       }
     });

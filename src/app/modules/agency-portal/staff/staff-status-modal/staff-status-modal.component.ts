@@ -1,13 +1,25 @@
-import { Component, Inject, ViewEncapsulation, ChangeDetectionStrategy, OnInit, OnDestroy, AfterViewInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  Inject,
+  ViewEncapsulation,
+  ChangeDetectionStrategy,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  ChangeDetectorRef,
+  inject,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { Subject, takeUntil } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
@@ -15,8 +27,10 @@ import { NotificationService } from 'app/shared/services/notification.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 
 export interface StaffStatusModalData {
-  staffId?: number; // ID del staff (solo en modo edición)
+  staffId?: number;
   isActive: boolean;
+  inactiveDate?: string | Date | null;
+  inactiveJustification?: string | null;
   isActiveOptions: OptionSelection[];
 }
 
@@ -26,6 +40,7 @@ export interface StaffStatusModalData {
   standalone: true,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideNativeDateAdapter()],
   imports: [
     MatDialogModule,
     MatButtonModule,
@@ -33,15 +48,18 @@ export interface StaffStatusModalData {
     MatInputModule,
     MatSelectModule,
     MatIconModule,
+    MatDatepickerModule,
     MatProgressSpinnerModule,
     ReactiveFormsModule,
-    TranslocoModule
-  ]
+    TranslocoModule,
+  ],
 })
 export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewInit {
   form: FormGroup;
   isLoading: boolean = false;
   currentLang: string = 'es';
+  /** Máximo permitido para fecha de inactivación (hoy); el datepicker no permite fechas futuras. */
+  maxInactiveDate = new Date();
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _staffService = inject(StaffService);
   private _notificationService = inject(NotificationService);
@@ -51,36 +69,83 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
   constructor(
     public dialogRef: MatDialogRef<StaffStatusModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: StaffStatusModalData,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {
-    // Crear el formulario reactivo
     this.form = this.fb.group({
-      isActive: [this.data.isActive, Validators.required]
+      isActive: [this.data.isActive, Validators.required],
+      inactiveDate: [this._parseInitialInactiveDate(this.data.inactiveDate)],
+      inactiveJustification: [this.data.inactiveJustification ?? ''],
     });
   }
 
   ngOnInit(): void {
-    // Obtener el idioma actual
     this.currentLang = this._translocoService.getActiveLang();
 
-    // Suscribirse a cambios de idioma
     this._translocoService.langChanges$
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((lang) => {
         this.currentLang = lang;
         this._changeDetectorRef.markForCheck();
       });
+
+    this._setupConditionalValidations();
+
+    this.form
+      .get('isActive')
+      ?.valueChanges.pipe(takeUntil(this._unsubscribeAll))
+      .subscribe(() => {
+        this._setupConditionalValidations();
+        this._changeDetectorRef.detectChanges();
+      });
   }
 
   ngAfterViewInit(): void {
-    // Forzar detección de cambios después de que la vista esté inicializada
-    // Esto asegura que las opciones del dropdown se rendericen correctamente
     this._changeDetectorRef.markForCheck();
   }
 
   ngOnDestroy(): void {
     this._unsubscribeAll.next(null);
     this._unsubscribeAll.complete();
+  }
+
+  /** Convierte valor inicial de API a Date para el datepicker; no permite fecha posterior a hoy. */
+  private _parseInitialInactiveDate(value: string | Date | null | undefined): Date | null {
+    if (value == null || value === '') {
+      return null;
+    }
+    const d = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+    if (Number.isNaN(d.getTime())) {
+      return null;
+    }
+    return this._clampInactiveDateToToday(d);
+  }
+
+  /** Ajusta la fecha al inicio del día local y la limita a no ser posterior a hoy. */
+  private _clampInactiveDateToToday(d: Date): Date {
+    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const today = new Date();
+    const max = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return day.getTime() > max.getTime() ? max : day;
+  }
+
+  /** Ajusta validadores de fecha y justificación cuando el estatus es inactivo. */
+  private _setupConditionalValidations(): void {
+    const isActive = this.form.get('isActive')?.value;
+    const inactiveDateControl = this.form.get('inactiveDate');
+    const inactiveJustificationControl = this.form.get('inactiveJustification');
+
+    if (isActive === false) {
+      inactiveDateControl?.setValidators([Validators.required]);
+      inactiveJustificationControl?.setValidators([Validators.required]);
+    } else {
+      inactiveDateControl?.clearValidators();
+      inactiveJustificationControl?.clearValidators();
+      inactiveDateControl?.setValue(null);
+      inactiveJustificationControl?.setValue('');
+    }
+
+    inactiveDateControl?.updateValueAndValidity({ emitEvent: false });
+    inactiveJustificationControl?.updateValueAndValidity({ emitEvent: false });
   }
 
   get isFormValid(): boolean {
@@ -92,52 +157,60 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
       return;
     }
 
-    // Si no hay staffId, solo cerrar el modal con los datos (modo add)
+    const isActiveVal = this.form.get('isActive')?.value;
+
     if (!this.data.staffId) {
       this.dialogRef.close({
         action: 'submit',
-        isActive: this.form.get('isActive')?.value
+        isActive: isActiveVal,
+        inactiveDate: this.form.get('inactiveDate')?.value,
+        inactiveJustification: this.form.get('inactiveJustification')?.value,
       });
       return;
     }
 
-    // Si hay staffId, llamar a la API (modo edit)
     this.isLoading = true;
     this._changeDetectorRef.detectChanges();
 
+    const inactiveDateValue = this.form.get('inactiveDate')?.value;
+    const inactiveDateOnly =
+      inactiveDateValue instanceof Date
+        ? inactiveDateValue.toISOString().split('T')[0]
+        : inactiveDateValue;
+
     const queryParameters: QueryParameters = {
       staffId: this.data.staffId,
-      isActive: this.form.get('isActive')?.value
+      isActive: isActiveVal,
+      inactiveJustification:
+        isActiveVal === false ? (this.form.get('inactiveJustification')?.value ?? '').trim() : undefined,
+      inactiveDate: isActiveVal === false ? inactiveDateOnly : undefined,
     };
 
-    this._staffService.updateStaffActiveStatus(queryParameters)
+    this._staffService
+      .updateStaffActiveStatus(queryParameters)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.isLoading = false;
           this._changeDetectorRef.detectChanges();
 
-          // Mostrar notificación de éxito
-          this._notificationService.showSuccessDialog(
-            this._translocoService.translate('staff.edit.status-updated-successfully')
-          );
-
-          // Cerrar el modal con los datos actualizados
           this.dialogRef.close({
             action: 'submit',
-            isActive: this.form.get('isActive')?.value
+            isActive: isActiveVal,
+            inactiveDate: this.form.get('inactiveDate')?.value,
+            inactiveJustification: this.form.get('inactiveJustification')?.value,
+            pendingSuccessConfirmation: true,
           });
         },
         error: (error) => {
           this.isLoading = false;
           this._changeDetectorRef.detectChanges();
 
-          // Mostrar notificación de error
           this._notificationService.showErrorDialog(
-            this._translocoService.translate('staff.edit.status-update-error')
+            this._translocoService.translate('staff.edit.status-update-error'),
           );
           console.error('Error al actualizar el estatus del staff:', error);
-        }
+        },
       });
   }
 
@@ -147,4 +220,3 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
     }
   }
 }
-

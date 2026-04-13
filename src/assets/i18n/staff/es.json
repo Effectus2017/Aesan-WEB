@@ -663,6 +663,9 @@
           "label": "Estatus",
           "required": "El estatus es requerido"
         },
+        "inactive-date": {
+          "max": "La fecha no puede ser posterior a hoy"
+        },
         "cancel": "Cancelar",
         "save": "Guardar"
       },
