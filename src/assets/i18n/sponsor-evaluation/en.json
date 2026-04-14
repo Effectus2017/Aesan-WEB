@@ -145,6 +145,8 @@
         },
         "services": {
           "title": "Site services",
+          "sectionTitle": "Site services",
+          "sectionDescription": "Meal services offered by site group (read-only).",
           "loadError": "Could not load program service types.",
           "empty": "This site has no groups with registered services.",
           "button": "Services",
@@ -179,8 +181,27 @@
           "email": "Email",
           "assignmentDate": "Assignment date",
           "isPrimary": "Primary",
-          "isActive": "Active"
+          "isActive": "Active",
+          "contractStartDate": "Contract start",
+          "contractEndDate": "Contract end",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "viewDetail": "View",
+          "viewDetailTooltip": "View staff information"
         }
+      }
+    },
+    "staffDetailViewModal": {
+      "title": "Staff information",
+      "fields": {
+        "fullName": "Full name",
+        "contractStart": "Contract start",
+        "contractEnd": "Contract end",
+        "staffType": "Staff type",
+        "status": "Status",
+        "address": "Address",
+        "comments": "Comments"
       }
     },
     "staff": {

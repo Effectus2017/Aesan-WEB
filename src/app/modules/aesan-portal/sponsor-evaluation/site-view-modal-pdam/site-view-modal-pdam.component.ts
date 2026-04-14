@@ -16,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { Site } from 'app/shared/models/site/Site';
 import { SiteEditModalData } from 'app/shared/models/response/SiteEditModalData';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
+import { SiteServicesReadonlyPanelComponent } from '../site-services-readonly-panel/site-services-readonly-panel.component';
 import { normalizeTime } from 'app/shared/utils';
 
 /**
@@ -40,6 +41,7 @@ import { normalizeTime } from 'app/shared/utils';
     NgIf,
     NgFor,
     DynamicGridDirective,
+    SiteServicesReadonlyPanelComponent,
   ],
   templateUrl: './site-view-modal-pdam.component.html',
 })

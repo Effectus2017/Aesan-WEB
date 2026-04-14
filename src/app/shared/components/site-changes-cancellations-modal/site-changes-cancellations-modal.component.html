@@ -17,6 +17,7 @@
             matInput
             [matDatepicker]="pickerEndOfOperation"
             formControlName="endOfOperationDate"
+            [max]="maxEndOfOperationDate"
             [placeholder]="'sites.edit.changes-cancellations-modal.end-of-operation-date.placeholder' | transloco"
           />
           <mat-datepicker-toggle matIconSuffix [for]="pickerEndOfOperation"></mat-datepicker-toggle>
@@ -24,6 +25,11 @@
           @if (form.get('endOfOperationDate')?.hasError('required')) {
           <mat-error>
             {{ 'sites.edit.changes-cancellations-modal.end-of-operation-date.required' | transloco }}
+          </mat-error>
+          }
+          @if (form.get('endOfOperationDate')?.hasError('matDatepickerMax')) {
+          <mat-error>
+            {{ 'sites.edit.changes-cancellations-modal.end-of-operation-date.max' | transloco }}
           </mat-error>
           }
         </mat-form-field>

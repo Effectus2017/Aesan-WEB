@@ -1438,6 +1438,18 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         return;
       }
 
+      if (result?.action === 'submit' && result.pendingSuccessConfirmation) {
+        this._notificationService.showSuccessDialogWithCallback('sites.edit.status-updated-successfully', () => {
+          if (result.isActive === false) {
+            const targetRoute = this.getTargetRoute();
+            this._customRouter.navigate(targetRoute);
+          } else {
+            this._reloadSiteDataAfterStatusChange();
+          }
+        });
+        return;
+      }
+
       if (result && result.action === 'submit') {
         // Actualizar el formulario con los valores del modal
         const isActiveControl = this.headerConfig.formGroup.get('isActive');
@@ -1468,6 +1480,24 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
         inactiveJustificationControl?.updateValueAndValidity({ emitEvent: false });
         this._changeDetectorRef.detectChanges();
       }
+    });
+  }
+
+  /** Recarga la ficha del sitio tras reactivar el estatus desde el modal (API ya persistió el cambio). */
+  private _reloadSiteDataAfterStatusChange(): void {
+    const siteId = this.param?.id;
+    if (!siteId) {
+      return;
+    }
+    this._siteService.getSiteById({ id: siteId }).subscribe({
+      next: (response) => {
+        const site = response?.body ?? response;
+        if (site) {
+          this.onSetForm(site);
+          this._changeDetectorRef.markForCheck();
+        }
+      },
+      error: (err) => console.error('Error al recargar el sitio:', err),
     });
   }
 

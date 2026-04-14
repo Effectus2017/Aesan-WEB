@@ -235,8 +235,8 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
             siteViewVariant: this.data.siteViewVariant,
           };
           this._dialog.open(SiteServicesViewModalComponent, {
-            width: '80%',
-            maxWidth: '1200px',
+            width: '96vw',
+            maxWidth: '1400px',
             maxHeight: '90vh',
             data: dialogData,
           });
@@ -269,10 +269,14 @@ export class SitesBySchoolViewModalComponent implements OnInit, OnDestroy, OnGen
             this._notificationService.showErrorDialog('dialog.error.message');
             return;
           }
-          const dialogData: SiteEditModalData = { site, agency: this.data.agency };
+          const dialogData: SiteEditModalData = {
+            site,
+            agency: this.data.agency,
+            siteViewVariant: this.data.siteViewVariant,
+          };
           const opts = {
-            width: '80%',
-            maxWidth: '1200px',
+            width: '96vw',
+            maxWidth: '1400px',
             maxHeight: '90vh',
             data: dialogData,
           };

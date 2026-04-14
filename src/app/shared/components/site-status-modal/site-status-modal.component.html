@@ -56,6 +56,7 @@
             matInput
             [matDatepicker]="pickerInactiveDate"
             formControlName="inactiveDate"
+            [max]="maxInactiveDate"
             [placeholder]="'sites.add.status-modal.inactive-date.placeholder' | transloco"
           />
           <mat-datepicker-toggle matIconSuffix [for]="pickerInactiveDate"></mat-datepicker-toggle>
@@ -63,6 +64,11 @@
           @if (form.get('inactiveDate')?.hasError('required')) {
           <mat-error>
             {{ 'sites.add.status-modal.inactive-date.required' | transloco }}
+          </mat-error>
+          }
+          @if (form.get('inactiveDate')?.hasError('matDatepickerMax')) {
+          <mat-error>
+            {{ 'sites.add.status-modal.inactive-date.max' | transloco }}
           </mat-error>
           }
         </mat-form-field>

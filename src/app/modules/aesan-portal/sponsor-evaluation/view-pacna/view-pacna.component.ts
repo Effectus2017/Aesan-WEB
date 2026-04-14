@@ -490,8 +490,9 @@ export class ViewPACNASponsorEvaluationComponent implements OnInit, OnDestroy, O
     const schoolName = center?.name ?? home?.name ?? '';
     const siteViewVariant = center ? 'pacna-centro' : 'pacna-hogar';
     this._dialog.open(SitesBySchoolViewModalComponent, {
-      width: '80%',
-      maxWidth: '1200px',
+      width: '96vw',
+      maxWidth: '1400px',
+      maxHeight: '90vh',
       data: {
         schoolId,
         schoolName,

@@ -635,7 +635,8 @@
                 "inactive-date": {
                     "label": "Fecha de Inactivación",
                     "placeholder": "Seleccione la fecha",
-                    "required": "La fecha de inactivación es requerida"
+                    "required": "La fecha de inactivación es requerida",
+                    "max": "La fecha no puede ser posterior a hoy"
                 },
                 "inactive-justification": {
                     "label": "Justificación de Inactivación",
@@ -1529,7 +1530,8 @@
                 "inactive-date": {
                     "label": "Fecha de Inactivación",
                     "placeholder": "Seleccione la fecha",
-                    "required": "La fecha de inactivación es requerida"
+                    "required": "La fecha de inactivación es requerida",
+                    "max": "La fecha no puede ser posterior a hoy"
                 },
                 "inactive-justification": {
                     "label": "Justificación de Inactivación",
@@ -1547,7 +1549,8 @@
                 "end-of-operation-date": {
                     "label": "Fecha de finalización de funcionamiento",
                     "placeholder": "Seleccione la fecha",
-                    "required": "La fecha de finalización de funcionamiento es requerida"
+                    "required": "La fecha de finalización de funcionamiento es requerida",
+                    "max": "La fecha no puede ser posterior a hoy"
                 },
                 "cancel": "Cancelar",
                 "save": "Guardar"

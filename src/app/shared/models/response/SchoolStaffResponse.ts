@@ -17,6 +17,11 @@ export interface SchoolStaffResponse {
   fatherLastName?: string;
   motherLastName?: string;
   email?: string;
+  birthDate?: Date | string;
+  contractStartDate?: Date | string;
+  contractEndDate?: Date | string;
+  positionName?: string;
+  positionNameEN?: string;
   assignmentTypeName?: string;
   /** Nombre en inglés del tipo de asignación (JSON camelCase: assignmentTypeNameEN). */
   assignmentTypeNameEN?: string;

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -10,9 +10,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
-import { StaffTableResponse } from 'app/shared/models/staff/Staff';
+import { Staff, StaffTableResponse } from 'app/shared/models/staff/Staff';
 import { NotificationService } from 'app/shared/services/notification.service';
 import { StaffService } from 'app/shared/services/staff.service';
+import { StaffDetailViewModalComponent } from '../staff-detail-view-modal/staff-detail-view-modal.component';
 import { AGENCY_BOARD_MEMBERS_READONLY_COLUMNS_SCHEMA } from './columns-schema';
 
 /** staffTypeId en BD para miembros de junta (mismo criterio que list-board-member). */
@@ -67,6 +68,7 @@ export class AgencyBoardMembersModalComponent implements OnInit, OnDestroy, OnGe
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _staffService = inject(StaffService);
   private _notificationService = inject(NotificationService);
+  private _dialog = inject(MatDialog);
 
   // -----
   // @ Variables
@@ -133,10 +135,33 @@ export class AgencyBoardMembersModalComponent implements OnInit, OnDestroy, OnGe
     event.preventDefault();
   }
 
-  /** Sin acciones adicionales en filas. */
-  onTableAction(event: Event, _action: string, _id: number): void {
+  /** Abre la ficha de solo lectura del miembro de junta. */
+  onTableAction(event: Event, action: string, rowId: number): void {
     event.stopPropagation();
     event.preventDefault();
+    if (action !== 'viewStaffDetail') {
+      return;
+    }
+    this._staffService
+      .getStaffById({ id: rowId })
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: { body?: Staff } | Staff) => {
+          const raw = response as { body?: Staff };
+          const staff = raw?.body ?? (response as Staff);
+          if (!staff) {
+            this._notificationService.showErrorDialog('dialog.error.message');
+            return;
+          }
+          this._dialog.open(StaffDetailViewModalComponent, {
+            width: '90vw',
+            maxWidth: '720px',
+            maxHeight: '90vh',
+            data: { staff },
+          });
+        },
+        error: () => this._notificationService.showErrorDialog('dialog.error.message'),
+      });
   }
 
   // -----

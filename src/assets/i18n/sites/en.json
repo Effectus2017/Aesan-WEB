@@ -643,7 +643,8 @@
                 "inactive-date": {
                     "label": "Inactivation Date",
                     "placeholder": "Select date",
-                    "required": "Inactivation date is required"
+                    "required": "Inactivation date is required",
+                    "max": "The date cannot be later than today"
                 },
                 "inactive-justification": {
                     "label": "Inactivation Justification",
@@ -1591,7 +1592,8 @@
                 "inactive-date": {
                     "label": "Inactivation Date",
                     "placeholder": "Select date",
-                    "required": "Inactivation date is required"
+                    "required": "Inactivation date is required",
+                    "max": "The date cannot be later than today"
                 },
                 "inactive-justification": {
                     "label": "Inactivation Justification",
@@ -1609,7 +1611,8 @@
                 "end-of-operation-date": {
                     "label": "End of operation date",
                     "placeholder": "Select the date",
-                    "required": "The end of operation date is required"
+                    "required": "The end of operation date is required",
+                    "max": "The date cannot be later than today"
                 },
                 "cancel": "Cancel",
                 "save": "Save"

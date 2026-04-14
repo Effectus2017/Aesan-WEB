@@ -27,4 +27,19 @@ export const AGENCY_BOARD_MEMBERS_READONLY_COLUMNS_SCHEMA: ColumnSchema[] = [
     type: 'boolean',
     label: 'sponsor-evaluation.agencyBoardMembersModal.columnStatus',
   },
+  {
+    key: 'actions',
+    type: 'button',
+    label: 'sponsor-evaluation.edit.staffBySite.table.columns.actions',
+    buttons: [
+      {
+        key: 'viewStaffDetail',
+        label: 'sponsor-evaluation.edit.staffBySite.table.buttons.viewDetail',
+        icon: 'heroicons_outline:eye',
+        tooltip: 'sponsor-evaluation.edit.staffBySite.table.buttons.viewDetailTooltip',
+        permission: 'staff.view',
+        disableAgencyRestriction: true,
+      },
+    ],
+  },
 ];

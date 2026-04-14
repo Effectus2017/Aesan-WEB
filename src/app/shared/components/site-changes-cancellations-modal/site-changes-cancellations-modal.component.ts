@@ -49,32 +49,39 @@ export interface SiteChangesCancellationsModalData {
 export class SiteChangesCancellationsModalComponent {
   form: FormGroup;
   isLoading = false;
+  /** Máximo permitido (hoy); no se permiten fechas futuras. */
+  maxEndOfOperationDate = new Date();
 
   constructor(
     public dialogRef: MatDialogRef<SiteChangesCancellationsModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SiteChangesCancellationsModalData,
     private fb: FormBuilder
   ) {
-    const initialDate = this.parseEndOfOperationDate(data.endOfOperationDate);
+    const initialDate = this._parseEndOfOperationDate(data.endOfOperationDate);
     this.form = this.fb.group({
       endOfOperationDate: [initialDate, Validators.required],
     });
   }
 
-  private parseEndOfOperationDate(
+  private _parseEndOfOperationDate(
     value: string | Date | null | undefined
   ): Date | null {
-    if (value == null) {
+    if (value == null || value === '') {
       return null;
     }
-    if (value instanceof Date) {
-      return value;
+    const d =
+      value instanceof Date ? new Date(value.getTime()) : new Date(value);
+    if (Number.isNaN(d.getTime())) {
+      return null;
     }
-    if (typeof value === 'string' && value) {
-      const parsed = new Date(value);
-      return isNaN(parsed.getTime()) ? null : parsed;
-    }
-    return null;
+    return this._clampEndDateToToday(d);
+  }
+
+  private _clampEndDateToToday(d: Date): Date {
+    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const today = new Date();
+    const max = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return day.getTime() > max.getTime() ? max : day;
   }
 
   get isFormValid(): boolean {

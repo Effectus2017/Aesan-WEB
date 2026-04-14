@@ -1,8 +1,9 @@
 import { AgencyResponse } from 'app/shared/models/agency/AgencyResponse';
 import { SchoolSiteTableResponse } from 'app/shared/models/response/SchoolSiteTableResponse';
+import type { SponsorEvaluationSiteViewVariant } from 'app/shared/models/response/SiteEditModalData';
 
-/** Programa / variante de modal de solo lectura para un sitio (evaluación de auspiciadores). */
-export type SponsorEvaluationSiteViewVariant = 'pdam' | 'psav' | 'pacna-centro' | 'pacna-hogar';
+/** Reexport: variante de programa en evaluación de auspiciadores. */
+export type { SponsorEvaluationSiteViewVariant };
 
 /** Datos que recibe `SitesBySchoolViewModalComponent` al abrirlo desde view-pdam, view-psav o view-pacna. */
 export interface SitesBySchoolViewModalData {

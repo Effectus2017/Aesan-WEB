@@ -1,0 +1,87 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-120">
+  <div class="flex justify-between items-center gap-2 pr-2 pl-6 min-h-16 flex-0 sm:pr-4 sm:pl-8 bg-primary text-on-primary">
+    <div class="flex flex-col min-w-0 flex-1 py-2">
+      <div class="text-lg font-medium leading-tight truncate">
+        {{ 'sponsor-evaluation.edit.staffDetailViewModal.title' | transloco }}
+      </div>
+    </div>
+    <div class="flex flex-shrink-0 items-center">
+      <button
+        mat-icon-button
+        [mat-dialog-close]="null"
+        [tabIndex]="-1"
+        [title]="'global.buttons.close' | transloco"
+        [attr.aria-label]="'global.buttons.close' | transloco"
+      >
+        <mat-icon class="text-on-primary" [svgIcon]="'heroicons_outline:x-mark'" aria-hidden="true"></mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="flex overflow-y-auto flex-col flex-auto p-6 min-h-0 gap-4 text-default">
+    <dl class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div class="sm:col-span-2">
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.fullName' | transloco }}</dt>
+        <dd class="mt-0.5 font-medium">{{ getFullName() }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.agencyBoardMembersModal.columnTitle' | transloco }}</dt>
+        <dd class="mt-0.5">{{ data.staff.positionName || '—' }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.agencyBoardMembersModal.columnBirthDate' | transloco }}</dt>
+        <dd class="mt-0.5">{{ data.staff.birthDate | date: 'dd/MM/yyyy' }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.contractStart' | transloco }}</dt>
+        <dd class="mt-0.5">
+          {{ data.staff.contractStartDate ? (data.staff.contractStartDate | date: 'dd/MM/yyyy') : '—' }}
+        </dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.contractEnd' | transloco }}</dt>
+        <dd class="mt-0.5">
+          {{ data.staff.contractEndDate ? (data.staff.contractEndDate | date: 'dd/MM/yyyy') : '—' }}
+        </dd>
+      </div>
+      <div class="sm:col-span-2">
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.agencyBoardMembersModal.columnEmail' | transloco }}</dt>
+        <dd class="mt-0.5 break-all">{{ data.staff.email || '—' }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.staffType' | transloco }}</dt>
+        <dd class="mt-0.5">{{ data.staff.staffTypeName || '—' }}</dd>
+      </div>
+      <div>
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.status' | transloco }}</dt>
+        <dd class="mt-0.5">{{ data.staff.statusName || '—' }}</dd>
+      </div>
+      <div class="sm:col-span-2">
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.address' | transloco }}</dt>
+        <dd class="mt-0.5">
+          {{ data.staff.postalAddress || '—' }}
+          <ng-container *ngIf="data.staff.cityName || data.staff.regionName || data.staff.zipCode">
+            <br />
+            <span>{{ data.staff.cityName }}</span>
+            <span *ngIf="data.staff.regionName">, {{ data.staff.regionName }}</span>
+            <span *ngIf="data.staff.zipCode"> {{ data.staff.zipCode }}</span>
+          </ng-container>
+        </dd>
+      </div>
+      <div class="sm:col-span-2" *ngIf="data.staff.comments">
+        <dt class="text-sm text-secondary">{{ 'sponsor-evaluation.edit.staffDetailViewModal.fields.comments' | transloco }}</dt>
+        <dd class="mt-0.5 whitespace-pre-wrap">{{ data.staff.comments }}</dd>
+      </div>
+    </dl>
+  </div>
+
+  <div
+    class="flex flex-col flex-shrink-0 justify-between p-6 border-t border-gray-200 dark:border-gray-700 sm:flex-row sm:items-center"
+  >
+    <div class="flex gap-2">
+      <button mat-flat-button type="button" [color]="'warn'" (click)="onClose()">
+        {{ 'global.buttons.close' | transloco }}
+      </button>
+    </div>
+  </div>
+</div>

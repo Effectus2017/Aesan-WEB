@@ -454,8 +454,9 @@ export class ViewPDAMSponsorEvaluationComponent implements OnInit, OnDestroy, On
     event.preventDefault();
     const school = this.tableConfig.dataSource.data.find((item: School) => item.id === schoolId);
     this._dialog.open(SitesBySchoolViewModalComponent, {
-      width: '80%',
-      maxWidth: '1200px',
+      width: '96vw',
+      maxWidth: '1400px',
+      maxHeight: '90vh',
       data: {
         schoolId,
         schoolName: school?.name ?? '',

@@ -20,7 +20,7 @@ import { TranslocoService } from '@ngneat/transloco';
 export interface SiteStatusModalData {
   siteId?: number; // ID del sitio (solo en modo edición)
   isActive: boolean;
-  inactiveDate: Date | null;
+  inactiveDate: string | Date | null;
   inactiveJustification: string | null;
   providedRationsService?: boolean | null; // ¿Brindó servicio de raciones durante su periodo de funcionamiento?
   isActiveOptions: OptionSelection[];
@@ -51,6 +51,8 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
   form: FormGroup;
   isLoading: boolean = false;
   currentLang: string = 'es';
+  /** Máximo permitido para fecha de inactivación (hoy); el datepicker no permite fechas futuras. */
+  maxInactiveDate = new Date();
   showInactivationFields: boolean = false; // Controla visibilidad de campos de inactivación
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _siteService = inject(SiteService);
@@ -67,7 +69,7 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       isActive: [this.data.isActive, Validators.required],
       providedRationsService: [this.data.providedRationsService ?? null, Validators.required], // Nueva pregunta
-      inactiveDate: [this.data.inactiveDate || null],
+      inactiveDate: [this._parseInitialInactiveDate(this.data.inactiveDate)],
       inactiveJustification: [this.data.inactiveJustification || '']
     });
   }
@@ -81,6 +83,7 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe((lang) => {
         this.currentLang = lang;
+        this._changeDetectorRef.markForCheck();
       });
 
     // Configurar validaciones condicionales iniciales
@@ -178,6 +181,26 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     this._unsubscribeAll.complete();
   }
 
+  /** Convierte valor inicial a Date para el datepicker; no permite fecha posterior a hoy. */
+  private _parseInitialInactiveDate(value: string | Date | null | undefined): Date | null {
+    if (value == null || value === '') {
+      return null;
+    }
+    const d = value instanceof Date ? new Date(value.getTime()) : new Date(value);
+    if (Number.isNaN(d.getTime())) {
+      return null;
+    }
+    return this._clampInactiveDateToToday(d);
+  }
+
+  /** Ajusta la fecha al inicio del día local y la limita a no ser posterior a hoy. */
+  private _clampInactiveDateToToday(d: Date): Date {
+    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const today = new Date();
+    const max = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return day.getTime() > max.getTime() ? max : day;
+  }
+
   private setupConditionalValidations(): void {
     const isActive = this.form.get('isActive')?.value;
     const providedRationsService = this.form.get('providedRationsService')?.value;
@@ -268,27 +291,26 @@ export class SiteStatusModalComponent implements OnInit, OnDestroy {
     this._siteService.updateSiteActiveStatus(queryParameters)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
-        next: (response) => {
+        next: () => {
           this.isLoading = false;
           this._changeDetectorRef.detectChanges();
 
-          // Mostrar notificación de éxito
-          this._notificationService.showSuccess('sites.edit.status-updated-successfully');
-
-          // Cerrar el modal con los datos actualizados
+          const isActiveVal = this.form.get('isActive')?.value;
           this.dialogRef.close({
             action: 'submit',
-            isActive: this.form.get('isActive')?.value,
+            isActive: isActiveVal,
             inactiveDate: this.form.get('inactiveDate')?.value,
-            inactiveJustification: this.form.get('inactiveJustification')?.value
+            inactiveJustification: this.form.get('inactiveJustification')?.value,
+            providedRationsService:
+              isActiveVal === false ? this.form.get('providedRationsService')?.value : undefined,
+            pendingSuccessConfirmation: true,
           });
         },
         error: (error) => {
           this.isLoading = false;
           this._changeDetectorRef.detectChanges();
 
-          // Mostrar notificación de error
-          this._notificationService.showError('sites.edit.status-update-error');
+          this._notificationService.showErrorDialog('sites.edit.status-update-error');
           console.error('Error al actualizar el estatus del sitio:', error);
         }
       });

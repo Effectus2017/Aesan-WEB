@@ -120,6 +120,8 @@
           },
           "services": {
             "title": "Servicios del sitio",
+            "sectionTitle": "Servicios del sitio",
+            "sectionDescription": "Servicios ofrecidos por grupo del sitio (solo lectura).",
             "loadError": "No se pudieron cargar los tipos de servicio del programa.",
             "empty": "Este sitio no tiene grupos con servicios registrados.",
             "button": "Servicios",
@@ -166,8 +168,27 @@
             "email": "Correo Electrónico",
             "assignmentDate": "Fecha de Asignación",
             "isPrimary": "Principal",
-            "isActive": "Activo"
+            "isActive": "Activo",
+            "contractStartDate": "Inicio de contrato",
+            "contractEndDate": "Fin de contrato",
+            "actions": "Acciones"
+          },
+          "buttons": {
+            "viewDetail": "Ver",
+            "viewDetailTooltip": "Ver información del personal"
           }
+        }
+      },
+      "staffDetailViewModal": {
+        "title": "Información del personal",
+        "fields": {
+          "fullName": "Nombre completo",
+          "contractStart": "Inicio de contrato",
+          "contractEnd": "Fin de contrato",
+          "staffType": "Tipo de personal",
+          "status": "Estatus",
+          "address": "Dirección",
+          "comments": "Comentarios"
         }
       },
       "settings": {

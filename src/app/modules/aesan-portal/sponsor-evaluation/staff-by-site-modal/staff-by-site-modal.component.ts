@@ -1,15 +1,19 @@
 import { ChangeDetectorRef, Component, inject, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { TranslocoModule } from '@ngneat/transloco';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
 import { SchoolStaffResponse } from 'app/shared/models/response/SchoolStaffResponse';
+import { NotificationService } from 'app/shared/services/notification.service';
+import { StaffService } from 'app/shared/services/staff.service';
+import { StaffDetailViewModalComponent } from '../staff-detail-view-modal/staff-detail-view-modal.component';
+import { Staff } from 'app/shared/models/staff/Staff';
 import { STAFF_BY_SITE_COLUMNS_SCHEMA } from './columns-schema';
 
 export interface StaffBySiteModalData {
@@ -53,6 +57,9 @@ export interface StaffBySiteModalData {
 export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTableHandler {
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _changeDetectorRef = inject(ChangeDetectorRef);
+  private _dialog = inject(MatDialog);
+  private _staffService = inject(StaffService);
+  private _notificationService = inject(NotificationService);
 
   // Loading
   isInitialLoading: boolean = true;
@@ -112,10 +119,38 @@ export class StaffBySiteModalComponent implements OnInit, OnDestroy, OnGenericTa
     // No se permite eliminar desde este modal
   }
 
-  onTableAction(event: Event, action: string, id: number): void {
+  /** Abre el modal de detalle del empleado cuando la acción es ver ficha. */
+  onTableAction(event: Event, action: string, rowId: number): void {
     event.stopPropagation();
     event.preventDefault();
-    // No hay acciones adicionales en este modal
+    if (action !== 'viewStaffDetail') {
+      return;
+    }
+    const row = this.tableConfig.dataSource.data.find((r) => r.id === rowId);
+    const staffId = row?.staffId;
+    if (!staffId) {
+      return;
+    }
+    this._staffService
+      .getStaffById({ id: staffId })
+      .pipe(takeUntil(this._unsubscribeAll))
+      .subscribe({
+        next: (response: { body?: Staff } | Staff) => {
+          const raw = response as { body?: Staff };
+          const staff = raw?.body ?? (response as Staff);
+          if (!staff) {
+            this._notificationService.showErrorDialog('dialog.error.message');
+            return;
+          }
+          this._dialog.open(StaffDetailViewModalComponent, {
+            width: '90vw',
+            maxWidth: '720px',
+            maxHeight: '90vh',
+            data: { staff },
+          });
+        },
+        error: () => this._notificationService.showErrorDialog('dialog.error.message'),
+      });
   }
 
   onClose(): void {
