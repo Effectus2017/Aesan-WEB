@@ -5,6 +5,7 @@ import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/common/QueryParameters';
 import { Staff } from '../models/staff/Staff';
 import { StaffRequest } from '../models/request/StaffRequest';
+import { UpdateStaffActiveStatusRequest } from '../models/request/update-staff-active-status-request';
 import { getHttpOptions } from '../utils';
 
 @Injectable({
@@ -99,8 +100,8 @@ export class StaffService {
    * @param isActive Nuevo estado activo
    * @returns Observable con el resultado de la actualización
    */
-  updateStaffActiveStatus(queryParams: QueryParameters): Observable<any> {
-    return this._httpClient.put(`${this.apiUrl}/update-staff-active-status`, {}, getHttpOptions(queryParams));
+  updateStaffActiveStatus(request: UpdateStaffActiveStatusRequest): Observable<any> {
+    return this._httpClient.put(`${this.apiUrl}/update-staff-active-status`, request);
   }
 
   /**

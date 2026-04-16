@@ -9,7 +9,7 @@ import {
   ChangeDetectorRef,
   inject,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -24,13 +24,18 @@ import { OptionSelection } from 'app/shared/models/common/OptionSelection';
 import { Subject, takeUntil } from 'rxjs';
 import { StaffService } from 'app/shared/services/staff.service';
 import { NotificationService } from 'app/shared/services/notification.service';
-import { QueryParameters } from 'app/shared/models/common/QueryParameters';
+import { UpdateStaffActiveStatusRequest } from 'app/shared/models/request/update-staff-active-status-request';
+import {
+  StaffAccessCancellationModalComponent,
+  StaffAccessCancellationModalResult,
+} from '../staff-access-cancellation-modal/staff-access-cancellation-modal.component';
 
 export interface StaffStatusModalData {
   staffId?: number;
   isActive: boolean;
   inactiveDate?: string | Date | null;
   inactiveJustification?: string | null;
+  userId?: string | null;
   isActiveOptions: OptionSelection[];
 }
 
@@ -63,6 +68,7 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
   private _unsubscribeAll: Subject<any> = new Subject<any>();
   private _staffService = inject(StaffService);
   private _notificationService = inject(NotificationService);
+  private _matDialog = inject(MatDialog);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _translocoService = inject(TranslocoService);
 
@@ -178,16 +184,98 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
         ? inactiveDateValue.toISOString().split('T')[0]
         : inactiveDateValue;
 
-    const queryParameters: QueryParameters = {
-      staffId: this.data.staffId,
+    const hasPortalAccount = !!this.data.userId;
+    if (isActiveVal === false && hasPortalAccount) {
+      this._notificationService.showConfirmationDialogWithCallback(
+        {
+          title: 'staff.edit.access-cancellation.confirm-dialog.title',
+          message: 'staff.edit.access-cancellation.confirm-dialog.message',
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-triangle',
+            color: 'warning',
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: 'staff.edit.access-cancellation.confirm-dialog.confirm',
+              color: 'warn',
+            },
+            cancel: {
+              show: true,
+              label: 'staff.edit.access-cancellation.confirm-dialog.cancel',
+            },
+          },
+        },
+        (confirmResult) => {
+          if (confirmResult !== 'confirmed') {
+            this.isLoading = false;
+            this._changeDetectorRef.detectChanges();
+            return;
+          }
+
+          const cancellationDialogRef = this._matDialog.open(StaffAccessCancellationModalComponent, {
+            data: {
+              staffId: this.data.staffId,
+              userId: this.data.userId ?? null,
+            },
+            disableClose: false,
+            width: '600px',
+            maxWidth: '90vw',
+            panelClass: ['mat-dialog-container', 'dialog-responsive'],
+          });
+
+          cancellationDialogRef
+            .afterClosed()
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((cancellationResult: StaffAccessCancellationModalResult | null) => {
+              if (!cancellationResult) {
+                this.isLoading = false;
+                this._changeDetectorRef.detectChanges();
+                return;
+              }
+
+              const request = this._buildStatusUpdateRequest(isActiveVal, inactiveDateOnly, cancellationResult);
+              this._submitStatusChangeRequest(request, isActiveVal);
+            });
+        },
+      );
+      return;
+    }
+
+    const request = this._buildStatusUpdateRequest(isActiveVal, inactiveDateOnly, null);
+    this._submitStatusChangeRequest(request, isActiveVal);
+  }
+
+  onCancel(): void {
+    if (!this.isLoading) {
+      this.dialogRef.close(null);
+    }
+  }
+
+  /** Construye el payload para actualizar estado del staff. */
+  private _buildStatusUpdateRequest(
+    isActiveVal: boolean,
+    inactiveDateOnly: string | null,
+    cancellationResult: StaffAccessCancellationModalResult | null,
+  ): UpdateStaffActiveStatusRequest {
+    return {
+      staffId: this.data.staffId!,
       isActive: isActiveVal,
       inactiveJustification:
         isActiveVal === false ? (this.form.get('inactiveJustification')?.value ?? '').trim() : undefined,
       inactiveDate: isActiveVal === false ? inactiveDateOnly : undefined,
+      accessCancellationJustification:
+        isActiveVal === false ? cancellationResult?.accessCancellationJustification ?? undefined : undefined,
+      accessCancellationConfirmedAt:
+        isActiveVal === false ? cancellationResult?.accessCancellationConfirmedAt ?? undefined : undefined,
     };
+  }
 
+  /** Ejecuta la llamada API para actualizar el estado del personal. */
+  private _submitStatusChangeRequest(request: UpdateStaffActiveStatusRequest, isActiveVal: boolean): void {
     this._staffService
-      .updateStaffActiveStatus(queryParameters)
+      .updateStaffActiveStatus(request)
       .pipe(takeUntil(this._unsubscribeAll))
       .subscribe({
         next: () => {
@@ -212,11 +300,5 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
           console.error('Error al actualizar el estatus del staff:', error);
         },
       });
-  }
-
-  onCancel(): void {
-    if (!this.isLoading) {
-      this.dialogRef.close(null);
-    }
   }
 }

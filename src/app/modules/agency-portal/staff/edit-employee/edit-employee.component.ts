@@ -741,6 +741,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         isActive: currentIsActive,
         inactiveDate: this.param.inactiveDate ?? null,
         inactiveJustification: this.param.inactiveJustification ?? null,
+        userId: this.param.userId ?? null,
         isActiveOptions: this.listStatus,
       } as StaffStatusModalData,
       disableClose: false,

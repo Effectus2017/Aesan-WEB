@@ -655,6 +655,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
         isActive: currentIsActive,
         inactiveDate: this.param.inactiveDate ?? null,
         inactiveJustification: this.param.inactiveJustification ?? null,
+        userId: this.param.userId ?? null,
         isActiveOptions: this.listStatus
       } as StaffStatusModalData,
       disableClose: false,

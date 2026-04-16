@@ -1,0 +1,52 @@
+<div class="flex flex-col -m-6 max-h-screen min-w-100">
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'staff.edit.access-cancellation.title' | transloco }}</div>
+    <button
+      mat-icon-button
+      [mat-dialog-close]="null"
+      [tabIndex]="-1"
+      [title]="'global.buttons.close' | transloco"
+      [attr.aria-label]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x-mark'"></mat-icon>
+    </button>
+  </div>
+
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto p-6 gap-4">
+      <p class="text-secondary">{{ 'staff.edit.access-cancellation.description' | transloco }}</p>
+
+      <mat-form-field>
+        <mat-label>{{ 'staff.edit.access-cancellation.justification.label' | transloco }}</mat-label>
+        <textarea
+          matInput
+          rows="4"
+          formControlName="accessCancellationJustification"
+          [attr.aria-label]="'staff.edit.access-cancellation.justification.label' | transloco"
+          [placeholder]="'staff.edit.access-cancellation.justification.placeholder' | transloco">
+        </textarea>
+        @if (form.controls.accessCancellationJustification.hasError('required')) {
+          <mat-error>{{ 'staff.edit.access-cancellation.justification.required' | transloco }}</mat-error>
+        }
+        @if (form.controls.accessCancellationJustification.hasError('maxlength')) {
+          <mat-error>{{ 'staff.edit.access-cancellation.justification.maxlength' | transloco }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-checkbox formControlName="acknowledgeCancellation">
+        {{ 'staff.edit.access-cancellation.acknowledge.label' | transloco }}
+      </mat-checkbox>
+      @if (form.controls.acknowledgeCancellation.hasError('required')) {
+        <p class="text-sm text-warn">{{ 'staff.edit.access-cancellation.acknowledge.required' | transloco }}</p>
+      }
+    </div>
+
+    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <button mat-flat-button type="button" color="warn" (click)="onCancel()">
+        {{ 'staff.edit.access-cancellation.cancel' | transloco }}
+      </button>
+      <button mat-flat-button type="submit" color="primary" [disabled]="!isFormValid">
+        {{ 'staff.edit.access-cancellation.confirm' | transloco }}
+      </button>
+    </div>
+  </form>
+</div>

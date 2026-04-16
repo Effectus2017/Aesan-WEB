@@ -709,6 +709,28 @@
         "cancel": "Cancel",
         "save": "Save"
       },
+      "access-cancellation": {
+        "title": "Cancel portal access",
+        "description": "Complete the information required to cancel this staff member's portal access.",
+        "confirm-dialog": {
+          "title": "Confirm inactivation",
+          "message": "This staff member has a portal account. Are you sure you want to continue with inactivation and cancel access?",
+          "confirm": "Yes, continue",
+          "cancel": "Cancel"
+        },
+        "justification": {
+          "label": "Cancellation justification",
+          "placeholder": "Describe why portal access is being cancelled",
+          "required": "Cancellation justification is required",
+          "maxlength": "Justification cannot exceed 500 characters"
+        },
+        "acknowledge": {
+          "label": "I confirm this staff member's portal access must be cancelled.",
+          "required": "You must confirm access cancellation"
+        },
+        "cancel": "Cancel",
+        "confirm": "Confirm cancellation"
+      },
       "status-updated-successfully": "Staff status updated successfully",
       "status-update-error": "Error updating staff status",
       "settings": {
