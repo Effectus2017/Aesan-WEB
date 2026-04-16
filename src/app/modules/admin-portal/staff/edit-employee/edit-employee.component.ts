@@ -38,6 +38,7 @@ import { FieldVisibilityService } from '../../../../shared/services/field-visibi
 import { SiteService } from 'app/shared/services/site.service';
 import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { Site } from 'app/shared/models/site/Site';
+import { UserService } from 'app/shared/services/user.service';
 
 @Component({
   selector: 'app-edit-employee',
@@ -81,6 +82,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   private _siteService = inject(SiteService);
   private _schoolStaffService = inject(SchoolStaffService);
   private _activatedRoute = inject(ActivatedRoute);
+  private _userService = inject(UserService);
 
   // Lista de Status
   listStatus: OptionSelection[] = [];
@@ -117,6 +119,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   // Parámetro del staff
   param: Staff | null = null;
+  currentUserId: string | null = null;
 
   headerConfig: GenericHeaderConfig = {
     title: 'staff.edit.title',
@@ -230,6 +233,10 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   ngOnInit(): void {
+    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user) => {
+      this.currentUserId = user?.userId ?? user?.nameid ?? null;
+    });
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
@@ -577,6 +584,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         inactiveDate: this.param.inactiveDate ?? null,
         inactiveJustification: this.param.inactiveJustification ?? null,
         userId: this.param.userId ?? null,
+        currentUserId: this.currentUserId,
         isActiveOptions: this.listStatus
       } as StaffStatusModalData,
       disableClose: false,

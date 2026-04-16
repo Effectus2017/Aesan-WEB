@@ -733,6 +733,7 @@
       },
       "status-updated-successfully": "Staff status updated successfully",
       "status-update-error": "Error updating staff status",
+      "self-status-change-blocked": "You are not allowed to change your own staff status.",
       "settings": {
         "tooltip": "Settings",
         "toggle-active": "Activate/Deactivate"

@@ -135,6 +135,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
   // Parámetro del staff
   param: Staff | null = null;
+  currentUserId: string | null = null;
 
   // Configuración de la tabla de relaciones
   relationshipsTableConfig: GenericTableConfig = {
@@ -239,6 +240,10 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
 
 
   ngOnInit(): void {
+    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user) => {
+      this.currentUserId = user?.userId ?? user?.nameid ?? null;
+    });
+
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
 
@@ -650,6 +655,7 @@ export class EditBoardMemberComponent implements OnInit, OnDestroy, OnGenericHea
         inactiveDate: this.param.inactiveDate ?? null,
         inactiveJustification: this.param.inactiveJustification ?? null,
         userId: this.param.userId ?? null,
+        currentUserId: this.currentUserId,
         isActiveOptions: this.listStatus
       } as StaffStatusModalData,
       disableClose: false,

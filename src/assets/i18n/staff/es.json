@@ -675,7 +675,7 @@
         "confirm-dialog": {
           "title": "Confirmar inactivaci\u00f3n",
           "message": "Este personal tiene cuenta de portal. \u00bfEst\u00e1 seguro de continuar con la inactivaci\u00f3n y cancelar su acceso?",
-          "confirm": "Continuar",
+          "confirm": "Si",
           "cancel": "Cancelar"
         },
         "justification": {
@@ -693,6 +693,7 @@
       },
       "status-updated-successfully": "Estado del personal actualizado exitosamente",
       "status-update-error": "Error al actualizar el estado del personal",
+      "self-status-change-blocked": "No se permite cambiar su propio estado de personal.",
       "settings": {
         "tooltip": "Configuraci\u00f3n",
         "toggle-active": "Activar/Desactivar"

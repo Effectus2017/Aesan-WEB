@@ -135,6 +135,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
 
   // Parámetro del staff
   param: Staff | null = null;
+  currentUserId: string | null = null;
 
   // Email original para excluir de la validación en edición
   originalEmail: string = '';
@@ -254,6 +255,10 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   ngOnInit(): void {
+    this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user) => {
+      this.currentUserId = user?.userId ?? user?.nameid ?? null;
+    });
+
     this.useCenterLabelsForSchoolAssignment = isAgencyPacnaProgram();
 
     // Obtener Agencia desde local storage desde AuthService
@@ -742,6 +747,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         inactiveDate: this.param.inactiveDate ?? null,
         inactiveJustification: this.param.inactiveJustification ?? null,
         userId: this.param.userId ?? null,
+        currentUserId: this.currentUserId,
         isActiveOptions: this.listStatus,
       } as StaffStatusModalData,
       disableClose: false,

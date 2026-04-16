@@ -36,6 +36,7 @@ export interface StaffStatusModalData {
   inactiveDate?: string | Date | null;
   inactiveJustification?: string | null;
   userId?: string | null;
+  currentUserId?: string | null;
   isActiveOptions: OptionSelection[];
 }
 
@@ -172,6 +173,17 @@ export class StaffStatusModalComponent implements OnInit, OnDestroy, AfterViewIn
         inactiveDate: this.form.get('inactiveDate')?.value,
         inactiveJustification: this.form.get('inactiveJustification')?.value,
       });
+      return;
+    }
+
+    if (
+      this.data.userId &&
+      this.data.currentUserId &&
+      this.data.userId.toLowerCase() === this.data.currentUserId.toLowerCase()
+    ) {
+      this._notificationService.showErrorDialog(
+        this._translocoService.translate('staff.edit.self-status-change-blocked'),
+      );
       return;
     }
 
