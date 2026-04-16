@@ -45,12 +45,27 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FieldVisibilityService } from '../../../../shared/services/field-visibility.service';
 import { SchoolStaffService } from 'app/shared/services/school-staff.service';
 import { School } from 'app/shared/models/school/School';
+import { Site } from 'app/shared/models/site/Site';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { noOverlappingSchedulesValidator } from 'app/shared/validators/no-overlapping-schedules.validator';
 import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disable-if-agency-restricted/disable-if-agency-restricted.directive';
 import { DisableIfNoPermissionDirective } from 'app/shared/directives/disable-if-no-permission/disable-if-no-permission.directive';
 import { isAgencyPacnaProgram } from 'app/shared/const';
+
+type PacnaAssignmentMode = 'center' | 'home' | 'mixed' | 'unknown';
+type StaffAssignmentType = 'center' | 'home';
+
+interface StaffAssignmentOption {
+  id: number;
+  schoolId: number;
+  siteId?: number | null;
+  assignmentType: StaffAssignmentType;
+  displayName: string;
+  displayCode?: string | null;
+  valueKey: string;
+}
+
 @Component({
   selector: 'app-edit-employee',
   templateUrl: './edit-employee.component.html',
@@ -101,9 +116,21 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   listStaffClassifications: StaffClassification[] = [];
   /** Escuelas de la agencia (resolver) para asignación opcional. */
   listSchools: School[] = [];
+  /** Sitios de la agencia (resolver) para construir opciones de hogares PACNA. */
+  listSites: Site[] = [];
+  /** Opciones finales a mostrar en el selector de asignación. */
+  assignmentOptions: StaffAssignmentOption[] = [];
+  /** Opciones de centros/escuelas. */
+  centerAssignmentOptions: StaffAssignmentOption[] = [];
+  /** Opciones de hogares (sitios). */
+  homeAssignmentOptions: StaffAssignmentOption[] = [];
 
   /** PACNA: en UI se usa la nomenclatura «Centro» en lugar de «Escuela». */
   useCenterLabelsForSchoolAssignment = false;
+  /** PACNA: para agencias de solo hogares se usa la nomenclatura «Hogar». */
+  useHomeLabelsForSchoolAssignment = false;
+  /** PACNA: para agencias mixtas se muestran Centros y Hogares. */
+  useMixedLabelsForSchoolAssignment = false;
   // Resultado de revisión / Review result
   reviewResult: OptionSelection[] = [];
 
@@ -136,6 +163,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   // Parámetro del staff
   param: Staff | null = null;
   currentUserId: string | null = null;
+  private _agencyData: any = null;
 
   // Email original para excluir de la validación en edición
   originalEmail: string = '';
@@ -247,6 +275,111 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   }
 
   /**
+   * Clave i18n del título de la sección de asignación.
+   */
+  get assignmentTitleKey(): string {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixed-assignment';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.home-assignment';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.center-assignment';
+    }
+    return 'staff.edit.school-assignment';
+  }
+
+  /**
+   * Clave i18n de la descripción de la sección de asignación.
+   */
+  get assignmentDescriptionKey(): string {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixed-assignment-description';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.home-assignment-description';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.center-assignment-description';
+    }
+    return 'staff.edit.school-assignment-description';
+  }
+
+  /**
+   * Clave i18n de la etiqueta del selector de asignación.
+   */
+  get assignmentPickerLabelKey(): string {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixedPicker.label';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.homePicker.label';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.centerPicker.label';
+    }
+    return 'staff.edit.schoolPicker.label';
+  }
+
+  /**
+   * Clave i18n del placeholder del selector de asignación.
+   */
+  get assignmentPickerPlaceholderKey(): string {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixedPicker.placeholder';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.homePicker.placeholder';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.centerPicker.placeholder';
+    }
+    return 'staff.edit.schoolPicker.placeholder';
+  }
+
+  /**
+   * Clave i18n del hint de lista vacía del selector de asignación.
+   */
+  get assignmentPickerEmptyListKey(): string {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixedPicker.emptyList';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.homePicker.emptyList';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.centerPicker.emptyList';
+    }
+    return 'staff.edit.schoolPicker.emptyList';
+  }
+
+  /**
+   * Clave i18n del hint informativo del selector de asignación.
+   */
+  get assignmentPickerHintKey(): string | null {
+    if (this.useMixedLabelsForSchoolAssignment) {
+      return 'staff.edit.mixedPicker.hint';
+    }
+    if (this.useHomeLabelsForSchoolAssignment) {
+      return 'staff.edit.homePicker.hint';
+    }
+    if (this.useCenterLabelsForSchoolAssignment) {
+      return 'staff.edit.centerPicker.hint';
+    }
+    return null;
+  }
+
+  /**
+   * Indica si se deben mostrar grupos de opciones (agencias PACNA mixtas).
+   */
+  get shouldShowAssignmentGroups(): boolean {
+    return this.useMixedLabelsForSchoolAssignment
+      && this.centerAssignmentOptions.length > 0
+      && this.homeAssignmentOptions.length > 0;
+  }
+
+  /**
    * Actualiza el estado del botón de guardar
    */
   private updateSubmitButtonState(): void {
@@ -254,12 +387,22 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     this._changeDetectorRef.detectChanges();
   }
 
+  /**
+   * Compara opciones de asignación por clave estable (evita colisiones de id entre Centro/Hogar).
+   */
+  compareAssignmentOptions = (a: StaffAssignmentOption | null, b: StaffAssignmentOption | null): boolean => {
+    if (!a && !b) {
+      return true;
+    }
+    return a?.valueKey === b?.valueKey;
+  };
+
   ngOnInit(): void {
     this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user) => {
       this.currentUserId = user?.userId ?? user?.nameid ?? null;
     });
 
-    this.useCenterLabelsForSchoolAssignment = isAgencyPacnaProgram();
+    this._agencyData = this._resolveAgencyFromRouteData();
 
     // Obtener Agencia desde local storage desde AuthService
     this.agencyId = this._authService.getAgencyId();
@@ -320,15 +463,23 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       this.listStaffTypes = resolvedData.staffTypes;
       this.listStaffClassifications = resolvedData.staffClassifications;
 
-      // Cargar staff desde el resolver
-      this.param = resolvedData.staff;
-      this.onSetForm(resolvedData.staff);
-
       const schoolsPayload = resolvedData.schools;
       const rawSchools: School[] = Array.isArray(schoolsPayload)
         ? schoolsPayload
         : schoolsPayload?.data ?? [];
       this.listSchools = rawSchools.filter((s) => s.isActive !== false);
+
+      const sitesPayload = resolvedData.sites;
+      const rawSites: Site[] = Array.isArray(sitesPayload)
+        ? sitesPayload
+        : sitesPayload?.data ?? [];
+      this.listSites = rawSites.filter((s) => s.isActive !== false);
+
+      this._configureAssignmentOptions(resolvedData.options ?? []);
+
+      // Cargar staff desde el resolver
+      this.param = resolvedData.staff;
+      this.onSetForm(resolvedData.staff);
     }
 
     // Suscribirse a cambios en la clasificación
@@ -411,7 +562,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       comments: param.comments,
       reviewDate: param.reviewDate,
       reviewJustification: param.reviewJustification,
-      school: this._schoolFromStaff(param),
+      school: this._assignmentFromStaff(param),
       salaryOrigins: param.salaryOrigins,
     });
 
@@ -583,7 +734,8 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
     const motherLastName: string = formValues.motherLastName || '';
 
     // Escuela asignada (opcional)
-    const schoolId: number | null = formValues.school?.id ?? null;
+    const schoolId: number | null = formValues.school?.schoolId ?? formValues.school?.id ?? null;
+    const siteId: number | null = formValues.school?.siteId ?? null;
     const isPrimary: boolean = false;
 
     // Loading
@@ -680,6 +832,7 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
       fatherLastName: fatherLastName,
       motherLastName: motherLastName,
       schoolId: schoolId,
+      siteId: siteId,
       isPrimary: isPrimary,
       birthDate: birthDate,
       email: email,
@@ -974,19 +1127,19 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
   /**
    * Resuelve la escuela del formulario a partir del DTO del staff (`schoolId` o sitio anidado).
    */
-  private _schoolFromStaff(param: Staff): School | null {
-    if (!this.listSchools.length) {
+  private _assignmentFromStaff(param: Staff): StaffAssignmentOption | null {
+    if (!this.assignmentOptions.length) {
       return null;
     }
     if (param.schoolId != null) {
-      const byId = this.listSchools.find((s) => s.id === param.schoolId);
+      const byId = this._assignmentFromAssignment(param.schoolId, null);
       if (byId) {
         return byId;
       }
     }
     const nestedSchoolId = param.site?.school?.id;
     if (nestedSchoolId != null) {
-      return this.listSchools.find((s) => s.id === nestedSchoolId) ?? null;
+      return this._assignmentFromAssignment(nestedSchoolId, param.site?.id ?? null);
     }
     return null;
   }
@@ -1003,11 +1156,11 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         const list = assignments ?? [];
         if (list.length > 0) {
           const activeAssignment = list.find((a) => a.isActive);
-          if (activeAssignment && this.listSchools.length > 0) {
-            const school = this.listSchools.find((s) => s.id === activeAssignment.schoolId);
-            if (school) {
+          if (activeAssignment && this.assignmentOptions.length > 0) {
+            const assignment = this._assignmentFromAssignment(activeAssignment.schoolId, activeAssignment.siteId ?? null);
+            if (assignment) {
               this.headerConfig.formGroup.patchValue({
-                school,
+                school: assignment,
               });
             }
           }
@@ -1017,5 +1170,227 @@ export class EditEmployeeComponent implements OnInit, OnDestroy, OnGenericHeader
         console.error('Error loading school assignment:', err);
       },
     });
+  }
+
+  /**
+   * Construye las opciones y etiquetas de asignación según PACNA y tipo de agencia.
+   */
+  private _configureAssignmentOptions(options: OptionSelection[]): void {
+    const isPacnaAgency = this._isPacnaAgency();
+
+    this.centerAssignmentOptions = this._buildCenterAssignmentOptions();
+
+    const isDayCareHomeOptions = options.filter((option) => option.optionKey === 'isDayCareHome');
+    const homeOptionId = isDayCareHomeOptions.find((option) => option.booleanValue === true)?.id ?? null;
+    this.homeAssignmentOptions = this._buildHomeAssignmentOptions(homeOptionId);
+
+    if (!isPacnaAgency) {
+      this.useCenterLabelsForSchoolAssignment = false;
+      this.useHomeLabelsForSchoolAssignment = false;
+      this.useMixedLabelsForSchoolAssignment = false;
+      this.assignmentOptions = [...this.centerAssignmentOptions];
+      return;
+    }
+
+    const mode = this._resolvePacnaAssignmentMode();
+    if (mode === 'center') {
+      this.useCenterLabelsForSchoolAssignment = true;
+      this.useHomeLabelsForSchoolAssignment = false;
+      this.useMixedLabelsForSchoolAssignment = false;
+      this.assignmentOptions = [...this.centerAssignmentOptions];
+      return;
+    }
+
+    if (mode === 'home') {
+      this.useCenterLabelsForSchoolAssignment = false;
+      this.useHomeLabelsForSchoolAssignment = true;
+      this.useMixedLabelsForSchoolAssignment = false;
+      this.assignmentOptions = [...this.homeAssignmentOptions];
+      return;
+    }
+
+    const hasCenters = this.centerAssignmentOptions.length > 0;
+    const hasHomes = this.homeAssignmentOptions.length > 0;
+
+    if (hasCenters && hasHomes) {
+      this.useCenterLabelsForSchoolAssignment = false;
+      this.useHomeLabelsForSchoolAssignment = false;
+      this.useMixedLabelsForSchoolAssignment = true;
+      this.assignmentOptions = [...this.centerAssignmentOptions, ...this.homeAssignmentOptions];
+      return;
+    }
+
+    this.useCenterLabelsForSchoolAssignment = hasCenters;
+    this.useHomeLabelsForSchoolAssignment = hasHomes;
+    this.useMixedLabelsForSchoolAssignment = false;
+    this.assignmentOptions = hasHomes
+      ? [...this.homeAssignmentOptions]
+      : [...this.centerAssignmentOptions];
+  }
+
+  /**
+   * Construye opciones de asignación para centros/escuelas.
+   */
+  private _buildCenterAssignmentOptions(): StaffAssignmentOption[] {
+    return this.listSchools.map((school) => ({
+      id: school.id,
+      schoolId: school.id,
+      siteId: null,
+      assignmentType: 'center',
+      displayName: school.name,
+      displayCode: school.schoolCode,
+      valueKey: `center-${school.id}`,
+    }));
+  }
+
+  /**
+   * Construye opciones de asignación para hogares usando sitios activos con escuela relacionada.
+   */
+  private _buildHomeAssignmentOptions(homeOptionId: number | null): StaffAssignmentOption[] {
+    const homeSites = this.listSites.filter((site) => this._isHomeSite(site, homeOptionId));
+
+    return homeSites
+      .map((site) => {
+        const schoolId = this._readSiteSchoolId(site);
+        if (!schoolId) {
+          return null;
+        }
+
+        return {
+          id: site.id ?? schoolId,
+          schoolId,
+          siteId: site.id ?? null,
+          assignmentType: 'home',
+          displayName: site.name ?? '',
+          displayCode: site.siteCode ?? null,
+          valueKey: `home-${site.id ?? schoolId}`,
+        } as StaffAssignmentOption;
+      })
+      .filter((option): option is StaffAssignmentOption => option !== null);
+  }
+
+  /**
+   * Determina si un sitio PACNA corresponde a Hogar.
+   */
+  private _isHomeSite(site: Site, homeOptionId: number | null): boolean {
+    if (site.isDayCareHome?.booleanValue === true) {
+      return true;
+    }
+    if (site.isDayCareHome?.booleanValue === false) {
+      return false;
+    }
+
+    if (homeOptionId != null && site.isDayCareHomeId != null) {
+      return site.isDayCareHomeId === homeOptionId;
+    }
+
+    // Fallback defensivo: si el API no trae discriminador, en PACNA se considera sitio de hogar
+    // para no dejar el selector vacío en agencias con Hogares o Ambos.
+    return true;
+  }
+
+  /**
+   * Obtiene el schoolId asociado a un sitio.
+   */
+  private _readSiteSchoolId(site: Site): number | null {
+    const siteWithSchoolId = site as Site & { schoolId?: number | null };
+    return site.school?.id ?? siteWithSchoolId.schoolId ?? null;
+  }
+
+  /**
+   * Resuelve el modo de asignación PACNA según la inscripción de la agencia.
+   */
+  private _resolvePacnaAssignmentMode(): PacnaAssignmentMode {
+    const inscriptionOption = this._agencyData?.inscription?.isDayCareHome;
+    if (inscriptionOption) {
+      if (inscriptionOption.booleanValue === true) {
+        return 'home';
+      }
+      if (inscriptionOption.booleanValue === false) {
+        return 'center';
+      }
+      return 'mixed';
+    }
+
+    const isDayCareHomeRaw = localStorage.getItem('agencyIsDayCareHome');
+    if (isDayCareHomeRaw === 'true') {
+      return 'home';
+    }
+    if (isDayCareHomeRaw === 'false') {
+      return 'center';
+    }
+    if (isDayCareHomeRaw === 'null') {
+      return 'mixed';
+    }
+
+    try {
+      const agencyRaw = localStorage.getItem('agency');
+      if (!agencyRaw) {
+        return 'unknown';
+      }
+
+      const agency = JSON.parse(agencyRaw);
+      const isDayCareHomeOption = agency?.inscription?.isDayCareHome;
+      if (!isDayCareHomeOption) {
+        return 'unknown';
+      }
+
+      if (isDayCareHomeOption.booleanValue === true) {
+        return 'home';
+      }
+
+      if (isDayCareHomeOption.booleanValue === false) {
+        return 'center';
+      }
+
+      return 'mixed';
+    } catch {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * Determina si la agencia actual incluye PACNA.
+   */
+  private _isPacnaAgency(): boolean {
+    const agencyPrograms = this._agencyData?.programs;
+    if (Array.isArray(agencyPrograms) && agencyPrograms.some((program: { id?: number }) => program?.id === 3)) {
+      return true;
+    }
+    return isAgencyPacnaProgram();
+  }
+
+  /**
+   * Busca la agencia resuelta en la cadena de rutas (current -> parent -> root).
+   */
+  private _resolveAgencyFromRouteData(): any | null {
+    let currentSnapshot: any = this._activatedRoute.snapshot;
+    while (currentSnapshot) {
+      const agency = currentSnapshot.data?.['initialData']?.agency;
+      if (agency) {
+        return agency;
+      }
+      currentSnapshot = currentSnapshot.parent;
+    }
+    return null;
+  }
+
+  /**
+   * Busca una opción de asignación por SchoolId, priorizando centros para mantener compatibilidad.
+   */
+  private _assignmentFromAssignment(schoolId: number, siteId: number | null): StaffAssignmentOption | null {
+    if (siteId != null) {
+      const homeMatch = this.homeAssignmentOptions.find((option) => option.siteId === siteId);
+      if (homeMatch) {
+        return homeMatch;
+      }
+    }
+
+    const centerMatch = this.centerAssignmentOptions.find((option) => option.schoolId === schoolId);
+    if (centerMatch) {
+      return centerMatch;
+    }
+
+    return this.assignmentOptions.find((option) => option.schoolId === schoolId) ?? null;
   }
 }

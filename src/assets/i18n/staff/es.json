@@ -15,9 +15,9 @@
           "position": "Cargo",
           "staffType": "Tipo de Personal",
           "birthDate": "Fecha de Nacimiento",
-          "email": "Correo Electr?nico",
+          "email": "Correo Electr\u00f3nico",
           "city": "Municipio",
-          "region": "Regi?n",
+          "region": "Regi\u00f3n",
           "userName": "Usuario",
           "isActive": "Activo",
           "actions": "Acciones"
@@ -44,11 +44,11 @@
         "table": {
           "columns": {
             "fullName": "Nombre Completo",
-            "classification": "Clasificaci?n",
+            "classification": "Clasificaci\u00f3n",
             "agency": "Auspiciador",
             "position": "Cargo",
             "status": "Estatus",
-            "description": "Descripci?n del empleado",
+            "description": "Descripci\u00f3n del empleado",
             "siteAdministrator": "Administrador del Sitio",
             "actions": "Acciones"
           }
@@ -70,13 +70,13 @@
           "columns": {
             "fullName": "Nombre Completo",
             "status": "Estatus",
-            "title": "T?tulo",
+            "title": "T\u00edtulo",
             "birthDate": "Fecha de Nacimiento",
-            "email": "Correo Electr?nico",
-            "postalAddress": "Direcci?n Postal",
+            "email": "Correo Electr\u00f3nico",
+            "postalAddress": "Direcci\u00f3n Postal",
             "municipality": "Municipio",
-            "zipCode": "C?digo Postal",
-            "updateDate": "Fecha de Actualizaci?n",
+            "zipCode": "C\u00f3digo Postal",
+            "updateDate": "Fecha de Actualizaci\u00f3n",
             "siteAdministrator": "Administrador del Sitio",
             "comments": "Comentarios",
             "actions": "Acciones"
@@ -131,7 +131,7 @@
         "label": "Cargo",
         "placeholder": "Seleccione el cargo",
         "required": "El cargo es requerido",
-        "selectClassificationFirst": "Primero seleccione una clasificaci?n para ver los cargos disponibles"
+        "selectClassificationFirst": "Primero seleccione una clasificaci\u00f3n para ver los cargos disponibles"
       },
       "staffType": {
         "label": "Tipo de Personal",
@@ -139,15 +139,15 @@
         "required": "El tipo de personal es requerido"
       },
       "staffClassification": {
-        "label": "Clasificaci?n",
-        "placeholder": "Seleccione la clasificaci?n",
-        "required": "La clasificaci?n es requerida"
+        "label": "Clasificaci\u00f3n",
+        "placeholder": "Seleccione la clasificaci\u00f3n",
+        "required": "La clasificaci\u00f3n es requerida"
       },
       "birthDate": {
         "label": "Fecha de Nacimiento",
         "placeholder": "Seleccione la fecha de nacimiento",
         "required": "La fecha de nacimiento es requerida",
-        "minimumAge": "Debe tener al menos 18 a?os"
+        "minimumAge": "Debe tener al menos 18 a\u00f1os"
       },
       "contractStartDate": {
         "label": "Fecha de Inicio de Contrato",
@@ -155,23 +155,23 @@
         "required": "La fecha de inicio de contrato es requerida"
       },
       "contractEndDate": {
-        "label": "Fecha de Finalizaci?n de Contrato",
-        "placeholder": "Seleccione la fecha de finalizaci?n de contrato",
-        "required": "La fecha de finalizaci?n de contrato es requerida"
+        "label": "Fecha de Finalizaci\u00f3n de Contrato",
+        "placeholder": "Seleccione la fecha de finalizaci\u00f3n de contrato",
+        "required": "La fecha de finalizaci\u00f3n de contrato es requerida"
       },
       "administrativeSection": "Cargo Administrativo",
-      "administrativeSectionSubtitle": "Datos del cargo, fechas de contrato y horario bajo clasificaci?n administrativa.",
+      "administrativeSectionSubtitle": "Datos del cargo, fechas de contrato y horario bajo clasificaci\u00f3n administrativa.",
       "operationalSection": "Cargo Operacional",
-      "operationalSectionSubtitle": "Datos del cargo, fechas de contrato y horario bajo clasificaci?n operacional.",
+      "operationalSectionSubtitle": "Datos del cargo, fechas de contrato y horario bajo clasificaci\u00f3n operacional.",
       "contractAdministrativeStart": {
         "label": "Inicio de Contrato Administrativo",
         "placeholder": "Seleccione la fecha",
         "required": "El inicio de contrato administrativo es requerido"
       },
       "contractAdministrativeEnd": {
-        "label": "Finalizaci?n de Contrato Administrativo",
+        "label": "Finalizaci\u00f3n de Contrato Administrativo",
         "placeholder": "Seleccione la fecha",
-        "required": "La finalizaci?n de contrato administrativo es requerida"
+        "required": "La finalizaci\u00f3n de contrato administrativo es requerida"
       },
       "contractOperationalStart": {
         "label": "Inicio de Contrato Operacional",
@@ -179,9 +179,9 @@
         "required": "El inicio de contrato operacional es requerido"
       },
       "contractOperationalEnd": {
-        "label": "Finalizaci?n de Contrato Operacional",
+        "label": "Finalizaci\u00f3n de Contrato Operacional",
         "placeholder": "Seleccione la fecha",
-        "required": "La finalizaci?n de contrato operacional es requerida"
+        "required": "La finalizaci\u00f3n de contrato operacional es requerida"
       },
       "scheduleFrom": {
         "label": "Desde",
@@ -194,15 +194,15 @@
         "required": "El horario Hasta es requerido"
       },
       "email": {
-        "label": "Correo Electr?nico",
-        "placeholder": "Ingrese el correo electr?nico",
-        "required": "El correo electr?nico es requerido",
-        "invalid": "El correo electr?nico no es v?lido"
+        "label": "Correo Electr\u00f3nico",
+        "placeholder": "Ingrese el correo electr\u00f3nico",
+        "required": "El correo electr\u00f3nico es requerido",
+        "invalid": "El correo electr\u00f3nico no es v\u00e1lido"
       },
       "postalAddress": {
-        "label": "Direcci?n Postal",
-        "placeholder": "Ingrese la direcci?n postal",
-        "required": "La direcci?n postal es requerida"
+        "label": "Direcci\u00f3n Postal",
+        "placeholder": "Ingrese la direcci\u00f3n postal",
+        "required": "La direcci\u00f3n postal es requerida"
       },
       "city": {
         "label": "Municipio",
@@ -210,28 +210,32 @@
         "required": "El municipio es requerido"
       },
       "region": {
-        "label": "Regi?n",
-        "placeholder": "Seleccione la regi?n",
-        "required": "La regi?n es requerida"
+        "label": "Regi\u00f3n",
+        "placeholder": "Seleccione la regi\u00f3n",
+        "required": "La regi\u00f3n es requerida"
       },
       "zipCode": {
-        "label": "C?digo Postal",
-        "placeholder": "Ingrese el c?digo postal",
-        "required": "El c?digo postal es requerido",
-        "invalid": "El c?digo postal debe tener el formato ##### o #####-####"
+        "label": "C\u00f3digo Postal",
+        "placeholder": "Ingrese el c\u00f3digo postal",
+        "required": "El c\u00f3digo postal es requerido",
+        "invalid": "El c\u00f3digo postal debe tener el formato ##### o #####-####"
       },
-      "site-assignment": "Asignaci?n de Sitio",
-      "site-assignment-description": "Especifique el sitio donde estar? asignado el personal",
+      "site-assignment": "Asignaci\u00f3n de Sitio",
+      "site-assignment-description": "Especifique el sitio donde estar\u00e1 asignado el personal",
       "site": {
         "label": "Sitio Asignado",
         "placeholder": "Seleccione el sitio (opcional)",
-        "hint": "Selecciona el sitio donde estar? asignado el personal",
+        "hint": "Selecciona el sitio donde estar\u00e1 asignado el personal",
         "required": "El sitio es requerido"
       },
       "school-assignment": "Asignaci\u00f3n de Escuela",
       "school-assignment-description": "Escuela donde el personal estar\u00e1 prestando servicio.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
+      "home-assignment": "Asignaci\u00f3n a hogar",
+      "home-assignment-description": "Opcional. Se listan los hogares (sitios) activos registrados para su agencia.",
+      "mixed-assignment": "Asignaci\u00f3n a Centro u Hogar",
+      "mixed-assignment-description": "Seleccione si la asignaci\u00f3n aplica a un Centro o a un Hogar activo de su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
@@ -244,17 +248,33 @@
         "hint": "La asignaci\u00f3n enlaza al empleado con el centro elegido.",
         "emptyList": "No hay centros activos para esta agencia. Registre centros en el m\u00f3dulo correspondiente."
       },
+      "homePicker": {
+        "label": "Hogar",
+        "placeholder": "Seleccione hogar (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con el hogar seleccionado.",
+        "emptyList": "No hay hogares activos con centro asociado para esta agencia."
+      },
+      "mixedPicker": {
+        "label": "Centro u Hogar",
+        "placeholder": "Seleccione centro u hogar (opcional)",
+        "hint": "Puede asignar el empleado a un centro o a un hogar de la agencia.",
+        "emptyList": "No hay centros ni hogares activos disponibles para asignar en esta agencia."
+      },
+      "assignmentGroup": {
+        "center": "Centros",
+        "home": "Hogares"
+      },
       "assignmentType": {
-        "label": "Tipo de Asignaci?n",
-        "placeholder": "Seleccione el tipo de asignaci?n",
-        "hint": "Indica el rol espec?fico del personal en la escuela"
+        "label": "Tipo de Asignaci\u00f3n",
+        "placeholder": "Seleccione el tipo de asignaci\u00f3n",
+        "hint": "Indica el rol espec\u00edfico del personal en la escuela"
       },
       "isPrimary": {
         "label": "Empleado Principal",
-        "hint": "Marque esta opci?n si el personal ser? el empleado principal del sitio, como por ejemplo un director"
+        "hint": "Marque esta opci\u00f3n si el personal ser\u00e1 el empleado principal del sitio, como por ejemplo un director"
       },
-      "additional-information": "Informaci?n Adicional",
-      "additional-information-description": "Informaci?n adicional del personal",
+      "additional-information": "Informaci\u00f3n Adicional",
+      "additional-information-description": "Informaci\u00f3n adicional del personal",
       "comments": {
         "label": "Comentarios",
         "placeholder": "Indique funciones y tareas principales (obligatorio)",
@@ -273,24 +293,24 @@
         "description": "Informaci\u00f3n sobre la revisi\u00f3n del empleado"
       },
       "review-result": {
-        "label": "Resultado de Revisi?n",
-        "placeholder": "Seleccione el resultado de la revisi?n",
-        "required": "El resultado de revisi?n es requerido"
+        "label": "Resultado de Revisi\u00f3n",
+        "placeholder": "Seleccione el resultado de la revisi\u00f3n",
+        "required": "El resultado de revisi\u00f3n es requerido"
       },
       "review-date": {
-        "label": "Fecha de Revisi?n",
-        "placeholder": "Seleccione la fecha de revisi?n",
-        "required": "La fecha de revisi?n es requerida"
+        "label": "Fecha de Revisi\u00f3n",
+        "placeholder": "Seleccione la fecha de revisi\u00f3n",
+        "required": "La fecha de revisi\u00f3n es requerida"
       },
       "review-justification": {
-        "label": "Justificaci?n de Revisi?n",
-        "placeholder": "Ingrese la justificaci?n de la revisi?n realizada",
-        "required": "La justificaci?n de revisi?n es requerida"
+        "label": "Justificaci\u00f3n de Revisi\u00f3n",
+        "placeholder": "Ingrese la justificaci\u00f3n de la revisi\u00f3n realizada",
+        "required": "La justificaci\u00f3n de revisi\u00f3n es requerida"
       },
       "tenureDuration": {
-        "label": "Tiempo de Duraci?n del Cargo",
-        "placeholder": "Ingrese el tiempo de duraci?n del cargo",
-        "required": "El tiempo de duraci?n del cargo es requerido"
+        "label": "Tiempo de Duraci\u00f3n del Cargo",
+        "placeholder": "Ingrese el tiempo de duraci\u00f3n del cargo",
+        "required": "El tiempo de duraci\u00f3n del cargo es requerido"
       },
       "tenureDurationUnit": {
         "label": "Unidad de Tiempo",
@@ -298,8 +318,8 @@
         "required": "La unidad de tiempo es requerida"
       },
       "receivesProgramSalary": {
-        "label": "?Recibe salario del programa?",
-        "placeholder": "Seleccione una opci?n",
+        "label": "\u00bfRecibe salario del programa?",
+        "placeholder": "Seleccione una opci\u00f3n",
         "required": "Este campo es requerido"
       },
       "salaryOrigin": {
@@ -312,22 +332,22 @@
         "cancel": "Cancelar"
       },
       "success": {
-        "employee": "El empleado ha sido agregado con ?xito",
-        "boardMember": "El miembro de junta ha sido agregado con ?xito"
+        "employee": "El empleado ha sido agregado con \u00e9xito",
+        "boardMember": "El miembro de junta ha sido agregado con \u00e9xito"
       },
       "error": {
         "general": "Error al agregar el staff",
         "incompleteFields": "Por favor, complete todos los campos requeridos",
-        "classificationRequired": "La clasificaci?n es requerida para empleados",
-        "contactLocationRequired": "Los campos de contacto y ubicaci?n son requeridos para miembros de junta"
+        "classificationRequired": "La clasificaci\u00f3n es requerida para empleados",
+        "contactLocationRequired": "Los campos de contacto y ubicaci\u00f3n son requeridos para miembros de junta"
       }
     },
     "relationship": {
       "modal": {
         "success": {
-          "createRelationship": "Relaci?n creada exitosamente",
-          "updateRelationship": "Relaci?n actualizada exitosamente",
-          "deleteRelationship": "Relaci?n eliminada exitosamente"
+          "createRelationship": "Relaci\u00f3n creada exitosamente",
+          "updateRelationship": "Relaci\u00f3n actualizada exitosamente",
+          "deleteRelationship": "Relaci\u00f3n eliminada exitosamente"
         },
         "error": {
           "createRelationship": "Error al crear la relaci\u00f3n",
@@ -336,12 +356,12 @@
           "loadingData": "Error al cargar los datos"
         },
         "warning": {
-          "noAvailableStaff": "No hay personas disponibles para relacionar. Todas las personas ya est?n relacionadas o solo queda el usuario actual."
+          "noAvailableStaff": "No hay personas disponibles para relacionar. Todas las personas ya est\u00e1n relacionadas o solo queda el usuario actual."
         }
       },
       "delete": {
         "confirm": {
-          "title": "Confirmar eliminaci?n",
+          "title": "Confirmar eliminaci\u00f3n",
           "message": "\u00bfEst\u00e1 seguro de que desea eliminar esta relaci\u00f3n?",
           "confirm": "Eliminar",
           "cancel": "Cancelar"
@@ -517,6 +537,10 @@
       "school-assignment-description": "Escuela donde el personal estar\u00e1 prestando servicio.",
       "center-assignment": "Asignaci\u00f3n a centro",
       "center-assignment-description": "Opcional. Se listan los centros registrados para su agencia.",
+      "home-assignment": "Asignaci\u00f3n a hogar",
+      "home-assignment-description": "Opcional. Se listan los hogares (sitios) activos registrados para su agencia.",
+      "mixed-assignment": "Asignaci\u00f3n a Centro u Hogar",
+      "mixed-assignment-description": "Seleccione si la asignaci\u00f3n aplica a un Centro o a un Hogar activo de su agencia.",
       "schoolPicker": {
         "label": "Escuela",
         "placeholder": "Seleccione escuela (opcional)",
@@ -528,6 +552,22 @@
         "placeholder": "Seleccione centro (opcional)",
         "hint": "La asignaci\u00f3n enlaza al empleado con el centro elegido.",
         "emptyList": "No hay centros activos para esta agencia."
+      },
+      "homePicker": {
+        "label": "Hogar",
+        "placeholder": "Seleccione hogar (opcional)",
+        "hint": "La asignaci\u00f3n enlaza al empleado con el hogar seleccionado.",
+        "emptyList": "No hay hogares activos con centro asociado para esta agencia."
+      },
+      "mixedPicker": {
+        "label": "Centro u Hogar",
+        "placeholder": "Seleccione centro u hogar (opcional)",
+        "hint": "Puede asignar el empleado a un centro o a un hogar de la agencia.",
+        "emptyList": "No hay centros ni hogares activos disponibles para asignar en esta agencia."
+      },
+      "assignmentGroup": {
+        "center": "Centros",
+        "home": "Hogares"
       },
       "assignmentType": {
         "label": "Tipo de Asignaci\u00f3n",

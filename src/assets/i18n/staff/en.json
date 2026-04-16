@@ -229,6 +229,10 @@
       "school-assignment-description": "School where the staff member will be providing service.",
       "center-assignment": "Center assignment",
       "center-assignment-description": "Optional. Centers registered for your agency are listed here.",
+      "home-assignment": "Home assignment",
+      "home-assignment-description": "Optional. Active homes (sites) registered for your agency are listed here.",
+      "mixed-assignment": "Center or home assignment",
+      "mixed-assignment-description": "Optional. Select whether the assignment applies to a center or an active home (site) in your agency.",
       "school": {
         "label": "Assigned Sites",
         "placeholder": "Select site (optional)",
@@ -245,6 +249,22 @@
         "placeholder": "Select center (optional)",
         "hint": "This links the employee to the selected center.",
         "emptyList": "There are no active centers for this agency. Register centers in the corresponding module."
+      },
+      "homePicker": {
+        "label": "Home",
+        "placeholder": "Select home (optional)",
+        "hint": "This links the employee to the selected home.",
+        "emptyList": "There are no active homes with an associated center for this agency."
+      },
+      "mixedPicker": {
+        "label": "Center or home",
+        "placeholder": "Select center or home (optional)",
+        "hint": "You can assign the employee to either a center or a home in the agency.",
+        "emptyList": "There are no active centers or homes available for assignment in this agency."
+      },
+      "assignmentGroup": {
+        "center": "Centers",
+        "home": "Homes"
       },
       "assignmentType": {
         "label": "Assignment Type",
@@ -557,6 +577,10 @@
       "school-assignment-description": "School where the staff member will be providing service.",
       "center-assignment": "Center assignment",
       "center-assignment-description": "Optional. Centers registered for your agency are listed here.",
+      "home-assignment": "Home assignment",
+      "home-assignment-description": "Optional. Active homes (sites) registered for your agency are listed here.",
+      "mixed-assignment": "Center or home assignment",
+      "mixed-assignment-description": "Optional. Select whether the assignment applies to a center or an active home (site) in your agency.",
       "schoolPicker": {
         "label": "School",
         "placeholder": "Select school (optional)",
@@ -568,6 +592,22 @@
         "placeholder": "Select center (optional)",
         "hint": "This links the employee to the selected center.",
         "emptyList": "There are no active centers for this agency."
+      },
+      "homePicker": {
+        "label": "Home",
+        "placeholder": "Select home (optional)",
+        "hint": "This links the employee to the selected home.",
+        "emptyList": "There are no active homes with an associated center for this agency."
+      },
+      "mixedPicker": {
+        "label": "Center or home",
+        "placeholder": "Select center or home (optional)",
+        "hint": "You can assign the employee to either a center or a home in the agency.",
+        "emptyList": "There are no active centers or homes available for assignment in this agency."
+      },
+      "assignmentGroup": {
+        "center": "Centers",
+        "home": "Homes"
       },
       "school": {
         "label": "Assigned Site",

@@ -2,6 +2,7 @@
 export interface SchoolStaffResponse {
   id: number;
   schoolId: number;
+  siteId?: number | null;
   staffId: number;
   assignmentDate: Date;
   assignmentTypeId?: number;
@@ -27,6 +28,8 @@ export interface SchoolStaffResponse {
   assignmentTypeNameEN?: string;
   schoolName?: string;
   schoolCode?: string;
+  siteName?: string;
+  siteCode?: string;
   agencyId?: number;
   schoolNumber?: number;
   schoolIsActive?: boolean;

@@ -130,7 +130,7 @@ export const initialDataStaffAddResolver: ResolveFn<any> = (route: ActivatedRout
     // options selection service
     // Servicio para opciones de selección
     optionSelectionService.getOptionSelectionByOptionKey({
-      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin',
+      optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,isDayCareHome',
       names: null,
       forDropdown: true,
     }),
@@ -246,7 +246,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           geoService.getRegionsFromDb(requestParameters),
           // Staff positions service (incluye staffRelationshipType para modales)
           optionSelectionService.getOptionSelectionByOptionKey({
-            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType,isDayCareHome',
             names: null,
             forDropdown: true,
           }),
@@ -284,7 +284,7 @@ export const initialDataStaffEditResolver: ResolveFn<any> = (route: ActivatedRou
           geoService.getRegionsFromDb(requestParameters),
           // Staff positions service (incluye staffRelationshipType para modales)
           optionSelectionService.getOptionSelectionByOptionKey({
-            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType',
+            optionKey: 'administrativePosition,operationalPosition,boardMemberTitle,isActive,tenureDurationUnit,yesNo,salaryOrigin,staffRelationshipType,isDayCareHome',
             names: null,
             forDropdown: true,
           }),

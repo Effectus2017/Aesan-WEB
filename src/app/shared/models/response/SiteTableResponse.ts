@@ -8,6 +8,8 @@ export interface SiteTableResponse {
   schoolName?: string | null;
   /** Id de la escuela vinculada al sitio (SchoolSite → School). */
   schoolId?: number | null;
+  /** Id de opción isDayCareHome para distinguir Centro/Hogar en PACNA. */
+  isDayCareHomeId?: number | null;
   isActive: boolean;
   generalEnrollment?: number;
   siteCode?: string;
