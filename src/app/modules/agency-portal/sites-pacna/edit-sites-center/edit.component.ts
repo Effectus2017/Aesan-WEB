@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -106,6 +106,7 @@ import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByPro
     MatSelectModule,
     MatButtonModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,
@@ -1110,9 +1111,9 @@ export class EditSitePacnaCenterComponent implements OnInit, OnDestroy, OnGeneri
       this.loadDeliveryTypesByGroupType(groupType);
     }
 
-    // Cargar servicios por grupos si la capacidad del salón comedor es menor que la matrícula general
+    // Cargar grupos con serviceSlots cuando el API los devuelve (misma regla que PACNA hogar: por datos, no solo por regla comedor/matricula)
     const paramGroups: SiteChildGroupResponse[] = param.childGroups ?? [];
-    if (param.hasDiningRoom && param.diningRoomCapacity && param.generalEnrollment && param.diningRoomCapacity < param.generalEnrollment && paramGroups.length > 0) {
+    if (paramGroups.length > 0) {
       this.childGroups = paramGroups.map(
         (group): SiteChildGroupRequest => ({
           id: group.id,

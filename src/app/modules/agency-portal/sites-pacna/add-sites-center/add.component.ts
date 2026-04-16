@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -101,6 +101,7 @@ import { PROGRAM_IDS } from 'app/shared/const';
     MatButtonModule,
     MatCheckboxModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,

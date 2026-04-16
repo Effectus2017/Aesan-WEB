@@ -370,7 +370,7 @@
 
           <!-- Name of the Sponsoring Agency *  -->
           <!-- IUE Number *  -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:items-start">
             <!-- Name of the Sponsoring Agency *  -->
             <mat-form-field data-cy="agency-field">
               <mat-label>{{ "sign-up.agency.label" | transloco }}</mat-label>
@@ -385,23 +385,16 @@
               <mat-label>{{ "sign-up.uie.label" | transloco }}</mat-label>
               <input
                 matInput
+                type="text"
                 [formControlName]="'uieNumber'"
                 placeholder="{{ 'sign-up.uie.placeholder' | transloco }}"
                 maxlength="12"
                 autocomplete="off"
                 data-cy="uie-input"
+                (input)="onUieInput($event)"
               />
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('required') && (signUpForm.get('uieNumber')?.touched || signUpForm.get('uieNumber')?.dirty)">
-                {{ "sign-up.uie.required" | transloco }}
-              </mat-error>
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('minlength') || signUpForm.get('uieNumber')?.hasError('maxlength')">
-                {{ "sign-up.uie.length" | transloco }}
-              </mat-error>
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('alphanumeric')">
-                {{ "sign-up.uie.alphanumeric" | transloco }}
-              </mat-error>
-              <mat-error *ngIf="signUpForm.get('uieNumber')?.hasError('uieExists')">
-                {{ "sign-up.uie.exists" | transloco }}
+              <mat-error *ngIf="getUieErrorTranslationKey() as uieErrorKey">
+                {{ uieErrorKey | transloco }}
               </mat-error>
               <mat-hint *ngIf="isUieValid()" class="!text-green-600">
                 {{ "sign-up.uie.valid" | transloco }}
@@ -411,7 +404,7 @@
 
           <!-- State Department Registration Number *  -->
           <!-- EIN *  -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:items-start">
             <!-- State Department Registration Number *  -->
             <mat-form-field data-cy="sdr-field">
               <mat-label>{{ "sign-up.state-department-registration.label" | transloco }}</mat-label>

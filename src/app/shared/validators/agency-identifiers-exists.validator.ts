@@ -12,6 +12,7 @@ const IUE_ALPHANUMERIC_12 = /^[A-Za-z0-9]{12}$/;
  *
  * @param userService Servicio de usuario para realizar la verificación
  * @param debounceTimeMs Tiempo de espera antes de realizar la validación (default: 1000ms)
+ * @param excludeNormalizedUie IUE normalizado (trim + mayúsculas) que no debe considerarse duplicado (p. ej. edición de la misma agencia)
  * @returns AsyncValidatorFn que retorna { uieExists: true } si el IUE existe, null si no existe
  *
  * @example
@@ -24,7 +25,11 @@ const IUE_ALPHANUMERIC_12 = /^[A-Za-z0-9]{12}$/;
  *   uieExistsValidator(this._userService, 1000)
  * ])
  */
-export function uieExistsValidator(userService: UserService, debounceTimeMs: number = 1000): AsyncValidatorFn {
+export function uieExistsValidator(
+  userService: UserService,
+  debounceTimeMs: number = 1000,
+  excludeNormalizedUie?: string | null
+): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> | Promise<ValidationErrors | null> => {
     if (!control.value) {
       return of(null);
@@ -40,6 +45,15 @@ export function uieExistsValidator(userService: UserService, debounceTimeMs: num
       return of(null);
     }
 
+    const normalized = uieNumber.toUpperCase();
+    const excluded =
+      excludeNormalizedUie != null && String(excludeNormalizedUie).trim() !== ''
+        ? String(excludeNormalizedUie).trim().toUpperCase()
+        : null;
+    if (excluded !== null && normalized === excluded) {
+      return of(null);
+    }
+
     const isInitialValue = control.pristine && control.untouched;
     const debounce = isInitialValue ? 0 : debounceTimeMs;
 
@@ -50,8 +64,17 @@ export function uieExistsValidator(userService: UserService, debounceTimeMs: num
           return of(null);
         }
 
+        const nv = uieValue.trim().toUpperCase();
+        const ex =
+          excludeNormalizedUie != null && String(excludeNormalizedUie).trim() !== ''
+            ? String(excludeNormalizedUie).trim().toUpperCase()
+            : null;
+        if (ex !== null && nv === ex) {
+          return of(null);
+        }
+
         const queryParameters: QueryParameters = {
-          uieNumber: uieValue.trim().toUpperCase(),
+          uieNumber: nv,
         };
 
         return userService.checkUieExists(queryParameters).pipe(

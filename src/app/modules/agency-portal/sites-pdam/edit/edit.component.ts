@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { GenericHeaderComponent } from 'app/shared/components/generic-header/generic-header.component';
 import { GeoService } from 'app/shared/services/geo.service';
 import { GenericHeaderConfig, OnGenericHeaderHandlers } from 'app/shared/components/generic-header/generic-header.interface';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { merge, Subject, takeUntil, skip } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -111,6 +111,7 @@ import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directi
     MatSelectModule,
     MatButtonModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,

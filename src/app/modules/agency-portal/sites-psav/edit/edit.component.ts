@@ -15,7 +15,7 @@ import { SiteChildGroupRequest } from 'app/shared/models/request/SiteChildGroupR
 import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGroupDialogResult } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -98,6 +98,7 @@ import { SATELLITE_SCHOOLS_COLUMNS_SCHEMA } from 'app/shared/components/site-sat
     MatSelectModule,
     MatButtonModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,

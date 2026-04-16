@@ -235,8 +235,8 @@
     },
     "pdam-tax-exemption-in-process": {
       "title": "Información sobre Elegibilidad",
-      "message": "Agradecemos su interés en participar de nuestro programa. Sin embargo, en estos momentos no se encuentra en cumplimiento con la siguiente regulación: ######.",
-      "cfr-link-text": "######"
+      "message": "Conforme a 7 CFR 210.9(b)(1), los auspiciadores deben presentar evidencia que permita validar que cumplen con la definición de entidad sin fines de lucro establecida en 7 CFR 210.2. La exención contributiva evidencia dicha condición, y la misma debe estar debidamente otorgada y vigente para poder completar el proceso de solicitud.\n\nAgradecemos su interés en formar parte del Programa de Desayuno, Almuerzo y Merienda Escolar (PDAM).",
+      "cfr-link-text": "7 CFR 210.9(b)(1)"
     },
     "basic-education-not-eligible": {
       "title": "Información sobre Elegibilidad",

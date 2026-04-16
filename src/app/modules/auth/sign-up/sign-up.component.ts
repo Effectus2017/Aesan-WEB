@@ -59,6 +59,7 @@ import { isPSAVProgram, isPDAMOrPSAVProgram, isPACNAProgram, isPDAMProgram, isPF
 import { environment } from 'environments/environment';
 import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { PhoneFormatDirective } from 'app/shared/directives/phone-format.directive';
+import { applyUieInputUppercase, getUieFormErrorTranslationKey, UieErrorTranslationKeys } from 'app/shared/utils/uie-form.helpers';
 
 @Component({
   selector: 'auth-sign-up',
@@ -116,6 +117,13 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   private _translocoService = inject(TranslocoService);
   private _changeDetectorRef = inject(ChangeDetectorRef);
   private _route = inject(ActivatedRoute);
+
+  private readonly _uieErrorKeys: UieErrorTranslationKeys = {
+    required: 'sign-up.uie.required',
+    alphanumeric: 'sign-up.uie.alphanumeric',
+    length: 'sign-up.uie.length',
+    exists: 'sign-up.uie.exists',
+  };
 
   listPrograms: Program[] = [];
   listCities: City[] = [];
@@ -1454,7 +1462,7 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
           title: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.title'),
           message: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.message'),
           cfrLink: {
-            url: 'https://www.ecfr.gov',
+            url: 'https://www.ecfr.gov/current/title-7/subtitle-B/chapter-II/subchapter-A/part-210#p-210.9(b)(1)',
             text: this._translocoService.translate('sign-up.pdam-tax-exemption-in-process.cfr-link-text'),
           },
         },
@@ -1498,6 +1506,24 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
    */
   isUieValid(): boolean {
     return this.isFieldValidAndComplete('uieNumber', 12, 'uieExists');
+  }
+
+  /**
+   * Devuelve la clave i18n del único mensaje de error del IUE (prioridad: requerido, formato, longitud, duplicado).
+   */
+  getUieErrorTranslationKey(): string | null {
+    return getUieFormErrorTranslationKey(this.signUpForm.get('uieNumber'), this._uieErrorKeys);
+  }
+
+  /**
+   * Convierte el IUE a mayúsculas al escribir y mantiene la posición del cursor.
+   */
+  onUieInput(event: Event): void {
+    const control = this.signUpForm.get('uieNumber');
+    if (!control) {
+      return;
+    }
+    applyUieInputUppercase(event, control, () => this._changeDetectorRef.markForCheck());
   }
 
   /**

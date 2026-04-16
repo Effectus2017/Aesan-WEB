@@ -23,7 +23,7 @@ import {
 } from 'app/shared/components/add-service-by-group-modal/add-service-by-group-modal.component';
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { merge, Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -107,6 +107,7 @@ import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByPro
     MatButtonModule,
     MatCheckboxModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,

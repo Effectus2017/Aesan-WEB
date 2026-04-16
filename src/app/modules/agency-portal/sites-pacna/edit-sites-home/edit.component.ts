@@ -778,45 +778,45 @@ export class EditSitePacnaHomeComponent implements OnInit, OnDestroy, OnGenericH
         diningRoomCapacity: param.diningRoomCapacity,
         generalEnrollment: param.generalEnrollment,
       }, { emitEvent: false });
+    }
 
-      // Cargar grupos con serviceSlots desde param.childGroups (misma condición que PDAM: por existencia de childGroups)
-      if (param.childGroups && param.childGroups.length > 0) {
-        const paramGroups: SiteChildGroupResponse[] = param.childGroups;
-        this.childGroups = paramGroups.map(
-          (group): SiteChildGroupRequest => ({
-            id: group.id,
-            siteId: this.param!.id,
-            groupName: group.groupName ?? '',
-            groupNameEN: group.groupName ?? '',
-            numberOfChildren: group.numberOfChildren ?? 0,
-            serviceSlots: (group.serviceSlots ?? []).map((slot) => {
-              const base = normalizeServiceSlotFromResponse(slot);
-              return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
-            }),
-          })
-        );
-        this.nextGroupNumber = this.childGroups.length + 1;
-
-        this.servicesByGroups = paramGroups.map((group, index) => ({
-          id: group.id ?? index + 1,
+    // Cargar grupos con serviceSlots si el API los devuelve (no anidar bajo dayCareHome: los datos deben mostrarse si existen)
+    if (param.childGroups && param.childGroups.length > 0) {
+      const paramGroups: SiteChildGroupResponse[] = param.childGroups;
+      this.childGroups = paramGroups.map(
+        (group): SiteChildGroupRequest => ({
+          id: group.id,
+          siteId: this.param!.id,
           groupName: group.groupName ?? '',
+          groupNameEN: group.groupName ?? '',
           numberOfChildren: group.numberOfChildren ?? 0,
           serviceSlots: (group.serviceSlots ?? []).map((slot) => {
             const base = normalizeServiceSlotFromResponse(slot);
-            return {
-              ...base,
-              serviceTypeName: slot.serviceTypeName,
-              serviceTypeNameEN: slot.serviceTypeNameEN,
-              operatingDates: slot.operatingDates ?? [],
-            };
+            return { ...base, serviceTypeName: slot.serviceTypeName, serviceTypeNameEN: slot.serviceTypeNameEN };
           }),
-        }));
-        this.updateServicesTableDataSource();
-        this.syncChildGroupsFromServices();
+        })
+      );
+      this.nextGroupNumber = this.childGroups.length + 1;
 
-        if (param.dayCareHome.offersServiceToDifferentGroups !== true) {
-          this.headerConfig.formGroup.patchValue({ offersServiceToDifferentGroups: true }, { emitEvent: false });
-        }
+      this.servicesByGroups = paramGroups.map((group, index) => ({
+        id: group.id ?? index + 1,
+        groupName: group.groupName ?? '',
+        numberOfChildren: group.numberOfChildren ?? 0,
+        serviceSlots: (group.serviceSlots ?? []).map((slot) => {
+          const base = normalizeServiceSlotFromResponse(slot);
+          return {
+            ...base,
+            serviceTypeName: slot.serviceTypeName,
+            serviceTypeNameEN: slot.serviceTypeNameEN,
+            operatingDates: slot.operatingDates ?? [],
+          };
+        }),
+      }));
+      this.updateServicesTableDataSource();
+      this.syncChildGroupsFromServices();
+
+      if (param.dayCareHome?.offersServiceToDifferentGroups !== true) {
+        this.headerConfig.formGroup.patchValue({ offersServiceToDifferentGroups: true }, { emitEvent: false });
       }
     }
 

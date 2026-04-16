@@ -20,7 +20,7 @@ import { AddServiceByGroupModalComponent, ServiceByGroupDialogData, ServiceByGro
 import { SERVICES_COLUMNS_SCHEMA } from 'app/shared/components/add-service-by-group-modal/services-columns-schema';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { ServiceTypeByProgram } from 'app/shared/models/program/ServiceTypeByProgram';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -101,6 +101,7 @@ import { DisableIfAgencyRestrictedDirective } from 'app/shared/directives/disabl
     MatButtonModule,
     MatCheckboxModule,
     GenericHeaderComponent,
+    NgClass,
     NgIf,
     NgForOf,
     TranslocoModule,

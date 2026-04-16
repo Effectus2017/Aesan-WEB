@@ -227,8 +227,8 @@
     },
     "pdam-tax-exemption-in-process": {
       "title": "Eligibility Information",
-      "message": "We appreciate your interest in participating in our program. However, at this time you are not in compliance with the following regulation: ######.",
-      "cfr-link-text": "######"
+      "message": "Pursuant to 7 CFR 210.9(b)(1), sponsors must provide evidence that they meet the definition of a nonprofit entity established in 7 CFR 210.2. Tax exemption serves as evidence of this status and must be duly granted and current to complete the application process.\n\nThank you for your interest in participating in the School Breakfast, Lunch, and Snack Program (NSLBP)",
+      "cfr-link-text": "7 CFR 210.9(b)(1)"
     },
     "basic-education-not-eligible": {
       "title": "Eligibility Information",

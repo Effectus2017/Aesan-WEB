@@ -12,7 +12,7 @@
 
   <!-- Content -->
   <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6">
-    <p class="mb-4">{{ data.message }}</p>
+    <p class="mb-4 whitespace-pre-line">{{ data.message }}</p>
     <p *ngIf="data.cfrLink" class="mb-6">
       {{ 'dialog.cfr-info-link-text' | transloco }}<br>
       <a [href]="data.cfrLink.url"
