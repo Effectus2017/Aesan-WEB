@@ -1,5 +1,5 @@
 import { inject, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, map, catchError, throwError } from 'rxjs';
 import { environment } from 'environments/environment';
 import { QueryParameters } from '../models/common/QueryParameters';
@@ -11,6 +11,13 @@ import { UploadService } from './upload.service';
 
 export type { DTORole };
 
+export interface RolesPagedResponse {
+  data: DTORole[];
+  count: number;
+}
+
+export type RolesResponseBody = DTORole[] | RolesPagedResponse;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -18,7 +25,7 @@ export class UsersService {
   private _users: BehaviorSubject<RequestUser[] | null> = new BehaviorSubject(null);
   /** Usuario actual: puede ser TokenResponse (login) o RequestUser (get-user-by-id, edit). */
   private _user: BehaviorSubject<RequestUser | TokenResponse | null> = new BehaviorSubject(null);
-  private _roles: BehaviorSubject<any | null> = new BehaviorSubject(null);
+  private _roles: BehaviorSubject<HttpResponse<RolesResponseBody> | null> = new BehaviorSubject(null);
 
   private apiUrl = `${environment.baseHttpUrl}/user`;
   private authApiUrl = `${environment.baseHttpUrl}/auth`;
@@ -44,7 +51,7 @@ export class UsersService {
   // @ Public methods
   // -----------------------------------------------------------------------------------------------------
 
-  get roles$(): Observable<any> {
+  get roles$(): Observable<HttpResponse<RolesResponseBody> | null> {
     return this._roles.asObservable();
   }
 
@@ -109,11 +116,16 @@ export class UsersService {
    * @param requestParameters Parámetros (take, skip, aesanOnly, etc.). Se pasan al API como query params.
    * @returns Observable con la respuesta completa (HttpResponse); los datos en response.body.
    */
-  getAllRolesFromDb(requestParameters: QueryParameters): Observable<any> {
-    return this._httpClient
-      .get<any>(`${this.apiUrl}/get-all-roles-from-db`, getHttpOptions(requestParameters))
+  getAllRolesFromDb(requestParameters: QueryParameters): Observable<HttpResponse<RolesResponseBody>> {
+    const httpOptions = {
+      ...getHttpOptions(requestParameters),
+      observe: 'response' as const,
+    };
+
+    return (this._httpClient
+      .get<RolesResponseBody>(`${this.apiUrl}/get-all-roles-from-db`, httpOptions as any) as Observable<HttpResponse<RolesResponseBody>>)
       .pipe(
-        tap((response: any) => this._roles.next(response)),
+        tap((response: HttpResponse<RolesResponseBody>) => this._roles.next(response)),
         catchError(handleError)
       );
   }
@@ -123,7 +135,11 @@ export class UsersService {
    */
   getAesanRoleNames(): Observable<string[]> {
     return this.getAllRolesFromDb({ aesanOnly: true }).pipe(
-      map((response: any) => (response?.body?.data ?? []).map((r: any) => r?.name ?? r?.Name ?? ''))
+      map((response) => {
+        const body = response?.body;
+        const roles = Array.isArray(body) ? body : (body?.data ?? []);
+        return roles.map((role) => role?.name ?? '');
+      })
     );
   }
 

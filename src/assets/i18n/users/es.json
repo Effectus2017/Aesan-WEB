@@ -29,7 +29,7 @@
             },
             "secondaryRoles": {
                 "title": "Roles secundarios (en caso de que aplique)",
-                "add": "Agregar otro rol secundario",
+                "add": "Agregar rol secundario",
                 "role": "Rol",
                 "rolePlaceholder": "Seleccione rol",
                 "comment": "Motivo",
@@ -104,6 +104,7 @@
                 "update": "Actualizar",
                 "save": "Guardar",
                 "update-password": "Cambiar contraseña",
+                "change-role": "Cambiar rol",
                 "force-password": "Forzar Cambio de Contraseña"
             },
             "agency": {
@@ -119,12 +120,56 @@
             },
             "programs": {
                 "label": "Programas asignados",
-                "placeholder": "Seleccione uno o más programas"
+                "placeholder": "Seleccione uno o más programas",
+                "section-title": "Programas asignados",
+                "table": {
+                    "columns": {
+                        "name": "Nombre",
+                        "nameEn": "Nombre en inglés",
+                        "actions": "Acciones"
+                    },
+                    "buttons": {
+                        "add": "Agregar programas",
+                        "delete": "Eliminar"
+                    },
+                    "tooltips": {
+                        "add": "Agregar programas"
+                    },
+                    "deleteConfirmTitle": "Eliminar programa",
+                    "deleteConfirmMessage": "¿Desea eliminar el programa {{programName}} del usuario?"
+                },
+                "update": {
+                    "success": {
+                        "title": "Programas actualizados",
+                        "message": "Los programas del usuario se actualizaron correctamente"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "No fue posible actualizar los programas del usuario"
+                    }
+                }
             },
             "update-password-modal": {
                 "title": "Cambiar Contraseña",
                 "subtitle": "Actualizar contraseña para {{ userName }}",
                 "password-mismatch": "Las contraseñas no coinciden"
+            },
+            "change-role-modal": {
+                "title": "Cambiar Rol",
+                "subtitle": "Actualizar rol para {{ userName }}",
+                "role": {
+                    "label": "Nuevo rol",
+                    "placeholder": "Seleccione el nuevo rol",
+                    "required": "El rol es requerido"
+                },
+                "success": {
+                    "title": "Rol actualizado",
+                    "message": "Rol actualizado exitosamente"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error al actualizar el rol"
+                }
             },
             "firstName": {
                 "label": "Nombre",
@@ -192,6 +237,30 @@
                     },
                     "buttons": {
                         "delete": "Eliminar"
+                    }
+                }
+            }
+        },
+        "program": {
+            "modal": {
+                "add": {
+                    "title": "Agregar programas",
+                    "description": "Seleccione los programas que desea asignar a {{ userName }}.",
+                    "search": {
+                        "label": "Buscar programa",
+                        "placeholder": "Buscar por nombre del programa"
+                    },
+                    "bulk": {
+                        "selectAll": "Seleccionar todos",
+                        "deselectAll": "Deseleccionar todos",
+                        "selectedCount": "{{count}} seleccionados"
+                    },
+                    "table": {
+                        "title": "Programas disponibles",
+                        "noPrograms": "No hay programas disponibles para asignar"
+                    },
+                    "buttons": {
+                        "assignSelected": "Asignar seleccionados"
                     }
                 }
             }
@@ -322,7 +391,7 @@
             },
             "secondaryRoles": {
                 "title": "Roles secundarios (en caso de que aplique)",
-                "add": "Agregar otro rol secundario",
+                "add": "Agregar rol secundario",
                 "role": "Rol",
                 "rolePlaceholder": "Seleccione rol",
                 "comment": "Motivo",

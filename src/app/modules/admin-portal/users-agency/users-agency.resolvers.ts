@@ -33,7 +33,7 @@ export const usersAgencyAddResolver: ResolveFn<unknown> = () => {
 
   return forkJoin([
     agencyService.getAllAgenciesFromDb({ alls: true, forDropdown: true, isPropietary: false }),
-    usersService.getAllRolesFromDb({ aesanOnly: true }),
+    usersService.getAllRolesFromDb({ aesanOnly: false }),
     programService.getAllProgramsFromDb({ alls: true, forDropdown: true }),
     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
     geoService.getRegionsFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),

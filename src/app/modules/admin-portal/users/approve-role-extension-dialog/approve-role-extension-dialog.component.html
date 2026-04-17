@@ -10,6 +10,6 @@
   </form>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">{{ 'dialog.permission-request-form.cancel' | transloco }}</button>
+  <button mat-button color="warn" (click)="onCancel()">{{ 'dialog.permission-request-form.cancel' | transloco }}</button>
   <button mat-raised-button color="primary" (click)="onConfirm()">{{ 'users.roleExtensionRequests.actions.approve' | transloco }}</button>
 </mat-dialog-actions>

@@ -42,3 +42,29 @@ export const PERMISSIONS_COLUMNS_SCHEMA: ColumnSchema[] = [
     ],
   },
 ];
+
+export const PROGRAMS_COLUMNS_SCHEMA: ColumnSchema[] = [
+  {
+    key: 'name',
+    type: 'text',
+    label: 'users.edit.programs.table.columns.name',
+  },
+  {
+    key: 'nameEN',
+    type: 'text',
+    label: 'users.edit.programs.table.columns.nameEn',
+  },
+  {
+    key: 'actions',
+    type: 'button',
+    label: 'users.edit.programs.table.columns.actions',
+    buttons: [
+      {
+        key: 'delete',
+        label: 'users.edit.programs.table.buttons.delete',
+        color: 'warn',
+        icon: 'delete',
+      },
+    ],
+  },
+];

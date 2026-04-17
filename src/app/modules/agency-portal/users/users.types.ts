@@ -8,6 +8,7 @@ export interface RequestUser {
   userName?: string | null;
   imageURL?: string | null;
   roles?: string[];
+  primaryRoleName?: string | null;
   agencyId?: number | null;
   isActive?: boolean | null;
   isTemporalPasswordActived?: boolean | null;

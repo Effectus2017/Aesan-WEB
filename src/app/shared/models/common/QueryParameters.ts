@@ -22,7 +22,7 @@ export interface QueryParameters {
   fileName?: string;
   folderTo?: string;
   roles?: string[];
-  /** Si true, get-all-roles-from-db devuelve solo roles AESAN (Name, DisplayName, DisplayNameEN). Con forDropdown=true ese endpoint devuelve solo el array (sin { data, count }). */
+  /** Si true, get-all-roles-from-db devuelve solo roles AESAN; si false, solo roles de agencia. */
   aesanOnly?: boolean;
   /** Excluir usuarios con rol Administrator o Super-Administrator (para dropdowns sin admins) */
   excludeAdministrators?: boolean;

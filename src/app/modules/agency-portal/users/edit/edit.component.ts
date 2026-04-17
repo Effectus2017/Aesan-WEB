@@ -9,14 +9,13 @@ import { RequestUser } from '../users.types';
 import { UploadService } from 'app/shared/services/upload.service';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { NgFor, NgIf } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CustomRouterService } from 'app/shared/services/custom-router.service';
-import { compareById, isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
+import { isNullOrUndefinedEmptyStringNullArray } from 'app/shared/utils';
 import { UploadFolderEnum } from 'app/shared/models/Upload/UploadFolderEnum';
 import { FileResponse } from 'app/shared/models/Upload/FileResponse';
 import { TranslocoModule } from '@ngneat/transloco';
@@ -30,6 +29,7 @@ import { UpdatePasswordModalComponent } from '../../../../modules/admin-portal/u
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
+import { ChangeRoleModalComponent } from '../change-role-modal/change-role-modal.component';
 
 @Component({
   selector: 'app-users-edit',
@@ -40,10 +40,8 @@ import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    NgFor,
     NgIf,
     MatButtonModule,
-    MatSelectModule,
     MatIconModule,
     MatMenuModule,
     MatDialogModule,
@@ -76,7 +74,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         middleName: new FormControl(null),
         fatherLastName: new FormControl(null, Validators.required),
         motherLastName: new FormControl(null),
-        role: new FormControl({ value: null, disabled: true }), // Rol readonly en perfil
         agency: new FormControl(null),
     }),
     saveButtonShow: true,
@@ -89,6 +86,13 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         id: 'update-password',
         label: 'users.edit.buttons.update-password',
         icon: 'heroicons_solid:key',
+        iconColor: 'text-primary',
+      },
+      {
+        id: 'change-role',
+        label: 'users.edit.buttons.change-role',
+        icon: 'heroicons_solid:user-circle',
+        iconColor: 'text-primary',
       },
     ],
   };
@@ -99,10 +103,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   id?: string = null;
   user?: any;
-
-  listRoles: any[] = [];
-
-  compareById = compareById;
+  currentLang = 'es';
+  primaryRoleDisplayName = '';
 
   constructor() {}
 
@@ -112,7 +114,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     if (resolvedData) {
       this.user = resolvedData.user;
-      this.listRoles = resolvedData.roles?.data ?? [];
       this.id = this.user.id;
 
       // Configurar el formulario con los datos del usuario
@@ -120,6 +121,13 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
       this._changeDetectorRef.markForCheck();
     }
+
+    this.currentLang = this._translocoService.getActiveLang() ?? 'es';
+    this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang) => {
+      this.currentLang = lang ?? 'es';
+      this._setPrimaryRoleDisplayName();
+      this._changeDetectorRef.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
@@ -147,9 +155,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       middleName: this.user.middleName,
       fatherLastName: this.user.fatherLastName,
       motherLastName: this.user.motherLastName,
-      role: this.user.role,
       agency: this.user.agency,
     });
+    this._setPrimaryRoleDisplayName();
 
     // Actualizar el validador de email con el email original
     const emailControl = this.headerConfig.formGroup.get('email');
@@ -165,6 +173,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     switch (menuItemId) {
       case 'update-password':
         this.openUpdatePasswordModal();
+        break;
+      case 'change-role':
+        this.openChangeRoleModal();
         break;
       default:
         console.warn(`Acción de menú no reconocida: ${menuItemId}`);
@@ -195,9 +206,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       return;
     }
 
-    // Obtener el rol actual del usuario (ya que está deshabilitado)
     const loggedInUserId = this._authService.getUserId();
-    const roleName = this.user.roles?.[0] || this.user.role?.name;
 
     const requestParameters: QueryParameters = {
       currentUserId: loggedInUserId,
@@ -212,7 +221,6 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       email: isNullOrUndefinedEmptyStringNullArray(form.email) ? this.user.email : form.email,
       userName: this.user.userName,
       imageURL: this.imageURL,
-      roles: [roleName],
       agencyId: this.user.agency?.id,
       // No incluir campos de estado en perfil de usuario
       isActive: this.user.isActive,
@@ -223,8 +231,14 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this._usersService.updateWithSP(_model, requestParameters).subscribe({
       next: (result: any) => {
         if (result.status === 200) {
-          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe();
-          this._changeDetectorRef.markForCheck();
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+            next: (userResponse: any) => {
+              if (userResponse?.body) {
+                this.onSetForm(userResponse.body);
+              }
+              this._changeDetectorRef.markForCheck();
+            },
+          });
 
           // Mostrar mensaje de éxito
           this._fuseConfirmationService.open({
@@ -430,17 +444,62 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result?.success) {
-        // Recargar los datos del usuario
-        this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
-          next: (result: any) => {
-            if (result?.body) {
-              this.onSetForm(result.body);
-              this._changeDetectorRef.markForCheck();
-            }
-          },
-        });
+        this._reloadUserData();
       }
     });
+  }
+
+  /**
+   * Abre el modal para actualizar rol
+   */
+  openChangeRoleModal(): void {
+    const dialogRef = this._matDialog.open(ChangeRoleModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        user: this.user,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        this._reloadUserData();
+      }
+    });
+  }
+
+  /**
+   * Recarga la información del usuario y repuebla el formulario.
+   */
+  private _reloadUserData(): void {
+    this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+      next: (result: any) => {
+        if (result?.body) {
+          this.onSetForm(result.body);
+          this._changeDetectorRef.markForCheck();
+        }
+      },
+    });
+  }
+
+  /**
+   * Calcula el nombre visible del rol primario para mostrarlo en el campo de solo lectura.
+   */
+  private _setPrimaryRoleDisplayName(): void {
+    const localizedFromUser =
+      this.currentLang === 'en'
+        ? this.user?.primaryRoleDisplayNameEN ?? this.user?.role?.displayNameEN
+        : this.user?.primaryRoleDisplayName ?? this.user?.role?.displayName;
+
+    this.primaryRoleDisplayName =
+      localizedFromUser ??
+      this.user?.role?.displayName ??
+      this.user?.role?.displayNameEN ??
+      this.user?.rolesDisplay ??
+      this.user?.primaryRoleName ??
+      this.user?.role?.name ??
+      this.user?.roles?.[0] ??
+      '';
   }
 }
 

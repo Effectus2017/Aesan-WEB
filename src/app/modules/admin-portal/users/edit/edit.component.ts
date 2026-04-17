@@ -10,6 +10,7 @@ import {
     AddSecondaryRoleModalResult,
     AgencyListItem,
     DTORole,
+  ProgramOption,
     RequestUser,
     SecondaryRoleFormRow,
     SecondaryRoleFromUserRow,
@@ -43,15 +44,18 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { GenericTableComponent } from 'app/shared/components/generic-table/generic-table.component';
 import { GenericTableConfig, OnGenericTableHandler } from 'app/shared/components/generic-table/generic-table.interface';
-import { PERMISSIONS_COLUMNS_SCHEMA, SECONDARY_ROLES_COLUMNS_SCHEMA } from './columns-schema';
+import { PERMISSIONS_COLUMNS_SCHEMA, PROGRAMS_COLUMNS_SCHEMA, SECONDARY_ROLES_COLUMNS_SCHEMA } from './columns-schema';
 import { MatTableDataSource } from '@angular/material/table';
 import { Permission } from 'app/shared/models/user/Permission';
 import { PermissionService } from 'app/shared/services/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddPermissionModalComponent } from '../add-permission-modal/add-permission-modal.component';
 import { AddSecondaryRoleModalComponent } from '../add-secondary-role-modal/add-secondary-role-modal.component';
+import { ChangeRoleModalComponent, ChangeRoleModalResult } from '../change-role-modal/change-role-modal.component';
 import { DeletePermissionModalComponent } from '../delete-permission-modal/delete-permission-modal.component';
 import { UpdatePasswordModalComponent } from '../update-password-modal/update-password-modal.component';
+import { AddProgramModalComponent, AddProgramModalResult } from '../add-program-modal/add-program-modal.component';
+import { DynamicGridDirective } from 'app/shared/directives/dynamic-grid.directive';
 import { UserService } from 'app/shared/services/user.service';
 import { emailExistsValidator } from 'app/shared/validators/email-exists.validator';
 import { VALIDATION_ERRORS } from 'app/shared/constants/validation-errors';
@@ -81,6 +85,7 @@ import { Region } from 'app/shared/models/location/Region';
     MatDatepickerModule,
     MatNativeDateModule,
     GenericTableComponent,
+    DynamicGridDirective,
   ],
 })
 export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers, OnGenericTableHandler {
@@ -153,6 +158,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         iconColor: 'text-primary',
       },
       {
+        id: 'change-role',
+        label: 'users.edit.buttons.change-role',
+        icon: 'heroicons_solid:user-circle',
+        iconColor: 'text-primary',
+      },
+      {
         id: 'add-secondary-role',
         label: 'users.edit.secondaryRoles.add',
         icon: 'heroicons_solid:user-plus',
@@ -181,6 +192,25 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       },
     ],
     addMenuTooltip: 'global.tooltips.addPermission',
+  };
+
+  programsTableConfig: GenericTableConfig = {
+    dataSource: new MatTableDataSource<ProgramOption>(),
+    dataSourceList: [],
+    columnsSchema: PROGRAMS_COLUMNS_SCHEMA,
+    displayedColumns: PROGRAMS_COLUMNS_SCHEMA.map((col) => (Array.isArray(col.key) ? col.key[0] : col.key)),
+    handler: null as any,
+    showPaginator: false,
+    fullScreen: false,
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add-program',
+        label: 'users.edit.programs.table.buttons.add',
+        icon: 'mat_outline:add',
+      },
+    ],
+    addMenuTooltip: 'users.edit.programs.table.tooltips.add',
   };
 
   secondaryRolesTableConfig: GenericTableConfig = {
@@ -216,6 +246,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
 
   /** Idioma activo de la UI (es/en) para mostrar nombres de roles en el idioma correcto. */
   currentLang = 'es';
+  /** Nombre visible del rol primario para mostrarlo en modo solo lectura. */
+  primaryRoleDisplayName = '';
 
   isLoading = false;
 
@@ -251,6 +283,25 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     };
   }
 
+  /** Devuelve el handler de la tabla de programas asignados. */
+  get programsTableHandler(): OnGenericTableHandler {
+    return {
+      tableConfig: this.programsTableConfig,
+      onTableAction: (event: Event, action: string, item: ProgramOption) => {
+        event?.stopPropagation?.();
+        event?.preventDefault?.();
+        if (action === 'delete') {
+          this.confirmRemoveProgram(item);
+        }
+      },
+      onAddMenuAction: (menuItemId: string) => {
+        if (menuItemId === 'add-program') {
+          this.openAddProgramModal();
+        }
+      },
+    };
+  }
+
   /** Devuelve el FormArray de roles secundarios del formulario. */
   get secondaryRolesArray(): FormArray {
     return this.headerConfig.formGroup.get('secondaryRoles') as FormArray;
@@ -266,6 +317,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.headerConfig.settingsMenuItems = [
       { id: 'force-password', label: 'users.edit.buttons.force-password', icon: 'heroicons_solid:lock-closed', iconColor: 'text-warn' },
       { id: 'update-password', label: 'users.edit.buttons.update-password', icon: 'heroicons_solid:key', iconColor: 'text-primary' },
+      { id: 'change-role', label: 'users.edit.buttons.change-role', icon: 'heroicons_solid:user-circle', iconColor: 'text-primary' },
       ...(isAdmin ? [{ id: 'add-secondary-role', label: 'users.edit.secondaryRoles.add', icon: 'heroicons_solid:user-plus', iconColor: 'text-primary' }] : []),
     ];
 
@@ -315,6 +367,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     this.currentLang = this._translocoService.getActiveLang() ?? 'es';
     this._translocoService.langChanges$.pipe(takeUntil(this._unsubscribeAll)).subscribe((lang) => {
       this.currentLang = lang ?? 'es';
+      this._setPrimaryRoleDisplayName();
       this._changeDetectorRef.markForCheck();
     });
   }
@@ -336,6 +389,9 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         break;
       case 'update-password':
         this.openUpdatePasswordModal();
+        break;
+      case 'change-role':
+        this.openChangeRoleModal();
         break;
       case 'add-secondary-role':
         this.openAddSecondaryRoleModal();
@@ -787,6 +843,28 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       });
   }
 
+  /** Muestra confirmación y, si acepta, elimina el programa de la tabla y persiste de inmediato. */
+  confirmRemoveProgram(program: ProgramOption): void {
+    this._fuseConfirmationService
+      .open({
+        title: this._translocoService.translate('users.edit.programs.table.deleteConfirmTitle'),
+        message: this._translocoService.translate('users.edit.programs.table.deleteConfirmMessage', { programName: this.currentLang === 'en' ? (program.nameEN ?? program.name) : program.name }),
+        icon: { show: true, name: 'heroicons_outline:exclamation-triangle', color: 'warn' },
+        actions: {
+          confirm: { show: true, label: this._translocoService.translate('users.edit.programs.table.buttons.delete'), color: 'warn' },
+          cancel: { show: true, label: this._translocoService.translate('users.list.delete.cancel') },
+        },
+      })
+      .afterClosed()
+      .subscribe((result) => {
+        if (result === 'confirmed') {
+          const currentPrograms = this.programsTableConfig.dataSource.data ?? [];
+          const updatedPrograms = currentPrograms.filter((item) => item.id !== program.id);
+          this._persistProgramsImmediately(updatedPrograms);
+        }
+      });
+  }
+
   /** Validador del grupo: verifica que contraseña y confirmación coincidan. */
   onPassword(formGroup: FormGroup) {
     const { value: password } = formGroup.get('currentPassword');
@@ -869,11 +947,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       ? (this.listAgencies?.find((a: { id: number }) => a.id === agencyId) ?? this.user.agency ?? { id: agencyId, name: this.user.agencyName ?? '' })
       : null;
     const userPrograms = this.user.programs ?? [];
-    const selectedPrograms = Array.isArray(userPrograms) && userPrograms.length > 0
+    const selectedProgramsRaw = Array.isArray(userPrograms) && userPrograms.length > 0
       ? userPrograms.map((p: { id: number; name?: string }) => this.listPrograms?.find((lp: { id: number }) => lp.id === p.id) ?? { id: p.id, name: p.name ?? '' }).filter(Boolean)
       : (this.user.programId != null
           ? [this.listPrograms?.find((p: { id: number }) => p.id === this.user.programId) ?? { id: this.user.programId, name: this.user.programName ?? this.user.program?.name ?? '' }].filter(Boolean)
           : []);
+    const selectedPrograms = this._dedupeProgramsById(selectedProgramsRaw as ProgramOption[]);
     this.headerConfig.formGroup.patchValue({
       email: this.user.email,
       firstName: this.user.firstName,
@@ -889,6 +968,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       region: this.user.region,
       programs: selectedPrograms ?? [],
     });
+    this.programsTableConfig.dataSource.data = selectedPrograms ?? [];
+    this._setPrimaryRoleDisplayName();
     const secondaryRows = this.getSecondaryRolesFromUser();
     this.secondaryRolesArray.clear();
     secondaryRows.forEach((row) => {
@@ -1350,6 +1431,35 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     });
   }
 
+  /** Abre el modal para agregar programas; al confirmar, persiste los cambios inmediatamente. */
+  openAddProgramModal(): void {
+    const currentPrograms = this._dedupeProgramsById(this.programsTableConfig.dataSource.data ?? []);
+    const assignedProgramIds = currentPrograms.map((program) => program.id);
+    const dialogRef = this._matDialog.open(AddProgramModalComponent, {
+      width: '700px',
+      maxWidth: '95vw',
+      data: {
+        userName: this.user?.firstName + ' ' + this.user?.fatherLastName,
+        listPrograms: this.listPrograms as ProgramOption[],
+        assignedProgramIds,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: AddProgramModalResult | undefined) => {
+      const selectedPrograms = result?.selectedPrograms ?? [];
+      if (!selectedPrograms.length) return;
+
+      const mergedPrograms = [...currentPrograms];
+      selectedPrograms.forEach((selectedProgram) => {
+        if (!mergedPrograms.some((item) => item.id === selectedProgram.id)) {
+          mergedPrograms.push(selectedProgram);
+        }
+      });
+
+      this._persistProgramsImmediately(this._dedupeProgramsById(mergedPrograms));
+    });
+  }
+
   /** Abre el modal para actualizar contraseña; al cerrar con éxito recarga los datos del usuario. */
   openUpdatePasswordModal(): void {
     const dialogRef = this._matDialog.open(UpdatePasswordModalComponent, {
@@ -1374,6 +1484,117 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           },
         });
       }
+    });
+  }
+
+  /** Abre el modal para cambiar el rol primario; al confirmar, actualiza el usuario y recarga datos. */
+  openChangeRoleModal(): void {
+    const currentRole = this.getPrimaryRoleFromUser();
+    const dialogRef = this._matDialog.open(ChangeRoleModalComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        listRoles: this.listRoles,
+        currentRole,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: ChangeRoleModalResult | undefined) => {
+      if (result?.role?.name) {
+        this._updatePrimaryRoleOnly(result.role.name);
+      }
+    });
+  }
+
+  /** Actualiza únicamente el rol primario del usuario manteniendo los demás datos. */
+  private _updatePrimaryRoleOnly(primaryRoleName: string): void {
+    const loggedInUserId = this._authService.getUserId();
+    const requestParameters: QueryParameters = {
+      currentUserId: loggedInUserId,
+    };
+
+    const currentSecondaryRoles = (this.user?.secondaryRoles ?? []) as UserSecondaryRoleStub[];
+    const secondaryRolesPayload: SecondaryRoleInput[] | undefined = currentSecondaryRoles.length
+      ? currentSecondaryRoles
+        .filter((s) => s.roleName && s.validFrom && s.validTo)
+        .map((s) => ({
+          roleName: s.roleName!,
+          validFrom: toIsoDateString(s.validFrom) ?? '',
+          validTo: toIsoDateString(s.validTo) ?? '',
+        }))
+        .filter((s) => s.validFrom && s.validTo)
+      : undefined;
+
+    const model: RequestUser = {
+      id: this.id,
+      firstName: this.user?.firstName,
+      middleName: this.user?.middleName,
+      fatherLastName: this.user?.fatherLastName,
+      motherLastName: this.user?.motherLastName,
+      email: this.user?.email,
+      userName: this.user?.userName,
+      imageURL: this.user?.imageURL,
+      primaryRoleName,
+      secondaryRoles: secondaryRolesPayload,
+      agencyId: this.user?.agency?.id ?? this.user?.agencyId ?? null,
+      cityId: this.user?.city?.id ?? this.user?.cityId,
+      regionId: this.user?.region?.id ?? this.user?.regionId,
+      programIds: this.user?.programs?.map((p: { id: number }) => p.id)?.filter((id: number) => id > 0),
+      isActive: this.user?.isActive,
+      isTemporalPasswordActived: this.user?.isTemporalPasswordActived,
+      emailConfirmed: this.user?.emailConfirmed,
+    };
+
+    this._usersService.updateWithSP(model, requestParameters).subscribe({
+      next: (result: any) => {
+        if (result.status === 200) {
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.edit.change-role-modal.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.edit.change-role-modal.success.message'),
+            icon: {
+              show: true,
+              name: 'heroicons_outline:check-circle',
+              color: 'success',
+            },
+            actions: {
+              confirm: {
+                show: true,
+                label: this._translocoService.translate('dialog.success.confirm'),
+                color: 'primary',
+              },
+              cancel: { show: false },
+            },
+          });
+
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+            next: (response: any) => {
+              if (response?.body) {
+                this.onSetForm(response.body);
+                this._changeDetectorRef.markForCheck();
+              }
+            },
+          });
+        }
+      },
+      error: () => {
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.edit.change-role-modal.error.title'),
+          message: this._translocoService.translate('users.edit.change-role-modal.error.message'),
+          icon: {
+            show: true,
+            name: 'heroicons_outline:exclamation-circle',
+            color: 'error',
+          },
+          actions: {
+            confirm: {
+              show: true,
+              label: this._translocoService.translate('dialog.error.confirm'),
+              color: 'primary',
+            },
+            cancel: { show: false },
+          },
+        });
+      },
     });
   }
 
@@ -1415,6 +1636,114 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         console.error('Error loading user permissions:', error);
       }
     });
+  }
+
+  /** Persiste inmediatamente la lista de programas del usuario usando updateWithSP. */
+  private _persistProgramsImmediately(programs: ProgramOption[]): void {
+    const uniquePrograms = this._dedupeProgramsById(programs);
+    const loggedInUserId = this._authService.getUserId();
+    const primaryRoleName = this.user?.primaryRoleName ?? this.user?.role?.name ?? this.user?.roles?.[0] ?? '';
+    if (!loggedInUserId || !primaryRoleName) {
+      this._fuseConfirmationService.open({
+        title: this._translocoService.translate('users.edit.programs.update.error.title'),
+        message: this._translocoService.translate('users.edit.programs.update.error.message'),
+        icon: { show: true, name: 'heroicons_outline:exclamation-circle', color: 'error' },
+        actions: {
+          confirm: { show: true, label: this._translocoService.translate('dialog.error.confirm'), color: 'primary' },
+          cancel: { show: false },
+        },
+      });
+      return;
+    }
+
+    const requestParameters: QueryParameters = { currentUserId: loggedInUserId };
+    const model: RequestUser = {
+      id: this.id,
+      firstName: this.user?.firstName,
+      middleName: this.user?.middleName,
+      fatherLastName: this.user?.fatherLastName,
+      motherLastName: this.user?.motherLastName,
+      email: this.user?.email,
+      userName: this.user?.userName,
+      imageURL: this.user?.imageURL,
+      primaryRoleName,
+      secondaryRoles: this._mapSecondaryRolesFromUser(),
+      agencyId: this.user?.agency?.id ?? this.user?.agencyId ?? null,
+      cityId: this.user?.city?.id ?? this.user?.cityId,
+      regionId: this.user?.region?.id ?? this.user?.regionId,
+      programIds: uniquePrograms.map((program) => program.id).filter((id) => id > 0),
+      isActive: this.user?.isActive,
+      isTemporalPasswordActived: this.user?.isTemporalPasswordActived,
+      emailConfirmed: this.user?.emailConfirmed,
+    };
+
+    this._usersService.updateWithSP(model, requestParameters).subscribe({
+      next: (result: any) => {
+        if (result?.status === 200) {
+          this._usersService.getUserByIdWithSP({ userId: this.id }).subscribe({
+            next: (response: any) => {
+              if (response?.body) {
+                this.onSetForm(response.body);
+                this.headerConfig.formGroup.get('programs')?.setValue(uniquePrograms, { emitEvent: false });
+                this.programsTableConfig.dataSource.data = uniquePrograms;
+                this._changeDetectorRef.markForCheck();
+              }
+            },
+          });
+
+          this._fuseConfirmationService.open({
+            title: this._translocoService.translate('users.edit.programs.update.success.title'),
+            message: result.body?.message || this._translocoService.translate('users.edit.programs.update.success.message'),
+            icon: { show: true, name: 'heroicons_outline:check-circle', color: 'success' },
+            actions: {
+              confirm: { show: true, label: this._translocoService.translate('dialog.success.confirm'), color: 'primary' },
+              cancel: { show: false },
+            },
+          });
+        }
+      },
+      error: () => {
+        this._fuseConfirmationService.open({
+          title: this._translocoService.translate('users.edit.programs.update.error.title'),
+          message: this._translocoService.translate('users.edit.programs.update.error.message'),
+          icon: { show: true, name: 'heroicons_outline:exclamation-circle', color: 'error' },
+          actions: {
+            confirm: { show: true, label: this._translocoService.translate('dialog.error.confirm'), color: 'primary' },
+            cancel: { show: false },
+          },
+        });
+      },
+    });
+  }
+
+  /** Convierte los roles secundarios del usuario actual al payload esperado por la API. */
+  private _mapSecondaryRolesFromUser(): SecondaryRoleInput[] | undefined {
+    const currentSecondaryRoles = (this.user?.secondaryRoles ?? []) as UserSecondaryRoleStub[];
+    const mappedSecondaryRoles = currentSecondaryRoles
+      .filter((item) => item.roleName && item.validFrom && item.validTo)
+      .map((item) => ({
+        roleName: item.roleName ?? '',
+        validFrom: toIsoDateString(item.validFrom) ?? '',
+        validTo: toIsoDateString(item.validTo) ?? '',
+      }))
+      .filter((item) => item.validFrom && item.validTo);
+
+    return mappedSecondaryRoles.length > 0 ? mappedSecondaryRoles : undefined;
+  }
+
+  /** Elimina programas repetidos usando el id como clave única. */
+  private _dedupeProgramsById(programs: ProgramOption[]): ProgramOption[] {
+    if (!Array.isArray(programs) || programs.length === 0) {
+      return [];
+    }
+
+    const dedupedPrograms = new Map<number, ProgramOption>();
+    programs.forEach((program) => {
+      if (program?.id != null && !dedupedPrograms.has(program.id)) {
+        dedupedPrograms.set(program.id, program);
+      }
+    });
+    return Array.from(dedupedPrograms.values());
   }
 
   // -----------------------------------------------------------------------------------------------------
@@ -1464,5 +1793,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       agencyControl.updateValueAndValidity({ emitEvent: false });
     }
     this.headerConfig.formGroup.updateValueAndValidity({ emitEvent: false });
+  }
+
+  /** Sincroniza el texto visible del rol primario según el idioma activo. */
+  private _setPrimaryRoleDisplayName(): void {
+    const primaryRole = this.getPrimaryRoleFromUser();
+    this.primaryRoleDisplayName = this._getRoleDisplayName(primaryRole);
+  }
+
+  /** Devuelve el nombre legible del rol con fallback al nombre técnico. */
+  private _getRoleDisplayName(role: DTORole | null): string {
+    if (!role) return '';
+    const localizedName = this.currentLang === 'en' ? role.displayNameEN : role.displayName;
+    return localizedName ?? role.displayName ?? role.displayNameEN ?? role.name ?? '';
   }
 }

@@ -100,6 +100,7 @@ export interface UserToken {
     name?: string;
     displayName?: string;
     displayNameEN?: string;
+    isAesanRole?: boolean;
   }
 
   /** Datos de entrada del modal de agregar/editar rol secundario. */

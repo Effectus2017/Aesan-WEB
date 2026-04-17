@@ -86,7 +86,7 @@
             </mat-form-field>
           </div>
           <!-- Access Information -->
-          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12" [class.sm:grid-cols-3]="!showAgencyField" [class.sm:grid-cols-4]="showAgencyField">
+          <div class="grid grid-cols-1 col-span-12 gap-4 sm:col-span-12" appDynamicGrid breakpoint="sm">
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.email.label" | transloco }}</mat-label>
               <input
@@ -109,21 +109,17 @@
             </mat-form-field>
             <mat-form-field class="flex-auto">
               <mat-label>{{ "users.edit.primaryRole.label" | transloco }}</mat-label>
-              <mat-select
-                formControlName="primaryRole"
+              <input
+                matInput
+                [value]="primaryRoleDisplayName"
+                disabled
                 [placeholder]="'users.edit.primaryRole.placeholder' | transloco"
-                [compareWith]="compareById"
-                data-cy="primary-role-select"
+                data-cy="primary-role-input"
                 [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
-              >
-                <mat-option *ngFor="let _role of listRoles" [value]="_role" data-cy="role-option">
-                  {{ currentLang === 'es' ? _role.displayName : _role.displayNameEN }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="headerConfig.formGroup.get('primaryRole').hasError('required')">
-                {{ "users.edit.primaryRole.required" | transloco }}
-              </mat-error>
+                [title]="'users.edit.primaryRole.label' | transloco"
+              />
             </mat-form-field>
+            <!--
             @if (showAgencyField) {
               <mat-form-field class="flex-auto">
                 <mat-label>{{ "users.edit.agency.label" | transloco }}</mat-label>
@@ -141,19 +137,7 @@
                 </mat-select>
               </mat-form-field>
             }
-            <mat-form-field class="flex-auto">
-              <mat-label>{{ "users.edit.programs.label" | transloco }}</mat-label>
-              <mat-select
-                formControlName="programs"
-                multiple
-                [placeholder]="'users.edit.programs.placeholder' | transloco"
-                [compareWith]="compareById"
-                data-cy="programs-select"
-                [attr.aria-label]="'users.edit.programs.label' | transloco"
-              >
-                <mat-option *ngFor="let program of listPrograms" [value]="program" data-cy="program-option">{{ currentLang === 'es' ? program.name : program.nameEN }}</mat-option>
-              </mat-select>
-            </mat-form-field>
+            -->
           </div>
           <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12">
             <mat-form-field class="flex-auto">
@@ -213,6 +197,12 @@
         <app-generic-table [config]="secondaryRolesTableConfig" [handler]="secondaryRolesTableHandler"></app-generic-table>
       </div>
       }
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
+        <p class="text-lg font-medium">{{ "users.edit.programs.section-title" | transloco }}</p>
+      </div>
+      <div class="grid grid-cols-1 col-span-12 gap-4 px-4 mb-4 sm:grid-cols-1 sm:col-span-12">
+        <app-generic-table [config]="programsTableConfig" [handler]="programsTableHandler"></app-generic-table>
+      </div>
       <div class="grid grid-cols-1 col-span-12 gap-4 px-4 my-6 sm:grid-cols-1">
         <p class="text-lg font-medium">{{ "users.edit.permissions-section" | transloco }}</p>
       </div>

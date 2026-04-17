@@ -101,6 +101,7 @@
                 "update": "Update",
                 "save": "Save",
                 "update-password": "Change Password",
+                "change-role": "Change Role",
                 "force-password": "Force Password Change"
             },
             "agency": {
@@ -116,12 +117,56 @@
             },
             "programs": {
                 "label": "Assigned programs",
-                "placeholder": "Select one or more programs"
+                "placeholder": "Select one or more programs",
+                "section-title": "Assigned programs",
+                "table": {
+                    "columns": {
+                        "name": "Name",
+                        "nameEn": "English name",
+                        "actions": "Actions"
+                    },
+                    "buttons": {
+                        "add": "Add programs",
+                        "delete": "Delete"
+                    },
+                    "tooltips": {
+                        "add": "Add programs"
+                    },
+                    "deleteConfirmTitle": "Remove program",
+                    "deleteConfirmMessage": "Do you want to remove {{programName}} from this user?"
+                },
+                "update": {
+                    "success": {
+                        "title": "Programs updated",
+                        "message": "User programs were updated successfully"
+                    },
+                    "error": {
+                        "title": "Error",
+                        "message": "Unable to update user programs"
+                    }
+                }
             },
             "update-password-modal": {
                 "title": "Update Password",
                 "subtitle": "Update password for {{ userName }}",
                 "password-mismatch": "Passwords do not match"
+            },
+            "change-role-modal": {
+                "title": "Change Role",
+                "subtitle": "Update role for {{ userName }}",
+                "role": {
+                    "label": "New role",
+                    "placeholder": "Select the new role",
+                    "required": "Role is required"
+                },
+                "success": {
+                    "title": "Role updated",
+                    "message": "Role updated successfully"
+                },
+                "error": {
+                    "title": "Error",
+                    "message": "Error updating role"
+                }
             },
             "firstName": {
                 "label": "First Name",
@@ -185,6 +230,30 @@
                     },
                     "buttons": {
                         "delete": "Delete"
+                    }
+                }
+            }
+        },
+        "program": {
+            "modal": {
+                "add": {
+                    "title": "Add programs",
+                    "description": "Select the programs you want to assign to {{ userName }}.",
+                    "search": {
+                        "label": "Search program",
+                        "placeholder": "Search by program name"
+                    },
+                    "bulk": {
+                        "selectAll": "Select all",
+                        "deselectAll": "Deselect all",
+                        "selectedCount": "{{count}} selected"
+                    },
+                    "table": {
+                        "title": "Available programs",
+                        "noPrograms": "No programs available to assign"
+                    },
+                    "buttons": {
+                        "assignSelected": "Assign selected"
                     }
                 }
             }

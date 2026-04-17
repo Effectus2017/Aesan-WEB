@@ -107,19 +107,15 @@
             </mat-error>
           </mat-form-field>
           <mat-form-field class="flex-auto">
-            <mat-label>{{ "users.edit.role.label" | transloco }}</mat-label>
-            <mat-select
-              formControlName="role"
-              [placeholder]="'users.edit.role.placeholder' | transloco"
-              [compareWith]="compareById"
-              data-cy="role-select"
-              [attr.aria-label]="'users.edit.role.label' | transloco"
+            <mat-label>{{ "users.edit.primaryRole.label" | transloco }}</mat-label>
+            <input
+              matInput
+              [value]="primaryRoleDisplayName"
               disabled
-            >
-              <mat-option *ngFor="let _roles of listRoles" [value]="_roles" data-cy="role-option">
-                {{ _roles.name }}
-              </mat-option>
-            </mat-select>
+              [placeholder]="'users.edit.primaryRole.placeholder' | transloco"
+              data-cy="primary-role-input"
+              [attr.aria-label]="'users.edit.primaryRole.label' | transloco"
+            />
           </mat-form-field>
         </div>
       </div>

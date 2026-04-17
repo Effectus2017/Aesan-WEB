@@ -145,6 +145,7 @@ export class UsersAddComponent implements OnInit, OnDestroy, OnGenericHeaderHand
         id: 'add-secondary-role',
         label: 'users.add.secondaryRoles.add',
         icon: 'heroicons_solid:user-plus',
+        iconColor: 'text-primary',
       },
     ],
   };

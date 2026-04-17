@@ -60,7 +60,7 @@ export const initialAgenciesUsersListResolver: ResolveFn<any> = () => {
 export const initialRolesResolver: ResolveFn<any> = () => {
   const usersService = inject(UsersService);
 
-  return forkJoin([usersService.getAllRolesFromDb({ take: 25, skip: 0 })]).pipe(
+  return forkJoin([usersService.getAllRolesFromDb({ take: 25, skip: 0, aesanOnly: false })]).pipe(
     map(([roles]) => ({
       roles: roles.body
     }))

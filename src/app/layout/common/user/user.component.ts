@@ -143,7 +143,8 @@ export class UserComponent implements OnInit, OnDestroy {
         this._usersService.getAllRolesFromDb({ aesanOnly: true }).pipe(takeUntil(this._unsubscribeAll)).subscribe((response) => {
           const lang = this._transloco.getActiveLang() ?? 'es';
           this.roleDisplayByKey = {};
-          const data = response?.body?.data ?? [];
+          const body = response?.body;
+          const data = Array.isArray(body) ? body : (body?.data ?? []);
           data.forEach((r: any) => {
             const key = r?.name ?? r?.Name ?? '';
             this.roleDisplayByKey[key] = lang === 'en' ? (r?.displayNameEN ?? r?.DisplayNameEN ?? key) : (r?.displayName ?? r?.DisplayName ?? key);

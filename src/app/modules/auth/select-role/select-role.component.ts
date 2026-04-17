@@ -78,7 +78,8 @@ export class AuthSelectRoleComponent implements OnInit, OnDestroy {
 
     this._usersService.getAllRolesFromDb({ aesanOnly: true }).subscribe({
       next: (response) => {
-        const allRoles = response?.body?.data ?? [];
+        const body = response?.body;
+        const allRoles = Array.isArray(body) ? body : (body?.data ?? []);
         this.roles = allRoles.filter((r: any) =>
           storedRoleNames.includes(r?.name ?? r?.Name ?? '')
         );

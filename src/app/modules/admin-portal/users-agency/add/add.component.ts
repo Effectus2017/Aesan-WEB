@@ -130,7 +130,12 @@ export class UsersAgencyAddComponent implements OnInit, OnDestroy, OnGenericHead
     submitDisabled: true,
     settingsButtonShow: true,
     settingsMenuItems: [
-      { id: 'add-secondary-role', label: 'users.add.secondaryRoles.add', icon: 'heroicons_solid:user-plus' },
+      {
+        id: 'add-secondary-role',
+        label: 'users.add.secondaryRoles.add',
+        icon: 'heroicons_solid:user-plus',
+        iconColor: 'text-primary',
+      },
     ],
   };
 

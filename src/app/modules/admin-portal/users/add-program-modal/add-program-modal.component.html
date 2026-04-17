@@ -1,0 +1,97 @@
+<div class="flex flex-col -m-6 h-[800px] min-w-120">
+  <div class="flex justify-between items-center pr-3 pl-6 h-16 flex-0 sm:pr-5 sm:pl-8 bg-primary text-on-primary">
+    <div class="text-lg font-medium">{{ 'users.program.modal.add.title' | transloco }}</div>
+    <button mat-icon-button (click)="onCancel()" [tabIndex]="-1" [title]="'global.buttons.close' | transloco">
+      <mat-icon class="text-current">close</mat-icon>
+    </button>
+  </div>
+
+  <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
+      <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+        <mat-icon class="icon-size-7 text-secondary" aria-hidden="true">hourglass_empty</mat-icon>
+        <div class="text-secondary">{{ 'global.loading' | transloco }}</div>
+      </div>
+
+      <div *ngIf="!isInitialLoading" class="flex flex-col gap-6">
+        <p class="text-secondary">
+          {{ 'users.program.modal.add.description' | transloco : { userName: data.userName } }}
+        </p>
+
+        <mat-form-field data-cy="program-search-field">
+          <mat-label>{{ 'users.program.modal.add.search.label' | transloco }}</mat-label>
+          <input
+            matInput
+            formControlName="search"
+            [placeholder]="'users.program.modal.add.search.placeholder' | transloco"
+            [title]="'users.program.modal.add.search.label' | transloco"
+            data-cy="program-search-input"
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="flex gap-4 items-center">
+          <button mat-button type="button" (click)="selectAll()" [disabled]="filteredPrograms.length === 0" data-cy="program-select-all-button">
+            {{ 'users.program.modal.add.bulk.selectAll' | transloco }}
+          </button>
+          <button mat-button type="button" (click)="deselectAll()" [disabled]="selectedPrograms.length === 0" data-cy="program-deselect-all-button">
+            {{ 'users.program.modal.add.bulk.deselectAll' | transloco }}
+          </button>
+          <span class="text-sm text-secondary">
+            {{ 'users.program.modal.add.bulk.selectedCount' | transloco : { count: selectedPrograms.length } }}
+          </span>
+        </div>
+
+        <div class="overflow-hidden rounded-lg border">
+          <div class="px-4 py-2 bg-gray-50 border-b dark:bg-gray-800">
+            <div class="text-sm font-medium">{{ 'users.program.modal.add.table.title' | transloco }}</div>
+          </div>
+
+          <div class="overflow-y-auto h-80">
+            <div *ngIf="filteredPrograms.length === 0" class="p-4 text-center text-secondary">
+              {{ 'users.program.modal.add.table.noPrograms' | transloco }}
+            </div>
+
+            <div *ngFor="let program of filteredPrograms" class="flex items-center p-4 border-b hover:bg-gray-50 dark:hover:bg-gray-800" data-cy="program-row">
+              <mat-checkbox
+                [checked]="isProgramSelected(program)"
+                (change)="toggleProgramSelection(program)"
+                class="mr-4"
+                data-cy="program-checkbox">
+              </mat-checkbox>
+
+              <div class="flex-1">
+                <div class="font-medium">{{ currentLang === 'es' ? program.name : (program.nameEN ?? program.name) }}</div>
+                <div class="text-sm text-secondary">{{ currentLang === 'es' ? (program.nameEN ?? '-') : program.name }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col justify-between gap-3 p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+      <button
+        mat-flat-button
+        type="button"
+        [color]="'warn'"
+        (click)="onCancel()"
+        [disabled]="isLoading || isInitialLoading"
+        class="!rounded-full px-6"
+        data-cy="program-cancel-button">
+        {{ 'global.buttons.cancel' | transloco }}
+      </button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="isSubmitDisabled"
+        [class.min-w-10]="isLoading"
+        class="!rounded-full px-6"
+        data-cy="program-save-button">
+        <mat-spinner *ngIf="isLoading" diameter="20" class="inline-block" aria-hidden="true"></mat-spinner>
+        <span *ngIf="!isLoading">{{ 'users.program.modal.add.buttons.assignSelected' | transloco }}</span>
+      </button>
+    </div>
+  </form>
+</div>

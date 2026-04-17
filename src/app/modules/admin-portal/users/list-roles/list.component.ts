@@ -101,6 +101,7 @@ export class RolesListComponent implements OnInit, OnDestroy {
     const requestParameters: QueryParameters = {
       take: this.tableConfig.pageSize,
       skip: index,
+      aesanOnly: false,
     };
 
     this._usersService.getAllRolesFromDb(requestParameters).subscribe();
