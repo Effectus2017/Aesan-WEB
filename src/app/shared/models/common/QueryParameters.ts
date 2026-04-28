@@ -124,6 +124,8 @@ export interface QueryParameters {
   logTo?: string; // ISO date
   page?: number;
   pageSize?: number;
+  readFilter?: 'all' | 'read' | 'unread' | 'deleted';
+  search?: string;
 
   // Filtros registro de correos (get-failed-email-logs / get-email-logs-by-email)
   status?: string;

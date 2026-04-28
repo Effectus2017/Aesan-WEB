@@ -4,6 +4,7 @@
       <!-- Theme Toggle and Languages -->
       <div class="flex gap-2 justify-end items-center mb-4">
         <languages></languages>
+        <theme-toggle></theme-toggle>
       </div>
       <div class="mt-2 text-4xl font-extrabold tracking-tight leading-tight text-center">{{ "sign-up.title" | transloco }}</div>
       <form class="mt-10" [formGroup]="signUpForm" #signUpNgForm="ngForm" data-cy="sign-up-form">
@@ -220,6 +221,53 @@
               </textarea>
               <mat-error *ngIf="signUpForm.get('federalFundsDeniedReason')?.hasError('required')">
                 {{ "sign-up.federal-funds-denied-reason.required" | transloco }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div
+            class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1"
+            appDynamicGrid="2"
+            *ngIf="
+              signUpForm && (signUpForm.get('stateFundsDenied')?.value === true || signUpForm.get('federalFundsDenied')?.value === true)
+            "
+          >
+            <mat-form-field *ngIf="signUpForm.get('stateFundsDenied')?.value === true" data-cy="state-funds-denied-date-field">
+              <mat-label>{{ "sign-up.state-funds-denied-date.label" | transloco }}</mat-label>
+              <input
+                matInput
+                [matDatepicker]="stateFundsDeniedPicker"
+                [formControlName]="'stateFundsDeniedDate'"
+                [max]="maxFundsDeniedDate"
+                [placeholder]="'sign-up.state-funds-denied-date.placeholder' | transloco"
+                data-cy="state-funds-denied-date-input"
+              />
+              <mat-datepicker-toggle matSuffix [for]="stateFundsDeniedPicker"></mat-datepicker-toggle>
+              <mat-datepicker #stateFundsDeniedPicker></mat-datepicker>
+              <mat-error *ngIf="signUpForm.get('stateFundsDeniedDate')?.hasError('required')">
+                {{ "sign-up.state-funds-denied-date.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('stateFundsDeniedDate')?.hasError('matDatepickerMax')">
+                {{ "sign-up.state-funds-denied-date.future-date" | transloco }}
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field class="flex-grow" *ngIf="signUpForm.get('federalFundsDenied')?.value === true" data-cy="federal-funds-denied-date-field">
+              <mat-label>{{ "sign-up.federal-funds-denied-date.label" | transloco }}</mat-label>
+              <input
+                matInput
+                [matDatepicker]="federalFundsDeniedPicker"
+                [formControlName]="'federalFundsDeniedDate'"
+                [max]="maxFundsDeniedDate"
+                [placeholder]="'sign-up.federal-funds-denied-date.placeholder' | transloco"
+                data-cy="federal-funds-denied-date-input"
+              />
+              <mat-datepicker-toggle matSuffix [for]="federalFundsDeniedPicker"></mat-datepicker-toggle>
+              <mat-datepicker #federalFundsDeniedPicker></mat-datepicker>
+              <mat-error *ngIf="signUpForm.get('federalFundsDeniedDate')?.hasError('required')">
+                {{ "sign-up.federal-funds-denied-date.required" | transloco }}
+              </mat-error>
+              <mat-error *ngIf="signUpForm.get('federalFundsDeniedDate')?.hasError('matDatepickerMax')">
+                {{ "sign-up.federal-funds-denied-date.future-date" | transloco }}
               </mat-error>
             </mat-form-field>
           </div>

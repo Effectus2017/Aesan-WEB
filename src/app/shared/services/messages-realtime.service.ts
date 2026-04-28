@@ -220,6 +220,9 @@ export class MessagesRealtimeService {
       console.log('🔢 ========== UnreadCountChanged RECIBIDO ==========');
       console.log('🔢 Nuevo contador:', count);
       this.unreadCount.set(count);
+      if (count === 0) {
+        this.markAllAsReadLocal();
+      }
     });
 
     // Agregar handler para errores de conexión
@@ -242,6 +245,15 @@ export class MessagesRealtimeService {
   setInitialMessages(initial: Message[], unread: number): void {
     this.messages.set(initial);
     this.unreadCount.set(unread);
+  }
+
+  /**
+   * Marca todos los mensajes cargados como leídos en memoria local.
+   * Mantiene sincronizado el panel cuando el backend solo publica el cambio de contador.
+   */
+  markAllAsReadLocal(): void {
+    this.messages.update((prev) => prev.map((message) => ({ ...message, read: true })));
+    this.unreadCount.set(0);
   }
 
   /**

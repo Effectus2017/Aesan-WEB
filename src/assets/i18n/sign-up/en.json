@@ -39,6 +39,18 @@
     "placeholder": "Enter the reason why you were disqualified or denied state funds",
     "required": "This field is required when you have been disqualified from state funds"
   },
+  "state-funds-denied-date": {
+    "label": "Date of disqualification or denial of state funds",
+    "placeholder": "Select the date",
+    "required": "Enter the date when you answered Yes to state funds",
+    "future-date": "The date cannot be in the future"
+  },
+  "federal-funds-denied-date": {
+    "label": "Date of disqualification or denial of federal funds",
+    "placeholder": "Select the date",
+    "required": "Enter the date when you answered Yes to federal funds",
+    "future-date": "The date cannot be in the future"
+  },
   "federal-funds-denied-reason": {
     "label": "Reason why the sponsor was disqualified or denied federal funds",
     "placeholder": "Enter the reason why you were disqualified or denied federal funds",

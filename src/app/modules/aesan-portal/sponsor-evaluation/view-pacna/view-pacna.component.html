@@ -144,6 +144,30 @@
           </mat-form-field>
         </div>
 
+        <div
+          class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-2 sm:col-span-12"
+          *ngIf="param?.inscription?.stateFundsDenied === true || param?.inscription?.federalFundsDenied === true"
+        >
+          <mat-form-field *ngIf="param?.inscription?.stateFundsDenied === true">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.stateFundsDeniedDate.label" | transloco }}</mat-label>
+            <input
+              matInput
+              readonly
+              tabindex="-1"
+              [value]="param?.inscription?.stateFundsDeniedDate ? (param.inscription.stateFundsDeniedDate | date: 'dd/MM/yyyy') : '—'"
+            />
+          </mat-form-field>
+          <mat-form-field *ngIf="param?.inscription?.federalFundsDenied === true">
+            <mat-label>{{ "sponsor-evaluation.edit.fields.federalFundsDeniedDate.label" | transloco }}</mat-label>
+            <input
+              matInput
+              readonly
+              tabindex="-1"
+              [value]="param?.inscription?.federalFundsDeniedDate ? (param.inscription.federalFundsDeniedDate | date: 'dd/MM/yyyy') : '—'"
+            />
+          </mat-form-field>
+        </div>
+
         <div class="grid grid-cols-1 col-span-12 gap-4 sm:grid-cols-1">
           <p class="text-lg font-medium">{{ "sponsor-evaluation.edit.sections.address" | transloco }}</p>
           <p class="mb-6 text-secondary">{{ "sponsor-evaluation.edit.sections.addressDescription" | transloco }}</p>

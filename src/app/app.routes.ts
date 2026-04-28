@@ -117,6 +117,8 @@ export const appRoutes: Route[] = [
       { path: 'logs', loadChildren: () => import('app/modules/admin-portal/logs/logs.routes') },
       // Message templates (Role: Admin)
       { path: 'message-template', loadChildren: () => import('app/modules/admin-portal/message-template/message-template.routes') },
+      // Centro de mensajes del usuario (Role: Admin)
+      { path: 'messages', loadChildren: () => import('app/modules/admin-portal/messages/messages.routes') },
       // Organization types (Role: Admin)
       { path: 'organization-type', loadChildren: () => import('app/modules/admin-portal/organization-type/organization-type.routes') },
       // Reports (Role: Admin)
@@ -140,6 +142,7 @@ export const appRoutes: Route[] = [
       { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes') },
       { path: 'sponsor-evaluation', loadChildren: () => import('app/modules/aesan-portal/sponsor-evaluation/sponsor-evaluation.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
+      { path: 'messages', loadChildren: () => import('app/modules/aesan-portal/messages/messages.routes') },
     ],
   },
 
@@ -186,6 +189,8 @@ export const appRoutes: Route[] = [
       { path: 'staff', loadChildren: () => import('app/modules/agency-portal/staff/staff.routes') },
       // Users, perfil de usuario (Role: Agency)
       { path: 'users', loadChildren: () => import('app/modules/agency-portal/users/users.routes') },
+      // Centro de mensajes del usuario (Role: Agency)
+      { path: 'messages', loadChildren: () => import('app/modules/agency-portal/messages/messages.routes') },
       // Legibility module, listado de módulos de elegibilidad (Role: Agency)
       { path: 'legibility', loadChildren: () => import('app/modules/agency-portal/legibility/legibility.routes') },
     ],

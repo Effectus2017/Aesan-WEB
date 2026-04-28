@@ -13,6 +13,7 @@ export interface InscriptionResponse {
   completedRegistrationDate?: string | null;
   federalFundsDenied?: boolean;
   federalFundsDeniedReason?: string | null;
+  federalFundsDeniedDate?: string | null;
   id?: number;
   isDayCareHomeId?: number;
   isDayCareHome?: OptionSelection | null;
@@ -23,6 +24,7 @@ export interface InscriptionResponse {
   rejectionJustification?: string | null;
   stateFundsDenied?: boolean;
   stateFundsDeniedReason?: string | null;
+  stateFundsDeniedDate?: string | null;
   taxExemptionStatus?: OptionSelection | null;
   taxExemptionStatusId?: number | null;
   taxExemptionType?: OptionSelection | null;

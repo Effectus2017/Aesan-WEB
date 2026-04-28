@@ -1,6 +1,6 @@
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { TextFieldModule } from '@angular/cdk/text-field';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { DatePipe, NgClass, NgFor, NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -61,6 +61,7 @@ import { StaffBySiteModalComponent } from '../staff-by-site-modal/staff-by-site-
   encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [
+    DatePipe,
     NgIf,
     NgFor,
     ReactiveFormsModule,

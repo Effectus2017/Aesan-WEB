@@ -136,6 +136,18 @@ export class GenericFilterPanelComponent implements OnChanges {
           type: filter.type,
           label: filter.label,
         });
+      } else if (filter.type === 'select') {
+        const formKey = sanitizeParamKeyForForm(paramKey);
+        group[formKey] = new FormControl(this._getInitial(paramKey) ?? null);
+        this._formKeyToParamKey[formKey] = paramKey;
+        this._filterFields.push({
+          filter,
+          paramKey,
+          formControlKey: formKey,
+          type: filter.type,
+          label: filter.label,
+          options: filter.options ?? []
+        });
       } else {
         const formKey = sanitizeParamKeyForForm(paramKey);
         group[formKey] = new FormControl(this._getInitial(paramKey) ?? '');

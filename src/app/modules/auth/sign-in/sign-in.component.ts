@@ -19,6 +19,7 @@ import {
 } from 'app/shared/constants/auth-error-keys';
 import { LoginRequest } from 'app/shared/models/request/LoginRequest';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { LazyImgDirective } from 'app/shared/directives/lazy-img.directive';
 import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
 
@@ -40,7 +41,8 @@ import { OptimizeImagePipe } from 'app/shared/pipes/optimize-image.pipe';
         MatCheckboxModule,
         MatProgressSpinnerModule,
         TranslocoModule,
-        LanguagesComponent
+        LanguagesComponent,
+        ThemeToggleComponent
     ]
 })
 export class AuthSignInComponent implements OnInit {

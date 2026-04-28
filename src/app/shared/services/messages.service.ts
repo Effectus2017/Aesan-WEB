@@ -113,7 +113,13 @@ export class MessagesService {
    * @returns True si se marcaron correctamente
    */
   markAllMessagesAsRead(queryParameters: QueryParameters): Observable<any> {
-    return this._httpClient.post(`${this.apiUrl}/mark-all-as-read`, {}, getHttpOptions(queryParameters));
+    return this._httpClient
+      .post(`${this.apiUrl}/mark-all-as-read`, {}, getHttpOptions(queryParameters))
+      .pipe(
+        tap(() => {
+          this._realtime.markAllAsReadLocal();
+        })
+      );
   }
 
   /**
@@ -132,6 +138,15 @@ export class MessagesService {
    */
   getUnreadMessageCount(queryParameters: QueryParameters): Observable<any> {
     return this._httpClient.get(`${this.apiUrl}/get-unread-message-count`, getHttpOptions(queryParameters));
+  }
+
+  /**
+   * Obtiene mensajes paginados para el usuario autenticado.
+   * @param queryParameters Parámetros de paginación y filtros
+   * @returns Resultado paginado con data y count
+   */
+  getMessages(queryParameters: QueryParameters): Observable<any> {
+    return this._httpClient.get(`${this.apiUrl}/get-messages`, getHttpOptions(queryParameters));
   }
 
   /**

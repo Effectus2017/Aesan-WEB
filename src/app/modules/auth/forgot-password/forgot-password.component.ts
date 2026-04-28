@@ -12,6 +12,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { UsersService } from 'app/shared/services/users.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { finalize } from 'rxjs';
 
 @Component({
@@ -30,7 +31,8 @@ import { finalize } from 'rxjs';
         MatProgressSpinnerModule,
         RouterLink,
         TranslocoModule,
-        LanguagesComponent
+        LanguagesComponent,
+        ThemeToggleComponent
     ]
 })
 export class AuthForgotPasswordComponent implements OnInit

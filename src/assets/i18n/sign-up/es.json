@@ -44,6 +44,18 @@
     "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos estatales",
     "required": "Este campo es requerido cuando ha sido descalificado de fondos estatales"
   },
+  "state-funds-denied-date": {
+    "label": "Fecha de la descalificación o denegación de fondos estatales",
+    "placeholder": "Seleccione la fecha",
+    "required": "Indique la fecha cuando respondió Sí a fondos estatales",
+    "future-date": "La fecha no puede ser futura"
+  },
+  "federal-funds-denied-date": {
+    "label": "Fecha de la descalificación o denegación de fondos federales",
+    "placeholder": "Seleccione la fecha",
+    "required": "Indique la fecha cuando respondió Sí a fondos federales",
+    "future-date": "La fecha no puede ser futura"
+  },
   "federal-funds-denied-reason": {
     "label": "Razón por la cual fue descalificado o denegado de fondos federales",
     "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos federales",

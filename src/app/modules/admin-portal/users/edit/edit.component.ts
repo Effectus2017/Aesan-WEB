@@ -164,6 +164,18 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         iconColor: 'text-primary',
       },
       {
+        id: 'add-program',
+        label: 'users.edit.programs.table.buttons.add',
+        icon: 'mat_outline:library_add',
+        iconColor: 'text-primary',
+      },
+      {
+        id: 'add-permission',
+        label: 'global.buttons.addPermission',
+        icon: 'mat_outline:add_moderator',
+        iconColor: 'text-primary',
+      },
+      {
         id: 'add-secondary-role',
         label: 'users.edit.secondaryRoles.add',
         icon: 'heroicons_solid:user-plus',
@@ -220,6 +232,15 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
     handler: null as any,
     showPaginator: false,
     fullScreen: false,
+    addMenuShow: true,
+    addMenuItems: [
+      {
+        id: 'add-secondary-role',
+        label: 'users.edit.secondaryRoles.table.buttons.add',
+        icon: 'mat_outline:add',
+      },
+    ],
+    addMenuTooltip: 'users.edit.secondaryRoles.table.tooltips.add',
   };
 
   imageURL: string;
@@ -280,6 +301,11 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
           if (!isNaN(index)) this.confirmRemoveSecondaryRole(index);
         }
       },
+      onAddMenuAction: (menuItemId: string) => {
+        if (menuItemId === 'add-secondary-role') {
+          this.openAddSecondaryRoleModal();
+        }
+      },
     };
   }
 
@@ -318,6 +344,8 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
       { id: 'force-password', label: 'users.edit.buttons.force-password', icon: 'heroicons_solid:lock-closed', iconColor: 'text-warn' },
       { id: 'update-password', label: 'users.edit.buttons.update-password', icon: 'heroicons_solid:key', iconColor: 'text-primary' },
       { id: 'change-role', label: 'users.edit.buttons.change-role', icon: 'heroicons_solid:user-circle', iconColor: 'text-primary' },
+      { id: 'add-program', label: 'users.edit.programs.table.buttons.add', icon: 'mat_outline:library_add', iconColor: 'text-primary' },
+      { id: 'add-permission', label: 'global.buttons.addPermission', icon: 'mat_outline:add_moderator', iconColor: 'text-primary' },
       ...(isAdmin ? [{ id: 'add-secondary-role', label: 'users.edit.secondaryRoles.add', icon: 'heroicons_solid:user-plus', iconColor: 'text-primary' }] : []),
     ];
 
@@ -381,7 +409,7 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
   // -----------------------------------------------------------------------------------------------------
   // @ Funciones On (componentes genéricos)
   // -----------------------------------------------------------------------------------------------------
-  /** Ejecuta la acción del menú de configuración del header (forzar contraseña, actualizar contraseña, agregar rol secundario). */
+  /** Ejecuta la acción del menú de configuración del header (contraseña, rol, programas, permisos, rol secundario). */
   onSettingsMenuAction(menuItemId: string): void {
     switch (menuItemId) {
       case 'force-password':
@@ -392,6 +420,12 @@ export class UsersEditComponent implements OnInit, OnDestroy, OnGenericHeaderHan
         break;
       case 'change-role':
         this.openChangeRoleModal();
+        break;
+      case 'add-program':
+        this.openAddProgramModal();
+        break;
+      case 'add-permission':
+        this.openAddPermissionModal();
         break;
       case 'add-secondary-role':
         this.openAddSecondaryRoleModal();

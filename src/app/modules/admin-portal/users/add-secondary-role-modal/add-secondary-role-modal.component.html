@@ -42,13 +42,14 @@
     </div>
 
     <!-- Actions - Fixed footer, outside scroll -->
-    <div class="flex flex-col justify-between p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
+    <div class="flex flex-col justify-between gap-3 p-6 border-t border-gray-200 flex-shrink-0 dark:border-gray-700 sm:flex-row sm:items-center">
       <div class="flex gap-2">
         <button
-          mat-button
-          color="warn"
+          mat-flat-button
           type="button"
+          [color]="'warn'"
           (click)="onCancel()"
+          class="!rounded-full px-6"
           data-cy="cancel-button"
         >
           {{ 'global.buttons.cancel' | transloco }}
@@ -58,6 +59,7 @@
         mat-flat-button
         color="primary"
         type="submit"
+        class="!rounded-full px-6"
         data-cy="save-button"
       >
         {{ submitKey | transloco }}

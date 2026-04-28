@@ -10,6 +10,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AUTH_ERROR_I18N_SELECT_ROLE_NO_AGENCY_ASSIGNED } from 'app/shared/constants/auth-error-keys';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { DTORole, UsersService } from 'app/shared/services/users.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,6 +29,7 @@ import { Subject, takeUntil } from 'rxjs';
     FuseAlertComponent,
     TranslocoModule,
     LanguagesComponent,
+    ThemeToggleComponent,
   ],
 })
 export class AuthSelectRoleComponent implements OnInit, OnDestroy {

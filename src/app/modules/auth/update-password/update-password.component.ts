@@ -13,6 +13,7 @@ import { TranslocoModule, TranslocoService } from '@ngneat/transloco';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 
 @Component({
     selector: 'auth-update-password',
@@ -31,6 +32,7 @@ import { LanguagesComponent } from 'app/layout/common/languages/languages.compon
         FuseAlertComponent,
         TranslocoModule,
         LanguagesComponent,
+        ThemeToggleComponent,
     ]
 })
 export class UpdatePasswordComponent implements OnInit {

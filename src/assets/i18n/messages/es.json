@@ -1,10 +1,52 @@
 {
   "messages": {
-    "title": "Mensajes",
+    "title": "Notificationes",
+    "viewAll": "Ver todos",
+    "closePanel": "Cerrar panel de mensajes",
     "markAllAsRead": "Marcar todo como leído",
     "markAsRead": "Marcar como leído",
+    "alreadyRead": "Mensaje ya leído",
     "markAsUnread": "Marcar como no leído",
     "remove": "Eliminar",
+    "filters": {
+      "all": "Todos",
+      "unread": "No leídos",
+      "read": "Leídos"
+    },
+    "center": {
+      "title": "Centro de notificaciones",
+      "subtitle": "Revisa el historial de tus mensajes en este portal.",
+      "filters": {
+        "readStatus": "Estado de lectura",
+        "deleted": "Eliminado",
+        "options": {
+          "all": "Todos (incluye eliminados)",
+          "read": "Leídos",
+          "unread": "No leídos",
+          "deleted": "Eliminados"
+        }
+      },
+      "searchLabel": "Buscar mensajes",
+      "searchPlaceholder": "Título o descripción",
+      "searchAction": "Buscar",
+      "clearSearch": "Limpiar búsqueda",
+      "loading": "Cargando mensajes...",
+      "emptyFiltered": "No hay mensajes para los filtros seleccionados.",
+      "table": {
+        "columns": {
+          "title": "Título",
+          "description": "Descripción",
+          "time": "Fecha",
+          "status": "Estado",
+          "actions": "Acciones"
+        },
+        "status": {
+          "read": "Leído",
+          "unread": "No leído",
+          "deleted": "Eliminado"
+        }
+      }
+    },
     "empty": {
       "title": "No hay mensajes",
       "subtitle": "Cuando tengas mensajes, aparecerán aquí."

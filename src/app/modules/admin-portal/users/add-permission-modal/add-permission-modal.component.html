@@ -10,8 +10,8 @@
   <!-- Form -->
   <form class="flex flex-col flex-auto min-h-0" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="flex overflow-y-auto flex-col flex-auto min-h-0 p-6 bg-default">
-      <!-- Loading for Initial Data -->
-      <div *ngIf="isInitialLoading" class="flex flex-col items-center justify-center gap-3 py-8">
+      <!-- Loading for Initial Data: flex-1 para ocupar el cuerpo del modal y centrar verticalmente -->
+      <div *ngIf="isInitialLoading" class="flex flex-1 flex-col items-center justify-center gap-3 min-h-0">
         <mat-icon class="icon-size-7 text-secondary" aria-hidden="true">hourglass_empty</mat-icon>
         <div class="text-secondary">{{ "global.loading" | transloco }}</div>
       </div>
@@ -46,18 +46,18 @@
         </div>
 
         <!-- Permissions Table -->
-        <div class="overflow-hidden rounded-lg border">
-          <div class="px-4 py-2 bg-gray-50 border-b dark:bg-gray-800">
+        <div class="overflow-hidden rounded-lg border bg-card">
+          <div class="px-4 py-2 bg-card border-b border-gray-200 dark:border-gray-700">
             <div class="text-sm font-medium">{{ "users.permission.modal.add.table.title" | transloco }}</div>
           </div>
 
-          <div class="overflow-y-auto h-80">
-            <div *ngIf="filteredPermissions.length === 0" class="p-4 text-center text-secondary">
+          <div class="overflow-y-auto h-80 bg-card">
+            <div *ngIf="filteredPermissions.length === 0" class="p-4 text-center text-secondary bg-card">
               {{ "users.permission.modal.add.table.noPermissions" | transloco }}
             </div>
 
             <div *ngFor="let permission of filteredPermissions"
-                 class="flex items-center p-4 border-b hover:bg-gray-50 dark:hover:bg-gray-800"
+                 class="flex items-center bg-card p-4 border-b border-gray-200 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800"
                  data-cy="permission-row">
               <mat-checkbox
                 [checked]="isPermissionSelected(permission)"

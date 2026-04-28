@@ -5,10 +5,18 @@ import type { GenericFilterResult } from 'app/shared/components/generic-table/ge
  */
 export interface FilterSchema {
   key: string | string[];
-  type: 'text' | 'date' | 'date-time' | 'boolean' | 'combined-text';
+  type: 'text' | 'date' | 'date-time' | 'boolean' | 'combined-text' | 'select';
   label: string;
   /** Para combined-text: claves que se combinan. */
   keys?: string[];
+  /** Para select: opciones a mostrar en el combo. */
+  options?: FilterSelectOption[];
+}
+
+/** Opción para filtros de tipo select. */
+export interface FilterSelectOption {
+  value: string | number | boolean | null;
+  label: string;
 }
 
 /**
@@ -32,6 +40,7 @@ export interface GenericFilterFieldConfig {
   formControlKey: string;
   type: FilterSchema['type'];
   label: string;
+  options?: FilterSelectOption[];
   /** Solo para date/date-time: clave del control "hasta". */
   paramKeyTo?: string;
   formControlKeyTo?: string;

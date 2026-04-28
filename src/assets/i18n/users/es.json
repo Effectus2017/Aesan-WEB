@@ -54,7 +54,11 @@
                         "actions": "Acciones"
                     },
                     "buttons": {
-                        "delete": "Eliminar"
+                        "delete": "Eliminar",
+                        "add": "Agregar rol secundario"
+                    },
+                    "tooltips": {
+                        "add": "Agregar rol secundario"
                     },
                     "deleteConfirmMessage": "¿Eliminar este rol secundario?"
                 }
@@ -260,7 +264,7 @@
                         "noPrograms": "No hay programas disponibles para asignar"
                     },
                     "buttons": {
-                        "assignSelected": "Asignar seleccionados"
+                        "assignSelected": "Asignar"
                     }
                 }
             }

@@ -325,6 +325,14 @@
           "label": "Razón por la cual fue descalificado o denegado de fondos federales",
           "placeholder": "Ingrese la razón por la cual fue descalificado o denegado de fondos federales"
         },
+        "stateFundsDeniedDate": {
+          "label": "Fecha de descalificación o denegación de fondos estatales",
+          "placeholder": ""
+        },
+        "federalFundsDeniedDate": {
+          "label": "Fecha de descalificación o denegación de fondos federales",
+          "placeholder": ""
+        },
         "address": {
           "label": "Dirección",
           "placeholder": "Ingresa la dirección"

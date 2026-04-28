@@ -1,6 +1,8 @@
 <!-- Messages toggle -->
 <button
     mat-icon-button
+    [title]="'messages.title' | transloco"
+    [attr.aria-label]="'messages.title' | transloco"
     (click)="openPanel()"
     #messagesOrigin>
     <ng-container *ngIf="unreadCount() > 0">
@@ -23,6 +25,8 @@
             <div class="mr-3 -ml-1 sm:hidden">
                 <button
                     mat-icon-button
+                    [title]="'messages.closePanel' | transloco"
+                    [attr.aria-label]="'messages.closePanel' | transloco"
                     (click)="closePanel()">
                     <mat-icon
                         class="text-current icon-size-5"
@@ -30,10 +34,12 @@
                 </button>
             </div>
             <div class="text-lg font-medium leading-10">{{ 'messages.title' | transloco }}</div>
-            <div class="ml-auto">
+            <div class="flex gap-1 items-center ml-auto">
                 <button
                     class="dark:text-white"
                     mat-icon-button
+                    [title]="'messages.markAllAsRead' | transloco"
+                    [attr.aria-label]="'messages.markAllAsRead' | transloco"
                     [disabled]="unreadCount() === 0"
                     [matTooltip]="'messages.markAllAsRead' | transloco"
                     (click)="markAllAsRead()">
@@ -44,10 +50,35 @@
             </div>
         </div>
 
+        <!-- Filters -->
+        <div class="flex items-center gap-1.5 px-4 py-2 border-b bg-card">
+            <button
+                class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
+                mat-stroked-button
+                [color]="activeFilter === 'all' ? 'primary' : undefined"
+                (click)="setFilter('all')">
+                {{ 'messages.filters.all' | transloco }}
+            </button>
+            <button
+                class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
+                mat-stroked-button
+                [color]="activeFilter === 'unread' ? 'primary' : undefined"
+                (click)="setFilter('unread')">
+                {{ 'messages.filters.unread' | transloco }}
+            </button>
+            <button
+                class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
+                mat-stroked-button
+                [color]="activeFilter === 'read' ? 'primary' : undefined"
+                (click)="setFilter('read')">
+                {{ 'messages.filters.read' | transloco }}
+            </button>
+        </div>
+
         <!-- Content -->
         <div class="flex overflow-y-auto relative flex-col flex-auto divide-y sm:max-h-120 bg-card">
             <!-- Messages -->
-            <ng-container *ngFor="let message of messages(); trackBy: trackByFn">
+            <ng-container *ngFor="let message of filteredMessages; trackBy: trackByFn">
                 <div
                     class="flex group hover:bg-gray-50 dark:hover:bg-black dark:hover:bg-opacity-5"
                     [ngClass]="{'unread': !message.read}">
@@ -86,8 +117,11 @@
                         <button
                             class="w-6 h-6 min-h-6"
                             mat-icon-button
+                            [title]="message.read ? ('messages.alreadyRead' | transloco) : ('messages.markAsRead' | transloco)"
+                            [attr.aria-label]="message.read ? ('messages.alreadyRead' | transloco) : ('messages.markAsRead' | transloco)"
+                            [disabled]="message.read"
                             (click)="toggleRead(message)"
-                            [matTooltip]="message.read ? ('messages.markAsUnread' | transloco) : ('messages.markAsRead' | transloco)">
+                            [matTooltip]="message.read ? ('messages.alreadyRead' | transloco) : ('messages.markAsRead' | transloco)">
                             <span
                                 class="w-2 h-2 rounded-full"
                                 [ngClass]="{'bg-gray-400 dark:bg-gray-500 sm:opacity-0 sm:group-hover:opacity-100': message.read,
@@ -97,6 +131,8 @@
                         <button
                             class="w-6 h-6 min-h-6 sm:opacity-0 sm:group-hover:opacity-100"
                             mat-icon-button
+                            [title]="'messages.remove' | transloco"
+                            [attr.aria-label]="'messages.remove' | transloco"
                             (click)="delete(message)"
                             [matTooltip]="'messages.remove' | transloco">
                             <mat-icon
@@ -113,6 +149,7 @@
                         <img
                             class="object-cover object-center overflow-hidden mr-4 w-8 h-8 rounded-full shrink-0"
                             [src]="message.image"
+                            [title]="'Message image'"
                             [alt]="'Message image'">
                     </ng-container>
                     <!-- Title, description & time -->
@@ -135,17 +172,32 @@
             </ng-container>
 
             <!-- No messages -->
-            <ng-container *ngIf="!messages() || !messages().length">
+            <ng-container *ngIf="!filteredMessages || !filteredMessages.length">
                 <div class="flex flex-col flex-auto justify-center items-center px-8 py-12 sm:justify-start">
                     <div class="flex justify-center items-center w-14 h-14 rounded-full flex-0 bg-primary-100 dark:bg-primary-600">
                         <mat-icon
                             class="text-primary-700 dark:text-primary-50"
+                            [title]="'messages.empty.title' | transloco"
+                            aria-hidden="true"
                             [svgIcon]="'heroicons_outline:inbox'"></mat-icon>
                     </div>
                     <div class="mt-5 text-2xl font-semibold tracking-tight">{{ 'messages.empty.title' | transloco }}</div>
                     <div class="mt-1 w-full text-center max-w-60 text-md text-secondary">{{ 'messages.empty.subtitle' | transloco }}</div>
                 </div>
             </ng-container>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-4 py-3 border-t bg-card">
+            <button
+                class="w-full text-xs font-medium"
+                mat-stroked-button
+                [title]="'messages.viewAll' | transloco"
+                [attr.aria-label]="'messages.viewAll' | transloco"
+                [routerLink]="getMessagesCenterLink()"
+                (click)="closePanel()">
+                {{ 'messages.viewAll' | transloco }}
+            </button>
         </div>
     </div>
 </ng-template>

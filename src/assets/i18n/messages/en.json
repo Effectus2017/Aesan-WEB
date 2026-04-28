@@ -1,10 +1,52 @@
 {
   "messages": {
     "title": "Messages",
+    "viewAll": "View all",
+    "closePanel": "Close messages panel",
     "markAllAsRead": "Mark all as read",
     "markAsRead": "Mark as read",
+    "alreadyRead": "Message already read",
     "markAsUnread": "Mark as unread",
     "remove": "Remove",
+    "filters": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "center": {
+      "title": "Message Center",
+      "subtitle": "Review your message history in this portal.",
+      "filters": {
+        "readStatus": "Read status",
+        "deleted": "Deleted",
+        "options": {
+          "all": "All (includes deleted)",
+          "read": "Read",
+          "unread": "Unread",
+          "deleted": "Deleted"
+        }
+      },
+      "searchLabel": "Search messages",
+      "searchPlaceholder": "Title or description",
+      "searchAction": "Search",
+      "clearSearch": "Clear search",
+      "loading": "Loading messages...",
+      "emptyFiltered": "There are no messages for the selected filters.",
+      "table": {
+        "columns": {
+          "title": "Title",
+          "description": "Description",
+          "time": "Date",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "read": "Read",
+          "unread": "Unread",
+          "deleted": "Deleted"
+        }
+      }
+    },
     "empty": {
       "title": "No messages",
       "subtitle": "When you have messages, they will appear here."

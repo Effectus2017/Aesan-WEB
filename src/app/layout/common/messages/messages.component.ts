@@ -13,6 +13,7 @@ import { TranslocoModule } from '@ngneat/transloco';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MessageDetailModalComponent } from './message-detail-modal/message-detail-modal.component';
 import { BrowserNotificationService } from 'app/shared/services/browser-notification.service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'messages',
@@ -21,7 +22,7 @@ import { BrowserNotificationService } from 'app/shared/services/browser-notifica
   changeDetection: ChangeDetectionStrategy.OnPush,
   exportAs: 'messages',
   standalone: true,
-  imports: [MatButtonModule, NgIf, MatIconModule, MatTooltipModule, NgFor, NgClass, NgTemplateOutlet, DatePipe, TranslocoModule, MatDialogModule],
+  imports: [MatButtonModule, NgIf, MatIconModule, MatTooltipModule, NgFor, NgClass, NgTemplateOutlet, DatePipe, TranslocoModule, MatDialogModule, RouterLink],
 })
 export class MessagesComponent implements OnInit, OnDestroy {
   @ViewChild('messagesOrigin') private _messagesOrigin: MatButton;
@@ -31,6 +32,21 @@ export class MessagesComponent implements OnInit, OnDestroy {
   get messages() { return this._messagesService.messages; }
   get unreadCount() { return this._messagesService.unreadCount; }
   get isConnected() { return this._messagesService.isConnected; }
+
+  activeFilter: 'all' | 'unread' | 'read' = 'all';
+
+  get filteredMessages(): Message[] {
+    const currentMessages = this.messages();
+    if (this.activeFilter === 'unread') {
+      return currentMessages.filter((message) => !message.read);
+    }
+
+    if (this.activeFilter === 'read') {
+      return currentMessages.filter((message) => message.read);
+    }
+
+    return currentMessages;
+  }
 
   private _overlayRef: OverlayRef;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -42,6 +58,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
   private _viewContainerRef: ViewContainerRef = inject(ViewContainerRef);
   private _dialog: MatDialog = inject(MatDialog);
   private _browserNotificationService: BrowserNotificationService = inject(BrowserNotificationService);
+  private _router: Router = inject(Router);
 
 
   /**
@@ -122,6 +139,14 @@ export class MessagesComponent implements OnInit, OnDestroy {
   }
 
   /**
+   * Actualiza el filtro activo de mensajes.
+   * @param filter Filtro que se debe aplicar en el panel
+   */
+  setFilter(filter: 'all' | 'unread' | 'read'): void {
+    this.activeFilter = filter;
+  }
+
+  /**
    * Toggle read status of the given message
    */
   toggleRead(message: Message): void {
@@ -132,6 +157,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
     // Marcar como leído usando el endpoint correcto
     this._messagesService.markMessageAsRead({ id: message.id }).subscribe();
+  }
+
+  /**
+   * Devuelve la ruta del centro de mensajes según el portal actual.
+   */
+  getMessagesCenterLink(): string {
+    const firstSegment = this._router.url.split('/').filter(Boolean)[0];
+    const validPortals = ['admin-portal', 'agency-portal', 'aesan-portal'];
+
+    if (firstSegment && validPortals.includes(firstSegment)) {
+      return `/${firstSegment}/messages`;
+    }
+
+    return '/admin-portal/messages';
   }
 
   /**

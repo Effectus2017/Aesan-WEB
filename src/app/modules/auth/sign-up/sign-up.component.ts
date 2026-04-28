@@ -29,6 +29,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Region } from 'app/shared/models/location/Region';
 import { Program } from 'app/shared/models/program/Program';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
+import { ThemeToggleComponent } from 'app/shared/components/theme-toggle/theme-toggle.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import {
   compare,
@@ -84,6 +85,7 @@ import { applyUieInputUppercase, getUieFormErrorTranslationKey, UieErrorTranslat
     MatSnackBarModule,
     MatDialogModule,
     LanguagesComponent,
+    ThemeToggleComponent,
     MatTooltipModule,
     NumericOnlyDirective,
     MatDatepickerModule,
@@ -188,6 +190,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   // Current Language
   currentLang: string = 'es';
 
+  /** Fecha máxima permitida (no futura) para denegación de fondos */
+  readonly maxFundsDeniedDate = new Date();
+
   // Agregar esta propiedad
   protected readonly window = window;
 
@@ -262,6 +267,9 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
       // Reason why the sponsor was disqualified or denied federal funds?
       // Se activa cuando federalFundsDenied = true
       federalFundsDeniedReason: [null],
+      // Fecha de descalificación/denegación (visible y requerida cuando sí/no = Sí)
+      stateFundsDeniedDate: [null],
+      federalFundsDeniedDate: [null],
 
       // ¿En qué estatus se encuentra su Exención Contributiva?"
       // In what status is your Tax Exemption?
@@ -869,6 +877,18 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
         // Reason why the sponsor was disqualified or denied state funds?
         // Se activa cuando stateFundsDenied = true
         stateFundsDeniedReason: stateFundsDeniedReason,
+        stateFundsDeniedDate:
+          stateFundsDenied && formValues.stateFundsDeniedDate
+            ? new Date(formValues.stateFundsDeniedDate).toISOString()
+            : stateFundsDenied
+              ? null
+              : undefined,
+        federalFundsDeniedDate:
+          federalFundsDenied && formValues.federalFundsDeniedDate
+            ? new Date(formValues.federalFundsDeniedDate).toISOString()
+            : federalFundsDenied
+              ? null
+              : undefined,
         // ¿En qué estatus se encuentra su Exención Contributiva?
         // In what status is your Tax Exemption?
         // En Proceso (3), Otorgado (4), Denegado (5)
@@ -1117,36 +1137,42 @@ export class AuthSignUpComponent implements OnInit, OnDestroy {
   checkStateFundsDenied(): void {
     const stateFundsDenied = this.signUpForm.value.stateFundsDenied === true;
     const stateFundsDeniedReasonControl = this.signUpForm.get('stateFundsDeniedReason');
+    const stateFundsDeniedDateControl = this.signUpForm.get('stateFundsDeniedDate');
 
     if (stateFundsDenied) {
-      // Si se selecciona "Sí", hacer el campo requerido
       stateFundsDeniedReasonControl?.setValidators([Validators.required]);
+      stateFundsDeniedDateControl?.setValidators([Validators.required]);
     } else {
-      // Si se selecciona "No", limpiar validaciones y valor
       stateFundsDeniedReasonControl?.clearValidators();
       stateFundsDeniedReasonControl?.setValue(null);
+      stateFundsDeniedDateControl?.clearValidators();
+      stateFundsDeniedDateControl?.setValue(null);
     }
 
-    // Actualizar el estado de validación
     stateFundsDeniedReasonControl?.updateValueAndValidity();
+    stateFundsDeniedDateControl?.updateValueAndValidity();
+    this._changeDetectorRef.markForCheck();
   }
 
   // Manejar el cambio en el campo federalFundsDenied
   checkFederalFundsDenied(): void {
     const federalFundsDenied = this.signUpForm.value.federalFundsDenied === true;
     const federalFundsDeniedReasonControl = this.signUpForm.get('federalFundsDeniedReason');
+    const federalFundsDeniedDateControl = this.signUpForm.get('federalFundsDeniedDate');
 
     if (federalFundsDenied) {
-      // Si se selecciona "Sí", hacer el campo requerido
       federalFundsDeniedReasonControl?.setValidators([Validators.required]);
+      federalFundsDeniedDateControl?.setValidators([Validators.required]);
     } else {
-      // Si se selecciona "No", limpiar validaciones y valor
       federalFundsDeniedReasonControl?.clearValidators();
       federalFundsDeniedReasonControl?.setValue(null);
+      federalFundsDeniedDateControl?.clearValidators();
+      federalFundsDeniedDateControl?.setValue(null);
     }
 
-    // Actualizar el estado de validación
     federalFundsDeniedReasonControl?.updateValueAndValidity();
+    federalFundsDeniedDateControl?.updateValueAndValidity();
+    this._changeDetectorRef.markForCheck();
   }
 
   // Manejar el cambio en el campo participatesInHeadStartProgramId

@@ -32,8 +32,10 @@ export interface AgencyRequest {
   servicesOfferedSince?: string;
   stateFundsDenied?: boolean;
   stateFundsDeniedReason?: string;
+  stateFundsDeniedDate?: string | null;
   federalFundsDenied?: boolean;
   federalFundsDeniedReason?: string;
+  federalFundsDeniedDate?: string | null;
   taxExemptionStatusId?: number;
   taxExemptionTypeId?: number;
   typeOfEntityId?: number;

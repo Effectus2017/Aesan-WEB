@@ -363,6 +363,14 @@
           "label": "Reason why the sponsor was disqualified or denied federal funds",
           "placeholder": "Enter the reason why you were disqualified or denied federal funds"
         },
+        "stateFundsDeniedDate": {
+          "label": "Date of disqualification or denial of state funds",
+          "placeholder": ""
+        },
+        "federalFundsDeniedDate": {
+          "label": "Date of disqualification or denial of federal funds",
+          "placeholder": ""
+        },
         "address": {
           "label": "Address",
           "placeholder": "Enter the address"

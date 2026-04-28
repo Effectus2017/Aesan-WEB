@@ -51,7 +51,11 @@
                         "actions": "Actions"
                     },
                     "buttons": {
-                        "delete": "Delete"
+                        "delete": "Delete",
+                        "add": "Add secondary role"
+                    },
+                    "tooltips": {
+                        "add": "Add secondary role"
                     },
                     "deleteConfirmMessage": "Remove this secondary role?"
                 }
@@ -253,7 +257,7 @@
                         "noPrograms": "No programs available to assign"
                     },
                     "buttons": {
-                        "assignSelected": "Assign selected"
+                        "assignSelected": "Assign"
                     }
                 }
             }
