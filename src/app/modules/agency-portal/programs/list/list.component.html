@@ -7,7 +7,7 @@
       <div *ngFor="let program of programs" class="flex flex-col h-full overflow-hidden bg-white shadow-md rounded-xl">
         <div class="flex-1 p-6">
           <div class="flex items-center mb-4">
-            <img class="w-16 h-16 mr-4 rounded-lg" [src]="program.icon" [alt]="program.title | transloco" [title]="program.title | transloco" />
+            <img class="w-16 h-16 mr-4 rounded-lg" [ngSrc]="program.icon" width="64" height="64" [alt]="program.title | transloco" [title]="program.title | transloco" />
             <h3 class="text-xl font-semibold text-gray-900">{{ program.title | transloco }}</h3>
           </div>
           <div class="space-y-4">

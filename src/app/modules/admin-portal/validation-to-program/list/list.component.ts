@@ -174,6 +174,7 @@ export class ValidationToProgramListComponent implements OnInit, OnDestroy, OnGe
       alls: true,
       forDropdown: false,
       isPropietary: false,
+      userId: this._authService.getUserId(),
       ...this.appliedFilters,
     };
     this._agencyService.getAllAgenciesFromDb(requestParameters).subscribe((result: any) => {

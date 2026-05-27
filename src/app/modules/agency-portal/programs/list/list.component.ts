@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgOptimizedImage } from '@angular/common';
 import { MatTableModule, MatTable } from '@angular/material/table';
 import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatSortModule, MatSort } from '@angular/material/sort';
@@ -26,7 +26,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
     templateUrl: './list.component.html',
     encapsulation: ViewEncapsulation.None,
     animations: fuseAnimations,
-    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, TranslocoModule, SharedModule]
+    imports: [CommonModule, MatTableModule, MatPaginatorModule, MatSortModule, MatButtonModule, MatIconModule, MatMenuModule, NgFor, TranslocoModule, SharedModule, NgOptimizedImage]
 })
 export class AgencyProgramsListComponent implements OnInit, OnDestroy, OnGenericHeaderHandlers {
   @ViewChild(MatPaginator) paginator: MatPaginator;

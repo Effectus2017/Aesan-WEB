@@ -1,7 +1,7 @@
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { DatePipe, NgClass, NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnDestroy, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, OnInit, signal, TemplateRef, ViewChild, ViewContainerRef, ViewEncapsulation } from '@angular/core';
 import { MatButton, MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -33,25 +33,25 @@ export class MessagesComponent implements OnInit, OnDestroy {
   get unreadCount() { return this._messagesService.unreadCount; }
   get isConnected() { return this._messagesService.isConnected; }
 
-  activeFilter: 'all' | 'unread' | 'read' = 'all';
-
-  get filteredMessages(): Message[] {
+  activeFilter = signal<'all' | 'unread' | 'read'>('all');
+  readonly filteredMessages = computed(() => {
     const currentMessages = this.messages();
-    if (this.activeFilter === 'unread') {
+    const filter = this.activeFilter();
+
+    if (filter === 'unread') {
       return currentMessages.filter((message) => !message.read);
     }
 
-    if (this.activeFilter === 'read') {
+    if (filter === 'read') {
       return currentMessages.filter((message) => message.read);
     }
 
     return currentMessages;
-  }
+  });
 
   private _overlayRef: OverlayRef;
   private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-  private _changeDetectorRef: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _messagesService: MessagesService = inject(MessagesService);
   private _authService: AuthService = inject(AuthService);
   private _overlay: Overlay = inject(Overlay);
@@ -92,6 +92,9 @@ export class MessagesComponent implements OnInit, OnDestroy {
    * On destroy
    */
   ngOnDestroy(): void {
+    this._unsubscribeAll.next(null);
+    this._unsubscribeAll.complete();
+
     // Dispose del servicio en tiempo real
     this._messagesService.dispose();
 
@@ -143,7 +146,7 @@ export class MessagesComponent implements OnInit, OnDestroy {
    * @param filter Filtro que se debe aplicar en el panel
    */
   setFilter(filter: 'all' | 'unread' | 'read'): void {
-    this.activeFilter = filter;
+    this.activeFilter.set(filter);
   }
 
   /**
@@ -292,22 +295,4 @@ export class MessagesComponent implements OnInit, OnDestroy {
     });
   }
 
-  /**
-   * Load messages from the service
-   *
-   * @private
-   */
-  private _loadMessages(): void {
-    this._messagesService.getAllMessagesFromDb({}).subscribe();
-  }
-
-  /**
-   * Calculate the unread count
-   *
-   * @private
-   */
-  private _calculateUnreadCount(): void {
-    // No necesitamos calcular manualmente ya que el servicio en tiempo real maneja esto
-    // Los signals se actualizan automáticamente
-  }
 }

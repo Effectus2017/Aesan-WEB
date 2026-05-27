@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
+import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { GeoService } from 'app/shared/services/geo.service';
@@ -17,12 +18,15 @@ export const initialDataValidationToProgramListResolver: ResolveFn<any> = () => 
   const agencyService = inject(AgencyService);
   const geoService = inject(GeoService);
   const programService = inject(ProgramService);
+  const authService = inject(AuthService);
+  const userId = authService.getUserId();
 
   const requestParameters: QueryParameters = {
     take: 25,
     skip: 0,
     alls: true,
     isPropietary: false,
+    userId,
   };
 
   return forkJoin([

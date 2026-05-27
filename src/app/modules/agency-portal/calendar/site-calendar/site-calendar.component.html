@@ -3,20 +3,21 @@
     let-tooltipPlacement="tooltipPlacement" let-highlightDay="highlightDay" let-unhighlightDay="unhighlightDay"
     let-eventClicked="eventClicked" let-tooltipTemplate="tooltipTemplate" let-tooltipAppendToBody="tooltipAppendToBody"
     let-tooltipDelay="tooltipDelay" let-trackByEventId="trackByEventId" let-validateDrag="validateDrag">
+    @let dayView = getDayView(day);
     <div class="cal-cell-top" [attr.aria-label]="{ day: day, locale: locale } | calendarA11y : 'monthCell'">
         <span aria-hidden="true">
-            <span class="cal-day-badge w-4 h-4 rounded flex-shrink-0" *ngIf="getDayIndicatorEvents(day).length > 0"
-                [matTooltip]="getDayTypeTooltip(day)"
-                [style.background-color]="getBadgeBackgroundColor(day)"></span>
+            <span class="cal-day-badge w-4 h-4 rounded flex-shrink-0" *ngIf="dayView.indicatorEvents.length > 0"
+                [matTooltip]="dayView.tooltip"
+                [style.background-color]="dayView.badgeColor"></span>
             <span class="cal-day-number">{{ day.date | calendarDate : 'monthViewDayNumber' : locale }}</span>
         </span>
     </div>
-    <div class="cal-events" *ngIf="getServiceIconEvents(day).length > 0">
+    <div class="cal-events" *ngIf="dayView.serviceIconEvents.length > 0">
         <div
             class="inline-flex justify-center items-center text-base leading-none rounded cal-event min-w-5 min-h-5"
-            *ngFor="let event of getServiceIconEvents(day); trackBy: trackByEventId"
+            *ngFor="let event of dayView.serviceIconEvents; trackBy: trackByEventId"
             [ngClass]="event?.cssClass"
-            [ngStyle]="isServiceEvent(event)
+            [ngStyle]="getEventView(event).isService
                 ? { backgroundColor: 'transparent', border: 'none' }
                 : { backgroundColor: event.color?.primary }"
             (mouseenter)="highlightDay.emit({ event: event })"
@@ -37,10 +38,10 @@
             (mwlClick)="eventClicked.emit({ event: event, sourceEvent: $event })"
             [attr.aria-hidden]="{} | calendarA11y : 'hideMonthCellEvents'">
             <span
-              *ngIf="isServiceEvent(event)"
-              [ngClass]="{ 'opacity-40': isDayHoliday(day) || isServiceDisabled(event) }"
+              *ngIf="getEventView(event).isService"
+              [ngClass]="{ 'opacity-40': dayView.isHoliday || getEventView(event).isDisabled }"
             >
-              {{ getServiceIcon(event) }}
+              {{ getEventView(event).icon }}
             </span>
         </div>
     </div>
@@ -49,7 +50,7 @@
 <!-- Template para títulos de eventos en vista semana/día: icono + título -->
 <ng-template #eventTitleTemplate let-event="event" let-view="view">
     <span class="cal-event-title">
-        <span *ngIf="isServiceEvent(event)">{{ getServiceIcon(event) }}</span>
+        <span *ngIf="getEventView(event).isService">{{ getEventView(event).icon }}</span>
         <span [innerHTML]="event.title | calendarEventTitle : view : event"></span>
     </span>
 </ng-template>
@@ -111,20 +112,26 @@
                 </div>
                 <!-- Bloque 2: Servicios (menú Material) -->
                 <div class="pl-4 border-l border-gray-200 dark:border-gray-600">
-                    <button mat-button [matMenuTriggerFor]="servicesLegendMenu"
+                    <button #servicesLegendTrigger mat-button [matMenuTriggerFor]="servicesLegendMenu"
                         class="!min-w-0 !px-2 !py-1 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                         {{ 'sites.calendar.legend.service' | transloco }}
                         <mat-icon class="!w-4 !h-4 !text-lg ml-0.5 align-middle">expand_more</mat-icon>
                     </button>
                     <mat-menu #servicesLegendMenu="matMenu" class="services-legend-menu" xPosition="before" yPosition="below">
-                        <div class="py-2 px-3 min-w-[200px] max-h-[70vh] overflow-y-auto">
-                            @for (item of serviceTypeLegendItems; track item.serviceTypeId) {
-                                <div class="flex gap-2 items-center py-1.5 px-2 text-sm text-gray-700 dark:text-gray-300">
-                                    <span class="text-base leading-none shrink-0" aria-hidden="true">{{ item.icon }}</span>
-                                    <span>{{ item.name }}</span>
-                                </div>
-                            }
-                        </div>
+                        @defer (on interaction(servicesLegendTrigger)) {
+                            <div class="py-2 px-3 min-w-[200px] max-h-[70vh] overflow-y-auto">
+                                @for (item of serviceTypeLegendItems; track item.serviceTypeId) {
+                                    <div class="flex gap-2 items-center py-1.5 px-2 text-sm text-gray-700 dark:text-gray-300">
+                                        <span class="text-base leading-none shrink-0" aria-hidden="true">{{ item.icon }}</span>
+                                        <span>{{ item.name }}</span>
+                                    </div>
+                                }
+                            </div>
+                        } @placeholder {
+                            <div class="py-2 px-3 min-w-[200px] text-sm text-gray-500 dark:text-gray-400">
+                                {{ 'global.loading' | transloco }}
+                            </div>
+                        }
                     </mat-menu>
                 </div>
             </div>

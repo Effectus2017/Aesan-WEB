@@ -55,21 +55,21 @@
             <button
                 class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
                 mat-stroked-button
-                [color]="activeFilter === 'all' ? 'primary' : undefined"
+                [color]="activeFilter() === 'all' ? 'primary' : undefined"
                 (click)="setFilter('all')">
                 {{ 'messages.filters.all' | transloco }}
             </button>
             <button
                 class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
                 mat-stroked-button
-                [color]="activeFilter === 'unread' ? 'primary' : undefined"
+                [color]="activeFilter() === 'unread' ? 'primary' : undefined"
                 (click)="setFilter('unread')">
                 {{ 'messages.filters.unread' | transloco }}
             </button>
             <button
                 class="h-8 min-h-8 px-3 text-xs font-semibold rounded-full"
                 mat-stroked-button
-                [color]="activeFilter === 'read' ? 'primary' : undefined"
+                [color]="activeFilter() === 'read' ? 'primary' : undefined"
                 (click)="setFilter('read')">
                 {{ 'messages.filters.read' | transloco }}
             </button>
@@ -77,11 +77,12 @@
 
         <!-- Content -->
         <div class="flex overflow-y-auto relative flex-col flex-auto divide-y sm:max-h-120 bg-card">
-            <!-- Messages -->
-            <ng-container *ngFor="let message of filteredMessages; trackBy: trackByFn">
-                <div
-                    class="flex group hover:bg-gray-50 dark:hover:bg-black dark:hover:bg-opacity-5"
-                    [ngClass]="{'unread': !message.read}">
+            @defer (on interaction(messagesOrigin)) {
+                <!-- Messages -->
+                <ng-container *ngFor="let message of filteredMessages(); trackBy: trackByFn">
+                    <div
+                        class="flex group hover:bg-gray-50 dark:hover:bg-black dark:hover:bg-opacity-5"
+                        [ngClass]="{'unread': !message.read}">
 
                     <!-- Message with a link -->
                     <ng-container *ngIf="message.link">
@@ -140,51 +141,56 @@
                                 [svgIcon]="'heroicons_solid:x-mark'"></mat-icon>
                         </button>
                     </div>
-                </div>
+                    </div>
 
-                <!-- Message content template -->
-                <ng-template #messageContent>
-                    <!-- Image -->
-                    <ng-container *ngIf="message.image">
-                        <img
-                            class="object-cover object-center overflow-hidden mr-4 w-8 h-8 rounded-full shrink-0"
-                            [src]="message.image"
-                            [title]="'Message image'"
-                            [alt]="'Message image'">
-                    </ng-container>
-                    <!-- Title, description & time -->
-                    <div class="flex flex-col flex-auto">
-                        <ng-container *ngIf="message.title">
-                            <div
-                                class="font-semibold line-clamp-1"
-                                [innerHTML]="message.title"></div>
+                    <!-- Message content template -->
+                    <ng-template #messageContent>
+                        <!-- Image -->
+                        <ng-container *ngIf="message.image">
+                            <img
+                                class="object-cover object-center overflow-hidden mr-4 w-8 h-8 rounded-full shrink-0"
+                                [src]="message.image"
+                                [title]="'Message image'"
+                                [alt]="'Message image'">
                         </ng-container>
-                        <ng-container *ngIf="message.description">
-                            <div
-                                class="line-clamp-2"
-                                [innerHTML]="message.description"></div>
-                        </ng-container>
-                        <div class="mt-2 text-sm leading-none text-secondary">
-                            {{message.time | date:'MMM dd, h:mm a'}}
+                        <!-- Title, description & time -->
+                        <div class="flex flex-col flex-auto">
+                            <ng-container *ngIf="message.title">
+                                <div
+                                    class="font-semibold line-clamp-1"
+                                    [innerHTML]="message.title"></div>
+                            </ng-container>
+                            <ng-container *ngIf="message.description">
+                                <div
+                                    class="line-clamp-2"
+                                    [innerHTML]="message.description"></div>
+                            </ng-container>
+                            <div class="mt-2 text-sm leading-none text-secondary">
+                                {{message.time | date:'MMM dd, h:mm a'}}
+                            </div>
                         </div>
-                    </div>
-                </ng-template>
-            </ng-container>
+                    </ng-template>
+                </ng-container>
 
-            <!-- No messages -->
-            <ng-container *ngIf="!filteredMessages || !filteredMessages.length">
-                <div class="flex flex-col flex-auto justify-center items-center px-8 py-12 sm:justify-start">
-                    <div class="flex justify-center items-center w-14 h-14 rounded-full flex-0 bg-primary-100 dark:bg-primary-600">
-                        <mat-icon
-                            class="text-primary-700 dark:text-primary-50"
-                            [title]="'messages.empty.title' | transloco"
-                            aria-hidden="true"
-                            [svgIcon]="'heroicons_outline:inbox'"></mat-icon>
+                <!-- No messages -->
+                <ng-container *ngIf="!filteredMessages().length">
+                    <div class="flex flex-col flex-auto justify-center items-center px-8 py-12 sm:justify-start">
+                        <div class="flex justify-center items-center w-14 h-14 rounded-full flex-0 bg-primary-100 dark:bg-primary-600">
+                            <mat-icon
+                                class="text-primary-700 dark:text-primary-50"
+                                [title]="'messages.empty.title' | transloco"
+                                aria-hidden="true"
+                                [svgIcon]="'heroicons_outline:inbox'"></mat-icon>
+                        </div>
+                        <div class="mt-5 text-2xl font-semibold tracking-tight">{{ 'messages.empty.title' | transloco }}</div>
+                        <div class="mt-1 w-full text-center max-w-60 text-md text-secondary">{{ 'messages.empty.subtitle' | transloco }}</div>
                     </div>
-                    <div class="mt-5 text-2xl font-semibold tracking-tight">{{ 'messages.empty.title' | transloco }}</div>
-                    <div class="mt-1 w-full text-center max-w-60 text-md text-secondary">{{ 'messages.empty.subtitle' | transloco }}</div>
+                </ng-container>
+            } @placeholder {
+                <div class="flex justify-center items-center py-8 text-sm text-secondary">
+                    {{ 'global.loading' | transloco }}
                 </div>
-            </ng-container>
+            }
         </div>
 
         <!-- Footer -->

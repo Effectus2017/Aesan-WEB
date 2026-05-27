@@ -14,8 +14,11 @@
             <!-- Logo -->
             <div class="flex justify-center items-center mt-3 mb-4 h-20">
                 <img
-                    class="w-14"
-                    [src]="logoPath"
+                    class="w-14 h-auto"
+                    [ngSrc]="logoPath"
+                    width="226"
+                    height="190"
+                    priority
                     alt="Logo image">
             </div>
         </ng-container>
@@ -35,17 +38,23 @@
             <div class="flex items-center mx-2 lg:mr-2">
                 <div class="hidden lg:flex">
                     <img
-                        class="w-14 dark:hidden"
-                        [src]="logoPath"
+                        class="w-14 h-auto dark:hidden"
+                        [ngSrc]="logoPath"
+                        width="226"
+                        height="190"
                         alt="Logo image">
                     <img
-                        class="hidden w-14 dark:flex"
-                        [src]="logoPath"
+                        class="hidden w-14 h-auto dark:flex"
+                        [ngSrc]="logoPath"
+                        width="226"
+                        height="190"
                         alt="Logo image">
                 </div>
                 <img
-                    class="flex w-8 lg:hidden"
-                    [src]="logoPath"
+                    class="flex w-8 h-auto lg:hidden"
+                    [ngSrc]="logoPath"
+                    width="226"
+                    height="190"
                     alt="Logo image">
             </div>
             <!-- Horizontal navigation -->
@@ -73,7 +82,7 @@
             <languages></languages>
             <!-- <theme-toggle></theme-toggle> -->
             <messages></messages>
-            <custom-shortcuts></custom-shortcuts>
+            <custom-shortcuts *ngIf="showQuickAccess"></custom-shortcuts>
             <user></user>
         </div>
     </div>
@@ -88,7 +97,7 @@
     <!-- Footer -->
     <div class="relative flex items-center justify-start w-full px-4 border-t flex-0 h-18 md:px-6 z-49 bg-[#003C49] dark:bg-transparent print:hidden">
         <div class="flex items-center">
-            <img src="assets/images/logo/aesan-logo-1x.png" alt="Logo" class="mr-2 h-14">
+            <img ngSrc="assets/images/logo/aesan-logo-1x.png" width="347" height="85" alt="Logo" class="mr-2 h-14 w-auto">
         </div>
         <div class="flex flex-row gap-9 ml-auto text-right text-white">
             <div class="flex gap-3 items-center">

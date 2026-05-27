@@ -2,7 +2,7 @@ import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, inject } from 
 import { LuxonDateAdapter } from '@angular/material-luxon-adapter';
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PreloadAllModules, provideRouter, withInMemoryScrolling, withPreloading, withRouterConfig } from '@angular/router';
+import { provideRouter, withInMemoryScrolling, withPreloading, withRouterConfig } from '@angular/router';
 import { provideFuse } from '@fuse';
 import { provideTransloco, TranslocoService } from '@ngneat/transloco';
 import { firstValueFrom } from 'rxjs';
@@ -10,6 +10,7 @@ import { appRoutes } from 'app/app.routes';
 import { provideAuth } from 'app/core/auth/auth.provider';
 import { provideIcons } from 'app/core/icons/icons.provider';
 import { mockApiServices } from 'app/mock-api';
+import { TranslocoBundleLoaderService } from './core/transloco/transloco-bundle-loader.service';
 import { TranslocoHttpLoader } from './core/transloco/transloco.http-loader';
 import { isNullOrUndefinedEmptyStringNullArray } from './shared/utils';
 import { provideToastr, ToastrModule } from 'ngx-toastr';
@@ -20,10 +21,50 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import localeEn from '@angular/common/locales/en';
 import { provideHttpClientWithInterceptors } from './core/http/http.config';
+import { SelectivePreloadingStrategy } from './core/router/selective-preloading.strategy';
+import type { FuseConfig } from '@fuse/services/config';
 
 // Registrar locales para Angular
 registerLocaleData(localeEs, 'es');
 registerLocaleData(localeEn, 'en');
+
+const fuseUiConfig: FuseConfig = {
+  layout: 'modern', //'compact',
+  scheme: 'light',
+  screens: {
+    sm: '600px',
+    md: '960px',
+    lg: '1280px',
+    xl: '1440px',
+  },
+  theme: 'theme-default',
+  themes: [
+    {
+      id: 'theme-default',
+      name: 'Default',
+    },
+    {
+      id: 'theme-brand',
+      name: 'Brand',
+    },
+    {
+      id: 'theme-teal',
+      name: 'Teal',
+    },
+    {
+      id: 'theme-rose',
+      name: 'Rose',
+    },
+    {
+      id: 'theme-purple',
+      name: 'Purple',
+    },
+    {
+      id: 'theme-amber',
+      name: 'Amber',
+    },
+  ],
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,7 +74,7 @@ export const appConfig: ApplicationConfig = {
 
     provideRouter(
         appRoutes,
-        withPreloading(PreloadAllModules),
+        withPreloading(SelectivePreloadingStrategy),
         withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
         withRouterConfig({
             onSameUrlNavigation: 'reload',
@@ -104,6 +145,14 @@ export const appConfig: ApplicationConfig = {
       },
       multi: true,
     },
+    {
+      provide: APP_INITIALIZER,
+      multi: true,
+      useFactory: () => {
+        inject(TranslocoBundleLoaderService);
+        return () => undefined;
+      },
+    },
 
     importProvidersFrom(ToastrModule.forRoot()),
 
@@ -119,47 +168,15 @@ export const appConfig: ApplicationConfig = {
     provideAuth(),
     provideIcons(),
     provideFuse({
-      mockApi: {
-        delay: 0,
-        services: mockApiServices,
-      },
-      fuse: {
-        layout: 'modern', //'compact',
-        scheme: 'light',
-        screens: {
-          sm: '600px',
-          md: '960px',
-          lg: '1280px',
-          xl: '1440px',
-        },
-        theme: 'theme-default',
-        themes: [
-          {
-            id: 'theme-default',
-            name: 'Default',
-          },
-          {
-            id: 'theme-brand',
-            name: 'Brand',
-          },
-          {
-            id: 'theme-teal',
-            name: 'Teal',
-          },
-          {
-            id: 'theme-rose',
-            name: 'Rose',
-          },
-          {
-            id: 'theme-purple',
-            name: 'Purple',
-          },
-          {
-            id: 'theme-amber',
-            name: 'Amber',
-          },
-        ],
-      },
+      ...(environment.production
+        ? {}
+        : {
+            mockApi: {
+              delay: 0,
+              services: mockApiServices,
+            },
+          }),
+      fuse: fuseUiConfig,
     }),
     provideToastr({
       timeOut: 3000,

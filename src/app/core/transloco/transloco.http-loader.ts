@@ -3,146 +3,82 @@ import { inject, Injectable } from '@angular/core';
 import { Translation, TranslocoLoader } from '@ngneat/transloco';
 import { Observable, forkJoin, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take } from 'rxjs/operators';
+import { deepMergeTranslations } from './deep-merge-translations';
 
 /**
  * TranslocoHttpLoader
  * -------------------
- * Este loader permite cargar múltiples archivos de traducción por idioma (por ejemplo: es.json, es.school.json, etc.)
- * y fusionarlos automáticamente para que todas las claves estén disponibles en la aplicación.
+ * Carga solo las traducciones del **núcleo** (listadas en `file-index.json`): idiomas raíz,
+ * navegación, diálogos comunes y mensajes del layout. El resto se carga por portal mediante
+ * {@link TranslocoBundleLoaderService}.
  *
- * Flujo de funcionamiento:
- * 1. Lee la lista de archivos desde './assets/i18n/file-index.json'.
- * 2. Agrupa los archivos por idioma (por ejemplo, todos los archivos que empiezan con 'es').
- * 3. Cuando se solicita una traducción, espera a que la lista de archivos esté lista y luego carga y fusiona todos los archivos del idioma solicitado.
- *
- * ¿Cómo agregar nuevos archivos de traducción?
- * - Crea el archivo de traducción (ejemplo: './assets/i18n/schools/es.json').
- * - Agrega la ruta relativa del archivo a 'file-index.json'.
- * - ¡Listo! El loader lo cargará y fusionará automáticamente.
- *
- * Notas:
- * - Si no se encuentra ningún archivo para un idioma, se carga solo el archivo principal (ej: es.json).
- * - La fusión es profunda, por lo que las claves anidadas se combinan correctamente.
- * - El sistema es escalable y soporta cualquier cantidad de archivos por idioma.
+ * Flujo:
+ * 1. Lee `./assets/i18n/file-index.json` (solo ficheros eager).
+ * 2. Agrupa rutas por idioma (`es`, `en`, …).
+ * 3. `getTranslation(lang)` fusiona todos los JSON de ese idioma para la carga inicial.
  */
-@Injectable({providedIn: 'root'})
-export class TranslocoHttpLoader implements TranslocoLoader
-{
-    private _httpClient = inject(HttpClient);
+@Injectable({ providedIn: 'root' })
+export class TranslocoHttpLoader implements TranslocoLoader {
+  private readonly _httpClient = inject(HttpClient);
 
-    // Lista de rutas de archivos JSON por idioma
-    private _translationFilePaths: Record<string, string[]> = {};
-    // Subject para indicar cuando los archivos están listos
-    private _filesReady$ = new ReplaySubject<void>(1);
+  private _translationFilePaths: Record<string, string[]> = {};
+  private readonly _filesReady$ = new ReplaySubject<void>(1);
 
-    constructor() {
-        // Al inicializar el servicio, obtener la lista de archivos disponibles desde file-index.json
-        this._httpClient.get<string[]>('./assets/i18n/file-index.json')
-            .pipe(catchError(() => of([])))
-            .subscribe(files => {
-                this._processTranslationFiles(files);
-                this._filesReady$.next(); // Indicar que los archivos están listos
-            });
-    }
+  constructor() {
+    this._httpClient
+      .get<string[]>('./assets/i18n/file-index.json')
+      .pipe(catchError(() => of([])))
+      .subscribe((files) => {
+        this._processTranslationFiles(files);
+        this._filesReady$.next();
+      });
+  }
 
-    /**
-     * Procesa los archivos de traducción y los organiza por idioma
-     */
-    private _processTranslationFiles(files: string[]): void {
-        // Reiniciar el objeto de rutas
-        this._translationFilePaths = {};
-        // Agrupar archivos por idioma
-        files.forEach(file => {
-            // Extraer el idioma del nombre del archivo (ej: es.json -> es)
-            const lang = file.split('/').pop()?.split('.')[0];
-            if (lang) {
-                if (!this._translationFilePaths[lang]) {
-                    this._translationFilePaths[lang] = [];
-                }
-                this._translationFilePaths[lang].push(file);
-            }
-        });
-    }
-
-    /**
-     * Registra manualmente un archivo de traducción para un idioma específico
-     */
-    registerTranslationFile(lang: string, filePath: string): void {
+  private _processTranslationFiles(files: string[]): void {
+    this._translationFilePaths = {};
+    files.forEach((file) => {
+      const lang = file.split('/').pop()?.split('.')[0];
+      if (lang) {
         if (!this._translationFilePaths[lang]) {
-            this._translationFilePaths[lang] = [];
+          this._translationFilePaths[lang] = [];
         }
+        this._translationFilePaths[lang].push(file);
+      }
+    });
+  }
 
-        // Agregar solo si no existe ya
-        if (!this._translationFilePaths[lang].includes(filePath)) {
-            this._translationFilePaths[lang].push(filePath);
-        }
+  /**
+   * Registra manualmente un archivo de traducción para un idioma (extensión puntual).
+   */
+  registerTranslationFile(lang: string, filePath: string): void {
+    if (!this._translationFilePaths[lang]) {
+      this._translationFilePaths[lang] = [];
     }
+    if (!this._translationFilePaths[lang].includes(filePath)) {
+      this._translationFilePaths[lang].push(filePath);
+    }
+  }
 
-    /**
-     * Obtiene todas las traducciones para un idioma combinando todos los archivos JSON
-     */
-    getTranslation(lang: string): Observable<Translation>
-    {
-        // Esperar a que los archivos estén listos antes de continuar
-        return this._filesReady$.pipe(
-            take(1),
-            switchMap(() => {
-                // Si no tenemos la lista de archivos o no hay archivos para este idioma,
-                // cargar solo el archivo principal
-                if (!this._translationFilePaths[lang] || this._translationFilePaths[lang].length === 0) {
-                    return this._httpClient.get<Translation>(`./assets/i18n/${lang}.json`)
-                        .pipe(
-                            catchError(() => {
-                                return of({});
-                            })
-                        );
-                }
+  getTranslation(lang: string, _data?: { scope: string }): Observable<Translation> {
+    return this._filesReady$.pipe(
+      take(1),
+      switchMap(() => {
+        if (!this._translationFilePaths[lang] || this._translationFilePaths[lang].length === 0) {
+          return this._httpClient.get<Translation>(`./assets/i18n/${lang}.json`).pipe(
+            catchError(() => of({} as Translation))
+          );
+        }
 
-                // Cargar todos los archivos para el idioma solicitado
-                const translationRequests = this._translationFilePaths[lang].map(path =>
-                    this._httpClient.get<Translation>(path).pipe(
-                        catchError(() => {
-                            return of({});
-                        })
-                    )
-                );
-
-                // Combinar todos los archivos en un solo objeto
-                return forkJoin(translationRequests).pipe(
-                    map(translations => {
-                        return translations.reduce((acc, curr) => {
-                            return this._deepMerge(acc, curr);
-                        }, {});
-                    })
-                );
-            })
+        const translationRequests = this._translationFilePaths[lang].map((path) =>
+          this._httpClient.get<Translation>(path).pipe(catchError(() => of({} as Translation)))
         );
-    }
 
-    /**
-     * Combina profundamente dos objetos de traducción
-     */
-    private _deepMerge(target: any, source: any): any {
-        const output = { ...target };
-
-        if (this._isObject(target) && this._isObject(source)) {
-            Object.keys(source).forEach(key => {
-                if (this._isObject(source[key])) {
-                    if (!(key in target)) {
-                        Object.assign(output, { [key]: source[key] });
-                    } else {
-                        output[key] = this._deepMerge(target[key], source[key]);
-                    }
-                } else {
-                    Object.assign(output, { [key]: source[key] });
-                }
-            });
-        }
-
-        return output;
-    }
-
-    private _isObject(item: any): boolean {
-        return item && typeof item === 'object' && !Array.isArray(item);
-    }
+        return forkJoin(translationRequests).pipe(
+          map((translations) =>
+            translations.reduce((acc, curr) => deepMergeTranslations(acc, curr), {} as Translation)
+          )
+        );
+      })
+    );
+  }
 }

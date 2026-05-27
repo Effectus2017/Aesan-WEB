@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -20,6 +20,7 @@ import { CurrentProgramBannerComponent } from 'app/shared/components/current-pro
 import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status-banner/agency-status-banner.component';
 import { AgencyCodeBannerComponent } from 'app/shared/components/agency-code-banner/agency-code-banner.component';
 import { RouteStyleService } from 'app/shared/services/route-style.service';
+import { computeShowQuickAccess } from 'app/shared/utils/route-layout-data.utils';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { MessagesComponent } from 'app/layout/common/messages/messages.component';
 
@@ -43,7 +44,8 @@ import { MessagesComponent } from 'app/layout/common/messages/messages.component
         AgencyStatusBannerComponent,
         AgencyCodeBannerComponent,
         MessagesComponent,
-        RouterOutlet
+        RouterOutlet,
+        NgOptimizedImage
     ]
 })
 export class ModernLayoutComponent implements OnInit, OnDestroy {
@@ -58,6 +60,9 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
   showAgencyStatusBanner: boolean = false;
   showDeadlineBanner: boolean = false;
   showAgencyCodeBanner: boolean = false;
+
+  /** Accesos rápidos (cabecera); desactivado en rutas con `data.showQuickAccess === false`. */
+  showQuickAccess: boolean = true;
 
   private _activatedRoute = inject(ActivatedRoute);
   private _router = inject(Router);
@@ -111,10 +116,12 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
       )
       .subscribe(() => {
         this.updateRouteStyles();
+        this._updateShowQuickAccess();
       });
 
     // Inicializar estilos
     this.updateRouteStyles();
+    this._updateShowQuickAccess();
 
     // Verificar si los banners deben mostrarse
     this.checkBannerVisibility();
@@ -146,6 +153,11 @@ export class ModernLayoutComponent implements OnInit, OnDestroy {
       // Toggle the opened status
       navigation.toggle();
     }
+  }
+
+  /** Actualiza visibilidad de accesos rápidos según datos de la ruta activa. */
+  private _updateShowQuickAccess(): void {
+    this.showQuickAccess = computeShowQuickAccess(this._activatedRoute);
   }
 
   private updateRouteStyles(): void {

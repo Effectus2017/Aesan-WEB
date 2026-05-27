@@ -1,4 +1,4 @@
-import { I18nPluralPipe, NgIf } from '@angular/common';
+import { I18nPluralPipe, NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -9,7 +9,7 @@ import { finalize, Subject, takeUntil, takeWhile, tap, timer } from 'rxjs';
     selector: 'auth-sign-out',
     templateUrl: './sign-out.component.html',
     encapsulation: ViewEncapsulation.None,
-    imports: [NgIf, RouterLink, I18nPluralPipe, TranslocoModule]
+    imports: [NgIf, RouterLink, I18nPluralPipe, TranslocoModule, NgOptimizedImage]
 })
 export class AuthSignOutComponent implements OnInit, OnDestroy
 {

@@ -100,6 +100,14 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
   private currentTableModal: any = null; // Referencia al modal de tabla actual
   private isCalculatingInitialDate: boolean = false; // Bandera para evitar bucles infinitos
   private hasCalculatedInitialDate: boolean = false; // Bandera para saber si ya se calculó el viewDate inicial
+  private _eventViewCache = new WeakMap<CalendarEvent, { isService: boolean; isDisabled: boolean; icon: string }>();
+  private _dayViewCache = new WeakMap<object, {
+    indicatorEvents: CalendarEvent[];
+    serviceIconEvents: CalendarEvent[];
+    isHoliday: boolean;
+    tooltip: string;
+    badgeColor: string;
+  }>();
 
 
   // Exponer CalendarView para uso en template
@@ -1572,35 +1580,76 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
     return getServiceEventColorByTypeId(service?.serviceTypeId);
   }
 
+  getEventView(event: CalendarEvent): { isService: boolean; isDisabled: boolean; icon: string } {
+    const cached = this._eventViewCache.get(event);
+    if (cached) {
+      return cached;
+    }
+
+    const meta = event.meta as { isService?: boolean; serviceTypeId?: number; isEnabled?: boolean } | undefined;
+    const isService = !!meta?.isService;
+    const icon = isService && meta?.serviceTypeId != null ? getServiceTypeStyle(meta.serviceTypeId).icon : '';
+    const eventView = {
+      isService,
+      isDisabled: isService && meta?.isEnabled === false,
+      icon
+    };
+
+    this._eventViewCache.set(event, eventView);
+    return eventView;
+  }
+
+  getDayView(day: { events?: CalendarEvent[] }): {
+    indicatorEvents: CalendarEvent[];
+    serviceIconEvents: CalendarEvent[];
+    isHoliday: boolean;
+    tooltip: string;
+    badgeColor: string;
+  } {
+    const dayObject = day as object;
+    const cached = this._dayViewCache.get(dayObject);
+    if (cached) {
+      return cached;
+    }
+
+    const events = day?.events ?? [];
+    const indicatorEvents = events.filter((event) => !this.getEventView(event).isService);
+    const serviceIconEvents = events.filter((event) => this.getEventView(event).isService);
+    const dayView = {
+      indicatorEvents,
+      serviceIconEvents,
+      isHoliday: indicatorEvents.some((event) => (event.meta as { isHoliday?: boolean })?.isHoliday === true),
+      tooltip: indicatorEvents[0]?.title ?? '',
+      badgeColor: indicatorEvents[0]?.color?.primary ?? '#b94a48'
+    };
+
+    this._dayViewCache.set(dayObject, dayView);
+    return dayView;
+  }
+
   /** Icono del servicio para eventos en la vista de mes (reemplaza el punto de color). */
   getServiceIcon(event: CalendarEvent): string {
-    const meta = event.meta as { isService?: boolean; serviceTypeId?: number } | undefined;
-    if (meta?.isService && meta.serviceTypeId != null) {
-      return getServiceTypeStyle(meta.serviceTypeId).icon;
-    }
-    return '';
+    return this.getEventView(event).icon;
   }
 
   /** Indica si el evento es de servicio (para mostrar icono en lugar de color). */
   isServiceEvent(event: CalendarEvent): boolean {
-    const meta = event.meta as { isService?: boolean } | undefined;
-    return !!meta?.isService;
+    return this.getEventView(event).isService;
   }
 
   /** Indica si el servicio del evento está inactivo. */
   isServiceDisabled(event: CalendarEvent): boolean {
-    const meta = event.meta as { isService?: boolean; isEnabled?: boolean } | undefined;
-    return !!meta?.isService && meta?.isEnabled === false;
+    return this.getEventView(event).isDisabled;
   }
 
   /** Eventos de día (operación, fin de semana, festivo) para la barra superior de la celda. */
   getDayIndicatorEvents(day: { events?: CalendarEvent[] }): CalendarEvent[] {
-    return (day?.events ?? []).filter(e => !this.isServiceEvent(e));
+    return this.getDayView(day).indicatorEvents;
   }
 
   /** Eventos de servicio para los iconos en la fila inferior de la celda. */
   getServiceIconEvents(day: { events?: CalendarEvent[] }): CalendarEvent[] {
-    return (day?.events ?? []).filter(e => this.isServiceEvent(e));
+    return this.getDayView(day).serviceIconEvents;
   }
 
   /** Ítems de leyenda de servicios: icono + nombre por cada tipo de servicio (siempre todos), ordenados por displayOrder. */
@@ -1614,24 +1663,17 @@ export class SiteCalendarComponent implements OnInit, OnDestroy, OnGenericTableH
 
   /** Indica si el día es feriado (para aplicar tono deshabilitado a los iconos). */
   isDayHoliday(day: { events?: CalendarEvent[] }): boolean {
-    return this.getDayIndicatorEvents(day).some(
-      e => (e.meta as { isHoliday?: boolean })?.isHoliday === true
-    );
+    return this.getDayView(day).isHoliday;
   }
 
   /** Texto del tooltip para el indicador de tipo de día */
   getDayTypeTooltip(day: { events?: CalendarEvent[] }): string {
-    const indicatorEvents = this.getDayIndicatorEvents(day);
-    return indicatorEvents.length > 0 ? (indicatorEvents[0].title ?? '') : '';
+    return this.getDayView(day).tooltip;
   }
 
   /** Color de fondo del badge según el tipo de día de funcionamiento */
   getBadgeBackgroundColor(day: { events?: CalendarEvent[] }): string {
-    const indicatorEvents = this.getDayIndicatorEvents(day);
-    if (indicatorEvents.length > 0) {
-      return indicatorEvents[0].color?.primary ?? '#b94a48';
-    }
-    return '#b94a48';
+    return this.getDayView(day).badgeColor;
   }
 
   /** Color de borde para el grupo en la vista de mes (por childGroupId). */

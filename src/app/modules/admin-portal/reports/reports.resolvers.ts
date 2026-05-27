@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { forkJoin, map, Observable, of } from 'rxjs';
+import { AuthService } from 'app/core/auth/auth.service';
 import { AgencyService } from 'app/shared/services/agency.service';
 import { ReportsService } from 'app/shared/services/reports.service';
 
@@ -10,6 +11,8 @@ import { ReportsService } from 'app/shared/services/reports.service';
  */
 export const SchoolHierarchyTreeResolver: ResolveFn<any> = (route) => {
   const agencyService = inject(AgencyService);
+  const authService = inject(AuthService);
+  const userId = authService.getUserId();
 
   // Obtener año actual como predeterminado
   const currentYear = new Date().getFullYear();
@@ -18,7 +21,7 @@ export const SchoolHierarchyTreeResolver: ResolveFn<any> = (route) => {
 
   // Solo cargar auspiciadores
   // NO cargar la jerarquía si no hay un selectedSponsorId
-  return agencyService.getAllAgenciesFromDb({ take: 10000000, skip: 0, alls: true, forDropdown: true, isPropietary: false })
+  return agencyService.getAllAgenciesFromDb({ take: 10000000, skip: 0, alls: true, forDropdown: true, isPropietary: false, userId })
     .pipe(
       map((agencies) => ({
         agencies: Array.isArray(agencies) ? agencies : (agencies as { data: unknown[] })?.data ?? [],

@@ -4,6 +4,7 @@ import { AdminPortalGuard } from 'app/core/auth/guards/admin-portal.guard';
 import { AgencyPortalGuard } from 'app/core/auth/guards/agency-portal.guard';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
+import { translocoBundleGuard } from 'app/core/transloco/transloco-bundle.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 
 export const appRoutes: Route[] = [
@@ -16,12 +17,13 @@ export const appRoutes: Route[] = [
     path: 'auth-redirect',
     canActivate: [AuthGuard],
     loadChildren: () => import('app/modules/auth/auth-redirect/auth-redirect.routes'),
+    data: { preload: true },
   },
 
   // Auth routes for guests
   {
     path: '',
-    canActivate: [NoAuthGuard],
+    canActivate: [NoAuthGuard, translocoBundleGuard('auth')],
     canActivateChild: [NoAuthGuard],
     component: LayoutComponent,
     data: {
@@ -32,7 +34,7 @@ export const appRoutes: Route[] = [
       { path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.routes') },
       { path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.routes') },
       { path: 'update-password', loadChildren: () => import('app/modules/auth/update-password/update-password.routes') },
-      { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes') },
+      { path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.routes'), data: { preload: true } },
       { path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.routes') },
     ],
   },
@@ -40,7 +42,7 @@ export const appRoutes: Route[] = [
   // Auth routes for authenticated users
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, translocoBundleGuard('auth')],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
     data: {
@@ -70,11 +72,12 @@ export const appRoutes: Route[] = [
   // Admin routes (solo Administrator y Super-Administrator)
   {
     path: 'admin-portal',
-    canActivate: [AuthGuard, AdminPortalGuard],
+    canActivate: [AuthGuard, AdminPortalGuard, translocoBundleGuard('admin-portal')],
     canActivateChild: [AuthGuard, AdminPortalGuard],
     component: LayoutComponent,
     data: {
       layout: 'modern',
+      showQuickAccess: false,
     },
     resolve: {
       initialData: initialDataAdminAesanPortalResolver,
@@ -82,7 +85,7 @@ export const appRoutes: Route[] = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'sponsors' },
       // Sponsors (Role: Admin)
-      { path: 'sponsors', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes') },
+      { path: 'sponsors', loadChildren: () => import('app/modules/admin-portal/validation-to-program/validation-to-program.routes'), data: { preload: true } },
       // Users (Role: Admin)
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
       // Users agency / auspiciadores (Role: Admin)
@@ -129,17 +132,18 @@ export const appRoutes: Route[] = [
   // AESAN portal routes
   {
     path: 'aesan-portal',
-    canActivate: [AuthGuard],
+    canActivate: [AuthGuard, translocoBundleGuard('aesan-portal')],
     canActivateChild: [AuthGuard],
     component: LayoutComponent,
     data: {
       layout: 'modern',
+      showQuickAccess: false,
     },
     resolve: {
       initialData: initialDataAdminAesanPortalResolver,
     },
     children: [
-      { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes') },
+      { path: 'dashboard', loadChildren: () => import('app/modules/aesan-portal/dashboard/dashboard.routes'), data: { preload: true } },
       { path: 'sponsor-evaluation', loadChildren: () => import('app/modules/aesan-portal/sponsor-evaluation/sponsor-evaluation.routes') },
       { path: 'users', loadChildren: () => import('app/modules/admin-portal/users/users.routes') },
       { path: 'messages', loadChildren: () => import('app/modules/aesan-portal/messages/messages.routes') },
@@ -149,7 +153,7 @@ export const appRoutes: Route[] = [
   // Agency (sponsor) routes
   {
     path: 'agency-portal',
-    canActivate: [AuthGuard, AgencyPortalGuard],
+    canActivate: [AuthGuard, AgencyPortalGuard, translocoBundleGuard('agency-portal')],
     canActivateChild: [AuthGuard, AgencyPortalGuard],
     component: LayoutComponent,
     data: {
@@ -164,7 +168,7 @@ export const appRoutes: Route[] = [
       // Programs, listado de programas (Role: Agency)
       { path: 'programs', loadChildren: () => import('app/modules/agency-portal/programs/programs.routes') },
       // Dashboard, dashboard de la agencia (Role: Agency)
-      { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes') },
+      { path: 'dashboard', loadChildren: () => import('app/modules/agency-portal/dashboard/dashboard.routes'), data: { preload: true } },
       // Documents, listado de documentos (Role: Agency)
       { path: 'documents', loadChildren: () => import('app/modules/agency-portal/documents-files/documents.routes') },
       // Forms, listado de formularios para solicitar programas (Role: Agency)

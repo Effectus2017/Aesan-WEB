@@ -1,4 +1,4 @@
-import { NgIf } from '@angular/common';
+import { NgIf, NgOptimizedImage } from '@angular/common';
 import { Component, inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -23,6 +23,7 @@ import { AgencyStatusBannerComponent } from 'app/shared/components/agency-status
 import { AgencyCodeBannerComponent } from 'app/shared/components/agency-code-banner/agency-code-banner.component';
 import { filter, Subject, takeUntil } from 'rxjs';
 import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/custom-shortcuts.component';
+import { computeShowQuickAccess } from 'app/shared/utils/route-layout-data.utils';
 
 @Component({
     selector: 'compact-layout',
@@ -44,7 +45,8 @@ import { CustomShortcutsComponent } from 'app/layout/common/custom-shortcuts/cus
         AgencyStatusBannerComponent,
         AgencyCodeBannerComponent,
         MessagesComponent,
-        CustomShortcutsComponent
+        CustomShortcutsComponent,
+        NgOptimizedImage
     ]
 })
 export class CompactLayoutComponent implements OnInit, OnDestroy {
@@ -60,6 +62,9 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
   showAgencyStatusBanner: boolean = false;
   showDeadlineBanner: boolean = false;
   showAgencyCodeBanner: boolean = false;
+
+  /** Accesos rápidos (cabecera); desactivado en rutas con `data.showQuickAccess === false`. */
+  showQuickAccess: boolean = true;
 
   private _authService = inject(AuthService);
   private _agencyService = inject(AgencyService);
@@ -108,10 +113,12 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
     // Suscribirse a los cambios de ruta
     this._router.events.pipe(filter(event => event instanceof NavigationEnd),takeUntil(this._unsubscribeAll)).subscribe(() => {
       this.updateRouteStyles();
+      this._updateShowQuickAccess();
     });
 
     // Inicializar estilos
     this.updateRouteStyles();
+    this._updateShowQuickAccess();
 
     // Verificar si los banners deben mostrarse
     this.checkBannerVisibility();
@@ -143,6 +150,11 @@ export class CompactLayoutComponent implements OnInit, OnDestroy {
       // Toggle the opened status
       navigation.toggle();
     }
+  }
+
+  /** Actualiza visibilidad de accesos rápidos según datos de la ruta activa. */
+  private _updateShowQuickAccess(): void {
+    this.showQuickAccess = computeShowQuickAccess(this._activatedRoute);
   }
 
   private updateRouteStyles(): void {

@@ -1,6 +1,7 @@
 import { inject } from '@angular/core';
 import { ResolveFn } from '@angular/router';
 import { forkJoin, map } from 'rxjs';
+import { AuthService } from 'app/core/auth/auth.service';
 import { QueryParameters } from 'app/shared/models/common/QueryParameters';
 import { UsersService } from 'app/shared/services/users.service';
 import { AgencyService } from 'app/shared/services/agency.service';
@@ -30,9 +31,11 @@ export const usersAgencyAddResolver: ResolveFn<unknown> = () => {
   const usersService = inject(UsersService);
   const programService = inject(ProgramService);
   const geoService = inject(GeoService);
+  const authService = inject(AuthService);
+  const userId = authService.getUserId();
 
   return forkJoin([
-    agencyService.getAllAgenciesFromDb({ alls: true, forDropdown: true, isPropietary: false }),
+    agencyService.getAllAgenciesFromDb({ alls: true, forDropdown: true, isPropietary: false, userId }),
     usersService.getAllRolesFromDb({ aesanOnly: false }),
     programService.getAllProgramsFromDb({ alls: true, forDropdown: true }),
     geoService.getCitiesFromDb({ take: 25, skip: 0, alls: true, forDropdown: true }),
